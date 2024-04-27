@@ -3,7 +3,7 @@ ThisBuild / scalaVersion := "2.13.10"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "scala-json"
+    name := "nexonix"
   )
 
 val circeVersion = "0.14.1"
