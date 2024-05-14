@@ -2,21 +2,21 @@ package org.nexonix.json
 
 import io.circe.Json
 
-trait Value[T] {
+trait Value {
   val name: String
   val source: Json
   val pathElements: Array[String]
-  val value : T
+  val value : Json
 }
 
 object Value {
-  def create(_name: String, _source: Json, _pathElements: Array[String]) : Value[Json] = {
-    new Value[Json] {
+  def create(_name: String, _source: Json, _pathElements: Array[String]) : Value = {
+    new Value {
       override val name: String = _name
       override val source: Json = _source
       override val pathElements: Array[String] = _pathElements
-      override val value: Json = pathElements.foldLeft(Option(_source)) {
-        (e, a) => e.flatMap(j => j.hcursor.downField(a).focus)
+      override val value: Json = pathElements.foldLeft(Option(source)) {
+        (e, a) => e.flatMap(j => if (j.isArray) j.hcursor.downN(a.toInt).focus else j.hcursor.downField(a).focus)
       }.orNull
     }
   }
