@@ -1,5 +1,5 @@
 package org.nexonix.domain
 
-class OntosCatalog {
+class OntosCatalogos {
 
 }
