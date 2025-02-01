@@ -11,8 +11,8 @@ val evreteVersion = "3.0.02"
 val akkaVersion = "2.7.0"
 val slf4jVersion = "2.0.7"
 libraryDependencies ++= Seq(
-  "org.scalactic" %% "scalactic" % "3.2.15",
-  "org.scalatest" %% "scalatest" % "3.2.15" % "test"
+  "org.scalactic" %% "scalactic" % "3.2.19",
+  "org.scalatest" %% "scalatest" % "3.2.19" % "test"
 )
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed",

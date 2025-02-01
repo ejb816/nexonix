@@ -10,7 +10,7 @@ trait Value {
 }
 
 object Value {
-  def create(_name: String, _source: Json, _pathElements: Array[String]) : Value = {
+  def define(_name: String, _source: Json, _pathElements: Array[String]) : Value = {
     new Value {
       override val name: String = _name
       override val source: Json = _source
