@@ -29,9 +29,9 @@ class TestValue extends AnyFunSuite {
 }
 """).getOrElse(Json.Null)
   test("Test Value") {
-    val phoneNumber = create("phoneNumber", json, Array[String]("order", "customer", "contactDetails", "phone")).value
+    val phoneNumber = create("phoneNumber", json, Array[String]("order", "customer", "contactDetails", "phone")).value[String]
     println(phoneNumber)
-    val itemID = create("itemID", json, Array[String]("order", "items", "0", "id")).value
+    val itemID = create("itemID", json, Array[String]("order", "items", "0", "id")).value[Integer]
     println(itemID)
   }
 
