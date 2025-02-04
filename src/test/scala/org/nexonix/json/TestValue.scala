@@ -2,7 +2,7 @@ package org.nexonix.json
 
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
-import org.nexonix.json.Value.create
+import org.nexonix.json.Value.define
 
 class TestValue extends AnyFunSuite {
   val json: Json = parser.parse("""
@@ -29,9 +29,9 @@ class TestValue extends AnyFunSuite {
 }
 """).getOrElse(Json.Null)
   test("Test Value") {
-    val phoneNumber = create("phoneNumber", json, Array[String]("order", "customer", "contactDetails", "phone")).value[String]
+    val phoneNumber = define("phoneNumber", json, Array[String]("order", "customer", "contactDetails", "phone")).value[String]
     println(phoneNumber)
-    val itemID = create("itemID", json, Array[String]("order", "items", "0", "id")).value[Integer]
+    val itemID = define("itemID", json, Array[String]("order", "items", "0", "id")).value[Integer]
     println(itemID)
   }
 

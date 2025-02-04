@@ -1,4 +1,4 @@
-package org.nexonix.domain
+package domain.core
 
 import io.circe.{Decoder, HCursor, Json}
 
