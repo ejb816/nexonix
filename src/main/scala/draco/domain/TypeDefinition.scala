@@ -1,5 +1,6 @@
-package domain.core
+package draco.domain
 
+import draco.domain
 import io.circe._
 import io.circe.syntax._
 
@@ -14,14 +15,15 @@ sealed trait TypeDefinition {
 }
 
 object TypeDefinition {
-  def define(
+  val NULL =
+  def apply (
               _typeName: TypeName,
-              _typeParameters: Seq[String],
-              _dependsOn: Seq[TypeName],
-              _derivesFrom: Seq[TypeName],
-              _members: Seq[Member],
-              _parameters: Seq[Parameter],
-              _rules: Seq[Rule]
+              _typeParameters: Seq[String] = Seq[String](),
+              _dependsOn: Seq[TypeName] = Seq[TypeName](),
+              _derivesFrom: Seq[TypeName] = Seq[TypeName](),
+              _members: Seq[Member] = Seq[Member](),
+              _parameters: Seq[Parameter] = Seq[Parameter](),
+              _rules: Seq[Rule] = Seq[Rule]()
             ) : TypeDefinition = {
     new TypeDefinition {
       override val typeName: TypeName = _typeName
@@ -34,7 +36,7 @@ object TypeDefinition {
     }
   }
   // Encode a TypeDefinition
-  implicit val encode: Encoder[TypeDefinition] = Encoder.instance { td =>
+  implicit val encoder: Encoder[TypeDefinition] = Encoder.instance { td =>
     Json.obj(
       "typeName"       -> td.typeName.asJson,
       "typeParameters" -> td.typeParameters.asJson,
@@ -46,7 +48,7 @@ object TypeDefinition {
     )
   }
 
-  implicit val decode: Decoder[TypeDefinition] = Decoder.instance { cursor =>
+  implicit val decoder: Decoder[TypeDefinition] = Decoder.instance { cursor =>
     for {
       _typeName        <- cursor.downField("typeName").as[TypeName]
       _typeParameters  <- cursor.downField("typeParameters").as[Seq[String]]
@@ -55,7 +57,7 @@ object TypeDefinition {
       _members         <- cursor.downField("members").as[Seq[Member]]
       _parameters      <- cursor.downField("parameters").as[Seq[Parameter]]
       _rules           <- cursor.downField("rules").as[Seq[Rule]]
-    } yield TypeDefinition.define(
+    } yield domain.TypeDefinition (
       _typeName,
       _typeParameters,
       _dependsOn,
