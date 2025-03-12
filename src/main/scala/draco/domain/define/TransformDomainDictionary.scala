@@ -12,6 +12,4 @@ object TransformDomainDictionary {
       override protected val internalMap: Map[String, TransformDomain] = Map(elements: _*)
     }
   }
-  implicit val encoder: Encoder[TransformDomainDictionary] = deriveEncoder
-  implicit val decoder: Decoder[TransformDomainDictionary] = deriveDecoder
 }

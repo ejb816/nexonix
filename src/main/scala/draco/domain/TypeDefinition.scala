@@ -15,7 +15,10 @@ sealed trait TypeDefinition {
 }
 
 object TypeDefinition {
-  val NULL =
+  val NULL: TypeDefinition = TypeDefinition (
+    _typeName = TypeName(_name = "",
+    _namePackage = Seq())
+  )
   def apply (
               _typeName: TypeName,
               _typeParameters: Seq[String] = Seq[String](),

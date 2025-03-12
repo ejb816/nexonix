@@ -1,11 +1,8 @@
 package draco.domain.primes
 
-import org.mitre.anvil.rules.Domain
+import draco.domain.Domain
 
-trait Primes extends Domain {
-
-}
-
+trait Primes extends Domain[Int] 
 object Primes {
   var listOfPrimes: Seq[Int] = Primes.Sieve.primes(29)
   object Sieve {

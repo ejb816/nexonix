@@ -17,6 +17,4 @@ object DataDomain {
       override val base: Domain[TypeData] = Base.base
     }
   }
-  implicit val encoder: Encoder[Domain[TypeData]] = deriveEncoder
-  implicit val decoder: Decoder[Domain[TypeData]] = deriveDecoder
 }

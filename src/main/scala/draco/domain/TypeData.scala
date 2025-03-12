@@ -3,7 +3,7 @@ package draco.domain
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, HCursor, Json}
 
-sealed trait TypeData {
+trait TypeData {
   val definition: TypeDefinition = TypeDefinition(
     _typeName = TypeName(_name = "TypeData", _namePackage = Seq("draco", "domain"))
   )
