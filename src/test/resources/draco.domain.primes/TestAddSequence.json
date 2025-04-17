@@ -1,0 +1,27 @@
+{
+  "name": "TestAddSequence",
+  "imports": {
+    "Json": "io.circe.Json"
+  },
+  "ruleLHS": {
+    "variables": {
+      "fp": "Json"
+    },
+    "predicates": [ "fp != null"]
+  },
+  "ruleRHS": {
+    "values": {
+      "delta" : {
+        "source": "fp",
+        "pathElements": [ "delta" ]
+      },
+      "maximum" : {
+        "source": "fp",
+        "pathElements": [ "maximum" ]
+      }
+    },
+    "body": [
+      "println(fp)"
+    ]
+  }
+}

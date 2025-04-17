@@ -1,0 +1,33 @@
+{
+  "name": "AddSequence",
+  "imports": {
+    "FindPrimes": "domain.primes.FindPrimes",
+    "Json": "io.circe.Json"
+  },
+  "ruleLHS": {
+    "variables": {
+      "fp": "Json"
+    },
+    "predicates": []
+  },
+  "ruleRHS": {
+    "values": {
+      "delta": {
+        "source": "fp",
+        "pathElements": [
+          "delta"
+        ]
+      },
+      "maximum": {
+        "source": "fp",
+        "pathElements": [
+          "maximum"
+        ]
+      }
+    },
+    "body": [
+      "for (i <- 2 to maximum.value[Int]) { context.insert(i) }",
+      "context.insert(FindPrimes.define(maximum.value[Int], delta.value[Int]))"
+    ]
+  }
+}

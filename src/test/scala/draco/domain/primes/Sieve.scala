@@ -1,4 +1,4 @@
-package domain.primes
+package draco.domain.primes
 
 object Sieve {
   // Basic Sieve of Eratosthenes prime filter (lazy evaluation)

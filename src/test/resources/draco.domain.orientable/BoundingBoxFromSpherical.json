@@ -1,0 +1,25 @@
+{
+  "name": [ "domain", "orientable", "BoundingBoxFromSpherical" ],
+  "dependsOn": [
+    "domain.coordinates.Spherical",
+    "domain.unit.Meters",
+    "domain.unit.Radians"
+  ],
+  "derivesFrom": [
+    "BoundingBox"
+  ],
+  "typeArguments": [],
+  "parameters": [
+    {"luf": "Spherical"},
+    {"rlb": "Spherical"}
+  ],
+  "members": [
+    {"value": {"left": "Left[Radians] = Left[Radians](luf.azimuth)"}},
+    {"value": {"right": "Right[Radians] = Right[Radians](rlb.azimuth)"}},
+    {"value": {"upper": "Upper[Radians] = Upper[Radians](luf.elevation)"}},
+    {"value": {"lower": "Lower[Radians] = Lower[Radians](rlb.elevation)"}},
+    {"value": {"front": "Front[Meters] = Front[Meters](luf.range)"}},
+    {"value": {"back": "Back[Meters] = Back[Meters](rlb.range)"}}
+  ],
+  "rules": []
+}

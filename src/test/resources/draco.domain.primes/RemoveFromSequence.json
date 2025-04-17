@@ -1,0 +1,25 @@
+{
+  "name": "RemoveFromSequence",
+  "imports": {
+    "Integer": "java.lang.Integer",
+    "FindPrimes": "domain.primes.FindPrimes"
+  },
+  "ruleLHS": {
+    "variables": {
+      "fp": "FindPrimes",
+      "i1": "Integer",
+      "i2": "Integer",
+      "i3": "Integer"
+    },
+    "predicates": [
+      "i1 * i2 == i3"
+    ]
+  },
+  "ruleRHS": {
+    "values": {},
+    "body": [
+      "fp.conditionalPrint(i3, \" -> \" + i1 + \" * \" + i2 + \" = \" + i3)",
+      "context.delete(i3)"
+    ]
+  }
+}

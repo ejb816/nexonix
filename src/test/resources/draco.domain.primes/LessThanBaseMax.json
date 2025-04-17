@@ -1,0 +1,25 @@
+{
+  "name": "LessThanBaseMax",
+  "imports": {
+    "FindPrimes": "domain.primes.FindPrimes",
+    "Integer": "java.lang.Integer"
+  },
+  "ruleLHS": {
+    "variables": {
+      "fp": "FindPrimes",
+      "i1": "Integer" ,
+      "i2": "Integer" ,
+      "i3": "Integer"
+    },
+    "predicates": [
+      "i1 * i2 == i3"
+    ]
+  },
+  "ruleRHS": {
+    "values": {},
+    "body": [
+      "fp.conditionalPrint(i3, \" -> \" + i1 + \" * \" + i2 + \" = \" + i3)",
+      "context.delete(i3)"
+    ]
+  }
+}

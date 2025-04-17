@@ -31,28 +31,28 @@ object Member {
           _name  <- cursor.downField("name").as[String]
           _type   <- cursor.downField("type").as[String]
           _value <- cursor.downField("value").as[String]
-        } yield Fixed.define(_name, _type, _value)
+        } yield Fixed (_name, _type, _value)
 
       case "Mutable" =>
         for {
           _name <- cursor.downField("name").as[String]
           _type <- cursor.downField("type").as[String]
           _value <- cursor.downField("value").as[String]
-        } yield Mutable.define(_name, _type, _value)
+        } yield Mutable (_name, _type, _value)
 
       case "Dynamic" =>
         for {
           _name <- cursor.downField("name").as[String]
           _type <- cursor.downField("type").as[String]
           _value <- cursor.downField("value").as[String]
-        } yield Dynamic.define(_name, _type, _value)
+        } yield Dynamic (_name, _type, _value)
 
       case "Parameter" =>
         for {
           _name <- cursor.downField("name").as[String]
           _type <- cursor.downField("type").as[String]
           _value <- cursor.downField("value").as[String]
-        } yield Parameter.define(_name, _type, _value)
+        } yield Parameter (_name, _type, _value)
 
       case other => Left(DecodingFailure(s"Unknown Member kind: $other", cursor.history))
     }
@@ -63,7 +63,7 @@ object Member {
 
 sealed trait Fixed extends Member
 object Fixed {
-  def define(
+  def apply (
               _aName: String,
               _aType: String,
               _aValue: String
@@ -78,7 +78,7 @@ object Fixed {
 
 sealed trait Mutable extends Member
 object Mutable {
-  def define(
+  def apply (
               _aName: String,
               _aType: String,
               _aValue: String
@@ -94,7 +94,7 @@ object Mutable {
 
 sealed trait Dynamic extends Member
 object Dynamic {
-  def define(
+  def apply (
               _aName: String,
               _aType: String,
               _aValue: String
@@ -109,7 +109,7 @@ object Dynamic {
 
 sealed trait Parameter extends Member
 object Parameter {
-  def define(
+  def apply (
               _aName: String,
               _aType: String,
               _aValue: String

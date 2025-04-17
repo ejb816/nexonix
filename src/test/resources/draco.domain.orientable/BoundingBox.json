@@ -1,0 +1,19 @@
+{
+  "name": [ "domain", "orientable", "BoundingBox" ],
+  "dependsOn": [
+    "domain.unit.Meters",
+    "domain.unit.Radians"
+  ],
+  "derivesFrom": [],
+  "typeArguments": [],
+  "parameters": [],
+  "members": [
+    {"value": {"left": "Left[Radians]"}},
+    {"value": {"right": "Right[Radians]"}},
+    {"value": {"upper": "Upper[Radians]"}},
+    {"value": {"lower": "Lower[Radians]"}},
+    {"value": {"front": "Front[Meters]"}},
+    {"value": {"back": "Back[Meters]"}}
+  ],
+  "ruleMap": []
+}

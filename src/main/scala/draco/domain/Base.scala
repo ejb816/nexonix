@@ -1,12 +1,12 @@
 package draco.domain
 
-trait Base extends Domain[TypeData]
+trait Base extends DomainDictionary
 
 object Base {
-  val dictionary: Dictionary[Domain[TypeData]] = Dictionary[Domain[TypeData]]()
-  val base: Base = new Base {
-    val superDomain: Domain[TypeData] = this
-    override val subDomains: Dictionary[Domain[TypeData]] = dictionary
-    override val base: Domain[TypeData] = this
+  def apply(_typeNames: Seq[TypeName]): Base = new Base {
+    val dictionary: DomainDictionary = DomainDictionary (_typeNames)
+    override val kvMap: Map[TypeName, TypeDefinition] = dictionary.kvMap
+    override val typeNames: Seq[TypeName] = dictionary.typeNames
+    override val domains: Map[TypeName, TypeDefinition] = dictionary.domains
   }
 }

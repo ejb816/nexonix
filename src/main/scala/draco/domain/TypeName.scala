@@ -5,33 +5,44 @@ import io.circe.{Decoder, Encoder, Json}
 
 sealed trait TypeName {
   val name: String
+  val domain: String
   val namePackage: Seq[String]
   val fullName: String
+  val resourcePath: String
 }
 
 object TypeName {
   def apply (
               _name: String,
-              _namePackage: Seq[String]
+              _domain: String = "Domain",
+              _namePackage: Seq[String] = Seq("draco")
             ) : TypeName = {
     new TypeName {
       override val name: String = _name
-      override val namePackage: Seq[String] = _namePackage
+      override val domain: String = _domain
+      override val namePackage: Seq[String] = _namePackage ++ Seq(_domain.toLowerCase())
       override val fullName: String = s"${namePackage.mkString(".")}.$name"
+      override val resourcePath: String = s"/${namePackage.mkString("/")}.${name}.json"
     }
   }
 
   implicit val encoder: Encoder[TypeName] = Encoder.instance { t =>
     Json.obj(
       "name"         -> Json.fromString(t.name),
-      "namePackage"  -> t.namePackage.asJson,
+      "domain"       -> Json.fromString(t.domain),
+      "namePackage"  -> t.namePackage.asJson
     )
   }
 
   implicit val decoder: Decoder[TypeName] = Decoder.instance { cursor =>
     for {
-      name         <- cursor.downField("name").as[String]
-      namePackage  <- cursor.downField("namePackage").as[Seq[String]]
-    } yield TypeName (name, namePackage)
+      _name         <- cursor.downField("name").as[String]
+      _domain       <- cursor.downField("name").as[String]
+      _namePackage  <- cursor.downField("namePackage").as[Seq[String]]
+    } yield TypeName (
+      _name,
+      _domain,
+      _namePackage
+    )
   }
 }

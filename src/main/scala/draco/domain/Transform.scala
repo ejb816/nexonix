@@ -1,17 +1,16 @@
 package draco.domain
 
 trait Transform {
-  val source: Domain[TypeData]
-  val sink:  Domain[TypeData]
+  val source: Domain
+  val sink:  Domain
 }
 
 object Transform {
   def apply(
-            dictionary: Dictionary[Domain[TypeData]],
-            sourceTypeName: TypeName,
-            sinkTypeName: TypeName
+             _source: Domain,
+             _sink: Domain
            ) : Transform = new Transform {
-    override val source: Domain[TypeData] = dictionary(sourceTypeName.name)
-    override val sink: Domain[TypeData] = dictionary(sinkTypeName.name)
+    override val source: Domain = _source
+    override val sink: Domain = _sink
   }
 }

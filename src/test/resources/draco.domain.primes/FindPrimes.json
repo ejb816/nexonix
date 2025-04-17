@@ -1,0 +1,13 @@
+{
+  "name": [],
+  "dependsOn": {},
+  "derivesFrom": [],
+  "typeArguments": [],
+  "parameters": {},
+  "members": {},
+  "rules": {
+    "AddSequence": [ "domain", "primes" ],
+    "RemoveFromSequence": [ "domain", "primes" ],
+    "LessThanBaseMax": [ "domain", "primes" ]
+  }
+}

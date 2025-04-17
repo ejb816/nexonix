@@ -1,6 +1,5 @@
 package draco.domain
 
-import draco.domain
 import io.circe._
 import io.circe.syntax._
 
@@ -15,9 +14,12 @@ sealed trait TypeDefinition {
 }
 
 object TypeDefinition {
-  val NULL: TypeDefinition = TypeDefinition (
-    _typeName = TypeName(_name = "",
-    _namePackage = Seq())
+  val Null: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "",
+      _domain = "Domain",
+      _namePackage = Seq("draco", "domain")
+    )
   )
   def apply (
               _typeName: TypeName,
@@ -41,13 +43,13 @@ object TypeDefinition {
   // Encode a TypeDefinition
   implicit val encoder: Encoder[TypeDefinition] = Encoder.instance { td =>
     Json.obj(
-      "typeName"       -> td.typeName.asJson,
-      "typeParameters" -> td.typeParameters.asJson,
-      "dependsOn"      -> td.dependsOn.asJson,   // Seq[TypeName]
-      "derivesFrom"    -> td.derivesFrom.asJson, // Seq[TypeName]
-      "members"        -> td.members.asJson,     // Seq[Member]
-      "parameters"     -> td.parameters.asJson,  // Seq[Parameter]
-      "rules"          -> td.rules.asJson        // Seq[Rule]
+      "typeName"       -> td.typeName.asJson,       // TypeName
+      "typeParameters" -> td.typeParameters.asJson, // Seq[String]
+      "dependsOn"      -> td.dependsOn.asJson,      // Seq[TypeName]
+      "derivesFrom"    -> td.derivesFrom.asJson,    // Seq[TypeName]
+      "members"        -> td.members.asJson,        // Seq[Member]
+      "parameters"     -> td.parameters.asJson,     // Seq[Parameter]
+      "rules"          -> td.rules.asJson           // Seq[Rule]
     )
   }
 
@@ -60,7 +62,7 @@ object TypeDefinition {
       _members         <- cursor.downField("members").as[Seq[Member]]
       _parameters      <- cursor.downField("parameters").as[Seq[Parameter]]
       _rules           <- cursor.downField("rules").as[Seq[Rule]]
-    } yield domain.TypeDefinition (
+    } yield TypeDefinition (
       _typeName,
       _typeParameters,
       _dependsOn,
@@ -69,5 +71,23 @@ object TypeDefinition {
       _parameters,
       _rules
     )
+  }
+
+  def generate (td: TypeDefinition, closed: Boolean = false) : String = {
+    val sealedType = if (closed) "sealed " else ""
+    val derived: Seq[TypeName] => String = d => {
+      if (d.isEmpty) "" else "extends " + d.map(f => f.name).mkString(" with ")
+    }
+    val depends: Seq[TypeName] => String = d => {
+      if (d.isEmpty) "" else s"import ${d.map(f => f.fullName).mkString("\nimport ")}"
+    }
+    s"""
+       |package ${td.typeName.namePackage.mkString(".")}
+       |
+       |import io.circe._
+       |import io.circe.syntax._
+       |${depends(td.dependsOn)}
+       |${sealedType}trait ${td.typeName.name} ${derived(td.derivesFrom)}
+       |""".stripMargin
   }
 }
