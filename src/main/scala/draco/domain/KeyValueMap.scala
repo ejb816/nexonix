@@ -7,7 +7,7 @@ trait KeyValueMap[K,V] extends Map[K, V] {
   def get(key: K): Option[V] = kvMap.get(key)
   def iterator: Iterator[(K, V)] = kvMap.iterator
 }
-
+// IDE cannot find this
 object KeyValueMap {
   def apply[K,V] (_kvMap: KeyValueMap[K,V]) : KeyValueMap[K,V] = new KeyValueMap[K,V] {
     override val kvMap: Map[K, V] = _kvMap

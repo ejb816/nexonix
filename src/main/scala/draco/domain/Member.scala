@@ -9,6 +9,16 @@ sealed trait Member {
 }
 
 object Member {
+  def apply (
+              _name: String,
+              _type: String,
+              _value: String
+            ) : Member = new Member {
+    override val aName: String = _name
+    override val aType: String = _type
+    override val aValue: String = _value
+  }
+
   implicit val encoder: Encoder[Member] = Encoder.instance { m =>
     val baseFields = Json.obj(
       "name"  -> Json.fromString(m.aName),
@@ -17,10 +27,10 @@ object Member {
     )
     // Add "kind" to differentiate subtypes:
     m match {
-      case fm: Fixed    => baseFields.deepMerge(Json.obj("kind" -> Json.fromString("Fixed")))
-      case mm: Mutable  => baseFields.deepMerge(Json.obj("kind" -> Json.fromString("Mutable")))
-      case dm: Dynamic  => baseFields.deepMerge(Json.obj("kind" -> Json.fromString("Dynamic")))
-      case pm: Parameter => baseFields.deepMerge(Json.obj("kind" -> Json.fromString("Parameter")))
+      case _: Fixed    => baseFields.deepMerge(Json.obj("kind" -> Json.fromString("Fixed")))
+      case _: Mutable  => baseFields.deepMerge(Json.obj("kind" -> Json.fromString("Mutable")))
+      case _: Dynamic  => baseFields.deepMerge(Json.obj("kind" -> Json.fromString("Dynamic")))
+      case _: Parameter => baseFields.deepMerge(Json.obj("kind" -> Json.fromString("Parameter")))
     }
   }
   implicit val decoder: Decoder[Member] = Decoder.instance { cursor =>
@@ -28,7 +38,7 @@ object Member {
     cursor.downField("kind").as[String].flatMap {
       case "Fixed" =>
         for {
-          _name  <- cursor.downField("name").as[String]
+          _name <- cursor.downField("name").as[String]
           _type   <- cursor.downField("type").as[String]
           _value <- cursor.downField("value").as[String]
         } yield Fixed (_name, _type, _value)
@@ -57,21 +67,19 @@ object Member {
       case other => Left(DecodingFailure(s"Unknown Member kind: $other", cursor.history))
     }
   }
-
-
 }
 
 sealed trait Fixed extends Member
 object Fixed {
   def apply (
-              _aName: String,
-              _aType: String,
-              _aValue: String
+              _name: String,
+              _type: String,
+              _value: String
             ) : Fixed = {
     new Fixed {
-      override val aName: String = _aName
-      override val aType: String = _aType
-      override val aValue: String = _aValue
+      override val aName: String = _name
+      override val aType: String = _type
+      override val aValue: String = _value
     }
   }
 }
@@ -79,14 +87,14 @@ object Fixed {
 sealed trait Mutable extends Member
 object Mutable {
   def apply (
-              _aName: String,
-              _aType: String,
-              _aValue: String
+              _name: String,
+              _type: String,
+              _value: String
             ) : Mutable = {
     new Mutable {
-      override val aName: String = _aName
-      override val aType: String = _aType
-      override val aValue: String = _aValue
+      override val aName: String = _name
+      override val aType: String = _type
+      override val aValue: String = _value
     }
   }
 }
@@ -95,14 +103,14 @@ object Mutable {
 sealed trait Dynamic extends Member
 object Dynamic {
   def apply (
-              _aName: String,
-              _aType: String,
-              _aValue: String
+              _name: String,
+              _type: String,
+              _value: String
             ) : Dynamic = {
     new Dynamic {
-      override val aName: String = _aName
-      override val aType: String = _aType
-      override val aValue: String = _aValue
+      override val aName: String = _name
+      override val aType: String = _type
+      override val aValue: String = _value
     }
   }
 }
@@ -110,14 +118,14 @@ object Dynamic {
 sealed trait Parameter extends Member
 object Parameter {
   def apply (
-              _aName: String,
-              _aType: String,
-              _aValue: String
+              _name: String,
+              _type: String,
+              _value: String
             ) : Parameter = {
     new Parameter {
-      override val aName: String = _aName
-      override val aType: String = _aType
-      override val aValue: String = _aValue
+      override val aName: String = _name
+      override val aType: String = _type
+      override val aValue: String = _value
     }
   }
   implicit val encoder: Encoder[Parameter] = Member.encoder.asInstanceOf[Encoder[Parameter]]

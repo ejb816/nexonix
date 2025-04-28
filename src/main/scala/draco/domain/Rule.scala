@@ -13,11 +13,11 @@ sealed trait Rule {
 
 object Rule {
   def apply (
-              _name: String,
-              _variables: Map[String, String],
-              _conditions: Seq[String],
-              _values: Map[String, Seq[String]],
-              _action: Seq[String]
+              _name: String = "Default Rule",
+              _variables: Map[String, String] = Map[String, String](),
+              _conditions: Seq[String] = Seq(),
+              _values: Map[String, Seq[String]] = Map[String, Seq[String]](),
+              _action: Seq[String] = Seq("println(\"Default Rule\")")
             ) : Rule = {
     new Rule {
       override val name: String = _name

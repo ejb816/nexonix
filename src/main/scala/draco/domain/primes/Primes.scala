@@ -1,8 +1,7 @@
 package draco.domain.primes
 
-import draco.domain.Domain
+trait Primes
 
-trait Primes extends Domain[Int] 
 object Primes {
   var listOfPrimes: Seq[Int] = Primes.Sieve.primes(29)
   object Sieve {

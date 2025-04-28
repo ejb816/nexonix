@@ -1,6 +1,6 @@
 package draco.domain.primes
 
-import Primes.Sieve._
+import draco.domain.primes.Primes.Sieve._
 
 trait PrimeNumber {
   def ordinal: Int

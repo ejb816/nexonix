@@ -1,11 +1,9 @@
 package draco.domain.primes
 
-import io.circe.Json
-import org.evrete.KnowledgeService
-import org.evrete.api.FactBuilder.fact
-import org.evrete.api.{Knowledge, RhsContext, StatefulSession}
+import io.circe.{Decoder, Encoder, Json}
+import org.evrete.api.Knowledge
 
-sealed trait FindPrimes {
+sealed trait FindPrimes extends Primes {
   val countBase = 0
   val counter = 0
   val baseMax = 0
@@ -18,21 +16,12 @@ sealed trait FindPrimes {
 }
 
 object FindPrimes {
-  val service: KnowledgeService = new KnowledgeService()
-  def define: (
-      StatefulSession,
-      Integer,
-      Integer,
-      Integer,
-      Integer
-    ) => FindPrimes =
-    (
-      _session,
-      _maximum,
-      _delta,
-      _base,
-      _counter
-    ) => {
+  def apply(
+             _maximum: Int,
+             _delta: Int,
+             _base: Int = 0,
+             _counter: Int = 0
+           ): FindPrimes = {
     new FindPrimes {
       override val baseMax: Int = _maximum * _delta
       override val maximum: Int = _maximum
@@ -49,44 +38,27 @@ object FindPrimes {
         } else countBase
         (newCount, newBase)
       }
-      val knowledge: Knowledge = DomainRuleSet.service.newKnowledge()
-      knowledge.newRule("Find prime numbers - add sequence")
-        .forEach(
-          fact("$fp", classOf[FindPrimes])
-        )
-        .execute((context: RhsContext) => {
-          val fp = context.get[FindPrimes]("$fp")
-          println("Adding input sequence of integers (2 to " + fp.maximum + "):")
-          for (i <- 2 to fp.maximum) {
-            print(" " + i)
-            context.insert(i)
-          }
-          println("\n... to working memory")
-          println()
-        })
-      knowledge.newRule("Find prime numbers - remove from sequence")
-        .forEach(
-          fact("$fp", classOf[FindPrimes]),
-          fact("$i1", classOf[Integer]),
-          fact("$i2", classOf[Integer]),
-          fact("$i3", classOf[Integer])
-        )
-        .where("$i1 * $i2 == $i3")
-        .execute((context: RhsContext) => {
-          val fp = context.get[FindPrimes]("$fp")
-          val i1 = context.get[Int]("$i1")
-          val i2 = context.get[Int]("$i2")
-          val i3 = context.get[Int]("$i3")
-          val baseCounter = fp.conditionalPrint(i3, " -> " + i1 + " * " + i2 + " = " + i3)
-          context.insert(
-            FindPrimes.define(_session, fp.maximum, fp.delta, baseCounter._1, baseCounter._2)
-          )
-          context.delete(i3)
-        })
     }
   }
 
-  def run (data: Json): Unit = {
+  val rules: Seq[Knowledge => Unit] = Seq(
+    AddSequence.rule,
+    RemoveFromSequence.rule
+  )
 
+  implicit val encoder: Encoder[FindPrimes] = Encoder.instance { fp =>
+    Json.obj(
+      "maximum" -> Json.fromInt(fp.maximum),
+      "delta" -> Json.fromInt(fp.delta)
+    )
+  }
+
+  implicit val decoder: Decoder[FindPrimes] = Decoder.instance { cursor =>
+    cursor.downField("maximum").as[Int]
+      .flatMap(_maximum =>
+        cursor.downField("delta").as[Int]
+          .map(_delta => FindPrimes(_maximum, _delta)
+          )
+      )
   }
 }

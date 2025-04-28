@@ -1,11 +1,12 @@
 package org.nexonix.json
 
+import draco.domain.{Rule, SourceContent, TypeDefinition, TypeName, Value}
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
-import org.nexonix.json.Value.define
 
 class TestValue extends AnyFunSuite {
-  val json: Json = parser.parse("""
+  test("Test Value") {
+    val json: Json = parser.parse("""
 {
   "order": {
     "customer": {
@@ -28,11 +29,19 @@ class TestValue extends AnyFunSuite {
   }
 }
 """).getOrElse(Json.Null)
-  test("Test Value") {
-    val phoneNumber = define("phoneNumber", json, Array[String]("order", "customer", "contactDetails", "phone")).value[String]
+    val phoneNumber = Value("phoneNumber", json, Seq[String]("order", "customer", "contactDetails", "phone")).value[String]
     println(phoneNumber)
-    val itemID = define("itemID", json, Array[String]("order", "items", "0", "id")).value[Integer]
+    val itemID = Value("itemID", json, Seq[String]("order", "items", "0", "id")).value[Int]
     println(itemID)
   }
-
+  test ("test rule json") {
+    val defaultRule = Rule()
+    val sourceContent = SourceContent(_resourcePath = "/draco/domain/primes/AddSequence.json", _resourceClass = classOf[TestValue])
+    val content = sourceContent.sourceLines.mkString("\n")
+    println(content)
+    val jsonContent: Json = parser.parse(content).getOrElse(Json.Null)
+    val rule = jsonContent.as[Rule].getOrElse(defaultRule)
+    val ruleSource: String = TypeDefinition.generateRule(rule, Seq("draco","domain","primes"), Seq[TypeName]())
+    println(ruleSource)
+  }
 }

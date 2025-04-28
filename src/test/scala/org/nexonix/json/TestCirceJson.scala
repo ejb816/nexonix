@@ -1,15 +1,14 @@
 package org.nexonix.json
 
-import org.scalatest.funsuite.AnyFunSuite
-import io.circe._
-import io.circe.parser._
-import io.circe.optics.JsonPath._
+import io.circe.optics.JsonPath.root
+import io.circe.{Json, parser}
 import monocle.Optional
+import org.scalatest.funsuite.AnyFunSuite
 
 class TestCirceJson extends AnyFunSuite {
 
   test("Circe Examples") {
-    val json: Json = parse("""
+    val json: Json = parser.parse("""
       {
         "order": {
           "customer": {
@@ -43,7 +42,6 @@ class TestCirceJson extends AnyFunSuite {
     println(phoneNumFromCursor)
 
     val _phoneNum: Optional[Json, String] = root.order.customer.contactDetails.phone.string
-    // _phoneNum: monocle.package.Optional[Json, String] = monocle.POptional$$anon$1@27d9dc98
 
     val phoneNum: Option[String] = _phoneNum.getOption(json)
     // phoneNum: Option[String] = Some(value = "0123-456-789")
