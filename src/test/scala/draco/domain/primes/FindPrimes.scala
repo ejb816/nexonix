@@ -1,5 +1,6 @@
 package draco.domain.primes
 
+import draco.domain.primes.Primes.{composites, naturals, primes}
 import io.circe.{Decoder, Encoder, Json}
 import org.evrete.api.Knowledge
 
@@ -17,14 +18,16 @@ sealed trait FindPrimes extends Primes {
 
 object FindPrimes {
   def apply(
-             _maximum: Int,
+             _numberOfPrimes: Int,
              _delta: Int,
              _base: Int = 0,
              _counter: Int = 0
            ): FindPrimes = {
     new FindPrimes {
-      override val baseMax: Int = _maximum * _delta
-      override val maximum: Int = _maximum
+      override val primeSequence: Seq[Int] = primes(_numberOfPrimes)
+      override val compositeSequence: Seq[Int] = composites(primeSequence)
+      override val naturalSequence: Seq[Int] = naturals(0).take(primeSequence.last)
+      override val baseMax: Int = _numberOfPrimes * _delta
       override val delta: Int = _delta
       override val countBase: Int = _base
       override val conditionalPrint: (Int, String) => (Int, Int) = (p, s) => {
@@ -48,13 +51,13 @@ object FindPrimes {
 
   implicit val encoder: Encoder[FindPrimes] = Encoder.instance { fp =>
     Json.obj(
-      "maximum" -> Json.fromInt(fp.maximum),
+      "numberOfPrimes" -> Json.fromInt(fp.maximum),
       "delta" -> Json.fromInt(fp.delta)
     )
   }
 
   implicit val decoder: Decoder[FindPrimes] = Decoder.instance { cursor =>
-    cursor.downField("maximum").as[Int]
+    cursor.downField("numberOfPrimes").as[Int]
       .flatMap(_maximum =>
         cursor.downField("delta").as[Int]
           .map(_delta => FindPrimes(_maximum, _delta)
