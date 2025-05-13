@@ -1,11 +1,12 @@
 package draco.domain.stooge
 
 import draco.domain.stooge.StoogeRules._
+import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
 import org.scalatest.funsuite.AnyFunSuite
 
 class TestStoogesActor extends AnyFunSuite {
 
-    test("Test StoogeActor Actor creation") {
+    test("Test Stooge Actor creation") {
 
         // Accessing this method in the StoogeRulesEngine triggers its initialization
         println(Greet())

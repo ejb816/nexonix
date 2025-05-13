@@ -1,28 +1,18 @@
 package draco.domain.stooge
 
 import draco.domain.actor.DomainActor
-import org.apache.pekko.actor.typed.Behavior
-import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
 trait StoogeActor extends DomainActor  {
   lazy val name: String = this.getClass.getSimpleName
-  val stoogeBehavior: Behavior[StoogeActor.Action] = Behaviors.receive { (context, message) =>
-    message match {
-      case _: StoogeActor.Bonk =>
-        println(s"$name bonked!")
-      case _: StoogeActor.Poke =>
-        println(s"$name poked!")
-      case _: StoogeActor.Poke =>
-        println(s"$name slapped!")
-    }
-    Behaviors.same
+
+  def receive: Receive = {
+    case msg =>
+      val msgFrom = sender()
+      println(s"${name}: Received message: $msg from $msgFrom");
   }
 }
 
-object StoogeActor extends App {
-  val systemBehavior: Behavior[Action] = Behaviors.receive { (context, message) =>
-    Behaviors.same
-  }
+object StoogeActor {
   def apply() : StoogeActor = new StoogeActor {}
   trait Action
   trait Slap extends Action

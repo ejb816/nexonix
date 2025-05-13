@@ -1,6 +1,6 @@
 package draco.domain.stooge
 
-import org.apache.pekko.actor.typed.ActorRef
+import org.apache.pekko.actor.ActorRef
 
 // Identify the 3 stooge
 trait StoogeName
