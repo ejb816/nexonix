@@ -1,6 +1,7 @@
 package draco.domain.rule
 
 import draco.domain.actor.DomainActor
+import org.apache.pekko.actor.typed.javadsl.Receive
 import org.evrete.api.Knowledge
 
 trait DomainRuleActor extends DomainActor {
@@ -10,7 +11,5 @@ trait DomainRuleActor extends DomainActor {
 object DomainRuleActor {
   def apply(_knowledge: Knowledge): DomainRuleActor = new DomainRuleActor {
     override val knowledge: Knowledge = _knowledge
-
-    override def receive: Receive = ???
   }
 }

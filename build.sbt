@@ -28,11 +28,6 @@ lazy val dependencies =
     val evreteCore = "org.evrete" % "evrete-core" % evreteVersion
     val evreteJavaDsl = "org.evrete" % "evrete-dsl-java" % evreteVersion
     val scalaTest = "org.scalatest" %% "scalatest" % scalaTestVersion % Test
-    val scalaReflect = "org.scala-lang" % "scala-reflect" % scalaVersion
-    val scalaCompiler = "org.scala-lang" % "scala-compiler" % scalaVersion
-
-    val scalaSwing = "org.scala-lang.modules" %% "scala-swing" % scalaSwingVersion
-    val jline = "org.jline" % "jline" % jlineVersion
   }
 
 lazy val root = (project in file("."))
@@ -56,20 +51,7 @@ lazy val root = (project in file("."))
       dependencies.circeOptics,
       dependencies.evreteCore,
       dependencies.evreteJavaDsl,
-      //dependencies.evreteJsr94,
-      dependencies.scalaTest,
-      dependencies.scalaReflect,
-      dependencies.scalaSwing,
-      dependencies.scalaCompiler
+      dependencies.scalaTest
     )
   )
 
-ThisBuild / managedScalaInstance := false
-
-// Add the configuration for the dependencies on Scala tool jars
-// You can also use a manually constructed configuration like:
-//   config("scala-tool").hide
-ivyConfigurations += Configurations.ScalaTool
-
-// Add the usual dependency on the library as well on the compiler in the
-//  'scala-tool' configuration
