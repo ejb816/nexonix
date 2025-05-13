@@ -20,19 +20,19 @@ object Action {
 /*
   From MChat AI
 
-  StoogesTestActor Trait:
-    Made StoogesTestActor a trait that extends Actor. This is a common pattern in Akka for defining reusable actor behavior.
+  StoogesActor Trait:
+    Made StoogesActor a trait that extends Actor. This is a common pattern in Akka for defining reusable actor behavior.
     Defined name and mapping as abstract members so that subclasses (like Moe) must provide implementations.
-    Provided a default implementation of receive in the StoogesTestActor trait.
+    Provided a default implementation of receive in the StoogesActor trait.
 
-  StoogesTestActor Companion Object:
-    The apply method creates an anonymous instance of StoogesTestActor with the provided name and mapping.
+  StoogesActor Companion Object:
+    The apply method creates an anonymous instance of StoogesActor with the provided name and mapping.
     processMessage Method:
-      Added a reusable processMessage method in the StoogesTestActor object to handle common message processing logic.
+      Added a reusable processMessage method in the StoogesActor object to handle common message processing logic.
       This method can be reused by subclasses.
 
   Moe object:
-    Moe extends StoogesTestActor and overrides the receive method to add Moe-specific logic.
+    Moe extends StoogesActor and overrides the receive method to add Moe-specific logic.
     The overridden receive method still calls processMessage to reuse the shared logic.
 
   =======
@@ -51,21 +51,21 @@ object Action {
     The case message => pattern matches the incoming message and binds it to the variable 'message'.
     The 'message' variable is then passed to the processMessage method for further processing.
  */
-trait StoogesTestActor extends DomainActor {
+trait StoogesActor extends DomainActor {
   val name: String
   val mapping: StoogeRules[String, Action, ActorRef, Action]
   def receive: Receive = {
     case (message, name, mapping) =>
-      //println(s"Name = $name  //  Processing message in trait StoogesTestActor: '$message'")
-      StoogesTestActor.processMessage(message,
+      //println(s"Name = $name  //  Processing message in trait StoogesActor: '$message'")
+      StoogesActor.processMessage(message,
         name.asInstanceOf[String],
         mapping.asInstanceOf[StoogeRules[String, Action, ActorRef, Action]])
   }
 }
 
-object StoogesTestActor {
-  def apply (_name: String, _mapping:StoogeRules[String, Action, ActorRef, Action]) : StoogesTestActor = {
-    new StoogesTestActor {
+object StoogesActor {
+  def apply (_name: String, _mapping:StoogeRules[String, Action, ActorRef, Action]) : StoogesActor = {
+    new StoogesActor {
       override val name: String = _name
       override val mapping: StoogeRules[String, Action, ActorRef, Action] = _mapping
     }
