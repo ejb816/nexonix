@@ -4,9 +4,6 @@ import draco.domain.actor.DomainActor
 
 trait StoogeActor extends DomainActor  {
   lazy val name: String = this.getClass.getSimpleName
-  val behavior: Behavior[StoogeActor] = new Behavior[StoogeActor](1) {
-
-  }
 
   def receive: Receive = {
     case msg =>

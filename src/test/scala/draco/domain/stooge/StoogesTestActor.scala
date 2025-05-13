@@ -1,6 +1,7 @@
 package draco.domain.stooge
 
 import draco.domain.actor.DomainActor
+import org.apache.pekko.actor.ActorRef
 
 // Identify the actions a stooge can do to another stooge. Also, include a start and stop action.
 trait Action

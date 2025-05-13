@@ -1,6 +1,7 @@
 package draco.domain.stooge
 
 import draco.domain.stooge.StoogeRules._
+import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
 import org.scalatest.funsuite.AnyFunSuite
 
 class TestStoogesActor extends AnyFunSuite {

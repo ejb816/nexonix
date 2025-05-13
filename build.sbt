@@ -56,7 +56,6 @@ lazy val root = (project in file("."))
       dependencies.circeOptics,
       dependencies.evreteCore,
       dependencies.evreteJavaDsl,
-      //dependencies.evreteJsr94,
       dependencies.scalaTest,
       dependencies.scalaReflect,
       dependencies.scalaSwing,

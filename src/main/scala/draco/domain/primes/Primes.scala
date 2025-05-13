@@ -1,38 +1,49 @@
 package draco.domain.primes
 
-trait Primes
+import scala.collection.immutable.Seq
 
-object Primes {
-  var listOfPrimes: Seq[Int] = Primes.Sieve.primes(29)
-  object Sieve {
-    // Basic Sieve of Eratosthenes prime filter (lazy evaluation)
-    private def primeFilter(numbers: LazyList[Int]): LazyList[Int] = {
-      val p = numbers.head
-      // The #:: operator constructs a LazyList (like : in Haskell)
-      // We remove all multiples of p from the remainder, then recurse
-      p #:: primeFilter(numbers.tail.filter(_ % p != 0))
-    }
+trait Primes {
+  val primeSequence: Seq[Int]
+  val compositeSequence: Seq[Int]
+  val naturalSequence: Seq[Int]
+}
 
-    // Infinite stream of primes starting at 2
-    private def primesTo: LazyList[Int] = primeFilter(LazyList.from(2))
-
-    // List of n primes
-    def primes(n: Int): List[Int] = {
-      // Convert the first n primes to a List
-      primesTo.take(n).toList
-    }
-
-    // nth prime
-    def prime(n: Int): Int = {
-      // The last element of the list of n primes
-      primes(n).last
-    }
-
-    // Small demonstration: print the first 10 primes and the 10th prime
-    def main(args: Array[String]): Unit = {
-      val first10Primes = primes(10)
-      println(s"First 10 primes: $first10Primes")
-      println(s"10th prime: ${prime(10)}")
-    }
+object Primes extends App {
+  def filter(naturals: LazyList[Int]): LazyList[Int] = {
+    val p = naturals.head
+    // The #:: operator constructs a LazyList (like : in Haskell)
+    // We remove all multiples of p from the remainder, then recurse
+    p #:: filter(naturals.tail.filter(_ % p != 0))
   }
+
+  def naturals(start: Int = 0, step: Int = 1): LazyList[Int] = LazyList.from(start, step)
+
+  def composites(primes: Seq[Int]): Seq[Int] = {
+    require(primes.length >= 2, "The input sequence must contain at least two primes.")
+    val isComposite: Int => Boolean = n => if (n < 2) false else !(2 to math.sqrt(n).toInt).exists(n % _ == 0)
+
+    primes.sliding(2).flatMap {
+      case Seq(p1, p2) =>
+        (p1 + 1 until p2).filter(isComposite)
+    }.toSeq
+  }
+
+  // List of n primeSequence
+  def primes(n: Int): Seq[Int] = {
+    // Convert the first n primeSequence to a List
+    filter(naturals(2)).take(n)
+  }
+
+  def apply(n: Int): Primes = new Primes {
+    val primeSequence: Seq[Int] = primes(n)
+    val compositeSequence: Seq[Int] = composites(primeSequence)
+    val naturalSequence: Seq[Int] = naturals().take(n)
+  }
+
+  // Small demonstration: print the first 22 primeSequence and the 22nd prime
+  private val first22Primes = Primes(22).primeSequence
+  println(s"First 22 primeSequence: $first22Primes")
+  println(s"22nd prime: ${first22Primes(21)}")
+  private val first22PrimesIntervals: Seq[Int] = composites(first22Primes)
+  println(s"Interval between first 22 primes: $first22PrimesIntervals")
 }
