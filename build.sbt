@@ -70,5 +70,10 @@ ThisBuild / managedScalaInstance := false
 //   config("scala-tool").hide
 ivyConfigurations += Configurations.ScalaTool
 
-// Add the usual dependency on the library as well on the compiler in the
-//  'scala-tool' configuration
+  // Add the usual dependency on the library as well on the compiler in the
+  //  'scala-tool' configuration
+  libraryDependencies ++= Seq(
+  "org.scala-lang" % "scala-library" % scalaVersion.value,
+  "org.scala-lang" % "scala-compiler" % scalaVersion.value % "scala-tool",
+  "org.jline" % "jline" % "3.22.0"
+)
