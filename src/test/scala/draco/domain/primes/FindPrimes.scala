@@ -5,10 +5,10 @@ import io.circe.{Decoder, Encoder, Json}
 import org.evrete.api.Knowledge
 
 sealed trait FindPrimes extends Primes {
+  val numberOfPrimes = 25
   val countBase = 0
   val counter = 0
   val baseMax = 0
-  val maximum = 25
   val delta = 1
   val conditionalPrint: (Int, String) => (Int, Int) = (n, s) => {
     println (s + n)
@@ -26,8 +26,9 @@ object FindPrimes {
     new FindPrimes {
       override val primeSequence: Seq[Int] = primes(_numberOfPrimes)
       override val compositeSequence: Seq[Int] = composites(primeSequence)
-      override val naturalSequence: Seq[Int] = naturals(0).take(primeSequence.last)
-      override val baseMax: Int = _numberOfPrimes * _delta
+      override val naturalSequence: Seq[Int] = naturals().take(primeSequence.last)
+
+      override val baseMax: Int = primeSequence.last * _delta
       override val delta: Int = _delta
       override val countBase: Int = _base
       override val conditionalPrint: (Int, String) => (Int, Int) = (p, s) => {
@@ -41,6 +42,10 @@ object FindPrimes {
         } else countBase
         (newCount, newBase)
       }
+
+      val value: Seq[Int] = primes(_numberOfPrimes)
+
+      def apply(nth: Int): Int = value(nth - 1)
     }
   }
 
@@ -51,17 +56,15 @@ object FindPrimes {
 
   implicit val encoder: Encoder[FindPrimes] = Encoder.instance { fp =>
     Json.obj(
-      "numberOfPrimes" -> Json.fromInt(fp.maximum),
+      "numberOfPrimes" -> Json.fromInt(fp.numberOfPrimes),
       "delta" -> Json.fromInt(fp.delta)
     )
   }
 
   implicit val decoder: Decoder[FindPrimes] = Decoder.instance { cursor =>
     cursor.downField("numberOfPrimes").as[Int]
-      .flatMap(_maximum =>
+      .flatMap(_numberOfPrimes =>
         cursor.downField("delta").as[Int]
-          .map(_delta => FindPrimes(_maximum, _delta)
-          )
-      )
+          .map(_delta => FindPrimes(_numberOfPrimes, _delta)))
   }
 }

@@ -22,7 +22,7 @@ object RemoveFromSequence {
         val baseCounter = fp.conditionalPrint(i3, s" -> $i1 * $i2 = $i3")
         context.delete(i3)
         context.delete(fp)
-        context.insert(FindPrimes(fp.maximum, fp.delta, baseCounter._1, baseCounter._2))
+        context.insert(FindPrimes(fp.numberOfPrimes, fp.delta, baseCounter._1, baseCounter._2))
       })
       .build()
   }

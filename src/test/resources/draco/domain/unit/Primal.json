@@ -1,0 +1,13 @@
+{
+  "name": ["Primal", "domain", "unit"],
+  "dependsOn": [],
+  "derivesFrom": [],
+  "typeArguments": [
+    "T"
+  ],
+  "parameters": {},
+  "members": {
+    "value": "T"
+  },
+  "rules": {}
+}

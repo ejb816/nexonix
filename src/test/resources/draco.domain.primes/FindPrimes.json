@@ -1,13 +1,19 @@
 {
-  "name": [],
-  "dependsOn": {},
-  "derivesFrom": [],
-  "typeArguments": [],
-  "parameters": {},
-  "members": {},
-  "rules": {
-    "AddSequence": [ "domain", "primes" ],
-    "RemoveFromSequence": [ "domain", "primes" ],
-    "LessThanBaseMax": [ "domain", "primes" ]
-  }
+  "typeName": {
+    "name": "FindPrimes",
+    "domain": "Primes",
+    "namePackage": [ "draco", "domain" ]},
+  "dependsOn": [],
+  "derivesFrom": [{
+      "name": "Rule",
+      "domain": "Domain",
+      "namePackage": [ "draco" ]}],
+  "typeParameters": [],
+  "parameters": [],
+  "members": [],
+  "rules": [{
+    "name": "AddSequence",
+    "domain": "Primes",
+    "namePackage": [ "draco", "domain" ]
+  }]
 }

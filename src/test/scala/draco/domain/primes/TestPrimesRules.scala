@@ -2,7 +2,11 @@ package draco.domain.primes
 
 import draco.domain.{Rule, SourceContent, TypeDefinition, TypeName}
 import io.circe.{Json, parser}
+import org.evrete.KnowledgeService
+import org.evrete.api.{FactHandle, RhsContext, StatefulSession}
 import org.scalatest.funsuite.AnyFunSuite
+
+import scala.collection.mutable.ListBuffer
 
 class TestPrimesRules extends AnyFunSuite {
   test("Generate AddSequence") {
@@ -13,7 +17,7 @@ class TestPrimesRules extends AnyFunSuite {
     println(jsonContent.spaces2)
 
     val rule: Rule = jsonContent.as[Rule].getOrElse(null)
-    val ruleSource = TypeDefinition.generateRule(rule, Seq("draco", "domain", "primes"), Seq[TypeName]())
+    val ruleSource = TypeDefinition.generateRule(rule, Seq("draco", "domain", "primeSequence"), Seq[TypeName]())
     println(ruleSource)
   }
   test("Generate RemoveFromSequence") {
@@ -24,7 +28,57 @@ class TestPrimesRules extends AnyFunSuite {
     println(jsonContent.spaces2)
 
     val rule: Rule = jsonContent.as[Rule].getOrElse(null)
-    val ruleSource = TypeDefinition.generateRule(rule, Seq("draco", "domain", "primes"), Seq[TypeName]())
+    val ruleSource = TypeDefinition.generateRule(rule, Seq("draco", "domain", "primeSequence"), Seq[TypeName]())
     println(ruleSource)
   }
+  test("PrimesLessThan100") {
+    val service: KnowledgeService = new KnowledgeService()
+    // Create a Knowledge instance
+    val knowledge = service.newKnowledge("Test Evrete")
+      .builder()
+      .newRule("prime numbers")
+      .forEach(
+        "$s1", classOf[String],
+        "$i1", classOf[Integer],
+        "$i2", classOf[Integer],
+        "$i3", classOf[Integer])
+      .where("$i1 * $i2 == $i3")
+      .where("$s1.length > -1")
+      .execute((ctx: RhsContext) => {
+        val i1 = ctx.get[Int]("$i1")
+        val i2 = ctx.get[Int]("$i2")
+        val i3 = ctx.get[Int]("$i3")
+        ctx.delete(i3)
+        ctx.insert(s"$i3 == $i1 * $i2")
+      })
+      .build()
+    // Stateful sessions are AutoCloseable
+    try {
+      val session: StatefulSession = knowledge.newStatefulSession()
+      try { // Inject candidates
+        val numbers = Primes.naturals(2).take(98)
+        session.insert(numbers: _*)
+        session.insert(Seq(""): _*)
+        // Execute rules
+        session.fire
+        val collectedInt = ListBuffer[Int]()
+        val collectdString = ListBuffer[String]()
+        // Print current memory state
+        session.forEachFact((fh: FactHandle, o: Any) => o match {
+          case i: Int =>
+            collectedInt += i
+          case s: String =>
+            collectdString += s
+        })
+        println(s"List of rules fired:\n${collectdString.sorted.mkString("\n")}")
+        println(s"Number of rules fired: ${collectdString.length}")
+        println(s"List of primeSequence ${collectedInt.sorted.toString().substring("ListBuffer".length)}")
+      } finally if (session != null) session.close()
+    }
+    service.shutdown()
+  }
+  test("DomainRulesTest") {
+
+  }
+
 }

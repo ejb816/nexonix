@@ -1,0 +1,21 @@
+{
+  "name": [ "Unit", "domain", "unit"],
+  "dependsOn": {
+    "scala": {},
+    "io": {
+      "circe": {
+        "Decoder": {},
+        "Encoder": {},
+        "HCursor": {},
+        "Json": {}
+      }
+    }
+  },
+  "derivesFrom": [
+    "Domain"
+  ],
+  "typeArguments": [],
+  "parameters": {},
+  "members": {},
+  "rules": {}
+}
