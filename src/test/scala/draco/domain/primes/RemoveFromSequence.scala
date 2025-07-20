@@ -1,6 +1,6 @@
 package draco.domain.primes
 
-import draco.domain.rule.DomainRule
+import draco.domain.DomainRule
 import org.evrete.api.{Knowledge, RhsContext}
 
 trait RemoveFromSequence extends DomainRule

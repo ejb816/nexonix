@@ -1,6 +1,6 @@
 package org.nexonix.json
 
-import draco.domain.TypeDefinition
+import draco.TypeDefinition
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite

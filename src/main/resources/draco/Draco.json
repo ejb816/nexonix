@@ -1,0 +1,22 @@
+{
+  "typeName": {
+    "name": "Draco",
+    "typePackage": {
+      "packageName": "",
+      "namePackage": []
+    }
+  },
+  "elementNames": [
+    "Dictionary",
+    "Generator",
+    "Member",
+    "RootType",
+    "RuleType",
+    "SourceContent",
+    "TypeDefinition",
+    "TypeDictionary",
+    "TypeName",
+    "TypePackage",
+    "Value"
+  ]
+}

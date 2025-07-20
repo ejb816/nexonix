@@ -1,4 +1,4 @@
-package draco.domain
+package draco.rule
 
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}

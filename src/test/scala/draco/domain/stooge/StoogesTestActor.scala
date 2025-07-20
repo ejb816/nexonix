@@ -1,6 +1,6 @@
 package draco.domain.stooge
 
-import draco.domain.actor.DomainActor
+import draco.domain.DomainActor
 import org.apache.pekko.actor.ActorRef
 
 // Identify the actions a stooge can do to another stooge. Also, include a start and stop action.
@@ -51,16 +51,9 @@ object Action {
     The case message => pattern matches the incoming message and binds it to the variable 'message'.
     The 'message' variable is then passed to the processMessage method for further processing.
  */
-trait StoogesActor extends DomainActor {
+trait StoogesActor extends DomainActor[StoogeAction] {
   val name: String
   val mapping: StoogeRules[String, Action, ActorRef, Action]
-  def receive: Receive = {
-    case (message, name, mapping) =>
-      //println(s"Name = $name  //  Processing message in trait StoogesActor: '$message'")
-      StoogesActor.processMessage(message,
-        name.asInstanceOf[String],
-        mapping.asInstanceOf[StoogeRules[String, Action, ActorRef, Action]])
-  }
 }
 
 object StoogesActor {

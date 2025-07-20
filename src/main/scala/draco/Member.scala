@@ -1,4 +1,4 @@
-package draco.domain
+package draco
 
 import io.circe.{Decoder, DecodingFailure, Encoder, Json}
 
@@ -8,7 +8,7 @@ sealed trait Member {
   val aValue: String
 }
 
-object Member {
+object Member extends App {
   def apply (
               _name: String,
               _type: String,
@@ -38,39 +38,42 @@ object Member {
     cursor.downField("kind").as[String].flatMap {
       case "Fixed" =>
         for {
-          _name <- cursor.downField("name").as[String]
-          _type   <- cursor.downField("type").as[String]
+          _name  <- cursor.downField("name").as[String]
+          _type  <- cursor.downField("type").as[String]
           _value <- cursor.downField("value").as[String]
         } yield Fixed (_name, _type, _value)
 
       case "Mutable" =>
         for {
-          _name <- cursor.downField("name").as[String]
-          _type <- cursor.downField("type").as[String]
+          _name  <- cursor.downField("name").as[String]
+          _type  <- cursor.downField("type").as[String]
           _value <- cursor.downField("value").as[String]
         } yield Mutable (_name, _type, _value)
 
       case "Dynamic" =>
         for {
-          _name <- cursor.downField("name").as[String]
-          _type <- cursor.downField("type").as[String]
+          _name  <- cursor.downField("name").as[String]
+          _type  <- cursor.downField("type").as[String]
           _value <- cursor.downField("value").as[String]
         } yield Dynamic (_name, _type, _value)
 
       case "Parameter" =>
         for {
-          _name <- cursor.downField("name").as[String]
-          _type <- cursor.downField("type").as[String]
+          _name  <- cursor.downField("name").as[String]
+          _type  <- cursor.downField("type").as[String]
           _value <- cursor.downField("value").as[String]
         } yield Parameter (_name, _type, _value)
 
       case other => Left(DecodingFailure(s"Unknown Member kind: $other", cursor.history))
     }
   }
+  println(s"""Declared and compiled type ${
+    val name: String = this.getClass.getName
+    name.substring(0, name.length - 1)}""")
 }
 
 sealed trait Fixed extends Member
-object Fixed {
+object Fixed extends App {
   def apply (
               _name: String,
               _type: String,
@@ -82,10 +85,13 @@ object Fixed {
       override val aValue: String = _value
     }
   }
+  println(s"""Declared and compiled type ${
+    val name: String = this.getClass.getName
+    name.substring(0, name.length - 1)}""")
 }
 
 sealed trait Mutable extends Member
-object Mutable {
+object Mutable extends App {
   def apply (
               _name: String,
               _type: String,
@@ -97,11 +103,14 @@ object Mutable {
       override val aValue: String = _value
     }
   }
+  println(s"""Declared and compiled type ${
+    val name: String = this.getClass.getName
+    name.substring(0, name.length - 1)}""")
 }
 
 
 sealed trait Dynamic extends Member
-object Dynamic {
+object Dynamic extends App {
   def apply (
               _name: String,
               _type: String,
@@ -113,10 +122,13 @@ object Dynamic {
       override val aValue: String = _value
     }
   }
+  println(s"""Declared and compiled type ${
+    val name: String = this.getClass.getName
+    name.substring(0, name.length - 1)}""")
 }
 
 sealed trait Parameter extends Member
-object Parameter {
+object Parameter extends App {
   def apply (
               _name: String,
               _type: String,
@@ -130,4 +142,16 @@ object Parameter {
   }
   implicit val encoder: Encoder[Parameter] = Member.encoder.asInstanceOf[Encoder[Parameter]]
   implicit val decoder: Decoder[Parameter] = Member.decoder.asInstanceOf[Decoder[Parameter]]
+  println(s"""Declared and compiled type ${
+    val name: String = this.getClass.getName
+    name.substring(0, name.length - 1)}""")
 }
+
+object CheckMember extends App {
+  Member.main(Array())
+  Fixed.main(Array())
+  Mutable.main(Array())
+  Dynamic.main(Array())
+  Parameter.main(Array())
+}
+

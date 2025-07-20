@@ -1,6 +1,7 @@
 package draco.domain.primes
 
-import draco.domain.{Rule, SourceContent, TypeDefinition, TypeName}
+import draco.rule.Rule
+import draco.{Generator, SourceContent, TypeDefinition, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService
 import org.evrete.api.{FactHandle, RhsContext, StatefulSession}
@@ -17,7 +18,7 @@ class TestPrimesRules extends AnyFunSuite {
     println(jsonContent.spaces2)
 
     val rule: Rule = jsonContent.as[Rule].getOrElse(null)
-    val ruleSource = TypeDefinition.generateRule(rule, Seq("draco", "domain", "primeSequence"), Seq[TypeName]())
+    val ruleSource = Generator.generate(rule, Seq("draco", "domain", "primeSequence"), Seq[TypeName]())
     println(ruleSource)
   }
   test("Generate RemoveFromSequence") {
@@ -28,7 +29,7 @@ class TestPrimesRules extends AnyFunSuite {
     println(jsonContent.spaces2)
 
     val rule: Rule = jsonContent.as[Rule].getOrElse(null)
-    val ruleSource = TypeDefinition.generateRule(rule, Seq("draco", "domain", "primeSequence"), Seq[TypeName]())
+    val ruleSource = Generator.generate(rule, Seq("draco", "domain", "primeSequence"), Seq[TypeName]())
     println(ruleSource)
   }
   test("PrimesLessThan100") {

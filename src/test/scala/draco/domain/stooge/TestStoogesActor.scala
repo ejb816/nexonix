@@ -1,7 +1,7 @@
 package draco.domain.stooge
 
 import draco.domain.stooge.StoogeRules._
-import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
+import org.apache.pekko.actor.typed.{ActorRef, ActorSystem, Props}
 import org.scalatest.funsuite.AnyFunSuite
 
 class TestStoogesActor extends AnyFunSuite {
@@ -15,18 +15,9 @@ class TestStoogesActor extends AnyFunSuite {
         initializeActorRefMap()
 
         // Create an ActorSystem
-        val system = {
-            ActorSystem("ActorSystem")
-        }
-
-        // Create the 3 stooge actors and add the ActorRef values to the rules engine actor reference map
-        val moeActor: ActorRef = system.actorOf(Props(actor_moe), "moeActor")
-        addActor(StoogeName.moe, moeActor)
-        val larryActor: ActorRef = system.actorOf(Props(actor_larry), "larryActor")
-        addActor(StoogeName.larry, larryActor)
-        val curlyActor: ActorRef = system.actorOf(Props(actor_curly), "curlyActor")
-        addActor(StoogeName.curly, curlyActor)
-
+        val systemBehavior = Stooge()
+        val system: ActorSystem[StoogeAction] = ActorSystem[StoogeAction](systemBehavior,"StoogesActorSystem")
+        val stoogesActor = system.systemActorOf(systemBehavior, "StoogesActorSystem")
         // Initialize the stooge rules engine
         initializeStoogesRules()
 
@@ -35,7 +26,7 @@ class TestStoogesActor extends AnyFunSuite {
          Messages are sent to the actor using the ! operator (tell).
          The actor processes the message based on its "receive" method.
          */
-        moeActor ! (Action.Start, StoogeName.moe, stoogesRules)  // This kicks off the processing
+        stoogesActor ! StoogeAction.Start  // This kicks off the processing
 
         // Give the threads in the actor system time to run
         Thread.sleep(5000)

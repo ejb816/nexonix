@@ -1,4 +1,4 @@
-package draco.domain.rule
+package draco.domain
 
 import org.evrete.api.Knowledge
 

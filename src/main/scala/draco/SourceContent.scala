@@ -1,4 +1,4 @@
-package draco.domain
+package draco
 
 import java.net.{URI, URL}
 import scala.io.{BufferedSource, Source}
@@ -13,10 +13,11 @@ trait SourceContent {
   val sourceString: String
 }
 
-object SourceContent {
+object SourceContent extends App {
+  println("Companion object SourceContent exists.")
   def apply(
              _resourcePath: String,
-             _resourceClass: Class[_]
+             _resourceClass: Class[_] = classOf[SourceContent]
            ) : SourceContent = new SourceContent {
     override val resourcePath: String = _resourcePath
     override val resourceClass: Class[_] = _resourceClass

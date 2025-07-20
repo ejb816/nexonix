@@ -1,7 +1,7 @@
 package draco.domain.primes
 
-import draco.domain.Value
-import draco.domain.rule.DomainRule
+import draco.Value
+import draco.domain.DomainRule
 import io.circe.Json
 import org.evrete.api.Knowledge
 

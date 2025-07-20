@@ -1,6 +1,6 @@
 package org.nexonix.json
 
-import draco.domain.{DomainDictionary, Parameter, TypeDefinition, TypeName}
+import draco.{Generator, Parameter, TypeDefinition, TypeDictionary, TypeName}
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 import org.scalatest.funsuite.AnyFunSuite
@@ -64,11 +64,11 @@ class TestTypeDeclarations extends AnyFunSuite {
     println(processed)
   }
 
-  val td: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (_name = "Left", _domain = "Orientable", _namePackage = Seq("draco", "domain")),
+  val td: TypeDefinition = draco.TypeDefinition (
+    _typeName = TypeName (_name = "Left", _packageName = "Orientable", _namePackage = Seq("draco", "domain")),
     _typeParameters = Seq("T"),
     _dependsOn = Seq(),
-    _derivesFrom = Seq( TypeName(_name = "Measure",_domain = "Unit", _namePackage = Seq("draco", "domain"))),
+    _derivesFrom = Seq( TypeName(_name = "Measure", _packageName = "Unit", _namePackage = Seq("draco", "domain"))),
     _members = Seq(Parameter(_name = "value", _type = "T", _value = "")),
     _parameters = Seq(),
     _rules = Seq()
@@ -76,40 +76,40 @@ class TestTypeDeclarations extends AnyFunSuite {
   test("Type Definition") {
     val tdJson = td.asJson
     println(tdJson.spaces2)
-    println(TypeDefinition.generate(td))
+    println(Generator.generate(td))
   }
 
 
 
   test("Test DomainDictionary") {
-    val alpha: TypeDefinition = TypeDefinition(
-      _typeName = TypeName (_name = "Alpha", _domain = "Alpha", _namePackage = Seq("draco", "domain")),
-      _derivesFrom = Seq (TypeName (_name = "DataModel", _domain = "DataModel", _namePackage = Seq("draco", "domain"))))
-    val bravo: TypeDefinition = TypeDefinition(
-      _typeName = TypeName (_name = "Bravo", _domain = "Bravo", _namePackage = Seq ("draco", "domain")),
-      _derivesFrom = Seq (TypeName (_name = "DataModel", _domain = "Datamodel",  _namePackage = Seq ("draco", "domain"))))
-    val charlie: TypeDefinition = TypeDefinition (
-      _typeName = TypeName (_name = "Charlie", _domain = "Charlie", _namePackage = Seq ("draco", "domain")),
-      _derivesFrom = Seq (TypeName (_name = "DataModel", _domain = "Datamodel",  _namePackage = Seq ("draco", "domain"))))
-    val delta: TypeDefinition = TypeDefinition(
-      _typeName = TypeName(_name = "Delta", _domain = "Delta", _namePackage = Seq ("draco", "domain")),
-      _derivesFrom = Seq (TypeName (_name = "DataModel", _domain = "Datamodel",  _namePackage = Seq ("draco", "domain"))))
-    val datamodel: TypeDefinition = TypeDefinition (
-      _typeName = TypeName (_name = "DataModel", _domain = "DataModel", _namePackage = Seq ("draco", "domain"))
+    val alpha: TypeDefinition = draco.TypeDefinition (
+      _typeName = TypeName (_name = "Alpha", _packageName = "Alpha", _namePackage = Seq("draco", "domain")),
+      _derivesFrom = Seq (TypeName (_name = "DataModel", _packageName = "DataModel", _namePackage = Seq("draco", "domain"))))
+    val bravo: TypeDefinition = draco.TypeDefinition (
+      _typeName = TypeName (_name = "Bravo", _packageName = "Bravo", _namePackage = Seq ("draco", "domain")),
+      _derivesFrom = Seq (TypeName (_name = "DataModel", _packageName = "DataModel",  _namePackage = Seq ("draco", "domain"))))
+    val charlie: TypeDefinition = draco.TypeDefinition (
+      _typeName = TypeName (_name = "Charlie", _packageName = "Charlie", _namePackage = Seq ("draco", "domain")),
+      _derivesFrom = Seq (TypeName (_name = "DataModel", _packageName = "DataModel",  _namePackage = Seq ("draco", "domain"))))
+    val delta: TypeDefinition = draco.TypeDefinition (
+      _typeName = TypeName(_name = "Delta", _packageName = "Delta", _namePackage = Seq ("draco", "domain")),
+      _derivesFrom = Seq (TypeName (_name = "DataModel", _packageName = "DataModel",  _namePackage = Seq ("draco", "domain"))))
+    val dataModel: TypeDefinition = draco.TypeDefinition (
+      _typeName = TypeName (_name = "DataModel", _packageName = "DataModel", _namePackage = Seq ("draco", "domain"))
     )
-
-    val dictionary = DomainDictionary (_domains = Map[TypeName,TypeDefinition](
-      (datamodel.typeName,  datamodel),
+    val map = Map[TypeName,TypeDefinition](
+      (dataModel.typeName,  dataModel),
       (alpha.typeName,  alpha),
       (bravo.typeName,  bravo),
       (charlie.typeName,  charlie),
-      (delta.typeName,  delta)
-    ))
-    val processed = s"Processing type definition dictionary: ${dictionary}"
+      (delta.typeName,  delta))
+
+    val alphaDictionary = TypeDictionary (typeName = TypeName("Alpha", "Alpha", Seq("draco", "domain")))
+    val processed = s"Processing type definition dictionary: ${alphaDictionary.asJson.spaces2}"
     println(processed)
 
     // Using the encoder via .asJson
-    println(dictionary.domains.toSeq)
+    println(alphaDictionary.kvMap.toSeq)
   }
 
   test("Test TypeDefinitionDomainDictionary") {

@@ -1,10 +1,11 @@
 package draco.domain.stooge
 
-import draco.domain.actor.DomainActor
+import draco.domain.DomainActor
 import draco.domain.stooge.Curly.{CurlyCustomMessage, InitializeRulesEngineCurly}
 import draco.domain.stooge.Larry.{InitializeRulesEngineLarry, LarryCustomMessage}
 import draco.domain.stooge.Moe.{InitializeRulesEngineMoe, MoeCustomMessage}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
+import org.apache.pekko.actor.typed.scaladsl.Behaviors.Receive
 import org.apache.pekko.actor.typed.{ActorRef, Behavior}
 
 /*
@@ -77,22 +78,16 @@ object CommandHandlerBehavior {
   }
 }
 
-case class CreateChild(name: String) extends StoogeAction
-case class InitializeChildRulesEngine(name: String, message: String) extends StoogeAction
-case class SendMessageToChild(name: String, message: StoogeAction) extends StoogeAction
+case class AddStooge(name: String) extends StoogeAction
+case class InitializeStoogeReaction(name: String, message: String) extends StoogeAction
+case class ActOnStooge(name: String, message: StoogeAction) extends StoogeAction
 
 /*
   The Stooge trait represents a base actor with a receive method that handles incoming messages.
   It includes a name property derived from the class name and logs received messages.
  */
-trait Stooge extends DomainActor {
+trait Stooge extends DomainActor[Stooge] {
   lazy val name: String = this.getClass.getSimpleName
-
-  def receive: Receive = {
-    case msg =>
-      val msgFrom = sender()
-      println(s"${name}: Received message: $msg from $msgFrom");
-  }
 }
 
 /*
@@ -105,28 +100,12 @@ trait Stooge extends DomainActor {
  */
 object Stooge {
   def apply(): Behavior[StoogeAction] = Behaviors.setup { context =>
-    var children: Map[String, ActorRef[StoogeAction]] = Map.empty
-    var child: ActorRef[StoogeAction] = null
+    val children: Map[String, ActorRef[StoogeAction]] = Map[String, ActorRef[StoogeAction]](
+      ("Moe",context.spawn(Moe(), "Moe")),
+      ("Larry",context.spawn(Larry(), "Larry")),
+      ("Curly",context.spawn(Curly(), "Curly")),
+    )
     Behaviors.receiveMessage {
-      case CreateChild(name) =>
-        // Create a new child actor
-        name match {
-          case "Moe" =>
-            println(s"CreateChild actor with name: $name")
-            child = context.spawn(Moe(), name)
-          case "Larry" =>
-            println(s"CreateChild actor with name: $name")
-            child = context.spawn(Larry(), name)
-          case "Curly" =>
-            println(s"CreateChild actor with name: $name")
-            child = context.spawn(Curly(), name)
-          case _ =>
-            println("Stooge/CreateChild: Unknown child actor name")
-        }
-        children += (name -> child)
-        //context.log.info(s"Created child actor with name: $name")
-        Behaviors.same
-
       /*
         The child actors (Moe, Larry, Curly) are expected to handle custom messages:
           MoeCustomMessage
@@ -134,7 +113,7 @@ object Stooge {
           CurlyCustomMessage
           These messages encapsulate the StoogeAction and allow child-specific processing.
       */
-      case SendMessageToChild(name, message) =>
+      case ActOnStooge(name, message) =>
         // Send a message to the specified child actor
         children.get(name) match {
           case Some(child) =>
@@ -165,7 +144,7 @@ object Stooge {
         (InitializeRulesEngineMoe, InitializeRulesEngineLarry, InitializeRulesEngineCurly)
         to the respective child actors. These messages set up the rules engine for each stooge.
        */
-      case InitializeChildRulesEngine(name, message) =>
+      case InitializeStoogeReaction(name, message) =>
         // Send a message to the specified child actor to initialize its rules engine
         children.get(name) match {
           case Some(child) =>

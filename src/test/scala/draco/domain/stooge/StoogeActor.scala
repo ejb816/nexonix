@@ -1,15 +1,9 @@
 package draco.domain.stooge
 
-import draco.domain.actor.DomainActor
+import draco.domain.DomainActor
 
-trait StoogeActor extends DomainActor  {
+trait StoogeActor extends DomainActor[StoogeAction]  {
   lazy val name: String = this.getClass.getSimpleName
-
-  def receive: Receive = {
-    case msg =>
-      val msgFrom = sender()
-      println(s"${name}: Received message: $msg from $msgFrom");
-  }
 }
 
 object StoogeActor {

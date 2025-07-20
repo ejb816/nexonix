@@ -1,8 +1,8 @@
 package org.nexonix.actor
 
-import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.scaladsl.LoggerOps
-import akka.actor.typed.{ ActorRef, ActorSystem, Behavior }
+import org.apache.pekko.actor.typed.scaladsl.Behaviors
+import org.apache.pekko.actor.typed.scaladsl.LoggerOps
+import org.apache.pekko.actor.typed.{ ActorRef, ActorSystem, Behavior }
 
 object HelloWorld {
   final case class Greet(whom: String, replyTo: ActorRef[Greeted])

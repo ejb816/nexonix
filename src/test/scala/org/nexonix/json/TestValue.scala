@@ -1,6 +1,8 @@
 package org.nexonix.json
 
-import draco.domain.{Rule, SourceContent, TypeDefinition, TypeName, Value}
+import draco.{SourceContent, TypeDefinition, Value}
+import draco.domain.TypeName
+import draco.rule.Rule
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 

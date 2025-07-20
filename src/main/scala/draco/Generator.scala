@@ -1,81 +1,17 @@
-package draco.domain
+package draco
 
-import io.circe.syntax.EncoderOps
-import io.circe.{Decoder, Encoder, Json}
+import draco.rule.Rule
 
 import java.util.regex.Matcher
 
-sealed trait TypeDefinition {
-  val typeName: TypeName
-  val typeParameters: Seq[String]
-  val dependsOn: Seq[TypeName]
-  val derivesFrom: Seq[TypeName]
-  val members: Seq[Member]
-  val parameters: Seq[Parameter]
-  val rules: Seq[TypeName]
-}
+trait Generator {}
 
-object TypeDefinition {
-  val Null: TypeDefinition = TypeDefinition (
-    _typeName = TypeName.Null
-  )
-  def apply (
-              _typeName: TypeName,
-              _typeParameters: Seq[String] = Seq[String](),
-              _dependsOn: Seq[TypeName] = Seq[TypeName](),
-              _derivesFrom: Seq[TypeName] = Seq[TypeName](),
-              _members: Seq[Member] = Seq[Member](),
-              _parameters: Seq[Parameter] = Seq[Parameter](),
-              _rules: Seq[TypeName] = Seq[TypeName]()
-            ) : TypeDefinition = {
-    new TypeDefinition {
-      override val typeName: TypeName = _typeName
-      override val typeParameters: Seq[String] = _typeParameters
-      override val dependsOn: Seq[TypeName] = _dependsOn
-      override val derivesFrom: Seq[TypeName] = _derivesFrom
-      override val members: Seq[Member] = _members
-      override val parameters: Seq[Parameter] = _parameters
-      override val rules: Seq[TypeName] = _rules
-    }
-  }
-  // Encode a TypeDefinition
-  implicit val encoder: Encoder[TypeDefinition] = Encoder.instance { td =>
-    Json.obj(
-      "typeName"       -> td.typeName.asJson,       // TypeName
-      "typeParameters" -> td.typeParameters.asJson, // Seq[String]
-      "dependsOn"      -> td.dependsOn.asJson,      // Seq[TypeName]
-      "derivesFrom"    -> td.derivesFrom.asJson,    // Seq[TypeName]
-      "members"        -> td.members.asJson,        // Seq[Member]
-      "parameters"     -> td.parameters.asJson,     // Seq[Parameter]
-      "rules"          -> td.rules.asJson           // Seq[Rule]
-    )
-  }
-
-  implicit val decoder: Decoder[TypeDefinition] = Decoder.instance { cursor =>
-    for {
-      _typeName        <- cursor.downField("typeName").as[TypeName]
-      _typeParameters  <- cursor.downField("typeParameters").as[Seq[String]]
-      _dependsOn       <- cursor.downField("dependsOn").as[Seq[TypeName]]
-      _derivesFrom     <- cursor.downField("derivesFrom").as[Seq[TypeName]]
-      _members         <- cursor.downField("members").as[Seq[Member]]
-      _parameters      <- cursor.downField("parameters").as[Seq[Parameter]]
-      _rules           <- cursor.downField("rules").as[Seq[TypeName]]
-    } yield TypeDefinition (
-      _typeName,
-      _typeParameters,
-      _dependsOn,
-      _derivesFrom,
-      _members,
-      _parameters,
-      _rules
-    )
-  }
-
-  def generateRule (
-                     ruleDef: Rule,
-                     namePackage: Seq[String],
-                     dependsOn: Seq[TypeName]
-                   ): String = {
+object Generator extends App {
+  def generate (
+                 ruleDef: Rule,
+                 namePackage: Seq[String],
+                 dependsOn: Seq[TypeName]
+               ): String = {
     val variables = ruleDef.variables.map { case (key, value) =>
       ("$" + key) -> value
     }
@@ -152,9 +88,8 @@ object TypeDefinition {
        |}
        |""".stripMargin
   }
-
   def generate (td: TypeDefinition, closed: Boolean = false) : String = {
-    val namePackage = td.typeName.namePackage
+    val namePackage = td.typeName.typePackage.namePackage
     val sealedType = if (closed) "sealed " else ""
     val derived: Seq[TypeName] => String = d => {
       if (d.isEmpty) "" else "extends " + d.map(f => f.name).mkString(" with ")
@@ -218,5 +153,8 @@ object TypeDefinition {
        |$ruleSet
        |}
        |""".stripMargin
+  }
+  def apply (typeDictionary: TypeDictionary) : Generator = {
+    new Generator {}
   }
 }
