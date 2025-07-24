@@ -8,7 +8,7 @@ trait Dictionary[K,V] extends Map[K, V] {
   def iterator: Iterator[(K, V)] = kvMap.iterator
 }
 
-object Dictionary {
+object Dictionary extends App {
   def apply[K,V] (_kvMap: Dictionary[K,V]) : Dictionary[K,V] = new Dictionary[K,V] {
     override val kvMap: Map[K, V] = _kvMap
   }

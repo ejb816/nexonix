@@ -4,7 +4,7 @@ import io.circe.parser
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 
-sealed trait TypeDefinition {
+sealed trait TypeDefinition extends Draco {
   val typeName: TypeName
   val typeParameters: Seq[String]
   val typeModule: Seq[TypeName]
@@ -92,35 +92,4 @@ object TypeDefinition extends App {
     )
   }
   lazy val Null: TypeDefinition = TypeDefinition (_typeName = TypeName.Null)
-  println("draco.TypeDefinition.Null:")
-  println(TypeDefinition.Null.asJson.spaces2)
-  println(
-    s"""draco.TypeDefinition (
-       |  TypeName ("TypeDefinition", "Draco"),
-       |  _members: Seq(
-       |    Fixed ("typeName", "TypeName", ""),
-       |    Fixed ("typeParameters", "Seq[String]", ""),
-       |    Fixed ("typeGroup", "Seq[TypeName]", ""),
-       |    Fixed ("typeInternals", "Seq[TypeName]", ""),
-       |    Fixed ("dependsOn", "Seq[TypeName]", ""),
-       |    Fixed ("derivesFrom", "Seq[TypeName]", ""),
-       |    Fixed ("members", "Seq[Member]", ""),
-       |    Fixed ("parameters", "Seq[Parameter]", ""),
-       |    Fixed ("rules", "Seq[TypeName]", "")
-       |  )
-       |):""".stripMargin)
-  println(TypeDefinition (
-    TypeName ("TypeDefinition", TypePackage("Draco")),
-    _members = Seq(
-      Fixed ("typeName", "TypeName", ""),
-      Fixed ("typeParameters", "Seq[String]", ""),
-      Fixed ("typeGroup", "Seq[TypeName]", ""),
-      Fixed ("typeInternals", "Seq[TypeName]", ""),
-      Fixed ("dependsOn", "Seq[TypeName]", ""),
-      Fixed ("derivesFrom", "Seq[TypeName]", ""),
-      Fixed ("members", "Seq[Member]", ""),
-      Fixed ("parameters", "Seq[Parameter]", ""),
-      Fixed ("rules", "Seq[TypeName]", "")
-    )
-  ).asJson.spaces2)
 }

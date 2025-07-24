@@ -24,10 +24,10 @@ object Sieve {
     primes(n).last
   }
 
-  // Small demonstration: print the first 10 primes and the 10th prime
+  // Small demonstration: print the first 22 primes and the 22nd prime
   def main(args: Array[String]): Unit = {
-    val first10Primes = primes(10)
-    println(s"First 10 primes: $first10Primes")
-    println(s"10th prime: ${prime(10)}")
+    val first22Primes = primes(22)
+    println(s"First 22 primes: $first22Primes")
+    println(s"22nd prime: ${prime(22)}")
   }
 }

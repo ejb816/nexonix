@@ -3,7 +3,7 @@ package draco
 import java.net.{URI, URL}
 import scala.io.{BufferedSource, Source}
 
-trait SourceContent {
+trait SourceContent extends Draco {
   val resourceClass: Class[_]
   val resourceURL: URL
   val resourcePath: String
@@ -14,7 +14,6 @@ trait SourceContent {
 }
 
 object SourceContent extends App {
-  println("Companion object SourceContent exists.")
   def apply(
              _resourcePath: String,
              _resourceClass: Class[_] = classOf[SourceContent]

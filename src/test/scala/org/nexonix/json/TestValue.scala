@@ -1,7 +1,6 @@
 package org.nexonix.json
 
-import draco.{SourceContent, TypeDefinition, Value}
-import draco.domain.TypeName
+import draco.{Generator, SourceContent, TypeDefinition, TypeName, Value}
 import draco.rule.Rule
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
@@ -43,7 +42,7 @@ class TestValue extends AnyFunSuite {
     println(content)
     val jsonContent: Json = parser.parse(content).getOrElse(Json.Null)
     val rule = jsonContent.as[Rule].getOrElse(defaultRule)
-    val ruleSource: String = TypeDefinition.generateRule(rule, Seq("draco","domain","primes"), Seq[TypeName]())
+    val ruleSource: String = Generator.generate(rule, Seq("draco","domain","primes"), Seq[TypeName]())
     println(ruleSource)
   }
 }

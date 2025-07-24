@@ -3,7 +3,7 @@ package draco
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 
-trait Value {
+trait Value extends Draco {
   val name: String
   val source: Json
   val pathElements: Seq[String]
@@ -14,7 +14,7 @@ trait Value {
   }
 }
 
-object Value {
+object Value extends App {
   def apply (
               _name: String,
               _source: Json,

@@ -1,6 +1,6 @@
 package draco
 
-trait TypeDictionary extends Dictionary[TypeName,TypeDefinition] {
+trait TypeDictionary extends Draco with Dictionary[TypeName,TypeDefinition] {
   val rootType: TypeDefinition = TypeDefinition.Null
   val elementTypes: Seq[TypeDefinition] = Seq()
 }

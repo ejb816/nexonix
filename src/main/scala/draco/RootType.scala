@@ -1,6 +1,6 @@
 package draco
 
-trait RootType {
+trait RootType extends Draco {
   val typeName: TypeName
   val elementNames: Seq[String]
   val typeDictionary: TypeDictionary

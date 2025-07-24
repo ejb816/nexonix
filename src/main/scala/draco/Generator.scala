@@ -4,7 +4,7 @@ import draco.rule.Rule
 
 import java.util.regex.Matcher
 
-trait Generator {}
+trait Generator extends Draco {}
 
 object Generator extends App {
   def generate (

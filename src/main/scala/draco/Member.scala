@@ -2,7 +2,7 @@ package draco
 
 import io.circe.{Decoder, DecodingFailure, Encoder, Json}
 
-sealed trait Member {
+sealed trait Member extends Draco{
   val aName: String
   val aType: String
   val aValue: String
@@ -67,9 +67,6 @@ object Member extends App {
       case other => Left(DecodingFailure(s"Unknown Member kind: $other", cursor.history))
     }
   }
-  println(s"""Declared and compiled type ${
-    val name: String = this.getClass.getName
-    name.substring(0, name.length - 1)}""")
 }
 
 sealed trait Fixed extends Member

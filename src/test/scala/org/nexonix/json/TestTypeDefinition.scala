@@ -1,6 +1,6 @@
 package org.nexonix.json
 
-import draco.TypeDefinition
+import draco.{Generator, TypeDefinition}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
@@ -20,7 +20,7 @@ class TestTypeDefinition extends AnyFunSuite  {
     val jsonAbstract = parser.parse(sourceStringAbstract).getOrElse(Json.Null)
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
 
-   println(TypeDefinition.generate(tdAbstract))
+   println(Generator.generate(tdAbstract))
   }
   test("Test Abstract Type Definition domain.unit.Angle") {
     val sourceStringAbstract: String =
@@ -36,7 +36,7 @@ class TestTypeDefinition extends AnyFunSuite  {
     val jsonAbstract = parser.parse(sourceStringAbstract).getOrElse(Json.Null)
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
 
-    println(TypeDefinition.generate(tdAbstract))
+    println(Generator.generate(tdAbstract))
   }
   test("Test Abstract Type Definition domain.unit.Radians") {
     val sourceStringAbstract: String =
@@ -52,7 +52,7 @@ class TestTypeDefinition extends AnyFunSuite  {
     val jsonAbstract = parser.parse(sourceStringAbstract).getOrElse(Json.Null)
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
 
-    println(TypeDefinition.generate(tdAbstract))
+    println(Generator.generate(tdAbstract))
   }
   test("Test Abstract Type Definition domain.unit.Distance") {
     val sourceStringAbstract: String =
@@ -68,7 +68,7 @@ class TestTypeDefinition extends AnyFunSuite  {
     val jsonAbstract = parser.parse(sourceStringAbstract).getOrElse(Json.Null)
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
 
-    println(TypeDefinition.generate(tdAbstract))
+    println(Generator.generate(tdAbstract))
   }
   test("Test Abstract Type Definition domain.unit.Meters") {
     val sourceStringAbstract: String =
@@ -84,7 +84,7 @@ class TestTypeDefinition extends AnyFunSuite  {
     val jsonAbstract = parser.parse(sourceStringAbstract).getOrElse(Json.Null)
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
 
-    println(TypeDefinition.generate(tdAbstract))
+    println(Generator.generate(tdAbstract))
   }
   test("Test Generic Type Definition domain.orientable.Left") {
     val sourceStringAbstract: String =
@@ -100,7 +100,7 @@ class TestTypeDefinition extends AnyFunSuite  {
     val jsonAbstract = parser.parse(sourceStringAbstract).getOrElse(Json.Null)
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
 
-    println(TypeDefinition.generate(tdAbstract))
+    println(Generator.generate(tdAbstract))
   }
   test("Test Generic Type Definition domain.orientable.Right") {
     val sourceStringAbstract: String =
@@ -116,7 +116,7 @@ class TestTypeDefinition extends AnyFunSuite  {
     val jsonAbstract = parser.parse(sourceStringAbstract).getOrElse(Json.Null)
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
 
-    println(TypeDefinition.generate(tdAbstract))
+    println(Generator.generate(tdAbstract))
   }
   test("Test Generic Type Definition domain.orientable.Upper") {
     val sourceStringAbstract: String =
@@ -184,7 +184,7 @@ class TestTypeDefinition extends AnyFunSuite  {
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
     println(jsonAbstract.spaces2)
     println(tdAbstract.asJson.spaces2)
-    println(TypeDefinition.generate(tdAbstract))
+    println(Generator.generate(tdAbstract))
   }
   test("Test Abstract Type Definition BoundingBox") {
     val sourceStringAbstract: String =
@@ -207,7 +207,7 @@ class TestTypeDefinition extends AnyFunSuite  {
         |}""".stripMargin
     val jsonAbstract = parser.parse(sourceStringAbstract).getOrElse(Json.Null)
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
-    println(TypeDefinition.generate(tdAbstract))
+    println(Generator.generate(tdAbstract))
   }
   test("Test Abstract Type Definition Spherical") {
     val sourceStringAbstract: String =
@@ -228,7 +228,7 @@ class TestTypeDefinition extends AnyFunSuite  {
     val jsonAbstract = parser.parse(sourceStringAbstract).getOrElse(Json.Null)
     val tdAbstract: TypeDefinition = jsonAbstract.as[TypeDefinition].toTry.get
 
-    println(TypeDefinition.generate(tdAbstract))
+    println(Generator.generate(tdAbstract))
   }
   test("Test Concrete Type Definition BoundingBoxFromSpherical") {
     val sourceStringConcrete: String =
@@ -255,6 +255,6 @@ class TestTypeDefinition extends AnyFunSuite  {
     val jsonConcrete = parser.parse(sourceStringConcrete).getOrElse(Json.Null)
     val tdConcrete: TypeDefinition = jsonConcrete.as[TypeDefinition].toTry.get
 
-    println(TypeDefinition.generate(tdConcrete))
+    println(Generator.generate(tdConcrete))
   }
 }

@@ -3,7 +3,7 @@ package draco
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 
-trait TypePackage {
+trait TypePackage extends Draco {
   val packageName: String
   val namePackage: Seq[String]
 }

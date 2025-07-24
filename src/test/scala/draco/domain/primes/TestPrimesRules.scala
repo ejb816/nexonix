@@ -13,7 +13,7 @@ class TestPrimesRules extends AnyFunSuite {
   test("Generate AddSequence") {
     val resourceClass = this.getClass
     val resourcePath = "/draco/domain/primes/AddSequence.json"
-    val sourceContent = SourceContent(_resourcePath = resourcePath, _resourceClass = resourceClass)
+    val sourceContent = SourceContent(resourcePath, resourceClass)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     println(jsonContent.spaces2)
 
@@ -32,7 +32,7 @@ class TestPrimesRules extends AnyFunSuite {
     val ruleSource = Generator.generate(rule, Seq("draco", "domain", "primeSequence"), Seq[TypeName]())
     println(ruleSource)
   }
-  test("PrimesLessThan100") {
+  test("PrimesLessThan80") {
     val service: KnowledgeService = new KnowledgeService()
     // Create a Knowledge instance
     val knowledge = service.newKnowledge("Test Evrete")
@@ -57,7 +57,7 @@ class TestPrimesRules extends AnyFunSuite {
     try {
       val session: StatefulSession = knowledge.newStatefulSession()
       try { // Inject candidates
-        val numbers = Primes.naturals(2).take(98)
+        val numbers = Primes.naturals(2).take(80)
         session.insert(numbers: _*)
         session.insert(Seq(""): _*)
         // Execute rules

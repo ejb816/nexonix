@@ -4,7 +4,7 @@ import draco.domain.primes.Primes.{composites, naturals, primes}
 import io.circe.{Decoder, Encoder, Json}
 import org.evrete.api.Knowledge
 
-sealed trait FindPrimes extends Primes {
+trait FindPrimes extends Primes {
   val numberOfPrimes = 25
   val countBase = 0
   val counter = 0
