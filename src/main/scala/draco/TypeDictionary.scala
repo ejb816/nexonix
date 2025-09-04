@@ -1,17 +1,14 @@
 package draco
 
 trait TypeDictionary extends Draco with Dictionary[TypeName,TypeDefinition] {
-  val rootType: TypeDefinition = TypeDefinition.Null
-  val elementTypes: Seq[TypeDefinition] = Seq()
+  val elementTypes: Seq[TypeDefinition]
 }
 
 object TypeDictionary extends App {
-  val Null = new TypeDictionary {
-    override val kvMap: Map[TypeName, TypeDefinition] = Map()
-  }
-  def apply (rootTypeName: TypeName, elementNames: Seq[String]) : TypeDictionary = new TypeDictionary {
-    override val rootType: TypeDefinition = TypeDefinition.load(rootTypeName)
-    override val elementTypes: Seq[TypeDefinition] = Seq(rootType) ++ TypeDefinition.load(rootType.typeName, elementNames)
-    override val kvMap: Map[TypeName, TypeDefinition] = elementTypes.map(td => (td.typeName, td)).toMap
+  lazy val Null: TypeDictionary = TypeDictionary(DomainName.Null)
+  def apply (_domainName: DomainName) : TypeDictionary = new TypeDictionary {
+    override val elementTypes: Seq[TypeDefinition] = _domainName.elementNames.map (name =>
+      TypeDefinition (TypeName (name, _domainName.typeName.parent)))
+    override val kvMap: Map[TypeName, TypeDefinition]  = elementTypes.map (td => (td.typeName, td)).toMap
   }
 }

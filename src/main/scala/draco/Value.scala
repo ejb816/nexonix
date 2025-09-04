@@ -30,14 +30,14 @@ object Value extends App {
     }
   }
 
-  implicit val encoder: Encoder[Value] = (a: Value) => Json.obj(
+  lazy implicit val encoder: Encoder[Value] = (a: Value) => Json.obj(
     ("name", a.name.asJson),
     ("source", a.source.asJson),
     ("pathElements", a.pathElements.asJson),
     ("pathValue", a.pathValue.asJson)
   )
 
-  implicit val decoder: Decoder[Value] = Decoder.instance { c =>
+  lazy implicit val decoder: Decoder[Value] = Decoder.instance { c =>
     for {
       _name
         <- c.downField("name").as[String]
@@ -45,7 +45,7 @@ object Value extends App {
         <- c.downField("source").as[Json]
       _pathElements
         <- c.downField("pathElements").as[Array[String]]
-    } yield Value(
+    } yield Value (
       _name,
       _source,
       _pathElements

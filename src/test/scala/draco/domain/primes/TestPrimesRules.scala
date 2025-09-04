@@ -1,7 +1,6 @@
 package draco.domain.primes
 
-import draco.rule.Rule
-import draco.{Generator, SourceContent, TypeDefinition, TypeName}
+import draco.{Generator, RuleDefinition, SourceContent, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService
 import org.evrete.api.{FactHandle, RhsContext, StatefulSession}
@@ -10,6 +9,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import scala.collection.mutable.ListBuffer
 
 class TestPrimesRules extends AnyFunSuite {
+
   test("Generate AddSequence") {
     val resourceClass = this.getClass
     val resourcePath = "/draco/domain/primes/AddSequence.json"
@@ -17,8 +17,8 @@ class TestPrimesRules extends AnyFunSuite {
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     println(jsonContent.spaces2)
 
-    val rule: Rule = jsonContent.as[Rule].getOrElse(null)
-    val ruleSource = Generator.generate(rule, Seq("draco", "domain", "primeSequence"), Seq[TypeName]())
+    val rule: RuleDefinition = jsonContent.as[RuleDefinition].getOrElse(null)
+    val ruleSource = Generator.generate(rule, Seq("draco", "domain", "primes"), Seq[TypeName]())
     println(ruleSource)
   }
   test("Generate RemoveFromSequence") {
@@ -28,11 +28,14 @@ class TestPrimesRules extends AnyFunSuite {
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     println(jsonContent.spaces2)
 
-    val rule: Rule = jsonContent.as[Rule].getOrElse(null)
-    val ruleSource = Generator.generate(rule, Seq("draco", "domain", "primeSequence"), Seq[TypeName]())
+    val rule: RuleDefinition = jsonContent.as[RuleDefinition].getOrElse(null)
+    val ruleSource = Generator.generate(rule, Seq("draco", "domain", "primes"), Seq[TypeName]())
     println(ruleSource)
   }
-  test("PrimesLessThan80") {
+  test("FindPrimes") {
+
+  }
+  test("PrimesLessThanN") {
     val service: KnowledgeService = new KnowledgeService()
     // Create a Knowledge instance
     val knowledge = service.newKnowledge("Test Evrete")
@@ -50,14 +53,15 @@ class TestPrimesRules extends AnyFunSuite {
         val i2 = ctx.get[Int]("$i2")
         val i3 = ctx.get[Int]("$i3")
         ctx.delete(i3)
-        ctx.insert(s"$i3 == $i1 * $i2")
+        ctx.insert(s" $i1 * $i2 == $i3")
       })
       .build()
     // Stateful sessions are AutoCloseable
     try {
       val session: StatefulSession = knowledge.newStatefulSession()
-      try { // Inject candidates
-        val numbers = Primes.naturals(2).take(80)
+      try { // Inject candidates and initialize
+        val numbers = Primes.naturals(2).take(98)
+        print(s"Input sequence (N = ${numbers.last}):\n$numbers\n")
         session.insert(numbers: _*)
         session.insert(Seq(""): _*)
         // Execute rules
@@ -71,7 +75,7 @@ class TestPrimesRules extends AnyFunSuite {
           case s: String =>
             collectdString += s
         })
-        println(s"List of rules fired:\n${collectdString.sorted.mkString("\n")}")
+        println(s"List of rules fired:${collectdString.mkString("\n")}")
         println(s"Number of rules fired: ${collectdString.length}")
         println(s"List of primeSequence ${collectedInt.sorted.toString().substring("ListBuffer".length)}")
       } finally if (session != null) session.close()

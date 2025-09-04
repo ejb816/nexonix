@@ -1,14 +1,12 @@
 package draco
 
-import draco.rule.Rule
-
 import java.util.regex.Matcher
 
 trait Generator extends Draco {}
 
 object Generator extends App {
   def generate (
-                 ruleDef: Rule,
+                 ruleDef: RuleDefinition,
                  namePackage: Seq[String],
                  dependsOn: Seq[TypeName]
                ): String = {
@@ -89,7 +87,7 @@ object Generator extends App {
        |""".stripMargin
   }
   def generate (td: TypeDefinition, closed: Boolean = false) : String = {
-    val namePackage = td.typeName.typePackage.namePackage
+    val namePackage = td.typeName.namePackage
     val sealedType = if (closed) "sealed " else ""
     val derived: Seq[TypeName] => String = d => {
       if (d.isEmpty) "" else "extends " + d.map(f => f.name).mkString(" with ")
@@ -97,7 +95,31 @@ object Generator extends App {
     val depends: Seq[TypeName] => String = d => {
       if (d.isEmpty) "" else s"import ${d.map(f => f.fullName).mkString("\nimport ")}"
     }
-    def kind: ((Member, String)) => String = {
+    def typeKind: ((Member, String)) => String = {
+      case (m: Fixed, s) =>
+        s"${s}val ${m.aName}: ${m.aType}"
+      case (m: Mutable, s) =>
+        s"${s}var ${m.aName}: ${m.aType}"
+      case (m: Dynamic, s) =>
+        s"${s}def ${m.aName}: ${m.aType}"
+      case (m: Parameter, s) =>
+        s"${s}_${m.aName}: ${m.aType}${if (m.aValue.isEmpty) "" else s" = ${m.aValue}"}"
+      case (m: Member, s) =>
+        s"${s}val ${m.aName}: ${m.aType}"
+    }
+
+    def prepend(prefix: String): Member => (Member, String) = m => (m, prefix)
+
+    val prependMembers: Seq[(Member, String)] = td.members.map(prepend("  "))
+    val typeMembers: Seq[String] = prependMembers.map(typeKind)
+    val typeBody = if (td.members.isEmpty) "" else
+      s"""{
+         |\t${typeMembers.mkString("\n")}
+         |}""".stripMargin
+
+    val typeParameters = if (td.typeParameters.isEmpty) "" else s"[${td.typeParameters.mkString(",")}]"
+
+    def applyKind: ((Member, String)) => String = {
       case (m: Fixed, s) =>
         s"${s}val ${m.aName}: ${m.aType}${if (m.aValue.isEmpty) "" else s" = ${m.aValue}"}"
       case (m: Mutable, s) =>
@@ -109,27 +131,15 @@ object Generator extends App {
       case (m: Member, s) =>
         s"${s}val ${m.aName}: ${m.aType}${if (m.aValue.isEmpty) "" else s" = ${m.aValue}"}"
     }
-
-    def prepend(prefix: String): Member => (Member, String) = m => (m, prefix)
-
-    val prependMembers: Seq[(Member, String)] = td.members.map(prepend("  "))
-    val typeMembers: Seq[String] = prependMembers.map(kind)
-    val typeBody = if (td.members.isEmpty) "" else
-      s"""{
-         |\t${typeMembers.mkString("\n")}
-         |}""".stripMargin
-
-    val typeParameters = if (td.typeParameters.isEmpty) "" else s"[${td.typeParameters.mkString(",")}]"
-
-    val prependParameters: Seq[(Member, String)] = td.parameters.map(prepend("    "))
-    val parameterMembers: Seq[String] = prependParameters.map[String](kind)
+    val prependParameters: Seq[(Member, String)] = td.parameters.map(prepend("  "))
+    val parameterMembers: Seq[String] = prependParameters.map[String](applyKind)
     val parameterList = if (parameterMembers.isEmpty) "" else
       s"""
          |\t${parameterMembers.mkString(",\n")}
          |""".stripMargin
 
     val prependApply: Seq[(Member, String)] = td.members.map(prepend("  override "))
-    val applyMembers: Seq[String] = prependApply.map(kind)
+    val applyMembers: Seq[String] = prependApply.map(applyKind)
     val applyBody = if (td.members.isEmpty) "" else
       s"""
          |{
