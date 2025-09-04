@@ -1,12 +1,12 @@
 package draco.domain.primes
 
 import draco.Value
-import draco.domain.DomainRule
+import draco.Rule
 import io.circe.Json
 import org.evrete.api.Knowledge
 
 
-trait AddSequence extends DomainRule
+trait AddSequence extends Rule
 
 object AddSequence {
 

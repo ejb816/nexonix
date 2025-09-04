@@ -8,6 +8,5 @@ class TypeNameTest extends AnyFunSuite {
     println("draco.TypeName.Null:")
     println(TypeName.Null.asJson.spaces2)
     println(s"""draco.TypeName("TypeName", "Draco", Seq[String]()):""")
-    println(TypeName("TypeName", TypePackage("Draco")).asJson.spaces2)
   }
 }
