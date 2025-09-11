@@ -1,0 +1,3 @@
+package dreams
+
+trait Service

@@ -1,45 +1,45 @@
 package org.nexonix.actor
 
-import draco.{Domain, DomainDictionary, DomainName, TypeName}
+import draco.{DomainType, DomainDictionary, DomainName, TypeName}
 
 trait DataModelService {
-  val domainPackage: Domain = Domain (DomainName (TypeName ("Domain")), Seq ("DataModel", "Alpha", "Bravo", "Charlie", "Delta"))
-  val dataModel: Domain
-  val alpha: Domain
-  val bravo: Domain
-  val charlie: Domain
-  val delta: Domain
+  val domainPackage: DomainType = DomainType (DomainName (TypeName ("Domain")), Seq ("DataModel", "Alpha", "Bravo", "Charlie", "Delta"))
+  val dataModel: DomainType
+  val alpha: DomainType
+  val bravo: DomainType
+  val charlie: DomainType
+  val delta: DomainType
   val dataModelDictionary : DomainDictionary
 }
 
-object DataModelService extends App {
-  def apply (_parentPackage: Seq[String] = Seq ()) : DataModelService = new DataModelService {
-    override val dataModel: Domain = Domain (
+object DataModelService {
+  def apply () : DataModelService = new DataModelService {
+    override val dataModel: DomainType = DomainType (
       DomainName (
         TypeName (
           domainPackage.domainNames.head,
-          _namePackage = _parentPackage)),
+          _parent = domainPackage.typeDefinition.typeName.fullName)),
       domainPackage.domainNames.tail)
-    override val alpha: Domain = Domain (
+    override val alpha: DomainType = DomainType (
       DomainName (
         TypeName (
           domainPackage.domainNames(1),
-          _namePackage = _parentPackage)))
-    override val bravo: Domain = Domain (
+          _parent = domainPackage.typeDefinition.typeName.fullName)))
+    override val bravo: DomainType = DomainType (
       DomainName (
         TypeName (
           domainPackage.domainNames(2),
-          _namePackage = _parentPackage)))
-    override val charlie: Domain = Domain (
+          _parent = domainPackage.typeDefinition.typeName.fullName)))
+    override val charlie: DomainType = DomainType (
       DomainName (
         TypeName (
           domainPackage.domainNames(3),
-          _namePackage = _parentPackage)))
-    override val delta: Domain = Domain (
+          _parent = domainPackage.typeDefinition.typeName.fullName)))
+    override val delta: DomainType = DomainType (
       DomainName (
         TypeName (
           domainPackage.domainNames(4),
-          _namePackage = _parentPackage)))
+          _parent =domainPackage.typeDefinition.typeName.fullName)))
     override val dataModelDictionary: DomainDictionary = DomainDictionary(Seq (domainPackage, dataModel, alpha, bravo, charlie, delta))
   }
 }

@@ -1,6 +1,6 @@
 package org.nexonix.json
 
-import draco.{Domain, DomainDictionary, DomainName, Generator, Parameter, TypeDefinition, TypeDictionary, TypeName, TypePackage}
+import draco.{DomainType, DomainDictionary, DomainName, Generator, Parameter, TypeDefinition, TypeDictionary, TypeName, TypePackage}
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 import org.nexonix.actor.DataModelService
