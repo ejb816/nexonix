@@ -13,9 +13,9 @@ sealed trait RuleDefinition {
 
 object RuleDefinition {
   def apply (
-              _name: String = "Default Rule",
-              _variables: Map[String, String] = Map[String, String](),
-              _conditions: Seq[String] = Seq(),
+              _name: String = "DefaultRule",
+              _variables: Map[String, String] = Map[String, String](("dr", "String")),
+              _conditions: Seq[String] = Seq(s"""dr.equals("DefaultRule")"""),
               _values: Map[String, Seq[String]] = Map[String, Seq[String]](),
               _action: Seq[String] = Seq("println(\"Default Rule\")")
             ) : RuleDefinition = {
@@ -28,7 +28,7 @@ object RuleDefinition {
     }
   }
 
-  // Encode a RuleDefinition
+  // Encode a RuleDefinition.json
   implicit val encoder: Encoder[RuleDefinition] = Encoder.instance { r =>
     Json.obj(
       "name"       -> Json.fromString(r.name),

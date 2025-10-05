@@ -1,6 +1,6 @@
 {
   "typeName" : {
-    "name" : "Draco",
+    "name" : "TypeName",
     "namePackage" : [
       "draco"
     ],
@@ -11,13 +11,6 @@
   "dependsOn" : [
   ],
   "derivesFrom" : [
-    {
-      "name" : "DomainType",
-      "namePackage" : [
-        "draco"
-      ],
-      "parent" : ""
-    }
   ],
   "members" : [
   ],

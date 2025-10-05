@@ -1,4 +1,4 @@
-package draco.domain.primes
+package draco.base.primes
 
 trait PrimeOrdinal {
   val prime: PrimeOrdinal

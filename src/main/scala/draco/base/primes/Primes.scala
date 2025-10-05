@@ -1,4 +1,4 @@
-package draco.domain.primes
+package draco.base.primes
 
 import scala.collection.immutable.Seq
 
@@ -39,11 +39,4 @@ object Primes extends App {
     val compositeSequence: Seq[Int] = composites(primeSequence)
     val naturalSequence: Seq[Int] = naturals().take(n)
   }
-
-  // Small demonstration: print the first 22 primeSequence and the 22nd prime
-  private val first22Primes = Primes(22).primeSequence
-  println(s"First 22 primeSequence: $first22Primes")
-  println(s"22nd prime: ${first22Primes(21)}")
-  private val first22PrimesIntervals: Seq[Int] = composites(first22Primes)
-  println(s"Interval between first 22 primes: $first22PrimesIntervals")
 }

@@ -7,6 +7,7 @@ class TypeNameTest extends AnyFunSuite {
   test("TypeName") {
     println("draco.TypeName.Null:")
     println(TypeName.Null.asJson.spaces2)
-    println(s"""draco.TypeName("TypeName", "Draco", Seq[String]()):""")
+    val typeTypeName: TypeName = TypeName ("TypeName")
+    println(typeTypeName.asJson.spaces2)
   }
 }

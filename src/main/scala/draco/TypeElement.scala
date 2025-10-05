@@ -2,24 +2,24 @@ package draco
 
 import io.circe.{Decoder, DecodingFailure, Encoder, Json}
 
-sealed trait Member extends Draco{
+sealed trait TypeElement {
   val aName: String
   val aType: String
   val aValue: String
 }
 
-object Member extends App {
+object TypeElement extends App {
   def apply (
               _name: String,
               _type: String,
               _value: String = ""
-            ) : Member = new Member {
+            ) : TypeElement = new TypeElement {
     override val aName: String = _name
     override val aType: String = _type
     override val aValue: String = _value
   }
 
-  lazy implicit val encoder: Encoder[Member] = Encoder.instance { m =>
+  lazy implicit val encoder: Encoder[TypeElement] = Encoder.instance { m =>
     val baseFields = Json.obj(
       "name"  -> Json.fromString(m.aName),
       "type"  -> Json.fromString(m.aType),
@@ -33,7 +33,7 @@ object Member extends App {
       case _: Parameter => baseFields.deepMerge(Json.obj("kind" -> Json.fromString("Parameter")))
     }
   }
-  lazy implicit val decoder: Decoder[Member] = Decoder.instance { cursor =>
+  lazy implicit val decoder: Decoder[TypeElement] = Decoder.instance { cursor =>
     // We read "kind" and then decide which subtype to decode
     cursor.downField("kind").as[String].flatMap {
       case "Fixed" =>
@@ -69,7 +69,7 @@ object Member extends App {
   }
 }
 
-sealed trait Fixed extends Member
+sealed trait Fixed extends TypeElement
 object Fixed {
   def apply (
               _name: String,
@@ -84,7 +84,7 @@ object Fixed {
   }
 }
 
-sealed trait Mutable extends Member
+sealed trait Mutable extends TypeElement
 object Mutable {
   def apply (
               _name: String,
@@ -99,7 +99,7 @@ object Mutable {
   }
 }
 
-sealed trait Dynamic extends Member
+sealed trait Dynamic extends TypeElement
 object Dynamic {
   def apply (
               _name: String,
@@ -114,7 +114,7 @@ object Dynamic {
   }
 }
 
-sealed trait Parameter extends Member
+sealed trait Parameter extends TypeElement
 object Parameter {
   def apply (
               _name: String,

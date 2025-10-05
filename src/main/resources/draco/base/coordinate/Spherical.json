@@ -1,0 +1,53 @@
+{
+  "typeName": {
+    "name": "Spherical",
+    "namePackage": [
+      "draco",
+      "base",
+      "coordinate"
+      ],
+    "parent": "draco.base.Coordinate"
+  },
+  "dependsOn": [
+    {
+      "name": "Radians",
+      "namePackage": [
+        "draco",
+        "base",
+        "unit"
+      ],
+      "parent": "draco.base.Coordinate"
+    },
+    {
+      "name": "Meters",
+      "namePackage": [
+        "draco",
+        "base",
+        "unit"
+      ],
+      "parent": "draco.base.Coordinate"
+    }
+  ],
+  "derivesFrom": [
+    {
+      "name": "Coordinate",
+      "namePackage": [
+        "draco",
+        "base",
+        "coordinate"
+      ],
+      "parent": "draco.base.Coordinate"
+    }  ],
+  "members": [
+    {"kind": "Fixed", "name": "azimuth", "type": "Radians", "value": ""},
+    {"kind": "Fixed", "name": "elevation", "type": "Radians", "value": ""},
+    {"kind": "Fixed", "name": "range", "type": "Meters", "value": ""}
+  ],
+  "typeParameters": [],
+  "parameters": [
+    {"kind": "Parameter", "name": "azimuth", "type": "Radians", "value": ""},
+    {"kind": "Parameter", "name": "elevation", "type": "Radians", "value": ""},
+    {"kind": "Parameter", "name": "range", "type": "Meters", "value": ""}
+  ],
+  "rules": []
+}

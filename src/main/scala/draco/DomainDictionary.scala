@@ -1,6 +1,6 @@
 package draco
 
-trait DomainDictionary extends Draco with Dictionary[DomainType,TypeDictionary] {}
+trait DomainDictionary extends Dictionary[DomainType,TypeDictionary] {}
 
 object DomainDictionary {
   def apply(domains: Seq[DomainType]) : DomainDictionary = new DomainDictionary {

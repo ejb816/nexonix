@@ -1,4 +1,4 @@
-package org.nexonix.actor
+package domain.datamodel
 
 import draco.{DomainDictionary, DomainDictionaryTest, DomainName, DomainType, TypeName}
 

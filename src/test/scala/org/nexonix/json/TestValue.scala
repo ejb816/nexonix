@@ -36,7 +36,7 @@ class TestValue extends AnyFunSuite {
   }
   test ("test rule json") {
     val defaultRule = RuleDefinition()
-    val sourceContent = SourceContent(_resourcePath = "/draco/domain/primes/AddSequence.json", _resourceClass = classOf[TestValue])
+    val sourceContent = SourceContent(_resourcePath = "/draco/base/primes/AddSequence.json", _resourceClass = classOf[TestValue])
     val content = sourceContent.sourceLines.mkString("\n")
     println(content)
     val jsonContent: Json = parser.parse(content).getOrElse(Json.Null)

@@ -1,6 +1,5 @@
 package org.nexonix.json
 
-import draco.{DomainType, DomainDictionary, DomainName, Generator, Parameter, TypeDefinition, TypeDictionary, TypeName, TypePackage}
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 import org.nexonix.actor.DataModelService
@@ -69,9 +68,9 @@ class TestTypeDeclarations extends AnyFunSuite {
   test("Test DataModelService") {
     val dataModelService: DataModelService = DataModelService()
     println(dataModelService.domainPackage.typeDefinition.typeName.fullName)
-    println(dataModelService.domainPackage.domainNames.mkString(","))
+    println(dataModelService.domainPackage.subDomainNames.mkString(","))
     println(dataModelService.dataModel.typeDefinition.typeName.fullName)
-    println(dataModelService.dataModel.domainNames.mkString(","))
+    println(dataModelService.dataModel.subDomainNames.mkString(","))
   }
 
   test("Test TypeDefinitionDomainDictionary") {

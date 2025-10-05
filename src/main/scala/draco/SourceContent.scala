@@ -3,7 +3,7 @@ package draco
 import java.net.{URI, URL}
 import scala.io.{BufferedSource, Source}
 
-trait SourceContent extends Draco {
+trait SourceContent {
   val resourceClass: Class[_]
   val resourceURL: URL
   val resourcePath: String
