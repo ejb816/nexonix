@@ -8,11 +8,13 @@
   },
   "typeParameters" : [
   ],
+  "moduleElements": [
+  ],
   "dependsOn" : [
   ],
   "derivesFrom" : [
   ],
-  "members" : [
+  "elements" : [
   ],
   "parameters" : [
   ],

@@ -5,8 +5,10 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class DracoTest extends AnyFunSuite {
   test("Draco") {
-    val typeDefinition = Draco.draco.typeDefinition
-    assert(typeDefinition != TypeDefinition.Null)
+    val typeDefinition: TypeDefinition = Draco.draco.typeDefinition
     println(typeDefinition.asJson.spaces2)
+    println(TypeDefinition.Null.asJson.spaces2)
+
+    assert(typeDefinition != TypeDefinition.Null)
   }
 }

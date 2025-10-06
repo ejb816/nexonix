@@ -8,6 +8,8 @@
   },
   "typeParameters" : [
   ],
+  "moduleElements": [
+  ],
   "dependsOn" : [
   ],
   "derivesFrom" : [
@@ -19,7 +21,7 @@
       "parent" : ""
     }
   ],
-  "members" : [
+  "elements" : [
   ],
   "parameters" : [
   ],
