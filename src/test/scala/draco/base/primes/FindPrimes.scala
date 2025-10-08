@@ -3,7 +3,7 @@ package draco.base.primes
 import io.circe.{Decoder, Encoder, Json}
 import org.evrete.api.Knowledge
 
-sealed trait FindPrimes extends Primes {
+sealed trait FindPrimes {
   val numberOfPrimes = 25
   val countBase = 0
   val counter = 0
@@ -23,11 +23,7 @@ object FindPrimes {
              _counter: Int = 0
            ): FindPrimes = {
     new FindPrimes {
-      override val primeSequence: Seq[Int] = primes(_numberOfPrimes)
-      override val compositeSequence: Seq[Int] = composites(primeSequence)
-      override val naturalSequence: Seq[Int] = naturals().take(primeSequence.last)
-
-      override val baseMax: Int = primeSequence.last * _delta
+      override val baseMax: Int = _numberOfPrimes * _delta
       override val delta: Int = _delta
       override val countBase: Int = _base
       override val conditionalPrint: (Int, String) => (Int, Int) = (p, s) => {
@@ -41,10 +37,6 @@ object FindPrimes {
         } else countBase
         (newCount, newBase)
       }
-
-      val value: Seq[Int] = primes(_numberOfPrimes)
-
-      def apply(nth: Int): Int = value(nth - 1)
     }
   }
 

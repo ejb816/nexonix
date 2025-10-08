@@ -1,10 +1,10 @@
 package draco.base.primes
 
+import draco.{Rule, Value}
 import io.circe.Json
 import org.evrete.api.Knowledge
 
-
-trait AddSequence extends DomainRule
+trait AddSequence extends Rule
 
 object AddSequence {
 

@@ -1,8 +1,9 @@
 package draco.base.primes
 
+import draco.Rule
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait RemoveFromSequence extends DomainRule
+trait RemoveFromSequence extends Rule
 
 object RemoveFromSequence {
 
