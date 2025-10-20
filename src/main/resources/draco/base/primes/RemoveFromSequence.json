@@ -2,6 +2,7 @@
   "name": "RemoveFromSequence",
   "variables": {
     "fp": "FindPrimes",
+    "s1": "String",
     "i1": "Int",
     "i2": "Int",
     "i3": "Int"
@@ -14,6 +15,7 @@
     "val baseCounter = fp.conditionalPrint(i3, s\" -> $i1 * $i2 = $i3\")",
     "context.delete(i3)",
     "context.delete(fp)",
-    "context.insert(FindPrimes(fp.maximum, fp.delta, baseCounter._1, baseCounter._2))"
+    "context.insert(FindPrimes(fp.inputCount, fp.delta, baseCounter._1, baseCounter._2))",
+    "context.insert(baseCounter._3)"
   ]
 }

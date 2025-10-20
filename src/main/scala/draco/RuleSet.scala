@@ -3,8 +3,14 @@ package draco
 import org.evrete.api.Knowledge
 
 trait RuleSet {
-  val knowledge: Knowledge
-  val rules: Seq[Rule]
+  def load (_knowledge: Knowledge = Draco.draco.knowledge): Unit = rules.foreach(rule => rule(_knowledge))
+  val rules: Seq[Rule] = Seq ()
+}
 
-  def load(): Unit = rules.foreach(rule => rule(knowledge))
+object RuleSet {
+  def apply (
+              _rules: Seq[Rule]
+            ) : RuleSet = new RuleSet {
+    override val rules: Seq[Rule] = _rules
+  }
 }

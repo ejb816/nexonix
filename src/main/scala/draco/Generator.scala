@@ -19,14 +19,9 @@ object Generator extends App {
     }
 
     // Create a forEach call with all variables
-    val variableString = if (ruleDef.variables.nonEmpty) {
-      val varParams = ruleDef.variables.flatMap { case (key, value) =>
-        Seq(s"\"$$${key}\"", s"classOf[$value]")
-      }.mkString(", ")
-      s".forEach($varParams)"
-    } else {
-      ""
-    }
+    val varParams = ruleDef.variables.flatMap { case (key, value) =>
+      Seq(s"\"$$${key}\"", s"classOf[$value]")
+    }.mkString(", ")
 
     val replacedConditions = ruleDef.conditions.map { condition =>
       variables.foldLeft(condition) { (updatedCondition, variable) =>
@@ -59,30 +54,27 @@ object Generator extends App {
     }
 
     val body = (bodyPrepend ++ valuePathDeclarations ++ ruleDef.action).mkString("\n\t\t")
-    val functionBody = s"(context: RhsContext) => {\n\t\t$body\n}"
-
     s"""
        |package ${namePackage.mkString(".")}
        |
-       |import draco.domain.DomainRule
+       |import draco.Value
+       |import io.circe.Json
        |import org.evrete.api.Knowledge
        |import org.evrete.api.RhsContext
        |${depends(dependsOn)}
        |
-       |trait ${ruleDef.name} extends DomainRule
-       |
        |object ${ruleDef.name} {
-       |
-       |\tval rule: Knowledge => Unit = knowledge => {
-       |\t\tknowledge
-       |\t\t.builder()
-       |\t\t.newRule ("${ruleDef.name}")
-       |\t\t$variableString
-       |\t\t$conditionsString
-       |
-       |\t\t.execute($functionBody)
-       |\t\t.build()
-       |\t}
+       |  val rule: Knowledge => Unit = knowledge => {
+       |    knowledge
+       |    .builder()
+       |    .newRule ("${ruleDef.name}")
+       |    .forEach ($varParams)
+       |    $conditionsString
+       |    .execute ((context: RhsContext) => {
+       |    \t$body
+       |    })
+       |    .build()
+       |  }
        |}
        |""".stripMargin
   }

@@ -6,10 +6,10 @@
   "conditions": [],
   "values": {
     "delta": ["fp","delta"],
-    "maximum": ["fp","maximum"]
+    "inputCount": ["fp","inputCount"]
   },
   "action": [
-      "for (i <- 2 to maximum.value[Int]) { context.insert(i) }",
-      "context.insert(FindPrimes.define(maximum.value[Int], delta.value[Int]))"
+      "for (i <- 2 to inputCount.value[Int]) { context.insert(i) }",
+      "context.insert(FindPrimes(inputCount.value[Int], delta.value[Int]))"
   ]
 }

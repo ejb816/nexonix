@@ -1,6 +1,11 @@
 package draco
 
+import org.evrete.KnowledgeService
+import org.evrete.api.Knowledge
+
 trait Draco extends DomainType {
+  private val knowledgeService: KnowledgeService = new KnowledgeService()
+  val knowledge: Knowledge = knowledgeService.newKnowledge("Draco Knowledge")
   private val elementTypeNames: Seq[String] = Seq (
     "ActorBehavior",
     "Dictionary",

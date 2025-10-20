@@ -1,12 +1,15 @@
 package draco.base.primes
 
+import io.circe.syntax.EncoderOps
+import io.circe.{Encoder, Json}
+
 import scala.collection.immutable.Seq
 
 trait Primes {
+  val naturalSequence: Seq[Int]
   val primeSequence: Seq[Int]
   val compositeSequence: Seq[Int]
-  val naturalSequence: Seq[Int]
-}
+ }
 
 object Primes extends App {
   def filter(naturals: LazyList[Int]): LazyList[Int] = {
@@ -28,15 +31,23 @@ object Primes extends App {
     }.toSeq
   }
 
-  // List of n primeSequence
+  // List of n primes
   def primes(n: Int): Seq[Int] = {
-    // Convert the first n primeSequence to a List
+    // Convert the first n primes to a List
     filter(naturals(2)).take(n)
   }
 
   def apply(n: Int): Primes = new Primes {
     val primeSequence: Seq[Int] = primes(n)
+    val naturalSequence: Seq[Int] = naturals().take(primeSequence.last + 1)
     val compositeSequence: Seq[Int] = composites(primeSequence)
-    val naturalSequence: Seq[Int] = naturals().take(n)
+  }
+
+  lazy implicit val encoder: Encoder[Primes] = Encoder.instance { ps =>
+    Json.obj (
+      "naturalSequence" -> ps.naturalSequence.asJson,
+      "primeSequence" -> ps.primeSequence.asJson,
+      "compositeSequence" -> ps.compositeSequence.asJson
+    )
   }
 }
