@@ -41,7 +41,7 @@ class TestValue extends AnyFunSuite {
     println(content)
     val jsonContent: Json = parser.parse(content).getOrElse(Json.Null)
     val rule = jsonContent.as[RuleDefinition].getOrElse(defaultRule)
-    val ruleSource: String = Generator.generate(rule, Seq("draco","domain","primes"), Seq[TypeName]())
+    val ruleSource: String = Generator.generate(rule, Seq("draco", "dmdomain","primes"), Seq[TypeName]())
     println(ruleSource)
   }
 }

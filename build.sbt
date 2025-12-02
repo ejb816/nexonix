@@ -1,6 +1,6 @@
 ThisBuild / organization := "org.nexonix"
 ThisBuild / version := "1.1.1-SNAPSHOT"
-ThisBuild / scalaVersion := "2.13.14"
+ThisBuild / scalaVersion := "2.13.16"
 publishMavenStyle := true
 
 enablePlugins(JavaAppPackaging)
@@ -14,7 +14,7 @@ lazy val dependencies =
     val evreteVersion = "4.0.3"
     val pekkoActorVersion = "1.2.0-M1"
     val scalaTestVersion = "3.2.15"
-    val scalaVersion = "2.13.10"
+    val scalaVersion = "2.13.16"
     val scalaSwingVersion = "2.1.1"
     val jlineVersion = "3.22.0"
     val pekkoActorTyped = "org.apache.pekko" %% "pekko-actor-typed" % pekkoActorVersion
@@ -38,7 +38,7 @@ lazy val dependencies =
 
 lazy val root = (project in file("."))
   .settings(
-    name := "nexonix-draco",
+    name := "draco",
 
     /**
      * sbt-native-packager config - creates package for deploying

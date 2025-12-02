@@ -1,8 +1,8 @@
 package draco.base.primes
 
+import draco.primes.Primes
 import org.scalatest.funsuite.AnyFunSuite
-
-import Primes._
+import draco.primes.Primes._
 class PrimesTest extends AnyFunSuite {
   test("Primes") {
     // Small demonstration: print the first 22 primeSequence and the 22nd prime

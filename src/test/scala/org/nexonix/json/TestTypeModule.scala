@@ -57,19 +57,19 @@ class TestTypeModule extends AnyFunSuite  {
   val backTypeName: TypeName = TypeName ("Back", orientableDomainName.typeName.fullName)
   val orientableParameters: Seq[Parameter] = Seq(valueParameter)
   val boundingBoxTypeName: TypeName = TypeName("BoundingBox", orientableDomainName.typeName.fullName)
-  val leftMember: TypeElement = Fixed ("left", "Left[Radians]")
-  val rightMember: TypeElement = Fixed ("right", "Right[Radians]")
-  val upperMember: TypeElement = Fixed ("upper", "Upper[Radians]")
-  val lowerMember: TypeElement = Fixed ("lower", "Lower[Radians]")
-  val frontMember: TypeElement = Fixed ("front", "Front[Meters]")
-  val backMember: TypeElement = Fixed ("back", "Back[Meters]")
-  val boundingBoxMembers: Seq[TypeElement] = Seq(
-    leftMember,
-    rightMember,
-    upperMember,
-    lowerMember,
-    frontMember,
-    backMember
+  val leftElement: TypeElement = Fixed ("left", "Left[Radians]")
+  val rightElement: TypeElement = Fixed ("right", "Right[Radians]")
+  val upperElement: TypeElement = Fixed ("upper", "Upper[Radians]")
+  val lowerElement: TypeElement = Fixed ("lower", "Lower[Radians]")
+  val frontElement: TypeElement = Fixed ("front", "Front[Meters]")
+  val backElement: TypeElement = Fixed ("back", "Back[Meters]")
+  val boundingBoxElements: Seq[TypeElement] = Seq(
+    leftElement,
+    rightElement,
+    upperElement,
+    lowerElement,
+    frontElement,
+    backElement
   )
   val coordinatesDomainName: DomainName = DomainName (
     TypeName ("Coordinates", baseDomainName.typeName.fullName),
@@ -81,27 +81,27 @@ class TestTypeModule extends AnyFunSuite  {
   val elevationParameter: Parameter = Parameter ("_elevation", "Radians")
   val rangeParameter: Parameter = Parameter ("_range", "Meters")
   val sphericalParameters: Seq[Parameter] = Seq (azimuthParameter, elevationParameter, rangeParameter)
-  val azimuthMember: TypeElement = Fixed ("azimuth", "Radians", "_azimuth")
-  val elevationMember: TypeElement = Fixed ("elevation", "Radians", "_elevation")
-  val rangeMember: TypeElement = Fixed ("elevation", "Meters", "_range")
-  val sphericalMembers: Seq[TypeElement] = Seq (azimuthMember, elevationMember, rangeMember)
+  val azimuthElement: TypeElement = Fixed ("azimuth", "Radians", "_azimuth")
+  val elevationElement: TypeElement = Fixed ("elevation", "Radians", "_elevation")
+  val rangeElement: TypeElement = Fixed ("elevation", "Meters", "_range")
+  val sphericalElements: Seq[TypeElement] = Seq (azimuthElement, elevationElement, rangeElement)
   val sphericalBoundsTypeName: TypeName = TypeName ("SphericalBounds", orientableDomainName.typeName.fullName)
   val lufParameter: Parameter = Parameter ("luf", "Spherical")
   val rlbParameter: Parameter = Parameter ("rlb", "Spherical")
-  val leftBoundsMember: TypeElement = Fixed ("left", "Left[Radians]", "Left[Radians](_luf.azimuth)")
-  val rightBoundsMember: TypeElement = Fixed ("right", "Right[Radians]", "Right[Radians](_rlb.azimuth)")
-  val upperBoundsMember: TypeElement = Fixed ("upper", "Upper[Radians]", "Upper[Radians](_luf.elevation)")
-  val lowerBoundsMember: TypeElement = Fixed ("lower", "Lower[Radians]", "Lower[Radians](_rlb.elevation)")
-  val frontBoundsMember: TypeElement = Fixed ("front", "Front[Meters]", "Front[Meters](_luf.range)")
-  val backBoundsMember: TypeElement = Fixed ("back", "Back[Meters]", "Back[Meters](_rlb.range)")
+  val leftBoundsElement: TypeElement = Fixed ("left", "Left[Radians]", "Left[Radians](_luf.azimuth)")
+  val rightBoundsElement: TypeElement = Fixed ("right", "Right[Radians]", "Right[Radians](_rlb.azimuth)")
+  val upperBoundsElement: TypeElement = Fixed ("upper", "Upper[Radians]", "Upper[Radians](_luf.elevation)")
+  val lowerBoundsElement: TypeElement = Fixed ("lower", "Lower[Radians]", "Lower[Radians](_rlb.elevation)")
+  val frontBoundsElement: TypeElement = Fixed ("front", "Front[Meters]", "Front[Meters](_luf.range)")
+  val backBoundsElement: TypeElement = Fixed ("back", "Back[Meters]", "Back[Meters](_rlb.range)")
   val sphericalBoundsParameters: Seq[Parameter] = Seq (lufParameter, rlbParameter)
-  val sphericalBoundsMembers: Seq[TypeElement] = Seq (
-    leftBoundsMember,
-    rightBoundsMember,
-    upperBoundsMember,
-    lowerBoundsMember,
-    frontBoundsMember,
-    backBoundsMember
+  val sphericalBoundsElements: Seq[TypeElement] = Seq (
+    leftBoundsElement,
+    rightBoundsElement,
+    upperBoundsElement,
+    lowerBoundsElement,
+    frontBoundsElement,
+    backBoundsElement
   )
 
   val tdList: Seq[TypeDefinition] = Seq[TypeDefinition] (
@@ -170,21 +170,21 @@ class TestTypeModule extends AnyFunSuite  {
       _dependsOn = Seq (metersTypeName, radiansTypeName),
       _derivesFrom = Seq (orientableDomainName.typeName),
       _parameters = orientableParameters,
-      _elements = boundingBoxMembers
+      _elements = boundingBoxElements
     ),
     TypeDefinition(
       _typeName = sphericalTypeName,
       _dependsOn = Seq (metersTypeName, radiansTypeName),
       _derivesFrom = Seq (coordinatesDomainName.typeName),
       _parameters = sphericalParameters,
-      _elements = sphericalMembers
+      _elements = sphericalElements
     ),
     TypeDefinition(
       _typeName = sphericalBoundsTypeName,
       _dependsOn = Seq (sphericalTypeName, metersTypeName, radiansTypeName),
       _derivesFrom = Seq (boundingBoxTypeName),
       _parameters = sphericalBoundsParameters,
-      _elements = sphericalBoundsMembers
+      _elements = sphericalBoundsElements
     )
   )
   def testTypeDefinitionEncode(td: TypeDefinition): Unit = {

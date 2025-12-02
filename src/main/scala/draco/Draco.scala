@@ -1,12 +1,21 @@
 package draco
 
+import draco.base.Base
+import draco.primes.Primes
 import org.evrete.KnowledgeService
 import org.evrete.api.Knowledge
 
 trait Draco extends DomainType {
   private val knowledgeService: KnowledgeService = new KnowledgeService()
   val knowledge: Knowledge = knowledgeService.newKnowledge("Draco Knowledge")
-  private val elementTypeNames: Seq[String] = Seq (
+  override val domainName: DomainName
+  override val typeDefinition: TypeDefinition
+  override val typeDictionary: TypeDictionary
+  override val domains: Seq[DomainType]
+}
+
+object Draco {
+  val typeElementNames: Seq[String] = Seq (
     "ActorBehavior",
     "Dictionary",
     "DomainDictionary",
@@ -24,13 +33,21 @@ trait Draco extends DomainType {
     "TypeName",
     "Value"
   )
-  override val domainName: DomainName = DomainName ( TypeName ("Draco"), elementTypeNames)
-  override val subDomainNames: Seq[String] = Seq ()
-}
 
-object Draco {
+  val domainName: DomainName = DomainName(TypeName("Draco"), typeElementNames)
+
+  private val domainType: DomainType = DomainType (
+    _domainName = domainName,
+    _typeDictionary = TypeDictionary(domainName),
+  )
   lazy val draco: Draco = new Draco {
-    override val typeDefinition: TypeDefinition = TypeDefinition.load (domainName.typeName)
+    override val domainName: DomainName = domainType.domainName
+    override val domainDictionary: DomainDictionary = domainType.domainDictionary
+    override val typeDefinition: TypeDefinition =  TypeDefinition.load (domainName.typeName)
     override val typeDictionary: TypeDictionary = TypeDictionary (domainName)
+    override val domains: Seq[DomainType] = Seq(
+      Base.base,
+      Primes.primes
+    )
   }
 }

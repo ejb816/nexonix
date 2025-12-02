@@ -1,8 +1,8 @@
 package org.nexonix.json
 
+import draco.transform.dataModel.DataModelService
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
-import org.nexonix.actor.DataModelService
 import org.scalatest.funsuite.AnyFunSuite
 
 
@@ -65,15 +65,8 @@ class TestTypeDeclarations extends AnyFunSuite {
     println(processed)
   }
 
-  test("Test DataModelService") {
-    val dataModelService: DataModelService = DataModelService()
-    println(dataModelService.domainPackage.typeDefinition.typeName.fullName)
-    println(dataModelService.domainPackage.subDomainNames.mkString(","))
-    println(dataModelService.dataModel.typeDefinition.typeName.fullName)
-    println(dataModelService.dataModel.subDomainNames.mkString(","))
-  }
 
-  test("Test TypeDefinitionDomainDictionary") {
+  test("Test DomainDictionary") {
 
   }
   test("Test TransformDomain") {

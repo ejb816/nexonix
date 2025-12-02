@@ -25,7 +25,7 @@ class ValueTest extends AnyFunSuite {
       |        "base",
       |        "unit"
       |      ],
-      |      "parent": "draco.base.unit.Unit"
+      |      "parent": "draco.base.Unit"
       |    },
       |    {
       |      "name": "Meters",
@@ -34,7 +34,7 @@ class ValueTest extends AnyFunSuite {
       |        "base",
       |        "unit"
       |      ],
-      |      "parent": "draco.base.unit.Unit"
+      |      "parent": "draco.base.Unit"
       |    }
       |  ],
       |  "derivesFrom": [

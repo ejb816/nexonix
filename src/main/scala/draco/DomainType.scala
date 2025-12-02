@@ -4,15 +4,21 @@ trait DomainType {
   val domainName: DomainName
   val typeDefinition: TypeDefinition
   val typeDictionary: TypeDictionary
-  val subDomainNames: Seq[String]
+  val domains: Seq[DomainType]
+  val domainDictionary:  DomainDictionary
 }
 
 object DomainType {
-  def apply (_domainName: DomainName, _domainNames: Seq[String] = Seq ()) : DomainType = new DomainType {
+  def apply (
+            _domainName: DomainName,
+            _typeDictionary: TypeDictionary = TypeDictionary.Null,
+            _domains: Seq[DomainType] = Seq()
+            ) : DomainType = new DomainType {
     override val domainName: DomainName = _domainName
-    override val typeDefinition: TypeDefinition = TypeDefinition.load(_domainName.typeName)
-    override val typeDictionary: TypeDictionary = TypeDictionary(_domainName)
-    override val subDomainNames: Seq[String] = _domainNames
+    override val typeDefinition: TypeDefinition = TypeDefinition(_domainName.typeName)
+    override val typeDictionary: TypeDictionary = _typeDictionary
+    override val domains: Seq[DomainType] = _domains
+    override val domainDictionary: DomainDictionary = DomainDictionary(domains)
   }
 }
 

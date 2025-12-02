@@ -1,5 +1,6 @@
 package draco.base.primes
 
+import draco.primes.{AddSequence, Primes, PrimesRuleData, RemoveFromSequence}
 import draco.{Generator, RuleDefinition, SourceContent, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService

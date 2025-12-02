@@ -1,20 +1,36 @@
 package draco.base
 
-import draco.{DomainName, Draco, TypeDefinition, TypeDictionary, TypeName}
-import org.evrete.api.Knowledge
+import draco.base.Base.typeElementNames
+import draco.{DomainDictionary, DomainName, DomainType, Draco, TypeDefinition, TypeDictionary, TypeName}
 
 trait Base extends Draco {}
 
 object Base {
-  private val elementTypeNames: Seq[String] = Seq ()
-  def apply (
-              _domainName: DomainName = DomainName (
-                TypeName ("Base", "draco.base"),
-                elementTypeNames
-              )
-            ) : Base = new Base {
-    override val typeDefinition: TypeDefinition = TypeDefinition.load(_domainName.typeName)
-    override val typeDictionary: TypeDictionary = TypeDictionary (_domainName)
-    override val subDomainNames: Seq[String] = Seq[String] ()
+  val typeElementNames: Seq[String] = Seq(
+    "Cardinal",
+    "Cartesian",
+    "Coordinates",
+    "Cylindrical",
+    "Distance",
+    "Meters",
+    "Nominal",
+    "Ordinal",
+    "Orientable",
+    "Polar",
+    "Radians",
+    "Rectangular",
+    "Rotation",
+    "Spacetime",
+    "Spherical",
+    "Unit"
+  )
+
+
+  val base: Base = new Base {
+    override val domainName: DomainName = DomainName(TypeName(_name = "Base", _parent = "draco.base"), typeElementNames)
+    val typeDefinition: TypeDefinition = TypeDefinition.load(domainName.typeName)
+    val typeDictionary: TypeDictionary = TypeDictionary (domainName)
+    override val domains: Seq[DomainType] = Seq ()
+    override val domainDictionary: DomainDictionary = Draco.draco.domainDictionary
   }
 }

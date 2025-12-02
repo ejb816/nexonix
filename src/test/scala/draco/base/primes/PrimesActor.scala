@@ -1,6 +1,7 @@
 package draco.base.primes
 
 import draco.ActorBehavior
+import draco.primes.Primes
 import io.circe.syntax.EncoderOps
 import org.apache.pekko.actor.typed.{ActorSystem, Behavior}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
