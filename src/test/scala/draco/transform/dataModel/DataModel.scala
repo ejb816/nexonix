@@ -1,30 +1,30 @@
 package draco.transform.dataModel
 
-import draco.transform.Transform
+import draco._
 import draco.transform.alpha.Alpha
 import draco.transform.bravo.Bravo
-import draco.transform.charlie.Charlie
-import draco.transform.delta.Delta
-import draco.{DomainDictionary, DomainName, DomainType, TypeDefinition, TypeDictionary, TypeName}
+import org.evrete.KnowledgeService
+import org.evrete.api.Knowledge
 
-trait DataModel extends Transform {}
-
+trait DataModel extends DomainElement {
+  override val knowledgeService: KnowledgeService = DomainElement.knowledgeService
+  override val knowledge: Knowledge = knowledgeService.newKnowledge("DataModel")
+}
 object DataModel {
   lazy val dataModel: DataModel = new DataModel {
-    override val domainName: DomainName = DomainName (
-      TypeName (
-        _name = "DataModel",
-        _namePackage = Seq ("draco", "transform", "dataModel")
+    val domain: Domain[DataModel] = Domain[DataModel] (
+      _domainName = DomainName (
+        _typeName = TypeName (
+          _name = "DataModel",
+          _namePackage = Seq ("draco", "transform", "dataModel")
+        ),
+        _elementTypeNames = Seq ()
+      ),
+      _domains = Seq (
+        DataModel.dataModel.domain,
+        Alpha.alpha.domain,
+        Bravo.bravo.domain
       )
     )
-    override val typeDefinition: TypeDefinition = TypeDefinition(domainName.typeName)
-    override val typeDictionary: TypeDictionary = TypeDictionary(domainName)
-    override val domains: Seq[DomainType] = Seq (
-      Alpha.alpha,
-      Bravo.bravo,
-      Charlie.charlie,
-      Delta.delta
-    )
-    override val domainDictionary: DomainDictionary = DomainDictionary(Seq (this) ++ domains)
   }
 }

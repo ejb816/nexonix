@@ -4,5 +4,10 @@ import org.evrete.api.Knowledge
 
 trait Rule {
   val rule: Knowledge => Unit
-  def apply(_knowledge: Knowledge): Unit = rule
+}
+
+object Rule {
+  def apply (_rule: Knowledge => Unit): Unit = {
+    val rule: Knowledge => Unit = _rule
+  }
 }

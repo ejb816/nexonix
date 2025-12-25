@@ -1,13 +1,14 @@
 package draco.base.primes
 
-import draco.primes.{AddSequence, Primes, PrimesRuleData, RemoveFromSequence}
+import draco.primes.{Accumulator, AddNaturalSequence, Numbers, Primes, PrimesFromNaturalSequence, PrimesRuleData, RemoveCompositeNumbers}
 import draco.{Generator, RuleDefinition, SourceContent, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService
 import org.evrete.api.{FactHandle, Knowledge, RhsContext, StatefulSession}
 import org.scalatest.funsuite.AnyFunSuite
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable
+import scala.collection.mutable.{ListBuffer, Set}
 
 class PrimesRulesTest extends AnyFunSuite {
   test("Generate AddSequence") {
@@ -32,107 +33,84 @@ class PrimesRulesTest extends AnyFunSuite {
     val ruleSource = Generator.generate (rule, Seq("draco", "base", "primes"), Seq[TypeName]())
     println(ruleSource)
   }
-  test("PrimesLessThanMaximum") {
+  def printResult (accumulator: Accumulator, numbers: Numbers) : Unit = {
+    // Print current memory state
+    val sortedTextData: Seq[(Long,String)] = accumulator.intervalTextSet.toSeq.sortBy(_._1)
+    val firstTime: Long = if (sortedTextData.nonEmpty) sortedTextData.head._1 else 0
+    val timedText: Seq[String] = sortedTextData.map { case (n,s) => s"${n - firstTime} $s" }
+    val primeList: List[Int] = if (accumulator.primeSet.isEmpty) {
+      Primes.primesFromComposites(accumulator.compositeSet.toSeq).toList
+    } else {
+      accumulator.primeSet.toSeq.toList
+    }
+    val prefixLength: Int = "List".length
+    println(s"Input Natural Sequence:${numbers.naturalSequence.toList.toString().substring(prefixLength)}")
+    println(s"Result Prime Sequence: ${primeList.sorted.toString().substring(prefixLength)}")
+    println(s"Result Composite Sequence: ${accumulator.compositeSet.toList.sorted.toString().substring(prefixLength)}")
+    println(s"firstTime = $firstTime")
+    println(s"Rule Results with Fire Interval:\n00000${timedText.mkString("\n")}")
+  }
+  def inputNaturalSequence (session: StatefulSession, accumulator: Accumulator, numbers: Numbers) : Unit = {
+    try { // Inject candidates
+      session.insert(Seq (accumulator): _*)
+      session.insert (numbers.naturalSequence: _*)
+      session.fire
+      printResult(accumulator, numbers)
+    } finally if (session != null) session.close()
+  }
+
+  test("PrimesFromNaturalSequence") {
     val service: KnowledgeService = new KnowledgeService()
-    // Create a Knowledge instance
-    val knowledge = service.newKnowledge("PrimesLessThanMaximum")
+    val knowledge = service.newKnowledge("PrimesFromNaturalSequence")
       .builder()
-      .newRule("prime numbers")
+      .newRule("PrimesFromNaturalSequence")
       .forEach(
-        "$prd", classOf[PrimesRuleData],
+        "$accumulator", classOf[Accumulator],
         "$i1", classOf[Integer],
         "$i2", classOf[Integer],
         "$i3", classOf[Integer])
       .where("$i1 * $i2 == $i3")
-      .where("$prd.textList.length > -1")
       .execute((ctx: RhsContext) => {
+        val accumulator = ctx.get[Accumulator]("$accumulator")
         val i1 = ctx.get[Int]("$i1")
         val i2 = ctx.get[Int]("$i2")
         val i3 = ctx.get[Int]("$i3")
-        val prd = ctx.get[PrimesRuleData]("$prd")
-
-        val text: Seq[String] = Seq (if (prd.textList.length < 1) "Starting..."
-        else "") ++ Seq(s" -> $i3 == $i1 * $i2")
-
-        ctx.delete(prd)
-        ctx.insert(PrimesRuleData(prd.primes, text))
+        val newText: (Long,String) = (System.nanoTime(), s" Remove $i3 ->\t$i3 == $i1 * $i2")
         ctx.delete(i3)
+        accumulator.compositeSet += i3
+        accumulator.intervalTextSet += newText
       })
       .build()
-    // Stateful sessions are AutoCloseable
-    try {
-      val session: StatefulSession = knowledge.newStatefulSession()
-      try { // Inject candidates
-        val numbers = Primes.naturals(2).take(25)
-        session.insert(numbers: _*)
-        session.insert(Seq(PrimesRuleData(Primes(25))): _*)
-        // Execute rules
-        session.fire
-        val collectedInt = ListBuffer[Int]()
-        // Print current memory state
-        session.forEachFact((fh: FactHandle, o: Any) => o match {
-          case i: Int =>
-            collectedInt += i
-          case prd: PrimesRuleData =>
-            println(prd.textList.mkString("\n"))
-        })
-        println(s"List of primeSequence ${collectedInt.sorted.toString().substring("ListBuffer".length)}")
-      } finally if (session != null) session.close()
-    }
+    inputNaturalSequence(
+      session = knowledge.newStatefulSession(),
+      accumulator = Accumulator (),
+      numbers = Numbers ()
+    )
     service.shutdown()
   }
-  test("AltPrimesLessThanMaximum") {
+
+  test("PrimesFromNaturalSequence.rule") {
     val service: KnowledgeService = new KnowledgeService()
-//    val knowledge = service.newKnowledge("PrimesLessThanMaximum")
-//      .builder()
-//      .newRule("PrimeNumbers")
-//      .forEach(
-//        "$prd", classOf[PrimesRuleData],
-//        "$i1", classOf[java.lang.Integer],
-//        "$i2", classOf[java.lang.Integer],
-//        "$i3", classOf[java.lang.Integer])
-//
-//      // Compiled predicates (no EL)
-//      .where("$prd", (prd: PrimesRuleData) => (prd.textList.length >= 0): java.lang.Boolean)
-//      .where("$i3",  (i3: java.lang.Integer) => (i3.intValue() > 1): java.lang.Boolean)
-//      .where("$i1",  (i1: java.lang.Integer) => (i1.intValue() > 1): java.lang.Boolean)
-//      .where("$i2",  (i2: java.lang.Integer) => (i2.intValue() > 1): java.lang.Boolean)
-//
-//      // Keep EL only for the 3-variable relation
-//      .where("$i1 * $i2 == $i3")
-//
-//      .execute((ctx: RhsContext) => {
-//        val i3  = ctx.get[java.lang.Integer]("$i3")     // boxed handle
-//        val prd = ctx.get[PrimesRuleData]("$prd")
-//        prd.addText(s" -> ${i3.intValue()} composite")
-//        ctx.update(prd)                                  // mutate + update same instance
-//        ctx.delete(i3)                                   // delete exact matched Integer
-//      })
-//      .build()
+    val knowledge = service.newKnowledge("PrimesFromNaturalSequence.rule")
+    PrimesFromNaturalSequence.rule (knowledge)
+    inputNaturalSequence(
+      session = knowledge.newStatefulSession(),
+      accumulator = Accumulator (),
+      numbers = Numbers(5)
+    )
+    service.shutdown()
   }
-  test("TypeRulesTest") {
+
+  test("AddAndRemoveRulesTest") {
     val service: KnowledgeService = new KnowledgeService()
-    val knowledge: Knowledge = service.newKnowledge("TypeRulesTest")
-    val prd: PrimesRuleData = PrimesRuleData (Primes (100))
-    try {
-      AddSequence.rule (knowledge)
-      RemoveFromSequence.rule (knowledge)
-      val session: StatefulSession = knowledge.newStatefulSession()
-      try { // Inject candidates
-        session.insert(Seq[Any] (prd, 0): _*)
-        // Execute rules
-        session.fire
-        val collectedInt = ListBuffer[Int]()
-        // Print current memory state
-        session.forEachFact((fh: FactHandle, o: Any) => o match {
-          case i: Int =>
-            collectedInt += i
-          case prd: PrimesRuleData =>
-            println(prd.textList.mkString("\n"))
-        })
-        println(s"List of primes ${collectedInt.sorted.toString().substring("ListBuffer".length)}")
-      } finally if (session != null) session.close()
-    }
+    val knowledge: Knowledge = service.newKnowledge("AddAndRemoveRulesTest")
+    AddNaturalSequence.rule (knowledge)
+    RemoveCompositeNumbers.rule (knowledge)
+    inputNaturalSequence(
+      session = knowledge.newStatefulSession(),
+      accumulator = Accumulator (),
+      numbers = Numbers(10)
+    )
     service.shutdown()
   }
 }

@@ -1,22 +1,23 @@
 package draco.transform.delta
 
 import draco.transform.dataModel.DataModel
-import draco.{DomainDictionary, DomainName, DomainType, TypeDefinition, TypeDictionary, TypeName}
+import draco.{Domain, DomainName, TypeName}
+import org.evrete.api.Knowledge
 
-trait Delta extends DataModel {}
+trait Delta extends DataModel {
+  override val knowledge: Knowledge = knowledgeService.newKnowledge("Delta")
+}
 
 object Delta {
   val delta: Delta = new Delta {
-    override val domainName: DomainName = DomainName (
-      TypeName (
-        _name = "Delta",
-        _namePackage = Seq ("draco", "transform", "delta")
+    val domain: Domain[Delta] = Domain[Delta] (
+      _domainName = DomainName (
+        _typeName = TypeName (
+          _name = "Delta",
+          _namePackage = Seq ("draco", "transform", "delta")
+        ),
+        _elementTypeNames = Seq ()
       )
     )
-    override val typeDefinition: TypeDefinition = TypeDefinition (domainName.typeName)
-    override val typeDictionary: TypeDictionary = TypeDictionary (domainName)
-    override val domains: Seq[DomainType] = Seq ()
-    override val domainDictionary: DomainDictionary = DomainDictionary (Seq (DataModel.dataModel))
-
   }
 }

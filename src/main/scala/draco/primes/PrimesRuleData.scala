@@ -1,24 +1,26 @@
 package draco.primes
 
+import draco.DomainType
+import draco.primes.Primes.primes
 import org.evrete.api.Knowledge
- trait PrimesRuleData {
-   val primes: Primes
-   val textList: Seq[String] = Seq[String]()
- }
+trait PrimesRuleData extends Primes {
+  val numbers: Numbers
+  val textData: String
+}
 
 object PrimesRuleData {
-  def apply(
-             _primes: Primes,
-             _textList: Seq[String] = Seq[String]()
-           ): PrimesRuleData = {
-    new PrimesRuleData {
-      val primes: Primes = _primes
-      override val textList: Seq[String] = _textList
-    }
+  def apply (
+             _numbers: Numbers = Numbers(),
+             _textData: String = ""
+           ): PrimesRuleData = new PrimesRuleData {
+
+    override val numbers: Numbers = _numbers
+    override val textData: String = _textData
+    override val domain: DomainType = primes.domain
   }
 
   val rules: Seq[Knowledge => Unit] = Seq(
-    AddSequence.rule,
-    RemoveFromSequence.rule
+    AddNaturalSequence.rule,
+    RemoveCompositeNumbers.rule
   )
 }

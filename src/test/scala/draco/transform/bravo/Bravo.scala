@@ -1,21 +1,23 @@
 package draco.transform.bravo
 
 import draco.transform.dataModel.DataModel
-import draco.{DomainDictionary, DomainName, DomainType, TypeDefinition, TypeDictionary, TypeName}
+import draco.{Domain, DomainName, TypeName}
+import org.evrete.api.Knowledge
 
-trait Bravo extends DataModel {}
+trait Bravo extends DataModel {
+  override val knowledge: Knowledge = knowledgeService.newKnowledge("Bravo")
+}
 
 object Bravo {
-  val bravo: Bravo = new Bravo {
-    override val domainName: DomainName = DomainName (
-    TypeName (
-      _name = "Bravo",
-      _namePackage = Seq ("draco","transform", "bravo")
+  lazy val bravo: Bravo = new Bravo {
+    val domain: Domain[Bravo] = Domain[Bravo] (
+      _domainName = DomainName (
+        _typeName = TypeName (
+          _name = "Bravo",
+          _namePackage = Seq ("draco", "transform", "bravo")
+        ),
+        _elementTypeNames = Seq ()
+      )
     )
-  )
-    override val typeDefinition: TypeDefinition = TypeDefinition (domainName.typeName)
-    override val typeDictionary: TypeDictionary = TypeDictionary (domainName)
-    override val domains: Seq[DomainType] = Seq ()
-    override val domainDictionary: DomainDictionary = DomainDictionary (Seq (DataModel.dataModel))
   }
 }

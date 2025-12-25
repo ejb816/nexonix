@@ -1,12 +1,15 @@
 package draco.base
 
-import draco.base.Base.typeElementNames
-import draco.{DomainDictionary, DomainName, DomainType, Draco, TypeDefinition, TypeDictionary, TypeName}
+import draco.{Domain, DomainElement, DomainName, TypeName}
+import org.evrete.KnowledgeService
+import org.evrete.api.Knowledge
 
-trait Base extends Draco {}
+trait Base extends DomainElement {
+  override val knowledge: Knowledge = knowledgeService.newKnowledge("Base")
+}
 
 object Base {
-  val typeElementNames: Seq[String] = Seq(
+  val typeElementNames: Seq[String] = Seq (
     "Cardinal",
     "Cartesian",
     "Coordinates",
@@ -24,13 +27,10 @@ object Base {
     "Spherical",
     "Unit"
   )
-
-
+  val domainName: DomainName = DomainName(TypeName(_name = "Base", _parent = "draco.base"), typeElementNames)
   val base: Base = new Base {
-    override val domainName: DomainName = DomainName(TypeName(_name = "Base", _parent = "draco.base"), typeElementNames)
-    val typeDefinition: TypeDefinition = TypeDefinition.load(domainName.typeName)
-    val typeDictionary: TypeDictionary = TypeDictionary (domainName)
-    override val domains: Seq[DomainType] = Seq ()
-    override val domainDictionary: DomainDictionary = Draco.draco.domainDictionary
+    override val knowledgeService: KnowledgeService = DomainElement.knowledgeService
+    override val knowledge: Knowledge = knowledgeService.newKnowledge("Base Knowledge")
+    override val domain: Domain[Base] = Domain[Base] (domainName)
   }
 }
