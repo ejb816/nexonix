@@ -1,0 +1,30 @@
+{
+  "name": "PrimesFromNaturalSequence",
+  "imports": [
+    {
+      "name": "Accumulator",
+      "namePackage": [
+        "draco",
+        "primes"
+      ],
+      "parent": ""
+    }
+  ],
+  "variables": {
+    "accumulator": "Accumulator",
+    "i1": "Integer",
+    "i2": "Integer",
+    "i3": "Integer"
+  },
+  "conditions": [
+    "i1 * i2 == i3"
+  ],
+  "values": {},
+  "action": [
+    "val newText: (Long,String) = (System.nanoTime(),s\" Remove $i3 ->\\t$i3 == $i1 * $i2\")",
+    "context.delete(i3)",
+    "accumulator.primeSet.remove(i3)",
+    "accumulator.compositeSet.addOne(i3)",
+    "accumulator.intervalTextSet.addOne(newText)"
+  ]
+}

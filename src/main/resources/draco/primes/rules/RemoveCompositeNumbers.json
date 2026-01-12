@@ -1,0 +1,30 @@
+{
+  "name": "RemoveFromSequence",
+  "imports": [
+    {
+      "name": "Accumulator",
+      "namePackage": [
+        "draco",
+        "primes"
+      ],
+      "parent": ""
+    }
+  ],
+  "variables": {
+    "accumulator": "Accumulator",
+    "i1": "Int",
+    "i2": "Int",
+    "i3": "Int"
+  },
+  "conditions": [
+    "i1 * i2 == i3"
+  ],
+  "values": {},
+  "action": [
+    "val newText: String = s\"Composite number $i3 removed -> $i1 * $i2 == $i3\"",
+    "context.delete(i3)",
+    "accumulator.primeSet.remove(i3)",
+    "accumulator.compositeSet.addOne(i3)",
+    "accumulator.intervalTextSet.addOne((System.nanoTime(), newText))"
+  ]
+}

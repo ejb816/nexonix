@@ -17,8 +17,11 @@ object Draco {
         ),
         _elementTypeNames = Seq (
           "ActorBehavior",
+          "ContentSink",
           "Dictionary",
+          "Domain",
           "DomainDictionary",
+          "DomainElement",
           "DomainName",
           "DomainType",
           "Generator",

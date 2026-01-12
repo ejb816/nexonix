@@ -1,4 +1,4 @@
-package draco.base.primes
+package draco.primes
 
 import draco.ActorBehavior
 import draco.primes.{Numbers, Primes}

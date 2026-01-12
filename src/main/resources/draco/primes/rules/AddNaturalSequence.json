@@ -1,0 +1,25 @@
+{
+  "name": "AddNaturalSequence",
+  "imports": [
+    {
+      "name": "Accumulator",
+      "namePackage": [
+        "draco",
+        "primes"
+      ],
+      "parent": ""
+    }
+  ],
+  "variables": {
+    "accumulator": "Accumulator",
+    "i": "Integer"
+  },
+  "conditions": [],
+  "values": {},
+  "action": [
+    "accumulator.primeSet.addOne(i)",
+    "accumulator.naturalSet.addOne(i)",
+    "val text = s\"Added $i to primeSet and naturalSet.\"",
+    "accumulator.intervalTextSet.addOne((System.nanoTime(), text))"
+  ]
+}

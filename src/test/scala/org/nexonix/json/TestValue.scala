@@ -36,12 +36,12 @@ class TestValue extends AnyFunSuite {
   }
   test ("test rule json") {
     val defaultRule = RuleDefinition()
-    val sourceContent = SourceContent(_resourcePath = "/draco/base/primes/AddSequence.json", _resourceClass = classOf[TestValue])
+    val sourceContent = SourceContent(Generator.main.sourceRoot, "draco/primes/rules/AddNaturalSequence.json")
     val content = sourceContent.sourceLines.mkString("\n")
     println(content)
     val jsonContent: Json = parser.parse(content).getOrElse(Json.Null)
     val rule = jsonContent.as[RuleDefinition].getOrElse(defaultRule)
-    val ruleSource: String = Generator.generate(rule, Seq("draco", "dmdomain","primes"), Seq[TypeName]())
+    val ruleSource: String = Generator.generate(rule, Seq("draco","primes"))
     println(ruleSource)
   }
 }

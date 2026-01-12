@@ -1,6 +1,5 @@
 package draco.primes
 import draco.DomainType
-import draco.primes.Primes.{composites, nPrimes, naturals, primes}
 
 trait Numbers extends Primes {
   val primeSequence: Seq[Int]
@@ -10,9 +9,9 @@ trait Numbers extends Primes {
 
 object Numbers {
   def apply (n: Int = 22): Numbers = new Numbers {
-    override val primeSequence: Seq[Int] = nPrimes(n)
-    override val naturalSequence: Seq[Int] = naturals(2).take(primeSequence.last-1)
-    override val compositeSequence: Seq[Int] = composites(primeSequence)
-    override val domain: DomainType = primes.domain
+    override val primeSequence: Seq[Int] = Primes.nPrimes(n)
+    override val naturalSequence: Seq[Int] = Primes.naturals(2).take(primeSequence.last-1)
+    override val compositeSequence: Seq[Int] = Primes.composites(primeSequence)
+    override val domain: DomainType = Primes.primes.domain
   }
 }

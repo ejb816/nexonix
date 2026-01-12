@@ -1,4 +1,4 @@
-package draco.base.primes
+package draco.primes
 
 import draco.primes.Numbers
 import org.scalatest.funsuite.AnyFunSuite

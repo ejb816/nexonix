@@ -52,8 +52,8 @@ object TypeName {
     for {
       _name        <- c.downField("name").as[String]
       _namePackage <- c.downField("namePackage").as[Seq[String]]
-      _parent      <- c.downField("parent").as[String]
+      _parent      <- c.downField("parent").as[Option[String]]
     } yield {
-      TypeName(_name, _parent, _namePackage)
+      TypeName(_name, _parent.getOrElse(""), _namePackage)
     }
   }}

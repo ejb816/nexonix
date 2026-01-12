@@ -1,0 +1,14 @@
+{
+  "name": "TupleFactRule",
+  "variables": {
+    "fact": "(Int,Int,Int)"
+  },
+  "conditions": [
+    "fact._1.equals(1) && fact._2.equals(2) && fact._3.equals(3)"
+  ],
+  "values": {},
+  "action": [
+    "println (fact)",
+    "println ((fact._1,fact._2,fact._3))"
+  ]
+}

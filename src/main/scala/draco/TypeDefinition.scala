@@ -17,8 +17,7 @@ sealed trait TypeDefinition {
 
 object TypeDefinition extends App {
   def load (typeName: TypeName) : TypeDefinition = {
-    val resourcePath = typeName.resourcePath
-    val sourceContent = SourceContent(resourcePath)
+    val sourceContent = SourceContent(Generator.main.sourceRoot, typeName.resourcePath)
     val sourceJSON: Json = parser.parse(sourceContent.sourceString).getOrElse(TypeDefinition (typeName).asJson)
     sourceJSON.as[TypeDefinition].getOrElse(Null)
   }

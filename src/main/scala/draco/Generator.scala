@@ -1,14 +1,16 @@
 package draco
 
 import java.util.regex.Matcher
+trait Generator {
 
-trait Generator {}
+}
 
 object Generator extends App {
+  lazy val main: Main = Main.roots
+  lazy val test: Test = Test.roots
   def generate (
                  ruleDef: RuleDefinition,
-                 namePackage: Seq[String],
-                 dependsOn: Seq[TypeName]
+                 namePackage: Seq[String]
                ): String = {
     val variables = ruleDef.variables.map { case (key, value) =>
       ("$" + key) -> value
@@ -20,8 +22,8 @@ object Generator extends App {
 
     // Create a forEach call with all variables
     val varParams = ruleDef.variables.flatMap { case (key, value) =>
-      Seq(s"\"$$${key}\"", s"classOf[$value]")
-    }.mkString(", ")
+      Seq(s"\t\t\"$$${key}\", classOf[$value]")
+    }.mkString(",\n")
 
     val replacedConditions = ruleDef.conditions.map { condition =>
       variables.foldLeft(condition) { (updatedCondition, variable) =>
@@ -31,7 +33,7 @@ object Generator extends App {
     }
 
     val conditionsString = replacedConditions.map { condition =>
-      s"\t.where(\"${condition.replaceAll("\"", "\\\\\"")}\")"
+      s".where(\"${condition.replaceAll("\"", "\\\\\"")}\")"
     }.mkString("\n")
 
     // Find JSON variables that could be used as sources for Value objects
@@ -57,18 +59,20 @@ object Generator extends App {
     s"""
        |package ${namePackage.mkString(".")}
        |
-       |import draco.Value
-       |import io.circe.Json
        |import org.evrete.api.Knowledge
        |import org.evrete.api.RhsContext
-       |${depends(dependsOn)}
+       |${depends(ruleDef.imports)}
+       |
+       |trait ${ruleDef.name} extends draco.Rule
        |
        |object ${ruleDef.name} {
        |  val rule: Knowledge => Unit = knowledge => {
        |    knowledge
        |    .builder()
        |    .newRule ("${ruleDef.name}")
-       |    .forEach ($varParams)
+       |    .forEach (
+       |$varParams
+       |    )
        |    $conditionsString
        |    .execute ((context: RhsContext) => {
        |    \t$body
