@@ -1,3 +1,3 @@
-package dreams
+package draco.dreams
 
 trait Service

@@ -1,7 +1,9 @@
 package draco
 
+import org.nexonix.domains.Dictionary
+
 trait TypeDictionary extends Dictionary[TypeName,TypeDefinition] {
-  val elementTypes: Seq[TypeDefinition]
+  val  elementTypes: Seq[TypeDefinition]
 }
 
 object TypeDictionary extends App {

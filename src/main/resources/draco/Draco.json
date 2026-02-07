@@ -6,13 +6,8 @@
     ],
     "parent" : ""
   },
-  "typeParameters" : [
-  ],
-  "moduleElements": [
-  ],
-  "dependsOn" : [
-  ],
-  "derivesFrom" : [
+  "modules": [],
+  "derivation" : [
     {
       "name" : "DomainType",
       "namePackage" : [
@@ -21,10 +16,15 @@
       "parent" : ""
     }
   ],
-  "elements" : [
-  ],
-  "parameters" : [
-  ],
-  "rules" : [
-  ]
+  "elements" : [],
+  "factory": {
+    "kind": "Factory",
+    "name": "",
+    "valueType": "draco.Draco",
+    "value": "",
+    "parameters": [],
+    "body": []
+  },
+  "typeGlobals": [],
+  "rules" : []
 }

@@ -1,4 +1,4 @@
-package org.nexonix.json
+package org.nexonix.format.json
 
 import io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
 

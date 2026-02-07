@@ -9,31 +9,8 @@
     ],
     "parent" : "draco.base.coordinate.Coordinate"
   },
-  "typeParameters": [],
-  "moduleElements": [],
-  "dependsOn": [
-    {
-      "name" : "Radians",
-      "namePackage" : [
-        "draco",
-        "base",
-        "unit",
-        "radians"
-      ],
-      "parent" : "draco.base.unit.Unit"
-    },
-    {
-      "name" : "Meters",
-      "namePackage" : [
-        "draco",
-        "base",
-        "unit",
-        "meters"
-      ],
-      "parent" : "draco.base.unit.Unit"
-    }
-  ],
-  "derivesFrom": [
+  "modules": [],
+  "derivation": [
     {
       "name" : "Coordinate",
       "namePackage" : [
@@ -48,42 +25,49 @@
     {
       "kind" : "Fixed",
       "name" : "azimuth",
-      "type" : "Radians",
+      "valueType" : "Radians",
       "value" : ""
     },
     {
       "kind" : "Fixed",
       "name" : "elevation",
-      "type" : "Radians",
+      "valueType" : "Radians",
       "value" : ""
     },
     {
       "kind" : "Fixed",
       "name" : "range",
-      "type" : "Meters",
+      "valueType" : "Meters",
       "value" : ""
     }
   ],
-  "parameters": [
-    {
-      "kind" : "Parameter",
-      "name" : "azimuth",
-      "type" : "Radians",
-      "value" : ""
-    },
-    {
-      "kind" : "Parameter",
-      "name" : "elevation",
-      "type" : "Radians",
-      "value" : ""
-    },
-    {
-      "kind" : "Parameter",
-      "name" : "range",
-      "type" : "Meters",
-      "value" : ""
-    }
-  ],
+  "factory": {
+    "kind": "Factory",
+    "name": "",
+    "valueType": "draco.base.coordinate.spherical.Spherical",
+    "value": "",
+    "parameters": [
+      {
+        "kind" : "Parameter",
+        "name" : "azimuth",
+        "valueType" : "Radians",
+        "value" : ""
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "elevation",
+        "valueType" : "Radians",
+        "value" : ""
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "range",
+        "valueType" : "Meters",
+        "value" : ""
+      }
+    ],
+    "body": []
+  },
+  "typeGlobals": [],
   "rules": []
 }
-

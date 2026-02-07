@@ -1,6 +1,6 @@
 package draco.base
 
-import draco.Primal
+import org.nexonix.domains.Primal
 
 trait Radians extends Rotation with Primal[Double] {
   override val name: String = "Radians"

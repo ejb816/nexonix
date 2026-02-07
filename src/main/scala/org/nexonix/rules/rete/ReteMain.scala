@@ -1,4 +1,4 @@
-package org.nexonix.rete
+package org.nexonix.rules.rete
 
 class ReteMain {
 

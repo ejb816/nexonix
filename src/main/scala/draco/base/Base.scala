@@ -1,8 +1,10 @@
 package draco.base
 
-import draco.{Domain, DomainElement, DomainName, TypeName}
+import draco.{DomainElement, DomainName, TypeDefinition, TypeName}
 import org.evrete.KnowledgeService
 import org.evrete.api.Knowledge
+import org.nexonix.domains
+import org.nexonix.domains.Domain
 
 trait Base extends DomainElement {
   override val knowledge: Knowledge = knowledgeService.newKnowledge("Base")
@@ -31,6 +33,6 @@ object Base {
   val base: Base = new Base {
     override val knowledgeService: KnowledgeService = DomainElement.knowledgeService
     override val knowledge: Knowledge = knowledgeService.newKnowledge("Base Knowledge")
-    override val domain: Domain[Base] = Domain[Base] (domainName)
+    override val domain: Domain[Base] = domains.Domain[Base] (domainName)
   }
 }

@@ -1,8 +1,10 @@
 package draco.primes
 
-import draco.{Domain, DomainElement, DomainName, TypeName}
+import draco.{DomainElement, DomainName, TypeName}
 import org.evrete.KnowledgeService
 import org.evrete.api.Knowledge
+import org.nexonix.domains
+import org.nexonix.domains.Domain
 
 trait Primes extends DomainElement {
   override val knowledgeService: KnowledgeService = DomainElement.knowledgeService
@@ -33,7 +35,7 @@ object Primes {
   }
 
   val primes: Primes = new Primes {
-    override val domain: Domain[Primes] = Domain[Primes] (
+    override val domain: Domain[Primes] = domains.Domain[Primes] (
       _domainName = DomainName (
         _typeName = TypeName (
           _name = "Primes",

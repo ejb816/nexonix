@@ -1,6 +1,7 @@
-package org.nexonix.json
+package org.nexonix.format.json
 
 import draco.{Generator, RuleDefinition, SourceContent, TypeDefinition, TypeName, Value}
+import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -29,19 +30,34 @@ class TestValue extends AnyFunSuite {
   }
 }
 """).getOrElse(Json.Null)
-    val phoneNumber = Value("phoneNumber", json, Seq[String]("order", "customer", "contactDetails", "phone")).value[String]
+    val phoneNumber = Value("phoneNumber", Seq[String]("order", "customer", "contactDetails", "phone")).value[String](json)
     println(phoneNumber)
-    val itemID = Value("itemID", json, Seq[String]("order", "items", "0", "id")).value[Int]
+    val itemID = Value("itemID", Seq[String]("order", "items", "0", "id")).value[Int](json)
     println(itemID)
   }
   test ("test rule json") {
-    val defaultRule = RuleDefinition()
-    val sourceContent = SourceContent(Generator.main.sourceRoot, "draco/primes/rules/AddNaturalSequence.json")
-    val content = sourceContent.sourceLines.mkString("\n")
-    println(content)
-    val jsonContent: Json = parser.parse(content).getOrElse(Json.Null)
-    val rule = jsonContent.as[RuleDefinition].getOrElse(defaultRule)
-    val ruleSource: String = Generator.generate(rule, Seq("draco","primes"))
-    println(ruleSource)
+    val jsonFilePaths: Seq[String] = Seq (
+      "draco/primes/rules/AddNaturalSequence.json",
+      "draco/primes/rules/PrimesFromNaturalSequence.json",
+      "draco/primes/rules/RemoveCompositeNumbers.json"
+    )
+    val checkJson: String => Unit = fn => {
+      val sourceContent = SourceContent(Generator.main.sourceRoot, fn)
+      val content = sourceContent.sourceLines.mkString("\n")
+      val jsonContent: Json = parser.parse(content).getOrElse(Json.Null)
+      val rule = jsonContent.as[RuleDefinition].getOrElse(RuleDefinition.Null)
+      val ruleSource: String = Generator.generate(rule)
+      if (jsonContent.equals(rule.asJson)) {
+        println(content)
+      } else {
+        val checked =
+          s"""Content of $fn does not exactly match encoder result:
+             |Check emitted rule source code against current source code.
+             |""".stripMargin
+        print(checked)
+      }
+      println(ruleSource)
+    }
+    jsonFilePaths.map (checkJson)
   }
 }

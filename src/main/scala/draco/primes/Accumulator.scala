@@ -1,6 +1,6 @@
 package draco.primes
 
-import draco.DomainType
+import draco.{DomainType, TypeDefinition}
 
 import scala.collection.mutable
 

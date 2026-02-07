@@ -1,4 +1,5 @@
-package org.nexonix.rete
+package org.nexonix.rules.rete
+
 // Define a Fact, which is a piece of data in the working memory
 case class Fact(id: String, attributes: Map[String, Any])
 

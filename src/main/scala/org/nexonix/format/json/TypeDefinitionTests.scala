@@ -1,4 +1,4 @@
-package org.nexonix.json
+package org.nexonix.format.json
 
 class TypeDefinitionTests {
 

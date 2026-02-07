@@ -1,5 +1,7 @@
 package draco
 
+import org.nexonix.domains.Dictionary
+
 trait DomainDictionary extends Dictionary[DomainType,TypeDictionary] {}
 
 object DomainDictionary {

@@ -1,9 +1,9 @@
-package draco
+package org.nexonix.format
 
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 
-trait Value extends org.nexonix.format.Value {
+trait Value {
   val name: String
   val source: Json
   val pathElements: Seq[String]

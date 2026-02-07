@@ -1,25 +1,49 @@
 {
-  "name": "AddNaturalSequence",
-  "imports": [
+  "typeName" : {
+    "name" : "AddNaturalSequence",
+    "namePackage" : [
+      "draco",
+      "primes",
+      "rules"
+    ]
+  },
+  "variables" : [
     {
-      "name": "Accumulator",
-      "namePackage": [
-        "draco",
-        "primes"
-      ],
-      "parent": ""
+      "kind" : "Variable",
+      "name" : "accumulator",
+      "valueType" : "draco.primes.Accumulator"
+    },
+    {
+      "kind" : "Variable",
+      "name" : "i",
+      "valueType" : "java.lang.Integer"
     }
   ],
-  "variables": {
-    "accumulator": "Accumulator",
-    "i": "Integer"
-  },
-  "conditions": [],
-  "values": {},
-  "action": [
-    "accumulator.primeSet.addOne(i)",
-    "accumulator.naturalSet.addOne(i)",
-    "val text = s\"Added $i to primeSet and naturalSet.\"",
-    "accumulator.intervalTextSet.addOne((System.nanoTime(), text))"
-  ]
+  "action" : {
+    "kind" : "Action",
+    "valueType" : "Unit",
+    "body" : [
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "accumulator.primeSet.addOne(i)"
+      },
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "accumulator.naturalSet.addOne(i)"
+      },
+      {
+        "kind" : "Fixed",
+        "name" : "text",
+        "valueType" : "String",
+        "value" : "s\"Added $i to primeSet and naturalSet.\""
+      },
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "accumulator.intervalTextSet.addOne((System.nanoTime(), text))"
+      }
+    ]
+  }
 }

@@ -2,15 +2,17 @@ package draco
 
 import org.evrete.KnowledgeService
 import org.evrete.api.Knowledge
+import org.nexonix.domains
+import org.nexonix.domains.Domain
 
 trait Draco extends DomainElement {
   val knowledgeService: KnowledgeService = DomainElement.knowledgeService
   val knowledge: Knowledge = knowledgeService.newKnowledge("Draco")
 }
 
-object Draco {
+object Draco extends App {
   lazy val draco: Draco  = new Draco {
-    override val domain: Domain[Draco] = Domain[Draco] (
+    override val domain: Domain[Draco] = domains.Domain[Draco] (
       _domainName = DomainName (
         _typeName = TypeName (
           "Draco"
@@ -25,18 +27,22 @@ object Draco {
           "DomainName",
           "DomainType",
           "Generator",
-          "Member",
+          "Main",
+          "Primal",
           "Rule",
           "RuleActorBehavior",
           "RuleDefinition",
-          "RuleSet",
+          "Service",
           "SourceContent",
+          "Test",
           "TypeDefinition",
           "TypeDictionary",
+          "TypeElement",
           "TypeName",
           "Value"
         )
       )
     )
+    override val typeDefinition: TypeDefinition = TypeDefinition.Null
   }
 }

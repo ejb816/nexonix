@@ -1,4 +1,4 @@
-package dreams
+package draco.dreams
 
 import draco.DomainType
 

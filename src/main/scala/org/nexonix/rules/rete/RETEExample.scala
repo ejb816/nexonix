@@ -1,4 +1,5 @@
-package org.nexonix.rete
+package org.nexonix.rules.rete
+
 // Example usage
 object RETEExample extends App {
   private val engine = new RETEEngine

@@ -1,4 +1,4 @@
-package org.nexonix.json
+package org.nexonix.format.json
 
 import draco.transform.dataModel.DataModelService
 import io.circe.syntax.EncoderOps

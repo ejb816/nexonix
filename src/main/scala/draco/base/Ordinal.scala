@@ -1,6 +1,6 @@
 package draco.base
 
-import draco.Primal
+import org.nexonix.domains.Primal
 
 trait Ordinal extends Unit with Primal[Enumeration] {
   override val name: String = "Ordinal"

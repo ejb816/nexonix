@@ -6,16 +6,17 @@
     ],
     "parent" : ""
   },
-  "typeParameters" : [
-  ],
-  "dependsOn" : [
-  ],
-  "derivesFrom" : [
-  ],
-  "members" : [
-  ],
-  "parameters" : [
-  ],
-  "rules" : [
-  ]
+  "modules": [],
+  "derivation" : [],
+  "elements" : [],
+  "factory": {
+    "kind": "Factory",
+    "name": "",
+    "valueType": "draco.TypeName",
+    "value": "",
+    "parameters": [],
+    "body": []
+  },
+  "typeGlobals": [],
+  "rules" : []
 }

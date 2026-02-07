@@ -1,4 +1,4 @@
-package org.nexonix.actor
+package org.nexonix.actors
 
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.apache.pekko.actor.typed.scaladsl.LoggerOps

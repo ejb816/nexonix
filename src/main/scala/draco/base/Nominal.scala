@@ -1,6 +1,6 @@
 package draco.base
 
-import draco.Primal
+import org.nexonix.domains.Primal
 
 trait Nominal extends Unit with Primal[String] {
   override val name: String = "Nominal"

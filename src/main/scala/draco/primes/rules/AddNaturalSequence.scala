@@ -1,30 +1,29 @@
 
 package draco.primes.rules
 
-import org.evrete.api.Knowledge
-import org.evrete.api.RhsContext
-import draco.primes.Accumulator
-
 trait AddNaturalSequence extends draco.Rule
 
 object AddNaturalSequence {
-  val rule: Knowledge => Unit = knowledge => {
+
+  val action: java.util.function.Consumer[org.evrete.api.RhsContext] = (ctx: org.evrete.api.RhsContext) => {
+      val accumulator: draco.primes.Accumulator = ctx.get[draco.primes.Accumulator]("$accumulator")
+      val i: java.lang.Integer = ctx.get[java.lang.Integer]("$i")
+      accumulator.primeSet.addOne(i)
+      accumulator.naturalSet.addOne(i)
+      val text: String = s"Added $i to primeSet and naturalSet."
+      accumulator.intervalTextSet.addOne((System.nanoTime(), text))
+  }
+
+  val pattern: org.evrete.api.Knowledge => Unit = knowledge => {
     knowledge
     .builder()
-    .newRule ("AddNaturalSequence")
+    .newRule ("draco.primes.rules.AddNaturalSequence")
     .forEach (
-		"$accumulator", classOf[Accumulator],
-		"$i", classOf[Integer]
+      "$accumulator", classOf[draco.primes.Accumulator],
+      "$i", classOf[java.lang.Integer]
     )
-    
-    .execute ((context: RhsContext) => {
-    	val accumulator: Accumulator = context.get[Accumulator]("$accumulator")
-		val i: Integer = context.get[Integer]("$i")
-		accumulator.primeSet.addOne(i)
-		accumulator.naturalSet.addOne(i)
-		val text = s"Added $i to primeSet and naturalSet."
-		accumulator.intervalTextSet.addOne((System.nanoTime(), text))
-    })
+
+    .execute (action)
     .build()
   }
 }

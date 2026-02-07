@@ -1,30 +1,88 @@
 {
-  "name": "PrimesFromNaturalSequence",
-  "imports": [
+  "typeName" : {
+    "name" : "PrimesFromNaturalSequence",
+    "namePackage" : [
+      "draco",
+      "primes",
+      "rules"
+    ]
+  },
+  "variables" : [
     {
-      "name": "Accumulator",
-      "namePackage": [
-        "draco",
-        "primes"
-      ],
-      "parent": ""
+      "kind" : "Variable",
+      "name" : "accumulator",
+      "valueType" : "draco.primes.Accumulator"
+    },
+    {
+      "kind" : "Variable",
+      "name" : "i1",
+      "valueType" : "Integer"
+    },
+    {
+      "kind" : "Variable",
+      "name" : "i2",
+      "valueType" : "Integer"
+    },
+    {
+      "kind" : "Variable",
+      "name" : "i3",
+      "valueType" : "Integer"
     }
   ],
-  "variables": {
-    "accumulator": "Accumulator",
-    "i1": "Integer",
-    "i2": "Integer",
-    "i3": "Integer"
-  },
-  "conditions": [
-    "i1 * i2 == i3"
+  "conditions" : [
+    {
+      "kind" : "Condition",
+      "valueType" : "Boolean",
+      "value" : "i1 * i2 == i3",
+      "parameters" : [
+        {
+          "kind" : "Parameter",
+          "name" : "i1",
+          "valueType" : "Integer"
+        },
+        {
+          "kind" : "Parameter",
+          "name" : "i2",
+          "valueType" : "Integer"
+        },
+        {
+          "kind" : "Parameter",
+          "name" : "i3",
+          "valueType" : "Integer"
+        }
+      ]
+    }
   ],
-  "values": {},
-  "action": [
-    "val newText: (Long,String) = (System.nanoTime(),s\" Remove $i3 ->\\t$i3 == $i1 * $i2\")",
-    "context.delete(i3)",
-    "accumulator.primeSet.remove(i3)",
-    "accumulator.compositeSet.addOne(i3)",
-    "accumulator.intervalTextSet.addOne(newText)"
-  ]
+  "action" : {
+    "kind" : "Action",
+    "valueType" : "Unit",
+    "body" : [
+      {
+        "kind" : "Fixed",
+        "name" : "newText",
+        "valueType" : "(Long, String)",
+        "value" : "(System.nanoTime(), s\" Remove $i3 ->\\t$i3 == $i1 * $i2\")"
+      },
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "ctx.delete(i3)"
+      },
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "accumulator.primeSet.remove(i3)"
+      },
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "accumulator.compositeSet.addOne(i3)"
+      },
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "accumulator.intervalTextSet.addOne(newText)"
+      }
+    ]
+  }
 }

@@ -5,30 +5,11 @@
       "draco",
       "base",
       "coordinate"
-      ],
+    ],
     "parent": "draco.base.Coordinate"
   },
-  "dependsOn": [
-    {
-      "name": "Radians",
-      "namePackage": [
-        "draco",
-        "base",
-        "unit"
-      ],
-      "parent": "draco.base.Coordinate"
-    },
-    {
-      "name": "Meters",
-      "namePackage": [
-        "draco",
-        "base",
-        "unit"
-      ],
-      "parent": "draco.base.Coordinate"
-    }
-  ],
-  "derivesFrom": [
+  "modules": [],
+  "derivation": [
     {
       "name": "Coordinate",
       "namePackage": [
@@ -37,17 +18,25 @@
         "coordinate"
       ],
       "parent": "draco.base.Coordinate"
-    }  ],
-  "members": [
-    {"kind": "Fixed", "name": "azimuth", "type": "Radians", "value": ""},
-    {"kind": "Fixed", "name": "elevation", "type": "Radians", "value": ""},
-    {"kind": "Fixed", "name": "range", "type": "Meters", "value": ""}
+    }
   ],
-  "typeParameters": [],
-  "parameters": [
-    {"kind": "Parameter", "name": "azimuth", "type": "Radians", "value": ""},
-    {"kind": "Parameter", "name": "elevation", "type": "Radians", "value": ""},
-    {"kind": "Parameter", "name": "range", "type": "Meters", "value": ""}
+  "elements": [
+    {"kind": "Fixed", "name": "azimuth", "valueType": "Radians", "value": "", "parameters": [], "body": []},
+    {"kind": "Fixed", "name": "elevation", "valueType": "Radians", "value": "", "parameters": [], "body": []},
+    {"kind": "Fixed", "name": "range", "valueType": "Meters", "value": "", "parameters": [], "body": []}
   ],
+  "factory": {
+    "kind": "Factory",
+    "name": "",
+    "valueType": "draco.base.coordinate.Spherical",
+    "value": "",
+    "parameters": [
+      {"kind": "Parameter", "name": "azimuth", "valueType": "Radians", "value": "", "parameters": [], "body": []},
+      {"kind": "Parameter", "name": "elevation", "valueType": "Radians", "value": "", "parameters": [], "body": []},
+      {"kind": "Parameter", "name": "range", "valueType": "Meters", "value": "", "parameters": [], "body": []}
+    ],
+    "body": []
+  },
+  "typeGlobals": [],
   "rules": []
 }

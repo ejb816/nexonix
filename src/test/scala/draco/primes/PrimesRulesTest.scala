@@ -43,7 +43,7 @@ class PrimesRulesTest extends AnyFunSuite {
     println(jsonContent.spaces2)
 
     val rule: RuleDefinition = jsonContent.as[RuleDefinition].getOrElse(null)
-    val ruleSource = Generator.generate (rule, Seq("draco", "primes", "rules"))
+    val ruleSource = Generator.generate (rule)
     val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/rules/PrimesFromNaturalSequence.scala")
     contentSink.write(ruleSource)
     println(ruleSource)
@@ -56,7 +56,7 @@ class PrimesRulesTest extends AnyFunSuite {
     println(jsonContent.spaces2)
 
     val rule: RuleDefinition = jsonContent.as[RuleDefinition].getOrElse(null)
-    val ruleSource = Generator.generate (rule, Seq("draco", "primes", "rules"))
+    val ruleSource = Generator.generate (rule)
     val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/rules/AddNaturalSequence.scala")
     contentSink.write(ruleSource)
     println(ruleSource)
@@ -69,7 +69,7 @@ class PrimesRulesTest extends AnyFunSuite {
     println(jsonContent.spaces2)
 
     val rule: RuleDefinition = jsonContent.as[RuleDefinition].getOrElse(null)
-    val ruleSource = Generator.generate (rule, Seq("draco", "primes", "rules"))
+    val ruleSource = Generator.generate (rule)
     val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/rules/RemoveCompositeNumbers.scala")
     contentSink.write(ruleSource)
     println(ruleSource)
@@ -103,7 +103,7 @@ class PrimesRulesTest extends AnyFunSuite {
   test("PrimesFromNaturalSequence.rule") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge = service.newKnowledge("PrimesFromNaturalSequence.rule")
-    rules.PrimesFromNaturalSequence.rule (knowledge)
+    rules.PrimesFromNaturalSequence.pattern (knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),
@@ -115,8 +115,8 @@ class PrimesRulesTest extends AnyFunSuite {
   test("AddAndRemoveRulesTest") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge: Knowledge = service.newKnowledge("AddAndRemoveRulesTest")
-    rules.AddNaturalSequence.rule (knowledge)
-    RemoveCompositeNumbers.rule (knowledge)
+    rules.AddNaturalSequence.pattern (knowledge)
+    rules.RemoveCompositeNumbers.pattern (knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),

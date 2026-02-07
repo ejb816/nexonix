@@ -1,8 +1,10 @@
 package draco.transform.bravo
 
 import draco.transform.dataModel.DataModel
-import draco.{Domain, DomainName, TypeName}
+import draco.{DomainName, TypeName}
 import org.evrete.api.Knowledge
+import org.nexonix.domains
+import org.nexonix.domains.Domain
 
 trait Bravo extends DataModel {
   override val knowledge: Knowledge = knowledgeService.newKnowledge("Bravo")
@@ -10,7 +12,7 @@ trait Bravo extends DataModel {
 
 object Bravo {
   lazy val bravo: Bravo = new Bravo {
-    val domain: Domain[Bravo] = Domain[Bravo] (
+    val domain: Domain[Bravo] = domains.Domain[Bravo] (
       _domainName = DomainName (
         _typeName = TypeName (
           _name = "Bravo",

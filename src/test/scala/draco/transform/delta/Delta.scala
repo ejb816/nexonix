@@ -1,8 +1,10 @@
 package draco.transform.delta
 
 import draco.transform.dataModel.DataModel
-import draco.{Domain, DomainName, TypeName}
+import draco.{DomainName, TypeName}
 import org.evrete.api.Knowledge
+import org.nexonix.domains
+import org.nexonix.domains.Domain
 
 trait Delta extends DataModel {
   override val knowledge: Knowledge = knowledgeService.newKnowledge("Delta")
@@ -10,7 +12,7 @@ trait Delta extends DataModel {
 
 object Delta {
   val delta: Delta = new Delta {
-    val domain: Domain[Delta] = Domain[Delta] (
+    val domain: Domain[Delta] = domains.Domain[Delta] (
       _domainName = DomainName (
         _typeName = TypeName (
           _name = "Delta",

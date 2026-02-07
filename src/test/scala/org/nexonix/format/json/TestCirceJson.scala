@@ -1,4 +1,4 @@
-package org.nexonix.json
+package org.nexonix.format.json
 
 import io.circe.optics.JsonPath.root
 import io.circe.{Json, parser}

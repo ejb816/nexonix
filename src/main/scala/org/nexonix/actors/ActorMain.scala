@@ -1,4 +1,4 @@
-package org.nexonix.actor
+package org.nexonix.actors
 
 class ActorMain {
 

@@ -1,6 +1,6 @@
 package draco.base
 
-import draco.Primal
+import org.nexonix.domains.Primal
 
 trait Meters extends Distance with Primal[Double] {
   override val name: String = "Meters"

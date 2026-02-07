@@ -1,4 +1,4 @@
-package org.nexonix.rete
+package org.nexonix.rules.rete
 
 import org.scalatest.funsuite.AnyFunSuite
 //import org.nexonix.rete.Rete.{Network, addFact, addProduction, fireRules}
