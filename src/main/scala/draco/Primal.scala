@@ -1,4 +1,4 @@
-package draco
+package org.nexonix.domains
 
 trait Primal [T] {
   val value : T

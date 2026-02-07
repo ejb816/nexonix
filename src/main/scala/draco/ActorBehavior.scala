@@ -1,7 +1,7 @@
-package draco
+package org.nexonix.actors
 
-import org.apache.pekko.actor.typed.{Behavior, ExtensibleBehavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
+import org.apache.pekko.actor.typed.{Behavior, ExtensibleBehavior, Signal, TypedActorContext}
 
 trait ActorBehavior[T] extends ExtensibleBehavior[T] {
   override def receive (ctx: TypedActorContext[T], msg: T): Behavior[T] = {

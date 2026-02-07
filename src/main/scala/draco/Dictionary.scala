@@ -1,4 +1,4 @@
-package draco
+package org.nexonix.domains
 
 trait Dictionary[K,V] extends Map[K, V] {
   val kvMap: Map[K, V]
@@ -8,7 +8,7 @@ trait Dictionary[K,V] extends Map[K, V] {
   def iterator: Iterator[(K, V)] = kvMap.iterator
 }
 
-object Dictionary extends App {
+object Dictionary {
   def apply[K,V] (_kvMap: Dictionary[K,V]) : Dictionary[K,V] = new Dictionary[K,V] {
     override val kvMap: Map[K, V] = _kvMap
   }

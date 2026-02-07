@@ -1,6 +1,8 @@
-package draco
+package org.nexonix.domains
 
-trait Domain [T] extends DomainType {}
+import draco._
+
+trait Domain[T] extends DomainType {}
 
 object Domain {
   def apply[T] (

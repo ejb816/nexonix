@@ -40,20 +40,21 @@ object TypeName {
   }
 
   lazy implicit val encoder: Encoder[TypeName] = Encoder.instance { t =>
-    // Only local identity; DO NOT embed parent object (breaks the cycle).
-    Json.obj(
-      "name"        -> Json.fromString(t.name),
-      "namePackage" -> t.namePackage.asJson,
-      "parent"  -> t.parent.asJson
-    )
+    val fields = Seq(
+      Some("name" -> Json.fromString(t.name)),
+      if (t.namePackage.nonEmpty) Some("namePackage" -> t.namePackage.asJson) else None,
+      if (t.parent.nonEmpty) Some("parent" -> t.parent.asJson) else None
+    ).flatten
+
+    Json.obj(fields: _*)
   }
 
   lazy implicit val decoder: Decoder[TypeName] = Decoder.instance { c =>
     for {
       _name        <- c.downField("name").as[String]
-      _namePackage <- c.downField("namePackage").as[Seq[String]]
-      _parent      <- c.downField("parent").as[Option[String]]
+      _namePackage <- c.downField("namePackage").as[Option[Seq[String]]].map(_.getOrElse(Seq.empty))
+      _parent      <- c.downField("parent").as[Option[String]].map(_.getOrElse(""))
     } yield {
-      TypeName(_name, _parent.getOrElse(""), _namePackage)
+      TypeName(_name, _parent, _namePackage)
     }
   }}

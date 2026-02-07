@@ -6,12 +6,11 @@ import io.circe.{Decoder, Encoder, Json}
 
 sealed trait TypeDefinition {
   val typeName: TypeName
-  val typeParameters: Seq[String]
-  val moduleElements: Seq[TypeName]
-  val dependsOn: Seq[TypeName]
-  val derivesFrom: Seq[TypeName]
+  val modules: Seq[TypeName]
+  val derivation: Seq[TypeName]
   val elements: Seq[TypeElement]
-  val parameters: Seq[TypeElement]
+  val factory: Factory
+  val typeGlobals: Seq[BodyElement]
   val rules: Seq[TypeName]
 }
 
@@ -23,68 +22,70 @@ object TypeDefinition extends App {
   }
   def apply (
               _typeName: TypeName,
-              _typeParameters: Seq[String] = Seq[String](),
-              _moduleElements: Seq[TypeName] = Seq[TypeName](),
-              _dependsOn: Seq[TypeName] = Seq[TypeName](),
-              _derivesFrom: Seq[TypeName] = Seq[TypeName](),
-              _elements: Seq[TypeElement] = Seq[TypeElement](),
-              _parameters: Seq[TypeElement] = Seq[TypeElement](),
-              _rules: Seq[TypeName] = Seq[TypeName]()
+              _modules: Seq[TypeName] = Seq.empty,
+              _derivation: Seq[TypeName] = Seq.empty,
+              _elements: Seq[TypeElement] = Seq.empty,
+              _factory: Factory = Factory.Null,
+              _typeGlobals: Seq[BodyElement] = Seq.empty,
+              _rules: Seq[TypeName] = Seq.empty
             ) : TypeDefinition = {
     new TypeDefinition {
       override val typeName: TypeName = _typeName
-      override val typeParameters: Seq[String] = _typeParameters
-      override val moduleElements: Seq[TypeName] = _moduleElements
-      override val dependsOn: Seq[TypeName] = _dependsOn
-      override val derivesFrom: Seq[TypeName] = _derivesFrom
+      override val modules: Seq[TypeName] = _modules
+      override val derivation: Seq[TypeName] = _derivation
       override val elements: Seq[TypeElement] = _elements
-      override val parameters: Seq[TypeElement] = _parameters
+      override val factory: Factory = _factory
+      override val typeGlobals: Seq[BodyElement] = _typeGlobals
       override val rules: Seq[TypeName] = _rules
     }
   }
   // Encode a TypeDefinition
   lazy implicit val encoder: Encoder[TypeDefinition] = Encoder.instance { td =>
-    Json.obj(
-      "typeName"       -> td.typeName.asJson,       // TypeName
-      "typeParameters" -> td.typeParameters.asJson, // Seq[String]
-      "moduleElements" -> td.moduleElements.asJson, // Seq[TypeName]
-      "dependsOn"      -> td.dependsOn.asJson,      // Seq[TypeName]
-      "derivesFrom"    -> td.derivesFrom.asJson,    // Seq[TypeName]
-      "elements"       -> td.elements.asJson,       // Seq[TypeElement]
-      "parameters"     -> td.parameters.asJson,     // Seq[TypeElement]
-      "rules"          -> td.rules.asJson           // Seq[TypeName]
-    )
+    val fields = Seq(
+      Some("typeName" -> td.typeName.asJson),
+      if (td.modules.nonEmpty) Some("modules" -> td.modules.asJson) else None,
+      if (td.derivation.nonEmpty) Some("derivation" -> td.derivation.asJson) else None,
+      if (td.elements.nonEmpty) Some("elements" -> td.elements.asJson) else None,
+      if (td.factory.valueType.nonEmpty) Some("factory" -> td.factory.asJson) else None,
+      if (td.typeGlobals.nonEmpty) Some("typeGlobals" -> td.typeGlobals.asJson) else None,
+      if (td.rules.nonEmpty) Some("rules" -> td.rules.asJson) else None
+    ).flatten
+
+    Json.obj(fields: _*)
   }
 
   lazy implicit val decoder: Decoder[TypeDefinition] = Decoder.instance { cursor =>
     for {
-      _typeName        <- cursor.downField("typeName").as[TypeName]
-      _typeParameters  <- cursor.downField("typeParameters").as[Seq[String]]
-      _moduleElements  <- cursor.downField("moduleElements").as[Seq[TypeName]]
-      _dependsOn       <- cursor.downField("dependsOn").as[Seq[TypeName]]
-      _derivesFrom     <- cursor.downField("derivesFrom").as[Seq[TypeName]]
-      _elements        <- cursor.downField("elements").as[Seq[TypeElement]]
-      _parameters      <- cursor.downField("parameters").as[Seq[TypeElement]]
-      _rules           <- cursor.downField("rules").as[Seq[TypeName]]
+      _typeName    <- cursor.downField("typeName").as[TypeName]
+      _modules     <- cursor.downField("modules").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
+      _derivation  <- cursor.downField("derivation").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
+      _elements    <- cursor.downField("elements").as[Option[Seq[TypeElement]]].map(_.getOrElse(Seq.empty))
+      _factory     <- cursor.downField("factory").as[Option[Factory]].map(_.getOrElse(Factory.Null))
+      _typeGlobals <- cursor.downField("typeGlobals").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
+      _rules       <- cursor.downField("rules").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
     } yield TypeDefinition (
       _typeName,
-      _typeParameters,
-      _moduleElements,
-      _dependsOn,
-      _derivesFrom,
+      _modules,
+      _derivation,
       _elements,
-      _parameters,
+      _factory,
+      _typeGlobals,
       _rules
     )
   }
   lazy val Null: TypeDefinition = new TypeDefinition {
     override val typeName: TypeName = TypeName.Null
-    override val typeParameters: Seq[String] = Seq()
-    override val moduleElements: Seq[TypeName] = Seq()
-    override val dependsOn: Seq[TypeName] = Seq()
-    override val derivesFrom: Seq[TypeName] = Seq()
-    override val elements: Seq[TypeElement] = Seq()
-    override val parameters: Seq[TypeElement] = Seq()
-    override val rules: Seq[TypeName] = Seq()
+    override val modules: Seq[TypeName] = Seq.empty
+    override val derivation: Seq[TypeName] = Seq.empty
+    override val elements: Seq[TypeElement] = Seq.empty
+    override val factory: Factory = Factory.Null
+    override val typeGlobals: Seq[BodyElement] = Seq.empty
+    override val rules: Seq[TypeName] = Seq.empty
   }
+  lazy val Default: TypeDefinition = TypeDefinition (
+    TypeName (
+      _name = "NewUnnamedType",
+      _namePackage = Seq ("new", "unknown", "package", "name")
+    )
+  )
 }
