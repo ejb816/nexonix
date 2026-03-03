@@ -16,7 +16,28 @@ trait PrimeOrdinal {
   }
 }
 
-object PrimeOrdinal extends App {
+object PrimeOrdinal extends App with draco.TypeInstance {
+  lazy val typeDefinition: draco.TypeDefinition = draco.TypeDefinition (
+    _typeName = draco.TypeName (
+      _name = "PrimeOrdinal",
+      _namePackage = Seq ("draco", "primes")
+    ),
+    _elements = Seq (
+      draco.Fixed ("prime", "PrimeOrdinal"),
+      draco.Fixed ("power", "PrimeOrdinal"),
+      draco.Fixed ("product", "PrimeOrdinal")
+    ),
+    _factory = draco.Factory (
+      "PrimeOrdinal",
+      _parameters = Seq (
+        draco.Parameter ("prime", "PrimeOrdinal", ""),
+        draco.Parameter ("power", "PrimeOrdinal", ""),
+        draco.Parameter ("product", "PrimeOrdinal", "")
+      )
+    )
+  )
+  lazy val typeInstance: draco.Type[PrimeOrdinal] = draco.Type[PrimeOrdinal] (typeDefinition)
+
   def apply(
              _prime: PrimeOrdinal,
              _power: PrimeOrdinal,

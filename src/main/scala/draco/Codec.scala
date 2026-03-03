@@ -1,4 +1,4 @@
-package org.nexonix.format.json
+package draco
 
 import io.circe.{Decoder, Encoder}
 

@@ -1,17 +1,32 @@
 package draco.primes
 
-import draco.{DomainElement, DomainName, TypeName}
-import org.evrete.KnowledgeService
-import org.evrete.api.Knowledge
-import org.nexonix.domains
-import org.nexonix.domains.Domain
-
-trait Primes extends DomainElement {
-  override val knowledgeService: KnowledgeService = DomainElement.knowledgeService
-  override val knowledge: Knowledge = knowledgeService.newKnowledge("Primes")
+import draco._
+trait Primes extends DomainInstance {
+  val knowledge: org.evrete.api.Knowledge = Rule.knowledgeService.newKnowledge("Primes")
 }
 
-object Primes {
+object Primes extends App with DomainInstance {
+  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = draco.TypeName (
+      _name = "Primes",
+      _namePackage = Seq ("draco", "primes")
+    ),
+    _derivation = Seq (
+      draco.TypeName ("DomainInstance", _namePackage = Seq ("draco"))
+    )
+  )
+  lazy val typeInstance: Type[Primes] = Type[Primes] (typeDefinition)
+
+  lazy val domainInstance: draco.Domain[Primes] = draco.Domain[Primes] (
+    _domainName = draco.DomainName (
+      _typeName = typeDefinition.typeName,
+      _elementTypeNames = Seq (
+        "Numbers",
+        "PrimesRuleData"
+      )
+    )
+  )
+
   def filter(naturals: LazyList[Int]): LazyList[Int] = {
     val p = naturals.head
     // The #:: operator constructs a LazyList (like : in Haskell)
@@ -32,20 +47,5 @@ object Primes {
   def nPrimes(n: Int): Seq[Int] = {
     // Convert the first n primes to a List
     filter(naturals(2)).take(n)
-  }
-
-  val primes: Primes = new Primes {
-    override val domain: Domain[Primes] = domains.Domain[Primes] (
-      _domainName = DomainName (
-        _typeName = TypeName (
-          _name = "Primes",
-          _namePackage = Seq ("draco", "primes")
-        ),
-        _elementTypeNames = Seq (
-          "Numbers",
-          "PrimesRuleData"
-        )
-      )
-    )
   }
 }

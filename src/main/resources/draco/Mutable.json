@@ -1,0 +1,38 @@
+{
+  "typeName" : {
+    "name" : "Mutable",
+    "namePackage" : [
+      "draco"
+    ]
+  },
+  "derivation" : [
+    {
+      "name" : "BodyElement",
+      "namePackage" : [
+        "draco"
+      ]
+    }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Mutable",
+    "parameters" : [
+      {
+        "kind" : "Parameter",
+        "name" : "name",
+        "valueType" : "String"
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "valueType",
+        "valueType" : "String"
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "value",
+        "valueType" : "String",
+        "value" : "\"\""
+      }
+    ]
+  }
+}

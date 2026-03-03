@@ -4,7 +4,25 @@ import java.net.URI
 
 trait Test extends Main
 
-object Test extends App {
+object Test extends App with TypeInstance {
+  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "Test",
+      _namePackage = Seq ("draco")
+    ),
+    _derivation = Seq (
+      TypeName ("Main", _namePackage = Seq ("draco"))
+    ),
+    _factory = Factory (
+      "Test",
+      _parameters = Seq (
+        Parameter ("sourceName", "String", ""),
+        Parameter ("sinkName", "String", "")
+      )
+    )
+  )
+  lazy val typeInstance: Type[Test] = Type[Test] (typeDefinition)
+
   def apply (
               _sourceName: String,
               _sinkName: String

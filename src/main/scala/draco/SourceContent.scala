@@ -11,7 +11,27 @@ SourceContent {
   val sourceString: String
 }
 
-object SourceContent extends App {
+object SourceContent extends App with TypeInstance {
+  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "SourceContent",
+      _namePackage = Seq ("draco")
+    ),
+    _elements = Seq (
+      Fixed ("source", "BufferedSource"),
+      Fixed ("sourceLines", "Seq[String]"),
+      Fixed ("sourceString", "String")
+    ),
+    _factory = Factory (
+      "SourceContent",
+      _parameters = Seq (
+        Parameter ("sourceRoot", "URI", ""),
+        Parameter ("logicalPath", "String", "")
+      )
+    )
+  )
+  lazy val typeInstance: Type[SourceContent] = Type[SourceContent] (typeDefinition)
+
   private lazy val NullSourceContent: URL = classOf[SourceContent].getResource("/NullSourceContent")
   def apply(
              _sourceRoot: URI,

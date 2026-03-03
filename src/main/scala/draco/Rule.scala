@@ -1,18 +1,35 @@
 package draco
 
+import org.evrete.KnowledgeService
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait Rule {
-  val pattern: Knowledge => Unit
-  val action: RhsContext => Unit
-}
+import java.util.function.Consumer
 
-object Rule {
-  def apply (
-      _pattern: Knowledge => Unit,
-      _action: RhsContext => Unit
-  ): Rule = new Rule {
-    override val pattern: Knowledge => Unit = _pattern
-    override val action: RhsContext => Unit = _action
+trait Rule[T] extends RuleType
+
+object Rule extends App with TypeInstance {
+  // Provisional until type parameters are handled in TypeName
+  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "Rule[T]",
+      _namePackage = Seq ("draco")
+    ),
+    _elements = Seq (
+      Fixed ("pattern", "Consumer[Knowledge]"),
+      Fixed ("action", "Consumer[RhsContext]")
+    )
+  )
+  lazy val typeInstance: Type[Rule[_]] = Type[Rule[_]] (typeDefinition)
+
+  lazy val knowledgeService: KnowledgeService = new KnowledgeService ()
+  def apply[T] (
+      _ruleDefinition: RuleDefinition = RuleDefinition.Null,
+      _pattern: Consumer[Knowledge],
+      _action: Consumer[RhsContext]
+    ) : Rule[T] = new Rule[T] {
+    override val ruleDefinition: RuleDefinition =_ruleDefinition
+    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
+    override val action: Consumer[RhsContext] = _action
+    override val pattern: Consumer[Knowledge] = _pattern
   }
 }

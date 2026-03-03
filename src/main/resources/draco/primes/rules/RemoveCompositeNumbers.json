@@ -11,7 +11,7 @@
     {
       "kind" : "Variable",
       "name" : "accumulator",
-      "valueType" : "draco.primes.Accumulator"
+      "valueType" : "Accumulator"
     },
     {
       "kind" : "Variable",

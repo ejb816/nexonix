@@ -1,25 +1,22 @@
 package draco.transform.charlie
 
-import draco.transform.dataModel.DataModel
-import draco.{DomainName, TypeName}
-import org.evrete.api.Knowledge
-import org.nexonix.domains
-import org.nexonix.domains.Domain
+import draco._
+import draco.transform._
 
-trait Charlie extends DataModel {
-  override val knowledge: Knowledge = knowledgeService.newKnowledge("Charlie")
-}
+trait Charlie extends dataModel.DataModel
 
 object Charlie {
-  val charlie: Charlie = new Charlie {
-    val domain: Domain[Charlie] = domains.Domain[Charlie] (
-      _domainName = DomainName (
-        _typeName = TypeName (
-          _name = "Charlie",
-          _namePackage = Seq ("draco", "transform", "charlie")
-        ),
-        _elementTypeNames = Seq ()
-      )
+  val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "Charlie",
+      _namePackage = Seq ("draco", "transform", "charlie")
     )
-  }
+  )
+  lazy val typeInstance: Type[Charlie] = Type[Charlie] (typeDefinition)
+  lazy val domainInstance: Domain[Charlie] = Domain[Charlie] (
+    _domainName = DomainName (
+      _typeName = typeDefinition.typeName,
+      _elementTypeNames = Seq ()
+    )
+  )
 }

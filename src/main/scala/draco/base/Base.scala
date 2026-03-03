@@ -1,38 +1,39 @@
 package draco.base
 
-import draco.{DomainElement, DomainName, TypeDefinition, TypeName}
-import org.evrete.KnowledgeService
-import org.evrete.api.Knowledge
-import org.nexonix.domains
-import org.nexonix.domains.Domain
+import draco._
 
-trait Base extends DomainElement {
-  override val knowledge: Knowledge = knowledgeService.newKnowledge("Base")
-}
+trait Base extends DomainInstance
 
-object Base {
-  val typeElementNames: Seq[String] = Seq (
-    "Cardinal",
-    "Cartesian",
-    "Coordinates",
-    "Cylindrical",
-    "Distance",
-    "Meters",
-    "Nominal",
-    "Ordinal",
-    "Orientable",
-    "Polar",
-    "Radians",
-    "Rectangular",
-    "Rotation",
-    "Spacetime",
-    "Spherical",
-    "Unit"
+object Base extends App with DomainInstance{
+  lazy val typeDefinition: draco.TypeDefinition = draco.TypeDefinition (
+    _typeName = draco.TypeName (
+      _name = "Base",
+      _namePackage = Seq ("draco", "base")
+    ),
+    _derivation = Seq (
+      draco.TypeName ("DomainInstance", _namePackage = Seq ("draco"))
+    )
   )
-  val domainName: DomainName = DomainName(TypeName(_name = "Base", _parent = "draco.base"), typeElementNames)
-  val base: Base = new Base {
-    override val knowledgeService: KnowledgeService = DomainElement.knowledgeService
-    override val knowledge: Knowledge = knowledgeService.newKnowledge("Base Knowledge")
-    override val domain: Domain[Base] = domains.Domain[Base] (domainName)
+  lazy val typeInstance: Type[Base] = Type[Base] (typeDefinition)
+  lazy val domainInstance: draco.DomainType = new Domain[Base] {
+    override val domainName: draco.DomainName = draco.DomainName(
+      _typeName = draco.TypeName(
+        _name = "Base",
+        _parent = "draco.base"
+      ),
+      _elementTypeNames = Seq(
+        "Cardinal",
+        "Coordinate",
+        "Distance",
+        "Meters",
+        "Nominal",
+        "Ordinal",
+        "Radians",
+        "Rotation",
+        "Unit"
+      )
+    )
+    override val typeDictionary: TypeDictionary = TypeDictionary(domainName)
+    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
   }
 }

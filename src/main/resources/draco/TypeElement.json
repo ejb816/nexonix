@@ -1,0 +1,38 @@
+{
+  "typeName" : {
+    "name" : "TypeElement",
+    "namePackage" : [
+      "draco"
+    ]
+  },
+  "modules" : [
+    {
+      "name" : "BodyElement",
+      "namePackage" : [
+        "draco"
+      ]
+    }
+  ],
+  "elements" : [
+    {
+      "kind" : "Fixed",
+      "name" : "name",
+      "valueType" : "String"
+    },
+    {
+      "kind" : "Fixed",
+      "name" : "valueType",
+      "valueType" : "String"
+    },
+    {
+      "kind" : "Fixed",
+      "name" : "parameters",
+      "valueType" : "Seq[Parameter]"
+    },
+    {
+      "kind" : "Fixed",
+      "name" : "body",
+      "valueType" : "Seq[BodyElement]"
+    }
+  ]
+}

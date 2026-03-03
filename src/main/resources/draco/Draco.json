@@ -25,6 +25,5 @@
     "parameters": [],
     "body": []
   },
-  "typeGlobals": [],
-  "rules" : []
+  "globalElements": []
 }

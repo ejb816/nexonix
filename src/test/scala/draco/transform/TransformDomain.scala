@@ -1,6 +1,6 @@
 package draco.transform
 
-import org.nexonix.domains.Domain
+import draco._
 
 trait TransformDomain[SO,SI] {
   val sourceDomain: Domain[SO]

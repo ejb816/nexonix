@@ -1,0 +1,46 @@
+{
+  "typeName" : {
+    "name" : "Pattern",
+    "namePackage" : [
+      "draco"
+    ]
+  },
+  "derivation" : [
+    {
+      "name" : "BodyElement",
+      "namePackage" : [
+        "draco"
+      ]
+    }
+  ],
+  "elements" : [
+    {
+      "kind" : "Fixed",
+      "name" : "variables",
+      "valueType" : "Seq[Variable]"
+    },
+    {
+      "kind" : "Fixed",
+      "name" : "conditions",
+      "valueType" : "Seq[Condition]"
+    }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Pattern",
+    "parameters" : [
+      {
+        "kind" : "Parameter",
+        "name" : "variables",
+        "valueType" : "Seq[Variable]",
+        "value" : "Seq.empty"
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "conditions",
+        "valueType" : "Seq[Condition]",
+        "value" : "Seq.empty"
+      }
+    ]
+  }
+}

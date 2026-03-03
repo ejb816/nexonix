@@ -1,11 +1,21 @@
-package org.nexonix.domains
+package draco
 
-trait Primal [T] {
+trait Primal [T] extends DracoType {
   val value : T
 }
 
-object Primal {
-  def apply[T] (_value: T) : Primal[T] = new Primal[T] {
-    override val value: T = _value
-  }
+object Primal extends App with TypeInstance {
+  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "Primal[T]",
+      _namePackage = Seq ("draco")
+    ),
+    _elements = Seq (
+      Fixed (
+        _name = "value",
+        _valueType = "T"
+      )
+    )
+  )
+  lazy val typeInstance: Type[Primal[_]] = Type[Primal[_]] (typeDefinition)
 }

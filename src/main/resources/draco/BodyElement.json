@@ -1,0 +1,78 @@
+{
+  "typeName" : {
+    "name" : "BodyElement",
+    "namePackage" : [
+      "draco"
+    ]
+  },
+  "modules" : [
+    {
+      "name" : "Fixed",
+      "namePackage" : [
+        "draco"
+      ]
+    },
+    {
+      "name" : "Mutable",
+      "namePackage" : [
+        "draco"
+      ]
+    },
+    {
+      "name" : "Dynamic",
+      "namePackage" : [
+        "draco"
+      ]
+    },
+    {
+      "name" : "Parameter",
+      "namePackage" : [
+        "draco"
+      ]
+    },
+    {
+      "name" : "Monadic",
+      "namePackage" : [
+        "draco"
+      ]
+    },
+    {
+      "name" : "Pattern",
+      "namePackage" : [
+        "draco"
+      ]
+    },
+    {
+      "name" : "Action",
+      "namePackage" : [
+        "draco"
+      ]
+    },
+    {
+      "name" : "Condition",
+      "namePackage" : [
+        "draco"
+      ]
+    },
+    {
+      "name" : "Variable",
+      "namePackage" : [
+        "draco"
+      ]
+    },
+    {
+      "name" : "Factory",
+      "namePackage" : [
+        "draco"
+      ]
+    }
+  ],
+  "derivation" : [
+    {
+      "name" : "TypeElement",
+      "namePackage" : [
+        "draco"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "typeName" : {
+    "name" : "Action",
+    "namePackage" : [
+      "draco"
+    ]
+  },
+  "derivation" : [
+    {
+      "name" : "BodyElement",
+      "namePackage" : [
+        "draco"
+      ]
+    }
+  ],
+  "elements" : [
+    {
+      "kind" : "Fixed",
+      "name" : "variables",
+      "valueType" : "Seq[Variable]"
+    },
+    {
+      "kind" : "Fixed",
+      "name" : "values",
+      "valueType" : "Seq[Value]"
+    }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Action",
+    "parameters" : [
+      {
+        "kind" : "Parameter",
+        "name" : "variables",
+        "valueType" : "Seq[Variable]",
+        "value" : "Seq.empty"
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "values",
+        "valueType" : "Seq[Value]",
+        "value" : "Seq.empty"
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "body",
+        "valueType" : "Seq[BodyElement]",
+        "value" : "Seq.empty"
+      }
+    ]
+  }
+}

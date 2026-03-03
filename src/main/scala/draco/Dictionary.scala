@@ -1,4 +1,4 @@
-package org.nexonix.domains
+package draco
 
 trait Dictionary[K,V] extends Map[K, V] {
   val kvMap: Map[K, V]

@@ -1,0 +1,39 @@
+{
+  "typeName" : {
+    "name" : "Factory",
+    "namePackage" : [
+      "draco"
+    ]
+  },
+  "derivation" : [
+    {
+      "name" : "BodyElement",
+      "namePackage" : [
+        "draco"
+      ]
+    }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Factory",
+    "parameters" : [
+      {
+        "kind" : "Parameter",
+        "name" : "valueType",
+        "valueType" : "String"
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "parameters",
+        "valueType" : "Seq[Parameter]",
+        "value" : "Seq.empty"
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "body",
+        "valueType" : "Seq[BodyElement]",
+        "value" : "Seq.empty"
+      }
+    ]
+  }
+}

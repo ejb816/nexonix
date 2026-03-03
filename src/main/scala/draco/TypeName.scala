@@ -11,7 +11,30 @@ sealed trait TypeName {
   val resourcePath: String
 }
 
-object TypeName {
+object TypeName extends App with TypeInstance {
+  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "TypeName",
+      _namePackage = Seq ("draco")
+    ),
+    _elements = Seq (
+      Fixed ("name", "String"),
+      Fixed ("namePackage", "Seq[String]"),
+      Fixed ("parent", "String"),
+      Fixed ("fullName", "String"),
+      Fixed ("resourcePath", "String")
+    ),
+    _factory = Factory (
+      "TypeName",
+      _parameters = Seq (
+        Parameter ("name", "String", ""),
+        Parameter ("parent", "String", "\"\""),
+        Parameter ("namePackage", "Seq[String]", "Seq()")
+      )
+    )
+  )
+  lazy val typeInstance: Type[TypeName] = Type[TypeName] (typeDefinition)
+
   private def fullTypeName: (Seq[String],String) => String = (np, n) => s"${np.mkString(".")}.$n"
   private def fullResourcePath: (Seq[String],String) => String = (np, n) => s"/${np.mkString("/")}/$n.json"
 

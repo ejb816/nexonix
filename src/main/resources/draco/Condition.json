@@ -1,0 +1,33 @@
+{
+  "typeName" : {
+    "name" : "Condition",
+    "namePackage" : [
+      "draco"
+    ]
+  },
+  "derivation" : [
+    {
+      "name" : "BodyElement",
+      "namePackage" : [
+        "draco"
+      ]
+    }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Condition",
+    "parameters" : [
+      {
+        "kind" : "Parameter",
+        "name" : "parameters",
+        "valueType" : "Seq[Parameter]",
+        "value" : "Seq.empty"
+      },
+      {
+        "kind" : "Parameter",
+        "name" : "value",
+        "valueType" : "String"
+      }
+    ]
+  }
+}

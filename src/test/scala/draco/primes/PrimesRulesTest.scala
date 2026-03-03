@@ -103,7 +103,7 @@ class PrimesRulesTest extends AnyFunSuite {
   test("PrimesFromNaturalSequence.rule") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge = service.newKnowledge("PrimesFromNaturalSequence.rule")
-    rules.PrimesFromNaturalSequence.pattern (knowledge)
+    rules.PrimesFromNaturalSequence.ruleInstance.pattern.accept(knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),
@@ -115,8 +115,8 @@ class PrimesRulesTest extends AnyFunSuite {
   test("AddAndRemoveRulesTest") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge: Knowledge = service.newKnowledge("AddAndRemoveRulesTest")
-    rules.AddNaturalSequence.pattern (knowledge)
-    rules.RemoveCompositeNumbers.pattern (knowledge)
+    rules.AddNaturalSequence.ruleInstance.pattern.accept(knowledge)
+    rules.RemoveCompositeNumbers.ruleInstance.pattern.accept(knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),

@@ -1,18 +1,25 @@
-package org.nexonix.domains
+package draco
 
-import draco._
+trait Domain[T] extends DomainType
 
-trait Domain[T] extends DomainType {}
+object Domain extends App with TypeInstance {
+  // Provisional until type parameters are handled in TypeName
+  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "Domain[T]",
+      _namePackage = Seq ("draco")
+    ),
+    _derivation = Seq (
+      TypeName ("DomainType", _namePackage = Seq ("draco"))
+    )
+  )
+  lazy val typeInstance: Type[Domain[_]] = Type[Domain[_]] (typeDefinition)
 
-object Domain {
   def apply[T] (
-                 _domainName: DomainName,
-                 _domains: Seq[DomainType] = Seq ()
+                 _domainName: DomainName
                ) : Domain[T] = new Domain[T] {
     override val domainName: DomainName = _domainName
     override val typeDefinition: TypeDefinition = TypeDefinition(domainName.typeName)
     override val typeDictionary: TypeDictionary = TypeDictionary (domainName)
-    override val domains: Seq[DomainType] = _domains
-    override val domainDictionary: DomainDictionary = DomainDictionary(domains)
   }
 }

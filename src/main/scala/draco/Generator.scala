@@ -1,10 +1,50 @@
 package draco
 
+import io.circe.syntax.EncoderOps
+
 trait Generator {
 
 }
 
-object Generator extends App {
+object Generator extends App with TypeInstance {
+  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "Generator",
+      _namePackage = Seq ("draco")
+    ),
+    _factory = Factory (
+      "Generator",
+      _parameters = Seq (
+        Parameter ("typeDictionary", "TypeDictionary", "")
+      )
+    )
+  )
+  lazy val typeInstance: Type[Generator] = Type[Generator] (typeDefinition)
+
+  // --- Literal generation helpers ---
+
+  private def wildcardName (name: String): String = {
+    val idx = name.indexOf('[')
+    if (idx < 0) name else name.substring(0, idx) + "[_]"
+  }
+
+  private def baseName (name: String): String = {
+    val idx = name.indexOf('[')
+    if (idx < 0) name else name.substring(0, idx)
+  }
+
+  private def typeDefinitionFromJson (td: TypeDefinition) : String = {
+    val json = td.asJson.spaces2
+    s"""parser.parse(\"\"\"$json\"\"\").flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)"""
+  }
+
+  private def ruleDefinitionFromJson (rd: RuleDefinition) : String = {
+    val json = rd.asJson.spaces2
+    s"""parser.parse(\"\"\"$json\"\"\").flatMap(_.as[RuleDefinition]).getOrElse(RuleDefinition.Null)"""
+  }
+
+  // --- Rule generation helpers ---
+
   private def factVariables (
     _variables: Seq[Variable]
   ) : String = {
@@ -66,36 +106,8 @@ object Generator extends App {
     else s"$varBindings\n$bodyStatements"
   }
 
-  lazy val main: Main = Main.roots
-  lazy val test: Test = Test.roots
-  def generate (
-                 rd: RuleDefinition
-               ): String = {
-    s"""
-       |package ${rd.typeName.namePackage.mkString(".")}
-       |
-       |trait ${rd.typeName.name} extends draco.Rule
-       |
-       |object ${rd.typeName.name} {
-       |${conditionFunctions(rd.conditions)}
-       |  val action: java.util.function.Consumer[org.evrete.api.RhsContext] = (ctx: org.evrete.api.RhsContext) => {
-       |${actionBody(rd.action, rd.variables, rd.values)}
-       |  }
-       |
-       |  val pattern: org.evrete.api.Knowledge => Unit = knowledge => {
-       |    knowledge
-       |    .builder()
-       |    .newRule ("${rd.typeName.fullName}")
-       |    .forEach (
-       |${factVariables(rd.variables)}
-       |    )
-       |${whereConditions(rd.conditions, rd.typeName)}
-       |    .execute (action)
-       |    .build()
-       |  }
-       |}
-       |""".stripMargin
-  }
+  // --- Type generation helpers ---
+
   private def typeModifier (
     modules: Seq[TypeName]
   ) : String = {
@@ -105,7 +117,8 @@ object Generator extends App {
   private def typeExtends (
     derivation: Seq[TypeName]
   ) : String = {
-    if (derivation.isEmpty) "" else "extends " + derivation.map(_.name).mkString(" with ")
+    if (derivation.isEmpty) "extends TypeInstance"
+    else "extends " + derivation.map(_.name).mkString(" with ")
   }
 
   private def methodParameters (
@@ -172,47 +185,32 @@ object Generator extends App {
   }
 
   private def factoryBody (
-    elements: Seq[BodyElement]
+    factory: Factory
   ) : String = {
-    if (elements.isEmpty) ""
-    else {
-      val overrides = elements.map {
-        case f: Fixed =>
-          val init = if (f.value.isEmpty) "" else s" = ${f.value}"
-          s"    override val ${f.name}: ${f.valueType}$init"
-        case m: Mutable =>
-          val init = if (m.value.isEmpty) "" else s" = ${m.value}"
-          s"    override var ${m.name}: ${m.valueType}$init"
-        case d: Dynamic =>
-          val init = if (d.value.isEmpty) "" else s" = ${d.value}"
-          s"    override def ${d.name}: ${d.valueType}$init"
-        case p: Parameter =>
-          val init = if (p.value.isEmpty) "" else s" = ${p.value}"
-          s"    override val ${p.name}: ${p.valueType}$init"
-        case be: BodyElement =>
-          val init = if (be.value.isEmpty) "" else s" = ${be.value}"
-          s"    override val ${be.name}: ${be.valueType}$init"
+    if (factory.body.nonEmpty) {
+      val overrides = factory.body.map {
+        case f: Fixed   => s"    override val ${f.name}: ${f.valueType} = ${f.value}"
+        case m: Mutable => s"    override var ${m.name}: ${m.valueType} = ${m.value}"
+        case d: Dynamic => s"    override def ${d.name}: ${d.valueType} = ${d.value}"
+        case be: BodyElement => s"    override val ${be.name}: ${be.valueType} = ${be.value}"
       }
       s"{\n${overrides.mkString("\n")}\n  }"
+    } else {
+      val overrides = factory.parameters.map { p =>
+        s"    override val ${p.name}: ${p.valueType} = _${p.name}"
+      }
+      val tdOverride = "    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition"
+      val allOverrides = overrides :+ tdOverride
+      s"{\n${allOverrides.mkString("\n")}\n  }"
     }
   }
 
-  private def ruleSetDeclaration (
-    rules: Seq[TypeName]
+  private def globalElementsDeclaration (
+    globalElements: Seq[BodyElement]
   ) : String = {
-    if (rules.isEmpty) "val ruleSet: Seq[Knowledge => Unit] = Seq()"
+    if (globalElements.isEmpty) ""
     else {
-      val ruleRefs = rules.map(_.fullName + ".rule")
-      s"val ruleSet: Seq[Knowledge => Unit] = Seq(\n    ${ruleRefs.mkString(",\n    ")}\n  )"
-    }
-  }
-
-  private def typeGlobalsDeclaration (
-    typeGlobals: Seq[BodyElement]
-  ) : String = {
-    if (typeGlobals.isEmpty) ""
-    else {
-      val globals = typeGlobals.map {
+      val globals = globalElements.map {
         case f: Fixed =>
           val init = if (f.value.isEmpty) s"null.asInstanceOf[${f.valueType}]" else f.value
           s"  val ${f.name}: ${f.valueType} = $init"
@@ -231,12 +229,34 @@ object Generator extends App {
     }
   }
 
+  private def nullValueFor (valueType: String, defaultValue: String) : String = {
+    if (defaultValue.nonEmpty) defaultValue
+    else valueType match {
+      case "String"                   => "\"\""
+      case s if s.startsWith("Seq[")  => "Seq.empty"
+      case s if s.startsWith("Map[")  => "Map.empty"
+      case "Int" | "Long"             => "0"
+      case "Double" | "Float"         => "0.0"
+      case "Boolean"                  => "false"
+      case _                          => s"null.asInstanceOf[$valueType]"
+    }
+  }
+
   private def nullInstance (
     typeName: TypeName,
-    elements: Seq[TypeElement]
+    elements: Seq[TypeElement],
+    factory: Factory
   ) : String = {
-    if (elements.isEmpty) s"lazy val Null: ${typeName.name} = new ${typeName.name} {}"
-    else {
+    val name = baseName(typeName.name)
+    if (factory.valueType.nonEmpty) {
+      val nullArgs = factory.parameters.map { p =>
+        s"    _${p.name} = ${nullValueFor(p.valueType, p.value)}"
+      }
+      if (nullArgs.isEmpty) s"lazy val Null: $name = apply()"
+      else s"lazy val Null: $name = apply(\n${nullArgs.mkString(",\n")}\n  )"
+    } else if (elements.isEmpty) {
+      s"lazy val Null: $name = new $name {}"
+    } else {
       val nullMembers = elements.map {
         case f: Fixed => s"    override val ${f.name}: ${f.valueType} = null.asInstanceOf[${f.valueType}]"
         case m: Mutable => s"    override var ${m.name}: ${m.valueType} = null.asInstanceOf[${m.valueType}]"
@@ -244,7 +264,7 @@ object Generator extends App {
         case p: Parameter => s"    override val ${p.name}: ${p.valueType} = null.asInstanceOf[${p.valueType}]"
         case te: TypeElement => s"    override val ${te.name}: ${te.valueType} = null.asInstanceOf[${te.valueType}]"
       }
-      s"lazy val Null: ${typeName.name} = new ${typeName.name} {\n${nullMembers.mkString("\n")}\n  }"
+      s"lazy val Null: $name = new $name {\n${nullMembers.mkString("\n")}\n  }"
     }
   }
 
@@ -252,53 +272,210 @@ object Generator extends App {
     typeName: TypeName,
     factory: Factory
   ) : String = {
+    val name = baseName(typeName.name)
     val specifiedParams = factory.parameters.filter(_.value.nonEmpty)
-    if (specifiedParams.isEmpty) s"lazy val Default: ${typeName.name} = apply()"
+    if (specifiedParams.isEmpty) s"lazy val Default: $name = apply()"
     else {
       val paramAssignments = specifiedParams.map { p =>
         s"    _${p.name} = ${p.value}"
       }
-      s"lazy val Default: ${typeName.name} = apply(\n${paramAssignments.mkString(",\n")}\n  )"
+      s"lazy val Default: $name = apply(\n${paramAssignments.mkString(",\n")}\n  )"
     }
   }
 
-  private def companionObject (td: TypeDefinition) : String = {
+  // --- Companion object generation ---
+
+  private def typeGlobal (td: TypeDefinition) : String = {
     val factory = td.factory
     val hasFactory = factory.valueType.nonEmpty
-    val hasGlobals = td.typeGlobals.nonEmpty
+    val hasGlobalElements = td.globalElements.nonEmpty
+    val objName = baseName(td.typeName.name)
+    val wName = wildcardName(td.typeName.name)
 
-    if (!hasFactory && !hasGlobals) {
-      s"object ${td.typeName.name}"
-    } else if (!hasFactory && hasGlobals) {
-      s"""object ${td.typeName.name} {
-         |${typeGlobalsDeclaration(td.typeGlobals)}
+    val header = s"object $objName extends App with TypeInstance"
+    val tdLiteral = s"  lazy val typeDefinition: TypeDefinition = ${typeDefinitionFromJson(td)}"
+    val tiLiteral = s"  lazy val typeInstance: Type[$wName] = Type[$wName] (typeDefinition)"
+
+    if (!hasFactory && !hasGlobalElements) {
+      s"""$header {
+         |$tdLiteral
+         |$tiLiteral
+         |}""".stripMargin
+    } else if (!hasFactory && hasGlobalElements) {
+      s"""$header {
+         |$tdLiteral
+         |$tiLiteral
+         |
+         |${globalElementsDeclaration(td.globalElements)}
          |}""".stripMargin
     } else {
-      s"""object ${td.typeName.name} {
-         |  def apply (${factoryParameters(factory.parameters)}) : ${factory.valueType} = new ${factory.valueType} ${factoryBody(factory.body)}
+      s"""$header {
+         |$tdLiteral
+         |$tiLiteral
          |
-         |  ${nullInstance(td.typeName, td.elements)}
+         |  def apply (${factoryParameters(factory.parameters)}) : ${factory.valueType} = new ${factory.valueType} ${factoryBody(factory)}
+         |
+         |  ${nullInstance(td.typeName, td.elements, td.factory)}
          |
          |  ${defaultInstance(td.typeName, td.factory)}
          |
-         |${typeGlobalsDeclaration(td.typeGlobals)}
-         |
-         |  ${ruleSetDeclaration(td.rules)}
+         |${globalElementsDeclaration(td.globalElements)}
          |}""".stripMargin
     }
   }
+
+  // --- Trait declaration helper ---
+
+  private def traitDeclaration (td: TypeDefinition) : String =
+    s"${typeModifier(td.modules)}trait ${td.typeName.name} ${typeExtends(td.derivation)} ${typeBody(td.elements)}"
+
+  // --- DomainInstance companion generation ---
+
+  private def domainInstanceLiteral (objName: String, dn: DomainName) : String = {
+    val elementNames = if (dn.elementTypeNames.isEmpty) "Seq.empty"
+    else {
+      val names = dn.elementTypeNames.map(n => s"      \"$n\"")
+      s"Seq (\n${names.mkString(",\n")}\n    )"
+    }
+    s"""  lazy val domainInstance: Domain[$objName] = Domain[$objName] (
+       |    _domainName = DomainName (
+       |      _typeName = typeDefinition.typeName,
+       |      _elementTypeNames = $elementNames
+       |    )
+       |  )""".stripMargin
+  }
+
+  private def domainGlobal (td: TypeDefinition, dn: DomainName) : String = {
+    val objName = baseName(td.typeName.name)
+    val wName = wildcardName(td.typeName.name)
+    val hasGlobalElements = td.globalElements.nonEmpty
+
+    val header = s"object $objName extends App with DomainInstance"
+    val tdLiteral = s"  lazy val typeDefinition: TypeDefinition = ${typeDefinitionFromJson(td)}"
+    val tiLiteral = s"  lazy val typeInstance: Type[$wName] = Type[$wName] (typeDefinition)"
+    val diLiteral = domainInstanceLiteral(objName, dn)
+    val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.globalElements)}" else ""
+
+    s"""$header {
+       |$tdLiteral
+       |$tiLiteral
+       |
+       |$diLiteral$globals
+       |}""".stripMargin
+  }
+
+  // --- Module ordering (topological sort) ---
+
+  private def moduleOrder (tds: Seq[TypeDefinition]) : Seq[TypeDefinition] = {
+    val byName = tds.map(td => baseName(td.typeName.name) -> td).toMap
+    val ordered = scala.collection.mutable.LinkedHashSet[String]()
+    def walk (td: TypeDefinition) : Unit = {
+      val name = baseName(td.typeName.name)
+      if (!ordered.contains(name)) {
+        ordered += name
+        td.modules.flatMap(tn => byName.get(baseName(tn.name))).foreach(walk)
+      }
+    }
+    val referencedAsModule = tds.flatMap(_.modules.map(tn => baseName(tn.name))).toSet
+    tds.filterNot(td => referencedAsModule.contains(baseName(td.typeName.name))).foreach(walk)
+    tds.foreach(walk) // safety net for unreachable types
+    ordered.toSeq.map(byName)
+  }
+
+  // --- Main generate methods ---
+
+  lazy val main: Main = Main.roots
+  lazy val test: Test = Test.roots
 
   def generate (td: TypeDefinition) : String = {
     s"""
        |package ${td.typeName.namePackage.mkString(".")}
        |
-       |import org.evrete.api.Knowledge
+       |${traitDeclaration(td)}
        |
-       |${typeModifier(td.modules)}trait ${td.typeName.name} ${typeExtends(td.derivation)} ${typeBody(td.elements)}
-       |
-       |${companionObject(td)}
+       |${typeGlobal(td)}
        |""".stripMargin
   }
+
+  def generate (td: TypeDefinition, dn: DomainName) : String = {
+    s"""
+       |package ${td.typeName.namePackage.mkString(".")}
+       |
+       |${traitDeclaration(td)}
+       |
+       |${domainGlobal(td, dn)}
+       |""".stripMargin
+  }
+
+  def generate (typeDefinitions: Seq[TypeDefinition]) : String = {
+    if (typeDefinitions.isEmpty) return ""
+    if (typeDefinitions.size == 1) return generate(typeDefinitions.head)
+    val ordered = moduleOrder(typeDefinitions)
+    val pkg = ordered.head.typeName.namePackage.mkString(".")
+    val typeBlocks = ordered.map { td =>
+      s"${traitDeclaration(td)}\n\n${typeGlobal(td)}"
+    }
+    s"\npackage $pkg\n\n${typeBlocks.mkString("\n\n")}\n"
+  }
+
+  private def ruleImports (namePackage: Seq[String]) : String = {
+    val packageImports = namePackage.inits.toSeq.tail.init.map(p => s"import ${p.mkString(".")}._")
+    val allPackageImports = if (packageImports.contains("import draco._")) packageImports
+      else "import draco._" +: packageImports
+    val frameworkImports = Seq (
+      "import io.circe.{Json, parser}",
+      "import org.evrete.api.{Knowledge, RhsContext}",
+      "import java.util.function.Consumer"
+    )
+    (allPackageImports ++ frameworkImports).mkString("\n")
+  }
+
+  def generate (rd: RuleDefinition) : String = {
+    val name = rd.typeName.name
+    s"""
+       |package ${rd.typeName.namePackage.mkString(".")}
+       |
+       |${ruleImports(rd.typeName.namePackage)}
+       |
+       |trait $name extends RuleInstance
+       |
+       |object $name extends App with RuleInstance {
+       |  private lazy val ruleDefinition: RuleDefinition = ${ruleDefinitionFromJson(rd)}
+       |${conditionFunctions(rd.conditions)}
+       |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+       |${actionBody(rd.action, rd.variables, rd.values)}
+       |  }
+       |
+       |  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+       |    knowledge
+       |    .builder()
+       |    .newRule ("${rd.typeName.fullName}")
+       |    .forEach (
+       |${factVariables(rd.variables)}
+       |    )
+       |${whereConditions(rd.conditions, rd.typeName)}
+       |    .execute (action)
+       |    .build()
+       |  }
+       |
+       |  lazy val ruleInstance: RuleType = Rule[$name] (
+       |    ruleDefinition,
+       |    _pattern = pattern,
+       |    _action = action
+       |  )
+       |
+       |  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+       |    _typeName = ruleDefinition.typeName,
+       |    _derivation = Seq (
+       |      RuleInstance.typeInstance.typeDefinition.typeName
+       |    )
+       |  )
+       |
+       |  lazy val typeInstance: DracoType = Type[$name] (typeDefinition)
+       |}
+       |""".stripMargin
+  }
+
   def apply (typeDictionary: TypeDictionary) : Generator = {
     new Generator {}
   }

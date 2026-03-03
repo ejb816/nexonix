@@ -1,0 +1,27 @@
+{
+  "typeName" : {
+    "name" : "Monadic",
+    "namePackage" : [
+      "draco"
+    ]
+  },
+  "derivation" : [
+    {
+      "name" : "BodyElement",
+      "namePackage" : [
+        "draco"
+      ]
+    }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Monadic",
+    "parameters" : [
+      {
+        "kind" : "Parameter",
+        "name" : "value",
+        "valueType" : "String"
+      }
+    ]
+  }
+}
