@@ -19,7 +19,6 @@ lazy val dependencies =
     val jlineVersion = "3.22.0"
     val pekkoActorTyped = "org.apache.pekko" %% "pekko-actor-typed" % pekkoActorVersion
     val pekkoActorTestkitTyped = "org.apache.pekko" %% "pekko-actor-testkit-typed" % pekkoActorVersion
-    val slf4j = "org.slf4j" % "slf4j-jdk14" % "2.0.9" % Test
     val slf4jImpl = "ch.qos.logback" % "logback-classic" % "1.5.11"
     val circeCore = "io.circe" %% "circe-core" % circeVersion
     val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
@@ -46,10 +45,12 @@ lazy val root = (project in file("."))
      Compile / mainClass := Some("org.mitre.anvil.rules.DataDictionaryMap"),
      Compile / discoveredMainClasses := Seq(),
 
+     fork := true,
+     javaOptions += "-Dslf4j.provider=ch.qos.logback.classic.spi.LogbackServiceProvider",
+
     libraryDependencies ++= Seq(
       dependencies.pekkoActorTyped,
       dependencies.pekkoActorTestkitTyped,
-      dependencies.slf4j,
       dependencies.slf4jImpl,
       dependencies.circeCore,
       dependencies.circeGeneric,

@@ -7,8 +7,9 @@ trait Primal [T] extends DracoType {
 object Primal extends App with TypeInstance {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
-      _name = "Primal[T]",
-      _namePackage = Seq ("draco")
+      _name = "Primal",
+      _namePackage = Seq ("draco"),
+      _typeParameters = Seq ("T")
     ),
     _elements = Seq (
       Fixed (

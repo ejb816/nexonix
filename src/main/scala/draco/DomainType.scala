@@ -1,7 +1,7 @@
 package draco
 
 trait DomainType extends DracoType {
-  val domainName: DomainName
+  val domainDefinition: DomainDefinition
   val typeDictionary: TypeDictionary
 }
 
@@ -16,8 +16,8 @@ object DomainType extends App with TypeInstance {
     ),
     _elements = Seq (
       Fixed (
-        _name = "domainName",
-        _valueType = "DomainName"
+        _name = "domainDefinition",
+        _valueType = "DomainDefinition"
       ),
       Fixed (
         _name = "typeDictionary",
@@ -26,14 +26,18 @@ object DomainType extends App with TypeInstance {
     )
   )
   lazy val typeInstance: Type[DomainType] = Type[DomainType] (typeDefinition)
+  lazy val Null: DomainType = new DomainType {
+    override val domainDefinition: DomainDefinition = DomainDefinition.Null
+    override val typeDictionary: TypeDictionary = TypeDictionary.Null
+    override val typeDefinition: TypeDefinition = TypeDefinition.Null
+  }
 
   def apply (
-            _domainName: DomainName,
+            _domainDefinition: DomainDefinition,
             _typeDictionary: TypeDictionary = TypeDictionary.Null
             ) : DomainType = new DomainType {
-    override val domainName: DomainName = _domainName
-    override val typeDefinition: TypeDefinition = TypeDefinition(_domainName.typeName)
+    override val domainDefinition: DomainDefinition = _domainDefinition
+    override val typeDefinition: TypeDefinition = TypeDefinition(_domainDefinition.typeName)
     override val typeDictionary: TypeDictionary = _typeDictionary
   }
 }
-

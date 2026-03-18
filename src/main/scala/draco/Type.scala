@@ -3,11 +3,11 @@ package draco
 trait Type[T] extends DracoType
 
 object Type extends App with TypeInstance {
-  // Provisional until type parameters are handled in TypeName
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
-      _name = "Type[T]",
-      _namePackage = Seq ("draco")
+      _name = "Type",
+      _namePackage = Seq ("draco"),
+      _typeParameters = Seq ("T")
     ),
     _derivation = Seq (
       TypeName ("DracoType", _namePackage = Seq ("draco"))

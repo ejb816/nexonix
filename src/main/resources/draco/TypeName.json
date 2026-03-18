@@ -1,21 +1,113 @@
 {
   "typeName" : {
     "name" : "TypeName",
-    "namePackage" : [
-      "draco"
+    "namePackage" : ["draco"]
+  },
+  "elements" : [
+    { "kind" : "Fixed", "name" : "name", "valueType" : "String" },
+    { "kind" : "Fixed", "name" : "namePackage", "valueType" : "Seq[String]" },
+    { "kind" : "Fixed", "name" : "aspects", "valueType" : "Seq[String]" },
+    { "kind" : "Fixed", "name" : "typeParameters", "valueType" : "Seq[String]" },
+    { "kind" : "Fixed", "name" : "qualifiedName", "valueType" : "String" },
+    { "kind" : "Fixed", "name" : "namePath", "valueType" : "String" },
+    { "kind" : "Fixed", "name" : "resourcePath", "valueType" : "String" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "TypeName",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "name", "valueType" : "String" },
+      { "kind" : "Parameter", "name" : "namePackage", "valueType" : "Seq[String]", "value" : "Seq()" },
+      { "kind" : "Parameter", "name" : "aspects", "valueType" : "Seq[String]", "value" : "Seq()" },
+      { "kind" : "Parameter", "name" : "typeParameters", "valueType" : "Seq[String]", "value" : "Seq()" }
     ],
-    "parent" : ""
+    "body" : [
+      { "kind" : "Fixed", "name" : "name", "valueType" : "String", "value" : "_name" },
+      { "kind" : "Fixed", "name" : "namePackage", "valueType" : "Seq[String]", "value" : "_namePackage" },
+      { "kind" : "Fixed", "name" : "aspects", "valueType" : "Seq[String]", "value" : "canonicalOrder(_aspects)" },
+      { "kind" : "Fixed", "name" : "typeParameters", "valueType" : "Seq[String]", "value" : "_typeParameters" },
+      { "kind" : "Fixed", "name" : "qualifiedName", "valueType" : "String", "value" : "fullQualifiedName(name, aspects)" },
+      { "kind" : "Fixed", "name" : "namePath", "valueType" : "String", "value" : "fullNamePath(namePackage, qualifiedName)" },
+      { "kind" : "Fixed", "name" : "resourcePath", "valueType" : "String", "value" : "fullResourcePath(namePackage, name, aspects)" }
+    ]
   },
-  "modules": [],
-  "derivation" : [],
-  "elements" : [],
-  "factory": {
-    "kind": "Factory",
-    "name": "",
-    "valueType": "draco.TypeName",
-    "value": "",
-    "parameters": [],
-    "body": []
-  },
-  "globalElements": []
+  "globalElements" : [
+    {
+      "kind" : "Fixed",
+      "name" : "validAspects",
+      "valueType" : "Seq[String]",
+      "value" : "Seq(\"domain\", \"rule\", \"actor\")"
+    },
+    {
+      "kind" : "Dynamic",
+      "name" : "canonicalOrder",
+      "valueType" : "Seq[String]",
+      "parameters" : [
+        { "kind" : "Parameter", "name" : "aspects", "valueType" : "Seq[String]" }
+      ],
+      "body" : [
+        { "kind" : "Fixed", "value" : "validAspects.filter(aspects.contains)" }
+      ]
+    },
+    {
+      "kind" : "Dynamic",
+      "name" : "aspectSuffix",
+      "valueType" : "String",
+      "parameters" : [
+        { "kind" : "Parameter", "name" : "aspects", "valueType" : "Seq[String]" }
+      ],
+      "body" : [
+        { "kind" : "Fixed", "value" : "canonicalOrder(aspects).map(_.capitalize).mkString" }
+      ]
+    },
+    {
+      "kind" : "Dynamic",
+      "name" : "aspectExtension",
+      "valueType" : "String",
+      "parameters" : [
+        { "kind" : "Parameter", "name" : "aspects", "valueType" : "Seq[String]" }
+      ],
+      "body" : [
+        { "kind" : "Fixed", "name" : "ordered", "valueType" : "Seq[String]", "value" : "canonicalOrder(aspects)" },
+        { "kind" : "Fixed", "value" : "if (ordered.isEmpty) \"\" else \".\" + ordered.mkString(\".\")" }
+      ]
+    },
+    {
+      "kind" : "Dynamic",
+      "name" : "fullQualifiedName",
+      "valueType" : "String",
+      "parameters" : [
+        { "kind" : "Parameter", "name" : "n", "valueType" : "String" },
+        { "kind" : "Parameter", "name" : "a", "valueType" : "Seq[String]" }
+      ],
+      "body" : [
+        { "kind" : "Fixed", "value" : "s\"$n${aspectSuffix(a)}\"" }
+      ]
+    },
+    {
+      "kind" : "Dynamic",
+      "name" : "fullNamePath",
+      "valueType" : "String",
+      "parameters" : [
+        { "kind" : "Parameter", "name" : "np", "valueType" : "Seq[String]" },
+        { "kind" : "Parameter", "name" : "qn", "valueType" : "String" }
+      ],
+      "body" : [
+        { "kind" : "Fixed", "value" : "if (np.isEmpty) qn else s\"${np.mkString(\".\")}.${qn}\"" }
+      ]
+    },
+    {
+      "kind" : "Dynamic",
+      "name" : "fullResourcePath",
+      "valueType" : "String",
+      "parameters" : [
+        { "kind" : "Parameter", "name" : "np", "valueType" : "Seq[String]" },
+        { "kind" : "Parameter", "name" : "n", "valueType" : "String" },
+        { "kind" : "Parameter", "name" : "a", "valueType" : "Seq[String]" }
+      ],
+      "body" : [
+        { "kind" : "Fixed", "value" : "s\"/${np.mkString(\"/\")}/$n${aspectExtension(a)}.json\"" }
+      ]
+    }
+  ]
 }

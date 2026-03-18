@@ -16,10 +16,10 @@ object Domain extends App with TypeInstance {
   lazy val typeInstance: Type[Domain[_]] = Type[Domain[_]] (typeDefinition)
 
   def apply[T] (
-                 _domainName: DomainName
+                 _domainDefinition: DomainDefinition
                ) : Domain[T] = new Domain[T] {
-    override val domainName: DomainName = _domainName
-    override val typeDefinition: TypeDefinition = TypeDefinition(domainName.typeName)
-    override val typeDictionary: TypeDictionary = TypeDictionary (domainName)
+    override val domainDefinition: DomainDefinition = _domainDefinition
+    override val typeDefinition: TypeDefinition = TypeDefinition(domainDefinition.typeName)
+    override val typeDictionary: TypeDictionary = TypeDictionary (domainDefinition)
   }
 }

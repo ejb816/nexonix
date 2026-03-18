@@ -1,21 +1,26 @@
 {
   "typeName" : {
     "name" : "TypeDefinition",
-    "namePackage" : [
-      "draco"
-    ],
-    "parent" : ""
+    "namePackage" : ["draco"]
   },
-  "modules": [],
-  "derivation" : [],
-  "elements" : [],
-  "factory": {
-    "kind": "Factory",
-    "name": "",
-    "valueType": "draco.TypeDefinition",
-    "value": "",
-    "parameters": [],
-    "body": []
-  },
-  "globalElements": []
+  "elements" : [
+    { "kind" : "Fixed", "name" : "typeName", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "modules", "valueType" : "Seq[TypeName]" },
+    { "kind" : "Fixed", "name" : "derivation", "valueType" : "Seq[TypeName]" },
+    { "kind" : "Fixed", "name" : "elements", "valueType" : "Seq[TypeElement]" },
+    { "kind" : "Fixed", "name" : "factory", "valueType" : "Factory" },
+    { "kind" : "Fixed", "name" : "globalElements", "valueType" : "Seq[BodyElement]" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "TypeDefinition",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "typeName", "valueType" : "TypeName" },
+      { "kind" : "Parameter", "name" : "modules", "valueType" : "Seq[TypeName]", "value" : "Seq.empty" },
+      { "kind" : "Parameter", "name" : "derivation", "valueType" : "Seq[TypeName]", "value" : "Seq.empty" },
+      { "kind" : "Parameter", "name" : "elements", "valueType" : "Seq[TypeElement]", "value" : "Seq.empty" },
+      { "kind" : "Parameter", "name" : "factory", "valueType" : "Factory", "value" : "Factory.Null" },
+      { "kind" : "Parameter", "name" : "globalElements", "valueType" : "Seq[BodyElement]", "value" : "Seq.empty" }
+    ]
+  }
 }

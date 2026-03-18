@@ -1,5 +1,0 @@
-package draco
-
-class GeneratorTest {
-
-}

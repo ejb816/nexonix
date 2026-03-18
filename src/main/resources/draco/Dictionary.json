@@ -1,0 +1,13 @@
+{
+  "typeName" : {
+    "name" : "Dictionary",
+    "namePackage" : ["draco"],
+    "typeParameters" : ["K", "V"]
+  },
+  "derivation" : [
+    { "name" : "Map", "typeParameters" : ["K", "V"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "kvMap", "valueType" : "Map[K, V]" }
+  ]
+}

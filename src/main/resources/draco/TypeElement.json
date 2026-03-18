@@ -5,6 +5,9 @@
       "draco"
     ]
   },
+  "derivation" : [
+    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["String"] }
+  ],
   "modules" : [
     {
       "name" : "BodyElement",

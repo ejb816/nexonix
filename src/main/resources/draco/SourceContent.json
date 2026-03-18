@@ -1,0 +1,19 @@
+{
+  "typeName" : {
+    "name" : "SourceContent",
+    "namePackage" : ["draco"]
+  },
+  "elements" : [
+    { "kind" : "Fixed", "name" : "source", "valueType" : "BufferedSource" },
+    { "kind" : "Fixed", "name" : "sourceLines", "valueType" : "Seq[String]" },
+    { "kind" : "Fixed", "name" : "sourceString", "valueType" : "String" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "SourceContent",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "sourceRoot", "valueType" : "URI" },
+      { "kind" : "Parameter", "name" : "logicalPath", "valueType" : "String" }
+    ]
+  }
+}

@@ -1,6 +1,5 @@
 package org.nexonix.format.json
 
-import draco.transform.dataModel.DataModelService
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 import org.scalatest.funsuite.AnyFunSuite

@@ -6,7 +6,44 @@ All notable changes to the Nexonix/Draco project will be documented in this file
 
 ### Added
 
-- **DomainInstance generation** — New `generate(td: TypeDefinition, dn: DomainName)` overload in Generator produces DomainInstance companion objects matching the hand-written Primes pattern. Includes `domainInstanceLiteral` and `domainGlobal` helpers.
+- **Complete JSON definition files** — Every manually-written draco framework type now has a corresponding JSON definition file in `src/main/resources/draco/`. New files: DracoType, Primal, Type, TypeInstance, RuleType, RuleInstance, Main, Test. Populated previously empty files: Rule, Value, SourceContent, RuleDefinition, TypeDictionary. Added missing derivation to: ActorInstance, DomainInstance, ActorDefinition, DomainDefinition (→ TypeInstance), TypeElement (→ Primal[String]).
+
+- **GeneratorDefinitionToSourceTest** — 28 generate tests covering all draco framework types: core hierarchy (DracoType, Primal, Type, TypeInstance), domain types, rule types, actor types, infrastructure types, and the TypeElement sealed hierarchy (multi-type generation). Tests generate source, write to `generated.draco` package, and compile-check.
+
+- **Generated output in `generated.draco` package** — Generated Scala files written to `src/test/scala/generated/draco/*.scala` with `package generated.draco`. Coexists with real framework types without shadowing. Replaces old `.generated.scala.txt` approach.
+
+- **External type import detection** — Generator automatically detects external types (URI, URL, BufferedSource, KnowledgeService, Consumer, Knowledge, RhsContext) referenced in elements/factory/globalElements and emits appropriate import statements.
+
+- **Parameterized Null instances** — `nullInstance` now uses `wildcardTypeName` for parameterized types (e.g., `lazy val Null: Actor[_] = apply[Nothing]()`) instead of unparameterized type name.
+
+### Changed
+
+- **TypeName `typeParameters` field** — Primal, Type, and Rule Scala sources updated to use proper `typeParameters = Seq("T")` instead of embedding `[T]` in the name string.
+
+- **`typeDefinitionLoad` fully qualified** — Generator now emits `draco.TypeDefinition.load(...)` instead of `TypeDefinition.load(...)`, enabling generated code to work in any package (including `generated.draco`).
+
+- **`typeExtends` no longer defaults to `extends TypeInstance`** — Empty derivation produces no extends clause (DracoType is the root). Types that previously relied on the implicit default now have explicit derivation in their JSON definitions.
+
+- **`typeImports` signature** — Changed from `(namePackage, hasCodec, instanceType)` to `(td, hasCodec, instanceType)` to enable external import detection from the TypeDefinition.
+
+- **Codec generation guard** — Simple codecs (Pattern 1) only generated when factory parameters are a subset of declared trait elements, preventing invalid field access in encoder/decoder.
+
+- **TypeDictionary derivation** — Fixed stale `namePackage` (`org.nexonix.domains` → `draco`) and updated to use `typeParameters` field instead of embedded `[TypeName,TypeDefinition]`.
+
+### Removed
+
+- **Stale JSON files** — Deleted `RuleActorBehavior.json` and `RuleSet.json` (no corresponding Scala source).
+- **Old generated files** — Removed all `*.generated.scala.txt` files, replaced by `generated/draco/*.scala`.
+
+---
+
+## [Previous - DomainDefinition, Rule Generation, Actor System]
+
+### Added
+
+- **DomainDefinition** — Replaced `DomainName` with `DomainDefinition`, a richer domain descriptor with `typeName`, `elementTypeNames`, `superdomain`, `source`, and `sink` fields. Makes domain definitions consistent with `RuleDefinition`. The `source`/`sink` fields formalize Update (endomorphism: source == sink) and Transform (source != sink) domain patterns. JSON backward compatible — existing `DomainName` JSON deserializes via defaulted `Option` fields.
+
+- **DomainInstance generation** — New `generate(td: TypeDefinition, dd: DomainDefinition)` overload in Generator produces DomainInstance companion objects matching the hand-written Primes pattern. Includes `domainInstanceLiteral` and `domainGlobal` helpers.
 
 - **nullValueFor helper** — Generator now produces type-appropriate null-equivalent values ("" for String, Seq.empty for Seq, 0 for Int, false for Boolean, etc.) instead of `null.asInstanceOf[T]` when generating Null instances.
 
@@ -54,7 +91,7 @@ All notable changes to the Nexonix/Draco project will be documented in this file
   - `RuleDefinition` - elides empty `variables`, `conditions`, `values`, `action`
   - `TypeName` - elides empty `namePackage`, `parent`
   - `Value` - elides empty `name`, `pathElements`
-  - `DomainName` - elides empty `elementTypeNames`
+  - `DomainDefinition` - elides empty `elementTypeNames`, `superdomain`, `source`, `sink`
 
 ### Changed
 

@@ -16,10 +16,10 @@ object Base extends App with DomainInstance{
   )
   lazy val typeInstance: Type[Base] = Type[Base] (typeDefinition)
   lazy val domainInstance: draco.DomainType = new Domain[Base] {
-    override val domainName: draco.DomainName = draco.DomainName(
+    override val domainDefinition: draco.DomainDefinition = draco.DomainDefinition(
       _typeName = draco.TypeName(
         _name = "Base",
-        _parent = "draco.base"
+        _namePackage = Seq ("draco", "base")
       ),
       _elementTypeNames = Seq(
         "Cardinal",
@@ -33,7 +33,7 @@ object Base extends App with DomainInstance{
         "Unit"
       )
     )
-    override val typeDictionary: TypeDictionary = TypeDictionary(domainName)
+    override val typeDictionary: TypeDictionary = TypeDictionary(domainDefinition)
     override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
   }
 }

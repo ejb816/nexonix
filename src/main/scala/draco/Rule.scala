@@ -8,11 +8,11 @@ import java.util.function.Consumer
 trait Rule[T] extends RuleType
 
 object Rule extends App with TypeInstance {
-  // Provisional until type parameters are handled in TypeName
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
-      _name = "Rule[T]",
-      _namePackage = Seq ("draco")
+      _name = "Rule",
+      _namePackage = Seq ("draco"),
+      _typeParameters = Seq ("T")
     ),
     _elements = Seq (
       Fixed ("pattern", "Consumer[Knowledge]"),

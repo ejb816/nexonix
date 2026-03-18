@@ -1,29 +1,9 @@
 {
   "typeName" : {
     "name" : "Draco",
-    "namePackage" : [
-      "draco"
-    ],
-    "parent" : ""
+    "namePackage" : ["draco"]
   },
-  "modules": [],
   "derivation" : [
-    {
-      "name" : "DomainType",
-      "namePackage" : [
-        "draco"
-      ],
-      "parent" : ""
-    }
-  ],
-  "elements" : [],
-  "factory": {
-    "kind": "Factory",
-    "name": "",
-    "valueType": "draco.Draco",
-    "value": "",
-    "parameters": [],
-    "body": []
-  },
-  "globalElements": []
+    { "name" : "DomainInstance", "namePackage" : ["draco"] }
+  ]
 }

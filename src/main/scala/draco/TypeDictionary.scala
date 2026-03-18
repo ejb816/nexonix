@@ -11,7 +11,7 @@ object TypeDictionary extends App with TypeInstance {
       _namePackage = Seq ("draco")
     ),
     _derivation = Seq (
-      TypeName ("Dictionary[TypeName,TypeDefinition]", _namePackage = Seq ("org", "nexonix", "domains"))
+      TypeName ("Dictionary", _namePackage = Seq ("draco"), _typeParameters = Seq ("TypeName", "TypeDefinition"))
     ),
     _elements = Seq (
       Fixed ("elementTypes", "Seq[TypeDefinition]")
@@ -19,16 +19,16 @@ object TypeDictionary extends App with TypeInstance {
     _factory = Factory (
       "TypeDictionary",
       _parameters = Seq (
-        Parameter ("domainName", "DomainName", "")
+        Parameter ("domainDefinition", "DomainDefinition", "")
       )
     )
   )
   lazy val typeInstance: Type[TypeDictionary] = Type[TypeDictionary] (typeDefinition)
 
-  def apply (_domainName: DomainName) : TypeDictionary = new TypeDictionary {
-    override val elementTypes: Seq[TypeDefinition] = _domainName.elementTypeNames.map (name =>
-      TypeDefinition (TypeName (name, _domainName.typeName.parent)))
+  def apply (_domainDefinition: DomainDefinition) : TypeDictionary = new TypeDictionary {
+    override val elementTypes: Seq[TypeDefinition] = _domainDefinition.elementTypeNames.map (name =>
+      TypeDefinition (TypeName (name, _namePackage = _domainDefinition.typeName.namePackage)))
     override val kvMap: Map[TypeName, TypeDefinition]  = elementTypes.map (td => (td.typeName, td)).toMap
   }
-  lazy val Null: TypeDictionary = TypeDictionary(DomainName.Null)
+  lazy val Null: TypeDictionary = TypeDictionary(DomainDefinition.Null)
 }

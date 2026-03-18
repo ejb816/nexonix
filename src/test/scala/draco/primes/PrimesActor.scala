@@ -1,12 +1,12 @@
 package draco.primes
 
-import draco.ActorBehavior
+import draco.Actor
 import draco.primes.{Numbers, Primes}
 import io.circe.syntax.EncoderOps
 import org.apache.pekko.actor.typed.{ActorSystem, Behavior}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
-trait PrimesActor extends ActorBehavior[Primes]
+trait PrimesActor extends Actor[Primes]
 
 // Create the actor system and spawn the actor
 object PrimesActor extends App {

@@ -85,7 +85,7 @@ class PrimesRulesTest extends AnyFunSuite {
       accumulator.primeSet.toSeq.toList
     }
     val prefixLength: Int = "List".length
-    println(s"Input Natural Sequence:${numbers.naturalSequence.toList.toString().substring(prefixLength)}")
+    println(s"Input Natural.json.json Sequence:${numbers.naturalSequence.toList.toString().substring(prefixLength)}")
     println(s"Result Prime Sequence: ${primeList.sorted.toString().substring(prefixLength)}")
     println(s"Result Composite Sequence: ${accumulator.compositeSet.toList.sorted.toString().substring(prefixLength)}")
     println(s"firstTime = $firstTime")

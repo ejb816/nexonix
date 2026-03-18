@@ -1,0 +1,19 @@
+{
+  "typeName" : {
+    "name" : "TypeDictionary",
+    "namePackage" : ["draco"]
+  },
+  "derivation" : [
+    { "name" : "Dictionary", "namePackage" : ["draco"], "typeParameters" : ["TypeName", "TypeDefinition"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "elementTypes", "valueType" : "Seq[TypeDefinition]" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "TypeDictionary",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "domainDefinition", "valueType" : "DomainDefinition" }
+    ]
+  }
+}

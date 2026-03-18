@@ -18,7 +18,7 @@ object Primes extends App with DomainInstance {
   lazy val typeInstance: Type[Primes] = Type[Primes] (typeDefinition)
 
   lazy val domainInstance: draco.Domain[Primes] = draco.Domain[Primes] (
-    _domainName = draco.DomainName (
+    _domainDefinition = draco.DomainDefinition (
       _typeName = typeDefinition.typeName,
       _elementTypeNames = Seq (
         "Numbers",

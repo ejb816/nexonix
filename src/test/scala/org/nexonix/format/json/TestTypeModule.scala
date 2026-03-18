@@ -1,43 +1,43 @@
 package org.nexonix.format.json
 
-import draco.{Factory, Fixed, Generator, TypeElement, DomainName, Parameter, TypeDefinition, TypeName}
+import draco.{Factory, Fixed, Generator, TypeElement, DomainDefinition, Parameter, TypeDefinition, TypeName}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
 class TestTypeModule extends AnyFunSuite  {
-  val dracoDomainName: DomainName = DomainName (
-    TypeName ("Draco"),
+  val dracoDomainDefinition: DomainDefinition = DomainDefinition (
+    TypeName ("Draco", _namePackage = Seq("draco"), _aspects = Seq("domain")),
     Seq (
       "Base"))
-  println(s"${dracoDomainName.typeName.name} namePackage: ${dracoDomainName.typeName.namePackage}")
+  println(s"${dracoDomainDefinition.typeName.name} namePackage: ${dracoDomainDefinition.typeName.namePackage}")
 
-  val baseDomainName: DomainName = DomainName (
-    TypeName ("Base", dracoDomainName.typeName.fullName),
+  val baseDomainDefinition: DomainDefinition = DomainDefinition (
+    TypeName ("Base", _namePackage = Seq("draco", "base"), _aspects = Seq("domain")),
     Seq (
       "Unit",
       "Orientable",
       "Coordinates"))
-  println(s"${baseDomainName.typeName.name} namePackage: ${baseDomainName.typeName.namePackage}")
+  println(s"${baseDomainDefinition.typeName.name} namePackage: ${baseDomainDefinition.typeName.namePackage}")
 
-  val unitDomainName: DomainName  = DomainName (
-    TypeName ("Unit", baseDomainName.typeName.fullName),
+  val unitDomainDefinition: DomainDefinition  = DomainDefinition (
+    TypeName ("Unit", _namePackage = Seq("draco", "base", "unit"), _aspects = Seq("domain")),
     Seq (
       "Measure",
       "Angle",
       "Radians",
       "Distance",
       "Meters"))
-  println(s"${unitDomainName.typeName.name} namePackage: ${unitDomainName.typeName.namePackage}")
+  println(s"${unitDomainDefinition.typeName.name} namePackage: ${unitDomainDefinition.typeName.namePackage}")
 
-  val measureTypeName: TypeName = TypeName ("Measure", unitDomainName.typeName.fullName)
-  val angleTypeName: TypeName = TypeName ("Angle", unitDomainName.typeName.fullName)
-  val radiansTypeName: TypeName = TypeName ("Radians", unitDomainName.typeName.fullName)
-  val distanceTypeName: TypeName = TypeName ("Distance", unitDomainName.typeName.fullName)
-  val metersTypeName: TypeName = TypeName ("Meters", unitDomainName.typeName.fullName)
+  val measureTypeName: TypeName = TypeName ("Measure", _namePackage = Seq("draco", "base", "unit"))
+  val angleTypeName: TypeName = TypeName ("Angle", _namePackage = Seq("draco", "base", "unit"))
+  val radiansTypeName: TypeName = TypeName ("Radians", _namePackage = Seq("draco", "base", "unit"))
+  val distanceTypeName: TypeName = TypeName ("Distance", _namePackage = Seq("draco", "base", "unit"))
+  val metersTypeName: TypeName = TypeName ("Meters", _namePackage = Seq("draco", "base", "unit"))
 
-  val orientableDomainName: DomainName = DomainName (
-    TypeName ("Orientable", baseDomainName.typeName.fullName),
+  val orientableDomainDefinition: DomainDefinition = DomainDefinition (
+    TypeName ("Orientable", _namePackage = Seq("draco", "base", "orientable"), _aspects = Seq("domain")),
     Seq (
       "Left",
       "Right",
@@ -45,17 +45,17 @@ class TestTypeModule extends AnyFunSuite  {
       "Lower",
       "Front",
       "Back"))
-  println(s"${orientableDomainName.typeName.name} TypePackage: ${orientableDomainName.typeName.namePackage}")
+  println(s"${orientableDomainDefinition.typeName.name} TypePackage: ${orientableDomainDefinition.typeName.namePackage}")
 
   val valueParameter: Parameter = Parameter ("value", "T", "")
-  val leftTypeName: TypeName = TypeName ("Left", orientableDomainName.typeName.fullName)
-  val rightTypeName: TypeName = TypeName ("Right", orientableDomainName.typeName.fullName)
-  val upperTypeName: TypeName = TypeName ("Upper", orientableDomainName.typeName.fullName)
-  val lowerTypeName: TypeName = TypeName ("Lower", orientableDomainName.typeName.fullName)
-  val frontTypeName: TypeName = TypeName ("Front", orientableDomainName.typeName.fullName)
-  val backTypeName: TypeName = TypeName ("Back", orientableDomainName.typeName.fullName)
+  val leftTypeName: TypeName = TypeName ("Left", _namePackage = Seq("draco", "base", "orientable"))
+  val rightTypeName: TypeName = TypeName ("Right", _namePackage = Seq("draco", "base", "orientable"))
+  val upperTypeName: TypeName = TypeName ("Upper", _namePackage = Seq("draco", "base", "orientable"))
+  val lowerTypeName: TypeName = TypeName ("Lower", _namePackage = Seq("draco", "base", "orientable"))
+  val frontTypeName: TypeName = TypeName ("Front", _namePackage = Seq("draco", "base", "orientable"))
+  val backTypeName: TypeName = TypeName ("Back", _namePackage = Seq("draco", "base", "orientable"))
   val orientableParameters: Seq[Parameter] = Seq(valueParameter)
-  val boundingBoxTypeName: TypeName = TypeName("BoundingBox", orientableDomainName.typeName.fullName)
+  val boundingBoxTypeName: TypeName = TypeName("BoundingBox", _namePackage = Seq("draco", "base", "orientable"))
   val leftElement: TypeElement = Fixed ("left", "Left[Radians]")
   val rightElement: TypeElement = Fixed ("right", "Right[Radians]")
   val upperElement: TypeElement = Fixed ("upper", "Upper[Radians]")
@@ -70,12 +70,12 @@ class TestTypeModule extends AnyFunSuite  {
     frontElement,
     backElement
   )
-  val coordinatesDomainName: DomainName = DomainName (
-    TypeName ("Coordinates", baseDomainName.typeName.fullName),
+  val coordinatesDomainDefinition: DomainDefinition = DomainDefinition (
+    TypeName ("Coordinates", _namePackage = Seq("draco", "base", "coordinates"), _aspects = Seq("domain")),
     Seq ("Spherical"))
-  println(s"${coordinatesDomainName.typeName.name} TypePackage: ${coordinatesDomainName.typeName.namePackage}")
+  println(s"${coordinatesDomainDefinition.typeName.name} TypePackage: ${coordinatesDomainDefinition.typeName.namePackage}")
 
-  val sphericalTypeName: TypeName = TypeName("Spherical", coordinatesDomainName.typeName.fullName)
+  val sphericalTypeName: TypeName = TypeName("Spherical", _namePackage = Seq("draco", "base", "coordinates"))
   val azimuthParameter: Parameter = Parameter ("_azimuth", "Radians", "")
   val elevationParameter: Parameter = Parameter ("_elevation", "Radians", "")
   val rangeParameter: Parameter = Parameter ("_range", "Meters", "")
@@ -84,7 +84,7 @@ class TestTypeModule extends AnyFunSuite  {
   val elevationElement: TypeElement = Fixed ("elevation", "Radians", "_elevation")
   val rangeElement: TypeElement = Fixed ("elevation", "Meters", "_range")
   val sphericalElements: Seq[TypeElement] = Seq (azimuthElement, elevationElement, rangeElement)
-  val sphericalBoundsTypeName: TypeName = TypeName ("SphericalBounds", orientableDomainName.typeName.fullName)
+  val sphericalBoundsTypeName: TypeName = TypeName ("SphericalBounds", _namePackage = Seq("draco", "base", "orientable"))
   val lufParameter: Parameter = Parameter ("luf", "Spherical", "")
   val rlbParameter: Parameter = Parameter ("rlb", "Spherical", "")
   val leftBoundsElement: TypeElement = Fixed ("left", "Left[Radians]", "Left[Radians](_luf.azimuth)")
@@ -105,12 +105,12 @@ class TestTypeModule extends AnyFunSuite  {
 
   val tdList: Seq[TypeDefinition] = Seq[TypeDefinition] (
     TypeDefinition(
-      _typeName = unitDomainName.typeName,
-      _derivation = Seq (baseDomainName.typeName)
+      _typeName = unitDomainDefinition.typeName,
+      _derivation = Seq (baseDomainDefinition.typeName)
     ),
     TypeDefinition(
       _typeName = measureTypeName,
-      _derivation = Seq (baseDomainName.typeName)
+      _derivation = Seq (baseDomainDefinition.typeName)
     ),
     TypeDefinition(
       _typeName = angleTypeName,
@@ -131,55 +131,55 @@ class TestTypeModule extends AnyFunSuite  {
     TypeDefinition(
       _typeName = leftTypeName,
       _derivation = Seq (measureTypeName),
-      _factory = Factory(leftTypeName.fullName, orientableParameters)
+      _factory = Factory(leftTypeName.namePath, orientableParameters)
     ),
     TypeDefinition(
       _typeName = rightTypeName,
       _derivation = Seq (measureTypeName),
-      _factory = Factory(rightTypeName.fullName, orientableParameters)
+      _factory = Factory(rightTypeName.namePath, orientableParameters)
     ),
     TypeDefinition(
       _typeName = upperTypeName,
       _derivation = Seq (measureTypeName),
-      _factory = Factory(upperTypeName.fullName, orientableParameters)
+      _factory = Factory(upperTypeName.namePath, orientableParameters)
     ),
     TypeDefinition(
       _typeName = lowerTypeName,
       _derivation = Seq (measureTypeName),
-      _factory = Factory(lowerTypeName.fullName, orientableParameters)
+      _factory = Factory(lowerTypeName.namePath, orientableParameters)
     ),
     TypeDefinition(
       _typeName = frontTypeName,
       _derivation = Seq (measureTypeName),
-      _factory = Factory(frontTypeName.fullName, orientableParameters)
+      _factory = Factory(frontTypeName.namePath, orientableParameters)
     ),
     TypeDefinition(
       _typeName = backTypeName,
       _derivation = Seq (measureTypeName),
-      _factory = Factory(backTypeName.fullName, orientableParameters)
+      _factory = Factory(backTypeName.namePath, orientableParameters)
     ),
     TypeDefinition(
       _typeName = boundingBoxTypeName,
-      _derivation = Seq (orientableDomainName.typeName),
+      _derivation = Seq (orientableDomainDefinition.typeName),
       _elements = boundingBoxElements,
-      _factory = Factory(boundingBoxTypeName.fullName, orientableParameters)
+      _factory = Factory(boundingBoxTypeName.namePath, orientableParameters)
     ),
     TypeDefinition(
       _typeName = sphericalTypeName,
-      _derivation = Seq (coordinatesDomainName.typeName),
+      _derivation = Seq (coordinatesDomainDefinition.typeName),
       _elements = sphericalElements,
-      _factory = Factory(sphericalTypeName.fullName, sphericalParameters)
+      _factory = Factory(sphericalTypeName.namePath, sphericalParameters)
     ),
     TypeDefinition(
       _typeName = sphericalBoundsTypeName,
       _derivation = Seq (boundingBoxTypeName),
       _elements = sphericalBoundsElements,
-      _factory = Factory(sphericalBoundsTypeName.fullName, sphericalBoundsParameters)
+      _factory = Factory(sphericalBoundsTypeName.namePath, sphericalBoundsParameters)
     )
   )
   def testTypeDefinitionEncode(td: TypeDefinition): Unit = {
     val sourceString: String = td.asJson.spaces2
-    println(s"${td.typeName.fullName}:")
+    println(s"${td.typeName.namePath}:")
     println(sourceString)
   }
 
@@ -187,7 +187,7 @@ class TestTypeModule extends AnyFunSuite  {
     val sourceString: String = td.asJson.spaces2
     val jsonObject = parser.parse(sourceString).getOrElse(Json.Null)
     val tdInstance: TypeDefinition = jsonObject.as[TypeDefinition].toTry.get
-    println(s"${tdInstance.typeName.fullName}:")
+    println(s"${tdInstance.typeName.namePath}:")
     println(tdInstance.asJson.spaces2)
   }
   def testTypeDefinitionGenerate(td: TypeDefinition): Unit = {

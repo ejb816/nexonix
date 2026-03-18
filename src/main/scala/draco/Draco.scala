@@ -1,6 +1,8 @@
 package draco
 
-trait Draco extends DomainInstance
+trait Draco extends DomainInstance {
+  val superDomain: DomainType = DomainType.Null
+}
 
 object Draco extends App with DomainInstance {
   lazy val typeInstance: Type[Draco] = new Type[Draco] {
@@ -16,7 +18,7 @@ object Draco extends App with DomainInstance {
   }
 
   lazy val domainInstance: DomainType = Domain[Draco] (
-    _domainName = DomainName (
+    _domainDefinition = DomainDefinition (
       _typeName = TypeName (
         "Draco"
       ),
@@ -26,8 +28,8 @@ object Draco extends App with DomainInstance {
         "Dictionary",
         "Domain",
         "DomainDictionary",
+        "DomainDefinition",
         "DomainElement",
-        "DomainName",
         "DomainType",
         "Generator",
         "Main",

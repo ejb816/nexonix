@@ -42,9 +42,13 @@ object TypeDefinition extends App with TypeInstance {
   lazy val typeInstance: Type[TypeDefinition] = Type[TypeDefinition] (typeDefinition)
 
   def load (typeName: TypeName) : TypeDefinition = {
-    val sourceContent = SourceContent(Generator.main.sourceRoot, typeName.resourcePath)
-    val sourceJSON: Json = parser.parse(sourceContent.sourceString).getOrElse(TypeDefinition (typeName).asJson)
-    sourceJSON.as[TypeDefinition].getOrElse(Null)
+    val stream = getClass.getResourceAsStream(typeName.resourcePath)
+    if (stream == null) return TypeDefinition(typeName)
+    val source = scala.io.Source.fromInputStream(stream)
+    try {
+      val json = source.mkString
+      parser.parse(json).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition(typeName))
+    } finally source.close()
   }
   def apply (
               _typeName: TypeName,
