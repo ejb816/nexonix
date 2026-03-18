@@ -1,0 +1,7 @@
+{
+  "typeName" : {
+    "name" : "Natural",
+    "namePackage" : ["domains", "natural"],
+    "aspects" : ["actor"]
+  }
+}

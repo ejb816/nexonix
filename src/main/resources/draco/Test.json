@@ -1,0 +1,17 @@
+{
+  "typeName" : {
+    "name" : "Test",
+    "namePackage" : ["draco"]
+  },
+  "derivation" : [
+    { "name" : "Main", "namePackage" : ["draco"] }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Test",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "sourceName", "valueType" : "String", "value" : "" },
+      { "kind" : "Parameter", "name" : "sinkName", "valueType" : "String", "value" : "" }
+    ]
+  }
+}

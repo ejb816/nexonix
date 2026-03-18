@@ -1,0 +1,21 @@
+{
+  "typeName" : {
+    "name" : "RuleType",
+    "namePackage" : ["draco"]
+  },
+  "derivation" : [
+    { "name" : "DracoType", "namePackage" : ["draco"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "ruleDefinition", "valueType" : "RuleDefinition" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "RuleType",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "_ruleDefinition", "valueType" : "RuleDefinition" },
+      { "kind" : "Parameter", "name" : "_pattern", "valueType" : "Consumer[Knowledge]" },
+      { "kind" : "Parameter", "name" : "_action", "valueType" : "Consumer[RhsContext]" }
+    ]
+  }
+}

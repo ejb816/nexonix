@@ -1,0 +1,12 @@
+{
+  "typeName" : {
+    "name" : "RuleInstance",
+    "namePackage" : ["draco"]
+  },
+  "derivation" : [
+    { "name" : "TypeInstance", "namePackage" : ["draco"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "ruleInstance", "valueType" : "RuleType" }
+  ]
+}

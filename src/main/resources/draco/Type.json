@@ -1,0 +1,17 @@
+{
+  "typeName" : {
+    "name" : "Type",
+    "namePackage" : ["draco"],
+    "typeParameters" : ["T"]
+  },
+  "derivation" : [
+    { "name" : "DracoType", "namePackage" : ["draco"] }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Type[T]",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "_typeDefinition", "valueType" : "TypeDefinition" }
+    ]
+  }
+}

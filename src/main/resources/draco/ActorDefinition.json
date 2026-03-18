@@ -1,0 +1,27 @@
+{
+  "typeName" : {
+    "name" : "ActorDefinition",
+    "namePackage" : ["draco"]
+  },
+  "derivation" : [
+    { "name" : "TypeInstance", "namePackage" : ["draco"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "typeName", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "sourceDomain", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "targetDomain", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "messageAction", "valueType" : "Action" },
+    { "kind" : "Fixed", "name" : "signalAction", "valueType" : "Action" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "ActorDefinition",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "typeName", "valueType" : "TypeName" },
+      { "kind" : "Parameter", "name" : "sourceDomain", "valueType" : "TypeName", "value" : "TypeName.Null" },
+      { "kind" : "Parameter", "name" : "targetDomain", "valueType" : "TypeName", "value" : "TypeName.Null" },
+      { "kind" : "Parameter", "name" : "messageAction", "valueType" : "Action", "value" : "Action.Null" },
+      { "kind" : "Parameter", "name" : "signalAction", "valueType" : "Action", "value" : "Action.Null" }
+    ]
+  }
+}

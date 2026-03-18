@@ -1,0 +1,12 @@
+{
+  "typeName" : {
+    "name" : "DomainInstance",
+    "namePackage" : ["draco"]
+  },
+  "derivation" : [
+    { "name" : "TypeInstance", "namePackage" : ["draco"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "domainInstance", "valueType" : "DomainType" }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "typeName" : {
+    "name" : "Primal",
+    "namePackage" : ["draco"],
+    "typeParameters" : ["T"]
+  },
+  "derivation" : [
+    { "name" : "DracoType", "namePackage" : ["draco"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "value", "valueType" : "T" }
+  ]
+}

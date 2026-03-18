@@ -1,0 +1,16 @@
+{
+  "typeName" : {
+    "name" : "DomainDictionary",
+    "namePackage" : ["draco"]
+  },
+  "derivation" : [
+    { "name" : "Dictionary", "namePackage" : ["draco"], "typeParameters" : ["DomainType", "TypeDictionary"] }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "DomainDictionary",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "domains", "valueType" : "Seq[DomainType]", "value" : "Seq()" }
+    ]
+  }
+}

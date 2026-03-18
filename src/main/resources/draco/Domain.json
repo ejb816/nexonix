@@ -1,0 +1,10 @@
+{
+  "typeName" : {
+    "name" : "Domain",
+    "namePackage" : ["draco"],
+    "typeParameters" : ["T"]
+  },
+  "derivation" : [
+    { "name" : "DomainType", "namePackage" : ["draco"] }
+  ]
+}

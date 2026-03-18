@@ -1,0 +1,18 @@
+{
+  "typeName" : {
+    "name" : "ContentSink",
+    "namePackage" : ["draco"]
+  },
+  "elements" : [
+    { "kind" : "Dynamic", "name" : "write", "valueType" : "Unit",
+      "parameters" : [{ "kind" : "Parameter", "name" : "content", "valueType" : "String" }] }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "ContentSink",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "sinkRoot", "valueType" : "URI" },
+      { "kind" : "Parameter", "name" : "logicalPath", "valueType" : "String" }
+    ]
+  }
+}

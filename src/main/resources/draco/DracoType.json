@@ -1,0 +1,9 @@
+{
+  "typeName" : {
+    "name" : "DracoType",
+    "namePackage" : ["draco"]
+  },
+  "elements" : [
+    { "kind" : "Fixed", "name" : "typeDefinition", "valueType" : "TypeDefinition" }
+  ]
+}

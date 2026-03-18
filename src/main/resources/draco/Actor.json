@@ -1,0 +1,22 @@
+{
+  "typeName" : {
+    "name" : "Actor",
+    "namePackage" : ["draco"],
+    "typeParameters" : ["T"]
+  },
+  "derivation" : [
+    {
+      "name" : "ExtensibleBehavior",
+      "namePackage" : ["org", "apache", "pekko", "actor", "typed"],
+      "typeParameters" : ["T"]
+    },
+    {
+      "name" : "ActorType",
+      "namePackage" : ["draco"]
+    }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Actor[T]"
+  }
+}

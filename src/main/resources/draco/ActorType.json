@@ -1,0 +1,12 @@
+{
+  "typeName" : {
+    "name" : "ActorType",
+    "namePackage" : ["draco"]
+  },
+  "derivation" : [
+    { "name" : "DracoType", "namePackage" : ["draco"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "actorDefinition", "valueType" : "ActorDefinition" }
+  ]
+}

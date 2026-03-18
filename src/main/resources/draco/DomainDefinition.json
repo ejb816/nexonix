@@ -1,0 +1,27 @@
+{
+  "typeName" : {
+    "name" : "DomainDefinition",
+    "namePackage" : ["draco"]
+  },
+  "derivation" : [
+    { "name" : "TypeInstance", "namePackage" : ["draco"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "typeName", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "elementTypeNames", "valueType" : "Seq[String]" },
+    { "kind" : "Fixed", "name" : "superDomain", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "source", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "target", "valueType" : "TypeName" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "DomainDefinition",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "typeName", "valueType" : "TypeName" },
+      { "kind" : "Parameter", "name" : "elementTypeNames", "valueType" : "Seq[String]", "value" : "Seq.empty" },
+      { "kind" : "Parameter", "name" : "superDomain", "valueType" : "TypeName", "value" : "TypeName.Null" },
+      { "kind" : "Parameter", "name" : "source", "valueType" : "TypeName", "value" : "TypeName.Null" },
+      { "kind" : "Parameter", "name" : "target", "valueType" : "TypeName", "value" : "TypeName.Null" }
+    ]
+  }
+}
