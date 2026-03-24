@@ -1,0 +1,21 @@
+{
+  "typeName" : {
+    "name" : "AssembleResult",
+    "namePackage" : ["domains", "dataModel"]
+  },
+  "variables" : [
+    { "kind" : "Variable", "name" : "partOne", "valueType" : "PartOne" },
+    { "kind" : "Variable", "name" : "partTwo", "valueType" : "PartTwo" }
+  ],
+  "action" : {
+    "kind" : "Action",
+    "valueType" : "Unit",
+    "body" : [
+      { "kind" : "Fixed", "name" : "result", "valueType" : "BravoResult", "value" : "Bravo.result(partOne.number, partTwo.text)" },
+      { "kind" : "Fixed", "name" : "bravoRef", "valueType" : "ActorRef[Bravo]", "value" : "ctx.getRuntime.get(\"bravoActorRef\").asInstanceOf[ActorRef[Bravo]]" },
+      { "kind" : "Monadic", "valueType" : "Unit", "value" : "bravoRef ! result" },
+      { "kind" : "Monadic", "valueType" : "Unit", "value" : "ctx.delete(partOne)" },
+      { "kind" : "Monadic", "valueType" : "Unit", "value" : "ctx.delete(partTwo)" }
+    ]
+  }
+}

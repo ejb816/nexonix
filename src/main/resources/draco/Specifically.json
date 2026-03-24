@@ -1,0 +1,7 @@
+{
+  "typeName" : {
+    "name" : "Specifically",
+    "namePackage" : ["draco"],
+    "typeParameters" : ["T"]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "typeName" : {
+    "name" : "PartTwo",
+    "namePackage" : ["domains", "dataModel"]
+  },
+  "derivation" : [
+    { "name" : "DataModel", "namePackage" : ["domains", "dataModel"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "text", "valueType" : "String" }
+  ]
+}

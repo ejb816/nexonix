@@ -1,0 +1,20 @@
+{
+  "typeName" : {
+    "name" : "Radians",
+    "namePackage" : ["draco", "base"]
+  },
+  "derivation" : [
+    { "name" : "Rotation", "namePackage" : ["draco", "base"], "typeParameters" : ["Double"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "name", "valueType" : "String" },
+    { "kind" : "Fixed", "name" : "description", "valueType" : "String" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Radians",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "value", "valueType" : "Double" }
+    ]
+  }
+}

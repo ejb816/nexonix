@@ -1,0 +1,9 @@
+{
+  "typeName" : {
+    "name" : "Base",
+    "namePackage" : ["draco", "base"]
+  },
+  "derivation" : [
+    { "name" : "DomainInstance", "namePackage" : ["draco"] }
+  ]
+}

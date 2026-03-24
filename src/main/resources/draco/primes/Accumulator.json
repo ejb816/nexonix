@@ -1,0 +1,19 @@
+{
+  "typeName" : {
+    "name" : "Accumulator",
+    "namePackage" : ["draco", "primes"]
+  },
+  "derivation" : [
+    { "name" : "Primes", "namePackage" : ["draco", "primes"] }
+  ],
+  "elements" : [
+    { "kind" : "Mutable", "name" : "primeSet", "valueType" : "mutable.Set[Int]" },
+    { "kind" : "Mutable", "name" : "compositeSet", "valueType" : "mutable.Set[Int]" },
+    { "kind" : "Mutable", "name" : "naturalSet", "valueType" : "mutable.Set[Int]" },
+    { "kind" : "Mutable", "name" : "intervalTextSet", "valueType" : "mutable.Set[(Long,String)]" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Accumulator"
+  }
+}

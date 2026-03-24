@@ -1,0 +1,9 @@
+{
+  "typeName" : {
+    "name" : "Primes",
+    "namePackage" : ["draco", "primes"]
+  },
+  "derivation" : [
+    { "name" : "DomainInstance", "namePackage" : ["draco"] }
+  ]
+}

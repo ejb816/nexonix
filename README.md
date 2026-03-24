@@ -45,11 +45,13 @@ This pair makes every type in the system self-describing and introspectable at r
 
 Three parallel traits extend `TypeInstance` for companions that own domain, rule, or actor definitions:
 
-| Trait | Owns | Definition Type |
-|-------|------|-----------------|
-| `DomainInstance` | `domainInstance: DomainType` | `DomainDefinition` |
-| `RuleInstance` | `ruleInstance: RuleType` | `RuleDefinition` |
-| `ActorInstance` | `actorInstance: ActorType` | `ActorDefinition` |
+| Trait | Owns |
+|-------|------|
+| `DomainInstance` | `domainInstance: DomainType` |
+| `RuleInstance` | `ruleInstance: RuleType` |
+| `ActorInstance` | `actorInstance: ActorType` |
+
+All three use `TypeDefinition` as their unified definition type — `DomainType.domainDefinition`, `RuleType.ruleDefinition`, and `ActorType.actorDefinition` are all `TypeDefinition`. Domain, rule, and actor roles are distinguished by which fields are populated, not by separate definition types.
 
 These three are deliberately kept structurally symmetric — none is parameterized. When Pekko's typed API requires `Behavior[T]` (which `Actor[T]` implements), the adapter uses `asInstanceOf` at the integration boundary rather than breaking the triadic symmetry by parameterizing `ActorInstance` alone.
 
@@ -59,16 +61,26 @@ A `TypeDefinition` is the schema for a type. It contains:
 
 | Field | Type | Purpose |
 |-------|------|---------|
-| `typeName` | `TypeName` | Qualified name with package path and aspect classification |
+| `typeName` | `TypeName` | Qualified name with package path |
+| `superDomain` | `TypeName` | Parent domain (for domain inheritance) |
 | `modules` | `Seq[TypeName]` | Subtypes (makes the trait `sealed`) |
 | `derivation` | `Seq[TypeName]` | Parent traits (`extends ... with ...`) |
 | `elements` | `Seq[TypeElement]` | Trait body members |
 | `factory` | `Factory` | Companion `apply()` specification |
 | `globalElements` | `Seq[BodyElement]` | Companion object members |
+| `elementTypeNames` | `Seq[String]` | Domain member type names |
+| `source` / `target` | `TypeName` | Domain transform source/target |
+| `variables` | `Seq[Variable]` | Rule fact variables |
+| `conditions` | `Seq[Condition]` | Rule LHS conditions |
+| `values` | `Seq[Value]` | Rule value extractors |
+| `pattern` / `action` | `Pattern` / `Action` | Rule LHS/RHS |
+| `messageAction` / `signalAction` | `Action` | Actor receive/signal handlers |
+
+All fields beyond `typeName` default to empty/Null, so a simple type needs only `typeName`. Domain, rule, and actor roles are expressed by populating the relevant fields — there are no separate definition types.
 
 `TypeDefinition` is serializable to and from JSON via Circe, with empty fields elided. This means a type can be defined entirely in a JSON file, loaded at runtime, and used to generate Scala source code.
 
-### TypeName and the Aspect Naming Convention
+### TypeName
 
 `TypeName` identifies a type with three fields:
 
@@ -76,28 +88,13 @@ A `TypeDefinition` is the schema for a type. It contains:
 |-------|------|---------|
 | `name` | `String` | Simple type name (e.g., `"Natural"`) |
 | `namePackage` | `Seq[String]` | Package path (e.g., `Seq("domains", "natural")`) |
-| `aspects` | `Seq[String]` | Role classification: subset of `("domain", "rule", "actor")` |
 | `typeParameters` | `Seq[String]` | Type parameters (e.g., `Seq("T")` for `Primal[T]`) |
 
-From the first three, three values are derived:
+Derived fields:
+- `namePath` — fully qualified: `"domains.natural.Natural"`
+- `resourcePath` — JSON file path: `"/domains/natural/Natural.json"`
 
-- `qualifiedName` — name + capitalized aspects suffix (e.g., `"NaturalDomainRule"`)
-- `namePath` — fully qualified: `"domains.natural.NaturalDomainRule"`
-- `resourcePath` — JSON file path: `"/domains/natural/Natural.domain.rule.json"`
-
-The `aspects` field replaces the earlier approach of using subpackages (`rules/`, `actors/`) to segregate definition files. Instead, the aspect classification is encoded in the filename via dot extensions and in the class name via suffixes. All files for a type live in the same package directory.
-
-**Canonical ordering** is always Domain > Rule > Actor, enforced by `TypeName.canonicalOrder`. The ordering carries semantic meaning through dyadic parsing: in a compound like `DomainRuleActor`, the first two elements (`DomainRule`) form the primary concept, and the third (`Actor`) is the outer role.
-
-| Aspects Present | JSON Filename | Scala Class Name |
-|---|---|---|
-| (none) | `Natural.json` | `Natural` |
-| Domain | `Natural.domain.json` | `NaturalDomain` |
-| Rule | `Natural.rule.json` | `NaturalRule` |
-| Actor | `Natural.actor.json` | `NaturalActor` |
-| Domain+Rule | `Natural.domain.rule.json` | `NaturalDomainRule` |
-| Rule+Actor | `Natural.rule.actor.json` | `NaturalRuleActor` |
-| Domain+Rule+Actor | `Natural.domain.rule.actor.json` | `NaturalDomainRuleActor` |
+Domain-ness is structural (name matches last package element). Rule and actor roles are expressed through derivation in `TypeDefinition`, not through `TypeName`.
 
 ### TypeElement Hierarchy
 
@@ -132,7 +129,7 @@ JSON serialization uses a `"kind"` discriminator field. A `Fixed` element looks 
 
 A domain is a named collection of types. Every domain has:
 
-- A `DomainDefinition` describing the domain: its member type names, optional superdomain, and source/target for transforms
+- A `TypeDefinition` with `elementTypeNames` populated, describing the domain's member types, optional superdomain, and source/target for transforms
 - A `TypeDictionary` mapping `TypeName` to `TypeDefinition` for each member
 - A `Domain[T]` instance that ties these together
 
@@ -146,8 +143,8 @@ object Primes extends App with DomainInstance {
   lazy val typeInstance: Type[Primes] = Type[Primes](typeDefinition)
 
   lazy val domainInstance: Domain[Primes] = Domain[Primes](
-    _domainDefinition = DomainDefinition(
-      _typeName = typeDefinition.typeName,
+    _domainDefinition = TypeDefinition(
+      typeDefinition.typeName,
       _elementTypeNames = Seq("Numbers", "PrimesRuleData")
     )
   )
@@ -156,13 +153,13 @@ object Primes extends App with DomainInstance {
 
 ### Rules
 
-Rules are defined as JSON and generated into Scala. A `RuleDefinition` specifies:
+Rules are defined as JSON and generated into Scala. A rule `TypeDefinition` populates:
 
 - `variables` — fact variables bound in the RETE network (`$accumulator`, `$i1`, etc.)
 - `conditions` — Boolean predicates evaluated by Evrete's runtime compiler
 - `action` — the body executed when the rule fires
 
-The `Generator` transforms a `RuleDefinition` into a Scala source file containing:
+The `Generator` detects a rule (via `variables.nonEmpty`) and produces a Scala source file containing:
 
 - A trait extending `RuleInstance`
 - A companion object with the rule's `pattern` (registers the rule with an Evrete `Knowledge` base) and `action` (the RHS lambda)
@@ -214,12 +211,12 @@ ExtensibleBehavior[T]      (Pekko)
   +-- Actor[T]             -- generic actor container; extends ActorType
 ```
 
-An `ActorInstance` companion owns an `Actor[T]` that defines `receive` and `receiveSignal` behaviors. The `ActorDefinition` describes the actor's metadata (analogous to `DomainDefinition` and `RuleDefinition`).
+An `ActorInstance` companion owns an `Actor[T]` that defines `receive` and `receiveSignal` behaviors. The actor's metadata is carried by a `TypeDefinition` (the same unified type used for domains and rules).
 
 ```scala
 object NaturalActor extends App with ActorInstance {
   lazy val actorInstance: ActorType = new Actor[Natural] {
-    override val actorDefinition: ActorDefinition = ...
+    override val actorDefinition: TypeDefinition = ...
     override def receive(ctx: TypedActorContext[Natural], msg: Natural): Behavior[Natural] = {
       println(s"msg.value = ${msg.value}")
       Behaviors.same[Natural]
@@ -243,13 +240,13 @@ system ! Natural(10)
 
 ### Code Generation
 
-The `Generator` reads JSON definitions and produces Scala source code. It handles three generation modes:
+The `Generator` reads JSON definitions and produces Scala source code. A single `generate(td: TypeDefinition)` method detects the type's role and dispatches accordingly:
 
-1. **TypeInstance generation** — From a `TypeDefinition`, generates a trait and companion object with `typeDefinition`, `typeInstance`, optional `apply()`, `Null`, and global elements.
-2. **DomainInstance generation** — Same as above, but the companion extends `DomainInstance` and includes a `domainInstance: Domain[T]` declaration with its member type list.
-3. **ActorInstance generation** — From a `TypeDefinition` and `ActorDefinition`, generates an actor trait and companion with Pekko imports.
-4. **Multi-type generation** — From a `Seq[TypeDefinition]`, generates multiple types in one file with topological sort by module dependency.
-5. **RuleInstance generation** — From a `RuleDefinition`, generates a rule trait and companion with condition functions, pattern/action lambdas, auto-generated imports, and Evrete integration.
+1. **Rule** (`variables.nonEmpty`) — Rule imports + RuleInstance companion with condition functions, pattern/action lambdas, Evrete integration.
+2. **Domain** (`elementTypeNames.nonEmpty`) — Domain imports + DomainInstance companion with member type list.
+3. **Actor** (derivation contains ActorType/ExtensibleBehavior) — Pekko imports + TypeInstance companion.
+4. **Otherwise** — Plain TypeInstance companion with `typeDefinition`, `typeInstance`, optional `apply()`, `Null`, and global elements.
+5. **Multi-type** — `generate(tds: Seq[TypeDefinition])` generates multiple types in one file with topological sort by module dependency.
 
 **JSON as single source of truth:** JSON definition files are the canonical representation of types. Every manually-written draco framework type now has a corresponding JSON definition file. Generated Scala source loads definitions from these JSON files at runtime via classpath loading (`TypeDefinition.load`). The Generator produces code that calls `draco.TypeDefinition.load(TypeName(...))` (fully qualified), which reads the JSON from the classpath using `getResourceAsStream`. The fully qualified reference ensures generated code works in any package, including `generated.draco` for testing.
 
@@ -297,8 +294,8 @@ When data moves between domains (e.g., from a sensor domain to an analysis domai
 - Self-describing type system with `TypeDefinition`, `TypeName`, and the full `TypeElement` hierarchy
 - JSON serialization/deserialization with field elision for all core types
 - `TypeDictionary` and `DomainDictionary` for domain-scoped type registries
-- Code generation from `TypeDefinition` JSON (single type, multi-type with topological sort, domain instances, actor instances)
-- Code generation from `RuleDefinition` JSON with condition functions, pattern/action lambdas, and auto-generated imports
+- Unified code generation from `TypeDefinition` JSON with automatic role detection (domain, rule, actor, plain type)
+- Multi-type generation with topological sort by module dependency
 - Codec generation: field-based codecs, kind-discriminated dispatch for sealed hierarchies, `Codec.sub` wiring for subtypes
 - Factory method generation with support for both parameter-derived and custom override bodies; type parameter support on `apply[T]`
 - Null instance generation: `apply()` for simple factories, direct element overrides for computed factories
@@ -308,9 +305,9 @@ When data moves between domains (e.g., from a sensor domain to an analysis domai
 - `TypeName.typeParameters` field for proper generic type support (replaces embedding `[T]` in name string)
 - Evrete RETE rule engine integration with runtime-compiled conditions
 - Rule execution with `StatefulSession` working memory (prime sieve)
-- Pekko actor integration with `Actor[T]`, `ActorInstance`, `ActorType`, `ActorDefinition`
+- Pekko actor integration with `Actor[T]`, `ActorInstance`, `ActorType`
 - NaturalActor working end-to-end test: JSON loading, actor creation, message sending
-- Aspect-based type naming convention with `TypeName.aspects` and derived `qualifiedName`, `namePath`, `resourcePath`
+- TypeDefinition unification — domain, rule, and actor definitions dissolved into TypeDefinition; Generator detects role from content
 - Content pipeline for reading JSON resources and writing generated Scala source
 - Generate test pattern: load JSON, generate source, write to `generated.draco` package, programmatic compilation check
 - Complete JSON definition files for all draco framework types (30+ types including TypeElement hierarchy)
@@ -321,10 +318,10 @@ When data moves between domains (e.g., from a sensor domain to an analysis domai
 
 ## Work in Progress
 
-- **Migrate rule JSON loading** — `ruleDefinitionFromJson` still embeds inline JSON; create `RuleDefinition.load` parallel to `TypeDefinition.load`.
-- **Generator evolution** — Planned: GeneratorType, GeneratorDefinition, GeneratorInstance, Generator[L] to make Generator a first-class type system citizen parameterized by target language (currently Scala-only).
+- **Update existing domains** — Migrate Draco, Base, Primes to new Extensible/simplified conventions.
+- **Generator domain** — `draco.generator.Generator[L]` as a self-describing domain parameterized by target language, with capability domains (`draco.rete`, `draco.json`, `draco.actor`, `draco.scala`).
 - **Dreams application** — Domain Rules Editor Actor Message Service; built-in editor for creating and modifying types, domains, rules, and actors via their JSON definitions.
-- **Transform domain rules** — Transform domains model source-to-sink mappings but do not yet generate transformation rules automatically.
+- **Orion** — Open Resilient Inter-Operability Nexus; five ION interaction patterns for cross-domain system-of-systems integration.
 
 ## Building and Running
 
@@ -373,7 +370,7 @@ src/
       logback-test.xml                -- Test logging config
     scala/
       draco/                          -- Framework tests
-      generated/draco/                -- Generated Scala from JSON definitions (package generated.draco)
+      draco/                          -- Framework tests and generation tests
       domains/                        -- Test domain examples (Natural, Alpha, Bravo, ...)
       org/nexonix/                    -- Additional rule and format tests
 ```

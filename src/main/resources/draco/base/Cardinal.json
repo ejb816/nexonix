@@ -1,0 +1,15 @@
+{
+  "typeName" : {
+    "name" : "Cardinal",
+    "namePackage" : ["draco", "base"],
+    "typeParameters" : ["T"]
+  },
+  "derivation" : [
+    { "name" : "Unit", "namePackage" : ["draco", "base"] },
+    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["T"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "name", "valueType" : "String" },
+    { "kind" : "Fixed", "name" : "description", "valueType" : "String" }
+  ]
+}

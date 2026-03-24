@@ -1,6 +1,6 @@
 package draco
 
-trait DracoType {
+trait DracoType extends Extensible {
   val typeDefinition: TypeDefinition
 }
 

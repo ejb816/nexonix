@@ -1,0 +1,14 @@
+{
+  "typeName" : {
+    "name" : "Rotation",
+    "namePackage" : ["draco", "base"],
+    "typeParameters" : ["T"]
+  },
+  "derivation" : [
+    { "name" : "Cardinal", "namePackage" : ["draco", "base"], "typeParameters" : ["T"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "name", "valueType" : "String" },
+    { "kind" : "Fixed", "name" : "description", "valueType" : "String" }
+  ]
+}

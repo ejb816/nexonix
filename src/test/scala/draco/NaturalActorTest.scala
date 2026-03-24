@@ -2,7 +2,7 @@ package draco
 
 
 import domains.natural._
-import domains.natural.actor._
+import domains.natural._
 import org.apache.pekko.actor.typed._
 import org.scalatest.funsuite.AnyFunSuite
 

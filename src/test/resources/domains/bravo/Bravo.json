@@ -1,0 +1,9 @@
+{
+  "typeName" : {
+    "name" : "Bravo",
+    "namePackage" : ["domains", "bravo"]
+  },
+  "derivation" : [
+    { "name" : "DataModel", "namePackage" : ["domains", "dataModel"] }
+  ]
+}

@@ -5,22 +5,44 @@
   },
   "elements" : [
     { "kind" : "Fixed", "name" : "typeName", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "superDomain", "valueType" : "TypeName" },
     { "kind" : "Fixed", "name" : "modules", "valueType" : "Seq[TypeName]" },
     { "kind" : "Fixed", "name" : "derivation", "valueType" : "Seq[TypeName]" },
     { "kind" : "Fixed", "name" : "elements", "valueType" : "Seq[TypeElement]" },
     { "kind" : "Fixed", "name" : "factory", "valueType" : "Factory" },
-    { "kind" : "Fixed", "name" : "globalElements", "valueType" : "Seq[BodyElement]" }
+    { "kind" : "Fixed", "name" : "globalElements", "valueType" : "Seq[BodyElement]" },
+    { "kind" : "Fixed", "name" : "elementTypeNames", "valueType" : "Seq[String]" },
+    { "kind" : "Fixed", "name" : "source", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "target", "valueType" : "TypeName" },
+    { "kind" : "Fixed", "name" : "variables", "valueType" : "Seq[Variable]" },
+    { "kind" : "Fixed", "name" : "conditions", "valueType" : "Seq[Condition]" },
+    { "kind" : "Fixed", "name" : "values", "valueType" : "Seq[Value]" },
+    { "kind" : "Fixed", "name" : "pattern", "valueType" : "Pattern" },
+    { "kind" : "Fixed", "name" : "action", "valueType" : "Action" },
+    { "kind" : "Fixed", "name" : "messageAction", "valueType" : "Action" },
+    { "kind" : "Fixed", "name" : "signalAction", "valueType" : "Action" }
   ],
   "factory" : {
     "kind" : "Factory",
     "valueType" : "TypeDefinition",
     "parameters" : [
       { "kind" : "Parameter", "name" : "typeName", "valueType" : "TypeName" },
+      { "kind" : "Parameter", "name" : "superDomain", "valueType" : "TypeName", "value" : "TypeName.Null" },
       { "kind" : "Parameter", "name" : "modules", "valueType" : "Seq[TypeName]", "value" : "Seq.empty" },
       { "kind" : "Parameter", "name" : "derivation", "valueType" : "Seq[TypeName]", "value" : "Seq.empty" },
       { "kind" : "Parameter", "name" : "elements", "valueType" : "Seq[TypeElement]", "value" : "Seq.empty" },
       { "kind" : "Parameter", "name" : "factory", "valueType" : "Factory", "value" : "Factory.Null" },
-      { "kind" : "Parameter", "name" : "globalElements", "valueType" : "Seq[BodyElement]", "value" : "Seq.empty" }
+      { "kind" : "Parameter", "name" : "globalElements", "valueType" : "Seq[BodyElement]", "value" : "Seq.empty" },
+      { "kind" : "Parameter", "name" : "elementTypeNames", "valueType" : "Seq[String]", "value" : "Seq.empty" },
+      { "kind" : "Parameter", "name" : "source", "valueType" : "TypeName", "value" : "TypeName.Null" },
+      { "kind" : "Parameter", "name" : "target", "valueType" : "TypeName", "value" : "TypeName.Null" },
+      { "kind" : "Parameter", "name" : "variables", "valueType" : "Seq[Variable]", "value" : "Seq.empty" },
+      { "kind" : "Parameter", "name" : "conditions", "valueType" : "Seq[Condition]", "value" : "Seq.empty" },
+      { "kind" : "Parameter", "name" : "values", "valueType" : "Seq[Value]", "value" : "Seq.empty" },
+      { "kind" : "Parameter", "name" : "pattern", "valueType" : "Pattern", "value" : "Pattern.Null" },
+      { "kind" : "Parameter", "name" : "action", "valueType" : "Action", "value" : "Action.Null" },
+      { "kind" : "Parameter", "name" : "messageAction", "valueType" : "Action", "value" : "Action.Null" },
+      { "kind" : "Parameter", "name" : "signalAction", "valueType" : "Action", "value" : "Action.Null" }
     ]
   }
 }

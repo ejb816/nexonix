@@ -1,28 +1,28 @@
 package org.nexonix.format.json
 
-import draco.{Factory, Fixed, Generator, TypeElement, DomainDefinition, Parameter, TypeDefinition, TypeName}
+import draco.{Factory, Fixed, Generator, TypeElement, Parameter, TypeDefinition, TypeName}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
 class TestTypeModule extends AnyFunSuite  {
-  val dracoDomainDefinition: DomainDefinition = DomainDefinition (
-    TypeName ("Draco", _namePackage = Seq("draco"), _aspects = Seq("domain")),
-    Seq (
+  val dracoDomainDefinition: TypeDefinition = TypeDefinition (
+    TypeName ("Draco", _namePackage = Seq("draco")),
+    _elementTypeNames = Seq (
       "Base"))
   println(s"${dracoDomainDefinition.typeName.name} namePackage: ${dracoDomainDefinition.typeName.namePackage}")
 
-  val baseDomainDefinition: DomainDefinition = DomainDefinition (
-    TypeName ("Base", _namePackage = Seq("draco", "base"), _aspects = Seq("domain")),
-    Seq (
+  val baseDomainDefinition: TypeDefinition = TypeDefinition (
+    TypeName ("Base", _namePackage = Seq("draco", "base")),
+    _elementTypeNames = Seq (
       "Unit",
       "Orientable",
       "Coordinates"))
   println(s"${baseDomainDefinition.typeName.name} namePackage: ${baseDomainDefinition.typeName.namePackage}")
 
-  val unitDomainDefinition: DomainDefinition  = DomainDefinition (
-    TypeName ("Unit", _namePackage = Seq("draco", "base", "unit"), _aspects = Seq("domain")),
-    Seq (
+  val unitDomainDefinition: TypeDefinition = TypeDefinition (
+    TypeName ("Unit", _namePackage = Seq("draco", "base", "unit")),
+    _elementTypeNames = Seq (
       "Measure",
       "Angle",
       "Radians",
@@ -36,9 +36,9 @@ class TestTypeModule extends AnyFunSuite  {
   val distanceTypeName: TypeName = TypeName ("Distance", _namePackage = Seq("draco", "base", "unit"))
   val metersTypeName: TypeName = TypeName ("Meters", _namePackage = Seq("draco", "base", "unit"))
 
-  val orientableDomainDefinition: DomainDefinition = DomainDefinition (
-    TypeName ("Orientable", _namePackage = Seq("draco", "base", "orientable"), _aspects = Seq("domain")),
-    Seq (
+  val orientableDomainDefinition: TypeDefinition = TypeDefinition (
+    TypeName ("Orientable", _namePackage = Seq("draco", "base", "orientable")),
+    _elementTypeNames = Seq (
       "Left",
       "Right",
       "Upper",
@@ -70,9 +70,9 @@ class TestTypeModule extends AnyFunSuite  {
     frontElement,
     backElement
   )
-  val coordinatesDomainDefinition: DomainDefinition = DomainDefinition (
-    TypeName ("Coordinates", _namePackage = Seq("draco", "base", "coordinates"), _aspects = Seq("domain")),
-    Seq ("Spherical"))
+  val coordinatesDomainDefinition: TypeDefinition = TypeDefinition (
+    TypeName ("Coordinates", _namePackage = Seq("draco", "base", "coordinates")),
+    _elementTypeNames = Seq ("Spherical"))
   println(s"${coordinatesDomainDefinition.typeName.name} TypePackage: ${coordinatesDomainDefinition.typeName.namePackage}")
 
   val sphericalTypeName: TypeName = TypeName("Spherical", _namePackage = Seq("draco", "base", "coordinates"))

@@ -1,6 +1,6 @@
 package org.nexonix.rules.rete
 
-import draco.{ContentSink, Generator, RuleDefinition, SourceContent, TypeName}
+import draco.{ContentSink, Generator, SourceContent, TypeDefinition, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService
 import org.nexonix.rules.rete.rules.TupleFactRule
@@ -14,7 +14,7 @@ class TupleFactReteTest extends AnyFunSuite {
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     println(jsonContent.spaces2)
 
-    val rule: RuleDefinition = jsonContent.as[RuleDefinition].getOrElse(null)
+    val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource: String = Generator.generate(rule)
     val contentSink: ContentSink = ContentSink(Generator.test.sinkRoot, "org/nexonix/rules/rete/rules/TupleFactRule.scala")
     contentSink.write(ruleSource)

@@ -1,0 +1,48 @@
+{
+  "typeName" : {
+    "name" : "AddNaturalSequence",
+    "namePackage" : [
+      "draco",
+      "primes"
+    ]
+  },
+  "variables" : [
+    {
+      "kind" : "Variable",
+      "name" : "accumulator",
+      "valueType" : "Accumulator"
+    },
+    {
+      "kind" : "Variable",
+      "name" : "i",
+      "valueType" : "Integer"
+    }
+  ],
+  "action" : {
+    "kind" : "Action",
+    "valueType" : "Unit",
+    "body" : [
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "accumulator.primeSet.addOne(i)"
+      },
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "accumulator.naturalSet.addOne(i)"
+      },
+      {
+        "kind" : "Fixed",
+        "name" : "text",
+        "valueType" : "String",
+        "value" : "s\"Added $i to primeSet and naturalSet.\""
+      },
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit",
+        "value" : "accumulator.intervalTextSet.addOne((System.nanoTime(), text))"
+      }
+    ]
+  }
+}

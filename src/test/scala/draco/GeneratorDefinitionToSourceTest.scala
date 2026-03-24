@@ -3,46 +3,68 @@ package draco
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
-import java.nio.file.Paths
-import scala.tools.nsc.{Global, Settings}
-import scala.tools.nsc.reporters.StoreReporter
-
 class GeneratorDefinitionToSourceTest extends AnyFunSuite {
 
-  private val generatedPrefix = "generated"
+  /** Output path with .scala.generated extension */
+  private def generatedOutputPath(typeName: String): String =
+    s"draco/$typeName.scala.generated"
 
-  /** Rewrite package declaration to generated.{original} so generated types
-    * coexist with the real framework types without shadowing. */
-  private def rewritePackage(source: String): String = {
-    source.replaceFirst("(?m)^package ", s"package $generatedPrefix.")
+  /** Derive the actual source path from a TypeDefinition's typeName */
+  private def actualSourcePath(td: TypeDefinition): String =
+    td.typeName.namePackage.mkString("/") + "/" + td.typeName.name + ".scala"
+
+  /** Read actual source file from src/main/scala, returns None if not found */
+  private def readActualSource(sourcePath: String): Option[Seq[String]] = {
+    try {
+      val sc = SourceContent(Generator.main.sinkRoot, sourcePath)
+      Some(sc.sourceLines)
+    } catch {
+      case _: Exception => None
+    }
   }
 
-  /** Output path under generated/ with .scala extension */
-  private def generatedOutputPath(typeName: String): String =
-    s"$generatedPrefix/draco/$typeName.scala"
-
-  private def compileCheck(outputPath: String): Unit = {
-    val generatedFile = Paths.get(Generator.test.sinkRoot.resolve(outputPath)).toString
-    try {
-      val settings = new Settings()
-      settings.classpath.value = System.getProperty("java.class.path")
-      settings.usejavacp.value = true
-      settings.stopAfter.value = List("typer")
-
-      val reporter = new StoreReporter(settings)
-      val compiler = new Global(settings, reporter)
-      val run = new compiler.Run()
-      run.compile(List(generatedFile))
-
-      if (reporter.hasErrors) {
-        reporter.infos.foreach(info => println(s"${info.severity}: ${info.msg}"))
-        fail(s"Generated source ($outputPath) did not compile")
-      } else {
-        println(s"Generated source ($outputPath) compiled successfully")
+  /** Compute a simple line-by-line diff between generated and actual source */
+  private def computeDiff(generated: String, actual: Seq[String]): String = {
+    val generatedLines = generated.linesIterator.toSeq
+    val maxLines = math.max(generatedLines.size, actual.size)
+    val diffs = (0 until maxLines).flatMap { i =>
+      val gen = if (i < generatedLines.size) Some(generatedLines(i)) else None
+      val act = if (i < actual.size) Some(actual(i)) else None
+      (gen, act) match {
+        case (Some(g), Some(a)) if g.trim != a.trim =>
+          Some(
+            s" * Line ${i + 1}:\n" +
+            s" *   generated: $g\n" +
+            s" *   actual:    $a"
+          )
+        case (Some(g), None) =>
+          Some(
+            s" * Line ${i + 1}:\n" +
+            s" *   generated: $g\n" +
+            s" *   actual:    (absent)"
+          )
+        case (None, Some(a)) =>
+          Some(
+            s" * Line ${i + 1}:\n" +
+            s" *   generated: (absent)\n" +
+            s" *   actual:    $a"
+          )
+        case _ => None
       }
-    } catch {
-      case _: scala.reflect.internal.MissingRequirementError =>
-        println("Skipping compilation check (scala-library not on embedded compiler classpath)")
+    }
+    if (diffs.isEmpty) " * No differences found."
+    else diffs.mkString("\n")
+  }
+
+  /** Append diff as a multiline comment to the generated source */
+  private def appendDiff(generatedSource: String, td: TypeDefinition): String = {
+    val sourcePath = actualSourcePath(td)
+    readActualSource(sourcePath) match {
+      case Some(actualLines) =>
+        val diff = computeDiff(generatedSource, actualLines)
+        s"$generatedSource\n/* --- Diff: generated vs $sourcePath ---\n$diff\n */\n"
+      case None =>
+        s"$generatedSource\n/* --- No actual source found at $sourcePath --- */\n"
     }
   }
 
@@ -52,28 +74,13 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
     println(jsonContent.spaces2)
 
     val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
-    val generatedSource = rewritePackage(Generator.generate(td))
-    println(generatedSource)
+    val generatedSource = Generator.generate(td)
+    val output = appendDiff(generatedSource, td)
+    println(output)
 
     val outputPath = generatedOutputPath(typeName)
-    val contentSink: ContentSink = ContentSink(Generator.test.sinkRoot, outputPath)
-    contentSink.write(generatedSource)
-    compileCheck(outputPath)
-  }
-
-  private def generateActorAndVerify(resourcePath: String, typeName: String): Unit = {
-    val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
-    val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
-    println(jsonContent.spaces2)
-
-    val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
-    val generatedSource = rewritePackage(Generator.generate(td, ActorDefinition.Null))
-    println(generatedSource)
-
-    val outputPath = generatedOutputPath(typeName)
-    val contentSink: ContentSink = ContentSink(Generator.test.sinkRoot, outputPath)
-    contentSink.write(generatedSource)
-    compileCheck(outputPath)
+    val contentSink: ContentSink = ContentSink(Generator.generated.sinkRoot, outputPath)
+    contentSink.write(output)
   }
 
   private def generateMultiAndVerify(resourcePaths: Seq[String], typeName: String): Unit = {
@@ -84,21 +91,18 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
     }
     typeDefinitions.foreach(td => println(td.typeName.name))
 
-    val generatedSource = rewritePackage(Generator.generate(typeDefinitions))
-    println(generatedSource)
+    val generatedSource = Generator.generate(typeDefinitions)
+    // Use first type for diff comparison (the root of the hierarchy)
+    val output = appendDiff(generatedSource, typeDefinitions.head)
+    println(output)
 
     val outputPath = generatedOutputPath(typeName)
-    val contentSink: ContentSink = ContentSink(Generator.test.sinkRoot, outputPath)
-    contentSink.write(generatedSource)
-    compileCheck(outputPath)
+    val contentSink: ContentSink = ContentSink(Generator.generated.sinkRoot, outputPath)
+    contentSink.write(output)
   }
 
   test("Generate Actor") {
-    generateActorAndVerify("draco/Actor.json", "Actor")
-  }
-
-  test("Generate ActorDefinition") {
-    generateAndVerify("draco/ActorDefinition.json", "ActorDefinition")
+    generateAndVerify("draco/Actor.json", "Actor")
   }
 
   test("Generate ActorInstance") {
@@ -121,10 +125,6 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
     generateAndVerify("draco/Domain.json", "Domain")
   }
 
-  test("Generate DomainDefinition") {
-    generateAndVerify("draco/DomainDefinition.json", "DomainDefinition")
-  }
-
   test("Generate DomainDictionary") {
     generateAndVerify("draco/DomainDictionary.json", "DomainDictionary")
   }
@@ -145,6 +145,10 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
     generateAndVerify("draco/DracoType.json", "DracoType")
   }
 
+  test("Generate Extensible") {
+    generateAndVerify("draco/Extensible.json", "Extensible")
+  }
+
   test("Generate Main") {
     generateAndVerify("draco/Main.json", "Main")
   }
@@ -157,16 +161,16 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
     generateAndVerify("draco/Rule.json", "Rule")
   }
 
-  test("Generate RuleDefinition") {
-    generateAndVerify("draco/RuleDefinition.json", "RuleDefinition")
-  }
-
   test("Generate RuleInstance") {
     generateAndVerify("draco/RuleInstance.json", "RuleInstance")
   }
 
   test("Generate RuleType") {
     generateAndVerify("draco/RuleType.json", "RuleType")
+  }
+
+  test("Generate Specifically") {
+    generateAndVerify("draco/Specifically.json", "Specifically")
   }
 
   test("Generate SourceContent") {

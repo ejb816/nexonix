@@ -1,6 +1,6 @@
 package org.nexonix.format.json
 
-import draco.{Generator, RuleDefinition, SourceContent, TypeDefinition, TypeName, Value}
+import draco.{Generator, SourceContent, TypeDefinition, TypeName, Value}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
@@ -37,15 +37,15 @@ class TestValue extends AnyFunSuite {
   }
   test ("test rule json") {
     val jsonFilePaths: Seq[String] = Seq (
-      "draco/primes/rules/AddNaturalSequence.json",
-      "draco/primes/rules/PrimesFromNaturalSequence.json",
-      "draco/primes/rules/RemoveCompositeNumbers.json"
+      "draco/primes/AddNaturalSequence.rule.json",
+      "draco/primes/PrimesFromNaturalSequence.rule.json",
+      "draco/primes/RemoveCompositeNumbers.rule.json"
     )
     val checkJson: String => Unit = fn => {
       val sourceContent = SourceContent(Generator.main.sourceRoot, fn)
       val content = sourceContent.sourceLines.mkString("\n")
       val jsonContent: Json = parser.parse(content).getOrElse(Json.Null)
-      val rule = jsonContent.as[RuleDefinition].getOrElse(RuleDefinition.Null)
+      val rule = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
       val ruleSource: String = Generator.generate(rule)
       if (jsonContent.equals(rule.asJson)) {
         println(content)

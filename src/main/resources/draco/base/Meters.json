@@ -1,0 +1,20 @@
+{
+  "typeName" : {
+    "name" : "Meters",
+    "namePackage" : ["draco", "base"]
+  },
+  "derivation" : [
+    { "name" : "Distance", "namePackage" : ["draco", "base"], "typeParameters" : ["Double"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "name", "valueType" : "String" },
+    { "kind" : "Fixed", "name" : "description", "valueType" : "String" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Meters",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "value", "valueType" : "Double" }
+    ]
+  }
+}

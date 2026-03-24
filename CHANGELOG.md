@@ -6,6 +6,37 @@ All notable changes to the Nexonix/Draco project will be documented in this file
 
 ### Added
 
+- **Extensible** — Non-parameterized structural root trait. Generator `typeExtends` convention: empty derivation → `extends Extensible`.
+
+- **Specifically[T]** — Specialization trait extending `Extensible` with a type parameter, for deferred structural commitments.
+
+- **TypeDefinition unification** — Dissolved `DomainDefinition`, `RuleDefinition`, and `ActorDefinition` into `TypeDefinition`. Ten new optional fields added: `elementTypeNames`, `source`, `target` (domain); `variables`, `conditions`, `values`, `pattern`, `action` (rule); `messageAction`, `signalAction` (actor). All default to empty/Null. `DomainType.domainDefinition`, `RuleType.ruleDefinition`, and `ActorType.actorDefinition` are now `TypeDefinition`-typed. The three definition source files and their JSON resource files have been deleted.
+
+- **Generator detection-based dispatch** — `generate(td: TypeDefinition)` inspects content to determine generation mode: `isDomain` (elementTypeNames), `isRule` (variables), `isActor` (derivation). Replaces five overloads with two (`generate(td)` and `generate(tds: Seq[TypeDefinition])`).
+
+- **Generate test pattern** — Output to `src/generated/scala/draco/<TypeName>.scala.generated` with diff comparison. `Generated.scala` alongside Main/Test for source/sink transitions.
+
+- **superDomain field on TypeDefinition** — Supports domain inheritance hierarchy.
+
+### Changed
+
+- **TypeName simplified** — `aspects` field removed. `qualifiedName`, `aspectExtension`, `canonicalOrder` removed. Resource paths simplified to `/${namePackage}/${name}.json`.
+
+- **Deferred factory defaults** — `pattern`, `action`, `messageAction`, `signalAction` defaults in `TypeDefinition.apply` use `null` with `override lazy val` resolution to avoid circular initialization in the self-describing type system.
+
+### Removed
+
+- **DomainDefinition** — Dissolved into `TypeDefinition`. Source file, JSON resource, and all references removed.
+- **RuleDefinition** — Dissolved into `TypeDefinition`. Source file, JSON resource, and all references removed.
+- **ActorDefinition** — Dissolved into `TypeDefinition`. Source file, JSON resource, and all references removed.
+- **Generator overloads** — `generate(td, dd: DomainDefinition)`, `generate(td, ad: ActorDefinition)`, `generate(rd: RuleDefinition)` removed.
+
+---
+
+## [Previous - JSON Definitions, Generated Tests, External Imports]
+
+### Added
+
 - **Complete JSON definition files** — Every manually-written draco framework type now has a corresponding JSON definition file in `src/main/resources/draco/`. New files: DracoType, Primal, Type, TypeInstance, RuleType, RuleInstance, Main, Test. Populated previously empty files: Rule, Value, SourceContent, RuleDefinition, TypeDictionary. Added missing derivation to: ActorInstance, DomainInstance, ActorDefinition, DomainDefinition (→ TypeInstance), TypeElement (→ Primal[String]).
 
 - **GeneratorDefinitionToSourceTest** — 28 generate tests covering all draco framework types: core hierarchy (DracoType, Primal, Type, TypeInstance), domain types, rule types, actor types, infrastructure types, and the TypeElement sealed hierarchy (multi-type generation). Tests generate source, write to `generated.draco` package, and compile-check.

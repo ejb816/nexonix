@@ -23,12 +23,12 @@ object Rule extends App with TypeInstance {
 
   lazy val knowledgeService: KnowledgeService = new KnowledgeService ()
   def apply[T] (
-      _ruleDefinition: RuleDefinition = RuleDefinition.Null,
+      _ruleDefinition: TypeDefinition = TypeDefinition.Null,
       _pattern: Consumer[Knowledge],
       _action: Consumer[RhsContext]
     ) : Rule[T] = new Rule[T] {
-    override val ruleDefinition: RuleDefinition =_ruleDefinition
-    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
+    override val ruleDefinition: TypeDefinition = _ruleDefinition
+    override val typeDefinition: TypeDefinition = _ruleDefinition
     override val action: Consumer[RhsContext] = _action
     override val pattern: Consumer[Knowledge] = _pattern
   }

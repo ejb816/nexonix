@@ -5,40 +5,33 @@ trait Draco extends DomainInstance {
 }
 
 object Draco extends App with DomainInstance {
-  lazy val typeInstance: Type[Draco] = new Type[Draco] {
-    override val typeDefinition: TypeDefinition = TypeDefinition (
-      _typeName = TypeName (
-        _name = "Draco",
-        _namePackage = Seq ("draco")
-      ),
-      _derivation = Seq (
-        TypeName ("DomainInstance", _namePackage = Seq ("draco"))
-      )
+  lazy val typeDefinition: TypeDefinition = TypeDefinition (
+    _typeName = TypeName (
+      _name = "Draco",
+      _namePackage = Seq ("draco")
+    ),
+    _derivation = Seq (
+      TypeName ("DomainInstance", _namePackage = Seq ("draco"))
     )
-  }
-
-  lazy val domainInstance: DomainType = Domain[Draco] (
-    _domainDefinition = DomainDefinition (
-      _typeName = TypeName (
-        "Draco"
-      ),
+  )
+  lazy val typeInstance: Type[Draco] = Type[Draco] (typeDefinition)
+  lazy val domainInstance: DomainType = new Domain[Draco] {
+    override lazy val domainDefinition: TypeDefinition = TypeDefinition (
+      typeDefinition.typeName,
       _elementTypeNames = Seq (
-        "ActorBehavior",
+        "Actor",
         "ContentSink",
         "Dictionary",
         "Domain",
         "DomainDictionary",
-        "DomainDefinition",
-        "DomainElement",
         "DomainType",
+        "Extensible",
         "Generator",
         "Main",
         "Primal",
         "Rule",
-        "RuleActorBehavior",
-        "RuleDefinition",
-        "Service",
         "SourceContent",
+        "Specifically",
         "Test",
         "TypeDefinition",
         "TypeDictionary",
@@ -47,6 +40,7 @@ object Draco extends App with DomainInstance {
         "Value"
       )
     )
-  )
-  override lazy val typeDefinition: TypeDefinition = typeInstance.typeDefinition
+    override lazy val typeDictionary: TypeDictionary = TypeDictionary (domainDefinition)
+    override lazy val typeDefinition: TypeDefinition = typeInstance.typeDefinition
+  }
 }

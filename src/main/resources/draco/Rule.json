@@ -15,7 +15,7 @@
     "kind" : "Factory",
     "valueType" : "Rule[T]",
     "parameters" : [
-      { "kind" : "Parameter", "name" : "ruleDefinition", "valueType" : "RuleDefinition", "value" : "RuleDefinition.Null" },
+      { "kind" : "Parameter", "name" : "ruleDefinition", "valueType" : "TypeDefinition", "value" : "TypeDefinition.Null" },
       { "kind" : "Parameter", "name" : "pattern", "valueType" : "Consumer[Knowledge]" },
       { "kind" : "Parameter", "name" : "action", "valueType" : "Consumer[RhsContext]" }
     ]

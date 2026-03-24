@@ -1,0 +1,10 @@
+{
+  "typeName" : {
+    "name" : "BravoResult",
+    "namePackage" : ["domains", "bravo"]
+  },
+  "derivation" : [
+    { "name" : "Bravo", "namePackage" : ["domains", "bravo"] },
+    { "name" : "Assembled", "namePackage" : ["domains", "dataModel"] }
+  ]
+}

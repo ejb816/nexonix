@@ -13,7 +13,7 @@
     "kind" : "Factory",
     "valueType" : "TypeDictionary",
     "parameters" : [
-      { "kind" : "Parameter", "name" : "domainDefinition", "valueType" : "DomainDefinition" }
+      { "kind" : "Parameter", "name" : "domainDefinition", "valueType" : "TypeDefinition" }
     ]
   }
 }

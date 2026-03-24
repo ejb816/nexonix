@@ -1,0 +1,13 @@
+{
+  "typeName" : {
+    "name" : "Coordinate",
+    "namePackage" : ["draco", "base"],
+    "typeParameters" : ["T <: Product"]
+  },
+  "derivation" : [
+    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["T"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "value", "valueType" : "T" }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "typeName" : {
+    "name" : "BravoActor",
+    "namePackage" : ["domains", "bravo"]
+  },
+  "derivation" : [
+    { "name" : "ActorInstance", "namePackage" : ["draco"] }
+  ]
+}

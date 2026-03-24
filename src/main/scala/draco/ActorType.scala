@@ -1,7 +1,7 @@
 package draco
 
 trait ActorType extends DracoType {
-  val actorDefinition: ActorDefinition
+  val actorDefinition: TypeDefinition
 }
 
 object ActorType extends App with TypeInstance {
@@ -16,7 +16,7 @@ object ActorType extends App with TypeInstance {
     _elements = Seq (
       Fixed (
         _name = "actorDefinition",
-        _valueType = "ActorDefinition"
+        _valueType = "TypeDefinition"
       )
     )
   )

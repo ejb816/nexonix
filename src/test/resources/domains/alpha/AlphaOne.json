@@ -1,0 +1,10 @@
+{
+  "typeName" : {
+    "name" : "AlphaOne",
+    "namePackage" : ["domains", "alpha"]
+  },
+  "derivation" : [
+    { "name" : "Alpha", "namePackage" : ["domains", "alpha"] },
+    { "name" : "PartOne", "namePackage" : ["domains", "dataModel"] }
+  ]
+}

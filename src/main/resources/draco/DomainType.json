@@ -7,7 +7,7 @@
     { "name" : "DracoType", "namePackage" : ["draco"] }
   ],
   "elements" : [
-    { "kind" : "Fixed", "name" : "domainDefinition", "valueType" : "DomainDefinition" },
+    { "kind" : "Fixed", "name" : "domainDefinition", "valueType" : "TypeDefinition" },
     { "kind" : "Fixed", "name" : "typeDictionary", "valueType" : "TypeDictionary" }
   ]
 }

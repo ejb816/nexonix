@@ -1,0 +1,21 @@
+{
+  "typeName" : {
+    "name" : "Numbers",
+    "namePackage" : ["draco", "primes"]
+  },
+  "derivation" : [
+    { "name" : "Primes", "namePackage" : ["draco", "primes"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "primeSequence", "valueType" : "Seq[Int]" },
+    { "kind" : "Fixed", "name" : "naturalSequence", "valueType" : "Seq[Int]" },
+    { "kind" : "Fixed", "name" : "compositeSequence", "valueType" : "Seq[Int]" }
+  ],
+  "factory" : {
+    "kind" : "Factory",
+    "valueType" : "Numbers",
+    "parameters" : [
+      { "kind" : "Parameter", "name" : "n", "valueType" : "Int", "value" : "22" }
+    ]
+  }
+}

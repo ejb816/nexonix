@@ -18,10 +18,10 @@ object Actor extends App with TypeInstance {
   )
   lazy val typeInstance: Type[Actor[_]] = Type[Actor[_]] (typeDefinition)
   def apply[T](
-                _actorDefinition: ActorDefinition
+                _actorDefinition: TypeDefinition
               ): Actor[T] = new Actor[T]  {
-    val typeDefinition: TypeDefinition = TypeDefinition (_actorDefinition.typeName)
-    val actorDefinition: ActorDefinition = _actorDefinition
+    val typeDefinition: TypeDefinition = _actorDefinition
+    val actorDefinition: TypeDefinition = _actorDefinition
     def receive(ctx: TypedActorContext[T], msg: T): Behavior[T] = {
       Behaviors.same[T]
     }

@@ -1,6 +1,6 @@
 package draco.primes
 
-import draco.{ContentSink, Generator, RuleDefinition, SourceContent, TypeName}
+import draco.{ContentSink, Generator, SourceContent, TypeDefinition, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService
 import org.evrete.api.{Knowledge, RhsContext, StatefulSession}
@@ -37,40 +37,40 @@ class PrimesRulesTest extends AnyFunSuite {
     service.shutdown()
   }
   test("Generate PrimesFromNaturalSequence") {
-    val resourcePath = "draco/primes/rules/PrimesFromNaturalSequence.json"
+    val resourcePath = "draco/primes/PrimesFromNaturalSequence.rule.json"
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     println(jsonContent.spaces2)
 
-    val rule: RuleDefinition = jsonContent.as[RuleDefinition].getOrElse(null)
+    val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/rules/PrimesFromNaturalSequence.scala")
+    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/PrimesFromNaturalSequence.scala")
     contentSink.write(ruleSource)
     println(ruleSource)
   }
 
   test("Generate AddNaturalSequence") {
-    val resourcePath = "draco/primes/rules/AddNaturalSequence.json"
+    val resourcePath = "draco/primes/AddNaturalSequence.rule.json"
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     println(jsonContent.spaces2)
 
-    val rule: RuleDefinition = jsonContent.as[RuleDefinition].getOrElse(null)
+    val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/rules/AddNaturalSequence.scala")
+    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/AddNaturalSequence.scala")
     contentSink.write(ruleSource)
     println(ruleSource)
   }
 
   test("Generate RemoveCompositeNumbers") {
-    val resourcePath = "draco/primes/rules/RemoveCompositeNumbers.json"
+    val resourcePath = "draco/primes/RemoveCompositeNumbers.rule.json"
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     println(jsonContent.spaces2)
 
-    val rule: RuleDefinition = jsonContent.as[RuleDefinition].getOrElse(null)
+    val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/rules/RemoveCompositeNumbers.scala")
+    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/RemoveCompositeNumbers.scala")
     contentSink.write(ruleSource)
     println(ruleSource)
   }
@@ -103,7 +103,7 @@ class PrimesRulesTest extends AnyFunSuite {
   test("PrimesFromNaturalSequence.rule") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge = service.newKnowledge("PrimesFromNaturalSequence.rule")
-    rules.PrimesFromNaturalSequence.ruleInstance.pattern.accept(knowledge)
+    PrimesFromNaturalSequence.ruleInstance.pattern.accept(knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),
@@ -115,8 +115,8 @@ class PrimesRulesTest extends AnyFunSuite {
   test("AddAndRemoveRulesTest") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge: Knowledge = service.newKnowledge("AddAndRemoveRulesTest")
-    rules.AddNaturalSequence.ruleInstance.pattern.accept(knowledge)
-    rules.RemoveCompositeNumbers.ruleInstance.pattern.accept(knowledge)
+    AddNaturalSequence.ruleInstance.pattern.accept(knowledge)
+    RemoveCompositeNumbers.ruleInstance.pattern.accept(knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),

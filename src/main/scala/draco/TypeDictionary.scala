@@ -19,16 +19,16 @@ object TypeDictionary extends App with TypeInstance {
     _factory = Factory (
       "TypeDictionary",
       _parameters = Seq (
-        Parameter ("domainDefinition", "DomainDefinition", "")
+        Parameter ("domainDefinition", "TypeDefinition", "")
       )
     )
   )
   lazy val typeInstance: Type[TypeDictionary] = Type[TypeDictionary] (typeDefinition)
 
-  def apply (_domainDefinition: DomainDefinition) : TypeDictionary = new TypeDictionary {
+  def apply (_domainDefinition: TypeDefinition) : TypeDictionary = new TypeDictionary {
     override val elementTypes: Seq[TypeDefinition] = _domainDefinition.elementTypeNames.map (name =>
       TypeDefinition (TypeName (name, _namePackage = _domainDefinition.typeName.namePackage)))
     override val kvMap: Map[TypeName, TypeDefinition]  = elementTypes.map (td => (td.typeName, td)).toMap
   }
-  lazy val Null: TypeDictionary = TypeDictionary(DomainDefinition.Null)
+  lazy val Null: TypeDictionary = TypeDictionary(TypeDefinition.Null)
 }

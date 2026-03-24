@@ -1,0 +1,14 @@
+{
+  "typeName" : {
+    "name" : "Ordinal",
+    "namePackage" : ["draco", "base"]
+  },
+  "derivation" : [
+    { "name" : "Unit", "namePackage" : ["draco", "base"] },
+    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["Enumeration"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "name", "valueType" : "String" },
+    { "kind" : "Fixed", "name" : "description", "valueType" : "String" }
+  ]
+}
