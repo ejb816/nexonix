@@ -1,5 +1,5 @@
 ThisBuild / organization := "org.nexonix"
-ThisBuild / version := "1.1.1-SNAPSHOT"
+ThisBuild / version := "2.0.0-alpha.1"
 ThisBuild / scalaVersion := "2.13.16"
 publishMavenStyle := true
 
@@ -42,7 +42,7 @@ lazy val root = (project in file("."))
     /**
      * sbt-native-packager config - creates package for deploying
      */
-     Compile / mainClass := Some("org.mitre.anvil.rules.DataDictionaryMap"),
+     Compile / mainClass := Some("draco.CLI"),
      Compile / discoveredMainClasses := Seq(),
 
      fork := true,
@@ -63,7 +63,16 @@ lazy val root = (project in file("."))
       dependencies.scalaReflect,
       dependencies.scalaSwing,
       dependencies.scalaCompiler
-    )
+    ),
+
+    assembly / mainClass := Some("draco.CLI"),
+    assembly / assemblyJarName := s"draco-${version.value}.jar",
+    assembly / assemblyMergeStrategy := {
+      case PathList("META-INF", "services", _*) => MergeStrategy.concat
+      case PathList("META-INF", _*)             => MergeStrategy.discard
+      case "reference.conf"                     => MergeStrategy.concat
+      case _                                    => MergeStrategy.first
+    }
   )
 
 ThisBuild / managedScalaInstance := false

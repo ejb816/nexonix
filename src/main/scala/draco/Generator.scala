@@ -234,6 +234,11 @@ object Generator extends App with TypeInstance {
     }
   }
 
+  /** Check if globalElements contain an explicit main method (Dynamic named "main").
+    * When present, the companion omits App and lets globalElementsDeclaration emit def main. */
+  private def hasExplicitMain (globalElements: Seq[BodyElement]) : Boolean =
+    globalElements.exists { case d: Dynamic => d.name == "main"; case _ => false }
+
   private def globalElementsDeclaration (
     globalElements: Seq[BodyElement]
   ) : String = {
@@ -583,8 +588,9 @@ object Generator extends App with TypeInstance {
     val objName = td.typeName.name
     val wName = wildcardTypeName(td.typeName)
     val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
+    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
 
-    val header = s"object $objName extends App with TypeInstance"
+    val header = s"object $objName extends ${appMixin}TypeInstance"
     val tdLiteral = s"  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
     val tiLiteral = s"  lazy val typeInstance: Type[$wName] = Type[$wName] (typeDefinition)"
     val codec = codecDeclaration(td, familyContext)
@@ -614,6 +620,18 @@ object Generator extends App with TypeInstance {
          |${globalElementsDeclaration(td.globalElements)}
          |}""".stripMargin
     }
+  }
+
+  // --- Object-only companion generation (no trait, extends DracoType) ---
+
+  private def objectGlobal (td: TypeDefinition) : String = {
+    val objName = td.typeName.name
+    s"""object $objName extends DracoType {
+       |  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}
+       |  lazy val typeInstance: DracoType = this
+       |
+       |${globalElementsDeclaration(td.globalElements)}
+       |}""".stripMargin
   }
 
   // --- Trait declaration helper ---
@@ -648,8 +666,9 @@ object Generator extends App with TypeInstance {
     val objName = td.typeName.name
     val wName = wildcardTypeName(td.typeName)
     val hasGlobalElements = td.globalElements.nonEmpty
+    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
 
-    val header = s"object $objName extends App with DomainInstance"
+    val header = s"object $objName extends ${appMixin}DomainInstance"
     val tdLiteral = s"  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
     val tiLiteral = s"  lazy val typeInstance: Type[$wName] = Type[$wName] (typeDefinition)"
     val codec = codecDeclaration(td, familyContext)
@@ -677,7 +696,8 @@ object Generator extends App with TypeInstance {
       _pattern = td.pattern,
       _action = td.action
     )
-    s"""object $name extends App with RuleInstance {
+    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
+    s"""object $name extends ${appMixin}RuleInstance {
        |  private lazy val ruleDefinition: TypeDefinition = ${ruleDefinitionFromJson(ruleTd)}
        |${conditionFunctions(td.conditions)}
        |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
@@ -741,6 +761,11 @@ object Generator extends App with TypeInstance {
 
   private def isActor (td: TypeDefinition) : Boolean =
     td.derivation.exists(tn => Set("ActorType", "ActorInstance", "ExtensibleBehavior").contains(tn.name))
+
+  /** Object-only type: no trait, no factory, no derivation, but has globalElements.
+    * Emits object extending DracoType with typeInstance = this. */
+  private def isObjectOnly (td: TypeDefinition) : Boolean =
+    td.elements.isEmpty && td.factory.valueType.isEmpty && td.derivation.isEmpty && td.globalElements.nonEmpty
 
   // --- Main generate methods ---
 
@@ -831,6 +856,13 @@ object Generator extends App with TypeInstance {
          |${traitDeclaration(td)}
          |
          |${domainGlobal(td)}
+         |""".stripMargin
+    } else if (isObjectOnly(td)) {
+      val imports = typeImports(td, hasCodec = false)
+      s"""
+         |package ${td.typeName.namePackage.mkString(".")}
+         |$imports
+         |${objectGlobal(td)}
          |""".stripMargin
     } else {
       val instanceType = if (isActor(td)) "actor" else ""

@@ -20,6 +20,7 @@ object Draco extends App with DomainInstance {
       typeDefinition.typeName,
       _elementTypeNames = Seq (
         "Actor",
+        "CLI",
         "ContentSink",
         "Dictionary",
         "Domain",
@@ -29,6 +30,7 @@ object Draco extends App with DomainInstance {
         "Generator",
         "Main",
         "Primal",
+        "REPL",
         "Rule",
         "SourceContent",
         "Specifically",
