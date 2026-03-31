@@ -1,6 +1,5 @@
 package draco
 
-import io.circe.parser
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 
@@ -74,15 +73,6 @@ object TypeDefinition extends App with TypeInstance {
   )
   lazy val typeInstance: Type[TypeDefinition] = Type[TypeDefinition] (typeDefinition)
 
-  def load (typeName: TypeName) : TypeDefinition = {
-    val stream = getClass.getResourceAsStream(typeName.resourcePath)
-    if (stream == null) return TypeDefinition(typeName)
-    val source = scala.io.Source.fromInputStream(stream)
-    try {
-      val json = source.mkString
-      parser.parse(json).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition(typeName))
-    } finally source.close()
-  }
   def apply (
               _typeName: TypeName,
               _superDomain: TypeName = TypeName.Null,

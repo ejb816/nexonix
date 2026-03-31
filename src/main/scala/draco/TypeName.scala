@@ -12,7 +12,7 @@ trait TypeName extends TypeInstance {
 }
 
 object TypeName extends App with TypeInstance {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition.load(TypeName ("TypeName", _namePackage = Seq("draco")))
+  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("TypeName", _namePackage = Seq("draco")))
   lazy val typeInstance: Type[TypeName] = Type[TypeName] (typeDefinition)
 
   implicit lazy val encoder: Encoder[TypeName] = Encoder.instance { x =>

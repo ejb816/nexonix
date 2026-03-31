@@ -14,7 +14,7 @@ object DataModelActor extends App with ActorInstance {
 
   def actorWithSession(bravoRef: ActorRef[Bravo]): Actor[DataModel] = {
     val knowledge = Rule.knowledgeService.newKnowledge("DataModelAssembly")
-    AssembleResult.ruleInstance.pattern.accept(knowledge)
+    AssembleResultRule.ruleInstance.pattern.accept(knowledge)
     knowledge.set("bravoActorRef", bravoRef)
     val session: StatefulSession = knowledge.newStatefulSession()
 

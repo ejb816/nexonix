@@ -1,7 +1,7 @@
 {
   "typeName" : {
-    "name" : "DataModelActor",
-    "namePackage" : ["domains", "dataModel"]
+    "name" : "Bravo",
+    "namePackage" : ["domains", "bravo"]
   },
   "derivation" : [
     { "name" : "ActorInstance", "namePackage" : ["draco"] }

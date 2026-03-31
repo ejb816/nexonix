@@ -2,34 +2,14 @@ package domains.dataModel
 
 import domains.bravo._
 import draco._
-import io.circe.{Json, parser}
 import org.evrete.api.{Knowledge, RhsContext}
 import org.apache.pekko.actor.typed.ActorRef
 import java.util.function.Consumer
 
-trait AssembleResult extends RuleInstance
+trait AssembleResultRule extends RuleInstance
 
-object AssembleResult extends App with RuleInstance {
-  private lazy val ruleDefinition: TypeDefinition = parser.parse("""{
-  "typeName" : {
-    "name" : "AssembleResult",
-    "namePackage" : ["domains", "dataModel"]
-  },
-  "variables" : [
-    { "kind" : "Variable", "name" : "partOne", "valueType" : "PartOne" },
-    { "kind" : "Variable", "name" : "partTwo", "valueType" : "PartTwo" }
-  ],
-  "action" : {
-    "kind" : "Action",
-    "valueType" : "Unit",
-    "body" : [
-      { "kind" : "Fixed", "name" : "result", "valueType" : "BravoResult", "value" : "Bravo.result(partOne.number, partTwo.text)" },
-      { "kind" : "Monadic", "valueType" : "Unit", "value" : "bravoRef ! result" },
-      { "kind" : "Monadic", "valueType" : "Unit", "value" : "ctx.delete(partOne)" },
-      { "kind" : "Monadic", "valueType" : "Unit", "value" : "ctx.delete(partTwo)" }
-    ]
-  }
-}""").flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
+object AssembleResultRule extends App with RuleInstance {
+  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("AssembleResult", _namePackage = Seq("domains", "dataModel")))
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
     val partOne: PartOne = ctx.get[PartOne]("$partOne")
@@ -53,7 +33,7 @@ object AssembleResult extends App with RuleInstance {
       .build()
   }
 
-  lazy val ruleInstance: RuleType = Rule[AssembleResult](
+  lazy val ruleInstance: RuleType = Rule[AssembleResultRule](
     ruleDefinition,
     _pattern = pattern,
     _action = action
@@ -66,5 +46,5 @@ object AssembleResult extends App with RuleInstance {
     )
   )
 
-  lazy val typeInstance: DracoType = Type[AssembleResult](typeDefinition)
+  lazy val typeInstance: DracoType = Type[AssembleResultRule](typeDefinition)
 }

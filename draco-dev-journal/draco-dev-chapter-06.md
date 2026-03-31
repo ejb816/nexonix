@@ -1,229 +1,238 @@
 # Draco Dev Journal — Chapter 6
 
 **Session date:** March 23, 2026 (continued)
-**Topic:** Codec Generation Implementation, TupleFactRule Fix, DomainDefinition Consistency Discussion, DomainDefinition Upgrade Plan
+**Topic:** Generator Consistency Updates, DelayedInit Bug Hunt, RuleDefinition Decoder Fix, Rule Import Generation, README.md
 
 ---
 
-## Session Start — Implementing the Codec Generation Plan
+## Session Start — Generator Consistency Plan
 
 > **Dev:** Implement the following plan:
-> # Codec Generation for Draco Generator
-> *(The full codec generation plan — all three codec patterns, nine new helper methods, five modified methods, phased implementation order — later documented in Chapter 7)*
+> # Plan: Generator Consistency Updates
+> *(A structured plan addressing three inconsistencies: factoryBody ignoring Factory.body, nullInstance using null-cast instead of factory apply, and missing DomainInstance companion generation)*
 
-**Draco:** *(Reads Generator.scala in full. Launches two parallel agents: one to catalog existing hand-written codec patterns across TypeName.scala, TypeElement.scala, TypeDefinition.scala, Codec.scala, Value.scala, DomainName.scala; another to read the TypeDefinitionTest.scala test assertions for verification targets)*
+**Draco:** *(Reads Generator.scala in full. Launches an Explore agent to find the definitions of Factory, DomainName, DomainInstance, and BodyElement across the codebase. Reads Domain.scala and DomainInstance.scala for the apply pattern. Reads Primes.scala for the target DomainInstance pattern.)*
 
-Implementation proceeds in five tracked tasks, following the plan's implementation order:
+Implementation proceeds as four tracked tasks:
 
-### Task 1: Foundation Helpers
+### Task 1: Refactor factoryBody to Honor Factory.body
 
-Three private methods added to Generator.scala after `nullValueFor`:
+Changed signature from `factoryBody(parameters: Seq[Parameter])` to `factoryBody(factory: Factory)`.
 
-- **`elisionCheck(p, instanceVar)`** — returns `Some(check)` for parameters with defaults, `None` for required fields. String → `.nonEmpty`, Seq/Map → `.nonEmpty`, Factory → `.valueType.nonEmpty`, Action → `.body.nonEmpty`, Pattern → `.variables.nonEmpty`.
-- **`findDiscriminatedParent(td, familyMap)`** — walks derivation chain upward to find the **root** discriminated union ancestor (e.g., TypeElement, not BodyElement). Returns `Some(name)` of the topmost ancestor with modules.
-- **`collectLeafModules(td, familyMap)`** — recursively collects concrete subtypes, skipping intermediate sealed traits (BodyElement is intermediate; Fixed, Mutable, etc. are leaves).
+When `factory.body` is non-empty, each BodyElement becomes an override line directly:
 
-### Task 2: Pattern 1 — Simple Field-Based Codecs
+```scala
+if (factory.body.nonEmpty) {
+  val overrides = factory.body.map {
+    case f: Fixed   => s"    override val ${f.name}: ${f.valueType} = ${f.value}"
+    case m: Mutable => s"    override var ${m.name}: ${m.valueType} = ${m.value}"
+    case d: Dynamic => s"    override def ${d.name}: ${d.valueType} = ${d.value}"
+    case be: BodyElement => s"    override val ${be.name}: ${be.valueType} = ${be.value}"
+  }
+```
 
-Three methods for types like TypeName, TypeDefinition, Value:
+When empty, falls back to parameter-derived behavior with the automatic `typeDefinition` override.
 
-- **`fieldElisionEncoder(params, instanceVar)`** — generates `Encoder.instance { x => val fields = Seq(...).flatten; Json.obj(fields: _*) }`
-- **`fieldElisionDecoder(params, typeName)`** — generates `Decoder.instance { cursor => for { ... } yield TypeName(...) }`
-- **`simpleCodecDeclaration(td)`** — combines encoder + decoder as `implicit lazy val`
+### Task 2: Add nullValueFor Helper
 
-### Task 3: Pattern 3 — Codec.sub Wiring
+New private method placed before `nullInstance`:
 
-- **`subtypeCodecDeclaration(td, parentName)`** — generates `private lazy val codec = Codec.sub[Parent, Child](Parent.encoder, Parent.decoder)` with `implicit def encoder` / `implicit def decoder`
+```scala
+private def nullValueFor(valueType: String, defaultValue: String): String = {
+  if (defaultValue.nonEmpty) defaultValue
+  else valueType match {
+    case "String"                   => "\"\""
+    case s if s.startsWith("Seq[")  => "Seq.empty"
+    case s if s.startsWith("Map[")  => "Map.empty"
+    case "Int" | "Long"             => "0"
+    case "Double" | "Float"         => "0.0"
+    case "Boolean"                  => "false"
+    case _                          => s"null.asInstanceOf[$valueType]"
+  }
+}
+```
 
-### Task 4: Pattern 2 — Discriminated Union
+### Task 3: Refactor nullInstance to Use Factory Apply
 
-The most complex pattern. Two methods:
+Changed signature to `nullInstance(typeName, elements, factory)`. When a factory exists (`valueType.nonEmpty`), generates Null via `apply()` with null-equivalent args from `nullValueFor`. Falls back to null-cast only when no factory is present.
 
-- **`discriminatedCodecDeclaration(td, familyMap)`** — Full encoder with `kind` match arms over all leaf subtypes, plus fallback. Full decoder dispatching on `cursor.downField("kind").as[String]` to per-subtype for-comprehensions.
-- **`encoderFieldLines(instanceVar, parentTd, leaves, familyMap)`** — Builds the shared encoder field set restricted to **parent-accessible fields only** (elements + factory params). This is critical: subtype-specific fields like `Pattern.variables` exist on leaf types but not on the parent trait, so the encoder can only access fields declared on the parent.
+### Task 4: Add DomainInstance Companion Generation
 
-### Task 5: Dispatcher and Wiring
+Three new methods:
 
-- **`codecDeclaration(td, familyContext)`** — Top-level dispatcher. Key ordering decision: checks `findDiscriminatedParent` **first** (so intermediate sealed traits like BodyElement get Pattern 3, not Pattern 2), then checks `td.modules.nonEmpty` for Pattern 2, then factory check for Pattern 1.
-- **`hasCodec(td, familyContext)`** — Boolean convenience for import generation.
-- **`circeImports`** — `import io.circe.{Decoder, Encoder, Json}` + `import io.circe.syntax.EncoderOps`
+- **`domainInstanceLiteral(objName, dn)`** — produces the `Domain[X](_domainName = DomainName(...))` call
+- **`domainGlobal(td, dn)`** — produces the full DomainInstance companion object
+- **`generate(td, dn)`** — new overload producing trait + DomainInstance companion
 
-Modified methods:
-- **`typeGlobal(td)`** → `typeGlobal(td, familyContext: Seq[TypeDefinition] = Seq.empty)` — codec block inserted after typeInstance, before factory/Null/Default
-- **`domainGlobal(td, dn)`** → `domainGlobal(td, dn, familyContext: Seq[TypeDefinition] = Seq.empty)` — same insertion
-- **`generate(td)`** — adds circe imports when codec present
-- **`generate(td, dn)`** — adds circe imports when codec present
-- **`generate(typeDefinitions)`** — passes `typeDefinitions` as familyContext to each `typeGlobal` call, adds circe imports when any type has codec
-
-### Key Design Discovery During Implementation
-
-The initial `codecDeclaration` checked `td.modules.nonEmpty` first (Pattern 2), then looked for a discriminated parent (Pattern 3). This was wrong for **BodyElement** — it has modules (it's a sealed trait) AND derives from TypeElement (which also has modules). The hand-written code gives BodyElement `Codec.sub[TypeElement, BodyElement]`, not its own discriminated union. Fixed by checking `findDiscriminatedParent` first: intermediate sealed traits that derive from a higher discriminated parent get Pattern 3.
-
-Similarly, `findDiscriminatedParent` initially returned the **immediate** parent with modules. For Fixed (derives from BodyElement, which derives from TypeElement), this returned "BodyElement" — but the hand-written code uses `Codec.sub[TypeElement, Fixed]`. Fixed by walking all the way to the **root** discriminated ancestor.
+Target output matches the hand-written Primes pattern.
 
 ---
 
-## TupleFactRule Compilation Fix
+## The Test Failure Cascade
 
-> **Dev:** *(Pastes full test compilation output showing an error in TupleFactReteTest.scala)*
-> ```
-> lazy value pattern in object TupleFactRule cannot be accessed as a member of
-> object org.nexonix.rules.rete.rules.TupleFactRule from class TupleFactReteTest
-> ```
+> **Dev:** You have done a great job on the more recent, comprehensive changes to the type system. However, I just ran all the tests in sbt and 7 out of 32 failed. I have the complete output of the tests in the sbt shell window. What is the best way to proceed with that information to work with you to fix the errors that are causing the 7 test failures?
 
-**Draco:** Pre-existing bug, not caused by the codec changes. `TupleFactRule.pattern` is `private lazy val` but the test calls it directly at line 29. Same pattern that was fixed previously in PrimesRulesTest.
+**Draco:** The most effective approach: copy the failing test output from your sbt shell and paste it here. Specifically, I need the failure summaries and stack traces.
+
+> **Dev:** *(Pastes complete test output showing 7 failures across 3 test classes)*
+
+**Draco:** Two distinct error patterns:
+
+**Pattern 1 (5 failures):** `NullPointerException: Cannot invoke "io.circe.Decoder.apply(io.circe.HCursor)" because "d" is null` — in TestValue, TupleFactReteTest, and three PrimesRulesTest "Generate" tests. The decoder itself is null when `jsonContent.as[RuleDefinition]` is called.
+
+**Pattern 2 (2 failures):** `NoSuchElementException: last of empty list` — in PrimesRulesTest "PrimesFromNaturalSequence.rule" and "AddAndRemoveRulesTest". Rules never fired, `compositeSet` was empty.
+
+*(Reads all three test files and all codec declarations across the codebase)*
+
+### The DelayedInit Root Cause
+
+`RuleDefinition` and `Value` companion objects extend `App` but have `implicit val encoder/decoder` — not `lazy val`. Due to `DelayedInit`, these are null when accessed from test contexts before `main()` runs.
+
+Other types already use `lazy`:
+- TypeDefinition.scala — `lazy implicit val` ✓
+- TypeName.scala — `lazy implicit val` ✓
+- DomainName.scala — `lazy implicit val` ✓
+- TypeElement.scala — `implicit lazy val` ✓
+
+Fix: Changed both files to `implicit lazy val`:
+
+```scala
+// RuleDefinition.scala
+implicit lazy val encoder: io.circe.Encoder[RuleDefinition] = ...
+implicit lazy val decoder: io.circe.Decoder[RuleDefinition] = ...
+
+// Value.scala
+implicit lazy val encoder: Encoder[Value] = ...
+implicit lazy val decoder: Decoder[Value] = ...
+```
+
+### The Missing .accept(knowledge) Fix
+
+For Pattern 2, the tests accessed `ruleInstance.pattern` (a `Consumer[Knowledge]`) without calling `.accept(knowledge)`, so rules were never registered:
 
 ```scala
 // Before:
-TupleFactRule.pattern (knowledge)
+rules.PrimesFromNaturalSequence.ruleInstance.pattern
 // After:
-TupleFactRule.ruleInstance.pattern.accept(knowledge)
+rules.PrimesFromNaturalSequence.ruleInstance.pattern.accept(knowledge)
 ```
 
-> **Dev:** I did not expect that the problem was caused by any of your changes. Pasting the entire error text for running all the tests was the easiest way for me to get your assistance. Thank you!
+Same fix for `AddNaturalSequence` and `RemoveCompositeNumbers`.
 
 ---
 
-## Task Recall
+## Layer Two — Private Val Null
 
-> **Dev:** What is your recall of what tasks are left to do?
+> **Dev:** *(Pastes new error)*
+> ```
+> Cannot invoke "java.util.function.Consumer.accept(Object)" because the return value of
+> "draco.RuleType.pattern()" is null
+> ```
 
-**Draco:** Based on the memory file, the remaining Generator tasks are:
+**Draco:** Same `DelayedInit` problem, one level deeper. `PrimesFromNaturalSequence extends App` has `private val pattern` and `private val action` — these are null when `lazy val ruleInstance` tries to reference them. They need to be `private lazy val`.
 
-5. **Rules subdomain auto-generation** — `rules` is a reserved subpackage name; `rules.Rules` extends `DomainInstance with <ParentDomain>` and is auto-generated as a container for all rule types in that subpackage.
-6. **TypeInstance/DomainInstance imports** — Extend the `ruleImports` pattern to `generate(td)` and `generate(td, dn)` methods.
+Fixed all three rule files:
 
-Just completed: ~~4. Codec generation~~ — the three patterns we just implemented.
+```scala
+// Before:
+private val ruleDefinition : RuleDefinition = ...
+private val action: Consumer[RhsContext] = ...
+private val pattern: Consumer[Knowledge] = ...
+
+// After:
+private lazy val ruleDefinition : RuleDefinition = ...
+private lazy val action: Consumer[RhsContext] = ...
+private lazy val pattern: Consumer[Knowledge] = ...
+```
+
+Also updated the Generator template so future generated rules emit `private lazy val`.
+
+Updated the memory note — the old guidance said "Private vals used only within same body → fine as `val`" was wrong. Corrected to: "Private vals referenced by lazy vals → `private lazy val` (DelayedInit makes them null when lazy val triggers)."
 
 ---
 
-## The Definition Type Consistency Discussion
+## Layer Three — The RuleDefinition Decoder Bug
 
-> **Dev:** There is a glitch in the consistency of the "definition types." TypeDefinition is the root definition type, and DracoType is the root type for derivation. The three immediate "subtypes" of DracoType are DomainType, RuleType, and ActorType. Even though it is not yet well defined in Draco, it should be straightforward to define the other type definition associated types. The inconsistency is that there should be a DomainDefinition, that has and is referenced by TypeName in the same way that RuleDefinition has and is referenced by TypeName, which also implies ActorDefinition. Let's discuss.
+> **Dev:** *(Pastes new error)*
+> ```
+> Cannot invoke "draco.RuleDefinition.typeName()" because "rd" is null
+> ```
 
-**Draco:** *(Launches three parallel Explore agents: one to read all definition-related types, one to read all domain-related types and companions, one to read the RuleDefinition/RuleType/RuleInstance/Rule chain as a pattern)*
+**Draco:** The decoder was previously null, so we never saw the actual decode error. Now it runs but fails. `.getOrElse(null)` produces null because the decode returns `Left`.
 
-The current structure has a clear asymmetry:
+Traced through the RuleDefinition decoder:
 
-**Runtime type hierarchy** (DracoType):
-```
-DracoType          → typeDefinition: TypeDefinition
-├── DomainType     → domainName: DomainName
-├── RuleType       → ruleDefinition: RuleDefinition
-└── ActorType      → (not yet defined)
-```
-
-**Definition types** (what describes each):
-```
-TypeDefinition     → typeName: TypeName     ✓ root definition
-RuleDefinition     → typeName: TypeName     ✓ parallel to RuleType
-DomainName         → typeName: TypeName     ✗ not a "Definition"
-???                                         ✗ no ActorDefinition
+```scala
+_pattern  <- cursor.downField("action").as[Option[Pattern]].map(_.getOrElse(Pattern.Null))
+_action   <- cursor.downField("action").as[Option[Action]].map(_.getOrElse(Action.Null))
 ```
 
-The inconsistency: `RuleType` carries a `RuleDefinition` (rich — variables, conditions, pattern, action), but `DomainType` carries only `DomainName` (just typeName + elementTypeNames). A consistent design would be:
+Line 77: `_pattern` reads from `cursor.downField("action")` — the same field as `_action` on line 78. The JSON "action" field has `"kind": "Action"`, so decoding it as `Pattern` fails (`Codec.sub` emap rejects it: "Expected Pattern, got Action"). This `Left` propagates through the for-comprehension.
 
-```
-TypeDefinition      — structure of any type
-├── DomainDefinition — structure of a domain
-├── RuleDefinition   — structure of a rule
-└── ActorDefinition  — structure of an actor
-```
+This was a pre-existing bug masked by the null decoder — the decode never ran far enough to hit this field-name error.
 
-Questions posed for discussion:
-1. Should DomainDefinition replace DomainName, or wrap it?
-2. What additional fields beyond elementTypeNames?
-3. For ActorDefinition — minimal viable shape?
-4. Subtypes of TypeDefinition, or peers sharing TypeName?
+Fix: `cursor.downField("action")` → `cursor.downField("pattern")` for the `_pattern` field. Since the JSON has no `"pattern"` field, `as[Option[Pattern]]` returns `None`, giving `Pattern.Null`.
 
 ---
 
-## DomainDefinition Design Emerges
+## Layer Four — The Test Overwrites the Source
 
-> **Dev:** DomainDefinition obviates the need for DomainName, as you discerned from my prompt. DomainName was a move toward consistency without getting there. For additional fields in DomainDefinition, start with elementTypeNames, which are simple names whose package is the same as the domain type. Add subdomains, which are referenced by TypeName since subdomains are any domain that directly derives from a domain type. Beyond those consider source and sink, given that they represent the domain and codomain of morphism pointing from left to right, respectively. If source equals sink, then it's an endomorphism. Endomorphisms are Updates and Morphisms are Transforms. We will not use the term morphism in the definition keywords.
+> **Dev:** I hope you have a sense of humor... PrimeRulesTest actually overwrites the existing source code implementation with the rule source code generated by the test. The good news? It can be fixed by the Generator generating "import draco._" in the generated rule source code. You might as well add imports for circe and evrete while you're at it.
 
-**Draco:** The DomainDefinition shape:
+**Draco:** *(Adds `ruleImports` method to Generator)*
 
+```scala
+private def ruleImports(namePackage: Seq[String]): String = {
+  val packageImports = namePackage.inits.toSeq.tail.init.map(p => s"import ${p.mkString(".")}._")
+  val allPackageImports = if (packageImports.contains("import draco._")) packageImports
+    else "import draco._" +: packageImports
+  val frameworkImports = Seq(
+    "import io.circe.{Json, parser}",
+    "import org.evrete.api.{Knowledge, RhsContext}",
+    "import java.util.function.Consumer"
+  )
+  (allPackageImports ++ frameworkImports).mkString("\n")
+}
 ```
-DomainDefinition
-  typeName: TypeName              — identity
-  elementTypeNames: Seq[String]   — simple names (package = domain's package)
-  subdomains: Seq[TypeName]       — domains that directly derive from this domain
-  source: TypeName                — left side (domain of the mapping)
-  sink: TypeName                  — right side (codomain of the mapping)
-```
 
-Semantic interpretation of source/sink:
+For `draco.primes.rules`, this generates `import draco.primes._`, `import draco._`, plus framework imports. For non-draco packages (like TupleFactRule's `org.nexonix.rules.rete.rules`), `import draco._` is prepended since it's not naturally in the package hierarchy.
 
-| source | sink | meaning |
-|--------|------|---------|
-| empty | empty | Plain domain (Draco, Base, Primes) |
-| X | X | Update (endomorphism) |
-| X | Y | Transform (X ≠ Y) |
-
-The distinction between Update and Transform is entirely structural, not a separate type hierarchy.
+Added the `ruleImports` call to `generate(rd: RuleDefinition)` between the package declaration and trait declaration.
 
 ---
 
-## Subdomains: Top-Down or Bottom-Up?
+## Writing the README
 
-> **Dev:** Propose to me whether the domain determines its subdomains or the subdomains determine the superdomain, within domain definition. I don't think it can be both.
+> **Dev:** Can you write a comprehensive README.md for a person who knows nothing about this software framework? Include the type system and its extensions into domains, rules and actors, as well as what can reasonably be inferred from the fundamental concepts and how they can be applied to create data transformation services that preserve semantics within and between domains. Summarize the features that the tests have shown to work, and the features that still need to be worked on. This is just a first draft, based on any information you can retrieve from the persistent storage you have maintained for this project.
 
-**Draco:** **Bottom-up: the subdomain declares its superdomain.**
+**Draco:** *(Reads all memory files, CLAUDE.md, CHANGELOG.md. Launches an Explore agent to do a thorough read of: the core type hierarchy, domain system, rule system, actor system, content pipeline, base domain, transform domains, primes domain, and test files — 54 tool uses across 9 major areas)*
 
-The reasoning follows from consistency with TypeDefinition's own patterns:
+The README covers:
 
-- `modules` (top-down) is for **sealed** hierarchies — the parent must exhaustively enumerate its children because the set is closed.
-- `derivation` (bottom-up) is for **open** extension — the child declares what it extends. Adding a child doesn't touch the parent.
-
-Domains are open, not sealed. You can add a `rules` subdomain to Primes without Primes needing to know about it. The `rules.Rules` auto-generation task then becomes: generate a DomainDefinition whose `superdomain` points to the parent domain's TypeName.
-
-So the revised field is `superdomain: TypeName` instead of `subdomains: Seq[TypeName]`:
-
-```
-DomainDefinition
-  typeName: TypeName
-  elementTypeNames: Seq[String]
-  superdomain: TypeName            — empty for root domains
-  source: TypeName
-  sink: TypeName
-```
-
-> **Dev:** Ready for plan to upgrade to DomainDefinition
+- **Core idea** — why self-describing types matter and how the type system is closed over itself
+- **Type system** — the full hierarchy from DracoType through TypeInstance, TypeDefinition, and the TypeElement sealed family
+- **Domains** — DomainName, Domain[T], DomainInstance, TypeDictionary, peer domain architecture
+- **Rules** — JSON-defined RuleDefinition, RETE integration, condition functions with fully-qualified names for Evrete's Java compiler, example JSON rule
+- **Actors** — the ActorBehavior → Service → ServiceDomain stack
+- **Code generation** — all three modes and the content pipeline
+- **Base domain** — measurement type hierarchy and compositional coordinate design
+- **Semantic preservation** — how types carry meaning, domains define vocabularies, rules preserve invariants, and transforms are first-class
+- **Working vs. in-progress features** — grounded in what the tests exercise
+- **Build instructions, dependencies, project structure**
 
 ---
 
-## Planning the DomainDefinition Upgrade
+## Documentation Updates for Next Session
 
-**Draco:** *(Enters plan mode. Launches three parallel agents:)*
+> **Dev:** I'm expecting to start a new session for the next phase, so please add inline updates to Claude.md as well as adding references to all the other documentation in the project that you have been updating.
 
-1. *Explore agent — cataloging every DomainName reference across the codebase (18 files found)*
-2. *Explore agent — reading the RuleDefinition/RuleType/RuleInstance/Rule chain as the pattern to follow*
-3. *Explore agent — reading all domain companions (Draco, Base, Primes, all transform domains) and TransformDomain trait*
+**Draco:** Updated all three files:
 
-Also reads TypeDictionary.scala (takes DomainName as factory param), ServiceDomain.scala (references `_domain.domainName.typeName`), TestTypeModule.scala (7 DomainName instances), and empty DomainNameTest.scala.
+**CLAUDE.md** — Rewrote the architecture section from scratch. Removed stale references to `DomainElement`, `TypeValue`, `preamble`, the conditions migration note. Added complete key files table, TypeElement hierarchy, companion object pattern, DelayedInit/lazy val rules, Generator details for all four `generate` overloads, and a "Related Documentation" section linking to README.md, CHANGELOG.md, and auto-memory.
 
-*(Launches Plan agent with full context from all three Explore agents)*
+**CHANGELOG.md** — Added new `[Unreleased]` section with all session changes: DomainInstance generation, nullValueFor, rule imports, factoryBody/nullInstance refactors, lazy val fixes, RuleDefinition decoder fix, test fixes.
 
-### The Plan (7 Phases)
-
-**Phase 1: Create DomainDefinition.scala** — `sealed trait` with 5 fields (typeName required, rest defaulted). Companion follows RuleDefinition pattern: `extends App with TypeInstance`, `apply()` with defaults (`Seq.empty`, `TypeName.Null`), `Null`, encoder with elision, decoder with `Option[T].getOrElse`. JSON backward-compatible with existing DomainName JSON.
-
-**Phase 2: Update core framework types (4 files)** — DomainType (`domainName` → `domainDefinition`), Domain (`_domainName` → `_domainDefinition`), TypeDictionary (factory param + apply + Null), ServiceDomain (`.domainName.typeName` → `.domainDefinition.typeName`).
-
-**Phase 3: Update Generator.scala** — Add `TypeName` case to `elisionCheck`. Rename `domainInstanceLiteral`, `domainGlobal`, `generate(td, dn)` param types. Generate `DomainDefinition(...)` with optional superdomain/source/sink fields.
-
-**Phase 4: Update domain companions (3 files)** — Draco, Base, Primes: `DomainName(...)` → `DomainDefinition(...)`, `_domainName` → `_domainDefinition`. Draco's elementTypeNames: `"DomainName"` → `"DomainDefinition"`.
-
-**Phase 5: Update test files (7 files)** — All five transform domains, TestTypeModule (7 variable renames + import), DomainNameTest → DomainDefinitionTest.
-
-**Phase 6: Delete DomainName.scala**
-
-**Phase 7: Update documentation** — CLAUDE.md, README.md, CHANGELOG.md.
-
-Files NOT modified: DomainInstance.scala (references DomainType, not DomainName), DomainDictionary.scala (works with DomainType/TypeDictionary).
-
-All code changes must be atomic — project won't compile in intermediate states.
+**MEMORY.md** — Marked completed Generator tasks (consistency updates, rule imports, framework imports). Added "Bug Fixes Applied This Session" section. Updated imminent task list with completed items struck through and new task #6 added.
 
 ---
 
@@ -231,7 +240,13 @@ All code changes must be atomic — project won't compile in intermediate states
 
 Major accomplishments this session:
 
-1. **Codec generation implemented** — All three patterns (simple field-based, discriminated union, Codec.sub wiring) added to Generator.scala. Nine new helper methods, five modified methods. Key discovery: pattern detection must check for discriminated parent before modules (intermediate sealed traits like BodyElement get Codec.sub, not their own union). Root-walking for `findDiscriminatedParent` ensures Fixed → TypeElement (not BodyElement).
-2. **TupleFactRule fix** — Pre-existing `private lazy val pattern` access bug, same as PrimesRulesTest fix.
-3. **Definition type consistency discussion** — Identified the DomainName/RuleDefinition asymmetry. Designed DomainDefinition with 5 fields: typeName, elementTypeNames, superdomain (bottom-up), source, sink. Update vs Transform is structural (source == sink or not).
-4. **DomainDefinition upgrade plan complete** — 7-phase plan covering 18 files, ready to execute.
+1. **Generator consistency updates** — factoryBody honors Factory.body, nullInstance uses factory apply() with type-appropriate defaults, DomainInstance companion generation added matching the Primes pattern.
+2. **Four-layer bug hunt** — Each fix revealed the next layer:
+   - Layer 1: `implicit val` → `implicit lazy val` for RuleDefinition/Value codecs (DelayedInit null)
+   - Layer 2: `private val` → `private lazy val` for rule action/pattern/ruleDefinition (DelayedInit null through lazy val reference)
+   - Layer 3: RuleDefinition decoder reading `_pattern` from `"action"` field instead of `"pattern"` (pre-existing bug masked by null decoder)
+   - Layer 4: Generated rule source missing imports (tests overwrite source files with Generator output)
+3. **Rule import generation** — `ruleImports(namePackage)` auto-generates package hierarchy imports + `import draco._` + framework imports for Circe, Evrete, Consumer.
+4. **Comprehensive README.md** — Full project documentation for newcomers, covering architecture, semantic preservation, working features, and roadmap.
+5. **Documentation refresh** — CLAUDE.md rewritten with current architecture, CHANGELOG.md updated, MEMORY.md updated with completed tasks and bug fix record.
+6. **Memory note corrected** — The lazy val rule for private vals was wrong ("fine as val"); corrected to require `private lazy val` when referenced by lazy vals.

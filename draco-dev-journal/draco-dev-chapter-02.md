@@ -1,232 +1,182 @@
 # Draco Dev Journal — Chapter 2
 
 **Session date:** March 23, 2026 (continued)
-**Topic:** Generator Renames, Rules Removal, Factory Semantics, Transform Domain Cleanup, Multi-Type Generation Planning
+**Topic:** lazy val Normalization, DelayedInit Discovery, Rule Companion Fix, Generator Pre-Requisite Planning
 
 ---
 
-## Implementing the Pre-Requisite Plan
+## Session Start — Continuation
 
-> **Dev:** Implement the following plan:
-> # Plan: Rename typeGlobals/companionObject and Fix Factory Body Generation
+This session continued from a previous conversation that ran out of context. A detailed summary was provided covering extensive prior work on companion object consistency updates, import generation discussions, Generator updates, TypeElement fixes, and lazy val normalization.
 
-**Draco:** *(Reads all 10 files targeted by the plan in parallel: TypeDefinition.scala, Generator.scala, TypeDefinitionTest.scala, DataModel.scala, CHANGELOG.md, and the five JSON resource files)*
+---
 
-### Change 1: Rename `typeGlobals` → `globalElements`
+## The typeInstance lazy val Sweep
 
-Applied `replace_all` across all files:
+> **Dev:** It looks like 'val typeInstance' needs to be 'lazy val typeInstance' everywhere we updated. However, there is an additional issue in RuleInstance that goes beyond that problem.
 
-- **TypeDefinition.scala** — trait field, self-describing elements, factory parameter, apply param/override, encoder, decoder (8 occurrences)
-- **Generator.scala** — 3 accessor references, generated literal string, method/param rename (`typeGlobalsDeclaration` → `globalElementsDeclaration`)
-- **TypeDefinitionTest.scala** — 7 occurrences in test data
-- **DataModel.scala** — factory parameter
-- **5 JSON resources** — Test2.json, Spherical.json, TypeDefinition.json, TypeName.json, Draco.json
-- **CHANGELOG.md** — 2 documentation references
+**Draco:** *(Reads all companion objects across the codebase to audit the current state of `typeInstance` declarations)*
 
-### Change 2: Rename Generator Methods
+Two tasks identified:
 
-- `companionObject` → `typeGlobal` (declaration + call site)
-- `typeGlobalsDeclaration` → `globalElementsDeclaration` (covered by Change 1's `replace_all`)
-- `hasGlobals` → `hasGlobalElements` (declaration + 2 conditionals)
+1. Change `val typeInstance` to `lazy val typeInstance` everywhere we updated
+2. Investigate the RuleInstance issue
 
-### Change 3: Fix Factory Body Generation
+For task 1, the user had already changed Pattern, Action, Condition, Variable, Factory, Rule, and RuleInstance to `lazy val typeInstance`. 28 more locations still had `val typeInstance`.
 
-Replaced `factoryBody` method — changed from `Seq[BodyElement]` parameter (which was always `Seq.empty` from `factory.body`) to `Seq[Parameter]`:
+For task 2, the issue was in `Rule.scala` line 39:
 
 ```scala
-private def factoryBody (
-  parameters: Seq[Parameter]
-) : String = {
-  val overrides = parameters.map { p =>
-    s"    override val ${p.name}: ${p.valueType} = _${p.name}"
-  }
-  val tdOverride = "    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition"
-  val allOverrides = overrides :+ tdOverride
-  s"{\n${allOverrides.mkString("\n")}\n  }"
+object Rule extends App with RuleInstance {
+  // ...
+  override val ruleInstance: RuleType = ???
 }
 ```
 
-Updated call site from `factoryBody(factory.body)` to `factoryBody(factory.parameters)`.
+`Rule` companion extended `RuleInstance`, which requires providing `val ruleInstance: RuleType`. But `Rule` is the generic container type (analogous to `Type[T]`), not a concrete rule — it shouldn't implement `RuleInstance`. When any rule companion calls `Rule[T](...)`, it triggers `Rule` object init, which hits `???` and crashes.
+
+**Fix:** Changed `Rule` companion from `extends App with RuleInstance` to `extends App with TypeInstance`, removed the `ruleInstance = ???` line.
+
+Applied `lazy val typeInstance` across all 28 remaining companion objects:
+- **TypeElement.scala**: BodyElement, TypeElement, Fixed, Mutable, Dynamic, Parameter, Monadic (7)
+- **Core draco**: TypeDefinition, TypeInstance, TypeName, Type, Primal, Value, RuleDefinition, RuleType, DomainName, DomainType, DomainInstance, DomainDictionary, TypeDictionary, Domain, ActorBehavior, RuleActorBehavior, Service, ServiceDomain, ContentSink, SourceContent, Main, Test, Generator, Draco
+- **draco.base**: Unit, Cardinal, Ordinal, Nominal, Distance, Rotation, Meters, Radians, Coordinate
+- **draco.primes**: Accumulator, Numbers, PrimeOrdinal, Primes
+- **draco.dreams**: Transform
+- **draco.primes.rules**: AddNaturalSequence, PrimesFromNaturalSequence, RemoveCompositeNumbers
+
+Generator templates also updated to emit `lazy val typeInstance` in both `generate(td)` and `generate(rd)`.
+
+Only two `val typeInstance` remained, both correct:
+- `DracoType.scala:8` — the bootstrap axiom (doesn't extend TypeInstance)
+- `TypeInstance.scala:4` — the abstract trait field declaration
+
+> **Dev:** Running AddNaturalSequence ran without any compile or execution errors anywhere.
 
 ---
 
-## Removing the `rules` Field from TypeDefinition
+## The DelayedInit Discovery
 
-> **Dev:** Looks like I forgot to make sure the rules field in TypeDefinition was deleted
+> **Dev:** *(Pastes full stack trace from running AddNaturalSequence)*
+> ```
+> Exception in thread "main" java.lang.NullPointerException:
+> Cannot invoke "draco.TypeDefinition.typeName()" because the return value of "draco.Type.typeDefinition()" is null
+>     at draco.primes.rules.AddNaturalSequence$.delayedEndpoint$draco$primes$rules$AddNaturalSequence$1(AddNaturalSequence.scala:44)
+>     at draco.primes.rules.AddNaturalSequence$delayedInit$body.apply(AddNaturalSequence.scala:10)
+>     at scala.App.$anonfun$main$1(App.scala:98)
+> ```
 
-> **Dev:** *(Confirms removal)* Yes
+**Draco:** The root cause is `extends App`. In Scala 2, `App` uses `DelayedInit`, which delays ALL `val` initializers in the object body until `main()` is called. When AddNaturalSequence runs its `main()` and accesses `RuleInstance.typeInstance`, the `lazy val` correctly defers and evaluates — but it calls `Type[RuleInstance](typeDefinition)` where `typeDefinition` is a plain `val` in RuleInstance's delayed body. Since RuleInstance's `main()` hasn't been called, `typeDefinition` is still null.
 
-**Draco:** Removed `rules: Seq[TypeName]` from TypeDefinition everywhere:
+The fix: `typeDefinition` must also be `lazy val` in all `extends App` companions, so it evaluates on first access rather than being trapped in the delayed init body. Same issue applies to `domainInstance` and `knowledgeService`.
 
-- **TypeDefinition.scala** — trait field, self-describing elements, factory parameter, apply (param + override), encoder, decoder yield
-- **Generator.scala** — `typeDefinitionLiteral` rules block, `ruleSetDeclaration` method + call site in `typeGlobal`
-- **TypeDefinitionTest.scala** — 4 occurrences (elements, factory params, factory body, `_rules` param)
-- **DataModel.scala** — `_rules = ???`
-- **5 JSON resources** — removed `"rules": []` lines
+The key insight: `lazy val` bypasses `DelayedInit` because it's compiled as a method with a bitmap check — it evaluates on first access regardless of whether the App body has run.
 
-Left untouched: BoundingBoxFromSpherical.json, Unit.json, Primal.json (older schema format, not parsed by current TypeDefinition decoder).
+Applied `lazy val typeDefinition` across all 47 companion objects. Also changed:
+- `domainInstance` → `lazy val` in Draco, Base, Primes
+- `ruleInstance` → `lazy val` in AddNaturalSequence, PrimesFromNaturalSequence, RemoveCompositeNumbers
+- `knowledgeService` → `lazy val` in Rule
+- `override val typeDefinition` → `override lazy val typeDefinition` in Draco
+- Generator templates updated to emit `lazy val` for `typeDefinition`, `typeInstance`, and `ruleInstance`
 
----
+Private vals left as `val`: `ruleDefinition`, `action`, `pattern` in rule companions — these are only used within the same object's delayed body, where they execute sequentially.
 
-## Factory Method Survey
+> **Dev:** Running AddNaturalSequence ran without any compile or execution errors anywhere.
 
-> **Dev:** Are there sources that can be generated from TypeDefinition, that currently have manually created source code, that either have apply methods that are not useful, or not have apply methods that would be useful?
-
-**Draco:** *(Launches Explore agent to survey all 31 companions with `lazy val typeDefinition` in `src/main/scala/draco/`)*
-
-### Findings
-
-**Has factory but apply is a no-op:**
-- **Generator** — factory declares `Parameter("typeDictionary", ...)` but `apply` just returns `new Generator {}` — the parameter is ignored
-
-**Has factory, apply is exact match (already correct):**
-- **TypeDefinition**, **RuleDefinition**, **Value**, **DomainName**
-
-**Has factory, apply has genuinely custom logic (can't be auto-generated):**
-- **TypeName** — computes `nameElements`, `namePackage` from input
-- **SourceContent**, **ContentSink** — file I/O in apply
-- **Main**, **Test** — URI resolution logic
-- **TypeDictionary** — reflection-based type loading
-- **DomainDictionary** — builds a map
-- **Service**, **RuleActorBehavior**, **ActorBehavior** — generic `[T]` types with custom wiring
-
-**Has elements but no factory (no apply generated):**
-- **DomainType**, **RuleType** — hand-written apply with defaults, but no factory in TypeDefinition
+**Draco:** The `DelayedInit` issue is fully resolved. Every non-private field in an `extends App` companion is now `lazy val`, so cross-object access always evaluates correctly regardless of initialization order.
 
 ---
 
-## Generator Instantiation Design Discussion
+## The Corrected lazy val Rule
 
-> **Dev:** The main reason for considering instance values for the Generator type, is the use case where the generate, build, deploy, configure and initialize process can be parallelized by spawning multiple actors. It is to early to try that, but do you think it worth preserving the option to instantiate Generators?
+The corrected rule is clean and simple: in an `extends App` companion, if another object might touch it, make it `lazy val`. Private fields used only within the same body are fine as `val`.
 
-**Draco:** Yes. The factory already declares the parameter — keeping it costs nothing and preserves the path to actor-based parallelization. The current `new Generator {}` apply is a placeholder, which is fine at this stage. When the time comes, each actor would get its own `Generator` instance scoped to a `TypeDictionary` slice.
+Updated memory with the full rule:
 
-No changes needed now.
-
----
-
-## Factory.Null Semantics
-
-> **Dev:** I have no issue with having both custom and automated factory methods, as long as the definitions can easily override whatever can be automated. I do think that Factory.Null should indicate that no factory method should be generated.
-
-**Draco:** That makes sense. The semantics:
-
-- **`Factory.Null`** — no factory, no `apply` generated
-- **Factory with parameters** — Generator produces the standard `apply` with `override val` body
-- **Custom logic** — hand-written code in the companion overrides or supplements the generated `apply`
-
-This is already how it works — `typeGlobal` only generates the apply branch when `factory.valueType.nonEmpty`.
-
-> **Dev:** update the memory file with the rules removal and Factory.Null semantics
-
-**Draco:** *(Updates MEMORY.md: rules field removal, Factory.Null semantics, custom/automated factory coexistence, Generator rename summary)*
+- `typeDefinition`, `typeInstance` → `lazy val` (bypasses DelayedInit)
+- `domainInstance`, `ruleInstance`, `knowledgeService` → `lazy val` (accessed cross-object)
+- `Null`/`Default` → `lazy val`
+- `codec` vals → `private lazy val`
+- Private vals used only within same body (action, pattern, ruleDefinition) → fine as `val`
+- DracoType.typeInstance is the sole exception: `val` (axiom, doesn't extend App)
 
 ---
 
-## Context Window Discussion
+## Pre-Requisites for Module Generation
 
-> **Dev:** If I keep doing claude -c, which I interpret as restarting the same Claude Code "session", is there limit to the data accretion for that session that will exceed the mitigation of compression and clearing context?
+> **Dev:** Can you think of anything we should do before we add generating subtype modules to the Generator?
 
-**Draco:** Yes, eventually. Each compression pass is lossy — detail from earlier exchanges gets increasingly summarized. After many rounds of `claude -c`, you end up with deeply compressed history where early context is reduced to thin summaries, and the compression itself consumes space.
+**Draco:** Two things stand out:
 
-The memory file is the durable store designed for this. Starting a fresh session (`claude` without `-c`) that reads MEMORY.md gives a clean context window with essential knowledge at full fidelity. Use `claude -c` for continuing a train of thought across a few sessions; start fresh when the topic shifts.
+**1. The Generator's `apply` body is incomplete.** The `companionObject` method calls `factoryBody(factory.body)`, but `factory.body` is always `Seq.empty` in every TypeDefinition. So the generated `apply` method produces `new TypeName` with an empty body — no override assignments.
 
----
+The Generator needs to:
+- Auto-generate `override val` assignments by mapping factory parameters to element fields (`_name` → `override val name = _name`)
+- Always append `override val typeDefinition: TypeDefinition = typeInstance.typeDefinition`
 
-## Clean Compile
-
-> **Dev:** Compile has no errors based on just invoking AddNaturalSequence, as I have been doing when we were getting compile errors.
-
-**Draco:** Good — clean compile confirms all the changes are consistent.
+**2. Test the Generator output before adding complexity.** We've never verified that the current `generate(td)` produces correct output. We should test it against a simple type and compare.
 
 ---
 
-## Transform Domain Cleanup
+## Generator as Singleton
 
-> **Dev:** Before TypeDefinitionTest can run, we need to fix the example DataModel domain with four subdomains (Alpha, Bravo, Charlie, Delta) I fixed Alpha domain and its associated compile issues. Could you look at Alpha and update DataModel, Bravo, Charlie and Delta with corrections consistent with Alpha?
+> **Dev:** First tell me if there is a natural use case for having multiple instances of the same source code generator.
 
-**Draco:** *(Reads all five files: Alpha, DataModel, Bravo, Charlie, Delta)*
+**Draco:** No. A Generator is a singleton utility — it transforms TypeDefinitions and RuleDefinitions into source code strings. There's no state that would vary between instances. The current `Generator.apply(typeDictionary: TypeDictionary)` factory creates `new Generator {}` which is an empty trait instance — it does nothing. All the real work is in the companion's `def generate(td)` and `def generate(rd)` methods, which are already static.
 
-Alpha's pattern (the fixed version):
-- `import draco._` + `import draco.transform._`
-- Clean trait: `trait Alpha extends dataModel.DataModel`
-- Flat companion with `typeDefinition`, `typeInstance`, `domainInstance` directly
-- Uses `Domain` from `draco._` (not `org.nexonix.domains`)
+So `Generator` should just be its companion object. The trait and factory are vestigial.
 
-The other four had stale imports, wrapper patterns (`lazy val bravo: Bravo = new Bravo { ... }`), knowledge overrides, and DataModel had incorrect typeName ("Alpha" instead of "DataModel") plus `???` placeholders.
+> **Dev:** The factory use is but the trait is where the generator method signatures belong, as well as fields defining the existence of and interactions with the programming languages that are supported by the Generator.
 
-Rewrote all four to match Alpha's pattern:
-
-```scala
-package draco.transform.bravo
-
-import draco._
-import draco.transform._
-
-trait Bravo extends dataModel.DataModel
-
-object Bravo {
-  val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "Bravo",
-      _namePackage = Seq ("draco", "transform", "bravo")
-    )
-  )
-  lazy val typeInstance: Type[Bravo] = Type[Bravo] (typeDefinition)
-  lazy val domainInstance: Domain[Bravo] = Domain[Bravo] (
-    _domainName = DomainName (
-      _typeName = typeDefinition.typeName,
-      _elementTypeNames = Seq ()
-    )
-  )
-}
-```
-
-Charlie and Delta follow the identical structure. DataModel simplified to the same flat companion pattern without subdomain wiring or knowledge overrides.
-
-> **Dev:** It works now.
+**Draco:** Right. The trait defines the Generator's contract — method signatures for `generate(td)` and `generate(rd)`, plus fields for describing supported target languages. The companion object is the Scala-specific implementation of that contract. So the factory and `apply` method should go, but the trait stays and gains the abstract declarations.
 
 ---
 
-## Planning Multi-Type File Generation
+## Language-Neutral Naming
 
-> **Dev:** SO are we ready to update Generator so we can generate the source code for TypeElement.scala from its type definition with the reference to the module type names?
+> **Dev:** Any name used in the (as it is named in Scala) "trait" should avoid being specific to any single programming language. So, as a principled example, the name should be equally appropriate for generating either Scala, Haskell, F# or TypeScript.
 
-**Draco:** *(Enters plan mode. Launches two Explore agents in parallel: one to read TypeElement.scala thoroughly (478 lines, 12 types, sealed hierarchy), another to trace how `modules` is used across the codebase.)*
+**Draco:** That's a strong design constraint. Looking at the current Generator, names like `typeModifier`, `typeExtends`, `typeBody`, `companionObject`, `factoryParameters`, `factoryBody` are all Scala-centric.
 
-### Key Findings
+The trait's vocabulary should describe what's being generated structurally — type declarations, type constructors, subtype discriminators — not how any particular language spells them.
 
-**TypeElement.scala structure:**
-1. `sealed trait TypeElement extends Primal[String]` — root with 4 elements (name, valueType, parameters, body)
-2. `sealed trait BodyElement extends TypeElement` — intermediate with 10 modules
-3. `object BodyElement` — companion with typeDefinition, typeInstance, codec
-4. `object TypeElement` — companion with typeDefinition, typeInstance, apply, Null, discriminated encoder/decoder
-5-14. Ten leaf subtypes (Fixed through Factory) — each with sealed trait + companion (typeDefinition, typeInstance, apply, Null, codec)
+> **Dev:** Are there names for those you say are Scala specific that would adequately represent the functions being performed without being Scala specific or object-oriented specific?
 
-**Current module handling:**
-- `typeModifier(modules)` adds `sealed` keyword — the only current use
-- `typeDefinitionLiteral` serializes modules into the literal but doesn't traverse them
-- No mechanism to generate multiple types in one file from module references
+**Draco:** Walking through each:
 
-**Custom parts that can't be auto-generated (for now):**
-- TypeElement's discriminated union encoder/decoder
-- BodyElement's and subtypes' codec delegations
-- Subtypes with hardcoded inherited field values (Monadic: `name=""`, `valueType="Unit"`; Action: `name="ctx"`; etc.)
+- `typeExtends` → **derivation** is already Draco's own term
+- `typeBody` → **elements** — also Draco's term
+- `typeModifier` → **modules** — the qualifier follows from whether modules is non-empty
+- `factoryParameters` / `factoryBody` → **Factory** is already a Draco concept, language-neutral
+- `nullInstance` / `defaultInstance` → `nullValue` / `defaultValue` (instance is OO-specific)
+- `methodParameters` / `methodBody` → just **parameters** / **body**
 
-### The Plan
+The hard one is `companionObject`. It houses the type's self-description, value constructor, and distinguished values. There isn't a universal name across paradigms for "the module associated with a type."
 
-Three additions to Generator.scala:
+The pattern: the names that work best are the ones that already come from Draco's own domain model rather than from any target language. Derivation, elements, factory, modules — these are Draco concepts that map to different syntax in each target language.
 
-1. **Extract `traitDeclaration` helper** from `generate(td)` — just the trait line
-2. **Add `moduleOrder`** — depth-first walk from roots, parents before children, siblings in `modules` sequence order
-3. **Add `generate(typeDefinitions: Seq[TypeDefinition])` overload** — topologically sorts, emits one package declaration + all trait/companion pairs
+> **Dev:** How about companionObject => typeGlobals?
 
-Two tests in TypeDefinitionTest.scala:
-- TypeElement hierarchy (12 TypeDefinitions from companion objects)
-- Simple parent-child synthetic example (Animal/Dog, reversed input order)
+**Draco:** That captures the concept well — everything in the companion is type-level rather than instance-level, i.e. global to the type.
 
-> **Draco:** Should I revert `typeGlobal` back to `companionObject` for clarity as an internal helper?
+The one issue: `typeGlobals` already exists as a field on TypeDefinition. That field represents *additional* module-level declarations beyond the standard ones (typeDefinition, typeInstance, factory, null, default). So the field is a subset of what the method would generate, creating a naming ambiguity.
 
-> **Dev:** Keep typeGlobal
+> **Dev:** We could change the current typeGlobals to globalElements and then let companionObject be typeGlobal (singular).
 
-*(Plan written, session continuing)*
+**Draco:** That's clean. `globalElements` is a `Seq[BodyElement]` — plural, a collection of elements. `typeGlobal` is the singular structural concept — the type's global scope that contains everything: self-description, constructor, distinguished values, and the global elements. The naming is consistent with Draco's vocabulary and the singular/plural distinction makes the relationship clear.
+
+---
+
+## The Three-Part Pre-Requisite Plan
+
+> **Dev:** Make those two renames and fix the factory body generation.
+
+**Draco:** *(Enters plan mode, launches exploration and planning agents)*
+
+Designed a three-part plan:
+
+1. **Rename `typeGlobals` → `globalElements`** — 25 references across 9 source files plus 5 JSON resource files and CHANGELOG.md
+2. **Rename `companionObject` → `typeGlobal`** — plus `typeGlobalsDeclaration` → `globalElementsDeclaration` and `hasGlobals` → `hasGlobalElements` within Generator.scala
+3. **Fix factory body generation** — replace `factoryBody(factory.body)` (always empty) with `factoryBody(factory.parameters)` that generates proper `override val` assignments from factory parameters plus `override val typeDefinition`
+
+*(Plan was presented but session ended before implementation began)*

@@ -44,7 +44,7 @@ class PrimesRulesTest extends AnyFunSuite {
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/PrimesFromNaturalSequence.scala")
+    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/PrimesFromNaturalSequenceRule.scala")
     contentSink.write(ruleSource)
     println(ruleSource)
   }
@@ -57,7 +57,7 @@ class PrimesRulesTest extends AnyFunSuite {
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/AddNaturalSequence.scala")
+    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/AddNaturalSequenceRule.scala")
     contentSink.write(ruleSource)
     println(ruleSource)
   }
@@ -70,7 +70,7 @@ class PrimesRulesTest extends AnyFunSuite {
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/RemoveCompositeNumbers.scala")
+    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/RemoveCompositeNumbersRule.scala")
     contentSink.write(ruleSource)
     println(ruleSource)
   }
@@ -103,7 +103,7 @@ class PrimesRulesTest extends AnyFunSuite {
   test("PrimesFromNaturalSequence.rule") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge = service.newKnowledge("PrimesFromNaturalSequence.rule")
-    PrimesFromNaturalSequence.ruleInstance.pattern.accept(knowledge)
+    PrimesFromNaturalSequenceRule.ruleInstance.pattern.accept(knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),
@@ -115,8 +115,8 @@ class PrimesRulesTest extends AnyFunSuite {
   test("AddAndRemoveRulesTest") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge: Knowledge = service.newKnowledge("AddAndRemoveRulesTest")
-    AddNaturalSequence.ruleInstance.pattern.accept(knowledge)
-    RemoveCompositeNumbers.ruleInstance.pattern.accept(knowledge)
+    AddNaturalSequenceRule.ruleInstance.pattern.accept(knowledge)
+    RemoveCompositeNumbersRule.ruleInstance.pattern.accept(knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),

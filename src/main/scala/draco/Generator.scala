@@ -1,5 +1,6 @@
 package draco
 
+import io.circe.parser
 import io.circe.syntax.EncoderOps
 
 trait Generator {
@@ -20,6 +21,36 @@ object Generator extends App with TypeInstance {
     )
   )
   lazy val typeInstance: Type[Generator] = Type[Generator] (typeDefinition)
+
+  // --- Type loading ---
+
+  private def loadFromResource (resourcePath: String) : Option[TypeDefinition] = {
+    val stream = getClass.getResourceAsStream(resourcePath)
+    if (stream == null) return None
+    val source = scala.io.Source.fromInputStream(stream)
+    try {
+      val json = source.mkString
+      parser.parse(json).flatMap(_.as[TypeDefinition]).toOption
+    } finally source.close()
+  }
+
+  private def resourcePath (typeName: TypeName, aspect: String = "") : String = {
+    val np = typeName.namePackage.mkString("/")
+    val n = typeName.name
+    if (aspect.isEmpty) s"/$np/$n.json" else s"/$np/$n.$aspect.json"
+  }
+
+  def loadType (typeName: TypeName) : TypeDefinition =
+    loadFromResource(resourcePath(typeName)).getOrElse(TypeDefinition(typeName))
+
+  def loadRuleType (typeName: TypeName) : TypeDefinition =
+    loadFromResource(resourcePath(typeName, "rule")).getOrElse(TypeDefinition(typeName))
+
+  def loadActorType (typeName: TypeName) : TypeDefinition =
+    loadFromResource(resourcePath(typeName, "actor")).getOrElse(TypeDefinition(typeName))
+
+  def loadAll (typeName: TypeName) : Seq[TypeDefinition] =
+    Seq("", "rule", "actor").flatMap(aspect => loadFromResource(resourcePath(typeName, aspect)))
 
   // --- Literal generation helpers ---
 
@@ -55,13 +86,14 @@ object Generator extends App with TypeInstance {
   }
 
   private def typeDefinitionLoad (td: TypeDefinition) : String = {
-    s"""draco.TypeDefinition.load(${typeNameLiteral(td.typeName)})"""
+    s"""draco.Generator.loadType(${typeNameLiteral(td.typeName)})"""
   }
 
-  private def ruleDefinitionFromJson (td: TypeDefinition) : String = {
-    val json = td.asJson.spaces2
-    s"""parser.parse(\"\"\"$json\"\"\").flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)"""
+  private def ruleDefinitionLoad (td: TypeDefinition) : String = {
+    s"""draco.Generator.loadRuleType(${typeNameLiteral(td.typeName)})"""
   }
+
+
 
   // --- Rule generation helpers ---
 
@@ -85,13 +117,13 @@ object Generator extends App with TypeInstance {
 
   private def whereConditions (
     conditions: Seq[Condition],
-    typeName: TypeName
+    qualifiedObjectName: String
   ) : String = {
     if (conditions.isEmpty) ""
     else conditions.zipWithIndex.map { case (c, idx) =>
       // Reference the condition function with fully qualified class name and $-prefixed parameters
       val params = c.parameters.map(p => s"$$${p.name}").mkString(", ")
-      s"""    .where("${typeName.namePath}.w$idx($params)")"""
+      s"""    .where("$qualifiedObjectName.w$idx($params)")"""
     }.mkString("\n")
   }
 
@@ -545,10 +577,11 @@ object Generator extends App with TypeInstance {
   private def nullInstance (
     typeName: TypeName,
     elements: Seq[TypeElement],
-    factory: Factory
+    factory: Factory,
+    nameSuffix: String = ""
   ) : String = {
-    val name = typeName.name
-    val wName = wildcardTypeName(typeName)
+    val name = typeName.name + nameSuffix
+    val wName = wildcardTypeName(typeName) + nameSuffix
     val typeParams = if (typeName.typeParameters.isEmpty) "" else s"[${typeName.typeParameters.map(_ => "Nothing").mkString(", ")}]"
     if (factory.valueType.nonEmpty && factory.body.isEmpty) {
       val nullArgs = factory.parameters.map { p =>
@@ -581,12 +614,12 @@ object Generator extends App with TypeInstance {
 
   // --- Companion object generation ---
 
-  private def typeGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty) : String = {
+  private def typeGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty, nameSuffix: String = "") : String = {
     val factory = td.factory
     val hasFactory = factory.valueType.nonEmpty
     val hasGlobalElements = td.globalElements.nonEmpty
-    val objName = td.typeName.name
-    val wName = wildcardTypeName(td.typeName)
+    val objName = td.typeName.name + nameSuffix
+    val wName = wildcardTypeName(td.typeName) + nameSuffix
     val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
     val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
 
@@ -615,7 +648,7 @@ object Generator extends App with TypeInstance {
          |$codecBlock
          |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType} = new ${factory.valueType} ${factoryBody(factory)}
          |
-         |  ${nullInstance(td.typeName, td.elements, td.factory)}
+         |  ${nullInstance(td.typeName, td.elements, td.factory, nameSuffix)}
          |
          |${globalElementsDeclaration(td.globalElements)}
          |}""".stripMargin
@@ -636,8 +669,8 @@ object Generator extends App with TypeInstance {
 
   // --- Trait declaration helper ---
 
-  private def traitDeclaration (td: TypeDefinition) : String =
-    s"${typeModifier(td.modules)}trait ${parameterizedName(td.typeName)} ${typeExtends(td.derivation)} ${typeBody(td.elements)}"
+  private def traitDeclaration (td: TypeDefinition, nameSuffix: String = "") : String =
+    s"${typeModifier(td.modules)}trait ${parameterizedName(td.typeName)}$nameSuffix ${typeExtends(td.derivation)} ${typeBody(td.elements)}"
 
   // --- DomainInstance companion generation ---
 
@@ -687,18 +720,10 @@ object Generator extends App with TypeInstance {
   // --- RuleInstance companion generation ---
 
   private def ruleGlobal (td: TypeDefinition) : String = {
-    val name = td.typeName.name
-    val ruleTd = TypeDefinition (
-      td.typeName,
-      _variables = td.variables,
-      _conditions = td.conditions,
-      _values = td.values,
-      _pattern = td.pattern,
-      _action = td.action
-    )
+    val name = td.typeName.name + "Rule"
     val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
     s"""object $name extends ${appMixin}RuleInstance {
-       |  private lazy val ruleDefinition: TypeDefinition = ${ruleDefinitionFromJson(ruleTd)}
+       |  private lazy val ruleDefinition: TypeDefinition = ${ruleDefinitionLoad(td)}
        |${conditionFunctions(td.conditions)}
        |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
        |${actionBody(td.action, td.variables, td.values)}
@@ -711,7 +736,7 @@ object Generator extends App with TypeInstance {
        |    .forEach (
        |${factVariables(td.variables)}
        |    )
-       |${whereConditions(td.conditions, td.typeName)}
+       |${whereConditions(td.conditions, td.typeName.namePath + "Rule")}
        |    .execute (action)
        |    .build()
        |  }
@@ -813,7 +838,6 @@ object Generator extends App with TypeInstance {
   )
 
   private lazy val ruleFrameworkImports: Seq[String] = Seq(
-    "import io.circe.{Json, parser}",
     "import org.evrete.api.{Knowledge, RhsContext}",
     "import java.util.function.Consumer"
   )
@@ -839,12 +863,13 @@ object Generator extends App with TypeInstance {
   def generate (td: TypeDefinition) : String = {
     if (isRule(td)) {
       val imports = ruleImports(td.typeName.namePackage)
+      val ruleName = td.typeName.name + "Rule"
       s"""
          |package ${td.typeName.namePackage.mkString(".")}
          |
          |$imports
          |
-         |trait ${td.typeName.name} extends RuleInstance
+         |trait $ruleName extends RuleInstance
          |
          |${ruleGlobal(td)}
          |""".stripMargin
@@ -865,14 +890,16 @@ object Generator extends App with TypeInstance {
          |${objectGlobal(td)}
          |""".stripMargin
     } else {
-      val instanceType = if (isActor(td)) "actor" else ""
+      val isActorType = isActor(td)
+      val instanceType = if (isActorType) "actor" else ""
+      val nameSuffix = if (isActorType) "Actor" else ""
       val imports = typeImports(td, hasCodec(td), instanceType)
       s"""
          |package ${td.typeName.namePackage.mkString(".")}
          |$imports
-         |${traitDeclaration(td)}
+         |${traitDeclaration(td, nameSuffix)}
          |
-         |${typeGlobal(td)}
+         |${typeGlobal(td, nameSuffix = nameSuffix)}
          |""".stripMargin
     }
   }
