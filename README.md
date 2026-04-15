@@ -315,10 +315,23 @@ When data moves between domains (e.g., from a sensor domain to an analysis domai
 - Parameterized Null instances: `Null: Actor[_] = apply[Nothing]()` for generic types
 - Base domain type hierarchy (Cardinal, Distance, Meters, Rotation, Radians, Coordinate, etc.)
 - Transform domain modeling with source/sink domain pairs (Alpha, Bravo, Charlie, Delta examples)
+- Generator owns all type loading (`loadType`, `loadRuleType`, `loadActorType`, `loadAll`); `TypeDefinition.load` removed
+- Auto-suffix naming convention: Generator appends "Rule"/"Actor" to generated type names from `.rule.json`/`.actor.json` aspect; JSON uses base concept name only
+- Flat package convention with domain discovery by scanning
+- `draco.Holon[T <: Product]` — base trait for primal type values (T with accessible substructure)
+- `draco.Transform[S <: DracoType, T <: DracoType]` — first two-parameter draco type, extends `Holon[(S, T)]`, companion-as-instance pattern avoids circular initialization
+- `draco.Primal[T]` now extends `TypeInstance` (was `DracoType`); factory anonymous classes use `override lazy val typeInstance` to defer resolution
+- Inline `TypeDefinition` eliminated for leaf types — 11 companions (Coordinate, Unit, Cardinal, Nominal, Ordinal, Distance, Rotation, Meters, Radians, Accumulator, Numbers) now delegate to `Generator.loadType`; TypeDefinition data lives exclusively in JSON resources
+- `draco.RuntimeCompiler` — runtime Scala compilation (`compile` / `compileMulti` / `loadClass`) wrapping `scala.tools.nsc.Global`; enables generate-compile-load-verify cycles in tests
+- `draco.GenerateAndCompileTest` — comprehensive Generator regression harness scanning all `src/main/resources/draco/` JSON definitions (baseline: 31/48 pass)
+- `bin/draco-gen` — Bash-invocable Generator CLI backed by `draco.GeneratorCLI`, packaged in the sbt-assembly fat JAR; subcommands `generate` / `compile` / `compile-multi` / `inspect`
+- Reference-frame example domains (Increment A): Cosmocentric super-domain plus Egocentric / Geocentric / Heliocentric / Galactocentric peer sub-domain skeletons under `src/test/{resources,scala}/domains/<frame>/`; verification via `domains.ReferenceFramesGenTest`
+- `Generator.typeImports` now emits cross-package imports for `TypeName`s referenced in `derivation` / `modules` / `superDomain` / `source` / `target` (closes a Generator gap where a sub-type extending a super-type in a non-parent package would fail to compile)
+- draco-dev-journal extraction tooling under `draco-dev-journal/tools/` — pulls user↔assistant pairs from Claude Code JSONL session files, matches against committed chapters, surfaces gaps; outputs regenerable (gitignored)
 
 ## Work in Progress
 
-- **Update existing domains** — Migrate Draco, Base, Primes to new Extensible/simplified conventions.
+- **Getting Started guide** — Walkthrough for new users demonstrating how to think in Draco.
 - **Generator domain** — `draco.generator.Generator[L]` as a self-describing domain parameterized by target language, with capability domains (`draco.rete`, `draco.json`, `draco.actor`, `draco.scala`).
 - **Dreams application** — Domain Rules Editor Actor Message Service; built-in editor for creating and modifying types, domains, rules, and actors via their JSON definitions.
 - **Orion** — Open Resilient Inter-Operability Nexus; five ION interaction patterns for cross-domain system-of-systems integration.

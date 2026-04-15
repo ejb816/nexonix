@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Combinatoric Induction — Prime Classification</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; background: #fafafa; }
+    h1 { font-size: 1.3em; color: #333; }
+    p { color: #666; font-size: 0.9em; max-width: 800px; }
+    .controls { margin: 1em 0; display: flex; gap: 1em; align-items: center; }
+    button { padding: 0.4em 1.2em; font-size: 0.95em; cursor: pointer; border: 1px solid #aaa; border-radius: 4px; background: #fff; }
+    button:hover { background: #eee; }
+    label { font-size: 0.9em; color: #555; }
+    input[type=range] { width: 160px; }
+    #info { font-size: 0.85em; color: #666; margin-top: 0.5em; font-family: monospace; min-height: 1.4em; }
+    #counter { font-size: 0.9em; color: #333; font-weight: bold; }
+    canvas { border: 1px solid #ddd; background: #fff; }
+  </style>
+</head>
+<body>
+  <h1>Combinatoric induction: sequential prime/composite classification by trial division</h1>
+  <p>Each number 2&ndash;541 is tested in order. For each, we trial-divide by known primes up to &radic;n.
+     Composites (red, from y-axis) are caught quickly at the first factor.
+     Primes (blue, from x-axis) require exhaustive search &mdash; the animation pauses longer,
+     reflecting the greater cost of confirming primality.</p>
+  <div class="controls">
+    <button id="btnPlay">Play</button>
+    <button id="btnPause">Pause</button>
+    <button id="btnReset">Reset</button>
+    <label>Speed: <input type="range" id="speed" min="1" max="100" value="30"></label>
+    <span id="counter">0 / 540</span>
+  </div>
+  <div id="info">&nbsp;</div>
+  <canvas id="canvas" width="1000" height="500"></canvas>
+  <script>
+    const maxN = 541;
+
+    // Precompute classification and trial division cost for each number 2..maxN
+    const numbers = []; // { n, isPrime, divisions, factor }
+    const knownPrimes = [];
+    for (let n = 2; n <= maxN; n++) {
+      const sqrtN = Math.sqrt(n);
+      let divisions = 0;
+      let factor = null;
+      for (let i = 0; i < knownPrimes.length && knownPrimes[i] <= sqrtN; i++) {
+        divisions++;
+        if (n % knownPrimes[i] === 0) {
+          factor = knownPrimes[i];
+          break;
+        }
+      }
+      const isPrime = factor === null;
+      if (isPrime) knownPrimes.push(n);
+      numbers.push({ n, isPrime, divisions: Math.max(1, divisions), factor });
+    }
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const pad = { top: 20, right: 30, bottom: 40, left: 50 };
+    const w = canvas.width - pad.left - pad.right;
+    const h = canvas.height - pad.top - pad.bottom;
+
+    let frame = 0;
+    let playing = false;
+    let timeout = null;
+
+    function getBaseDelay() {
+      const v = document.getElementById('speed').value;
+      return Math.max(2, 80 - v * 0.8);
+    }
+
+    function toX(n) { return pad.left + (n / maxN) * w; }
+    function toY(n) { return pad.top + h - (n / maxN) * h; }
+
+    function drawAxes() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#ccc';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(pad.left, pad.top); ctx.lineTo(pad.left, pad.top + h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pad.left, pad.top + h); ctx.lineTo(pad.left + w, pad.top + h); ctx.stroke();
+      ctx.fillStyle = '#888';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'right';
+      for (let v = 0; v <= maxN; v += 100) {
+        const y = toY(v);
+        ctx.fillText(v, pad.left - 6, y + 4);
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + w, y);
+        ctx.strokeStyle = '#eee'; ctx.stroke();
+      }
+      ctx.textAlign = 'center';
+      for (let v = 0; v <= maxN; v += 100) {
+        ctx.fillText(v, toX(v), pad.top + h + 20);
+      }
+      ctx.fillStyle = '#555';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Primes (blue, from x-axis)', pad.left + w / 2, pad.top + h + 35);
+      ctx.save();
+      ctx.translate(14, pad.top + h / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('Composites (red, from y-axis)', 0, 0);
+      ctx.restore();
+    }
+
+    function drawNumber(entry) {
+      const x = toX(entry.n);
+      const y = toY(entry.n);
+      if (entry.isPrime) {
+        ctx.strokeStyle = 'rgba(52, 152, 219, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x, pad.top + h); ctx.lineTo(x, y); ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(52, 152, 219, 0.8)';
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = 'rgba(231, 76, 60, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(x, y); ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(231, 76, 60, 0.7)';
+        ctx.fill();
+      }
+    }
+
+    function updateInfo(i) {
+      document.getElementById('counter').textContent = (i) + ' / ' + numbers.length;
+      const info = document.getElementById('info');
+      if (i > 0) {
+        const e = numbers[i - 1];
+        if (e.isPrime) {
+          info.textContent = e.n + ' is PRIME (' + e.divisions + ' trial divisions)';
+        } else {
+          info.textContent = e.n + ' = ' + e.factor + ' \u00d7 ' + (e.n / e.factor) +
+            ' (found after ' + e.divisions + ' trial division' + (e.divisions > 1 ? 's' : '') + ')';
+        }
+      } else {
+        info.textContent = '\u00a0';
+      }
+    }
+
+    function step() {
+      if (frame < numbers.length) {
+        const entry = numbers[frame];
+        drawNumber(entry);
+        frame++;
+        updateInfo(frame);
+        const delay = getBaseDelay() * entry.divisions;
+        timeout = setTimeout(step, delay);
+      } else {
+        playing = false;
+      }
+    }
+
+    function play() {
+      if (playing) return;
+      playing = true;
+      step();
+    }
+
+    function pause() {
+      playing = false;
+      if (timeout) { clearTimeout(timeout); timeout = null; }
+    }
+
+    function reset() {
+      pause();
+      frame = 0;
+      drawAxes();
+      updateInfo(0);
+    }
+
+    document.getElementById('btnPlay').onclick = play;
+    document.getElementById('btnPause').onclick = pause;
+    document.getElementById('btnReset').onclick = reset;
+
+    drawAxes();
+    updateInfo(0);
+  </script>
+</body>
+</html>

@@ -8,19 +8,6 @@ trait Nominal extends Unit with Primal[String] {
 }
 
 object Nominal extends App with draco.TypeInstance {
-  lazy val typeDefinition: draco.TypeDefinition = draco.TypeDefinition (
-    _typeName = draco.TypeName (
-      _name = "Nominal",
-      _namePackage = Seq ("draco", "base")
-    ),
-    _derivation = Seq (
-      draco.TypeName ("Unit", _namePackage = Seq ("draco", "base")),
-      draco.TypeName ("Primal[String]", _namePackage = Seq ("draco"))
-    ),
-    _elements = Seq (
-      draco.Fixed ("name", "String"),
-      draco.Fixed ("description", "String")
-    )
-  )
+  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Nominal", _namePackage = Seq("draco", "base")))
   lazy val typeInstance: draco.Type[Nominal] = draco.Type[Nominal] (typeDefinition)
 }

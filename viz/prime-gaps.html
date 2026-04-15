@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Inter-prime Difference Sequence</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    body { font-family: sans-serif; margin: 2em; background: #fafafa; }
+    h1 { font-size: 1.3em; color: #333; }
+    canvas { max-width: 1100px; }
+  </style>
+</head>
+<body>
+  <h1>First-order inter-prime differences: p(n+1) &minus; p(n) for the first 100 primes</h1>
+  <canvas id="chart"></canvas>
+  <script>
+    const primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229,233,239,241,251,257,263,269,271,277,281,283,293,307,311,313,317,331,337,347,349,353,359,367,373,379,383,389,397,401,409,419,421,431,433,439,443,449,457,461,463,467,479,487,491,499,503,509,521,523,541];
+    const gaps = [1,2,2,4,2,4,2,4,6,2,6,4,2,4,6,6,2,6,4,2,6,4,6,8,4,2,4,2,4,14,4,6,2,10,2,6,6,4,6,6,2,10,2,4,2,12,12,4,2,4,6,2,10,6,6,6,2,6,4,2,10,14,4,2,4,14,6,10,2,4,6,8,6,6,4,6,8,4,8,10,2,10,2,6,4,6,8,4,2,4,12,8,4,8,4,6,12,2,18];
+    const labels = gaps.map((g, i) => primes[i] + '\u2013' + primes[i+1]);
+    const colors = gaps.map(g => g === 2 ? '#e74c3c' : g === 1 ? '#f39c12' : '#3498db');
+
+    new Chart(document.getElementById('chart'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Gap size',
+          data: gaps,
+          backgroundColor: colors,
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: ctx => 'Between ' + ctx[0].label,
+              label: ctx => 'Gap: ' + ctx.raw
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { maxRotation: 90, font: { size: 8 } },
+            title: { display: true, text: 'Adjacent prime pair' }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Gap size' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

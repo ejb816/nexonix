@@ -63,6 +63,7 @@ object TypeElement extends App with TypeInstance {
               _valueType: String,
               _value: String
             ) : TypeElement = new TypeElement {
+    override lazy val typeInstance: DracoType = TypeElement.typeInstance
     override val name: String = _name
     override val valueType: String = _valueType
     override val value: String = _value
@@ -194,6 +195,7 @@ object Fixed extends App with TypeInstance {
       _value: String = ""
     ) : Fixed = {
     new Fixed {
+      override lazy val typeInstance: DracoType = Fixed.typeInstance
       override val name: String = _name
       override val valueType: String = _valueType
       override val value: String = _value
@@ -220,6 +222,7 @@ object Mutable extends App with TypeInstance {
               _value: String = ""
             ) : Mutable = {
     new Mutable {
+      override lazy val typeInstance: DracoType = Mutable.typeInstance
       override val name: String = _name
       override val valueType: String = _valueType
       override val value: String = _value
@@ -248,6 +251,7 @@ object Dynamic extends App with TypeInstance {
               _body: Seq[BodyElement]
             ) : Dynamic = {
     new Dynamic {
+      override lazy val typeInstance: DracoType = Dynamic.typeInstance
       override val name: String = _name
       override val valueType: String = _valueType
       override val parameters: Seq[Parameter] = _parameters
@@ -276,6 +280,7 @@ object Parameter extends App with TypeInstance {
               _value: String
             ) : Parameter = {
     new Parameter {
+      override lazy val typeInstance: DracoType = Parameter.typeInstance
       override val name: String = _name
       override val valueType: String = _valueType
       override val value: String = _value
@@ -299,6 +304,7 @@ object Monadic extends App with TypeInstance {
   )
   lazy val typeInstance: Type[Monadic] = Type[Monadic] (typeDefinition)
   def apply(_value: String): Monadic = new Monadic {
+    override lazy val typeInstance: DracoType = Monadic.typeInstance
     override val name: String = ""
     override val valueType: String = "Unit"
     override val value: String = _value
@@ -334,6 +340,7 @@ object Pattern extends App with TypeInstance {
       _variables: Seq[Variable] = Seq.empty,
       _conditions: Seq[Condition] = Seq.empty
     ) : Pattern = new Pattern {
+    override lazy val typeInstance: DracoType = Pattern.typeInstance
     override val variables: Seq[Variable] = _variables
     override val conditions: Seq[Condition] = _conditions
     override val name: String = ""
@@ -370,6 +377,7 @@ object Action extends App with TypeInstance {
               _values: Seq[Value] = Seq.empty,
               _body: Seq[BodyElement]
             ) : Action = new Action {
+    override lazy val typeInstance: DracoType = Action.typeInstance
     override val name: String = "ctx"
     override val valueType: String = "org.evrete.api.RHSContext => Unit"
     override val value: String = ""
@@ -399,6 +407,7 @@ object Condition extends App with TypeInstance {
               _parameters: Seq[Parameter],
               _value: String
             ) : Condition = new Condition {
+    override lazy val typeInstance: DracoType = Condition.typeInstance
     override val name: String = ""
     override val parameters: Seq[Parameter] = _parameters
     override val body: Seq[BodyElement] = Seq ()
@@ -430,6 +439,7 @@ object Variable extends App with TypeInstance {
               _variableName: String,
               _variableType: String
             ) : Variable = new Variable {
+    override lazy val typeInstance: DracoType = Variable.typeInstance
     override val name: String = _variableName
     override val valueType: String = _variableType
     override val value: String = ""
@@ -461,6 +471,7 @@ object Factory extends App with TypeInstance {
     _parameters: Seq[Parameter] = Seq.empty,
     _body: Seq[BodyElement] = Seq.empty
   ): Factory = new Factory {
+    override lazy val typeInstance: DracoType = Factory.typeInstance
     override val name: String = ""
     override val valueType: String = _fullName
     override val value: String = ""

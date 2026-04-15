@@ -1,11 +1,11 @@
 {
   "typeName" : {
-    "name" : "Coordinate",
-    "namePackage" : ["draco", "base"],
+    "name" : "Holon",
+    "namePackage" : ["draco"],
     "typeParameters" : ["T <: Product"]
   },
   "derivation" : [
-    { "name" : "Holon", "namePackage" : ["draco"], "typeParameters" : ["T"] }
+    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["T"] }
   ],
   "elements" : [
     { "kind" : "Fixed", "name" : "value", "valueType" : "T" }

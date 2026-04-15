@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rule Firing Animation</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; background: #fafafa; }
+    h1 { font-size: 1.3em; color: #333; }
+    p { color: #666; font-size: 0.9em; max-width: 800px; }
+    .controls { margin: 1em 0; display: flex; gap: 1em; align-items: center; }
+    button { padding: 0.4em 1.2em; font-size: 0.95em; cursor: pointer; border: 1px solid #aaa; border-radius: 4px; background: #fff; }
+    button:hover { background: #eee; }
+    label { font-size: 0.9em; color: #555; }
+    input[type=range] { width: 160px; }
+    #info { font-size: 0.85em; color: #666; margin-top: 0.5em; font-family: monospace; min-height: 1.4em; }
+    #counter { font-size: 0.9em; color: #333; font-weight: bold; }
+    canvas { border: 1px solid #ddd; background: #fff; }
+  </style>
+</head>
+<body>
+  <h1>RETE sieve animation: composite removals in firing order</h1>
+  <p>Each dot appears in the order the RETE engine fired the rule. The y-axis is the
+     composite value removed. Watch how the engine jumps across the number line rather
+     than working sequentially.</p>
+  <div class="controls">
+    <button id="btnPlay">Play</button>
+    <button id="btnPause">Pause</button>
+    <button id="btnReset">Reset</button>
+    <label>Speed: <input type="range" id="speed" min="1" max="100" value="30"></label>
+    <span id="counter">0 / 0</span>
+  </div>
+  <div id="info">&nbsp;</div>
+  <canvas id="canvas" width="1000" height="500"></canvas>
+  <script>
+    const firings = [
+      [4,2,2],[486,2,243],[424,8,53],[522,29,18],[236,4,59],[12,6,2],[270,3,90],[243,9,27],
+      [20,10,2],[246,2,123],[150,5,30],[441,21,21],[28,14,2],[36,18,2],[325,13,25],[6,2,3],
+      [391,17,23],[488,2,244],[44,22,2],[240,4,60],[432,8,54],[273,3,91],[18,6,3],[500,25,20],
+      [52,26,2],[248,2,124],[155,5,31],[252,9,28],[60,30,2],[30,10,3],[68,34,2],[8,2,4],
+      [490,2,245],[42,14,3],[76,38,2],[462,21,22],[338,13,26],[276,3,92],[244,4,61],[84,42,2],
+      [54,18,3],[24,6,4],[440,8,55],[408,17,24],[250,2,125],[92,46,2],[160,5,32],[66,22,3],
+      [100,50,2],[261,9,29],[40,10,4],[10,2,5],[492,2,246],[108,54,2],[525,25,21],[78,26,3],
+      [116,58,2],[279,3,93],[248,4,62],[56,14,4],[90,30,3],[252,2,126],[124,62,2],[30,6,5],
+      [351,13,27],[448,8,56],[483,21,23],[165,5,33],[132,66,2],[102,34,3],[72,18,4],
+      [425,17,25],[12,2,6],[140,70,2],[494,2,247],[270,9,30],[50,10,5],[114,38,3],
+      [148,74,2],[88,22,4],[282,3,94],[252,4,63],[156,78,2],[254,2,127],[126,42,3],
+      [36,6,6],[164,82,2],[70,14,5],[456,8,57],[104,26,4],[170,5,34],[138,46,3],
+      [364,13,28],[172,86,2],[14,2,7],[496,2,248],[180,90,2],[150,50,3],[279,9,31],
+      [504,21,24],[120,30,4],[442,17,26],[90,18,5],[60,10,6],[285,3,95],[188,94,2],
+      [256,2,128],[256,4,64],[162,54,3],[196,98,2],[136,34,4],[42,6,7],[204,102,2],
+      [110,22,5],[174,58,3],[175,5,35],[16,2,8],[464,8,58],[498,2,249],[84,14,6],
+      [212,106,2],[152,38,4],[377,13,29],[186,62,3],[220,110,2],[288,3,96],[288,9,32],
+      [258,2,129],[130,26,5],[260,4,65],[228,114,2],[70,10,7],[198,66,3],[168,42,4],
+      [459,17,27],[108,18,6],[525,21,25],[236,118,2],[48,6,8],[18,2,9],[210,70,3],
+      [500,2,250],[180,5,36],[244,122,2],[150,30,5],[472,8,59],[184,46,4],[252,126,2],
+      [222,74,3],[98,14,7],[260,130,2],[291,3,97],[260,2,130],[132,22,6],[390,13,30],
+      [264,4,66],[200,50,4],[297,9,33],[170,34,5],[268,134,2],[234,78,3],[80,10,8],
+      [276,138,2],[20,2,10],[502,2,251],[54,6,9],[246,82,3],[216,54,4],[185,5,37],
+      [284,142,2],[476,17,28],[156,26,6],[126,18,7],[190,38,5],[480,8,60],[292,146,2],
+      [258,86,3],[262,2,131],[294,3,98],[232,58,4],[300,150,2],[268,4,67],[270,90,3],
+      [112,14,8],[306,9,34],[210,42,5],[308,154,2],[403,13,31],[180,30,6],[22,2,11],
+      [504,2,252],[248,62,4],[90,10,9],[154,22,7],[316,158,2],[282,94,3],[60,6,10],
+      [190,5,38],[324,162,2],[230,46,5],[294,98,3],[264,2,132],[488,8,61],[297,3,99],
+      [264,66,4],[332,166,2],[204,34,6],[493,17,29],[272,4,68],[144,18,8],[340,170,2],
+      [306,102,3],[182,26,7],[24,2,12],[280,70,4],[506,2,253],[250,50,5],[348,174,2],
+      [315,9,35],[126,14,9],[318,106,3],[416,13,32],[66,6,11],[356,178,2],[195,5,39],
+      [100,10,10],[228,38,6],[296,74,4],[266,2,133],[364,182,2],[330,110,3],[300,3,100],
+      [270,54,5],[496,8,62],[176,22,8],[210,30,7],[372,186,2],[276,4,69],[342,114,3],
+      [312,78,4],[26,2,13],[380,190,2],[508,2,254],[252,42,6],[510,17,30],[162,18,9],
+      [290,58,5],[354,118,3],[388,194,2],[324,9,36],[200,5,40],[72,6,12],[328,82,4],
+      [396,198,2],[268,2,134],[140,14,10],[429,13,33],[110,10,11],[238,34,7],[303,3,101],
+      [366,122,3],[208,26,8],[404,202,2],[276,46,6],[310,62,5],[280,4,70],[504,8,63],
+      [344,86,4],[378,126,3],[412,206,2],[28,2,14],[510,2,255],[420,210,2],[198,22,9],
+      [390,130,3],[360,90,4],[266,38,7],[330,66,5],[428,214,2],[300,50,6],[205,5,41],
+      [333,9,37],[270,2,135],[78,6,13],[527,17,31],[240,30,8],[306,3,102],[436,218,2],
+      [180,18,10],[402,134,3],[120,10,12],[376,94,4],[442,13,34],[154,14,11],[444,222,2],
+      [284,4,71],[30,2,15],[350,70,5],[512,2,256],[512,8,64],[414,138,3],[452,226,2],
+      [324,54,6],[294,42,7],[392,98,4],[234,26,9],[460,230,2],[426,142,3],[272,2,136],
+      [272,34,8],[210,5,42],[370,74,5],[468,234,2],[84,6,14],[309,3,103],[342,9,38],
+      [438,146,3],[408,102,4],[476,238,2],[220,22,10],[348,58,6],[32,2,16],[288,4,72],
+      [514,2,257],[130,10,13],[322,46,7],[484,242,2],[450,150,3],[198,18,11],[455,13,35],
+      [390,78,5],[520,8,65],[168,14,12],[424,106,4],[492,246,2],[270,30,9],[304,38,8],
+      [462,154,3],[274,2,137],[500,250,2],[372,62,6],[215,5,43],[312,3,104],[440,110,4],
+      [90,6,15],[410,82,5],[508,254,2],[474,158,3],[350,50,7],[351,9,39],[34,2,17],
+      [516,2,258],[292,4,73],[260,26,10],[486,162,3],[516,258,2],[456,114,4],[140,10,14],
+      [396,66,6],[430,86,5],[528,8,66],[336,42,8],[524,262,2],[242,22,11],[306,34,9],
+      [276,2,138],[468,13,36],[498,166,3],[182,14,13],[216,18,12],[532,266,2],[472,118,4],
+      [378,54,7],[315,3,105],[220,5,44],[96,6,16],[510,170,3],[540,270,2],[450,90,5],
+      [36,2,18],[420,70,6],[518,2,259],[296,4,74],[360,9,40]
+    ];
+
+    const primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229,233,239,241,251,257,263,269,271,277,281,283,293,307,311,313,317,331,337,347,349,353,359,367,373,379,383,389,397,401,409,419,421,431,433,439,443,449,457,461,463,467,479,487,491,499,503,509,521,523,541];
+    const maxComposite = 541;
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const pad = { top: 20, right: 30, bottom: 40, left: 50 };
+    const w = canvas.width - pad.left - pad.right;
+    const h = canvas.height - pad.top - pad.bottom;
+
+    let frame = 0;
+    let playing = false;
+    let timer = null;
+
+    function getInterval() {
+      const v = document.getElementById('speed').value;
+      return Math.max(5, 200 - v * 2);
+    }
+
+    function drawAxes() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#ccc';
+      ctx.lineWidth = 1;
+      // y-axis
+      ctx.beginPath();
+      ctx.moveTo(pad.left, pad.top);
+      ctx.lineTo(pad.left, pad.top + h);
+      ctx.stroke();
+      // x-axis
+      ctx.beginPath();
+      ctx.moveTo(pad.left, pad.top + h);
+      ctx.lineTo(pad.left + w, pad.top + h);
+      ctx.stroke();
+      // y ticks
+      ctx.fillStyle = '#888';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'right';
+      for (let v = 0; v <= maxComposite; v += 100) {
+        const y = pad.top + h - (v / maxComposite) * h;
+        ctx.fillText(v, pad.left - 6, y + 4);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(pad.left + w, y);
+        ctx.strokeStyle = '#eee';
+        ctx.stroke();
+      }
+      // x ticks
+      ctx.textAlign = 'center';
+      for (let v = 0; v <= maxComposite; v += 100) {
+        const x = pad.left + (v / maxComposite) * w;
+        ctx.fillText(v, x, pad.top + h + 20);
+      }
+      // axis labels
+      ctx.fillStyle = '#555';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Primes (blue, from x-axis)', pad.left + w / 2, pad.top + h + 35);
+      ctx.save();
+      ctx.translate(14, pad.top + h / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('Composites (red, from y-axis)', 0, 0);
+      ctx.restore();
+    }
+
+    function drawPoint(i) {
+      const composite = firings[i][0];
+      const x = pad.left + (composite / maxComposite) * w;
+      const y = pad.top + h - (composite / maxComposite) * h;
+      // horizontal line from y-axis to dot
+      ctx.strokeStyle = 'rgba(231, 76, 60, 0.25)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      // dot
+      ctx.beginPath();
+      ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(231, 76, 60, 0.7)';
+      ctx.fill();
+      // highlight latest
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(231, 76, 60, 0.3)';
+      ctx.fill();
+    }
+
+    function drawAll(upTo) {
+      drawAxes();
+      for (let i = 0; i < upTo; i++) {
+        const composite = firings[i][0];
+        const x = pad.left + (composite / maxComposite) * w;
+        const y = pad.top + h - (composite / maxComposite) * h;
+        ctx.beginPath();
+        ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(231, 76, 60, 0.7)';
+        ctx.fill();
+      }
+      if (upTo > 0) {
+        const last = firings[upTo - 1];
+        const x = pad.left + (last[0] / maxComposite) * w;
+        const y = pad.top + h - (last[0] / maxComposite) * h;
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(231, 76, 60, 0.3)';
+        ctx.fill();
+      }
+    }
+
+    function updateInfo(i) {
+      const counter = document.getElementById('counter');
+      counter.textContent = i + ' / ' + firings.length;
+      const info = document.getElementById('info');
+      if (i > 0) {
+        const f = firings[i - 1];
+        info.textContent = 'Remove ' + f[0] + ' = ' + f[1] + ' \u00d7 ' + f[2];
+      } else {
+        info.textContent = '\u00a0';
+      }
+    }
+
+    function drawPrimes() {
+      primes.forEach(p => {
+        const x = pad.left + (p / maxComposite) * w;
+        const y = pad.top + h - (p / maxComposite) * h;
+        // vertical line from x-axis up to dot
+        ctx.strokeStyle = 'rgba(52, 152, 219, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, pad.top + h);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        // dot
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(52, 152, 219, 0.8)';
+        ctx.fill();
+      });
+    }
+
+    function step() {
+      if (frame < firings.length) {
+        drawPoint(frame);
+        frame++;
+        updateInfo(frame);
+      } else {
+        drawPrimes();
+        pause();
+      }
+    }
+
+    function play() {
+      if (playing) return;
+      playing = true;
+      timer = setInterval(step, getInterval());
+    }
+
+    function pause() {
+      playing = false;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function reset() {
+      pause();
+      frame = 0;
+      drawAxes();
+      updateInfo(0);
+    }
+
+    document.getElementById('btnPlay').onclick = play;
+    document.getElementById('btnPause').onclick = pause;
+    document.getElementById('btnReset').onclick = reset;
+    document.getElementById('speed').oninput = function() {
+      if (playing) {
+        clearInterval(timer);
+        timer = setInterval(step, getInterval());
+      }
+    };
+
+    drawAxes();
+    updateInfo(0);
+  </script>
+</body>
+</html>

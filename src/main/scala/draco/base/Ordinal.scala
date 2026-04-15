@@ -8,19 +8,6 @@ trait Ordinal extends Unit with Primal[Enumeration] {
 }
 
 object Ordinal extends App with draco.TypeInstance {
-  lazy val typeDefinition: draco.TypeDefinition = draco.TypeDefinition (
-    _typeName = draco.TypeName (
-      _name = "Ordinal",
-      _namePackage = Seq ("draco", "base")
-    ),
-    _derivation = Seq (
-      draco.TypeName ("Unit", _namePackage = Seq ("draco", "base")),
-      draco.TypeName ("Primal[Enumeration]", _namePackage = Seq ("draco"))
-    ),
-    _elements = Seq (
-      draco.Fixed ("name", "String"),
-      draco.Fixed ("description", "String")
-    )
-  )
+  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Ordinal", _namePackage = Seq("draco", "base")))
   lazy val typeInstance: draco.Type[Ordinal] = draco.Type[Ordinal] (typeDefinition)
 }

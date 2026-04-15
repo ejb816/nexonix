@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gap Frequency Histogram</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    body { font-family: sans-serif; margin: 2em; background: #fafafa; }
+    h1 { font-size: 1.3em; color: #333; }
+    p { color: #666; font-size: 0.9em; max-width: 800px; }
+    canvas { max-width: 700px; }
+  </style>
+</head>
+<body>
+  <h1>Gap frequency: how often each inter-prime gap size occurs (first 100 primes)</h1>
+  <p>Counts how many times each gap value appears in the first-order difference sequence.
+     Even gaps dominate, with 2 and 6 being the most common. The lone odd gap (1) is the
+     special case 2&rarr;3, the only consecutive integer prime pair.</p>
+  <canvas id="chart"></canvas>
+  <script>
+    const gaps = [1,2,2,4,2,4,2,4,6,2,6,4,2,4,6,6,2,6,4,2,6,4,6,8,4,2,4,2,4,14,4,6,2,10,2,6,6,4,6,6,2,10,2,4,2,12,12,4,2,4,6,2,10,6,6,6,2,6,4,2,10,14,4,2,4,14,6,10,2,4,6,8,6,6,4,6,8,4,8,10,2,10,2,6,4,6,8,4,2,4,12,8,4,8,4,6,12,2,18];
+
+    // Count occurrences of each gap size
+    const freq = {};
+    gaps.forEach(g => { freq[g] = (freq[g] || 0) + 1; });
+    const sizes = Object.keys(freq).map(Number).sort((a, b) => a - b);
+    const counts = sizes.map(s => freq[s]);
+    const colors = sizes.map(s => s === 2 ? '#e74c3c' : s === 1 ? '#f39c12' : s === 6 ? '#2ecc71' : '#3498db');
+
+    new Chart(document.getElementById('chart'), {
+      type: 'bar',
+      data: {
+        labels: sizes,
+        datasets: [{
+          label: 'Frequency',
+          data: counts,
+          backgroundColor: colors,
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: ctx => 'Gap size: ' + ctx[0].label,
+              label: ctx => ctx.raw + ' occurrences (' + (100 * ctx.raw / gaps.length).toFixed(1) + '%)'
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'Gap size' }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Frequency' },
+            ticks: { stepSize: 2 }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

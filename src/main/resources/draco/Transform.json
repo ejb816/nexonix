@@ -1,0 +1,13 @@
+{
+  "typeName" : {
+    "name" : "Transform",
+    "namePackage" : ["draco"],
+    "typeParameters" : ["S <: DracoType", "T <: DracoType"]
+  },
+  "derivation" : [
+    { "name" : "Holon", "namePackage" : ["draco"], "typeParameters" : ["(S, T)"] }
+  ],
+  "elements" : [
+    { "kind" : "Fixed", "name" : "value", "valueType" : "(S, T)" }
+  ]
+}

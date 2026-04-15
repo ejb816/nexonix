@@ -13,22 +13,7 @@ trait Accumulator extends Primes {
 }
 
 object Accumulator extends App with TypeInstance {
-  lazy val typeDefinition: draco.TypeDefinition = draco.TypeDefinition (
-    _typeName = draco.TypeName (
-      _name = "Accumulator",
-      _namePackage = Seq ("draco", "primes")
-    ),
-    _derivation = Seq (
-      draco.TypeName ("Primes", _namePackage = Seq ("draco", "primes"))
-    ),
-    _elements = Seq (
-      draco.Mutable ("primeSet", "mutable.Set[Int]"),
-      draco.Mutable ("compositeSet", "mutable.Set[Int]"),
-      draco.Mutable ("naturalSet", "mutable.Set[Int]"),
-      draco.Mutable ("intervalTextSet", "mutable.Set[(Long,String)]")
-    ),
-    _factory = draco.Factory ("Accumulator")
-  )
+  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Accumulator", _namePackage = Seq("draco", "primes")))
 
   lazy val typeInstance: DracoType = Type[Accumulator] (typeDefinition)
 

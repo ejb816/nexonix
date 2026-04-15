@@ -74,7 +74,10 @@ class PrimesRulesTest extends AnyFunSuite {
     contentSink.write(ruleSource)
     println(ruleSource)
   }
+
   def printResult (accumulator: Accumulator, numbers: Numbers) : Unit = {
+    def indexDifference (list: List[Int]): List[Int] = if (list.length < 2) List.empty else list.zip(list.tail).map { case (a, b) => b - a }
+
     // Print current memory state
     val sortedTextData: Seq[(Long,String)] = accumulator.intervalTextSet.toSeq.sortBy(_._1)
     val firstTime: Long = if (sortedTextData.nonEmpty) sortedTextData.head._1 else 0
@@ -87,6 +90,12 @@ class PrimesRulesTest extends AnyFunSuite {
     val prefixLength: Int = "List".length
     println(s"Input Natural.json.json Sequence:${numbers.naturalSequence.toList.toString().substring(prefixLength)}")
     println(s"Result Prime Sequence: ${primeList.sorted.toString().substring(prefixLength)}")
+    val firstOrder = indexDifference(primeList.sorted)
+    val twinPrimeIndices = firstOrder.zipWithIndex.collect { case (2, i) => i }
+    val secondOrder = indexDifference(twinPrimeIndices)
+    println(s"Result Inter-prime Difference Sequence: ${firstOrder.toString().substring(prefixLength)}")
+    println(s"Result Twin Prime Index Sequence: ${twinPrimeIndices.toString().substring(prefixLength)}")
+    println(s"Result Twin Prime Spacing Sequence: ${secondOrder.toString().substring(prefixLength)}")
     println(s"Result Composite Sequence: ${accumulator.compositeSet.toList.sorted.toString().substring(prefixLength)}")
     println(s"firstTime = $firstTime")
     println(s"Rule Results with Fire Interval:\n00000${timedText.mkString("\n")}")
@@ -107,7 +116,7 @@ class PrimesRulesTest extends AnyFunSuite {
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),
-      numbers = Numbers(5)
+      numbers = Numbers(10)
     )
     service.shutdown()
   }

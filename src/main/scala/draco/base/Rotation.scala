@@ -6,18 +6,6 @@ trait Rotation[T] extends Cardinal[T] {
 }
 
 object Rotation extends App with draco.TypeInstance {
-  lazy val typeDefinition: draco.TypeDefinition = draco.TypeDefinition (
-    _typeName = draco.TypeName (
-      _name = "Rotation[T]",
-      _namePackage = Seq ("draco", "base")
-    ),
-    _derivation = Seq (
-      draco.TypeName ("Cardinal[T]", _namePackage = Seq ("draco", "base"))
-    ),
-    _elements = Seq (
-      draco.Fixed ("name", "String"),
-      draco.Fixed ("description", "String")
-    )
-  )
+  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Rotation", _namePackage = Seq("draco", "base")))
   lazy val typeInstance: draco.Type[Rotation[_]] = draco.Type[Rotation[_]] (typeDefinition)
 }

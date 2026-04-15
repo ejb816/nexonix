@@ -8,26 +8,7 @@ trait Numbers extends Primes {
 }
 
 object Numbers extends App with draco.TypeInstance {
-  lazy val typeDefinition: draco.TypeDefinition = draco.TypeDefinition (
-    _typeName = draco.TypeName (
-      _name = "Numbers",
-      _namePackage = Seq ("draco", "primes")
-    ),
-    _derivation = Seq (
-      draco.TypeName ("Primes", _namePackage = Seq ("draco", "primes"))
-    ),
-    _elements = Seq (
-      draco.Fixed ("primeSequence", "Seq[Int]"),
-      draco.Fixed ("naturalSequence", "Seq[Int]"),
-      draco.Fixed ("compositeSequence", "Seq[Int]")
-    ),
-    _factory = draco.Factory (
-      "Numbers",
-      _parameters = Seq (
-        draco.Parameter ("n", "Int", "22")
-      )
-    )
-  )
+  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Numbers", _namePackage = Seq("draco", "primes")))
   lazy val typeInstance: draco.Type[Numbers] = Type[Numbers] (typeDefinition)
 
   def apply (n: Int = 22): Numbers = new Numbers {

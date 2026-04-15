@@ -6,6 +6,80 @@ All notable changes to the Nexonix/Draco project will be documented in this file
 
 ### Added
 
+- **`draco.Holon[T <: Product]`** — Base trait for primal type values (T has accessible substructure: tuples, case classes). `extends Extensible with Primal[T]`. Companion uses `Generator.loadType`.
+
+- **`draco.Transform[S <: DracoType, T <: DracoType]`** — First two-parameter draco type. `extends Extensible with Holon[(S, T)]`. Primal type value whose `value` is a 2-tuple of source and target references, captured via the companion-as-instance pattern to avoid circular initialization.
+
+- **`draco.RuntimeCompiler`** — `compile`, `compileMulti`, and `loadClass` helpers wrapping `scala.tools.nsc.Global` for runtime Scala compilation in tests (`scala-compiler` was already a dependency).
+
+- **`draco.GenerateAndCompileTest`** — Comprehensive regression test: every JSON definition under `src/main/resources/draco/` is loaded, run through `Generator.generate`, and compiled via `RuntimeCompiler`. Baseline: 31 passed, 17 failed, 48 total. The `TypeElement` sealed hierarchy compiles as one unit via `compileMulti`.
+
+- **`draco.RuntimeCompilerTest`** — Four tests covering the full cycle: simple standalone class, source referencing draco types (classpath bridging), full cycle from JSON (Holon), and error reporting.
+
+- **`draco.GeneratorCLI` + `bin/draco-gen`** — Bash-invocable Generator CLI, packaged in the sbt-assembly fat JAR. Subcommands: `generate`, `compile`, `compile-multi`, `inspect`. Rebuild with `sbt assembly`. Enables fast iteration on Generator output and source-definition debugging.
+
+- **Reference-frame example domains (Increment A)** — Cosmocentric super-domain plus Egocentric/Geocentric/Heliocentric/Galactocentric peer sub-domain skeletons under `src/test/{resources,scala}/domains/<frame>/`. No leaves or transforms yet — Increments B and C remain.
+
+- **`domains.ReferenceFramesGenTest`** — 12-assertion verification harness: per-frame JSON parse + whitespace-normalized match of generator output to committed Scala, plus Cosmocentric standalone compile and family-wide `compileMulti`. Failure messages include the exact `bin/draco-gen generate ... > ...` recipe to reconcile drift.
+
+- **Chapter 20 of draco-dev-journal** — Covers the reference-frame Increment A session, including the CLI pivot and the Generator cross-package import bug discovery.
+
+- **draco-dev-journal extraction tooling** — Scripts under `draco-dev-journal/tools/` for extracting user↔assistant pairs from Claude Code JSONL session files (`extract_sessions.py`), matching them against existing chapters to identify gaps (`map_and_detect_gaps.py`), and producing per-chapter insertion/merged-draft files (`gaps/build_chapter.py`, `gaps/integrate_chapter.py`, `gaps/process_gaps.py`). Scripts use dynamic project-root resolution (no hardcoded paths); per-chapter scripts take the chapter number via argv. Outputs are regenerable and excluded via `.gitignore`.
+
+### Changed
+
+- **`draco.Primal[T]`** now extends `TypeInstance` (was `DracoType`). All factory anonymous classes use `override lazy val typeInstance` to break circular initialization. Applies to `TypeElement` (11 factories), `Coordinate`, `Meters`, `Radians`, and the `Primal` companion itself.
+
+- **`draco.base.Coordinate`** retargets from `Primal[T]` to `Holon[T]`. Downstream types still see `Primal[T]` by transitivity.
+
+- **Inline `TypeDefinition` eliminated for leaf types** — `Coordinate`, `Unit`, `Cardinal`, `Nominal`, `Ordinal`, `Distance`, `Rotation`, `Meters`, `Radians`, `Accumulator`, `Numbers`. All 11 leaf companions' `typeDefinition` now delegates to `Generator.loadType(TypeName(...))`; TypeDefinition data lives exclusively in JSON resource files. Domain-root types (`Draco`, `Base`, `Primes`) retain inline `TypeDefinition` for now.
+
+- **`Generator.typeImports`** — New `referencedPackageImports` helper emits `import <pkg>._` for any cross-package `TypeName` in `derivation` / `modules` / `superDomain` / `source` / `target`. Unblocks any sub-type whose supertype lives in a non-parent package (e.g. `Egocentric extends Cosmocentric` where `Cosmocentric` lives in `domains.cosmocentric`). Purely additive — `GenerateAndCompileTest` baseline unchanged.
+
+- **Chapters 01-19 of draco-dev-journal** — Content updates from running the gap-filling pipeline against source session data; adds Chapter 19 (Holon / Transform[S,T] / RuntimeCompiler design session).
+
+### Fixed
+
+- **`PrimesRulesTest.indexDifference`** — Returns `List.empty` for lists with fewer than 2 elements instead of crashing with `UnsupportedOperationException: tail of empty list`.
+
+- **CI `release.yml`** — Adds an explicit sbt install step before the test/release phase, resolving a CI failure where sbt was unavailable on the runner.
+
+### Removed
+
+- **`draco.dreams.Transform`** — Obsolete runtime-only transform type, superseded by `draco.Transform[S, T]`. Scala source and JSON resource both deleted.
+
+---
+
+## [2.0.0-alpha.2] - 2026-03-31
+
+### Changed
+
+- **Generator owns all type loading** — Moved all type loading from `TypeDefinition.load` to Generator (`loadType`, `loadRuleType`, `loadActorType`, `loadAll`). `TypeDefinition.load` removed.
+
+- **Auto-suffix naming convention** — Generator auto-appends "Rule" or "Actor" to generated type names based on file aspect (`.rule.json`, `.actor.json`). JSON `typeName` uses the base concept name only.
+
+- **Rule type renames** — `AddNaturalSequence` → `AddNaturalSequenceRule`, `PrimesFromNaturalSequence` → `PrimesFromNaturalSequenceRule`, `RemoveCompositeNumbers` → `RemoveCompositeNumbersRule`, `AssembleResult` → `AssembleResultRule`.
+
+- **Actor JSON renames** — `BravoActor.actor.json` → `Bravo.actor.json`, `DataModelActor.actor.json` → `DataModel.actor.json` (remove baked-in suffix from filenames).
+
+- **Dev journal resequenced** — Chapters reordered into chronological order; added chapters 17-18.
+
+### Removed
+
+- **Inline JSON in rule Scala files** — Rules now load from `.rule.json` via `Generator.loadRuleType` instead of duplicating JSON inline.
+
+- **TypeDefinition.load** — Replaced by Generator loading methods.
+
+### Fixed
+
+- **Int vs Integer in RemoveCompositeNumbers** — Evrete working memory uses boxed types; changed to `classOf[Integer]` instead of `classOf[Int]`.
+
+---
+
+## [2.0.0-alpha.1] - 2026-03-26
+
+### Added
+
 - **Extensible** — Non-parameterized structural root trait. Generator `typeExtends` convention: empty derivation → `extends Extensible`.
 
 - **Specifically[T]** — Specialization trait extending `Extensible` with a type parameter, for deferred structural commitments.

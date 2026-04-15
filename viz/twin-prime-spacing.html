@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Twin Prime Spacing</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    body { font-family: sans-serif; margin: 2em; background: #fafafa; }
+    h1 { font-size: 1.3em; color: #333; }
+    p { color: #666; font-size: 0.9em; max-width: 800px; }
+    canvas { max-width: 900px; }
+  </style>
+</head>
+<body>
+  <h1>Twin prime spacing: gaps between consecutive occurrences of gap=2 in the first-order difference sequence</h1>
+  <p>The first-order inter-prime differences contain the value 2 at certain indices (twin prime pairs).
+     This chart shows the distance between those indices &mdash; how many primes apart consecutive twin pairs are.
+     The x-axis labels show the actual twin prime pairs at each position.</p>
+  <canvas id="chart"></canvas>
+  <script>
+    const primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229,233,239,241,251,257,263,269,271,277,281,283,293,307,311,313,317,331,337,347,349,353,359,367,373,379,383,389,397,401,409,419,421,431,433,439,443,449,457,461,463,467,479,487,491,499,503,509,521,523,541];
+    const gaps = [1,2,2,4,2,4,2,4,6,2,6,4,2,4,6,6,2,6,4,2,6,4,6,8,4,2,4,2,4,14,4,6,2,10,2,6,6,4,6,6,2,10,2,4,2,12,12,4,2,4,6,2,10,6,6,6,2,6,4,2,10,14,4,2,4,14,6,10,2,4,6,8,6,6,4,6,8,4,8,10,2,10,2,6,4,6,8,4,2,4,12,8,4,8,4,6,12,2,18];
+
+    // Twin prime indices (where gap === 2) in the first-order sequence
+    const twinIndices = gaps.reduce((acc, g, i) => { if (g === 2) acc.push(i); return acc; }, []);
+    // Second-order: spacing between consecutive twin prime positions
+    const spacing = twinIndices.slice(1).map((v, i) => v - twinIndices[i]);
+    // Labels: the twin pair at the END of each spacing interval
+    const labels = twinIndices.slice(1).map(i => '(' + primes[i] + ',' + primes[i+1] + ')');
+
+    new Chart(document.getElementById('chart'), {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Spacing',
+          data: spacing.map((s, i) => ({ x: i, y: s })),
+          backgroundColor: '#e74c3c',
+          pointRadius: 6,
+          pointHoverRadius: 8
+        }, {
+          label: 'Trend',
+          data: spacing.map((s, i) => ({ x: i, y: s })),
+          type: 'line',
+          borderColor: 'rgba(231, 76, 60, 0.3)',
+          borderWidth: 1,
+          pointRadius: 0,
+          tension: 0.3,
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: ctx => 'Twin pair: ' + labels[ctx[0].dataIndex],
+              label: ctx => 'Spacing from previous twin: ' + ctx.raw.y + ' primes apart'
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            ticks: {
+              callback: function(val) { return labels[val] || ''; },
+              maxRotation: 60,
+              font: { size: 9 },
+              autoSkip: false
+            },
+            title: { display: true, text: 'Consecutive twin prime pair' },
+            min: -0.5,
+            max: spacing.length - 0.5
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Spacing (# of primes between twin pairs)' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

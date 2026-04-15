@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cumulative Prime Count π(n)</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    body { font-family: sans-serif; margin: 2em; background: #fafafa; }
+    h1 { font-size: 1.3em; color: #333; }
+    p { color: #666; font-size: 0.9em; max-width: 800px; }
+    canvas { max-width: 900px; }
+  </style>
+</head>
+<body>
+  <h1>Cumulative prime count &pi;(n) vs n for n &le; 541</h1>
+  <p>The staircase curve shows the exact prime counting function &pi;(n) &mdash; the number of primes
+     &le; n. The smooth curve is the logarithmic estimate n/ln(n) from the prime number theorem.
+     The gap between them shows how the estimate undershoots, especially for small n.</p>
+  <canvas id="chart"></canvas>
+  <script>
+    const primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229,233,239,241,251,257,263,269,271,277,281,283,293,307,311,313,317,331,337,347,349,353,359,367,373,379,383,389,397,401,409,419,421,431,433,439,443,449,457,461,463,467,479,487,491,499,503,509,521,523,541];
+    const maxN = 541;
+
+    // Build π(n): step function
+    const piData = [];
+    let count = 0;
+    let primeIdx = 0;
+    for (let n = 2; n <= maxN; n++) {
+      if (primeIdx < primes.length && primes[primeIdx] === n) {
+        count++;
+        primeIdx++;
+      }
+      piData.push({ x: n, y: count });
+    }
+
+    // n/ln(n) estimate
+    const estimateData = [];
+    for (let n = 2; n <= maxN; n++) {
+      estimateData.push({ x: n, y: n / Math.log(n) });
+    }
+
+    new Chart(document.getElementById('chart'), {
+      type: 'line',
+      data: {
+        datasets: [
+          {
+            label: 'π(n) — exact count',
+            data: piData,
+            borderColor: '#e74c3c',
+            backgroundColor: 'rgba(231, 76, 60, 0.08)',
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHitRadius: 6,
+            fill: true,
+            stepped: true
+          },
+          {
+            label: 'n / ln(n) — estimate',
+            data: estimateData,
+            borderColor: '#3498db',
+            borderWidth: 1.5,
+            borderDash: [6, 3],
+            pointRadius: 0,
+            pointHitRadius: 6,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { usePointStyle: true, padding: 20 }
+          },
+          tooltip: {
+            callbacks: {
+              title: ctx => 'n = ' + ctx[0].raw.x,
+              label: ctx => ctx.dataset.label + ': ' + ctx.raw.y.toFixed(1)
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            title: { display: true, text: 'n' },
+            min: 2
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Number of primes ≤ n' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
