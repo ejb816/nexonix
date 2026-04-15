@@ -97,7 +97,9 @@ This clarified the convention:
 
 ## Phase 1: Flatten JSON Files
 
-*(Draco presents the plan — moves + namePackage updates for approval)*
+> **Dev:** Yes, very good. We can check for more after this is done.
+
+*(Draco reads all rule/actor JSON and Scala files, tests, and references across the codebase, then presents the flattening plan in two phases — JSON moves + namePackage updates, then Scala moves + import/reference updates)*
 
 > **Dev:** Yes
 
@@ -251,6 +253,22 @@ All five test domains updated to the same pattern:
 | Added TypeDictionary | yes | yes | yes | yes | yes |
 | Return type → `DomainType` | yes | yes | yes | yes | yes |
 | Dropped empty `_elementTypeNames = Seq()` | — | — | — | yes | yes |
+
+---
+
+## Writing the Chapter
+
+> **Dev:** Yes but also create the next chapter in draco-dev-journal, and transcribe this session into it.
+
+**Draco:** *(Reads existing journal chapters for format reference)* *(Creates draco-dev-chapter-16.md)* *(Updates DRACO.md)* *(Updates MEMORY.md and project_type_system_redesign.md)*
+
+All three artifacts written:
+
+1. **`draco-dev-journal/draco-dev-chapter-16.md`** — Full session transcription covering the situation assessment, all design decisions (domain discovery, flat packages, aspect naming), and the seven phases of work with the specific changes made in each.
+
+2. **`DRACO.md`** — Updated the "JSON as Single Source of Truth" section (flat aspect naming, domain discovery convention) and the Primes domain description (flat package, PrimeOrdinal added).
+
+3. **Memory** — Updated `project_type_system_redesign.md` (added sections for flat packages, domain discovery, standardized domain pattern; updated status/next), updated `MEMORY.md` index (marked Task 2 DONE).
 
 ---
 

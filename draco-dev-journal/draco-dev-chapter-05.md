@@ -153,6 +153,64 @@ The natural sequence would be:
 
 ---
 
+## Natural Type Definition Files
+
+> **Dev:** yes, let's see what you can do.
+
+**Draco:** *(Searches for existing JSON resource files under domains/natural. Reads Numbers.json, Primes.json, Accumulator.json, AddNaturalSequence.json, Primal.json, Unit.json for format reference. Searches for Factory encoder/decoder patterns. Creates Natural.json and Natural.actor.json. Edits Natural.scala and creates NaturalActor.scala. Removes vestigial empty files under old actors/ and rules/ subdirectories.)*
+
+Here's a summary of all changes:
+
+**JSON files created/populated:**
+- `src/test/resources/domains/natural/Natural.json` -- TypeDefinition for Natural (Primal[Int] with value element and factory)
+- `src/test/resources/domains/natural/Natural.actor.json` -- ActorDefinition with aspect-named TypeName
+
+**Scala files fixed:**
+- `Natural.scala` -- `Main.roots` -> `Test.roots`, fixed `_logicalPath` to include filename, `sourceContent` changed to `lazy val`, removed redundant double-parse fallback
+- `NaturalActor.scala` -- loads ActorDefinition from `Natural.actor.json` via `SourceContent`/`Test.roots` instead of parsing empty strings
+
+**Deleted vestigial files:**
+- `src/test/resources/domains/natural/actors/Natural.json` (empty, old subpackage convention)
+- `src/test/resources/domains/natural/rules/Natural.json` (empty, old subpackage convention)
+
+---
+
+## TypeName DelayedInit Fix
+
+> **Dev:**
+> ```
+> Cannot invoke "scala.collection.immutable.Seq.filter(scala.Function1)"
+> because the return value of "draco.TypeName$.validAspects()" is null
+> ```
+
+**Draco:** *(Edits TypeName.scala)*
+
+Classic DelayedInit problem. `TypeName.validAspects` is a `private val` (not `lazy val`) in a companion that `extends App`. It's null when the decoder is triggered from NaturalActor before `TypeName.main()` has run.
+
+The fix is in `TypeName.scala` -- change `validAspects` to `private lazy val`.
+
+This is exactly the DelayedInit pattern documented in CLAUDE.md -- `TypeName extends App`, so all plain `val` initializers are deferred until `main()`. When the Circe decoder calls `TypeName.apply` -> `canonicalOrder` -> `validAspects.filter(...)`, `validAspects` is still null.
+
+---
+
+## Generator Output Path Bug
+
+> **Dev:** TypeName.generated.scala was written into src/test/resources/draco instead of src/test/scala/draco and there was a single "null" where the import statements should have been
+
+**Draco:** *(Reads Generator.scala. Edits Generator.scala and TypeNameTest.scala)*
+
+Two issues:
+
+1. **Wrong output path** -- should use `Generator.test.sinkRoot` (which points to `src/test/scala/`) instead of `Generator.test.sourceRoot` (which points to `src/test/resources/`).
+
+2. **`null` for imports** -- another DelayedInit casualty. `circeImports` is a `private val` in `Generator extends App`.
+
+Fixed both:
+- `circeImports`: `private val` -> `private lazy val` (DelayedInit fix)
+- ContentSink: `Generator.test.sourceRoot` -> `Generator.test.sinkRoot` (writes to `src/test/scala/draco/`)
+
+---
+
 ## Dev Journal Instruction
 
 > **Dev:** And the instruction to give a new session: "Read draco-dev-journal/draco-dev-chapter-1.md for the format. Transcribe this session as the next chapter. Use the other chapter for format and structure information only. The content itself should come exclusively from this session."

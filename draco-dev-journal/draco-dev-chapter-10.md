@@ -188,6 +188,24 @@ The invalid permutations never appear because the Generator won't produce them â
 
 ---
 
+## Suggesting a Next Step
+
+> **Dev:** We've covered a range of issues and topics in this part of the session. Can you suggest a next fix, modification or improvement to the framework software, based on recent tasks?
+
+**Draco:** Based on this session, the most actionable next step is **fixing `NaturalActor.scala` so it actually works**. Right now it has:
+
+1. **Malformed JSON** -- unquoted/broken strings in the embedded definition
+2. **The `asInstanceOf` cast** -- the test needs it to pass `actorInstance` to `ActorSystem`, and NaturalActor is the first concrete example of that pattern
+
+Getting NaturalActor to compile and pass a working test would validate:
+- The `Actor`/`ActorInstance`/`ActorType` triad design
+- The `asInstanceOf` adapter approach
+- The Pekko integration pattern that Dreams will build on
+
+It's a small, contained fix that unblocks the actor subsystem as a working example -- same role that `PrimesRulesTest` plays for rules.
+
+---
+
 ## JSON as Single Source of Truth
 
 > **Dev:** Let's look at how we can use both embedded JSON strings and files containing the same JSON in a way that can be helpful in improving both the manually created source code and how the Generator can generate it. The goal is to make it easier for Dreams to create new or modify existing Domain, Rule and Actor types.

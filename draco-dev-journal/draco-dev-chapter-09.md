@@ -58,6 +58,23 @@ Final check: `grep -r DomainName src/` returned nothing (only CHANGELOG.md histo
 
 ---
 
+## Actor.apply Fix
+
+> **Dev:**
+> ```
+> /Users/edwardburke/IdeaProjects/nexonix/src/main/scala/draco/Actor.scala:26:108
+> unbound wildcard type
+>     override def receiveSignal(ctx: TypedActorContext[T], msg: Signal): Behavior[T] = Behavior.isUnhandled[_]
+> ```
+
+**Draco:** *(Reads Actor.scala)* *(Edits Actor.scala)*
+
+The wildcard `[_]` can't be used here — Scala needs the concrete type parameter `T` since you're returning `Behavior[T]`.
+
+Two issues: `Behavior.isUnhandled` isn't a factory method (it's a check), and the wildcard `[_]` isn't valid in that position. The correct Pekko API is `Behaviors.unhandled[T]`, which returns a `Behavior[T]` that marks messages as unhandled.
+
+---
+
 ## The Domain[T,U] Experiment
 
 > **Dev:** I've changed Domain.scala from Domain[T] to Domain[T,U], but my attempt is incorrect. The U type parameter is added in the trait declaration after a "with" and I'm getting this error:
@@ -173,6 +190,25 @@ Plan proposed:
 2. Add `src/test/resources/logback-test.xml` with Pekko at WARN
 
 *(Plan pending user review — to be implemented in the next session)*
+
+---
+
+## SLF4J Logging Noise — Initial Report
+
+> **Dev:**
+> ```
+> SLF4J(W): Class path contains multiple SLF4J providers.
+> SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@401fde0a]
+> SLF4J(W): Found provider [org.slf4j.jul.JULServiceProvider@46168708]
+> SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+> 23:16:41.545 [naturalActor-pekko.actor.default-dispatcher-3] INFO org.apache.pekko.event.slf4j.Slf4jLogger -- Slf4jLogger started
+> ```
+
+**Draco:** *(Launches agent to explore logging config and deps. Enters plan mode.)*
+
+These are two distinct issues: SLF4J dual-provider warnings and Pekko logger startup noise. The root causes are clear — plan pending implementation.
+
+*(Plan deferred to next session — implemented in Chapter 10)*
 
 ---
 

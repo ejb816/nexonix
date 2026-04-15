@@ -5,6 +5,85 @@
 
 ---
 
+## Phase 5 and Orion Discussion
+
+> **Dev:** Was there a Phase 5?
+
+**Draco:** Yes -- Phase 5 was Generator updates:
+
+1. Update `typeExtends` to partition `Extensible[Self]` into `extends`, rest after `with`
+2. Remove `generate(td, dd)` and `generate(td, ad)` overloads -- one `generate(td)` handles all
+
+But removing the overloads depends on the definition unification (DomainDefinition/ActorDefinition dissolving into TypeDefinition), which we haven't done yet. And the `typeExtends` partitioning is the Extensible convention -- the Generator needs to know that derivation[0] is `Extensible[Self]` and goes in `extends`, everything else after `with`.
+
+We could do the `typeExtends` change now. The overload removal waits until DomainDefinition and ActorDefinition actually dissolve.
+
+Want to do the `typeExtends` partitioning?
+
+> **Dev:** Open Resilient Inter-Operability Nexus.
+
+**Draco:** *(Reads ActorDefinition.scala)*
+
+So the stack is:
+
+- **Draco** -- core type system, rule engine, self-describing types
+- **Dreams** -- Domain Rules Editor Actor Message Service -- tooling for creating/modifying types
+- **Orion** -- Open Resilient Inter-Operability Nexus -- cross-domain integration and communication
+
+And Orion is where the actor/message architecture really earns its keep -- typed messages flowing between domains, domain boundary crossing, source/target transforms. That's why ActorDefinition needs to be right before it dissolves into TypeDefinition.
+
+ActorDefinition already has `sourceDomain`/`targetDomain` and `messageAction`/`signalAction` (the two behaviors). For the unification into TypeDefinition, these fields map to domain-level concerns and `Action` TypeElements. What else does Dreams/Orion need from an actor definition that isn't here?
+
+> **Dev:** Aggregation for output and destructuring for input.
+
+**Draco:** So an actor's behavior has two sides:
+
+- **Input**: destructuring -- take an incoming domain-typed message apart into its constituent parts
+- **Output**: aggregation -- assemble parts into a target domain-typed message to send
+
+These are duals. And they map to existing concepts:
+
+- **Destructuring** -- Pattern matching / Case analysis -- the input side of a Morphic
+- **Aggregation** -- Factory -- mapping constituent values into an integrated unitary instance
+
+So an actor's complete behavior is: destructure input (source domain) -> transform -> aggregate output (target domain). The current `messageAction: Action` only captures the middle part. It's missing the structured input/output specifications.
+
+Does this mean we need a new TypeElement for destructuring (the inverse of Factory), or can Pattern already express it?
+
+> **Dev:** It's not so much what is in the actors as it is the pattern of interaction between the actors, that determines how the actors are defined with regard to handling Morphic input, which in turn is determined by the pattern established in the domain containment and inheritance hierarchies.
+
+**Draco:** So actors are derived from the domain structure, not independently defined. The domain hierarchy *determines* the actors:
+
+- **Containment** tells you what subtypes exist -- what cases the actor needs to handle
+- **Inheritance** (superDomain) tells you what types are in scope -- what the actor can reference
+- **Source/target** tells you the transform direction -- what the actor receives and produces
+- **The interaction pattern** between domains determines the morphic input shape
+
+The actor definition is a *consequence* of the domain definitions. The Generator should be able to derive actor behavior from the domain structure -- you define the domains, the actors follow.
+
+And that's what Dreams needs to get right -- it defines domain structure, and the actor layer falls out. Orion then orchestrates the running actors based on those domain relationships.
+
+---
+
+## Session Preamble
+
+> **Dev:** I am in the MacOS terminal window, and I cannot seem to scroll back to the beginning of this new session. Is that expected behavior?
+
+**Draco:** Yes, that's expected. Claude Code's interactive mode uses a full-screen terminal UI that doesn't preserve scrollback in the normal way. The conversation history is managed within the session, not in your terminal's scroll buffer.
+
+If you need to review earlier output, you can use `/history` to see past conversations. The conversation context is preserved internally -- I have full context of everything we've discussed this session.
+
+> **Dev:** Please repeat the phase list containing the next phase before we proceed.
+
+**Draco:** From the original plan:
+
+1. **Expand TypeDefinition** -- add fields with defaults (non-breaking, all existing JSON parses) -- **DONE**
+2. **Refactor Generator** -- add detection, unified dispatch, keep old overloads as deprecated wrappers -- **DONE**
+3. **Migrate consumers** -- update DomainType/RuleType/ActorType, Domain/Rule/Actor.apply, each companion, each JSON file -- **DONE**
+4. **Remove deprecated types** -- delete DomainDefinition, RuleDefinition, ActorDefinition and old Generator overloads
+
+---
+
 ## Session Start — Multi-Type File Generation
 
 > **Dev:** Implement the following plan:
@@ -133,7 +212,7 @@ Each of those is the `lazy val typeDefinition` defined in the companion object i
 
 ## Scope Question
 
-> **Draco:** Should the RuleDefinition literal also be replaced with the same JSON-embed approach, or just TypeDefinition for now?
+**Draco:** Should the RuleDefinition literal also be replaced with the same JSON-embed approach, or just TypeDefinition for now?
 
 > **Dev:** Both TypeDefinition and RuleDefinition.
 

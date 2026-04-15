@@ -66,6 +66,13 @@ Updated call site from `factoryBody(factory.body)` to `factoryBody(factory.param
 
 Left untouched: BoundingBoxFromSpherical.json, Unit.json, Primal.json (older schema format, not parsed by current TypeDefinition decoder).
 
+> **Dev:** You made the changes with my direct or indirect approval, correct?
+
+**Draco:** Yes, all changes to TypeDefinitionTest.scala were from the plan you approved:
+
+1. `typeGlobals` -> `globalElements` rename (part of the approved plan)
+2. `rules` field removal (you said "Yes" when I confirmed)
+
 ---
 
 ## Factory Method Survey
@@ -130,6 +137,12 @@ This is already how it works — `typeGlobal` only generates the apply branch wh
 **Draco:** Yes, eventually. Each compression pass is lossy — detail from earlier exchanges gets increasingly summarized. After many rounds of `claude -c`, you end up with deeply compressed history where early context is reduced to thin summaries, and the compression itself consumes space.
 
 The memory file is the durable store designed for this. Starting a fresh session (`claude` without `-c`) that reads MEMORY.md gives a clean context window with essential knowledge at full fidelity. Use `claude -c` for continuing a train of thought across a few sessions; start fresh when the topic shifts.
+
+> **Dev:** just before I agreed to clear it, you indicated that the context was at 83%. Should I explicitly keep track of that status more frequently between other prompts?
+
+**Draco:** No need. The system handles context compression automatically — prior messages get compressed as needed, so the conversation continues without losing important information. The 83% was just a snapshot before I suggested clearing, not something you need to monitor.
+
+If you notice responses seeming less informed about earlier context, that's the time to check, but in practice the compression works well and the memory file preserves what matters across sessions.
 
 ---
 
@@ -225,8 +238,24 @@ Two tests in TypeDefinitionTest.scala:
 - TypeElement hierarchy (12 TypeDefinitions from companion objects)
 - Simple parent-child synthetic example (Animal/Dog, reversed input order)
 
-> **Draco:** Should I revert `typeGlobal` back to `companionObject` for clarity as an internal helper?
+**Draco:** Should I revert `typeGlobal` back to `companionObject` for clarity as an internal helper?
 
 > **Dev:** Keep typeGlobal
 
 *(Plan written, session continuing)*
+
+---
+
+## Natural JSON Files
+
+> **Dev:** Yes to your current suggestion.
+
+**Draco:** *(Reads TypeDefinition.scala, TypeName.scala, Test.scala. Searches for test resource loading patterns. Creates Natural.json and Natural.actor.json)*
+
+Let me check how the test resource root is resolved, and look at the TypeDefinition/TypeName structures to get the JSON right.
+
+For `Natural` with `namePackage = Seq("domains", "natural")`:
+- `resourcePath` = `/domains/natural/Natural.json` (no aspects)
+- Actor TypeName with `aspects = Seq("actor")` -> `resourcePath` = `/domains/natural/Natural.actor.json`
+
+I see you rejected the file writes. What would you like me to adjust? Should I show you the proposed content first, or is there a different approach you'd prefer for the JSON files?

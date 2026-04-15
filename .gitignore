@@ -9,3 +9,9 @@
 # AI platform symlinks — canonical files are DRACO.md and .draco/
 CLAUDE.md
 .claude
+# Journal extraction outputs — regenerable from ~/.claude/projects via tools/*.py scripts
+/draco-dev-journal/tools/extracted/
+/draco-dev-journal/tools/gaps/chapter-*.json
+/draco-dev-journal/tools/gaps/chapter-*-insertions.md
+/draco-dev-journal/tools/gaps/chapter-*-updated.md
+/draco-dev-journal/tools/mapping.json

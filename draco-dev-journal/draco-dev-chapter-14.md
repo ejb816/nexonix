@@ -326,6 +326,15 @@ Two options:
 
 *(Renames CLAUDE.md → DRACO.md, creates symlink CLAUDE.md → DRACO.md. Same for .claude/ → .draco/)*
 
+> **Dev:** what about the .claude directories? are there any of those at the project level?
+
+**Draco:** *(Runs: ls -la /Users/edwardburke/IdeaProjects/nexonix/.claude\*)* Yes — there's a `.claude/` directory at the project root containing `settings.local.json`. That's Claude Code's project-level settings. So the full plan would be:
+- Rename `CLAUDE.md` → `DRACO.md`, symlink `CLAUDE.md → DRACO.md`
+- Rename `.claude/` → `.draco/`, symlink `.claude → .draco`
+- Update internal references accordingly
+
+However, `.claude/` is actively used by Claude Code at runtime for settings — I'd want to verify the symlink works before relying on it.
+
 > **Dev:** Will pushing updates to git ignore the symlinks?
 
 **Draco:** No — git tracks symlinks by default. When you push, git stores the symlink itself (not the target's content).
@@ -337,11 +346,23 @@ Two options:
 2. Git only sees `DRACO.md` and `.draco/`
 3. Symlinks just sit in your working directory, invisible to git, always available for Claude Code
 
+> **Dev:** Wait, if they are in .gitignore, why would the sysmlinks have to be removed?
+
+**Draco:** You're right — they wouldn't. If `CLAUDE.md` and `.claude` are in `.gitignore`, git ignores the symlinks entirely. They just sit in your working directory, invisible to git, always available for Claude Code. The only gap: a fresh clone won't have the symlinks. A one-line setup script or a note in README covers that.
+
 > **Dev:** Is there anything special about the content of files and directories with the "claude" name embedded, that would be broken, invalid or useless to other AI coding platforms?
 
 **Draco:** No. The content is just markdown and JSON. The only Claude-specific things are the file naming convention, the permissions in settings.local.json, and the auto-memory path reference. The actual project documentation is universally useful. So `DRACO.md` as the canonical source works for everyone, and each platform gets its own symlink or copy.
 
-*(Adds CLAUDE.md and .claude to .gitignore, saves memory about the symlink convention)*
+> **Dev:** So if can make a note to "yourself" in memory to make sure the symlinks exists and are in .gitignore, along with the per project name that replaces claude, then let's do it.
+
+**Draco:** *(Creates feedback_draco_symlinks.md)* *(Reads MEMORY.md)* *(Edits MEMORY.md)* *(Searches for .gitignore)* *(Reads .gitignore)* *(Edits .gitignore)*
+
+Done. Here's the setup:
+
+- **Canonical**: `DRACO.md` and `.draco/` — tracked by git
+- **Local symlinks**: `CLAUDE.md → DRACO.md` and `.claude → .draco` — in `.gitignore`, never pushed
+- **Memory**: I'll verify the symlinks exist at the start of future sessions and recreate if needed
 
 ---
 
@@ -391,6 +412,10 @@ They're stored as JSON, but the full transcripts are server-side, not local mark
 
 **Draco:** No. I can see the current session conversation, DRACO.md, auto-memory files, and the codebase. But I cannot read prior session transcripts. When you `/resume` a session, the CLI restores that conversation's context — but I don't have a tool to browse saved sessions on my own.
 
+> **Dev:** I just typed "/" and was shown a list of options that did not seem to include "/history".
+
+**Draco:** You're right — it may be under a different name or may have been removed/changed in your version of Claude Code. Try typing `/resume` directly, or check `claude --help` from a separate terminal to see the available session commands. It's also possible that session management is done outside the interactive mode — e.g., `claude --resume` or `claude --continue` from the shell when launching Claude Code, rather than as a slash command inside a session.
+
 ---
 
 ## The Dev Journal Plan
@@ -437,3 +462,12 @@ For each session:
 > **Dev:** Ok lets make this the last chapter in the draco-dev-journal by creating and adding it first and then add the others in reverse chrono order and then reverse them again when they are all transcribed.
 
 **Draco:** *(Creates `draco-dev-journal/` directory and begins transcribing this session as chapter 14)*
+
+> **Dev:** So I'm assuming that when I tell the next older session to read that chapter you just wrote, that it can figure out how to do the same for that session
+
+**Draco:** Yes — the chapter establishes the format, conventions, and structure clearly enough that any resumed session will have it as a template. You'd just need to tell it:
+
+1. Read `draco-dev-journal/draco-dev-chapter-1.md` for the format
+2. Transcribe this session as the next chapter
+
+The conventions are self-evident from the file: Dev/Draco voices, blockquotes for prompts, code blocks, section headers for major topics, verbatim fidelity.
