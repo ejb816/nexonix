@@ -848,15 +848,39 @@ object Generator extends App with TypeInstance {
     else "import draco._" +: packageImports
   }
 
+  /** Imports for packages referenced by the TypeDefinition's cross-type TypeNames
+    * (derivation, modules, superDomain, source, target) that are not already
+    * covered by packageHierarchyImports.
+    *
+    * Without this, a type whose derivation points at another package (e.g.
+    * Egocentric extends Cosmocentric where Cosmocentric lives in
+    * domains.cosmocentric) compiles to "not found: type Cosmocentric". */
+  private def referencedPackageImports (td: TypeDefinition) : Seq[String] = {
+    val ownInits: Set[Seq[String]] = td.typeName.namePackage.inits.toSet
+    val covered: Set[Seq[String]] = ownInits + Seq("draco")
+    val referenced: Seq[TypeName] =
+      (td.derivation
+        ++ td.modules
+        ++ Seq(td.superDomain, td.source, td.target))
+        .filter(tn => tn != null && tn.name.nonEmpty)
+    referenced
+      .map(_.namePackage)
+      .filter(_.nonEmpty)
+      .filterNot(covered.contains)
+      .distinct
+      .map(p => s"import ${p.mkString(".")}._")
+  }
+
   private def typeImports (td: TypeDefinition, hasCodec: Boolean, instanceType: String = "") : String = {
     val pkg = packageHierarchyImports(td.typeName.namePackage)
+    val refs = referencedPackageImports(td)
     val codec = if (hasCodec) circeImports else Seq.empty
     val instance = instanceType match {
       case "actor" => pekkoImports
       case _ => Seq.empty
     }
     val external = externalImports(td)
-    val allImports = pkg ++ codec ++ instance ++ external
+    val allImports = (pkg ++ refs).distinct ++ codec ++ instance ++ external
     if (allImports.isEmpty) "" else s"\n${allImports.mkString("\n")}\n"
   }
 

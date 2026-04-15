@@ -1,0 +1,9 @@
+{
+  "typeName" : {
+    "name" : "Heliocentric",
+    "namePackage" : ["domains", "heliocentric"]
+  },
+  "derivation" : [
+    { "name" : "Cosmocentric", "namePackage" : ["domains", "cosmocentric"] }
+  ]
+}

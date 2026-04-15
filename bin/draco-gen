@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Thin wrapper around draco.GeneratorCLI in the sbt-assembly fat JAR.
+# Rebuild with:  sbt assembly
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+project_root="$(cd "$script_dir/.." && pwd)"
+
+# Resolve the most recent draco-<version>.jar under target/scala-2.13/.
+# This way the wrapper does not need to know the exact version string.
+jar="$(ls -1t "$project_root"/target/scala-2.13/draco-*.jar 2>/dev/null | head -n 1 || true)"
+
+if [[ -z "$jar" ]]; then
+  echo "error: no draco-*.jar found under $project_root/target/scala-2.13/" >&2
+  echo "       run  sbt assembly  first" >&2
+  exit 1
+fi
+
+exec java -cp "$jar" draco.GeneratorCLI "$@"
