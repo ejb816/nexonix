@@ -1,0 +1,10 @@
+{
+  "typeName" : {
+    "name" : "Fix",
+    "namePackage" : ["domains", "geocentric"]
+  },
+  "derivation" : [
+    { "name" : "Geocentric", "namePackage" : ["domains", "geocentric"] },
+    { "name" : "Holon", "namePackage" : ["draco"], "typeParameters" : ["(Position, Altitude, Heading)"] }
+  ]
+}

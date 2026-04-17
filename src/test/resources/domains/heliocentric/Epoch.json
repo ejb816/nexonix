@@ -1,0 +1,10 @@
+{
+  "typeName" : {
+    "name" : "Epoch",
+    "namePackage" : ["domains", "heliocentric"]
+  },
+  "derivation" : [
+    { "name" : "Heliocentric", "namePackage" : ["domains", "heliocentric"] },
+    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["Double"] }
+  ]
+}

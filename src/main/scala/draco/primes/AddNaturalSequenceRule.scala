@@ -5,10 +5,10 @@ import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait AddNaturalSequenceRule extends RuleInstance
+trait AddNaturalSequence.ruleRule extends RuleInstance
 
-object AddNaturalSequenceRule extends App with RuleInstance {
-  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("AddNaturalSequence", _namePackage = Seq("draco", "primes")))
+object AddNaturalSequence.ruleRule extends App with RuleInstance {
+  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("AddNaturalSequence.rule", _namePackage = Seq("draco", "primes")))
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val accumulator: Accumulator = ctx.get[Accumulator]("$accumulator")
@@ -22,7 +22,7 @@ object AddNaturalSequenceRule extends App with RuleInstance {
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
     knowledge
     .builder()
-    .newRule ("draco.primes.AddNaturalSequence")
+    .newRule ("draco.primes.AddNaturalSequence.rule")
     .forEach (
       "$accumulator", classOf[Accumulator],
       "$i", classOf[Integer]
@@ -32,7 +32,7 @@ object AddNaturalSequenceRule extends App with RuleInstance {
     .build()
   }
 
-  lazy val ruleInstance: RuleType = Rule[AddNaturalSequenceRule] (
+  lazy val ruleInstance: RuleType = Rule[AddNaturalSequence.ruleRule] (
     ruleDefinition,
     _pattern = pattern,
     _action = action
@@ -45,5 +45,5 @@ object AddNaturalSequenceRule extends App with RuleInstance {
     )
   )
 
-  lazy val typeInstance: DracoType = Type[AddNaturalSequenceRule] (typeDefinition)
+  lazy val typeInstance: DracoType = Type[AddNaturalSequence.ruleRule] (typeDefinition)
 }

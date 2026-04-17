@@ -1,0 +1,10 @@
+{
+  "typeName" : {
+    "name" : "Trajectory",
+    "namePackage" : ["domains", "galactocentric"]
+  },
+  "derivation" : [
+    { "name" : "Galactocentric", "namePackage" : ["domains", "galactocentric"] },
+    { "name" : "Holon", "namePackage" : ["draco"], "typeParameters" : ["(Parallax, ProperMotion, RadialVelocity)"] }
+  ]
+}

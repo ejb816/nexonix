@@ -1,6 +1,6 @@
 {
   "typeName" : {
-    "name" : "Natural",
+    "name" : "Natural.actor",
     "namePackage" : ["domains", "natural"]
   }
 }

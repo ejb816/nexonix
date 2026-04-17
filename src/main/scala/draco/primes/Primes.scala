@@ -7,25 +7,10 @@ trait Primes extends DomainInstance {
 }
 
 object Primes extends App with DomainInstance {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "Primes",
-      _namePackage = Seq ("draco", "primes")
-    ),
-    _derivation = Seq (
-      TypeName ("DomainInstance", _namePackage = Seq ("draco"))
-    )
-  )
+  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Primes", _namePackage = Seq ("draco", "primes")))
   lazy val typeInstance: Type[Primes] = Type[Primes] (typeDefinition)
   lazy val domainInstance: DomainType = new Domain[Primes] {
-    override lazy val domainDefinition: TypeDefinition = TypeDefinition (
-      typeDefinition.typeName,
-      _elementTypeNames = Seq (
-        "Accumulator",
-        "Numbers",
-        "PrimeOrdinal"
-      )
-    )
+    override lazy val domainDefinition: TypeDefinition = typeDefinition
     override lazy val typeDictionary: TypeDictionary = TypeDictionary (domainDefinition)
     override lazy val typeDefinition: TypeDefinition = typeInstance.typeDefinition
   }

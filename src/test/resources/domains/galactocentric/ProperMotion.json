@@ -1,0 +1,10 @@
+{
+  "typeName" : {
+    "name" : "ProperMotion",
+    "namePackage" : ["domains", "galactocentric"]
+  },
+  "derivation" : [
+    { "name" : "Galactocentric", "namePackage" : ["domains", "galactocentric"] },
+    { "name" : "Holon", "namePackage" : ["draco"], "typeParameters" : ["(Double, Double)"] }
+  ]
+}

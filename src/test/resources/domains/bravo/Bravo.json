@@ -5,5 +5,9 @@
   },
   "derivation" : [
     { "name" : "DataModel", "namePackage" : ["domains", "dataModel"] }
+  ],
+  "elementTypeNames" : [
+    "BravoResult",
+    "Bravo.actor"
   ]
 }

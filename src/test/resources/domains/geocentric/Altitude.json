@@ -1,0 +1,10 @@
+{
+  "typeName" : {
+    "name" : "Altitude",
+    "namePackage" : ["domains", "geocentric"]
+  },
+  "derivation" : [
+    { "name" : "Geocentric", "namePackage" : ["domains", "geocentric"] },
+    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["Double"] }
+  ]
+}

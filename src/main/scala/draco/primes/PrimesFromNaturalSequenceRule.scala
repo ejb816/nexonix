@@ -5,10 +5,10 @@ import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait PrimesFromNaturalSequenceRule extends RuleInstance
+trait PrimesFromNaturalSequence.ruleRule extends RuleInstance
 
-object PrimesFromNaturalSequenceRule extends App with RuleInstance {
-  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("PrimesFromNaturalSequence", _namePackage = Seq("draco", "primes")))
+object PrimesFromNaturalSequence.ruleRule extends App with RuleInstance {
+  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("PrimesFromNaturalSequence.rule", _namePackage = Seq("draco", "primes")))
   def w0(i1: Integer, i2: Integer, i3: Integer): Boolean = i1 * i2 == i3
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val accumulator: Accumulator = ctx.get[Accumulator]("$accumulator")
@@ -25,19 +25,19 @@ object PrimesFromNaturalSequenceRule extends App with RuleInstance {
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
     knowledge
     .builder()
-    .newRule ("draco.primes.PrimesFromNaturalSequence")
+    .newRule ("draco.primes.PrimesFromNaturalSequence.rule")
     .forEach (
       "$accumulator", classOf[Accumulator],
       "$i1", classOf[Integer],
       "$i2", classOf[Integer],
       "$i3", classOf[Integer]
     )
-    .where("draco.primes.PrimesFromNaturalSequenceRule.w0($i1, $i2, $i3)")
+    .where("draco.primes.PrimesFromNaturalSequence.ruleRule.w0($i1, $i2, $i3)")
     .execute (action)
     .build()
   }
 
-  lazy val ruleInstance: RuleType = Rule[PrimesFromNaturalSequenceRule] (
+  lazy val ruleInstance: RuleType = Rule[PrimesFromNaturalSequence.ruleRule] (
     ruleDefinition,
     _pattern = pattern,
     _action = action
@@ -50,5 +50,5 @@ object PrimesFromNaturalSequenceRule extends App with RuleInstance {
     )
   )
 
-  lazy val typeInstance: DracoType = Type[PrimesFromNaturalSequenceRule] (typeDefinition)
+  lazy val typeInstance: DracoType = Type[PrimesFromNaturalSequence.ruleRule] (typeDefinition)
 }

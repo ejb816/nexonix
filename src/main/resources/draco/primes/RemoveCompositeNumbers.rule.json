@@ -1,6 +1,6 @@
 {
   "typeName" : {
-    "name" : "RemoveCompositeNumbers",
+    "name" : "RemoveCompositeNumbers.rule",
     "namePackage" : [
       "draco",
       "primes"

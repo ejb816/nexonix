@@ -1,6 +1,6 @@
 {
   "typeName" : {
-    "name" : "DataModel",
+    "name" : "DataModel.actor",
     "namePackage" : ["domains", "dataModel"]
   },
   "derivation" : [

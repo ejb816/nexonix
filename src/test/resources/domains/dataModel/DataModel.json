@@ -5,5 +5,12 @@
   },
   "derivation" : [
     { "name" : "DomainInstance", "namePackage" : ["draco"] }
+  ],
+  "elementTypeNames" : [
+    "PartOne",
+    "PartTwo",
+    "Assembled",
+    "AssembleResult.rule",
+    "DataModel.actor"
   ]
 }

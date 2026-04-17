@@ -1,6 +1,6 @@
 {
   "typeName" : {
-    "name" : "AssembleResult",
+    "name" : "AssembleResult.rule",
     "namePackage" : ["domains", "dataModel"]
   },
   "variables" : [

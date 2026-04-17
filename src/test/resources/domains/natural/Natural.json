@@ -9,6 +9,9 @@
       "namePackage" : ["draco"]
     }
   ],
+  "elementTypeNames" : [
+    "Natural.actor"
+  ],
   "elements" : [
     {
       "kind" : "Fixed",

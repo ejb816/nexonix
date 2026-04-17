@@ -782,10 +782,10 @@ object Generator extends App with TypeInstance {
     td.elementTypeNames.nonEmpty
 
   private def isRule (td: TypeDefinition) : Boolean =
-    td.variables.nonEmpty
+    td.typeName.name.endsWith(".rule") || td.variables.nonEmpty
 
   private def isActor (td: TypeDefinition) : Boolean =
-    td.derivation.exists(tn => Set("ActorType", "ActorInstance", "ExtensibleBehavior").contains(tn.name))
+    td.typeName.name.endsWith(".actor") || td.derivation.exists(tn => Set("ActorType", "ActorInstance", "ExtensibleBehavior").contains(tn.name))
 
   /** Object-only type: no trait, no factory, no derivation, but has globalElements.
     * Emits object extending DracoType with typeInstance = this. */

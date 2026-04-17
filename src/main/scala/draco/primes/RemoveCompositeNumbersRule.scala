@@ -5,10 +5,10 @@ import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait RemoveCompositeNumbersRule extends RuleInstance
+trait RemoveCompositeNumbers.ruleRule extends RuleInstance
 
-object RemoveCompositeNumbersRule extends App with RuleInstance {
-  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("RemoveCompositeNumbers", _namePackage = Seq("draco", "primes")))
+object RemoveCompositeNumbers.ruleRule extends App with RuleInstance {
+  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("RemoveCompositeNumbers.rule", _namePackage = Seq("draco", "primes")))
   def w0(i1: Int, i2: Int, i3: Int): Boolean = i1 * i2 == i3
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val accumulator: Accumulator = ctx.get[Accumulator]("$accumulator")
@@ -25,19 +25,19 @@ object RemoveCompositeNumbersRule extends App with RuleInstance {
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
     knowledge
     .builder()
-    .newRule ("draco.primes.RemoveCompositeNumbers")
+    .newRule ("draco.primes.RemoveCompositeNumbers.rule")
     .forEach (
       "$accumulator", classOf[Accumulator],
       "$i1", classOf[Int],
       "$i2", classOf[Int],
       "$i3", classOf[Int]
     )
-    .where("draco.primes.RemoveCompositeNumbersRule.w0($i1, $i2, $i3)")
+    .where("draco.primes.RemoveCompositeNumbers.ruleRule.w0($i1, $i2, $i3)")
     .execute (action)
     .build()
   }
 
-  lazy val ruleInstance: RuleType = Rule[RemoveCompositeNumbersRule] (
+  lazy val ruleInstance: RuleType = Rule[RemoveCompositeNumbers.ruleRule] (
     ruleDefinition,
     _pattern = pattern,
     _action = action
@@ -50,5 +50,5 @@ object RemoveCompositeNumbersRule extends App with RuleInstance {
     )
   )
 
-  lazy val typeInstance: DracoType = Type[RemoveCompositeNumbersRule] (typeDefinition)
+  lazy val typeInstance: DracoType = Type[RemoveCompositeNumbers.ruleRule] (typeDefinition)
 }

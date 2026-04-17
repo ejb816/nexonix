@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "TupleFact",
+    "name": "TupleFact.rule",
     "namePackage": ["org", "nexonix", "rules", "rete", "rules"]
   },
   "variables": [
