@@ -1,0 +1,11 @@
+{
+  "typeName" : {
+    "name" : "HeliocentricGalactocentric",
+    "namePackage" : ["domains", "heliocentric", "galactocentric"]
+  },
+  "source" : { "name" : "Heliocentric",   "namePackage" : ["domains", "heliocentric"] },
+  "target" : { "name" : "Galactocentric", "namePackage" : ["domains", "galactocentric"] },
+  "derivation" : [
+    { "name" : "Transform", "namePackage" : ["draco"], "typeParameters" : ["Heliocentric", "Galactocentric"] }
+  ]
+}

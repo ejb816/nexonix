@@ -64,33 +64,42 @@ object Generator extends App with TypeInstance {
     if (idx < 0) name else name.substring(0, idx)
   }
 
-  /** Parameterized name from TypeName: "Primal[T]" or "Primal" if no typeParameters */
+  /** Parameterized name from TypeName: "Primal[T]" or "Primal" if no typeParameters.
+    * Strips `.rule`/`.actor` aspect suffix so the result is a valid Scala identifier base. */
   private def parameterizedName (tn: TypeName) : String = {
-    if (tn.typeParameters.isEmpty) tn.name
-    else s"${tn.name}[${tn.typeParameters.mkString(", ")}]"
+    val base = stripAspect(tn.name)
+    if (tn.typeParameters.isEmpty) base
+    else s"$base[${tn.typeParameters.mkString(", ")}]"
   }
 
-  /** Wildcard name from TypeName: "Primal[_]" or "Primal" if no typeParameters */
+  /** Wildcard name from TypeName: "Primal[_]" or "Primal" if no typeParameters.
+    * Strips `.rule`/`.actor` aspect suffix. */
   private def wildcardTypeName (tn: TypeName) : String = {
-    if (tn.typeParameters.isEmpty) tn.name
-    else s"${tn.name}[${tn.typeParameters.map(_ => "_").mkString(", ")}]"
+    val base = stripAspect(tn.name)
+    if (tn.typeParameters.isEmpty) base
+    else s"$base[${tn.typeParameters.map(_ => "_").mkString(", ")}]"
   }
 
-  private def typeNameLiteral (tn: TypeName) : String = {
+  private def typeNameLiteralOf (name: String, tn: TypeName) : String = {
     val args = Seq(
-      Some(s""""${tn.name}""""),
+      Some(s""""$name""""),
       if (tn.namePackage.nonEmpty) Some(s"_namePackage = Seq(${tn.namePackage.map(s => s""""$s"""").mkString(", ")})") else None,
       if (tn.typeParameters.nonEmpty) Some(s"_typeParameters = Seq(${tn.typeParameters.map(s => s""""$s"""").mkString(", ")})") else None
     ).flatten
     s"TypeName (${args.mkString(", ")})"
   }
 
+  private def typeNameLiteral (tn: TypeName) : String =
+    typeNameLiteralOf(tn.name, tn)
+
   private def typeDefinitionLoad (td: TypeDefinition) : String = {
     s"""draco.Generator.loadType(${typeNameLiteral(td.typeName)})"""
   }
 
+  /** Emit `loadRuleType(TypeName(baseName, ...))` — the `.rule` aspect is added back
+    * by `loadRuleType` when resolving the JSON resource. */
   private def ruleDefinitionLoad (td: TypeDefinition) : String = {
-    s"""draco.Generator.loadRuleType(${typeNameLiteral(td.typeName)})"""
+    s"""draco.Generator.loadRuleType(${typeNameLiteralOf(stripAspect(td.typeName.name), td.typeName)})"""
   }
 
 
@@ -618,7 +627,7 @@ object Generator extends App with TypeInstance {
     val factory = td.factory
     val hasFactory = factory.valueType.nonEmpty
     val hasGlobalElements = td.globalElements.nonEmpty
-    val objName = td.typeName.name + nameSuffix
+    val objName = stripAspect(td.typeName.name) + nameSuffix
     val wName = wildcardTypeName(td.typeName) + nameSuffix
     val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
     val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
@@ -674,25 +683,15 @@ object Generator extends App with TypeInstance {
 
   // --- DomainInstance companion generation ---
 
-  private def domainInstanceLiteral (objName: String, td: TypeDefinition) : String = {
-    val elementNames = if (td.elementTypeNames.isEmpty) "Seq.empty"
-    else {
-      val names = td.elementTypeNames.map(n => s"      \"$n\"")
-      s"Seq (\n${names.mkString(",\n")}\n    )"
-    }
-    val optionalFields = Seq(
-      if (td.superDomain.name.nonEmpty) Some(s"      _superDomain = ${typeNameLiteral(td.superDomain)}") else None,
-      if (td.source.name.nonEmpty) Some(s"      _source = ${typeNameLiteral(td.source)}") else None,
-      if (td.target.name.nonEmpty) Some(s"      _target = ${typeNameLiteral(td.target)}") else None
-    ).flatten
-    val optionalFieldsStr = if (optionalFields.isEmpty) ""
-    else s",\n${optionalFields.mkString(",\n")}"
-    s"""  lazy val domainInstance: Domain[$objName] = Domain[$objName] (
-       |    _domainDefinition = TypeDefinition (
-       |      typeDefinition.typeName,
-       |      _elementTypeNames = $elementNames$optionalFieldsStr
-       |    )
-       |  )""".stripMargin
+  private def domainInstanceLiteral (objName: String) : String =
+    s"  lazy val domainInstance: Domain[$objName] = Domain[$objName] (typeDefinition)"
+
+  /** Emit a Scala-visible mirror of the domain's elementTypeNames list. JSON remains
+    * the runtime authority (via `typeDefinition.elementTypeNames`); this val is for
+    * developer readability — see at-a-glance what's in the domain without opening JSON. */
+  private def elementTypeNamesLiteral (td: TypeDefinition) : String = {
+    val items = td.elementTypeNames.map(n => s""""$n"""").mkString(", ")
+    s"  lazy val elementTypeNames: Seq[String] = Seq ($items)"
   }
 
   private def domainGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty) : String = {
@@ -704,14 +703,17 @@ object Generator extends App with TypeInstance {
     val header = s"object $objName extends ${appMixin}DomainInstance"
     val tdLiteral = s"  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
     val tiLiteral = s"  lazy val typeInstance: Type[$wName] = Type[$wName] (typeDefinition)"
+    val etnLiteral = elementTypeNamesLiteral(td)
     val codec = codecDeclaration(td, familyContext)
     val codecBlock = if (codec.nonEmpty) s"\n$codec\n" else ""
-    val diLiteral = domainInstanceLiteral(objName, td)
+    val diLiteral = domainInstanceLiteral(objName)
     val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.globalElements)}" else ""
 
     s"""$header {
        |$tdLiteral
        |$tiLiteral
+       |
+       |$etnLiteral
        |$codecBlock
        |$diLiteral$globals
        |}""".stripMargin
@@ -720,7 +722,7 @@ object Generator extends App with TypeInstance {
   // --- RuleInstance companion generation ---
 
   private def ruleGlobal (td: TypeDefinition) : String = {
-    val name = td.typeName.name + "Rule"
+    val name = stripAspect(td.typeName.name) + "Rule"
     val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
     s"""object $name extends ${appMixin}RuleInstance {
        |  private lazy val ruleDefinition: TypeDefinition = ${ruleDefinitionLoad(td)}
@@ -736,7 +738,7 @@ object Generator extends App with TypeInstance {
        |    .forEach (
        |${factVariables(td.variables)}
        |    )
-       |${whereConditions(td.conditions, td.typeName.namePath + "Rule")}
+       |${whereConditions(td.conditions, stripAspect(td.typeName.namePath) + "Rule")}
        |    .execute (action)
        |    .build()
        |  }
@@ -778,8 +780,21 @@ object Generator extends App with TypeInstance {
 
   // --- Detection helpers ---
 
+  /** Strip aspect suffix (`.rule` / `.actor`) from a raw TypeName.name or namePath
+    * so it can be used as a Scala identifier base before appending `Rule`/`Actor`. */
+  private def stripAspect (name: String) : String =
+    name.stripSuffix(".rule").stripSuffix(".actor")
+
+  /** A TypeDefinition is a domain when it is either:
+    *   - a *tuple domain* or *domain scalar* with named sub-elements
+    *     (`elementTypeNames` populated), or
+    *   - a *domain tuple* — a transform domain — recognizable by having
+    *     both `source` and `target` populated as TypeName references.
+    * Both forms deserve the domain emission pattern (`DomainInstance` +
+    * `domainInstance: Domain[T]`); either alone is sufficient. */
   private def isDomain (td: TypeDefinition) : Boolean =
-    td.elementTypeNames.nonEmpty
+    td.elementTypeNames.nonEmpty ||
+    (td.source.name.nonEmpty && td.target.name.nonEmpty)
 
   private def isRule (td: TypeDefinition) : Boolean =
     td.typeName.name.endsWith(".rule") || td.variables.nonEmpty
@@ -887,7 +902,7 @@ object Generator extends App with TypeInstance {
   def generate (td: TypeDefinition) : String = {
     if (isRule(td)) {
       val imports = ruleImports(td.typeName.namePackage)
-      val ruleName = td.typeName.name + "Rule"
+      val ruleName = stripAspect(td.typeName.name) + "Rule"
       s"""
          |package ${td.typeName.namePackage.mkString(".")}
          |

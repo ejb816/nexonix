@@ -68,12 +68,39 @@ class ReferenceFramesGenTest extends AnyFunSuite {
   private val radialVelocity = Ty("RadialVelocity", "galactocentric")
   private val trajectory     = Ty("Trajectory",     "galactocentric")
 
+  // Transform domains (domain tuples): `domains.<source>.<target>.<SourceTarget>`
+  // Full 4×3 = 12 transform peer matrix for Increment C.
+  private val egocentricGeocentric       = Ty("EgocentricGeocentric",       "egocentric/geocentric")
+  private val egocentricHeliocentric     = Ty("EgocentricHeliocentric",     "egocentric/heliocentric")
+  private val egocentricGalactocentric   = Ty("EgocentricGalactocentric",   "egocentric/galactocentric")
+  private val geocentricEgocentric       = Ty("GeocentricEgocentric",       "geocentric/egocentric")
+  private val geocentricHeliocentric     = Ty("GeocentricHeliocentric",     "geocentric/heliocentric")
+  private val geocentricGalactocentric   = Ty("GeocentricGalactocentric",   "geocentric/galactocentric")
+  private val heliocentricEgocentric     = Ty("HeliocentricEgocentric",     "heliocentric/egocentric")
+  private val heliocentricGeocentric     = Ty("HeliocentricGeocentric",     "heliocentric/geocentric")
+  private val heliocentricGalactocentric = Ty("HeliocentricGalactocentric", "heliocentric/galactocentric")
+  private val galactocentricEgocentric   = Ty("GalactocentricEgocentric",   "galactocentric/egocentric")
+  private val galactocentricGeocentric   = Ty("GalactocentricGeocentric",   "galactocentric/geocentric")
+  private val galactocentricHeliocentric = Ty("GalactocentricHeliocentric", "galactocentric/heliocentric")
+
   private val families: Seq[Family] = Seq(
-    Family("Cosmocentric",   Seq(cosmocentric)),
-    Family("Egocentric",     Seq(cosmocentric, egocentric, bearing, reach, percept)),
-    Family("Geocentric",     Seq(cosmocentric, geocentric, position, altitude, heading, fix)),
-    Family("Heliocentric",   Seq(cosmocentric, heliocentric, elements, epoch, ephemeris)),
-    Family("Galactocentric", Seq(cosmocentric, galactocentric, parallax, properMotion, radialVelocity, trajectory))
+    Family("Cosmocentric",             Seq(cosmocentric)),
+    Family("Egocentric",               Seq(cosmocentric, egocentric, bearing, reach, percept)),
+    Family("Geocentric",               Seq(cosmocentric, geocentric, position, altitude, heading, fix)),
+    Family("Heliocentric",             Seq(cosmocentric, heliocentric, elements, epoch, ephemeris)),
+    Family("Galactocentric",           Seq(cosmocentric, galactocentric, parallax, properMotion, radialVelocity, trajectory)),
+    Family("EgocentricGeocentric",     Seq(cosmocentric, egocentric, geocentric, egocentricGeocentric)),
+    Family("EgocentricHeliocentric",   Seq(cosmocentric, egocentric, heliocentric, egocentricHeliocentric)),
+    Family("EgocentricGalactocentric", Seq(cosmocentric, egocentric, galactocentric, egocentricGalactocentric)),
+    Family("GeocentricEgocentric",     Seq(cosmocentric, geocentric, egocentric, geocentricEgocentric)),
+    Family("GeocentricHeliocentric",   Seq(cosmocentric, geocentric, heliocentric, geocentricHeliocentric)),
+    Family("GeocentricGalactocentric", Seq(cosmocentric, geocentric, galactocentric, geocentricGalactocentric)),
+    Family("HeliocentricEgocentric",   Seq(cosmocentric, heliocentric, egocentric, heliocentricEgocentric)),
+    Family("HeliocentricGeocentric",   Seq(cosmocentric, heliocentric, geocentric, heliocentricGeocentric)),
+    Family("HeliocentricGalactocentric", Seq(cosmocentric, heliocentric, galactocentric, heliocentricGalactocentric)),
+    Family("GalactocentricEgocentric", Seq(cosmocentric, galactocentric, egocentric, galactocentricEgocentric)),
+    Family("GalactocentricGeocentric", Seq(cosmocentric, galactocentric, geocentric, galactocentricGeocentric)),
+    Family("GalactocentricHeliocentric", Seq(cosmocentric, galactocentric, heliocentric, galactocentricHeliocentric))
   )
 
   /** All 19 types, deduplicated (Cosmocentric appears in every family). */

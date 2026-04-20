@@ -1,0 +1,21 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+git add -u
+
+git commit -m "$(cat <<'EOF'
+Reference Frames Increment C, Generator simplification, rule naming fix, elementTypeNames val
+
+- Generator.domainInstanceLiteral simplified to single-line Domain[T](typeDefinition)
+- Generator.isDomain recognizes domain tuples via populated source+target
+- Generator emits Scala-visible lazy val elementTypeNames on domain companions
+- stripAspect helper fixes *.ruleRule bug at 5 emission sites; ruleDefinitionLoad emits base-name TypeName for correct loadRuleType resolution
+- 4 broken rule files regenerated (3 primes + TupleFactRule)
+- Reference frames Increment C: 12 transform-domain skeletons (full 4x3 peer matrix)
+- ReferenceFramesGenTest expanded 44 -> 80 tests
+- Chapter 22 of draco-dev-journal covers the session
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+EOF
+)"
+
+git push
