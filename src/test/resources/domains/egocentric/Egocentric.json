@@ -6,5 +6,5 @@
   "derivation" : [
     { "name" : "Cosmocentric", "namePackage" : ["domains", "cosmocentric"] }
   ],
-  "elementTypeNames" : ["Bearing", "Reach", "Percept"]
+  "elementTypeNames" : ["Direction", "Distance", "Course", "Gaze", "Percept", "Lean", "Effect", "Waypoint", "Path", "Ego"]
 }

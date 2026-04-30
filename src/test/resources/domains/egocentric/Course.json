@@ -1,10 +1,10 @@
 {
   "typeName" : {
-    "name" : "Bearing",
+    "name" : "Course",
     "namePackage" : ["domains", "egocentric"]
   },
   "derivation" : [
     { "name" : "Egocentric", "namePackage" : ["domains", "egocentric"] },
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["Double"] }
+    { "name" : "Direction", "namePackage" : ["domains", "egocentric"] }
   ]
 }

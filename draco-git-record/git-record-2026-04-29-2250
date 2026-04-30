@@ -1,0 +1,43 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+# New files (Egocentric redesign — leaf types, actor, journal chapter, git-record)
+git add src/test/resources/domains/egocentric/Course.json
+git add src/test/resources/domains/egocentric/Gaze.json
+git add src/test/resources/domains/egocentric/Lean.json
+git add src/test/resources/domains/egocentric/Effect.json
+git add src/test/resources/domains/egocentric/Waypoint.json
+git add src/test/resources/domains/egocentric/Path.json
+git add src/test/resources/domains/egocentric/Ego.json
+git add src/test/resources/domains/egocentric/Ego.actor.json
+git add src/test/scala/domains/egocentric/Course.scala
+git add src/test/scala/domains/egocentric/Gaze.scala
+git add src/test/scala/domains/egocentric/Lean.scala
+git add src/test/scala/domains/egocentric/Effect.scala
+git add src/test/scala/domains/egocentric/Waypoint.scala
+git add src/test/scala/domains/egocentric/Path.scala
+git add src/test/scala/domains/egocentric/Ego.scala
+git add src/test/scala/domains/egocentric/EgoActor.scala
+git add draco-dev-journal/draco-dev-chapter-23.md
+git add draco-git-record/git-record-2026-04-29-2250
+
+# Renames + modifications (Bearing→Direction, Reach→Distance, Percept derivation, Egocentric elementTypeNames, ReferenceFramesGenTest expansion)
+git add -u
+
+git commit -m "$(cat <<'EOF'
+Egocentric domain vocabulary redesign — endogenous semantics, Holon/Primal distinction, ten-element increment
+
+- Renamed Bearing → Direction (Primal[(Double, Double)] az+el) and Reach → Distance (Primal[Double] IPD-multiples) — frame-appropriate vocabulary; Bearing/Range belong in Geocentric and outward
+- Added 7 new Egocentric element types: Course (extends Direction), Gaze (extends Direction), Lean (Primal[(Double, Double)] polar — postural-stabilization effect), Effect (Primal[Unit] placeholder), Waypoint (Primal[(Gaze, Distance)]), Path (Primal[Seq[Waypoint]]), Ego (Holon[(Percept, Effect)] — the only perspective Holon)
+- Added Ego.actor.json + EgoActor.scala (modeled on NaturalActor)
+- Updated Percept derivation: Holon[(Bearing, Reach)] → Primal[(Gaze, Distance)] under the Holon=perspective rule
+- Egocentric.elementTypeNames now lists all 10 elements
+- ReferenceFramesGenTest scaled 19 → 26 types under one Egocentric family expansion; Course/Gaze drift fixed (hand-written aligned to Generator output: 'with Egocentric with Direction')
+- First successful uses of Primal[tuple], Primal[Seq[T]], Primal[Unit], sibling-type derivation chain in a leaf, and Holon parameterized by typed tuple
+- Codified design rules: Holon=perspective (subjective POV within objective frame); Primal=value (unitary or composed); endogenous semantics for Egocentric (no SI units, no compass references); sub-package nesting under a domain means transform, not sub-domain
+- Chapter 23 of draco-dev-journal covers the session including the meta-discussion on conversation cost and the one-recommendation default
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+EOF
+)"
+
+git push

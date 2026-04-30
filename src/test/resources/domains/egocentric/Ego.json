@@ -1,10 +1,10 @@
 {
   "typeName" : {
-    "name" : "Reach",
+    "name" : "Ego",
     "namePackage" : ["domains", "egocentric"]
   },
   "derivation" : [
     { "name" : "Egocentric", "namePackage" : ["domains", "egocentric"] },
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["Double"] }
+    { "name" : "Holon", "namePackage" : ["draco"], "typeParameters" : ["(Percept, Effect)"] }
   ]
 }

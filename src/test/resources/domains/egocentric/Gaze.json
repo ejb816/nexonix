@@ -1,10 +1,10 @@
 {
   "typeName" : {
-    "name" : "Percept",
+    "name" : "Gaze",
     "namePackage" : ["domains", "egocentric"]
   },
   "derivation" : [
     { "name" : "Egocentric", "namePackage" : ["domains", "egocentric"] },
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["(Gaze, Distance)"] }
+    { "name" : "Direction", "namePackage" : ["domains", "egocentric"] }
   ]
 }

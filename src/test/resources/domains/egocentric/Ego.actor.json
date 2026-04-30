@@ -1,0 +1,6 @@
+{
+  "typeName" : {
+    "name" : "Ego.actor",
+    "namePackage" : ["domains", "egocentric"]
+  }
+}

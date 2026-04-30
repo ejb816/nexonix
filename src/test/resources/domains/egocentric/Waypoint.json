@@ -1,6 +1,6 @@
 {
   "typeName" : {
-    "name" : "Percept",
+    "name" : "Waypoint",
     "namePackage" : ["domains", "egocentric"]
   },
   "derivation" : [

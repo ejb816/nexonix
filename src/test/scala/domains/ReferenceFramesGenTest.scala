@@ -10,9 +10,10 @@ import scala.io.Source
 /** Generates Scala source from the reference-frame JSON type definitions and
  *  verifies generator/hand-written equivalence plus compilation.
  *
- *  Families (19 types total):
+ *  Families (26 types total):
  *    - Cosmocentric (super-domain, no leaves)
- *    - Egocentric     + Bearing, Reach  → Percept
+ *    - Egocentric     + Direction, Distance, Course, Gaze, Percept, Lean,
+ *                       Effect, Waypoint, Path, Ego (perspective Holon)
  *    - Geocentric     + Position, Altitude, Heading → Fix
  *    - Heliocentric   + Elements, Epoch → Ephemeris
  *    - Galactocentric + Parallax, ProperMotion, RadialVelocity → Trajectory
@@ -25,11 +26,11 @@ import scala.io.Source
  *  Per family (super + sub-frame + leaves + assembly):
  *    - All family members compile together as one unit (compileMulti).
  *      Single-source `compile` is inadequate once members have
- *      inter-file dependencies (extends a sibling, Holon[(Bearing, Reach)], etc.);
+ *      inter-file dependencies (extends a sibling, Primal[(Gaze, Distance)], etc.);
  *      this is the only correct compilation verification.
  *
  *  Universe-wide:
- *    - All 19 types compile together as one unit.
+ *    - All 26 types compile together as one unit.
  */
 class ReferenceFramesGenTest extends AnyFunSuite {
 
@@ -47,9 +48,16 @@ class ReferenceFramesGenTest extends AnyFunSuite {
   private val cosmocentric = Ty("Cosmocentric", "cosmocentric")
 
   private val egocentric     = Ty("Egocentric",     "egocentric")
-  private val bearing        = Ty("Bearing",        "egocentric")
-  private val reach          = Ty("Reach",          "egocentric")
+  private val direction      = Ty("Direction",      "egocentric")
+  private val distance       = Ty("Distance",       "egocentric")
+  private val course         = Ty("Course",         "egocentric")
+  private val gaze           = Ty("Gaze",           "egocentric")
   private val percept        = Ty("Percept",        "egocentric")
+  private val lean           = Ty("Lean",           "egocentric")
+  private val effect         = Ty("Effect",         "egocentric")
+  private val waypoint       = Ty("Waypoint",       "egocentric")
+  private val path           = Ty("Path",           "egocentric")
+  private val ego            = Ty("Ego",            "egocentric")
 
   private val geocentric     = Ty("Geocentric",     "geocentric")
   private val position       = Ty("Position",       "geocentric")
@@ -85,7 +93,7 @@ class ReferenceFramesGenTest extends AnyFunSuite {
 
   private val families: Seq[Family] = Seq(
     Family("Cosmocentric",             Seq(cosmocentric)),
-    Family("Egocentric",               Seq(cosmocentric, egocentric, bearing, reach, percept)),
+    Family("Egocentric",               Seq(cosmocentric, egocentric, direction, distance, course, gaze, percept, lean, effect, waypoint, path, ego)),
     Family("Geocentric",               Seq(cosmocentric, geocentric, position, altitude, heading, fix)),
     Family("Heliocentric",             Seq(cosmocentric, heliocentric, elements, epoch, ephemeris)),
     Family("Galactocentric",           Seq(cosmocentric, galactocentric, parallax, properMotion, radialVelocity, trajectory)),
