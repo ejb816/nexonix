@@ -5,7 +5,7 @@ trait DomainType extends DracoType {
   val typeDictionary: TypeDictionary
 }
 
-object DomainType extends App with TypeInstance {
+object DomainType extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "DomainType",
@@ -25,7 +25,7 @@ object DomainType extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[DomainType] = Type[DomainType] (typeDefinition)
+  lazy val dracoType: Type[DomainType] = Type[DomainType] (typeDefinition)
   lazy val Null: DomainType = new DomainType {
     override val domainDefinition: TypeDefinition = TypeDefinition.Null
     override val typeDictionary: TypeDictionary = TypeDictionary.Null

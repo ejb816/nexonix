@@ -10,7 +10,7 @@ trait RuleType extends DracoType {
   val pattern: Consumer[Knowledge]
 }
 
-object RuleType extends App with TypeInstance {
+object RuleType extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "RuleType",
@@ -29,7 +29,7 @@ object RuleType extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[RuleType] = Type[RuleType] (typeDefinition)
+  lazy val dracoType: Type[RuleType] = Type[RuleType] (typeDefinition)
   def apply (
             _ruleDefinition: TypeDefinition,
             _pattern: Consumer[Knowledge],

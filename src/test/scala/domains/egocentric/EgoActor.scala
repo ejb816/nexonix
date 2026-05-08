@@ -5,9 +5,9 @@ import io.circe._
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 
-trait EgoActor extends ActorInstance
+trait EgoActor extends Extensible
 
-object EgoActor extends App with ActorInstance {
+object EgoActor extends App {
 
   private lazy val actorSourceContent: String = SourceContent (
     _sourceRoot = Test.roots.sourceRoot,
@@ -15,8 +15,7 @@ object EgoActor extends App with ActorInstance {
   ).sourceString
 
   lazy val typeDefinition: TypeDefinition = Ego.typeDefinition
-  lazy val typeInstance: DracoType = Type[Ego] (Ego.typeDefinition)
-  lazy val actorInstance: ActorType = new Actor[Ego] {
+  lazy val actorType: ActorType = new Actor[Ego] {
     override val actorDefinition: TypeDefinition = parser.parse(actorSourceContent).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
     override val typeDefinition: TypeDefinition = Ego.typeDefinition
 

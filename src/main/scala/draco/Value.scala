@@ -14,7 +14,7 @@ trait Value {
     else null.asInstanceOf[T]
   }}
 
-object Value extends App with TypeInstance {
+object Value extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "Value",
@@ -32,7 +32,7 @@ object Value extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[Value] = Type[Value] (typeDefinition)
+  lazy val dracoType: Type[Value] = Type[Value] (typeDefinition)
 
   def apply(_name: String, _pathElements: Seq[String]): Value = {
     new Value {

@@ -12,7 +12,7 @@ sealed trait TypeElement extends Primal[String] {
 
 sealed trait BodyElement extends TypeElement
 
-object BodyElement extends App with TypeInstance {
+object BodyElement extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "BodyElement",
@@ -34,13 +34,13 @@ object BodyElement extends App with TypeInstance {
       TypeName ("Factory", _namePackage = Seq ("draco"))
     )
   )
-  lazy val typeInstance: Type[BodyElement] = Type[BodyElement] (typeDefinition)
+  lazy val dracoType: Type[BodyElement] = Type[BodyElement] (typeDefinition)
   private lazy val codec = Codec.sub[TypeElement, BodyElement](TypeElement.encoder, TypeElement.decoder)
   implicit def encoder: Encoder[BodyElement] = codec.encoder
   implicit def decoder: Decoder[BodyElement] = codec.decoder
 }
 
-object TypeElement extends App with TypeInstance {
+object TypeElement extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "TypeElement",
@@ -56,18 +56,16 @@ object TypeElement extends App with TypeInstance {
       Fixed ("body", "Seq[BodyElement]")
     )
   )
-  lazy val typeInstance: Type[TypeElement] = Type[TypeElement] (typeDefinition)
+  lazy val dracoType: Type[TypeElement] = Type[TypeElement] (typeDefinition)
 
   def apply (
               _name: String,
               _valueType: String,
               _value: String
             ) : TypeElement = new TypeElement {
-    override lazy val typeInstance: DracoType = TypeElement.typeInstance
     override val name: String = _name
     override val valueType: String = _valueType
     override val value: String = _value
-    override val typeDefinition: TypeDefinition = TypeElement.typeDefinition
   }
   lazy val Null: TypeElement = TypeElement (_name = "", _valueType = "", _value = "")
   implicit lazy val encoder: Encoder[TypeElement] = Encoder.instance { te =>
@@ -178,7 +176,7 @@ object TypeElement extends App with TypeInstance {
 
 
 sealed trait Fixed extends BodyElement
-object Fixed extends App with TypeInstance {
+object Fixed extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Fixed", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -188,24 +186,22 @@ object Fixed extends App with TypeInstance {
       Parameter ("value", "String", "\"\"")
     ))
   )
-  lazy val typeInstance: Type[Fixed] = Type[Fixed] (typeDefinition)
+  lazy val dracoType: Type[Fixed] = Type[Fixed] (typeDefinition)
   def apply (
       _name: String,
       _valueType: String,
       _value: String = ""
     ) : Fixed = {
     new Fixed {
-      override lazy val typeInstance: DracoType = Fixed.typeInstance
       override val name: String = _name
       override val valueType: String = _valueType
       override val value: String = _value
-      override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
     }
   }
 }
 
 sealed trait Mutable extends BodyElement
-object Mutable extends App with TypeInstance {
+object Mutable extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Mutable", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -215,24 +211,22 @@ object Mutable extends App with TypeInstance {
       Parameter ("value", "String", "\"\"")
     ))
   )
-  lazy val typeInstance: Type[Mutable] = Type[Mutable] (typeDefinition)
+  lazy val dracoType: Type[Mutable] = Type[Mutable] (typeDefinition)
   def apply (
               _name: String,
               _valueType: String,
               _value: String = ""
             ) : Mutable = {
     new Mutable {
-      override lazy val typeInstance: DracoType = Mutable.typeInstance
       override val name: String = _name
       override val valueType: String = _valueType
       override val value: String = _value
-      override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
     }
   }
 }
 
 sealed trait Dynamic extends BodyElement
-object Dynamic extends App with TypeInstance {
+object Dynamic extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Dynamic", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -243,7 +237,7 @@ object Dynamic extends App with TypeInstance {
       Parameter ("body", "Seq[BodyElement]", "Seq.empty")
     ))
   )
-  lazy val typeInstance: Type[Dynamic] = Type[Dynamic] (typeDefinition)
+  lazy val dracoType: Type[Dynamic] = Type[Dynamic] (typeDefinition)
   def apply (
               _name: String,
               _valueType: String,
@@ -251,19 +245,17 @@ object Dynamic extends App with TypeInstance {
               _body: Seq[BodyElement]
             ) : Dynamic = {
     new Dynamic {
-      override lazy val typeInstance: DracoType = Dynamic.typeInstance
       override val name: String = _name
       override val valueType: String = _valueType
       override val parameters: Seq[Parameter] = _parameters
       override val body: Seq[BodyElement] = _body
       override val value: String = ""
-      override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
     }
   }
 }
 
 sealed trait Parameter extends BodyElement
-object Parameter extends App with TypeInstance {
+object Parameter extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Parameter", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -273,18 +265,16 @@ object Parameter extends App with TypeInstance {
       Parameter ("value", "String", "")
     ))
   )
-  lazy val typeInstance: Type[Parameter] = Type[Parameter] (typeDefinition)
+  lazy val dracoType: Type[Parameter] = Type[Parameter] (typeDefinition)
   def apply (
               _name: String,
               _valueType: String,
               _value: String
             ) : Parameter = {
     new Parameter {
-      override lazy val typeInstance: DracoType = Parameter.typeInstance
       override val name: String = _name
       override val valueType: String = _valueType
       override val value: String = _value
-      override lazy val typeDefinition: TypeDefinition = typeInstance.typeDefinition
     }
   }
 
@@ -294,7 +284,7 @@ object Parameter extends App with TypeInstance {
 }
 
 sealed trait Monadic extends BodyElement
-object Monadic extends App with TypeInstance {
+object Monadic extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Monadic", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -302,13 +292,11 @@ object Monadic extends App with TypeInstance {
       Parameter ("value", "String", "")
     ))
   )
-  lazy val typeInstance: Type[Monadic] = Type[Monadic] (typeDefinition)
+  lazy val dracoType: Type[Monadic] = Type[Monadic] (typeDefinition)
   def apply(_value: String): Monadic = new Monadic {
-    override lazy val typeInstance: DracoType = Monadic.typeInstance
     override val name: String = ""
     override val valueType: String = "Unit"
     override val value: String = _value
-    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
   }
 
   lazy val Null: Monadic = Monadic("")
@@ -322,7 +310,7 @@ sealed trait Pattern extends BodyElement {
   val conditions: Seq[Condition]
 }
 
-object Pattern extends App with TypeInstance {
+object Pattern extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Pattern", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -335,18 +323,16 @@ object Pattern extends App with TypeInstance {
       Parameter ("conditions", "Seq[Condition]", "Seq.empty")
     ))
   )
-  lazy val typeInstance: Type[Pattern] = Type[Pattern] (typeDefinition)
+  lazy val dracoType: Type[Pattern] = Type[Pattern] (typeDefinition)
   def apply (
       _variables: Seq[Variable] = Seq.empty,
       _conditions: Seq[Condition] = Seq.empty
     ) : Pattern = new Pattern {
-    override lazy val typeInstance: DracoType = Pattern.typeInstance
     override val variables: Seq[Variable] = _variables
     override val conditions: Seq[Condition] = _conditions
     override val name: String = ""
     override val valueType: String = "org.evrete.api.Knowledge => Unit"
     override val value: String = ""
-    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
   }
   lazy val Null: Pattern = Pattern (_variables = Seq.empty, _conditions = Seq.empty)
   private lazy val codec = Codec.sub[TypeElement, Pattern](TypeElement.encoder, TypeElement.decoder)
@@ -357,7 +343,7 @@ sealed trait Action extends BodyElement {
   val variables: Seq[Variable]
   val values: Seq[Value]
 }
-object Action extends App with TypeInstance {
+object Action extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Action", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -371,20 +357,18 @@ object Action extends App with TypeInstance {
       Parameter ("body", "Seq[BodyElement]", "Seq.empty")
     ))
   )
-  lazy val typeInstance: Type[Action] = Type[Action] (typeDefinition)
+  lazy val dracoType: Type[Action] = Type[Action] (typeDefinition)
   def apply (
               _variables: Seq[Variable] = Seq.empty,
               _values: Seq[Value] = Seq.empty,
               _body: Seq[BodyElement]
             ) : Action = new Action {
-    override lazy val typeInstance: DracoType = Action.typeInstance
     override val name: String = "ctx"
     override val valueType: String = "org.evrete.api.RHSContext => Unit"
     override val value: String = ""
     override val body: Seq[BodyElement] = _body
     override val variables: Seq[Variable] = _variables
     override val values: Seq[Value] = _values
-    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
   }
   lazy val Null: Action = Action (_variables = Seq.empty, _values = Seq.empty, _body = Seq.empty)
   private lazy val codec = Codec.sub[TypeElement, Action](TypeElement.encoder, TypeElement.decoder)
@@ -393,7 +377,7 @@ object Action extends App with TypeInstance {
 }
 sealed trait Condition extends BodyElement
 
-object Condition extends App with TypeInstance {
+object Condition extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Condition", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -402,18 +386,16 @@ object Condition extends App with TypeInstance {
       Parameter ("value", "String", "")
     ))
   )
-  lazy val typeInstance: Type[Condition] = Type[Condition] (typeDefinition)
+  lazy val dracoType: Type[Condition] = Type[Condition] (typeDefinition)
   def apply (
               _parameters: Seq[Parameter],
               _value: String
             ) : Condition = new Condition {
-    override lazy val typeInstance: DracoType = Condition.typeInstance
     override val name: String = ""
     override val parameters: Seq[Parameter] = _parameters
     override val body: Seq[BodyElement] = Seq ()
     override val valueType: String = "Boolean"
     override val value: String = _value
-    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
   }
 
   lazy val Null: Condition = Condition (_parameters = Seq.empty, _value = "")
@@ -425,7 +407,7 @@ object Condition extends App with TypeInstance {
 
 sealed trait Variable extends BodyElement
 
-object Variable extends App with TypeInstance {
+object Variable extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Variable", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -434,18 +416,16 @@ object Variable extends App with TypeInstance {
       Parameter ("valueType", "String", "")
     ))
   )
-  lazy val typeInstance: Type[Variable] = Type[Variable] (typeDefinition)
+  lazy val dracoType: Type[Variable] = Type[Variable] (typeDefinition)
   def apply (
               _variableName: String,
               _variableType: String
             ) : Variable = new Variable {
-    override lazy val typeInstance: DracoType = Variable.typeInstance
     override val name: String = _variableName
     override val valueType: String = _variableType
     override val value: String = ""
     override val parameters: Seq[Parameter] = Seq ()
     override val body: Seq[BodyElement] = Seq ()
-    override val typeDefinition: TypeDefinition = typeInstance.typeDefinition
   }
   lazy val Null: Variable = Variable (_variableName = "", _variableType = "")
   private lazy val codec = Codec.sub[TypeElement, Variable](TypeElement.encoder, TypeElement.decoder)
@@ -455,7 +435,7 @@ object Variable extends App with TypeInstance {
 
 sealed trait Factory extends BodyElement
 
-object Factory extends App with TypeInstance {
+object Factory extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName ("Factory", _namePackage = Seq ("draco")),
     _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
@@ -465,19 +445,17 @@ object Factory extends App with TypeInstance {
       Parameter ("body", "Seq[BodyElement]", "Seq.empty")
     ))
   )
-  lazy val typeInstance: Type[Factory] = Type[Factory] (typeDefinition)
+  lazy val dracoType: Type[Factory] = Type[Factory] (typeDefinition)
   def apply(
     _fullName: String,
     _parameters: Seq[Parameter] = Seq.empty,
     _body: Seq[BodyElement] = Seq.empty
   ): Factory = new Factory {
-    override lazy val typeInstance: DracoType = Factory.typeInstance
     override val name: String = ""
     override val valueType: String = _fullName
     override val value: String = ""
     override val parameters: Seq[Parameter] = _parameters
     override val body: Seq[BodyElement] = _body
-    override lazy val typeDefinition: TypeDefinition = typeInstance.typeDefinition
   }
 
   lazy val Null: Factory = Factory("")

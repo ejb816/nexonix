@@ -5,6 +5,7 @@
 /project/target/
 /src/generated/
 /.draco/
+/.draco-tmp/
 
 # AI platform symlinks — canonical files are DRACO.md and .draco/
 CLAUDE.md

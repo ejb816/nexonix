@@ -12,15 +12,12 @@ trait Accumulator extends Primes {
   val intervalTextSet: mutable.Set[(Long,String)]
 }
 
-object Accumulator extends App with TypeInstance {
+object Accumulator extends App {
   lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Accumulator", _namePackage = Seq("draco", "primes")))
 
-  lazy val typeInstance: DracoType = Type[Accumulator] (typeDefinition)
+  lazy val dracoType: DracoType = Type[Accumulator] (typeDefinition)
 
   def apply () : Accumulator = new Accumulator {
-    override val domainInstance: DomainType = Primes.domainInstance
-    override val typeDefinition: TypeDefinition = Accumulator.typeDefinition
-    override val typeInstance: DracoType = Accumulator.typeInstance
     override val primeSet: mutable.Set[Int] = mutable.Set[Int] ()
     override val compositeSet: mutable.Set[Int] = mutable.Set[Int] ()
     override val naturalSet: mutable.Set[Int] = mutable.Set[Int] ()

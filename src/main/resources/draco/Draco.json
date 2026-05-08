@@ -1,32 +1,33 @@
 {
-  "typeName" : {
-    "name" : "Draco",
-    "namePackage" : ["draco"]
+  "typeName": {
+    "name": "Draco",
+    "namePackage": [
+      "draco"
+    ]
   },
-  "derivation" : [
-    { "name" : "DomainInstance", "namePackage" : ["draco"] }
-  ],
-  "elementTypeNames" : [
-    "Actor",
-    "CLI",
-    "ContentSink",
-    "Dictionary",
-    "Domain",
-    "DomainDictionary",
-    "DomainType",
-    "Extensible",
-    "Generator",
-    "Main",
-    "Primal",
-    "REPL",
-    "Rule",
-    "SourceContent",
-    "Specifically",
-    "Test",
-    "TypeDefinition",
-    "TypeDictionary",
-    "TypeElement",
-    "TypeName",
-    "Value"
-  ]
+  "domainAspect": {
+    "elementTypeNames": [
+      "Actor",
+      "CLI",
+      "ContentSink",
+      "Dictionary",
+      "Domain",
+      "DomainDictionary",
+      "DomainType",
+      "Extensible",
+      "Generator",
+      "Main",
+      "Primal",
+      "REPL",
+      "Rule",
+      "SourceContent",
+      "Specifically",
+      "Test",
+      "TypeDefinition",
+      "TypeDictionary",
+      "TypeElement",
+      "TypeName",
+      "Value"
+    ]
+  }
 }

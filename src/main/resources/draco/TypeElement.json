@@ -1,41 +1,51 @@
 {
-  "typeName" : {
-    "name" : "TypeElement",
-    "namePackage" : [
+  "typeName": {
+    "name": "TypeElement",
+    "namePackage": [
       "draco"
     ]
   },
-  "derivation" : [
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["String"] }
-  ],
-  "modules" : [
-    {
-      "name" : "BodyElement",
-      "namePackage" : [
-        "draco"
-      ]
-    }
-  ],
-  "elements" : [
-    {
-      "kind" : "Fixed",
-      "name" : "name",
-      "valueType" : "String"
-    },
-    {
-      "kind" : "Fixed",
-      "name" : "valueType",
-      "valueType" : "String"
-    },
-    {
-      "kind" : "Fixed",
-      "name" : "parameters",
-      "valueType" : "Seq[Parameter]"
-    },
-    {
-      "kind" : "Fixed",
-      "name" : "body",
-      "valueType" : "Seq[BodyElement]"
-    }
-  ]
+  "dracoAspect": {
+    "modules": [
+      {
+        "name": "BodyElement",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "derivation": [
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "String"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "name",
+        "valueType": "String"
+      },
+      {
+        "kind": "Fixed",
+        "name": "valueType",
+        "valueType": "String"
+      },
+      {
+        "kind": "Fixed",
+        "name": "parameters",
+        "valueType": "Seq[Parameter]"
+      },
+      {
+        "kind": "Fixed",
+        "name": "body",
+        "valueType": "Seq[BodyElement]"
+      }
+    ]
+  }
 }

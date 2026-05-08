@@ -4,7 +4,7 @@ trait ActorType extends DracoType {
   val actorDefinition: TypeDefinition
 }
 
-object ActorType extends App with TypeInstance {
+object ActorType extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "ActorType",
@@ -20,5 +20,5 @@ object ActorType extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[ActorType] = Type[ActorType] (typeDefinition)
+  lazy val dracoType: Type[ActorType] = Type[ActorType] (typeDefinition)
 }

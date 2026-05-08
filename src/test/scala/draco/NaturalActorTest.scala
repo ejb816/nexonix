@@ -8,7 +8,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class NaturalActorTest extends AnyFunSuite {
   test("Actor[Natural]") {
-    val system = ActorSystem[Natural](NaturalActor.actorInstance.asInstanceOf[Actor[Natural]], "naturalActor")
+    val system = ActorSystem[Natural](NaturalActor.actorType.asInstanceOf[Actor[Natural]], "naturalActor")
     println("Sending number 10 to naturalActor:")
     system ! Natural(10)
     // give the async actor time to process before the test exits

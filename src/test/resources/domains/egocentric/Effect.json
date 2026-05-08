@@ -1,10 +1,29 @@
 {
-  "typeName" : {
-    "name" : "Effect",
-    "namePackage" : ["domains", "egocentric"]
+  "typeName": {
+    "name": "Effect",
+    "namePackage": [
+      "domains",
+      "egocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Egocentric", "namePackage" : ["domains", "egocentric"] },
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["Unit"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Egocentric",
+        "namePackage": [
+          "domains",
+          "egocentric"
+        ]
+      },
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "Unit"
+        ]
+      }
+    ]
+  }
 }

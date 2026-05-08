@@ -1,18 +1,40 @@
 {
-  "typeName" : {
-    "name" : "Main",
-    "namePackage" : ["draco"]
-  },
-  "elements" : [
-    { "kind" : "Fixed", "name" : "sourceRoot", "valueType" : "URI" },
-    { "kind" : "Fixed", "name" : "sinkRoot", "valueType" : "URI" }
-  ],
-  "factory" : {
-    "kind" : "Factory",
-    "valueType" : "Main",
-    "parameters" : [
-      { "kind" : "Parameter", "name" : "sourceName", "valueType" : "String", "value" : "" },
-      { "kind" : "Parameter", "name" : "sinkName", "valueType" : "String", "value" : "" }
+  "typeName": {
+    "name": "Main",
+    "namePackage": [
+      "draco"
     ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "sourceRoot",
+        "valueType": "URI"
+      },
+      {
+        "kind": "Fixed",
+        "name": "sinkRoot",
+        "valueType": "URI"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Main",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "sourceName",
+          "valueType": "String",
+          "value": ""
+        },
+        {
+          "kind": "Parameter",
+          "name": "sinkName",
+          "valueType": "String",
+          "value": ""
+        }
+      ]
+    }
   }
 }

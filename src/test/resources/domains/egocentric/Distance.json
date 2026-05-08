@@ -1,10 +1,29 @@
 {
-  "typeName" : {
-    "name" : "Distance",
-    "namePackage" : ["domains", "egocentric"]
+  "typeName": {
+    "name": "Distance",
+    "namePackage": [
+      "domains",
+      "egocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Egocentric", "namePackage" : ["domains", "egocentric"] },
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["Double"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Egocentric",
+        "namePackage": [
+          "domains",
+          "egocentric"
+        ]
+      },
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "Double"
+        ]
+      }
+    ]
+  }
 }

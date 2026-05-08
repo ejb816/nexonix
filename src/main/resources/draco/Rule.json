@@ -1,26 +1,63 @@
 {
-  "typeName" : {
-    "name" : "Rule",
-    "namePackage" : ["draco"],
-    "typeParameters" : ["T"]
-  },
-  "derivation" : [
-    { "name" : "RuleType", "namePackage" : ["draco"] }
-  ],
-  "elements" : [
-    { "kind" : "Fixed", "name" : "pattern", "valueType" : "Consumer[Knowledge]" },
-    { "kind" : "Fixed", "name" : "action", "valueType" : "Consumer[RhsContext]" }
-  ],
-  "factory" : {
-    "kind" : "Factory",
-    "valueType" : "Rule[T]",
-    "parameters" : [
-      { "kind" : "Parameter", "name" : "ruleDefinition", "valueType" : "TypeDefinition", "value" : "TypeDefinition.Null" },
-      { "kind" : "Parameter", "name" : "pattern", "valueType" : "Consumer[Knowledge]" },
-      { "kind" : "Parameter", "name" : "action", "valueType" : "Consumer[RhsContext]" }
+  "typeName": {
+    "name": "Rule",
+    "namePackage": [
+      "draco"
+    ],
+    "typeParameters": [
+      "T"
     ]
   },
-  "globalElements" : [
-    { "kind" : "Fixed", "name" : "knowledgeService", "valueType" : "KnowledgeService", "value" : "new KnowledgeService ()" }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "RuleType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "pattern",
+        "valueType": "Consumer[Knowledge]"
+      },
+      {
+        "kind": "Fixed",
+        "name": "action",
+        "valueType": "Consumer[RhsContext]"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Rule[T]",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "ruleDefinition",
+          "valueType": "TypeDefinition",
+          "value": "TypeDefinition.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "pattern",
+          "valueType": "Consumer[Knowledge]"
+        },
+        {
+          "kind": "Parameter",
+          "name": "action",
+          "valueType": "Consumer[RhsContext]"
+        }
+      ]
+    },
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "knowledgeService",
+        "valueType": "KnowledgeService",
+        "value": "new KnowledgeService ()"
+      }
+    ]
+  }
 }

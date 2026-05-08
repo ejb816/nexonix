@@ -1,32 +1,34 @@
 {
-  "typeName" : {
-    "name" : "Variable",
-    "namePackage" : [
+  "typeName": {
+    "name": "Variable",
+    "namePackage": [
       "draco"
     ]
   },
-  "derivation" : [
-    {
-      "name" : "BodyElement",
-      "namePackage" : [
-        "draco"
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "BodyElement",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Variable",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "name",
+          "valueType": "String"
+        },
+        {
+          "kind": "Parameter",
+          "name": "valueType",
+          "valueType": "String"
+        }
       ]
     }
-  ],
-  "factory" : {
-    "kind" : "Factory",
-    "valueType" : "Variable",
-    "parameters" : [
-      {
-        "kind" : "Parameter",
-        "name" : "name",
-        "valueType" : "String"
-      },
-      {
-        "kind" : "Parameter",
-        "name" : "valueType",
-        "valueType" : "String"
-      }
-    ]
   }
 }

@@ -2,7 +2,7 @@ package draco
 
 trait DomainDictionary extends Dictionary[DomainType,TypeDictionary] {}
 
-object DomainDictionary extends App with TypeInstance {
+object DomainDictionary extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "DomainDictionary",
@@ -18,7 +18,7 @@ object DomainDictionary extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[DomainDictionary] = Type[DomainDictionary] (typeDefinition)
+  lazy val dracoType: Type[DomainDictionary] = Type[DomainDictionary] (typeDefinition)
 
   def apply(
              _domains: Seq[DomainType] = Seq()

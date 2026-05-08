@@ -1,10 +1,21 @@
 {
-  "typeName" : {
-    "name" : "Domain",
-    "namePackage" : ["draco"],
-    "typeParameters" : ["T"]
+  "typeName": {
+    "name": "Domain",
+    "namePackage": [
+      "draco"
+    ],
+    "typeParameters": [
+      "T"
+    ]
   },
-  "derivation" : [
-    { "name" : "DomainType", "namePackage" : ["draco"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DomainType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ]
+  }
 }

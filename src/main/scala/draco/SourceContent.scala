@@ -11,7 +11,7 @@ SourceContent {
   val sourceString: String
 }
 
-object SourceContent extends App with TypeInstance {
+object SourceContent extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "SourceContent",
@@ -30,7 +30,7 @@ object SourceContent extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[SourceContent] = Type[SourceContent] (typeDefinition)
+  lazy val dracoType: Type[SourceContent] = Type[SourceContent] (typeDefinition)
 
   private lazy val NullSourceContent: URL = classOf[SourceContent].getResource("/NullSourceContent")
   def apply(
@@ -40,7 +40,7 @@ object SourceContent extends App with TypeInstance {
     val sourceURI: URI = _sourceRoot.resolve (URI.create(_logicalPath))
     override val source: BufferedSource = Source.fromFile(sourceURI)
     override val sourceLines: Seq[String] = source.getLines.toSeq
-    override val sourceString: String = sourceLines.mkString
+    override val sourceString: String = sourceLines.mkString("\n")
     source.close()
   }
 }

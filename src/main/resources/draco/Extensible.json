@@ -1,6 +1,8 @@
 {
-  "typeName" : {
-    "name" : "Extensible",
-    "namePackage" : ["draco"]
+  "typeName": {
+    "name": "Extensible",
+    "namePackage": [
+      "draco"
+    ]
   }
 }

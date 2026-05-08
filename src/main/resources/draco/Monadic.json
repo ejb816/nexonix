@@ -1,27 +1,29 @@
 {
-  "typeName" : {
-    "name" : "Monadic",
-    "namePackage" : [
+  "typeName": {
+    "name": "Monadic",
+    "namePackage": [
       "draco"
     ]
   },
-  "derivation" : [
-    {
-      "name" : "BodyElement",
-      "namePackage" : [
-        "draco"
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "BodyElement",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Monadic",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "value",
+          "valueType": "String"
+        }
       ]
     }
-  ],
-  "factory" : {
-    "kind" : "Factory",
-    "valueType" : "Monadic",
-    "parameters" : [
-      {
-        "kind" : "Parameter",
-        "name" : "value",
-        "valueType" : "String"
-      }
-    ]
   }
 }

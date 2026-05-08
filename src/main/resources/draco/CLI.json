@@ -1,19 +1,30 @@
 {
-  "typeName" : {
-    "name" : "CLI",
-    "namePackage" : ["draco"]
+  "typeName": {
+    "name": "CLI",
+    "namePackage": [
+      "draco"
+    ]
   },
-  "globalElements" : [
-    {
-      "kind" : "Dynamic",
-      "name" : "main",
-      "valueType" : "Unit",
-      "parameters" : [
-        { "kind" : "Parameter", "name" : "args", "valueType" : "Array[String]" }
-      ],
-      "body" : [
-        { "kind" : "Monadic", "value" : "println(\"Draco 2.0.0-alpha.1\")" }
-      ]
-    }
-  ]
+  "dracoAspect": {
+    "globalElements": [
+      {
+        "kind": "Dynamic",
+        "name": "main",
+        "valueType": "Unit",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "args",
+            "valueType": "Array[String]"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Monadic",
+            "value": "println(\"Draco 2.0.0-alpha.1\")"
+          }
+        ]
+      }
+    ]
+  }
 }

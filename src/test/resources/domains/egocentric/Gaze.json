@@ -1,10 +1,27 @@
 {
-  "typeName" : {
-    "name" : "Gaze",
-    "namePackage" : ["domains", "egocentric"]
+  "typeName": {
+    "name": "Gaze",
+    "namePackage": [
+      "domains",
+      "egocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Egocentric", "namePackage" : ["domains", "egocentric"] },
-    { "name" : "Direction", "namePackage" : ["domains", "egocentric"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Egocentric",
+        "namePackage": [
+          "domains",
+          "egocentric"
+        ]
+      },
+      {
+        "name": "Direction",
+        "namePackage": [
+          "domains",
+          "egocentric"
+        ]
+      }
+    ]
+  }
 }

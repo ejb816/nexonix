@@ -7,7 +7,7 @@ import java.util.function.Consumer
 
 trait Rule[T] extends RuleType
 
-object Rule extends App with TypeInstance {
+object Rule extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "Rule",
@@ -19,7 +19,7 @@ object Rule extends App with TypeInstance {
       Fixed ("action", "Consumer[RhsContext]")
     )
   )
-  lazy val typeInstance: Type[Rule[_]] = Type[Rule[_]] (typeDefinition)
+  lazy val dracoType: Type[Rule[_]] = Type[Rule[_]] (typeDefinition)
 
   lazy val knowledgeService: KnowledgeService = new KnowledgeService ()
   def apply[T] (

@@ -9,7 +9,7 @@ trait ContentSink {
   def write(content: String): Unit
 }
 
-object ContentSink extends App with TypeInstance {
+object ContentSink extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "ContentSink",
@@ -26,7 +26,7 @@ object ContentSink extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[ContentSink] = Type[ContentSink] (typeDefinition)
+  lazy val dracoType: Type[ContentSink] = Type[ContentSink] (typeDefinition)
 
   def apply(
              _sinkRoot: URI,

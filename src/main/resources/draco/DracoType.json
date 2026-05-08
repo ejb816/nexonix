@@ -1,9 +1,17 @@
 {
-  "typeName" : {
-    "name" : "DracoType",
-    "namePackage" : ["draco"]
+  "typeName": {
+    "name": "DracoType",
+    "namePackage": [
+      "draco"
+    ]
   },
-  "elements" : [
-    { "kind" : "Fixed", "name" : "typeDefinition", "valueType" : "TypeDefinition" }
-  ]
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "typeDefinition",
+        "valueType": "TypeDefinition"
+      }
+    ]
+  }
 }

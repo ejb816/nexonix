@@ -4,7 +4,7 @@ trait DracoType extends Extensible {
   val typeDefinition: TypeDefinition
 }
 
-object DracoType extends App with TypeInstance {
+object DracoType extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "DracoType",
@@ -17,7 +17,7 @@ object DracoType extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[DracoType] = Type[DracoType] (typeDefinition)
+  lazy val dracoType: Type[DracoType] = Type[DracoType] (typeDefinition)
   lazy val Null: DracoType = new DracoType {
     override val typeDefinition: TypeDefinition = TypeDefinition.Null
   }

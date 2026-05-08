@@ -1,10 +1,29 @@
 {
-  "typeName" : {
-    "name" : "RadialVelocity",
-    "namePackage" : ["domains", "galactocentric"]
+  "typeName": {
+    "name": "RadialVelocity",
+    "namePackage": [
+      "domains",
+      "galactocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Galactocentric", "namePackage" : ["domains", "galactocentric"] },
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["Double"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Galactocentric",
+        "namePackage": [
+          "domains",
+          "galactocentric"
+        ]
+      },
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "Double"
+        ]
+      }
+    ]
+  }
 }

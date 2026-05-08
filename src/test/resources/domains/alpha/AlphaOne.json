@@ -1,10 +1,27 @@
 {
-  "typeName" : {
-    "name" : "AlphaOne",
-    "namePackage" : ["domains", "alpha"]
+  "typeName": {
+    "name": "AlphaOne",
+    "namePackage": [
+      "domains",
+      "alpha"
+    ]
   },
-  "derivation" : [
-    { "name" : "Alpha", "namePackage" : ["domains", "alpha"] },
-    { "name" : "PartOne", "namePackage" : ["domains", "dataModel"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Alpha",
+        "namePackage": [
+          "domains",
+          "alpha"
+        ]
+      },
+      {
+        "name": "PartOne",
+        "namePackage": [
+          "domains",
+          "dataModel"
+        ]
+      }
+    ]
+  }
 }

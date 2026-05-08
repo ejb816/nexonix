@@ -5,11 +5,10 @@ import draco._
 import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
-trait BravoActor extends ActorInstance
+trait BravoActor extends Extensible
 
-object BravoActor extends App with ActorInstance {
+object BravoActor extends App {
   lazy val typeDefinition: TypeDefinition = Bravo.typeDefinition
-  lazy val typeInstance: DracoType = Type[Bravo](Bravo.typeDefinition)
 
   def actorWithProbe(probe: ActorRef[Bravo]): Actor[Bravo] = {
     new Actor[Bravo] {
@@ -31,7 +30,7 @@ object BravoActor extends App with ActorInstance {
     }
   }
 
-  lazy val actorInstance: ActorType = new Actor[Bravo] {
+  lazy val actorType: ActorType = new Actor[Bravo] {
     override val actorDefinition: TypeDefinition = TypeDefinition(Bravo.typeDefinition.typeName)
     override val typeDefinition: TypeDefinition = Bravo.typeDefinition
 

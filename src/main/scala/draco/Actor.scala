@@ -5,7 +5,7 @@ import org.apache.pekko.actor.typed.{Behavior, ExtensibleBehavior, Signal, Typed
 
 trait Actor[T] extends ExtensibleBehavior[T] with ActorType
 
-object Actor extends App with TypeInstance {
+object Actor extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "Actor[T]",
@@ -16,7 +16,7 @@ object Actor extends App with TypeInstance {
     ),
     _factory = Factory ("Actor[T]")
   )
-  lazy val typeInstance: Type[Actor[_]] = Type[Actor[_]] (typeDefinition)
+  lazy val dracoType: Type[Actor[_]] = Type[Actor[_]] (typeDefinition)
   def apply[T](
                 _actorDefinition: TypeDefinition
               ): Actor[T] = new Actor[T]  {

@@ -1,9 +1,8 @@
 {
-  "typeName" : {
-    "name" : "RuntimeCompiler",
-    "namePackage" : ["draco"]
-  },
-  "derivation" : [
-    { "name" : "TypeInstance", "namePackage" : ["draco"] }
-  ]
+  "typeName": {
+    "name": "RuntimeCompiler",
+    "namePackage": [
+      "draco"
+    ]
+  }
 }

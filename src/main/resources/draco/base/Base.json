@@ -1,20 +1,22 @@
 {
-  "typeName" : {
-    "name" : "Base",
-    "namePackage" : ["draco", "base"]
+  "typeName": {
+    "name": "Base",
+    "namePackage": [
+      "draco",
+      "base"
+    ]
   },
-  "derivation" : [
-    { "name" : "DomainInstance", "namePackage" : ["draco"] }
-  ],
-  "elementTypeNames" : [
-    "Cardinal",
-    "Coordinate",
-    "Distance",
-    "Meters",
-    "Nominal",
-    "Ordinal",
-    "Radians",
-    "Rotation",
-    "Unit"
-  ]
+  "domainAspect": {
+    "elementTypeNames": [
+      "Cardinal",
+      "Coordinate",
+      "Distance",
+      "Meters",
+      "Nominal",
+      "Ordinal",
+      "Radians",
+      "Rotation",
+      "Unit"
+    ]
+  }
 }

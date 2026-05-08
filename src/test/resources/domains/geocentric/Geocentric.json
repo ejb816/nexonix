@@ -1,10 +1,28 @@
 {
-  "typeName" : {
-    "name" : "Geocentric",
-    "namePackage" : ["domains", "geocentric"]
+  "typeName": {
+    "name": "Geocentric",
+    "namePackage": [
+      "domains",
+      "geocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Cosmocentric", "namePackage" : ["domains", "cosmocentric"] }
-  ],
-  "elementTypeNames" : ["Position", "Altitude", "Heading", "Fix"]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Cosmocentric",
+        "namePackage": [
+          "domains",
+          "cosmocentric"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "elementTypeNames": [
+      "Position",
+      "Altitude",
+      "Heading",
+      "Fix"
+    ]
+  }
 }

@@ -2,7 +2,7 @@ package draco
 
 trait Specifically[T] extends Extensible
 
-object Specifically extends App with TypeInstance {
+object Specifically extends App {
   lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Specifically", _namePackage = Seq("draco"), _typeParameters = Seq("T")))
-  lazy val typeInstance: Type[Specifically[_]] = Type[Specifically[_]] (typeDefinition)
+  lazy val dracoType: Type[Specifically[_]] = Type[Specifically[_]] (typeDefinition)
 }

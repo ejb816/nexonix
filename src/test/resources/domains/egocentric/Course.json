@@ -1,10 +1,27 @@
 {
-  "typeName" : {
-    "name" : "Course",
-    "namePackage" : ["domains", "egocentric"]
+  "typeName": {
+    "name": "Course",
+    "namePackage": [
+      "domains",
+      "egocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Egocentric", "namePackage" : ["domains", "egocentric"] },
-    { "name" : "Direction", "namePackage" : ["domains", "egocentric"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Egocentric",
+        "namePackage": [
+          "domains",
+          "egocentric"
+        ]
+      },
+      {
+        "name": "Direction",
+        "namePackage": [
+          "domains",
+          "egocentric"
+        ]
+      }
+    ]
+  }
 }

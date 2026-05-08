@@ -4,9 +4,9 @@ package domains.egocentric
 import draco._
 import domains._
 
-trait Waypoint extends Extensible with Egocentric with Primal[(Gaze, Distance)]
+trait Waypoint extends Egocentric with Primal[(Gaze, Distance)]
 
-object Waypoint extends App with TypeInstance {
+object Waypoint extends App {
   lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("Waypoint", _namePackage = Seq("domains", "egocentric")))
-  lazy val typeInstance: Type[Waypoint] = Type[Waypoint] (typeDefinition)
+  lazy val dracoType: Type[Waypoint] = Type[Waypoint] (typeDefinition)
 }

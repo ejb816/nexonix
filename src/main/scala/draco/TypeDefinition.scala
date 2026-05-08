@@ -3,27 +3,30 @@ package draco
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 
-sealed trait TypeDefinition {
+sealed trait TypeDefinition extends Aspects {
   val typeName: TypeName
-  val superDomain: TypeName
-  val modules: Seq[TypeName]
-  val derivation: Seq[TypeName]
-  val elements: Seq[TypeElement]
-  val factory: Factory
-  val globalElements: Seq[BodyElement]
-  val elementTypeNames: Seq[String]
-  val source: TypeName
-  val target: TypeName
-  val variables: Seq[Variable]
-  val conditions: Seq[Condition]
-  val values: Seq[Value]
-  val pattern: Pattern
-  val action: Action
-  val messageAction: Action
-  val signalAction: Action
+
+  // Convenience accessors — read from the corresponding aspect
+  def superDomain: TypeName = dracoAspect.superDomain
+  def modules: Seq[TypeName] = dracoAspect.modules
+  def extensible: TypeName = dracoAspect.extensible
+  def derivation: Seq[TypeName] = dracoAspect.derivation
+  def elements: Seq[TypeElement] = dracoAspect.elements
+  def factory: Factory = dracoAspect.factory
+  def globalElements: Seq[BodyElement] = dracoAspect.globalElements
+  def source: TypeName = dracoAspect.source
+  def target: TypeName = dracoAspect.target
+  def elementTypeNames: Seq[String] = domainAspect.elementTypeNames
+  def variables: Seq[Variable] = ruleAspect.variables
+  def conditions: Seq[Condition] = ruleAspect.conditions
+  def values: Seq[Value] = ruleAspect.values
+  def pattern: Pattern = ruleAspect.pattern
+  def action: Action = ruleAspect.action
+  def messageAction: Action = actorAspect.messageAction
+  def signalAction: Action = actorAspect.signalAction
 }
 
-object TypeDefinition extends App with TypeInstance {
+object TypeDefinition extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "TypeDefinition",
@@ -31,52 +34,54 @@ object TypeDefinition extends App with TypeInstance {
     ),
     _elements = Seq (
       Fixed ("typeName", "TypeName"),
-      Fixed ("superDomain", "TypeName"),
-      Fixed ("modules", "Seq[TypeName]"),
-      Fixed ("derivation", "Seq[TypeName]"),
-      Fixed ("elements", "Seq[TypeElement]"),
-      Fixed ("factory", "Factory"),
-      Fixed ("globalElements", "Seq[BodyElement]"),
-      Fixed ("elementTypeNames", "Seq[String]"),
-      Fixed ("source", "TypeName"),
-      Fixed ("target", "TypeName"),
-      Fixed ("variables", "Seq[Variable]"),
-      Fixed ("conditions", "Seq[Condition]"),
-      Fixed ("values", "Seq[Value]"),
-      Fixed ("pattern", "Pattern"),
-      Fixed ("action", "Action"),
-      Fixed ("messageAction", "Action"),
-      Fixed ("signalAction", "Action")
+      Fixed ("dracoAspect",  "DracoAspect"),
+      Fixed ("domainAspect", "DomainAspect"),
+      Fixed ("ruleAspect",   "RuleAspect"),
+      Fixed ("actorAspect",  "ActorAspect")
     ),
     _factory = Factory (
       "TypeDefinition",
       _parameters = Seq (
-        Parameter ("typeName", "TypeName", ""),
-        Parameter ("superDomain", "TypeName", "TypeName.Null"),
-        Parameter ("modules", "Seq[TypeName]", "Seq.empty"),
-        Parameter ("derivation", "Seq[TypeName]", "Seq.empty"),
-        Parameter ("elements", "Seq[TypeElement]", "Seq.empty"),
-        Parameter ("factory", "Factory", "Factory.Null"),
-        Parameter ("globalElements", "Seq[BodyElement]", "Seq.empty"),
-        Parameter ("elementTypeNames", "Seq[String]", "Seq.empty"),
-        Parameter ("source", "TypeName", "TypeName.Null"),
-        Parameter ("target", "TypeName", "TypeName.Null"),
-        Parameter ("variables", "Seq[Variable]", "Seq.empty"),
-        Parameter ("conditions", "Seq[Condition]", "Seq.empty"),
-        Parameter ("values", "Seq[Value]", "Seq.empty"),
-        Parameter ("pattern", "Pattern", "Pattern.Null"),
-        Parameter ("action", "Action", "Action.Null"),
-        Parameter ("messageAction", "Action", "Action.Null"),
-        Parameter ("signalAction", "Action", "Action.Null")
+        Parameter ("typeName",     "TypeName",     ""),
+        Parameter ("dracoAspect",  "DracoAspect",  "DracoAspect.Null"),
+        Parameter ("domainAspect", "DomainAspect", "DomainAspect.Null"),
+        Parameter ("ruleAspect",   "RuleAspect",   "RuleAspect.Null"),
+        Parameter ("actorAspect",  "ActorAspect",  "ActorAspect.Null")
       )
     )
   )
-  lazy val typeInstance: Type[TypeDefinition] = Type[TypeDefinition] (typeDefinition)
+  lazy val dracoType: Type[TypeDefinition] = Type[TypeDefinition] (typeDefinition)
 
+  /** Aspect-based factory — canonical going forward.
+    * Aspect overrides are `lazy val` so aspect construction is deferred until
+    * first access. This avoids initialization cycles when bootstrap types like
+    * `Pattern` use `TypeDefinition.apply` inside their own `typeDefinition`
+    * lazy-val computation. */
+  def fromAspects (
+                    _typeName: TypeName,
+                    _dracoAspect:  => DracoAspect  = DracoAspect.Null,
+                    _domainAspect: => DomainAspect = DomainAspect.Null,
+                    _ruleAspect:   => RuleAspect   = RuleAspect.Null,
+                    _actorAspect:  => ActorAspect  = ActorAspect.Null
+                  ) : TypeDefinition = new TypeDefinition {
+    override val typeName: TypeName = _typeName
+    override lazy val dracoAspect:  DracoAspect  = { val d = _dracoAspect;  if (d != null) d else DracoAspect.Null }
+    override lazy val domainAspect: DomainAspect = { val d = _domainAspect; if (d != null) d else DomainAspect.Null }
+    override lazy val ruleAspect:   RuleAspect   = { val r = _ruleAspect;   if (r != null) r else RuleAspect.Null }
+    override lazy val actorAspect:  ActorAspect  = { val a = _actorAspect;  if (a != null) a else ActorAspect.Null }
+  }
+
+  /** Legacy flat-args factory — bundles flat fields into aspect blocks internally.
+    * Preserved for backward compatibility with existing callers; new code should
+    * prefer `fromAspects`. Aspect construction is deferred via by-name params and
+    * lazy aspect overrides; null-valued field defaults are passed through to the
+    * aspect, whose own `lazy val` accessors promote them to the appropriate Null
+    * sentinel on first access. */
   def apply (
               _typeName: TypeName,
               _superDomain: TypeName = TypeName.Null,
               _modules: Seq[TypeName] = Seq.empty,
+              _extensible: TypeName = TypeName.Null,
               _derivation: Seq[TypeName] = Seq.empty,
               _elements: Seq[TypeElement] = Seq.empty,
               _factory: Factory = Factory.Null,
@@ -91,90 +96,101 @@ object TypeDefinition extends App with TypeInstance {
               _action: Action = null,
               _messageAction: Action = null,
               _signalAction: Action = null
-            ) : TypeDefinition = {
-    new TypeDefinition {
-      override val typeName: TypeName = _typeName
-      override val superDomain: TypeName = _superDomain
-      override val modules: Seq[TypeName] = _modules
-      override val derivation: Seq[TypeName] = _derivation
-      override val elements: Seq[TypeElement] = _elements
-      override val factory: Factory = _factory
-      override val globalElements: Seq[BodyElement] = _globalElements
-      override val elementTypeNames: Seq[String] = _elementTypeNames
-      override val source: TypeName = _source
-      override val target: TypeName = _target
-      override val variables: Seq[Variable] = _variables
-      override val conditions: Seq[Condition] = _conditions
-      override val values: Seq[Value] = _values
-      override lazy val pattern: Pattern = if (_pattern != null) _pattern else Pattern.Null
-      override lazy val action: Action = if (_action != null) _action else Action.Null
-      override lazy val messageAction: Action = if (_messageAction != null) _messageAction else Action.Null
-      override lazy val signalAction: Action = if (_signalAction != null) _signalAction else Action.Null
-    }
-  }
-  // Encode a TypeDefinition
+            ) : TypeDefinition = fromAspects (
+    _typeName = _typeName,
+    _dracoAspect = DracoAspect (
+      _superDomain    = _superDomain,
+      _modules        = _modules,
+      _extensible     = _extensible,
+      _derivation     = _derivation,
+      _elements       = _elements,
+      _factory        = _factory,
+      _globalElements = _globalElements,
+      _source         = _source,
+      _target         = _target
+    ),
+    _domainAspect = DomainAspect (_elementTypeNames),
+    _ruleAspect = RuleAspect (
+      _variables  = _variables,
+      _conditions = _conditions,
+      _values     = _values,
+      _pattern    = _pattern,
+      _action     = _action
+    ),
+    _actorAspect = ActorAspect (
+      _messageAction = _messageAction,
+      _signalAction  = _signalAction
+    )
+  )
+
+  // Encode a TypeDefinition — emits the aspect-block form, omitting empty aspects.
   lazy implicit val encoder: Encoder[TypeDefinition] = Encoder.instance { td =>
     val fields = Seq(
       Some("typeName" -> td.typeName.asJson),
-      if (td.superDomain.name.nonEmpty) Some("superDomain" -> td.superDomain.asJson) else None,
-      if (td.modules.nonEmpty) Some("modules" -> td.modules.asJson) else None,
-      if (td.derivation.nonEmpty) Some("derivation" -> td.derivation.asJson) else None,
-      if (td.elements.nonEmpty) Some("elements" -> td.elements.asJson) else None,
-      if (td.factory.valueType.nonEmpty) Some("factory" -> td.factory.asJson) else None,
-      if (td.globalElements.nonEmpty) Some("globalElements" -> td.globalElements.asJson) else None,
-      if (td.elementTypeNames.nonEmpty) Some("elementTypeNames" -> td.elementTypeNames.asJson) else None,
-      if (td.source.name.nonEmpty) Some("source" -> td.source.asJson) else None,
-      if (td.target.name.nonEmpty) Some("target" -> td.target.asJson) else None,
-      if (td.variables.nonEmpty) Some("variables" -> td.variables.asJson) else None,
-      if (td.conditions.nonEmpty) Some("conditions" -> td.conditions.asJson) else None,
-      if (td.values.nonEmpty) Some("values" -> td.values.asJson) else None,
-      if (td.pattern.variables.nonEmpty || td.pattern.conditions.nonEmpty) Some("pattern" -> td.pattern.asJson) else None,
-      if (td.action.body.nonEmpty) Some("action" -> td.action.asJson) else None,
-      if (td.messageAction.body.nonEmpty) Some("messageAction" -> td.messageAction.asJson) else None,
-      if (td.signalAction.body.nonEmpty) Some("signalAction" -> td.signalAction.asJson) else None
+      if (!DracoAspect.isEmpty(td.dracoAspect))   Some("dracoAspect"  -> td.dracoAspect.asJson)  else None,
+      if (!DomainAspect.isEmpty(td.domainAspect)) Some("domainAspect" -> td.domainAspect.asJson) else None,
+      if (!RuleAspect.isEmpty(td.ruleAspect))     Some("ruleAspect"   -> td.ruleAspect.asJson)   else None,
+      if (!ActorAspect.isEmpty(td.actorAspect))   Some("actorAspect"  -> td.actorAspect.asJson)  else None
     ).flatten
 
     Json.obj(fields: _*)
   }
 
+  // Decode a TypeDefinition — accepts both the new aspect-block shape and the
+  // legacy flat-field shape. If an aspect block is present, it is used as-is;
+  // otherwise the corresponding flat fields are gathered into a synthesized aspect.
   lazy implicit val decoder: Decoder[TypeDefinition] = Decoder.instance { cursor =>
     for {
-      _typeName    <- cursor.downField("typeName").as[TypeName]
-      _superDomain <- cursor.downField("superDomain").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
-      _modules     <- cursor.downField("modules").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
-      _derivation  <- cursor.downField("derivation").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
-      _elements    <- cursor.downField("elements").as[Option[Seq[TypeElement]]].map(_.getOrElse(Seq.empty))
-      _factory     <- cursor.downField("factory").as[Option[Factory]].map(_.getOrElse(Factory.Null))
+      _typeName       <- cursor.downField("typeName").as[TypeName]
+      _dracoOpt       <- cursor.downField("dracoAspect").as[Option[DracoAspect]]
+      _domainOpt      <- cursor.downField("domainAspect").as[Option[DomainAspect]]
+      _ruleOpt        <- cursor.downField("ruleAspect").as[Option[RuleAspect]]
+      _actorOpt       <- cursor.downField("actorAspect").as[Option[ActorAspect]]
+      // Legacy flat-field fallbacks
+      _superDomain    <- cursor.downField("superDomain").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
+      _modules        <- cursor.downField("modules").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
+      _extensible     <- cursor.downField("extensible").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
+      _derivation     <- cursor.downField("derivation").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
+      _elements       <- cursor.downField("elements").as[Option[Seq[TypeElement]]].map(_.getOrElse(Seq.empty))
+      _factory        <- cursor.downField("factory").as[Option[Factory]].map(_.getOrElse(Factory.Null))
       _globalElements <- cursor.downField("globalElements").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
       _elementTypeNames <- cursor.downField("elementTypeNames").as[Option[Seq[String]]].map(_.getOrElse(Seq.empty))
-      _source      <- cursor.downField("source").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
-      _target      <- cursor.downField("target").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
-      _variables   <- cursor.downField("variables").as[Option[Seq[Variable]]].map(_.getOrElse(Seq.empty))
-      _conditions  <- cursor.downField("conditions").as[Option[Seq[Condition]]].map(_.getOrElse(Seq.empty))
-      _values      <- cursor.downField("values").as[Option[Seq[Value]]].map(_.getOrElse(Seq.empty))
-      _pattern     <- cursor.downField("pattern").as[Option[Pattern]].map(_.getOrElse(Pattern.Null))
-      _action      <- cursor.downField("action").as[Option[Action]].map(_.getOrElse(Action.Null))
-      _messageAction <- cursor.downField("messageAction").as[Option[Action]].map(_.getOrElse(Action.Null))
-      _signalAction  <- cursor.downField("signalAction").as[Option[Action]].map(_.getOrElse(Action.Null))
-    } yield TypeDefinition (
-      _typeName,
-      _superDomain,
-      _modules,
-      _derivation,
-      _elements,
-      _factory,
-      _globalElements,
-      _elementTypeNames,
-      _source,
-      _target,
-      _variables,
-      _conditions,
-      _values,
-      _pattern,
-      _action,
-      _messageAction,
-      _signalAction
-    )
+      _source         <- cursor.downField("source").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
+      _target         <- cursor.downField("target").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
+      _variables      <- cursor.downField("variables").as[Option[Seq[Variable]]].map(_.getOrElse(Seq.empty))
+      _conditions     <- cursor.downField("conditions").as[Option[Seq[Condition]]].map(_.getOrElse(Seq.empty))
+      _values         <- cursor.downField("values").as[Option[Seq[Value]]].map(_.getOrElse(Seq.empty))
+      _pattern        <- cursor.downField("pattern").as[Option[Pattern]].map(_.getOrElse(Pattern.Null))
+      _action         <- cursor.downField("action").as[Option[Action]].map(_.getOrElse(Action.Null))
+      _messageAction  <- cursor.downField("messageAction").as[Option[Action]].map(_.getOrElse(Action.Null))
+      _signalAction   <- cursor.downField("signalAction").as[Option[Action]].map(_.getOrElse(Action.Null))
+    } yield {
+      val dracoAspect = _dracoOpt.getOrElse (DracoAspect (
+        _superDomain    = _superDomain,
+        _modules        = _modules,
+        _extensible     = _extensible,
+        _derivation     = _derivation,
+        _elements       = _elements,
+        _factory        = _factory,
+        _globalElements = _globalElements,
+        _source         = _source,
+        _target         = _target
+      ))
+      val domainAspect = _domainOpt.getOrElse (DomainAspect (_elementTypeNames))
+      val ruleAspect = _ruleOpt.getOrElse (RuleAspect (
+        _variables  = _variables,
+        _conditions = _conditions,
+        _values     = _values,
+        _pattern    = _pattern,
+        _action     = _action
+      ))
+      val actorAspect = _actorOpt.getOrElse (ActorAspect (
+        _messageAction = _messageAction,
+        _signalAction  = _signalAction
+      ))
+      fromAspects (_typeName, dracoAspect, domainAspect, ruleAspect, actorAspect)
+    }
   }
+
   lazy val Null: TypeDefinition = TypeDefinition (TypeName.Null)
 }

@@ -4,7 +4,7 @@ trait TypeDictionary extends Dictionary[TypeName,TypeDefinition] {
   val  elementTypes: Seq[TypeDefinition]
 }
 
-object TypeDictionary extends App with TypeInstance {
+object TypeDictionary extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "TypeDictionary",
@@ -23,7 +23,7 @@ object TypeDictionary extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[TypeDictionary] = Type[TypeDictionary] (typeDefinition)
+  lazy val dracoType: Type[TypeDictionary] = Type[TypeDictionary] (typeDefinition)
 
   def apply (_domainDefinition: TypeDefinition) : TypeDictionary = new TypeDictionary {
     override val elementTypes: Seq[TypeDefinition] = _domainDefinition.elementTypeNames.map (name =>

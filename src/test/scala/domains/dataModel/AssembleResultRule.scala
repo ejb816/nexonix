@@ -6,10 +6,10 @@ import org.evrete.api.{Knowledge, RhsContext}
 import org.apache.pekko.actor.typed.ActorRef
 import java.util.function.Consumer
 
-trait AssembleResultRule extends RuleInstance
+trait AssembleResultRule extends Extensible
 
-object AssembleResultRule extends App with RuleInstance {
-  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("AssembleResult", _namePackage = Seq("domains", "dataModel")))
+object AssembleResultRule extends App {
+  lazy val typeDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("AssembleResult", _namePackage = Seq("domains", "dataModel")))
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
     val partOne: PartOne = ctx.get[PartOne]("$partOne")
@@ -33,18 +33,9 @@ object AssembleResultRule extends App with RuleInstance {
       .build()
   }
 
-  lazy val ruleInstance: RuleType = Rule[AssembleResultRule](
-    ruleDefinition,
+  lazy val ruleType: RuleType = Rule[AssembleResultRule](
+    typeDefinition,
     _pattern = pattern,
     _action = action
   )
-
-  lazy val typeDefinition: TypeDefinition = TypeDefinition(
-    _typeName = ruleDefinition.typeName,
-    _derivation = Seq(
-      RuleInstance.typeInstance.typeDefinition.typeName
-    )
-  )
-
-  lazy val typeInstance: DracoType = Type[AssembleResultRule](typeDefinition)
 }

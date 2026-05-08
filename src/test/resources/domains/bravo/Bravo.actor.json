@@ -1,9 +1,9 @@
 {
-  "typeName" : {
-    "name" : "Bravo.actor",
-    "namePackage" : ["domains", "bravo"]
-  },
-  "derivation" : [
-    { "name" : "ActorInstance", "namePackage" : ["draco"] }
-  ]
+  "typeName": {
+    "name": "Bravo.actor",
+    "namePackage": [
+      "domains",
+      "bravo"
+    ]
+  }
 }

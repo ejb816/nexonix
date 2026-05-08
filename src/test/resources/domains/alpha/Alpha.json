@@ -1,13 +1,26 @@
 {
-  "typeName" : {
-    "name" : "Alpha",
-    "namePackage" : ["domains", "alpha"]
+  "typeName": {
+    "name": "Alpha",
+    "namePackage": [
+      "domains",
+      "alpha"
+    ]
   },
-  "derivation" : [
-    { "name" : "DataModel", "namePackage" : ["domains", "dataModel"] }
-  ],
-  "elementTypeNames" : [
-    "AlphaOne",
-    "AlphaTwo"
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DataModel",
+        "namePackage": [
+          "domains",
+          "dataModel"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "elementTypeNames": [
+      "AlphaOne",
+      "AlphaTwo"
+    ]
+  }
 }

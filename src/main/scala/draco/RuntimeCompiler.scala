@@ -5,11 +5,11 @@ import scala.tools.nsc.reporters.StoreReporter
 import java.io.{File, PrintWriter}
 import java.nio.file.Files
 
-trait RuntimeCompiler extends TypeInstance
+trait RuntimeCompiler extends Extensible
 
-object RuntimeCompiler extends App with TypeInstance {
+object RuntimeCompiler extends App {
   lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("RuntimeCompiler", _namePackage = Seq("draco")))
-  lazy val typeInstance: Type[RuntimeCompiler] = Type[RuntimeCompiler] (typeDefinition)
+  lazy val dracoType: Type[RuntimeCompiler] = Type[RuntimeCompiler] (typeDefinition)
 
   def compile(source: String, fileName: String): Either[Seq[String], File] = {
     val tempDir = Files.createTempDirectory("draco-gen").toFile

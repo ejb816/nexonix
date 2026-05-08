@@ -32,11 +32,11 @@ class RuntimeCompilerTest extends AnyFunSuite {
         |
         |trait GeneratedTrait extends Extensible with DracoType
         |
-        |object GeneratedTrait extends App with TypeInstance {
+        |object GeneratedTrait extends App {
         |  lazy val typeDefinition: TypeDefinition = TypeDefinition(
         |    _typeName = TypeName("GeneratedTrait", _namePackage = Seq("draco", "generated", "test"))
         |  )
-        |  lazy val typeInstance: Type[GeneratedTrait] = Type[GeneratedTrait](typeDefinition)
+        |  lazy val dracoType: Type[GeneratedTrait] = Type[GeneratedTrait](typeDefinition)
         |}
         |""".stripMargin
 

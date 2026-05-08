@@ -1,55 +1,140 @@
 {
-  "typeName" : {
-    "name" : "TypeName",
-    "namePackage" : ["draco"]
-  },
-  "elements" : [
-    { "kind" : "Fixed", "name" : "name", "valueType" : "String" },
-    { "kind" : "Fixed", "name" : "namePackage", "valueType" : "Seq[String]" },
-    { "kind" : "Fixed", "name" : "typeParameters", "valueType" : "Seq[String]" },
-    { "kind" : "Fixed", "name" : "namePath", "valueType" : "String" },
-    { "kind" : "Fixed", "name" : "resourcePath", "valueType" : "String" }
-  ],
-  "factory" : {
-    "kind" : "Factory",
-    "valueType" : "TypeName",
-    "parameters" : [
-      { "kind" : "Parameter", "name" : "name", "valueType" : "String" },
-      { "kind" : "Parameter", "name" : "namePackage", "valueType" : "Seq[String]", "value" : "Seq()" },
-      { "kind" : "Parameter", "name" : "typeParameters", "valueType" : "Seq[String]", "value" : "Seq()" }
-    ],
-    "body" : [
-      { "kind" : "Fixed", "name" : "name", "valueType" : "String", "value" : "_name" },
-      { "kind" : "Fixed", "name" : "namePackage", "valueType" : "Seq[String]", "value" : "_namePackage" },
-      { "kind" : "Fixed", "name" : "typeParameters", "valueType" : "Seq[String]", "value" : "_typeParameters" },
-      { "kind" : "Fixed", "name" : "namePath", "valueType" : "String", "value" : "fullNamePath(namePackage, name)" },
-      { "kind" : "Fixed", "name" : "resourcePath", "valueType" : "String", "value" : "fullResourcePath(namePackage, name)" }
+  "typeName": {
+    "name": "TypeName",
+    "namePackage": [
+      "draco"
     ]
   },
-  "globalElements" : [
-    {
-      "kind" : "Dynamic",
-      "name" : "fullNamePath",
-      "valueType" : "String",
-      "parameters" : [
-        { "kind" : "Parameter", "name" : "np", "valueType" : "Seq[String]" },
-        { "kind" : "Parameter", "name" : "n", "valueType" : "String" }
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "name",
+        "valueType": "String"
+      },
+      {
+        "kind": "Fixed",
+        "name": "namePackage",
+        "valueType": "Seq[String]"
+      },
+      {
+        "kind": "Fixed",
+        "name": "typeParameters",
+        "valueType": "Seq[String]"
+      },
+      {
+        "kind": "Fixed",
+        "name": "namePath",
+        "valueType": "String"
+      },
+      {
+        "kind": "Fixed",
+        "name": "resourcePath",
+        "valueType": "String"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "TypeName",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "name",
+          "valueType": "String"
+        },
+        {
+          "kind": "Parameter",
+          "name": "namePackage",
+          "valueType": "Seq[String]",
+          "value": "Seq()"
+        },
+        {
+          "kind": "Parameter",
+          "name": "typeParameters",
+          "valueType": "Seq[String]",
+          "value": "Seq()"
+        }
       ],
-      "body" : [
-        { "kind" : "Fixed", "value" : "if (np.isEmpty) n else s\"${np.mkString(\".\")}.${n}\"" }
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "name",
+          "valueType": "String",
+          "value": "_name"
+        },
+        {
+          "kind": "Fixed",
+          "name": "namePackage",
+          "valueType": "Seq[String]",
+          "value": "_namePackage"
+        },
+        {
+          "kind": "Fixed",
+          "name": "typeParameters",
+          "valueType": "Seq[String]",
+          "value": "_typeParameters"
+        },
+        {
+          "kind": "Fixed",
+          "name": "namePath",
+          "valueType": "String",
+          "value": "fullNamePath(namePackage, name)"
+        },
+        {
+          "kind": "Fixed",
+          "name": "resourcePath",
+          "valueType": "String",
+          "value": "fullResourcePath(namePackage, name)"
+        }
       ]
     },
-    {
-      "kind" : "Dynamic",
-      "name" : "fullResourcePath",
-      "valueType" : "String",
-      "parameters" : [
-        { "kind" : "Parameter", "name" : "np", "valueType" : "Seq[String]" },
-        { "kind" : "Parameter", "name" : "n", "valueType" : "String" }
-      ],
-      "body" : [
-        { "kind" : "Fixed", "value" : "s\"/${np.mkString(\"/\")}/$n.json\"" }
-      ]
-    }
-  ]
+    "globalElements": [
+      {
+        "kind": "Dynamic",
+        "name": "fullNamePath",
+        "valueType": "String",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "np",
+            "valueType": "Seq[String]"
+          },
+          {
+            "kind": "Parameter",
+            "name": "n",
+            "valueType": "String"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "value": "if (np.isEmpty) n else s\"${np.mkString(\".\")}.${n}\""
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "fullResourcePath",
+        "valueType": "String",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "np",
+            "valueType": "Seq[String]"
+          },
+          {
+            "kind": "Parameter",
+            "name": "n",
+            "valueType": "String"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "value": "s\"/${np.mkString(\"/\")}/$n.json\""
+          }
+        ]
+      }
+    ]
+  }
 }

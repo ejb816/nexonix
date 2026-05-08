@@ -1,0 +1,24 @@
+typeName:
+  name: ActorAspect
+  namePackage:
+    - draco
+dracoAspect:
+  elements:
+    - kind: Fixed
+      name: messageAction
+      valueType: Action
+    - kind: Fixed
+      name: signalAction
+      valueType: Action
+  factory:
+    kind: Factory
+    valueType: ActorAspect
+    parameters:
+      - kind: Parameter
+        name: messageAction
+        valueType: Action
+        value: Action.Null
+      - kind: Parameter
+        name: signalAction
+        valueType: Action
+        value: Action.Null

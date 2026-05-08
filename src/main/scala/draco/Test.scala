@@ -4,7 +4,7 @@ import java.net.URI
 
 trait Test extends Main
 
-object Test extends App with TypeInstance {
+object Test extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "Test",
@@ -21,7 +21,7 @@ object Test extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[Test] = Type[Test] (typeDefinition)
+  lazy val dracoType: Type[Test] = Type[Test] (typeDefinition)
 
   def apply (
               _sourceName: String,

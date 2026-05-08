@@ -27,7 +27,7 @@ class TupleFactReteTest extends AnyFunSuite {
   test("TupleFactRule") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge = service.newKnowledge("TupleFactRule.rule")
-    TupleFactRule.ruleInstance.pattern.accept(knowledge)
+    TupleFactRule.ruleType.pattern.accept(knowledge)
     val session = knowledge.newStatefulSession()
     try {
       session.insert(Seq (fact): _*)

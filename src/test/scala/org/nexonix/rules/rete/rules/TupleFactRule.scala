@@ -9,10 +9,10 @@ import org._
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait TupleFactRule extends RuleInstance
+trait TupleFactRule extends Extensible
 
-object TupleFactRule extends App with RuleInstance {
-  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("TupleFact", _namePackage = Seq("org", "nexonix", "rules", "rete", "rules")))
+object TupleFactRule extends App {
+  lazy val typeDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("TupleFact", _namePackage = Seq("org", "nexonix", "rules", "rete", "rules")))
   def w0(fact: (Int,Int,Int)): Boolean = fact._1.equals(1) && fact._2.equals(2) && fact._3.equals(3)
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val fact: (Int,Int,Int) = ctx.get[(Int,Int,Int)]("$fact")
@@ -32,18 +32,9 @@ object TupleFactRule extends App with RuleInstance {
     .build()
   }
 
-  lazy val ruleInstance: RuleType = Rule[TupleFactRule] (
-    ruleDefinition,
+  lazy val ruleType: RuleType = Rule[TupleFactRule] (
+    typeDefinition,
     _pattern = pattern,
     _action = action
   )
-
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = ruleDefinition.typeName,
-    _derivation = Seq (
-      RuleInstance.typeInstance.typeDefinition.typeName
-    )
-  )
-
-  lazy val typeInstance: DracoType = Type[TupleFactRule] (typeDefinition)
 }

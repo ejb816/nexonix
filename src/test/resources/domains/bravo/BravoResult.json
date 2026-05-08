@@ -1,10 +1,27 @@
 {
-  "typeName" : {
-    "name" : "BravoResult",
-    "namePackage" : ["domains", "bravo"]
+  "typeName": {
+    "name": "BravoResult",
+    "namePackage": [
+      "domains",
+      "bravo"
+    ]
   },
-  "derivation" : [
-    { "name" : "Bravo", "namePackage" : ["domains", "bravo"] },
-    { "name" : "Assembled", "namePackage" : ["domains", "dataModel"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Bravo",
+        "namePackage": [
+          "domains",
+          "bravo"
+        ]
+      },
+      {
+        "name": "Assembled",
+        "namePackage": [
+          "domains",
+          "dataModel"
+        ]
+      }
+    ]
+  }
 }

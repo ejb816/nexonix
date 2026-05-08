@@ -6,15 +6,14 @@ import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorConte
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.StatefulSession
 
-trait DataModelActor extends ActorInstance
+trait DataModelActor extends Extensible
 
-object DataModelActor extends App with ActorInstance {
+object DataModelActor extends App {
   lazy val typeDefinition: TypeDefinition = DataModel.typeDefinition
-  lazy val typeInstance: DracoType = Type[DataModel](DataModel.typeDefinition)
 
   def actorWithSession(bravoRef: ActorRef[Bravo]): Actor[DataModel] = {
     val knowledge = Rule.knowledgeService.newKnowledge("DataModelAssembly")
-    AssembleResultRule.ruleInstance.pattern.accept(knowledge)
+    AssembleResultRule.ruleType.pattern.accept(knowledge)
     knowledge.set("bravoActorRef", bravoRef)
     val session: StatefulSession = knowledge.newStatefulSession()
 
@@ -38,7 +37,7 @@ object DataModelActor extends App with ActorInstance {
     }
   }
 
-  lazy val actorInstance: ActorType = Actor[DataModel](
+  lazy val actorType: ActorType = Actor[DataModel](
     TypeDefinition(DataModel.typeDefinition.typeName)
   )
 }

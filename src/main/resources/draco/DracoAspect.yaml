@@ -1,0 +1,73 @@
+typeName:
+  name: DracoAspect
+  namePackage:
+    - draco
+dracoAspect:
+  elements:
+    - kind: Fixed
+      name: superDomain
+      valueType: TypeName
+    - kind: Fixed
+      name: modules
+      valueType: Seq[TypeName]
+    - kind: Fixed
+      name: extensible
+      valueType: TypeName
+    - kind: Fixed
+      name: derivation
+      valueType: Seq[TypeName]
+    - kind: Fixed
+      name: elements
+      valueType: Seq[TypeElement]
+    - kind: Fixed
+      name: factory
+      valueType: Factory
+    - kind: Fixed
+      name: globalElements
+      valueType: Seq[BodyElement]
+    - kind: Fixed
+      name: source
+      valueType: TypeName
+    - kind: Fixed
+      name: target
+      valueType: TypeName
+  factory:
+    kind: Factory
+    valueType: DracoAspect
+    parameters:
+      - kind: Parameter
+        name: superDomain
+        valueType: TypeName
+        value: TypeName.Null
+      - kind: Parameter
+        name: modules
+        valueType: Seq[TypeName]
+        value: Seq.empty
+      - kind: Parameter
+        name: extensible
+        valueType: TypeName
+        value: TypeName.Null
+      - kind: Parameter
+        name: derivation
+        valueType: Seq[TypeName]
+        value: Seq.empty
+      - kind: Parameter
+        name: elements
+        valueType: Seq[TypeElement]
+        value: Seq.empty
+      - kind: Parameter
+        name: factory
+        valueType: Factory
+        value: Factory.Null
+      - kind: Parameter
+        name: globalElements
+        valueType: Seq[BodyElement]
+        value: Seq.empty
+      - kind: Parameter
+        name: source
+        valueType: TypeName
+        value: TypeName.Null
+      - kind: Parameter
+        name: target
+        valueType: TypeName
+        value: TypeName.Null

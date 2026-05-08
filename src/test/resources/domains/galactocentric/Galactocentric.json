@@ -1,10 +1,28 @@
 {
-  "typeName" : {
-    "name" : "Galactocentric",
-    "namePackage" : ["domains", "galactocentric"]
+  "typeName": {
+    "name": "Galactocentric",
+    "namePackage": [
+      "domains",
+      "galactocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Cosmocentric", "namePackage" : ["domains", "cosmocentric"] }
-  ],
-  "elementTypeNames" : ["Parallax", "ProperMotion", "RadialVelocity", "Trajectory"]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Cosmocentric",
+        "namePackage": [
+          "domains",
+          "cosmocentric"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "elementTypeNames": [
+      "Parallax",
+      "ProperMotion",
+      "RadialVelocity",
+      "Trajectory"
+    ]
+  }
 }

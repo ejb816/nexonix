@@ -1,12 +1,27 @@
 {
-  "typeName" : {
-    "name" : "PartOne",
-    "namePackage" : ["domains", "dataModel"]
+  "typeName": {
+    "name": "PartOne",
+    "namePackage": [
+      "domains",
+      "dataModel"
+    ]
   },
-  "derivation" : [
-    { "name" : "DataModel", "namePackage" : ["domains", "dataModel"] }
-  ],
-  "elements" : [
-    { "kind" : "Fixed", "name" : "number", "valueType" : "Int" }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DataModel",
+        "namePackage": [
+          "domains",
+          "dataModel"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "number",
+        "valueType": "Int"
+      }
+    ]
+  }
 }

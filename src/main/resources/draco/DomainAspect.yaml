@@ -1,0 +1,17 @@
+typeName:
+  name: DomainAspect
+  namePackage:
+    - draco
+dracoAspect:
+  elements:
+    - kind: Fixed
+      name: elementTypeNames
+      valueType: Seq[String]
+  factory:
+    kind: Factory
+    valueType: DomainAspect
+    parameters:
+      - kind: Parameter
+        name: elementTypeNames
+        valueType: Seq[String]
+        value: Seq.empty

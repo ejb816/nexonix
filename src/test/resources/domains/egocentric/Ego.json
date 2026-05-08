@@ -1,10 +1,29 @@
 {
-  "typeName" : {
-    "name" : "Ego",
-    "namePackage" : ["domains", "egocentric"]
+  "typeName": {
+    "name": "Ego",
+    "namePackage": [
+      "domains",
+      "egocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Egocentric", "namePackage" : ["domains", "egocentric"] },
-    { "name" : "Holon", "namePackage" : ["draco"], "typeParameters" : ["(Percept, Effect)"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Egocentric",
+        "namePackage": [
+          "domains",
+          "egocentric"
+        ]
+      },
+      {
+        "name": "Holon",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "(Percept, Effect)"
+        ]
+      }
+    ]
+  }
 }

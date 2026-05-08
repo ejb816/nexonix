@@ -1,10 +1,29 @@
 {
-  "typeName" : {
-    "name" : "Path",
-    "namePackage" : ["domains", "egocentric"]
+  "typeName": {
+    "name": "Path",
+    "namePackage": [
+      "domains",
+      "egocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Egocentric", "namePackage" : ["domains", "egocentric"] },
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["Seq[Waypoint]"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Egocentric",
+        "namePackage": [
+          "domains",
+          "egocentric"
+        ]
+      },
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "Seq[Waypoint]"
+        ]
+      }
+    ]
+  }
 }

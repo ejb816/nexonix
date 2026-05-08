@@ -1,13 +1,31 @@
 {
-  "typeName" : {
-    "name" : "Holon",
-    "namePackage" : ["draco"],
-    "typeParameters" : ["T <: Product"]
+  "typeName": {
+    "name": "Holon",
+    "namePackage": [
+      "draco"
+    ],
+    "typeParameters": [
+      "T <: Product"
+    ]
   },
-  "derivation" : [
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["T"] }
-  ],
-  "elements" : [
-    { "kind" : "Fixed", "name" : "value", "valueType" : "T" }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "T"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "value",
+        "valueType": "T"
+      }
+    ]
+  }
 }

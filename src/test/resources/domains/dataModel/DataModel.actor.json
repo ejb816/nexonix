@@ -1,9 +1,9 @@
 {
-  "typeName" : {
-    "name" : "DataModel.actor",
-    "namePackage" : ["domains", "dataModel"]
-  },
-  "derivation" : [
-    { "name" : "ActorInstance", "namePackage" : ["draco"] }
-  ]
+  "typeName": {
+    "name": "DataModel.actor",
+    "namePackage": [
+      "domains",
+      "dataModel"
+    ]
+  }
 }

@@ -1,7 +1,11 @@
 {
-  "typeName" : {
-    "name" : "REPL",
-    "namePackage" : ["draco"],
-    "typeParameters" : ["L"]
+  "typeName": {
+    "name": "REPL",
+    "namePackage": [
+      "draco"
+    ],
+    "typeParameters": [
+      "L"
+    ]
   }
 }

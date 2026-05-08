@@ -1,11 +1,38 @@
 {
-  "typeName" : {
-    "name" : "HeliocentricGeocentric",
-    "namePackage" : ["domains", "heliocentric", "geocentric"]
+  "typeName": {
+    "name": "HeliocentricGeocentric",
+    "namePackage": [
+      "domains",
+      "heliocentric",
+      "geocentric"
+    ]
   },
-  "source" : { "name" : "Heliocentric", "namePackage" : ["domains", "heliocentric"] },
-  "target" : { "name" : "Geocentric",   "namePackage" : ["domains", "geocentric"] },
-  "derivation" : [
-    { "name" : "Transform", "namePackage" : ["draco"], "typeParameters" : ["Heliocentric", "Geocentric"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Transform",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "Heliocentric",
+          "Geocentric"
+        ]
+      }
+    ],
+    "source": {
+      "name": "Heliocentric",
+      "namePackage": [
+        "domains",
+        "heliocentric"
+      ]
+    },
+    "target": {
+      "name": "Geocentric",
+      "namePackage": [
+        "domains",
+        "geocentric"
+      ]
+    }
+  }
 }

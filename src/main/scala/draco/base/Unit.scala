@@ -5,7 +5,7 @@ trait Unit extends draco.DracoType {
   val description: String = "Abstract Unit root"
 }
 
-object Unit extends App with draco.TypeInstance {
+object Unit extends App {
   lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Unit", _namePackage = Seq("draco", "base")))
-  lazy val typeInstance: draco.Type[Unit] = draco.Type[Unit] (typeDefinition)
+  lazy val dracoType: draco.Type[Unit] = draco.Type[Unit] (typeDefinition)
 }

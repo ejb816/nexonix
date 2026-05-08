@@ -1,0 +1,36 @@
+typeName:
+  name: TypeDefinition
+  namePackage:
+    - draco
+dracoAspect:
+  derivation:
+    - name: Aspects
+      namePackage:
+        - draco
+  elements:
+    - kind: Fixed
+      name: typeName
+      valueType: TypeName
+  factory:
+    kind: Factory
+    valueType: TypeDefinition
+    parameters:
+      - kind: Parameter
+        name: typeName
+        valueType: TypeName
+      - kind: Parameter
+        name: dracoAspect
+        valueType: DracoAspect
+        value: DracoAspect.Null
+      - kind: Parameter
+        name: domainAspect
+        valueType: DomainAspect
+        value: DomainAspect.Null
+      - kind: Parameter
+        name: ruleAspect
+        valueType: RuleAspect
+        value: RuleAspect.Null
+      - kind: Parameter
+        name: actorAspect
+        valueType: ActorAspect
+        value: ActorAspect.Null

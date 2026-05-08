@@ -5,10 +5,10 @@ import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait RemoveCompositeNumbersRule extends RuleInstance
+trait RemoveCompositeNumbersRule extends Extensible
 
-object RemoveCompositeNumbersRule extends App with RuleInstance {
-  private lazy val ruleDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("RemoveCompositeNumbers", _namePackage = Seq("draco", "primes")))
+object RemoveCompositeNumbersRule extends App {
+  lazy val typeDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("RemoveCompositeNumbers", _namePackage = Seq("draco", "primes")))
   def w0(i1: Int, i2: Int, i3: Int): Boolean = i1 * i2 == i3
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val accumulator: Accumulator = ctx.get[Accumulator]("$accumulator")
@@ -37,18 +37,9 @@ object RemoveCompositeNumbersRule extends App with RuleInstance {
     .build()
   }
 
-  lazy val ruleInstance: RuleType = Rule[RemoveCompositeNumbersRule] (
-    ruleDefinition,
+  lazy val ruleType: RuleType = Rule[RemoveCompositeNumbersRule] (
+    typeDefinition,
     _pattern = pattern,
     _action = action
   )
-
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = ruleDefinition.typeName,
-    _derivation = Seq (
-      RuleInstance.typeInstance.typeDefinition.typeName
-    )
-  )
-
-  lazy val typeInstance: DracoType = Type[RemoveCompositeNumbersRule] (typeDefinition)
 }

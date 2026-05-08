@@ -1,14 +1,41 @@
 {
-  "typeName" : {
-    "name" : "Nominal",
-    "namePackage" : ["draco", "base"]
+  "typeName": {
+    "name": "Nominal",
+    "namePackage": [
+      "draco",
+      "base"
+    ]
   },
-  "derivation" : [
-    { "name" : "Unit", "namePackage" : ["draco", "base"] },
-    { "name" : "Primal", "namePackage" : ["draco"], "typeParameters" : ["String"] }
-  ],
-  "elements" : [
-    { "kind" : "Fixed", "name" : "name", "valueType" : "String" },
-    { "kind" : "Fixed", "name" : "description", "valueType" : "String" }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Unit",
+        "namePackage": [
+          "draco",
+          "base"
+        ]
+      },
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "String"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "name",
+        "valueType": "String"
+      },
+      {
+        "kind": "Fixed",
+        "name": "description",
+        "valueType": "String"
+      }
+    ]
+  }
 }

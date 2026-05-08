@@ -3,7 +3,7 @@ package draco
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
-trait TypeName extends TypeInstance {
+trait TypeName extends Extensible {
   val name: String
   val namePackage: Seq[String]
   val typeParameters: Seq[String]
@@ -11,9 +11,9 @@ trait TypeName extends TypeInstance {
   val resourcePath: String
 }
 
-object TypeName extends App with TypeInstance {
+object TypeName extends App {
   lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("TypeName", _namePackage = Seq("draco")))
-  lazy val typeInstance: Type[TypeName] = Type[TypeName] (typeDefinition)
+  lazy val dracoType: Type[TypeName] = Type[TypeName] (typeDefinition)
 
   implicit lazy val encoder: Encoder[TypeName] = Encoder.instance { x =>
     val fields = Seq(
@@ -41,8 +41,6 @@ object TypeName extends App with TypeInstance {
     override val typeParameters: Seq[String] = _typeParameters
     override val namePath: String = fullNamePath(namePackage, name)
     override val resourcePath: String = fullResourcePath(namePackage, name)
-    override lazy val typeInstance: DracoType = TypeName.typeInstance
-    override lazy val typeDefinition: TypeDefinition = TypeName.typeDefinition
   }
 
   lazy val Null: TypeName = new TypeName {
@@ -51,8 +49,6 @@ object TypeName extends App with TypeInstance {
     override val typeParameters: Seq[String] = Seq.empty
     override val namePath: String = ""
     override val resourcePath: String = ""
-    override lazy val typeDefinition: TypeDefinition = TypeDefinition.Null
-    override lazy val typeInstance: DracoType = TypeName.Null
   }
 
   def fullNamePath(np: Seq[String], n: String): String = if (np.isEmpty) n else s"${np.mkString(".")}.$n"

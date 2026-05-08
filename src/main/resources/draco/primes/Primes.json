@@ -1,17 +1,19 @@
 {
-  "typeName" : {
-    "name" : "Primes",
-    "namePackage" : ["draco", "primes"]
+  "typeName": {
+    "name": "Primes",
+    "namePackage": [
+      "draco",
+      "primes"
+    ]
   },
-  "derivation" : [
-    { "name" : "DomainInstance", "namePackage" : ["draco"] }
-  ],
-  "elementTypeNames" : [
-    "Accumulator",
-    "Numbers",
-    "PrimeOrdinal",
-    "AddNaturalSequence.rule",
-    "PrimesFromNaturalSequence.rule",
-    "RemoveCompositeNumbers.rule"
-  ]
+  "domainAspect": {
+    "elementTypeNames": [
+      "Accumulator",
+      "Numbers",
+      "PrimeOrdinal",
+      "AddNaturalSequence.rule",
+      "PrimesFromNaturalSequence.rule",
+      "RemoveCompositeNumbers.rule"
+    ]
+  }
 }

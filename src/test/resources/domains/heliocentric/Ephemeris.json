@@ -1,10 +1,29 @@
 {
-  "typeName" : {
-    "name" : "Ephemeris",
-    "namePackage" : ["domains", "heliocentric"]
+  "typeName": {
+    "name": "Ephemeris",
+    "namePackage": [
+      "domains",
+      "heliocentric"
+    ]
   },
-  "derivation" : [
-    { "name" : "Heliocentric", "namePackage" : ["domains", "heliocentric"] },
-    { "name" : "Holon", "namePackage" : ["draco"], "typeParameters" : ["(Elements, Epoch)"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Heliocentric",
+        "namePackage": [
+          "domains",
+          "heliocentric"
+        ]
+      },
+      {
+        "name": "Holon",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "(Elements, Epoch)"
+        ]
+      }
+    ]
+  }
 }

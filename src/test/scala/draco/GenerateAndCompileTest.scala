@@ -28,9 +28,9 @@ class GenerateAndCompileTest extends AnyFunSuite {
     if (!dir.exists) Seq.empty
     else {
       val files = dir.listFiles().toSeq
-      val jsonFiles = files.filter(f => f.isFile && f.getName.endsWith(".json"))
+      val resourceFiles = files.filter(f => f.isFile && (f.getName.endsWith(".json") || f.getName.endsWith(".yaml")))
       val subdirs = files.filter(_.isDirectory)
-      jsonFiles ++ subdirs.flatMap(findJsonFiles)
+      resourceFiles ++ subdirs.flatMap(findJsonFiles)
     }
   }
 
@@ -42,7 +42,9 @@ class GenerateAndCompileTest extends AnyFunSuite {
   private def loadTypeDefinition(rp: String): Either[String, (TypeDefinition, String)] = {
     try {
       val sourceContent = SourceContent(resourceRoot, rp)
-      val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
+      val jsonContent: Json =
+        if (rp.endsWith(".yaml")) io.circe.yaml.parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
+        else parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
       val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
       if (td == null || td == TypeDefinition.Null)
         Left("Failed to parse TypeDefinition from JSON")

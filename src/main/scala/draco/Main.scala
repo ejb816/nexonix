@@ -7,7 +7,7 @@ trait Main {
   val sinkRoot: URI
 }
 
-object Main extends App with TypeInstance {
+object Main extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "Main",
@@ -25,7 +25,7 @@ object Main extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[Main] = Type[Main] (typeDefinition)
+  lazy val dracoType: Type[Main] = Type[Main] (typeDefinition)
 
   def apply (
               _sourceName: String,

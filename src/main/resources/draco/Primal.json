@@ -1,13 +1,20 @@
 {
-  "typeName" : {
-    "name" : "Primal",
-    "namePackage" : ["draco"],
-    "typeParameters" : ["T"]
+  "typeName": {
+    "name": "Primal",
+    "namePackage": [
+      "draco"
+    ],
+    "typeParameters": [
+      "T"
+    ]
   },
-  "derivation" : [
-    { "name" : "DracoType", "namePackage" : ["draco"] }
-  ],
-  "elements" : [
-    { "kind" : "Fixed", "name" : "value", "valueType" : "T" }
-  ]
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "value",
+        "valueType": "T"
+      }
+    ]
+  }
 }

@@ -7,7 +7,7 @@ trait Generator {
 
 }
 
-object Generator extends App with TypeInstance {
+object Generator extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "Generator",
@@ -20,37 +20,67 @@ object Generator extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[Generator] = Type[Generator] (typeDefinition)
+  lazy val dracoType: Type[Generator] = Type[Generator] (typeDefinition)
 
   // --- Type loading ---
 
+  /** Parse text as YAML if the path ends in .yaml, otherwise as JSON.
+    * Both produce a circe `Json` AST; the TypeDefinition decoder is shape-tolerant
+    * to either source format. */
   private def loadFromResource (resourcePath: String) : Option[TypeDefinition] = {
     val stream = getClass.getResourceAsStream(resourcePath)
     if (stream == null) return None
     val source = scala.io.Source.fromInputStream(stream)
     try {
-      val json = source.mkString
-      parser.parse(json).flatMap(_.as[TypeDefinition]).toOption
+      val text = source.mkString
+      val parsed =
+        if (resourcePath.endsWith(".yaml")) io.circe.yaml.parser.parse(text)
+        else parser.parse(text)
+      parsed.flatMap(_.as[TypeDefinition]).toOption
     } finally source.close()
   }
 
-  private def resourcePath (typeName: TypeName, aspect: String = "") : String = {
+  private def resourcePath (typeName: TypeName, aspect: String = "", ext: String = "json") : String = {
     val np = typeName.namePackage.mkString("/")
     val n = typeName.name
-    if (aspect.isEmpty) s"/$np/$n.json" else s"/$np/$n.$aspect.json"
+    if (aspect.isEmpty) s"/$np/$n.$ext" else s"/$np/$n.$aspect.$ext"
   }
 
+  /** Try the YAML resource first, fall back to JSON. YAML is the normative authoring
+    * format going forward; JSON remains supported for backward compatibility while
+    * the corpus migrates. */
+  private def tryLoad (typeName: TypeName, aspect: String = "") : Option[TypeDefinition] =
+    loadFromResource(resourcePath(typeName, aspect, "yaml"))
+      .orElse(loadFromResource(resourcePath(typeName, aspect, "json")))
+
   def loadType (typeName: TypeName) : TypeDefinition =
-    loadFromResource(resourcePath(typeName)).getOrElse(TypeDefinition(typeName))
+    tryLoad(typeName).getOrElse(TypeDefinition(typeName))
 
   def loadRuleType (typeName: TypeName) : TypeDefinition =
-    loadFromResource(resourcePath(typeName, "rule")).getOrElse(TypeDefinition(typeName))
+    tryLoad(typeName, "rule").getOrElse(TypeDefinition(typeName))
 
   def loadActorType (typeName: TypeName) : TypeDefinition =
-    loadFromResource(resourcePath(typeName, "actor")).getOrElse(TypeDefinition(typeName))
+    tryLoad(typeName, "actor").getOrElse(TypeDefinition(typeName))
 
   def loadAll (typeName: TypeName) : Seq[TypeDefinition] =
-    Seq("", "rule", "actor").flatMap(aspect => loadFromResource(resourcePath(typeName, aspect)))
+    Seq("", "rule", "actor").flatMap(aspect => tryLoad(typeName, aspect))
+
+  /** True iff `td` itself, or any transitive ancestor via `draco.derivation`, has a
+    * typeName matching `targetName`. Used to decide whether emitted factory bodies
+    * must override `typeDefinition` / `dracoType` (only required when the chain
+    * actually reaches the trait that declares those abstract members). */
+  private def chainHits (td: TypeDefinition, targetName: String, seen: Set[String] = Set.empty) : Boolean = {
+    if (seen.contains(td.typeName.name)) return false
+    if (td.typeName.name == targetName) return true
+    val nextSeen = seen + td.typeName.name
+    td.dracoAspect.derivation.exists { tn =>
+      if (tn.name == targetName) true
+      else {
+        try chainHits(loadType(tn), targetName, nextSeen)
+        catch { case _: Throwable => false }
+      }
+    }
+  }
 
   // --- Literal generation helpers ---
 
@@ -176,17 +206,20 @@ object Generator extends App with TypeInstance {
   }
 
   private def typeExtends (
-    derivation: Seq[TypeName]
+    td: TypeDefinition
   ) : String = {
-    if (derivation.isEmpty) "extends Extensible"
-    else if (derivation.head.name == "Extensible" && derivation.head.typeParameters.nonEmpty) {
-      // Extensible as Generator directive: substitute its type parameter into extends position
-      val extendsType = derivation.head.typeParameters.head
-      val withTypes = derivation.tail.map(parameterizedName)
-      if (withTypes.isEmpty) s"extends $extendsType"
-      else s"extends $extendsType with ${withTypes.mkString(" with ")}"
-    }
-    else "extends Extensible with " + derivation.map(parameterizedName).mkString(" with ")
+    val ext = td.extensible
+    val derivation = td.derivation
+    if (ext.name.nonEmpty) {
+      val head = parameterizedName(ext)
+      if (derivation.isEmpty) s"extends $head"
+      else s"extends $head with ${derivation.map(parameterizedName).mkString(" with ")}"
+    } else if (derivation.nonEmpty) {
+      val head = parameterizedName(derivation.head)
+      val tail = derivation.tail.map(parameterizedName)
+      if (tail.isEmpty) s"extends $head"
+      else s"extends $head with ${tail.mkString(" with ")}"
+    } else "extends Extensible"
   }
 
   private def methodParameters (
@@ -253,12 +286,13 @@ object Generator extends App with TypeInstance {
   }
 
   private def factoryBody (
-    factory: Factory
+    td: TypeDefinition
   ) : String = {
+    val factory = td.factory
+    val objName = baseName(factory.valueType)
     val instanceOverrides = Seq(
-      "    override lazy val typeInstance: DracoType = ${objName}.typeInstance",
-      "    override lazy val typeDefinition: TypeDefinition = ${objName}.typeDefinition"
-    ).map(s => s.replace("${objName}", baseName(factory.valueType)))
+      if (chainHits(td, "DracoType")) Some(s"    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition") else None
+    ).flatten
     if (factory.body.nonEmpty) {
       val overrides = factory.body.map {
         case f: Fixed   => s"    override val ${f.name}: ${f.valueType} = ${f.value}"
@@ -603,8 +637,7 @@ object Generator extends App with TypeInstance {
         s"    override val ${e.name}: ${e.valueType} = ${nullValueFor(e.valueType, "")}"
       }
       val nullInstanceOverrides = Seq(
-        s"    override lazy val typeDefinition: TypeDefinition = TypeDefinition.Null",
-        s"    override lazy val typeInstance: DracoType = $name.Null"
+        s"    override lazy val typeDefinition: TypeDefinition = TypeDefinition.Null"
       )
       s"lazy val Null: $wName = new $wName {\n${(nullMembers ++ nullInstanceOverrides).mkString("\n")}\n  }"
     } else if (elements.isEmpty) {
@@ -630,11 +663,11 @@ object Generator extends App with TypeInstance {
     val objName = stripAspect(td.typeName.name) + nameSuffix
     val wName = wildcardTypeName(td.typeName) + nameSuffix
     val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
-    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
+    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "extends App"
 
-    val header = s"object $objName extends ${appMixin}TypeInstance"
+    val header = s"object $objName $appMixin".trim
     val tdLiteral = s"  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
-    val tiLiteral = s"  lazy val typeInstance: Type[$wName] = Type[$wName] (typeDefinition)"
+    val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
     val codec = codecDeclaration(td, familyContext)
     val codecBlock = if (codec.nonEmpty) s"\n$codec\n" else ""
 
@@ -655,7 +688,7 @@ object Generator extends App with TypeInstance {
          |$tdLiteral
          |$tiLiteral
          |$codecBlock
-         |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType} = new ${factory.valueType} ${factoryBody(factory)}
+         |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType} = new ${factory.valueType} ${factoryBody(td)}
          |
          |  ${nullInstance(td.typeName, td.elements, td.factory, nameSuffix)}
          |
@@ -670,7 +703,7 @@ object Generator extends App with TypeInstance {
     val objName = td.typeName.name
     s"""object $objName extends DracoType {
        |  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}
-       |  lazy val typeInstance: DracoType = this
+       |  lazy val dracoType: DracoType = this
        |
        |${globalElementsDeclaration(td.globalElements)}
        |}""".stripMargin
@@ -679,12 +712,12 @@ object Generator extends App with TypeInstance {
   // --- Trait declaration helper ---
 
   private def traitDeclaration (td: TypeDefinition, nameSuffix: String = "") : String =
-    s"${typeModifier(td.modules)}trait ${parameterizedName(td.typeName)}$nameSuffix ${typeExtends(td.derivation)} ${typeBody(td.elements)}"
+    s"${typeModifier(td.modules)}trait ${parameterizedName(td.typeName)}$nameSuffix ${typeExtends(td)} ${typeBody(td.elements)}"
 
-  // --- DomainInstance companion generation ---
+  // --- Domain companion generation ---
 
-  private def domainInstanceLiteral (objName: String) : String =
-    s"  lazy val domainInstance: Domain[$objName] = Domain[$objName] (typeDefinition)"
+  private def domainTypeLiteral (objName: String) : String =
+    s"  lazy val domainType: Domain[$objName] = Domain[$objName] (typeDefinition)"
 
   /** Emit a Scala-visible mirror of the domain's elementTypeNames list. JSON remains
     * the runtime authority (via `typeDefinition.elementTypeNames`); this val is for
@@ -696,36 +729,34 @@ object Generator extends App with TypeInstance {
 
   private def domainGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty) : String = {
     val objName = td.typeName.name
-    val wName = wildcardTypeName(td.typeName)
     val hasGlobalElements = td.globalElements.nonEmpty
-    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
+    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "extends App"
 
-    val header = s"object $objName extends ${appMixin}DomainInstance"
+    val header = s"object $objName $appMixin".trim
     val tdLiteral = s"  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
-    val tiLiteral = s"  lazy val typeInstance: Type[$wName] = Type[$wName] (typeDefinition)"
     val etnLiteral = elementTypeNamesLiteral(td)
     val codec = codecDeclaration(td, familyContext)
     val codecBlock = if (codec.nonEmpty) s"\n$codec\n" else ""
-    val diLiteral = domainInstanceLiteral(objName)
+    val dtLiteral = domainTypeLiteral(objName)
     val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.globalElements)}" else ""
 
     s"""$header {
        |$tdLiteral
-       |$tiLiteral
        |
        |$etnLiteral
        |$codecBlock
-       |$diLiteral$globals
+       |$dtLiteral$globals
        |}""".stripMargin
   }
 
-  // --- RuleInstance companion generation ---
+  // --- Rule companion generation ---
 
   private def ruleGlobal (td: TypeDefinition) : String = {
     val name = stripAspect(td.typeName.name) + "Rule"
-    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "App with "
-    s"""object $name extends ${appMixin}RuleInstance {
-       |  private lazy val ruleDefinition: TypeDefinition = ${ruleDefinitionLoad(td)}
+    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "extends App"
+    val header = s"object $name $appMixin".trim
+    s"""$header {
+       |  lazy val typeDefinition: TypeDefinition = ${ruleDefinitionLoad(td)}
        |${conditionFunctions(td.conditions)}
        |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
        |${actionBody(td.action, td.variables, td.values)}
@@ -743,20 +774,11 @@ object Generator extends App with TypeInstance {
        |    .build()
        |  }
        |
-       |  lazy val ruleInstance: RuleType = Rule[$name] (
-       |    ruleDefinition,
+       |  lazy val ruleType: RuleType = Rule[$name] (
+       |    typeDefinition,
        |    _pattern = pattern,
        |    _action = action
        |  )
-       |
-       |  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-       |    _typeName = ruleDefinition.typeName,
-       |    _derivation = Seq (
-       |      RuleInstance.typeInstance.typeDefinition.typeName
-       |    )
-       |  )
-       |
-       |  lazy val typeInstance: DracoType = Type[$name] (typeDefinition)
        |}""".stripMargin
   }
 
@@ -790,8 +812,8 @@ object Generator extends App with TypeInstance {
     *     (`elementTypeNames` populated), or
     *   - a *domain tuple* — a transform domain — recognizable by having
     *     both `source` and `target` populated as TypeName references.
-    * Both forms deserve the domain emission pattern (`DomainInstance` +
-    * `domainInstance: Domain[T]`); either alone is sufficient. */
+    * Both forms deserve the domain emission pattern (companion with
+    * `domainType: Domain[T]`); either alone is sufficient. */
   private def isDomain (td: TypeDefinition) : Boolean =
     td.elementTypeNames.nonEmpty ||
     (td.source.name.nonEmpty && td.target.name.nonEmpty)
@@ -800,10 +822,10 @@ object Generator extends App with TypeInstance {
     td.typeName.name.endsWith(".rule") || td.variables.nonEmpty
 
   private def isActor (td: TypeDefinition) : Boolean =
-    td.typeName.name.endsWith(".actor") || td.derivation.exists(tn => Set("ActorType", "ActorInstance", "ExtensibleBehavior").contains(tn.name))
+    td.typeName.name.endsWith(".actor") || td.derivation.exists(tn => Set("ActorType", "ExtensibleBehavior").contains(tn.name))
 
   /** Object-only type: no trait, no factory, no derivation, but has globalElements.
-    * Emits object extending DracoType with typeInstance = this. */
+    * Emits object extending DracoType with dracoType = this. */
   private def isObjectOnly (td: TypeDefinition) : Boolean =
     td.elements.isEmpty && td.factory.valueType.isEmpty && td.derivation.isEmpty && td.globalElements.nonEmpty
 
@@ -876,7 +898,7 @@ object Generator extends App with TypeInstance {
     val referenced: Seq[TypeName] =
       (td.derivation
         ++ td.modules
-        ++ Seq(td.superDomain, td.source, td.target))
+        ++ Seq(td.extensible, td.superDomain, td.source, td.target))
         .filter(tn => tn != null && tn.name.nonEmpty)
     referenced
       .map(_.namePackage)
@@ -908,7 +930,7 @@ object Generator extends App with TypeInstance {
          |
          |$imports
          |
-         |trait $ruleName extends RuleInstance
+         |trait $ruleName extends Extensible
          |
          |${ruleGlobal(td)}
          |""".stripMargin

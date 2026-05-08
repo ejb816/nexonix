@@ -1,9 +1,20 @@
 {
-  "typeName" : {
-    "name" : "Charlie",
-    "namePackage" : ["domains", "charlie"]
+  "typeName": {
+    "name": "Charlie",
+    "namePackage": [
+      "domains",
+      "charlie"
+    ]
   },
-  "derivation" : [
-    { "name" : "DataModel", "namePackage" : ["domains", "dataModel"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DataModel",
+        "namePackage": [
+          "domains",
+          "dataModel"
+        ]
+      }
+    ]
+  }
 }

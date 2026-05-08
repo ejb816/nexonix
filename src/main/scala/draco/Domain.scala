@@ -2,7 +2,7 @@ package draco
 
 trait Domain[T] extends DomainType
 
-object Domain extends App with TypeInstance {
+object Domain extends App {
   // Provisional until type parameters are handled in TypeName
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
@@ -13,7 +13,7 @@ object Domain extends App with TypeInstance {
       TypeName ("DomainType", _namePackage = Seq ("draco"))
     )
   )
-  lazy val typeInstance: Type[Domain[_]] = Type[Domain[_]] (typeDefinition)
+  lazy val dracoType: Type[Domain[_]] = Type[Domain[_]] (typeDefinition)
 
   def apply[T] (
                  _domainDefinition: TypeDefinition

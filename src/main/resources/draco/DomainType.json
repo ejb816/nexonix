@@ -1,13 +1,30 @@
 {
-  "typeName" : {
-    "name" : "DomainType",
-    "namePackage" : ["draco"]
+  "typeName": {
+    "name": "DomainType",
+    "namePackage": [
+      "draco"
+    ]
   },
-  "derivation" : [
-    { "name" : "DracoType", "namePackage" : ["draco"] }
-  ],
-  "elements" : [
-    { "kind" : "Fixed", "name" : "domainDefinition", "valueType" : "TypeDefinition" },
-    { "kind" : "Fixed", "name" : "typeDictionary", "valueType" : "TypeDictionary" }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "domainDefinition",
+        "valueType": "TypeDefinition"
+      },
+      {
+        "kind": "Fixed",
+        "name": "typeDictionary",
+        "valueType": "TypeDictionary"
+      }
+    ]
+  }
 }

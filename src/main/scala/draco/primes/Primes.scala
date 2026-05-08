@@ -2,18 +2,13 @@ package draco.primes
 
 import draco._
 
-trait Primes extends DomainInstance {
+trait Primes extends Extensible {
   val knowledge: org.evrete.api.Knowledge = Rule.knowledgeService.newKnowledge("Primes")
 }
 
-object Primes extends App with DomainInstance {
+object Primes extends App {
   lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Primes", _namePackage = Seq ("draco", "primes")))
-  lazy val typeInstance: Type[Primes] = Type[Primes] (typeDefinition)
-  lazy val domainInstance: DomainType = new Domain[Primes] {
-    override lazy val domainDefinition: TypeDefinition = typeDefinition
-    override lazy val typeDictionary: TypeDictionary = TypeDictionary (domainDefinition)
-    override lazy val typeDefinition: TypeDefinition = typeInstance.typeDefinition
-  }
+  lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 
   def filter(naturals: LazyList[Int]): LazyList[Int] = {
     val p = naturals.head

@@ -1,15 +1,10 @@
 package draco
 
-trait Draco extends DomainInstance {
+trait Draco extends Extensible {
   val superDomain: DomainType = DomainType.Null
 }
 
-object Draco extends App with DomainInstance {
+object Draco extends App {
   lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Draco", _namePackage = Seq ("draco")))
-  lazy val typeInstance: Type[Draco] = Type[Draco] (typeDefinition)
-  lazy val domainInstance: DomainType = new Domain[Draco] {
-    override lazy val domainDefinition: TypeDefinition = typeDefinition
-    override lazy val typeDictionary: TypeDictionary = TypeDictionary (domainDefinition)
-    override lazy val typeDefinition: TypeDefinition = typeInstance.typeDefinition
-  }
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 }

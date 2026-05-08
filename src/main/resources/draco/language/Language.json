@@ -1,0 +1,14 @@
+{
+  "typeName": {
+    "name": "Language",
+    "namePackage": [
+      "draco",
+      "language"
+    ]
+  },
+  "domainAspect": {
+    "elementTypeNames": [
+      "YAML"
+    ]
+  }
+}

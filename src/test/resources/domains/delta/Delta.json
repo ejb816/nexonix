@@ -1,9 +1,20 @@
 {
-  "typeName" : {
-    "name" : "Delta",
-    "namePackage" : ["domains", "delta"]
+  "typeName": {
+    "name": "Delta",
+    "namePackage": [
+      "domains",
+      "delta"
+    ]
   },
-  "derivation" : [
-    { "name" : "DataModel", "namePackage" : ["domains", "dataModel"] }
-  ]
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DataModel",
+        "namePackage": [
+          "domains",
+          "dataModel"
+        ]
+      }
+    ]
+  }
 }

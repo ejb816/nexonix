@@ -1,34 +1,43 @@
 {
-  "typeName" : {
-    "name" : "Natural",
-    "namePackage" : ["domains", "natural"]
+  "typeName": {
+    "name": "Natural",
+    "namePackage": [
+      "domains",
+      "natural"
+    ]
   },
-  "derivation" : [
-    {
-      "name" : "Primal[Int]",
-      "namePackage" : ["draco"]
-    }
-  ],
-  "elementTypeNames" : [
-    "Natural.actor"
-  ],
-  "elements" : [
-    {
-      "kind" : "Fixed",
-      "name" : "value",
-      "valueType" : "Int"
-    }
-  ],
-  "factory" : {
-    "kind" : "Factory",
-    "valueType" : "Natural",
-    "parameters" : [
+  "dracoAspect": {
+    "derivation": [
       {
-        "kind" : "Parameter",
-        "name" : "_int",
-        "valueType" : "Int",
-        "value" : "0"
+        "name": "Primal[Int]",
+        "namePackage": [
+          "draco"
+        ]
       }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "value",
+        "valueType": "Int"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Natural",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "_int",
+          "valueType": "Int",
+          "value": "0"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "elementTypeNames": [
+      "Natural.actor"
     ]
   }
 }

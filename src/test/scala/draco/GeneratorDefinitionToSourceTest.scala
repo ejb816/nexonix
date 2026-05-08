@@ -105,10 +105,6 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
     generateAndVerify("draco/Actor.json", "Actor")
   }
 
-  test("Generate ActorInstance") {
-    generateAndVerify("draco/ActorInstance.json", "ActorInstance")
-  }
-
   test("Generate ActorType") {
     generateAndVerify("draco/ActorType.json", "ActorType")
   }
@@ -127,10 +123,6 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
 
   test("Generate DomainDictionary") {
     generateAndVerify("draco/DomainDictionary.json", "DomainDictionary")
-  }
-
-  test("Generate DomainInstance") {
-    generateAndVerify("draco/DomainInstance.json", "DomainInstance")
   }
 
   test("Generate DomainType") {
@@ -161,10 +153,6 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
     generateAndVerify("draco/Rule.json", "Rule")
   }
 
-  test("Generate RuleInstance") {
-    generateAndVerify("draco/RuleInstance.json", "RuleInstance")
-  }
-
   test("Generate RuleType") {
     generateAndVerify("draco/RuleType.json", "RuleType")
   }
@@ -183,10 +171,6 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
 
   test("Generate Type") {
     generateAndVerify("draco/Type.json", "Type")
-  }
-
-  test("Generate TypeDefinition") {
-    generateAndVerify("draco/TypeDefinition.json", "TypeDefinition")
   }
 
   test("Generate TypeDictionary") {
@@ -211,10 +195,6 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
       ),
       "TypeElement"
     )
-  }
-
-  test("Generate TypeInstance") {
-    generateAndVerify("draco/TypeInstance.json", "TypeInstance")
   }
 
   test("Generate TypeName") {

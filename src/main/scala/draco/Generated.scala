@@ -4,7 +4,7 @@ import java.net.URI
 
 trait Generated extends Main
 
-object Generated extends App with TypeInstance {
+object Generated extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "Generated",
@@ -21,7 +21,7 @@ object Generated extends App with TypeInstance {
       )
     )
   )
-  lazy val typeInstance: Type[Generated] = Type[Generated] (typeDefinition)
+  lazy val dracoType: Type[Generated] = Type[Generated] (typeDefinition)
 
   def apply (
               _sourceName: String,

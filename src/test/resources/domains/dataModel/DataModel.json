@@ -1,16 +1,18 @@
 {
-  "typeName" : {
-    "name" : "DataModel",
-    "namePackage" : ["domains", "dataModel"]
+  "typeName": {
+    "name": "DataModel",
+    "namePackage": [
+      "domains",
+      "dataModel"
+    ]
   },
-  "derivation" : [
-    { "name" : "DomainInstance", "namePackage" : ["draco"] }
-  ],
-  "elementTypeNames" : [
-    "PartOne",
-    "PartTwo",
-    "Assembled",
-    "AssembleResult.rule",
-    "DataModel.actor"
-  ]
+  "domainAspect": {
+    "elementTypeNames": [
+      "PartOne",
+      "PartTwo",
+      "Assembled",
+      "AssembleResult.rule",
+      "DataModel.actor"
+    ]
+  }
 }

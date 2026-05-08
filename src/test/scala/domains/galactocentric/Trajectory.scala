@@ -4,9 +4,9 @@ package domains.galactocentric
 import draco._
 import domains._
 
-trait Trajectory extends Extensible with Galactocentric with Holon[(Parallax, ProperMotion, RadialVelocity)] 
+trait Trajectory extends Galactocentric with Holon[(Parallax, ProperMotion, RadialVelocity)] 
 
-object Trajectory extends App with TypeInstance {
+object Trajectory extends App {
   lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("Trajectory", _namePackage = Seq("domains", "galactocentric")))
-  lazy val typeInstance: Type[Trajectory] = Type[Trajectory] (typeDefinition)
+  lazy val dracoType: Type[Trajectory] = Type[Trajectory] (typeDefinition)
 }
