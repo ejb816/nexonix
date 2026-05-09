@@ -2,35 +2,20 @@ package draco
 
 import java.net.URI
 
-trait Main {
+trait Main extends DracoType {
   val sourceRoot: URI
   val sinkRoot: URI
 }
 
-object Main extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "Main",
-      _namePackage = Seq ("draco")
-    ),
-    _elements = Seq (
-      Fixed ("sourceRoot", "URI"),
-      Fixed ("sinkRoot", "URI")
-    ),
-    _factory = Factory (
-      "Main",
-      _parameters = Seq (
-        Parameter ("sourceName", "String", ""),
-        Parameter ("sinkName", "String", "")
-      )
-    )
-  )
+object Main extends App with DracoType {
+  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Main"))
   lazy val dracoType: Type[Main] = Type[Main] (typeDefinition)
 
   def apply (
               _sourceName: String,
               _sinkName: String
             ) : Main = new Main {
+    override val typeDefinition: TypeDefinition = Main.typeDefinition
     override val sourceRoot: URI = classOf[Main]
       .getResource("/")
       .toURI

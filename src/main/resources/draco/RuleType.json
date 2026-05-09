@@ -19,6 +19,16 @@
         "kind": "Fixed",
         "name": "ruleDefinition",
         "valueType": "TypeDefinition"
+      },
+      {
+        "kind": "Fixed",
+        "name": "action",
+        "valueType": "Consumer[RhsContext]"
+      },
+      {
+        "kind": "Fixed",
+        "name": "pattern",
+        "valueType": "Consumer[Knowledge]"
       }
     ],
     "factory": {
@@ -27,19 +37,25 @@
       "parameters": [
         {
           "kind": "Parameter",
-          "name": "_ruleDefinition",
+          "name": "ruleDefinition",
           "valueType": "TypeDefinition"
         },
         {
           "kind": "Parameter",
-          "name": "_pattern",
+          "name": "pattern",
           "valueType": "Consumer[Knowledge]"
         },
         {
           "kind": "Parameter",
-          "name": "_action",
+          "name": "action",
           "valueType": "Consumer[RhsContext]"
         }
+      ],
+      "body": [
+        { "kind": "Fixed", "name": "ruleDefinition", "valueType": "TypeDefinition",       "value": "_ruleDefinition" },
+        { "kind": "Fixed", "name": "typeDefinition", "valueType": "TypeDefinition",       "value": "_ruleDefinition" },
+        { "kind": "Fixed", "name": "action",         "valueType": "Consumer[RhsContext]", "value": "_action" },
+        { "kind": "Fixed", "name": "pattern",        "valueType": "Consumer[Knowledge]",  "value": "_pattern" }
       ]
     }
   }

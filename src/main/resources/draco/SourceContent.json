@@ -6,6 +6,14 @@
     ]
   },
   "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
     "elements": [
       {
         "kind": "Fixed",
@@ -37,6 +45,13 @@
           "name": "logicalPath",
           "valueType": "String"
         }
+      ],
+      "body": [
+        { "kind": "Monadic", "value": "val sourceURI: java.net.URI = _sourceRoot.resolve(java.net.URI.create(_logicalPath))" },
+        { "kind": "Fixed", "name": "source",       "valueType": "BufferedSource", "value": "scala.io.Source.fromFile(sourceURI)" },
+        { "kind": "Fixed", "name": "sourceLines",  "valueType": "Seq[String]",    "value": "source.getLines.toSeq" },
+        { "kind": "Fixed", "name": "sourceString", "valueType": "String",         "value": "sourceLines.mkString(\"\\n\")" },
+        { "kind": "Monadic", "value": "source.close()" }
       ]
     }
   }

@@ -1,0 +1,32 @@
+{
+  "typeName" : {
+    "name" : "Aspects",
+    "namePackage" : [
+      "draco"
+    ]
+  },
+  "dracoAspect" : {
+    "elements" : [
+      {
+        "kind" : "Fixed",
+        "name" : "dracoAspect",
+        "valueType" : "DracoAspect"
+      },
+      {
+        "kind" : "Fixed",
+        "name" : "domainAspect",
+        "valueType" : "DomainAspect"
+      },
+      {
+        "kind" : "Fixed",
+        "name" : "ruleAspect",
+        "valueType" : "RuleAspect"
+      },
+      {
+        "kind" : "Fixed",
+        "name" : "actorAspect",
+        "valueType" : "ActorAspect"
+      }
+    ]
+  }
+}

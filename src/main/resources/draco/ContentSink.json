@@ -6,6 +6,14 @@
     ]
   },
   "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
     "elements": [
       {
         "kind": "Dynamic",
@@ -33,6 +41,28 @@
           "kind": "Parameter",
           "name": "logicalPath",
           "valueType": "String"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": "val sinkPath: java.nio.file.Path = java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))"
+        },
+        {
+          "kind": "Dynamic",
+          "name": "write",
+          "valueType": "Unit",
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "content",
+              "valueType": "String"
+            }
+          ],
+          "body": [
+            { "kind": "Monadic", "value": "java.nio.file.Files.createDirectories(sinkPath.getParent)" },
+            { "kind": "Monadic", "value": "java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))" }
+          ]
         }
       ]
     }

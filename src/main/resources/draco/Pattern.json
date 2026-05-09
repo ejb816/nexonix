@@ -42,6 +42,13 @@
           "valueType": "Seq[Condition]",
           "value": "Seq.empty"
         }
+      ],
+      "body": [
+        { "kind": "Fixed", "name": "variables",  "valueType": "Seq[Variable]",  "value": "_variables" },
+        { "kind": "Fixed", "name": "conditions", "valueType": "Seq[Condition]", "value": "_conditions" },
+        { "kind": "Fixed", "name": "name",       "valueType": "String",         "value": "\"\"" },
+        { "kind": "Fixed", "name": "valueType",  "valueType": "String",         "value": "\"org.evrete.api.Knowledge => Unit\"" },
+        { "kind": "Fixed", "name": "value",      "valueType": "String",         "value": "\"\"" }
       ]
     }
   }

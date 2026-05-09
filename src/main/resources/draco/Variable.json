@@ -28,6 +28,11 @@
           "name": "valueType",
           "valueType": "String"
         }
+      ],
+      "body": [
+        { "kind": "Fixed", "name": "name",      "valueType": "String", "value": "_name" },
+        { "kind": "Fixed", "name": "valueType", "valueType": "String", "value": "_valueType" },
+        { "kind": "Fixed", "name": "value",     "valueType": "String", "value": "\"\"" }
       ]
     }
   }

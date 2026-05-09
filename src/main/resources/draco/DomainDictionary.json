@@ -28,6 +28,14 @@
           "valueType": "Seq[DomainType]",
           "value": "Seq()"
         }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "kvMap",
+          "valueType": "Map[DomainType, TypeDictionary]",
+          "value": "_domains.map(domain => (domain, domain.typeDictionary)).toMap"
+        }
       ]
     }
   }

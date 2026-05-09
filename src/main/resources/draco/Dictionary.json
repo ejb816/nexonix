@@ -24,6 +24,49 @@
         "kind": "Fixed",
         "name": "kvMap",
         "valueType": "Map[K, V]"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "removed",
+        "valueType": "Map[K, V]",
+        "parameters": [
+          { "kind": "Parameter", "name": "key", "valueType": "K" }
+        ],
+        "body": [
+          { "kind": "Monadic", "value": "kvMap.removed(key)" }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "updated[V1 >: V]",
+        "valueType": "Map[K, V1]",
+        "parameters": [
+          { "kind": "Parameter", "name": "key", "valueType": "K" },
+          { "kind": "Parameter", "name": "value", "valueType": "V1" }
+        ],
+        "body": [
+          { "kind": "Monadic", "value": "kvMap.updated(key, value)" }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "get",
+        "valueType": "Option[V]",
+        "parameters": [
+          { "kind": "Parameter", "name": "key", "valueType": "K" }
+        ],
+        "body": [
+          { "kind": "Monadic", "value": "kvMap.get(key)" }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "iterator",
+        "valueType": "Iterator[(K, V)]",
+        "parameters": [],
+        "body": [
+          { "kind": "Monadic", "value": "kvMap.iterator" }
+        ]
       }
     ]
   }

@@ -30,7 +30,19 @@
           "valueType": "String",
           "value": ""
         }
+      ],
+      "body": [
+        { "kind": "Fixed", "name": "sourceRoot", "valueType": "URI", "value": "classOf[Test].getResource(\"/\").toURI.resolve(java.net.URI.create(s\"../../../src/test/${_sourceName}/\"))" },
+        { "kind": "Fixed", "name": "sinkRoot",   "valueType": "URI", "value": "classOf[Test].getResource(\"/\").toURI.resolve(java.net.URI.create(s\"../../../src/test/${_sinkName}/\"))" }
       ]
-    }
+    },
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "roots",
+        "valueType": "Test",
+        "value": "Test (\"resources\", \"scala\")"
+      }
+    ]
   }
 }

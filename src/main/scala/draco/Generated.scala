@@ -27,6 +27,7 @@ object Generated extends App {
               _sourceName: String,
               _sinkName: String
             ) : Generated = new Generated {
+    override val typeDefinition: TypeDefinition = Generated.typeDefinition
     override val sourceRoot: URI = classOf[Generated]
       .getResource("/")
       .toURI

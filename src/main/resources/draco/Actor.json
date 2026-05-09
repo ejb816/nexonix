@@ -32,7 +32,42 @@
     ],
     "factory": {
       "kind": "Factory",
-      "valueType": "Actor[T]"
+      "valueType": "Actor[T]",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "actorDefinition",
+          "valueType": "TypeDefinition"
+        }
+      ],
+      "body": [
+        { "kind": "Fixed", "name": "typeDefinition",  "valueType": "TypeDefinition", "value": "_actorDefinition" },
+        { "kind": "Fixed", "name": "actorDefinition", "valueType": "TypeDefinition", "value": "_actorDefinition" },
+        {
+          "kind": "Dynamic",
+          "name": "receive",
+          "valueType": "org.apache.pekko.actor.typed.Behavior[T]",
+          "parameters": [
+            { "kind": "Parameter", "name": "ctx", "valueType": "org.apache.pekko.actor.typed.TypedActorContext[T]" },
+            { "kind": "Parameter", "name": "msg", "valueType": "T" }
+          ],
+          "body": [
+            { "kind": "Monadic", "value": "org.apache.pekko.actor.typed.scaladsl.Behaviors.same[T]" }
+          ]
+        },
+        {
+          "kind": "Dynamic",
+          "name": "receiveSignal",
+          "valueType": "org.apache.pekko.actor.typed.Behavior[T]",
+          "parameters": [
+            { "kind": "Parameter", "name": "ctx", "valueType": "org.apache.pekko.actor.typed.TypedActorContext[T]" },
+            { "kind": "Parameter", "name": "msg", "valueType": "org.apache.pekko.actor.typed.Signal" }
+          ],
+          "body": [
+            { "kind": "Monadic", "value": "org.apache.pekko.actor.typed.scaladsl.Behaviors.same[T]" }
+          ]
+        }
+      ]
     }
   }
 }

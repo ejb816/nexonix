@@ -27,6 +27,7 @@ object Test extends App {
               _sourceName: String,
               _sinkName: String
             ) : Test = new Test {
+    override val typeDefinition: TypeDefinition = Test.typeDefinition
     override val sourceRoot: URI = classOf[Test]
       .getResource("/")
       .toURI

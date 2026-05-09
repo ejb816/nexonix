@@ -2,14 +2,13 @@ package draco
 
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
-import java.io.File
 
 class GenerateAndCompileTest extends AnyFunSuite {
 
   private val resourceRoot = Generator.main.sourceRoot
 
-  /** TypeElement hierarchy — must be compiled as one unit (sealed traits) */
-  private val typeElementGroup: Set[String] = Set(
+  /** TypeElement hierarchy — sealed-trait family that must compile together */
+  private val typeElementGroup: Seq[String] = Seq(
     "draco/TypeElement.json",
     "draco/BodyElement.json",
     "draco/Fixed.json",
@@ -24,20 +23,46 @@ class GenerateAndCompileTest extends AnyFunSuite {
     "draco/Factory.json"
   )
 
-  private def findJsonFiles(dir: File): Seq[File] = {
-    if (!dir.exists) Seq.empty
-    else {
-      val files = dir.listFiles().toSeq
-      val resourceFiles = files.filter(f => f.isFile && (f.getName.endsWith(".json") || f.getName.endsWith(".yaml")))
-      val subdirs = files.filter(_.isDirectory)
-      resourceFiles ++ subdirs.flatMap(findJsonFiles)
-    }
-  }
+  /** TypeDefinition + Aspects family — interrelated through `Aspects` */
+  private val typeDefinitionGroup: Seq[String] = Seq(
+    "draco/TypeDefinition.json",
+    "draco/Aspects.json",
+    "draco/DracoAspect.json",
+    "draco/DomainAspect.json",
+    "draco/RuleAspect.json",
+    "draco/ActorAspect.json"
+  )
 
-  private def resourcePath(file: File): String = {
-    val root = new File(resourceRoot).getAbsolutePath
-    file.getAbsolutePath.stripPrefix(root).stripPrefix("/")
-  }
+  /** All other types defined under `src/main/resources/draco/` root. Compiled as a
+    * single unit so cross-references between members resolve within the group. */
+  private val dracoCoreGroup: Seq[String] = Seq(
+    "draco/Actor.json",
+    "draco/ActorType.json",
+    "draco/CLI.json",
+    "draco/ContentSink.json",
+    "draco/Dictionary.json",
+    "draco/Domain.json",
+    "draco/DomainDictionary.json",
+    "draco/DomainType.json",
+    "draco/Draco.json",
+    "draco/DracoType.json",
+    "draco/Extensible.json",
+    "draco/Holon.json",
+    "draco/Main.json",
+    "draco/Primal.json",
+    "draco/REPL.json",
+    "draco/Rule.json",
+    "draco/RuleType.json",
+    "draco/RuntimeCompiler.json",
+    "draco/SourceContent.json",
+    "draco/Specifically.json",
+    "draco/Test.json",
+    "draco/Transform.json",
+    "draco/Type.json",
+    "draco/TypeDictionary.json",
+    "draco/TypeName.json",
+    "draco/Value.json"
+  )
 
   private def loadTypeDefinition(rp: String): Either[String, (TypeDefinition, String)] = {
     try {
@@ -47,21 +72,11 @@ class GenerateAndCompileTest extends AnyFunSuite {
         else parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
       val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
       if (td == null || td == TypeDefinition.Null)
-        Left("Failed to parse TypeDefinition from JSON")
+        Left(s"Failed to parse TypeDefinition from $rp")
       else
         Right((td, td.typeName.name))
     } catch {
-      case e: Exception => Left(s"JSON load exception: ${e.getMessage}")
-    }
-  }
-
-  private def generateSource(td: TypeDefinition): Either[String, String] = {
-    try {
-      val source = Generator.generate(td)
-      if (source == null || source.isEmpty) Left("Generator produced empty source")
-      else Right(source)
-    } catch {
-      case e: Exception => Left(s"Generator exception: ${e.getMessage}")
+      case e: Exception => Left(s"Load exception for $rp: ${e.getMessage}")
     }
   }
 
@@ -83,32 +98,11 @@ class GenerateAndCompileTest extends AnyFunSuite {
     compiled: Boolean,
     errors: Seq[String]
   ) {
-    def status: String = if (compiled) "PASS" else if (sourceGenerated) "COMPILE_FAIL" else if (jsonParsed) "GENERATE_FAIL" else "JSON_FAIL"
-
-    def summary: String = {
-      val errorSummary = if (errors.nonEmpty) s"  ${errors.head}" else ""
-      f"  $status%-14s $typeName%-30s $resourcePath$errorSummary"
-    }
-  }
-
-  private def testSingle(rp: String): TestRecord = {
-    loadTypeDefinition(rp) match {
-      case Left(err) =>
-        TestRecord(rp, rp, jsonParsed = false, sourceGenerated = false, compiled = false, errors = Seq(err))
-      case Right((td, name)) =>
-        generateSource(td) match {
-          case Left(err) =>
-            TestRecord(name, rp, jsonParsed = true, sourceGenerated = false, compiled = false, errors = Seq(err))
-          case Right(source) =>
-            val fileName = s"${name.replaceAll("\\[.*", "")}.scala"
-            RuntimeCompiler.compile(source, fileName) match {
-              case Right(_) =>
-                TestRecord(name, rp, jsonParsed = true, sourceGenerated = true, compiled = true, errors = Seq.empty)
-              case Left(errs) =>
-                TestRecord(name, rp, jsonParsed = true, sourceGenerated = true, compiled = false, errors = errs.take(3))
-            }
-        }
-    }
+    def status: String =
+      if (compiled) "PASS"
+      else if (sourceGenerated) "COMPILE_FAIL"
+      else if (jsonParsed) "GENERATE_FAIL"
+      else "JSON_FAIL"
   }
 
   private def testGroup(groupName: String, resourcePaths: Seq[String]): TestRecord = {
@@ -120,6 +114,7 @@ class GenerateAndCompileTest extends AnyFunSuite {
     }
 
     val tds = loaded.collect { case Right((td, _)) => td }
+    val typeNames = loaded.collect { case Right((_, name)) => name }
     generateSourceMulti(tds) match {
       case Left(err) =>
         TestRecord(groupName, s"[${tds.size} types]", jsonParsed = true,
@@ -130,52 +125,49 @@ class GenerateAndCompileTest extends AnyFunSuite {
             TestRecord(groupName, s"[${tds.size} types]", jsonParsed = true,
               sourceGenerated = true, compiled = true, errors = Seq.empty)
           case Left(errs) =>
+            // Dump the generated source so the failing type/line can be inspected
+            val safeName = groupName.replaceAll("[^A-Za-z0-9]+", "_")
+            val dumpPath = s"/tmp/$safeName-generated.scala"
+            try {
+              val pw = new java.io.PrintWriter(dumpPath)
+              try pw.write(source) finally pw.close()
+              println(s"\n[generated source dumped to $dumpPath]")
+              println(s"[group members: ${typeNames.mkString(", ")}]")
+            } catch { case _: Throwable => () }
             TestRecord(groupName, s"[${tds.size} types]", jsonParsed = true,
-              sourceGenerated = true, compiled = false, errors = errs.take(3))
+              sourceGenerated = true, compiled = false, errors = errs.take(20))
         }
     }
   }
 
-  test("Generate and compile all type definitions") {
-    val rootDir = new File(resourceRoot)
-    val jsonFiles = findJsonFiles(rootDir).sortBy(_.getAbsolutePath)
-    val allPaths = jsonFiles.map(resourcePath)
-
-    // Split into individual types and the TypeElement group
-    val individualPaths = allPaths.filterNot(typeElementGroup.contains)
-    val groupPaths = allPaths.filter(typeElementGroup.contains)
-
-    // Test individual types
-    val individualRecords: Seq[TestRecord] = individualPaths.map(testSingle)
-
-    // Test TypeElement hierarchy as one compile unit
-    val groupRecord: Seq[TestRecord] = if (groupPaths.nonEmpty) {
-      Seq(testGroup("TypeElement hierarchy", groupPaths))
-    } else Seq.empty
-
-    val records = individualRecords ++ groupRecord
-
-    val passed = records.count(_.compiled)
-    val failed = records.count(r => !r.compiled)
-
+  private def reportRecord(r: TestRecord): Unit = {
     println()
     println("=" * 100)
-    println(f"  GENERATE AND COMPILE REPORT: $passed%d passed, $failed%d failed, ${records.size}%d total")
+    println(f"  ${r.status}%-14s ${r.typeName}  ${r.resourcePath}")
     println("=" * 100)
-    println()
-    records.sortBy(r => (!r.compiled, r.typeName)).foreach(r => println(r.summary))
-    println()
-    println("=" * 100)
-
-    if (failed > 0) {
+    if (r.errors.nonEmpty) {
       println()
-      println("FAILURES:")
-      println()
-      records.filter(!_.compiled).foreach { r =>
-        println(s"  ${r.typeName} (${r.resourcePath}):")
-        r.errors.foreach(e => println(s"    $e"))
-        println()
-      }
+      println("DETAILS:")
+      r.errors.foreach(e => println(s"  $e"))
     }
+    println()
+  }
+
+  test("TypeElement group: generate and compile") {
+    val record = testGroup("TypeElement hierarchy", typeElementGroup)
+    reportRecord(record)
+    assert(record.compiled, s"TypeElement group failed: ${record.errors.mkString("; ")}")
+  }
+
+  test("TypeDefinition group: generate and compile") {
+    val record = testGroup("TypeDefinition family", typeDefinitionGroup)
+    reportRecord(record)
+    assert(record.compiled, s"TypeDefinition group failed: ${record.errors.mkString("; ")}")
+  }
+
+  test("Draco core group: generate and compile") {
+    val record = testGroup("Draco core types", dracoCoreGroup)
+    reportRecord(record)
+    assert(record.compiled, s"Draco core group failed: ${record.errors.mkString("; ")}")
   }
 }

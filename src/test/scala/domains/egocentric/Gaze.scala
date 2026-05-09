@@ -6,7 +6,7 @@ import domains._
 
 trait Gaze extends Egocentric with Direction
 
-object Gaze extends App {
+object Gaze extends App with DracoType {
   lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("Gaze", _namePackage = Seq("domains", "egocentric")))
   lazy val dracoType: Type[Gaze] = Type[Gaze] (typeDefinition)
 }

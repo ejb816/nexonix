@@ -34,6 +34,20 @@
           "name": "domainDefinition",
           "valueType": "TypeDefinition"
         }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "elementTypes",
+          "valueType": "Seq[TypeDefinition]",
+          "value": "_domainDefinition.domainAspect.elementTypeNames.map(name => TypeDefinition(TypeName(name, _namePackage = _domainDefinition.typeName.namePackage)))"
+        },
+        {
+          "kind": "Fixed",
+          "name": "kvMap",
+          "valueType": "Map[TypeName, TypeDefinition]",
+          "value": "elementTypes.map(td => (td.typeName, td)).toMap"
+        }
       ]
     }
   }

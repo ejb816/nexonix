@@ -35,6 +35,13 @@
           "valueType": "Seq[BodyElement]",
           "value": "Seq.empty"
         }
+      ],
+      "body": [
+        { "kind": "Fixed", "name": "valueType",  "valueType": "String",           "value": "_valueType" },
+        { "kind": "Fixed", "name": "parameters", "valueType": "Seq[Parameter]",   "value": "_parameters" },
+        { "kind": "Fixed", "name": "body",       "valueType": "Seq[BodyElement]", "value": "_body" },
+        { "kind": "Fixed", "name": "name",       "valueType": "String",           "value": "\"\"" },
+        { "kind": "Fixed", "name": "value",      "valueType": "String",           "value": "\"\"" }
       ]
     }
   }

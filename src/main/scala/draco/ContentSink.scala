@@ -5,39 +5,23 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Path, Paths}
 
 
-trait ContentSink {
+trait ContentSink extends DracoType {
   def write(content: String): Unit
 }
 
-object ContentSink extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "ContentSink",
-      _namePackage = Seq ("draco")
-    ),
-    _elements = Seq (
-      Dynamic ("write", "Unit", Seq (Parameter ("content", "String", "")), Seq.empty)
-    ),
-    _factory = Factory (
-      "ContentSink",
-      _parameters = Seq (
-        Parameter ("sinkRoot", "URI", ""),
-        Parameter ("logicalPath", "String", "")
-      )
-    )
-  )
+object ContentSink extends App with DracoType {
+  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("ContentSink"))
   lazy val dracoType: Type[ContentSink] = Type[ContentSink] (typeDefinition)
 
   def apply(
              _sinkRoot: URI,
              _logicalPath: String
            ): ContentSink = new ContentSink {
-
-    val sinkPath: Path = Paths.get(_sinkRoot.resolve(_logicalPath))
-
+    override val typeDefinition: TypeDefinition = ContentSink.typeDefinition
     override def write(content: String): Unit = {
       Files.createDirectories(sinkPath.getParent)
       Files.write(sinkPath, content.getBytes(StandardCharsets.UTF_8))
     }
+    val sinkPath: Path = Paths.get(_sinkRoot.resolve(_logicalPath))
   }
 }

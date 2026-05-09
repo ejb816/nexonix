@@ -6,7 +6,7 @@ import domains._
 
 trait Ego extends Egocentric with Holon[(Percept, Effect)]
 
-object Ego extends App {
+object Ego extends App with DracoType {
   lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("Ego", _namePackage = Seq("domains", "egocentric")))
   lazy val dracoType: Type[Ego] = Type[Ego] (typeDefinition)
 }

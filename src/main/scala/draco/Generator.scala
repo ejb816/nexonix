@@ -208,8 +208,8 @@ object Generator extends App {
   private def typeExtends (
     td: TypeDefinition
   ) : String = {
-    val ext = td.extensible
-    val derivation = td.derivation
+    val ext = td.dracoAspect.extensible
+    val derivation = td.dracoAspect.derivation
     if (ext.name.nonEmpty) {
       val head = parameterizedName(ext)
       if (derivation.isEmpty) s"extends $head"
@@ -219,7 +219,8 @@ object Generator extends App {
       val tail = derivation.tail.map(parameterizedName)
       if (tail.isEmpty) s"extends $head"
       else s"extends $head with ${tail.mkString(" with ")}"
-    } else "extends Extensible"
+    } else if (td.typeName.name == "Extensible") ""
+    else "extends Extensible"
   }
 
   private def methodParameters (
@@ -262,9 +263,15 @@ object Generator extends App {
     if (elements.isEmpty) ""
     else {
       val members = elements.map {
-        case f: Fixed => s"  val ${f.name}: ${f.valueType}"
-        case m: Mutable => s"  var ${m.name}: ${m.valueType}"
-        case d: Dynamic => s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType}"
+        case f: Fixed =>
+          if (f.value.nonEmpty) s"  val ${f.name}: ${f.valueType} = ${f.value}"
+          else s"  val ${f.name}: ${f.valueType}"
+        case m: Mutable =>
+          if (m.value.nonEmpty) s"  var ${m.name}: ${m.valueType} = ${m.value}"
+          else s"  var ${m.name}: ${m.valueType}"
+        case d: Dynamic =>
+          if (d.body.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body)}"
+          else s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType}"
         case p: Parameter => s"  val ${p.name}: ${p.valueType}"
         case te: TypeElement => s"  val ${te.name}: ${te.valueType}"
       }
@@ -288,16 +295,22 @@ object Generator extends App {
   private def factoryBody (
     td: TypeDefinition
   ) : String = {
-    val factory = td.factory
+    val factory = td.dracoAspect.factory
     val objName = baseName(factory.valueType)
+    val hasTypeDefinitionOverride =
+      if (factory.body.nonEmpty) factory.body.exists(_.name == "typeDefinition")
+      else factory.parameters.exists(_.name == "typeDefinition")
     val instanceOverrides = Seq(
-      if (chainHits(td, "DracoType")) Some(s"    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition") else None
+      if (chainHits(td, "DracoType") && !hasTypeDefinitionOverride)
+        Some(s"    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition")
+      else None
     ).flatten
     if (factory.body.nonEmpty) {
       val overrides = factory.body.map {
         case f: Fixed   => s"    override val ${f.name}: ${f.valueType} = ${f.value}"
         case m: Mutable => s"    override var ${m.name}: ${m.valueType} = ${m.value}"
-        case d: Dynamic => s"    override def ${d.name}: ${d.valueType} = ${d.value}"
+        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body)}"
+        case mo: Monadic => s"    ${mo.value}"
         case be: BodyElement => s"    override val ${be.name}: ${be.valueType} = ${be.value}"
       }
       s"{\n${(overrides ++ instanceOverrides).mkString("\n")}\n  }"
@@ -338,6 +351,18 @@ object Generator extends App {
     }
   }
 
+  /** True if the value type denotes a function-like value (no circe codec). */
+  private def isFunctionLikeType (valueType: String) : Boolean = {
+    val t = valueType.trim
+    t.contains("=>") ||
+      t.startsWith("Consumer[") ||
+      t.startsWith("Function[") ||
+      t.startsWith("Function0[") ||
+      t.startsWith("Function1[") ||
+      t.startsWith("Function2[") ||
+      t.startsWith("Behavior[")
+  }
+
   private def nullValueFor (valueType: String, defaultValue: String) : String = {
     if (defaultValue.nonEmpty) defaultValue
     else valueType match {
@@ -373,9 +398,9 @@ object Generator extends App {
     td: TypeDefinition,
     familyMap: Map[String, TypeDefinition]
   ) : Option[String] = {
-    td.derivation.map(tn => baseName(tn.name)).flatMap { name =>
+    td.dracoAspect.derivation.map(tn => baseName(tn.name)).flatMap { name =>
       familyMap.get(name) match {
-        case Some(parentTd) if parentTd.modules.nonEmpty =>
+        case Some(parentTd) if parentTd.dracoAspect.modules.nonEmpty =>
           // Parent has modules — but check if it in turn derives from a higher discriminated parent
           findDiscriminatedParent(parentTd, familyMap).orElse(Some(name))
         case Some(parentTd) =>
@@ -390,10 +415,10 @@ object Generator extends App {
     td: TypeDefinition,
     familyMap: Map[String, TypeDefinition]
   ) : Seq[String] = {
-    td.modules.flatMap { moduleTn =>
+    td.dracoAspect.modules.flatMap { moduleTn =>
       val name = baseName(moduleTn.name)
       familyMap.get(name) match {
-        case Some(moduleTd) if moduleTd.modules.nonEmpty =>
+        case Some(moduleTd) if moduleTd.dracoAspect.modules.nonEmpty =>
           // Intermediate sealed trait — recurse
           collectLeafModules(moduleTd, familyMap)
         case _ =>
@@ -446,7 +471,7 @@ object Generator extends App {
   private def simpleCodecDeclaration (td: TypeDefinition) : String = {
     val name = td.typeName.name
     val wName = wildcardTypeName(td.typeName)
-    val params = td.factory.parameters
+    val params = td.dracoAspect.factory.parameters
     s"""  implicit lazy val encoder: Encoder[$wName] = ${fieldElisionEncoder(params, "x")}
        |  implicit lazy val decoder: Decoder[$wName] = ${fieldElisionDecoder(params, name)}""".stripMargin
   }
@@ -482,7 +507,7 @@ object Generator extends App {
     // Decoder: dispatch on kind field
     val decoderCases = leaves.map { leaf =>
       val leafTd = familyMap.get(leaf)
-      val params = leafTd.map(_.factory.parameters).getOrElse(Seq.empty)
+      val params = leafTd.map(_.dracoAspect.factory.parameters).getOrElse(Seq.empty)
       val forLines = params.map { p =>
         if (p.value.nonEmpty) {
           val default = p.valueType match {
@@ -509,7 +534,7 @@ object Generator extends App {
     }.mkString("\n\n")
 
     // Fallback case: decode as parent type with base fields
-    val fallbackParams = td.factory.parameters
+    val fallbackParams = td.dracoAspect.factory.parameters
     val fallbackForLines = fallbackParams.map { p =>
       if (p.value.nonEmpty) {
         val default = p.valueType match {
@@ -525,8 +550,8 @@ object Generator extends App {
     }
     val fallbackYieldArgs = fallbackParams.map(p => s"_${p.name}").mkString(", ")
     val fallbackCase = if (fallbackParams.isEmpty) {
-      s"""      case _ =>
-         |        Right($name.Null)""".stripMargin
+      s"""      case other =>
+         |        Left(io.circe.DecodingFailure(s"Unknown $name kind: $$other", cursor.history))""".stripMargin
     } else {
       s"""      case _ =>
          |        for {
@@ -558,12 +583,12 @@ object Generator extends App {
     familyMap: Map[String, TypeDefinition]
   ) : String = {
     // Fields accessible on the parent: its elements and factory parameters
-    val parentFieldNames = (parentTd.elements.map(_.name) ++ parentTd.factory.parameters.map(_.name)).distinct
+    val parentFieldNames = (parentTd.dracoAspect.elements.map(_.name) ++ parentTd.dracoAspect.factory.parameters.map(_.name)).distinct
 
     // Find representative Parameter for each parent field (from factory params or synthesize from elements)
     val parentParams: Seq[Parameter] = parentFieldNames.flatMap { name =>
-      parentTd.factory.parameters.find(_.name == name).orElse {
-        parentTd.elements.find(_.name == name).map(e => Parameter(e.name, e.valueType, ""))
+      parentTd.dracoAspect.factory.parameters.find(_.name == name).orElse {
+        parentTd.dracoAspect.elements.find(_.name == name).map(e => Parameter(e.name, e.valueType, ""))
       }
     }
 
@@ -601,14 +626,16 @@ object Generator extends App {
         // Pattern 3: Codec.sub wiring (includes intermediate sealed traits)
         subtypeCodecDeclaration(td, parentName)
       case None =>
-        if (td.modules.nonEmpty) {
+        if (td.dracoAspect.modules.nonEmpty) {
           // Pattern 2: discriminated union (top-level sealed trait)
           discriminatedCodecDeclaration(td, familyMap)
-        } else if (td.factory.valueType.nonEmpty && td.factory.parameters.nonEmpty) {
-          // Pattern 1: simple field-based — only when factory params are accessible as trait elements
-          val elementNames = td.elements.map(_.name).toSet
-          val paramNames = td.factory.parameters.map(_.name).toSet
-          if (paramNames.subsetOf(elementNames)) simpleCodecDeclaration(td)
+        } else if (td.dracoAspect.factory.valueType.nonEmpty && td.dracoAspect.factory.parameters.nonEmpty) {
+          // Pattern 1: simple field-based — only when factory params are accessible as
+          // trait elements AND no param has a function-like type (those have no circe codec).
+          val elementNames = td.dracoAspect.elements.map(_.name).toSet
+          val paramNames = td.dracoAspect.factory.parameters.map(_.name).toSet
+          val anyFunctionLike = td.dracoAspect.factory.parameters.exists(p => isFunctionLikeType(p.valueType))
+          if (paramNames.subsetOf(elementNames) && !anyFunctionLike) simpleCodecDeclaration(td)
           else ""
         } else {
           // No codec (abstract type)
@@ -626,20 +653,12 @@ object Generator extends App {
     val name = typeName.name + nameSuffix
     val wName = wildcardTypeName(typeName) + nameSuffix
     val typeParams = if (typeName.typeParameters.isEmpty) "" else s"[${typeName.typeParameters.map(_ => "Nothing").mkString(", ")}]"
-    if (factory.valueType.nonEmpty && factory.body.isEmpty) {
+    if (factory.valueType.nonEmpty) {
       val nullArgs = factory.parameters.map { p =>
         s"    _${p.name} = ${nullValueFor(p.valueType, p.value)}"
       }
       if (nullArgs.isEmpty) s"lazy val Null: $wName = apply$typeParams()"
       else s"lazy val Null: $wName = apply$typeParams(\n${nullArgs.mkString(",\n")}\n  )"
-    } else if (factory.valueType.nonEmpty && factory.body.nonEmpty) {
-      val nullMembers = elements.map { e =>
-        s"    override val ${e.name}: ${e.valueType} = ${nullValueFor(e.valueType, "")}"
-      }
-      val nullInstanceOverrides = Seq(
-        s"    override lazy val typeDefinition: TypeDefinition = TypeDefinition.Null"
-      )
-      s"lazy val Null: $wName = new $wName {\n${(nullMembers ++ nullInstanceOverrides).mkString("\n")}\n  }"
     } else if (elements.isEmpty) {
       s"lazy val Null: $wName = new $wName {}"
     } else {
@@ -657,15 +676,18 @@ object Generator extends App {
   // --- Companion object generation ---
 
   private def typeGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty, nameSuffix: String = "") : String = {
-    val factory = td.factory
+    val factory = td.dracoAspect.factory
     val hasFactory = factory.valueType.nonEmpty
-    val hasGlobalElements = td.globalElements.nonEmpty
+    val hasGlobalElements = td.dracoAspect.globalElements.nonEmpty
     val objName = stripAspect(td.typeName.name) + nameSuffix
     val wName = wildcardTypeName(td.typeName) + nameSuffix
     val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
-    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "extends App"
 
-    val header = s"object $objName $appMixin".trim
+    val parents = Seq(
+      if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
+      if (chainHits(td, "DracoType")) Some("DracoType") else None
+    ).flatten
+    val header = if (parents.isEmpty) s"object $objName" else s"object $objName extends ${parents.mkString(" with ")}"
     val tdLiteral = s"  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
     val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
     val codec = codecDeclaration(td, familyContext)
@@ -681,7 +703,7 @@ object Generator extends App {
          |$tdLiteral
          |$tiLiteral
          |$codecBlock
-         |${globalElementsDeclaration(td.globalElements)}
+         |${globalElementsDeclaration(td.dracoAspect.globalElements)}
          |}""".stripMargin
     } else {
       s"""$header {
@@ -690,9 +712,9 @@ object Generator extends App {
          |$codecBlock
          |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType} = new ${factory.valueType} ${factoryBody(td)}
          |
-         |  ${nullInstance(td.typeName, td.elements, td.factory, nameSuffix)}
+         |  ${nullInstance(td.typeName, td.dracoAspect.elements, td.dracoAspect.factory, nameSuffix)}
          |
-         |${globalElementsDeclaration(td.globalElements)}
+         |${globalElementsDeclaration(td.dracoAspect.globalElements)}
          |}""".stripMargin
     }
   }
@@ -705,14 +727,14 @@ object Generator extends App {
        |  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}
        |  lazy val dracoType: DracoType = this
        |
-       |${globalElementsDeclaration(td.globalElements)}
+       |${globalElementsDeclaration(td.dracoAspect.globalElements)}
        |}""".stripMargin
   }
 
   // --- Trait declaration helper ---
 
   private def traitDeclaration (td: TypeDefinition, nameSuffix: String = "") : String =
-    s"${typeModifier(td.modules)}trait ${parameterizedName(td.typeName)}$nameSuffix ${typeExtends(td)} ${typeBody(td.elements)}"
+    s"${typeModifier(td.dracoAspect.modules)}trait ${parameterizedName(td.typeName)}$nameSuffix ${typeExtends(td)} ${typeBody(td.dracoAspect.elements)}"
 
   // --- Domain companion generation ---
 
@@ -723,22 +745,24 @@ object Generator extends App {
     * the runtime authority (via `typeDefinition.elementTypeNames`); this val is for
     * developer readability — see at-a-glance what's in the domain without opening JSON. */
   private def elementTypeNamesLiteral (td: TypeDefinition) : String = {
-    val items = td.elementTypeNames.map(n => s""""$n"""").mkString(", ")
+    val items = td.domainAspect.elementTypeNames.map(n => s""""$n"""").mkString(", ")
     s"  lazy val elementTypeNames: Seq[String] = Seq ($items)"
   }
 
   private def domainGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty) : String = {
     val objName = td.typeName.name
-    val hasGlobalElements = td.globalElements.nonEmpty
-    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "extends App"
-
-    val header = s"object $objName $appMixin".trim
+    val hasGlobalElements = td.dracoAspect.globalElements.nonEmpty
+    val parents = Seq(
+      if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
+      if (chainHits(td, "DracoType")) Some("DracoType") else None
+    ).flatten
+    val header = if (parents.isEmpty) s"object $objName" else s"object $objName extends ${parents.mkString(" with ")}"
     val tdLiteral = s"  lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
     val etnLiteral = elementTypeNamesLiteral(td)
     val codec = codecDeclaration(td, familyContext)
     val codecBlock = if (codec.nonEmpty) s"\n$codec\n" else ""
     val dtLiteral = domainTypeLiteral(objName)
-    val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.globalElements)}" else ""
+    val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.dracoAspect.globalElements)}" else ""
 
     s"""$header {
        |$tdLiteral
@@ -753,13 +777,16 @@ object Generator extends App {
 
   private def ruleGlobal (td: TypeDefinition) : String = {
     val name = stripAspect(td.typeName.name) + "Rule"
-    val appMixin = if (hasExplicitMain(td.globalElements)) "" else "extends App"
-    val header = s"object $name $appMixin".trim
+    val parents = Seq(
+      if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
+      if (chainHits(td, "DracoType")) Some("DracoType") else None
+    ).flatten
+    val header = if (parents.isEmpty) s"object $name" else s"object $name extends ${parents.mkString(" with ")}"
     s"""$header {
        |  lazy val typeDefinition: TypeDefinition = ${ruleDefinitionLoad(td)}
-       |${conditionFunctions(td.conditions)}
+       |${conditionFunctions(td.ruleAspect.conditions)}
        |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
-       |${actionBody(td.action, td.variables, td.values)}
+       |${actionBody(td.ruleAspect.action, td.ruleAspect.variables, td.ruleAspect.values)}
        |  }
        |
        |  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
@@ -767,9 +794,9 @@ object Generator extends App {
        |    .builder()
        |    .newRule ("${td.typeName.namePath}")
        |    .forEach (
-       |${factVariables(td.variables)}
+       |${factVariables(td.ruleAspect.variables)}
        |    )
-       |${whereConditions(td.conditions, stripAspect(td.typeName.namePath) + "Rule")}
+       |${whereConditions(td.ruleAspect.conditions, stripAspect(td.typeName.namePath) + "Rule")}
        |    .execute (action)
        |    .build()
        |  }
@@ -791,10 +818,10 @@ object Generator extends App {
       val name = baseName(td.typeName.name)
       if (!ordered.contains(name)) {
         ordered += name
-        td.modules.flatMap(tn => byName.get(baseName(tn.name))).foreach(walk)
+        td.dracoAspect.modules.flatMap(tn => byName.get(baseName(tn.name))).foreach(walk)
       }
     }
-    val referencedAsModule = tds.flatMap(_.modules.map(tn => baseName(tn.name))).toSet
+    val referencedAsModule = tds.flatMap(_.dracoAspect.modules.map(tn => baseName(tn.name))).toSet
     tds.filterNot(td => referencedAsModule.contains(baseName(td.typeName.name))).foreach(walk)
     tds.foreach(walk) // safety net for unreachable types
     ordered.toSeq.map(byName)
@@ -815,19 +842,19 @@ object Generator extends App {
     * Both forms deserve the domain emission pattern (companion with
     * `domainType: Domain[T]`); either alone is sufficient. */
   private def isDomain (td: TypeDefinition) : Boolean =
-    td.elementTypeNames.nonEmpty ||
-    (td.source.name.nonEmpty && td.target.name.nonEmpty)
+    td.domainAspect.elementTypeNames.nonEmpty ||
+    (td.dracoAspect.source.name.nonEmpty && td.dracoAspect.target.name.nonEmpty)
 
   private def isRule (td: TypeDefinition) : Boolean =
-    td.typeName.name.endsWith(".rule") || td.variables.nonEmpty
+    td.typeName.name.endsWith(".rule") || td.ruleAspect.variables.nonEmpty
 
   private def isActor (td: TypeDefinition) : Boolean =
-    td.typeName.name.endsWith(".actor") || td.derivation.exists(tn => Set("ActorType", "ExtensibleBehavior").contains(tn.name))
+    td.typeName.name.endsWith(".actor") || td.dracoAspect.derivation.exists(tn => Set("ActorType", "ExtensibleBehavior").contains(tn.name))
 
   /** Object-only type: no trait, no factory, no derivation, but has globalElements.
     * Emits object extending DracoType with dracoType = this. */
   private def isObjectOnly (td: TypeDefinition) : Boolean =
-    td.elements.isEmpty && td.factory.valueType.isEmpty && td.derivation.isEmpty && td.globalElements.nonEmpty
+    td.dracoAspect.elements.isEmpty && td.dracoAspect.factory.valueType.isEmpty && td.dracoAspect.derivation.isEmpty && td.dracoAspect.globalElements.nonEmpty
 
   // --- Main generate methods ---
 
@@ -856,10 +883,10 @@ object Generator extends App {
 
   /** Collect external type imports needed by a TypeDefinition */
   private def externalImports (td: TypeDefinition) : Seq[String] = {
-    val allValueTypes = td.elements.map(_.valueType) ++
-      td.factory.parameters.map(_.valueType) ++
-      td.globalElements.map(_.valueType) ++
-      td.derivation.map(_.name)
+    val allValueTypes = td.dracoAspect.elements.map(_.valueType) ++
+      td.dracoAspect.factory.parameters.map(_.valueType) ++
+      td.dracoAspect.globalElements.map(_.valueType) ++
+      td.dracoAspect.derivation.map(_.name)
     val typeNames = allValueTypes.flatMap(extractTypeNames).distinct
     typeNames.flatMap(externalTypeImports.get).distinct.sorted
   }
@@ -896,9 +923,9 @@ object Generator extends App {
     val ownInits: Set[Seq[String]] = td.typeName.namePackage.inits.toSet
     val covered: Set[Seq[String]] = ownInits + Seq("draco")
     val referenced: Seq[TypeName] =
-      (td.derivation
-        ++ td.modules
-        ++ Seq(td.extensible, td.superDomain, td.source, td.target))
+      (td.dracoAspect.derivation
+        ++ td.dracoAspect.modules
+        ++ Seq(td.dracoAspect.extensible, td.dracoAspect.superDomain, td.dracoAspect.source, td.dracoAspect.target))
         .filter(tn => tn != null && tn.name.nonEmpty)
     referenced
       .map(_.namePackage)
@@ -974,9 +1001,10 @@ object Generator extends App {
     // Merge external imports across all types in the family
     val mergedTd = TypeDefinition(
       _typeName = ordered.head.typeName,
-      _elements = ordered.flatMap(_.elements),
-      _factory = Factory("", _parameters = ordered.flatMap(_.factory.parameters)),
-      _globalElements = ordered.flatMap(_.globalElements)
+      _derivation = ordered.flatMap(_.dracoAspect.derivation),
+      _elements = ordered.flatMap(_.dracoAspect.elements),
+      _factory = Factory("", _parameters = ordered.flatMap(_.dracoAspect.factory.parameters)),
+      _globalElements = ordered.flatMap(_.dracoAspect.globalElements)
     )
     val imports = typeImports(mergedTd, anyCodec)
     val typeBlocks = ordered.map { td =>

@@ -6,7 +6,7 @@ import domains._
 
 trait Cosmocentric extends DracoType
 
-object Cosmocentric extends App {
+object Cosmocentric extends App with DracoType {
   lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("Cosmocentric", _namePackage = Seq("domains", "cosmocentric")))
   lazy val dracoType: Type[Cosmocentric] = Type[Cosmocentric] (typeDefinition)
 }

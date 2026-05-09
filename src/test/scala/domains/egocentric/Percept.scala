@@ -6,7 +6,7 @@ import domains._
 
 trait Percept extends Egocentric with Primal[(Gaze, Distance)]
 
-object Percept extends App {
+object Percept extends App with DracoType {
   lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("Percept", _namePackage = Seq("domains", "egocentric")))
   lazy val dracoType: Type[Percept] = Type[Percept] (typeDefinition)
 }

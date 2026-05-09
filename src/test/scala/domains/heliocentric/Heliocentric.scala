@@ -7,7 +7,7 @@ import domains.cosmocentric._
 
 trait Heliocentric extends Cosmocentric 
 
-object Heliocentric extends App {
+object Heliocentric extends App with DracoType {
   lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("Heliocentric", _namePackage = Seq("domains", "heliocentric")))
 
   lazy val elementTypeNames: Seq[String] = Seq ("Elements", "Epoch", "Ephemeris")

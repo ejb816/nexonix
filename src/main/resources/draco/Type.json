@@ -23,7 +23,7 @@
       "parameters": [
         {
           "kind": "Parameter",
-          "name": "_typeDefinition",
+          "name": "typeDefinition",
           "valueType": "TypeDefinition"
         }
       ]
