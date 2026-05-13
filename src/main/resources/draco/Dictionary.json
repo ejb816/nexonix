@@ -17,6 +17,12 @@
           "K",
           "V"
         ]
+      },
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
       }
     ],
     "elements": [
@@ -30,10 +36,17 @@
         "name": "removed",
         "valueType": "Map[K, V]",
         "parameters": [
-          { "kind": "Parameter", "name": "key", "valueType": "K" }
+          {
+            "kind": "Parameter",
+            "name": "key",
+            "valueType": "K"
+          }
         ],
         "body": [
-          { "kind": "Monadic", "value": "kvMap.removed(key)" }
+          {
+            "kind": "Monadic",
+            "value": "kvMap.removed(key)"
+          }
         ]
       },
       {
@@ -41,11 +54,22 @@
         "name": "updated[V1 >: V]",
         "valueType": "Map[K, V1]",
         "parameters": [
-          { "kind": "Parameter", "name": "key", "valueType": "K" },
-          { "kind": "Parameter", "name": "value", "valueType": "V1" }
+          {
+            "kind": "Parameter",
+            "name": "key",
+            "valueType": "K"
+          },
+          {
+            "kind": "Parameter",
+            "name": "value",
+            "valueType": "V1"
+          }
         ],
         "body": [
-          { "kind": "Monadic", "value": "kvMap.updated(key, value)" }
+          {
+            "kind": "Monadic",
+            "value": "kvMap.updated(key, value)"
+          }
         ]
       },
       {
@@ -53,10 +77,17 @@
         "name": "get",
         "valueType": "Option[V]",
         "parameters": [
-          { "kind": "Parameter", "name": "key", "valueType": "K" }
+          {
+            "kind": "Parameter",
+            "name": "key",
+            "valueType": "K"
+          }
         ],
         "body": [
-          { "kind": "Monadic", "value": "kvMap.get(key)" }
+          {
+            "kind": "Monadic",
+            "value": "kvMap.get(key)"
+          }
         ]
       },
       {
@@ -65,9 +96,20 @@
         "valueType": "Iterator[(K, V)]",
         "parameters": [],
         "body": [
-          { "kind": "Monadic", "value": "kvMap.iterator" }
+          {
+            "kind": "Monadic",
+            "value": "kvMap.iterator"
+          }
         ]
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
   }
 }

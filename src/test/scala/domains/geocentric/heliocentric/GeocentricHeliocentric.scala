@@ -6,10 +6,11 @@ import domains.geocentric._
 import domains._
 import domains.heliocentric._
 
-trait GeocentricHeliocentric extends Transform[Geocentric, Heliocentric]
+trait GeocentricHeliocentric extends DomainTransform[Geocentric, Heliocentric]
 
-object GeocentricHeliocentric extends App {
-  lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("GeocentricHeliocentric", _namePackage = Seq("domains", "geocentric", "heliocentric")))
+object GeocentricHeliocentric extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("GeocentricHeliocentric", _namePackage = Seq ("domains", "geocentric", "heliocentric")))
+  lazy val dracoType: Type[GeocentricHeliocentric] = Type[GeocentricHeliocentric] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ()
 

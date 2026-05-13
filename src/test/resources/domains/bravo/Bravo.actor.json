@@ -5,5 +5,14 @@
       "domains",
       "bravo"
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Bravo",
+      "namePackage": [
+        "domains",
+        "bravo"
+      ]
+    }
   }
 }

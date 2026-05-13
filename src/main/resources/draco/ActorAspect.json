@@ -6,6 +6,14 @@
     ]
   },
   "dracoAspect" : {
+    "derivation" : [
+      {
+        "name" : "DracoType",
+        "namePackage" : [
+          "draco"
+        ]
+      }
+    ],
     "elements" : [
       {
         "kind" : "Fixed",
@@ -25,15 +33,27 @@
         {
           "kind" : "Parameter",
           "name" : "messageAction",
-          "valueType" : "Action",
-          "value" : "Action.Null"
+          "valueType" : "Action"
         },
         {
           "kind" : "Parameter",
           "name" : "signalAction",
-          "valueType" : "Action",
-          "value" : "Action.Null"
+          "valueType" : "Action"
         }
+      ]
+    },
+    "globalElements" : [
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit"
+      }
+    ]
+  },
+  "domainAspect" : {
+    "typeName" : {
+      "name" : "Draco",
+      "namePackage" : [
+        "draco"
       ]
     }
   }

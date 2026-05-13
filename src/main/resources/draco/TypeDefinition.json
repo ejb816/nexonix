@@ -33,27 +33,41 @@
         {
           "kind" : "Parameter",
           "name" : "dracoAspect",
-          "valueType" : "DracoAspect",
-          "value" : "DracoAspect.Null"
+          "valueType" : "DracoAspect"
         },
         {
           "kind" : "Parameter",
           "name" : "domainAspect",
-          "valueType" : "DomainAspect",
-          "value" : "DomainAspect.Null"
+          "valueType" : "DomainAspect"
         },
         {
           "kind" : "Parameter",
           "name" : "ruleAspect",
-          "valueType" : "RuleAspect",
-          "value" : "RuleAspect.Null"
+          "valueType" : "RuleAspect"
         },
         {
           "kind" : "Parameter",
           "name" : "actorAspect",
-          "valueType" : "ActorAspect",
-          "value" : "ActorAspect.Null"
+          "valueType" : "ActorAspect"
         }
+      ]
+    },
+    "globalElements" : [
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit"
+      },
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit"
+      }
+    ]
+  },
+  "domainAspect" : {
+    "typeName" : {
+      "name" : "Draco",
+      "namePackage" : [
+        "draco"
       ]
     }
   }

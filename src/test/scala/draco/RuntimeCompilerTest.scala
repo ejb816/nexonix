@@ -14,11 +14,11 @@ class RuntimeCompilerTest extends AnyFunSuite {
         |}
         |""".stripMargin
 
-    val result = RuntimeCompiler.compile(source, "SimpleTest.scala")
+    val result = Generator.compile(source, "SimpleTest.scala")
     assert(result.isRight, s"Compilation failed: ${result.left.getOrElse(Seq.empty).mkString("\n")}")
 
     val classDir = result.toOption.get
-    val clazz = RuntimeCompiler.loadClass(classDir, "draco.generated.test.SimpleTest")
+    val clazz = Generator.loadClass(classDir, "draco.generated.test.SimpleTest")
     val instance = clazz.getDeclaredConstructor().newInstance()
     val nameField = clazz.getMethod("name")
     assert(nameField.invoke(instance) == "SimpleTest")
@@ -30,7 +30,7 @@ class RuntimeCompilerTest extends AnyFunSuite {
         |
         |import draco._
         |
-        |trait GeneratedTrait extends Extensible with DracoType
+        |trait GeneratedTrait extends DracoType
         |
         |object GeneratedTrait extends App {
         |  lazy val typeDefinition: TypeDefinition = TypeDefinition(
@@ -40,11 +40,11 @@ class RuntimeCompilerTest extends AnyFunSuite {
         |}
         |""".stripMargin
 
-    val result = RuntimeCompiler.compile(source, "GeneratedTrait.scala")
+    val result = Generator.compile(source, "GeneratedTrait.scala")
     assert(result.isRight, s"Compilation failed: ${result.left.getOrElse(Seq.empty).mkString("\n")}")
 
     val classDir = result.toOption.get
-    val clazz = RuntimeCompiler.loadClass(classDir, "draco.generated.test.GeneratedTrait$")
+    val clazz = Generator.loadClass(classDir, "draco.generated.test.GeneratedTrait$")
     val instance = clazz.getField("MODULE$").get(null)
     val typeDef = clazz.getMethod("typeDefinition").invoke(instance).asInstanceOf[TypeDefinition]
     assert(typeDef.typeName.name == "GeneratedTrait")
@@ -60,7 +60,7 @@ class RuntimeCompilerTest extends AnyFunSuite {
     println(s"Generated source for ${td.typeName.name}:")
     println(generatedSource)
 
-    val result = RuntimeCompiler.compile(generatedSource, "Holon.scala")
+    val result = Generator.compile(generatedSource, "Holon.scala")
     result match {
       case Right(classDir) =>
         println(s"Compilation successful: $classDir")
@@ -79,7 +79,7 @@ class RuntimeCompilerTest extends AnyFunSuite {
         |}
         |""".stripMargin
 
-    val result = RuntimeCompiler.compile(badSource, "BadClass.scala")
+    val result = Generator.compile(badSource, "BadClass.scala")
     assert(result.isLeft, "Expected compilation to fail")
     val errors = result.left.getOrElse(Seq.empty)
     assert(errors.nonEmpty, "Expected at least one error")

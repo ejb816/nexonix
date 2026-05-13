@@ -71,6 +71,9 @@ object Gabbler {
         case MessagePosted(screenName, message) =>
           context.log.info2("message has been posted by '{}': {}", screenName, message)
           Behaviors.stopped
+        case SessionDenied(reason) =>
+          context.log.info("session denied: {}", reason)
+          Behaviors.stopped
       }
     }
 }

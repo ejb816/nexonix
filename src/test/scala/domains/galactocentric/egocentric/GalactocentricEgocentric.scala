@@ -6,10 +6,11 @@ import domains.galactocentric._
 import domains._
 import domains.egocentric._
 
-trait GalactocentricEgocentric extends Transform[Galactocentric, Egocentric]
+trait GalactocentricEgocentric extends DomainTransform[Galactocentric, Egocentric]
 
-object GalactocentricEgocentric extends App {
-  lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("GalactocentricEgocentric", _namePackage = Seq("domains", "galactocentric", "egocentric")))
+object GalactocentricEgocentric extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("GalactocentricEgocentric", _namePackage = Seq ("domains", "galactocentric", "egocentric")))
+  lazy val dracoType: Type[GalactocentricEgocentric] = Type[GalactocentricEgocentric] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ()
 

@@ -13,5 +13,13 @@
         "valueType": "TypeDefinition"
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
   }
 }

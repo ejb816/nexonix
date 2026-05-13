@@ -16,6 +16,10 @@
         "kind": "Fixed",
         "name": "pathElements",
         "valueType": "Seq[String]"
+      },
+      {
+        "kind": "Monadic",
+        "value": "def value[T] (_source: Json)(implicit decoder: Decoder[T]): T = {\n  val pathValue: Json = pathElements.foldLeft(Option(_source)) {\n    (e, a) => e.flatMap(j => if (j.isArray) j.hcursor.downN(a.toInt).focus else j.hcursor.downField(a).focus)\n  }.orNull\n  if (pathValue != null) pathValue.as[T].getOrElse(null.asInstanceOf[T])\n  else null.asInstanceOf[T]\n}"
       }
     ],
     "factory": {
@@ -32,6 +36,14 @@
           "name": "pathElements",
           "valueType": "Seq[String]"
         }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
       ]
     }
   }

@@ -41,7 +41,7 @@ object Value {
     for {
       _name <- c.downField("name").as[String]
       _source <- c.downField("source").as[Json]
-      _pathElements <- c.downField("pathElements").as[Array[String]]
+      _pathElements <- c.downField("pathElements").as[Seq[String]]
     } yield Value (
       _name,
       _source,

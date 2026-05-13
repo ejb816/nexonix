@@ -10,7 +10,7 @@
   "dracoAspect": {
     "derivation": [
       {
-        "name": "Transform",
+        "name": "DomainTransform",
         "namePackage": [
           "draco"
         ],
@@ -31,6 +31,16 @@
       "name": "Galactocentric",
       "namePackage": [
         "domains",
+        "galactocentric"
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "HeliocentricGalactocentric",
+      "namePackage": [
+        "domains",
+        "heliocentric",
         "galactocentric"
       ]
     }

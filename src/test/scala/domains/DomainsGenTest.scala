@@ -32,7 +32,7 @@ import scala.io.Source
  *  Universe-wide:
  *    - All 26 types compile together as one unit.
  */
-class ReferenceFramesGenTest extends AnyFunSuite {
+class DomainsGenTest extends AnyFunSuite {
 
   /** A reference-frame type (frame itself, leaf, or assembly). */
   private case class Ty(name: String, pkg: String) {
@@ -197,7 +197,7 @@ class ReferenceFramesGenTest extends AnyFunSuite {
         (source, s"${ty.name}.scala")
       }
 
-      RuntimeCompiler.compileMulti(pairs) match {
+      Generator.compileMulti(pairs) match {
         case Right(_) => // pass
         case Left(errors) =>
           val names = family.members.map(_.name).mkString(", ")
@@ -208,7 +208,7 @@ class ReferenceFramesGenTest extends AnyFunSuite {
 
   // --- Universe-wide: all 19 types compile together ---
 
-  test(s"Reference frames: all ${allTypes.size} types compile together as one unit (compileMulti)") {
+  test(s"Domains: all ${allTypes.size} types compile together as one unit (compileMulti)") {
     val pairs: Seq[(String, String)] = allTypes.map { ty =>
       val td     = loadTypeDefinition(ty.jsonPath)
       val source = Generator.generate(td)
@@ -216,7 +216,7 @@ class ReferenceFramesGenTest extends AnyFunSuite {
       (source, s"${ty.name}.scala")
     }
 
-    RuntimeCompiler.compileMulti(pairs) match {
+    Generator.compileMulti(pairs) match {
       case Right(_) => // pass
       case Left(errors) =>
         val names = allTypes.map(_.name).mkString(", ")

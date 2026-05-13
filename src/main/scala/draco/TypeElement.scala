@@ -1,100 +1,42 @@
 package draco
 
-import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
+import io.circe.syntax.EncoderOps
 
 sealed trait TypeElement extends Primal[String] {
   val name: String
   val valueType: String
-  val parameters: Seq[Parameter] = Seq ()
-  val body: Seq[BodyElement] = Seq ()
+  lazy val parameters: Seq[Parameter] = Seq.empty
+  lazy val body: Seq[BodyElement] = Seq.empty
 }
 
-sealed trait BodyElement extends TypeElement
-
-object BodyElement extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "BodyElement",
-      _namePackage = Seq ("draco")
-    ),
-    _derivation = Seq (
-      TypeName ("TypeElement", _namePackage = Seq ("draco"))
-    ),
-    _modules = Seq (
-      TypeName ("Fixed", _namePackage = Seq ("draco")),
-      TypeName ("Mutable", _namePackage = Seq ("draco")),
-      TypeName ("Dynamic", _namePackage = Seq ("draco")),
-      TypeName ("Parameter", _namePackage = Seq ("draco")),
-      TypeName ("Monadic", _namePackage = Seq ("draco")),
-      TypeName ("Pattern", _namePackage = Seq ("draco")),
-      TypeName ("Action", _namePackage = Seq ("draco")),
-      TypeName ("Condition", _namePackage = Seq ("draco")),
-      TypeName ("Variable", _namePackage = Seq ("draco")),
-      TypeName ("Factory", _namePackage = Seq ("draco"))
-    )
-  )
-  lazy val dracoType: Type[BodyElement] = Type[BodyElement] (typeDefinition)
-  private lazy val codec = Codec.sub[TypeElement, BodyElement](TypeElement.encoder, TypeElement.decoder)
-  implicit def encoder: Encoder[BodyElement] = codec.encoder
-  implicit def decoder: Decoder[BodyElement] = codec.decoder
-}
-
-object TypeElement extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "TypeElement",
-      _namePackage = Seq ("draco")
-    ),
-    _modules = Seq (
-      TypeName ("BodyElement", _namePackage = Seq ("draco"))
-    ),
-    _elements = Seq (
-      Fixed ("name", "String"),
-      Fixed ("valueType", "String"),
-      Fixed ("parameters", "Seq[Parameter]"),
-      Fixed ("body", "Seq[BodyElement]")
-    )
-  )
+object TypeElement extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("TypeElement", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[TypeElement] = Type[TypeElement] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
-  def apply (
-              _name: String,
-              _valueType: String,
-              _value: String
-            ) : TypeElement = new TypeElement {
-    override val name: String = _name
-    override val valueType: String = _valueType
-    override val value: String = _value
-  }
-  lazy val Null: TypeElement = TypeElement (_name = "", _valueType = "", _value = "")
-  implicit lazy val encoder: Encoder[TypeElement] = Encoder.instance { te =>
-    val kind = te match {
+  implicit lazy val encoder: Encoder[TypeElement] = Encoder.instance { x =>
+    val kind = x match {
       case _: Fixed => "Fixed"
       case _: Mutable => "Mutable"
       case _: Dynamic => "Dynamic"
       case _: Parameter => "Parameter"
+      case _: Monadic => "Monadic"
+      case _: Pattern => "Pattern"
       case _: Action => "Action"
       case _: Condition => "Condition"
       case _: Variable => "Variable"
       case _: Factory => "Factory"
-      case _: Monadic => "Monadic"
-      case _: Pattern => "Pattern"
-      case _: TypeElement => "TypeElement"
     }
-
-    val fields = Seq (
+    val fields = Seq(
       Some("kind" -> Json.fromString(kind)),
-      if (te.name.nonEmpty) Some("name" -> te.name.asJson) else None,
-      if (te.valueType.nonEmpty) Some("valueType" -> te.valueType.asJson) else None,
-      if (te.value.nonEmpty) Some("value" -> te.value.asJson) else None,
-      if (te.parameters.nonEmpty) Some("parameters" -> te.parameters.asJson) else None,
-      if (te.body.nonEmpty) Some("body" -> te.body.asJson) else None
+      if (x.name.nonEmpty) Some("name" -> x.name.asJson) else None,
+      if (x.valueType.nonEmpty) Some("valueType" -> x.valueType.asJson) else None,
+      if (x.parameters.nonEmpty) Some("parameters" -> x.parameters.asJson) else None,
+      if (x.body.nonEmpty) Some("body" -> x.body.asJson) else None
     ).flatten
-
     Json.obj(fields: _*)
   }
-
   implicit lazy val decoder: Decoder[TypeElement] = Decoder.instance { cursor =>
     cursor.downField("kind").as[String].flatMap {
       case "Fixed" =>
@@ -117,7 +59,7 @@ object TypeElement extends App {
           _valueType <- cursor.downField("valueType").as[Option[String]].map(_.getOrElse(""))
           _parameters <- cursor.downField("parameters").as[Option[Seq[Parameter]]].map(_.getOrElse(Seq.empty))
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
-        } yield Dynamic(_name, _valueType, _parameters, _body)
+        } yield Dynamic (_name, _valueType, _parameters, _body)
 
       case "Parameter" =>
         for {
@@ -126,9 +68,14 @@ object TypeElement extends App {
           _value <- cursor.downField("value").as[Option[String]].map(_.getOrElse(""))
         } yield Parameter (_name, _valueType, _value)
 
+      case "Monadic" =>
+        for {
+          _value <- cursor.downField("value").as[Option[String]].map(_.getOrElse(""))
+        } yield Monadic (_value)
+
       case "Pattern" =>
         for {
-          _variables  <- cursor.downField("variables").as[Option[Seq[Variable]]].map(_.getOrElse(Seq.empty))
+          _variables <- cursor.downField("variables").as[Option[Seq[Variable]]].map(_.getOrElse(Seq.empty))
           _conditions <- cursor.downField("conditions").as[Option[Seq[Condition]]].map(_.getOrElse(Seq.empty))
         } yield Pattern (_variables, _conditions)
 
@@ -158,309 +105,321 @@ object TypeElement extends App {
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
         } yield Factory (_valueType, _parameters, _body)
 
-      case "Monadic" =>
-        for {
-          _value <- cursor.downField("value").as[Option[String]].map(_.getOrElse(""))
-        } yield Monadic(_value)
-
-      case _ =>
-        for {
-          _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
-          _valueType <- cursor.downField("valueType").as[Option[String]].map(_.getOrElse(""))
-          _value <- cursor.downField("value").as[Option[String]].map(_.getOrElse(""))
-        } yield TypeElement (_name, _valueType, _value)
-
+      case other =>
+        Left(io.circe.DecodingFailure(s"Unknown TypeElement kind: $other", cursor.history))
     }
   }
 }
 
+sealed trait BodyElement extends TypeElement
 
-sealed trait Fixed extends BodyElement
-object Fixed extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Fixed", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _factory = Factory ("Fixed", _parameters = Seq (
-      Parameter ("name", "String", ""),
-      Parameter ("valueType", "String", ""),
-      Parameter ("value", "String", "\"\"")
-    ))
-  )
+object BodyElement extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("BodyElement", _namePackage = Seq ("draco")))
+  lazy val dracoType: Type[BodyElement] = Type[BodyElement] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
+  private lazy val codec = Codec.sub[TypeElement, BodyElement](TypeElement.encoder, TypeElement.decoder)
+  implicit def encoder: Encoder[BodyElement] = codec.encoder
+  implicit def decoder: Decoder[BodyElement] = codec.decoder
+}
+
+trait Fixed extends BodyElement
+
+object Fixed extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Fixed", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Fixed] = Type[Fixed] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
+  private lazy val codec = Codec.sub[TypeElement, Fixed](TypeElement.encoder, TypeElement.decoder)
+  implicit def encoder: Encoder[Fixed] = codec.encoder
+  implicit def decoder: Decoder[Fixed] = codec.decoder
+
   def apply (
-      _name: String,
-      _valueType: String,
-      _value: String = ""
-    ) : Fixed = {
-    new Fixed {
-      override val name: String = _name
-      override val valueType: String = _valueType
-      override val value: String = _value
-    }
+    _name: String,
+    _valueType: String,
+    _value: String = ""
+  ) : Fixed = new Fixed {
+    override lazy val name: String = _name
+    override lazy val valueType: String = _valueType
+    override lazy val value: String = _value
+    override lazy val typeDefinition: TypeDefinition = Fixed.typeDefinition
   }
+
+  lazy val Null: Fixed = apply(
+    _name = "",
+    _valueType = "",
+    _value = ""
+  )
+
 }
 
-sealed trait Mutable extends BodyElement
-object Mutable extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Mutable", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _factory = Factory ("Mutable", _parameters = Seq (
-      Parameter ("name", "String", ""),
-      Parameter ("valueType", "String", ""),
-      Parameter ("value", "String", "\"\"")
-    ))
-  )
+trait Mutable extends BodyElement
+
+object Mutable extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Mutable", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Mutable] = Type[Mutable] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
+  private lazy val codec = Codec.sub[TypeElement, Mutable](TypeElement.encoder, TypeElement.decoder)
+  implicit def encoder: Encoder[Mutable] = codec.encoder
+  implicit def decoder: Decoder[Mutable] = codec.decoder
+
   def apply (
-              _name: String,
-              _valueType: String,
-              _value: String = ""
-            ) : Mutable = {
-    new Mutable {
-      override val name: String = _name
-      override val valueType: String = _valueType
-      override val value: String = _value
-    }
+    _name: String,
+    _valueType: String,
+    _value: String = ""
+  ) : Mutable = new Mutable {
+    override lazy val name: String = _name
+    override lazy val valueType: String = _valueType
+    override lazy val value: String = _value
+    override lazy val typeDefinition: TypeDefinition = Mutable.typeDefinition
   }
+
+  lazy val Null: Mutable = apply(
+    _name = "",
+    _valueType = "",
+    _value = ""
+  )
+
 }
 
-sealed trait Dynamic extends BodyElement
-object Dynamic extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Dynamic", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _factory = Factory ("Dynamic", _parameters = Seq (
-      Parameter ("name", "String", ""),
-      Parameter ("valueType", "String", ""),
-      Parameter ("parameters", "Seq[Parameter]", "Seq.empty"),
-      Parameter ("body", "Seq[BodyElement]", "Seq.empty")
-    ))
-  )
+trait Dynamic extends BodyElement
+
+object Dynamic extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Dynamic", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Dynamic] = Type[Dynamic] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
+  private lazy val codec = Codec.sub[TypeElement, Dynamic](TypeElement.encoder, TypeElement.decoder)
+  implicit def encoder: Encoder[Dynamic] = codec.encoder
+  implicit def decoder: Decoder[Dynamic] = codec.decoder
+
   def apply (
-              _name: String,
-              _valueType: String,
-              _parameters: Seq[Parameter],
-              _body: Seq[BodyElement]
-            ) : Dynamic = {
-    new Dynamic {
-      override val name: String = _name
-      override val valueType: String = _valueType
-      override val parameters: Seq[Parameter] = _parameters
-      override val body: Seq[BodyElement] = _body
-      override val value: String = ""
-    }
+    _name: String,
+    _valueType: String,
+    _parameters: Seq[Parameter] = Seq.empty,
+    _body: Seq[BodyElement] = Seq.empty
+  ) : Dynamic = new Dynamic {
+    override lazy val name: String = _name
+    override lazy val valueType: String = _valueType
+    override lazy val parameters: Seq[Parameter] = _parameters
+    override lazy val body: Seq[BodyElement] = _body
+    override lazy val value: String = ""
+    override lazy val typeDefinition: TypeDefinition = Dynamic.typeDefinition
   }
+
+  lazy val Null: Dynamic = apply(
+    _name = "",
+    _valueType = "",
+    _parameters = Seq.empty,
+    _body = Seq.empty
+  )
+
 }
 
-sealed trait Parameter extends BodyElement
-object Parameter extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Parameter", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _factory = Factory ("Parameter", _parameters = Seq (
-      Parameter ("name", "String", ""),
-      Parameter ("valueType", "String", ""),
-      Parameter ("value", "String", "")
-    ))
-  )
+trait Parameter extends BodyElement
+
+object Parameter extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Parameter", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Parameter] = Type[Parameter] (typeDefinition)
-  def apply (
-              _name: String,
-              _valueType: String,
-              _value: String
-            ) : Parameter = {
-    new Parameter {
-      override val name: String = _name
-      override val valueType: String = _valueType
-      override val value: String = _value
-    }
-  }
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   private lazy val codec = Codec.sub[TypeElement, Parameter](TypeElement.encoder, TypeElement.decoder)
   implicit def encoder: Encoder[Parameter] = codec.encoder
   implicit def decoder: Decoder[Parameter] = codec.decoder
-}
 
-sealed trait Monadic extends BodyElement
-object Monadic extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Monadic", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _factory = Factory ("Monadic", _parameters = Seq (
-      Parameter ("value", "String", "")
-    ))
-  )
-  lazy val dracoType: Type[Monadic] = Type[Monadic] (typeDefinition)
-  def apply(_value: String): Monadic = new Monadic {
-    override val name: String = ""
-    override val valueType: String = "Unit"
-    override val value: String = _value
+  def apply (
+    _name: String,
+    _valueType: String,
+    _value: String
+  ) : Parameter = new Parameter {
+    override lazy val name: String = _name
+    override lazy val valueType: String = _valueType
+    override lazy val value: String = _value
+    override lazy val typeDefinition: TypeDefinition = Parameter.typeDefinition
   }
 
-  lazy val Null: Monadic = Monadic("")
+  lazy val Null: Parameter = apply(
+    _name = "",
+    _valueType = "",
+    _value = ""
+  )
+
+}
+
+trait Monadic extends BodyElement
+
+object Monadic extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Monadic", _namePackage = Seq ("draco")))
+  lazy val dracoType: Type[Monadic] = Type[Monadic] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
   private lazy val codec = Codec.sub[TypeElement, Monadic](TypeElement.encoder, TypeElement.decoder)
   implicit def encoder: Encoder[Monadic] = codec.encoder
   implicit def decoder: Decoder[Monadic] = codec.decoder
+
+  def apply (
+    _value: String
+  ) : Monadic = new Monadic {
+    override lazy val name: String = ""
+    override lazy val valueType: String = "Unit"
+    override lazy val value: String = _value
+    override lazy val typeDefinition: TypeDefinition = Monadic.typeDefinition
+  }
+
+  lazy val Null: Monadic = apply(
+    _value = ""
+  )
+
 }
 
-sealed trait Pattern extends BodyElement {
+trait Pattern extends BodyElement {
   val variables: Seq[Variable]
   val conditions: Seq[Condition]
 }
 
-object Pattern extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Pattern", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _elements = Seq (
-      Fixed ("variables", "Seq[Variable]"),
-      Fixed ("conditions", "Seq[Condition]")
-    ),
-    _factory = Factory ("Pattern", _parameters = Seq (
-      Parameter ("variables", "Seq[Variable]", "Seq.empty"),
-      Parameter ("conditions", "Seq[Condition]", "Seq.empty")
-    ))
-  )
+object Pattern extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Pattern", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Pattern] = Type[Pattern] (typeDefinition)
-  def apply (
-      _variables: Seq[Variable] = Seq.empty,
-      _conditions: Seq[Condition] = Seq.empty
-    ) : Pattern = new Pattern {
-    override val variables: Seq[Variable] = _variables
-    override val conditions: Seq[Condition] = _conditions
-    override val name: String = ""
-    override val valueType: String = "org.evrete.api.Knowledge => Unit"
-    override val value: String = ""
-  }
-  lazy val Null: Pattern = Pattern (_variables = Seq.empty, _conditions = Seq.empty)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
   private lazy val codec = Codec.sub[TypeElement, Pattern](TypeElement.encoder, TypeElement.decoder)
   implicit def encoder: Encoder[Pattern] = codec.encoder
   implicit def decoder: Decoder[Pattern] = codec.decoder
+
+  def apply (
+    _variables: Seq[Variable] = Seq.empty,
+    _conditions: Seq[Condition] = Seq.empty
+  ) : Pattern = new Pattern {
+    override lazy val variables: Seq[Variable] = _variables
+    override lazy val conditions: Seq[Condition] = _conditions
+    override lazy val name: String = ""
+    override lazy val valueType: String = "org.evrete.api.Knowledge => Unit"
+    override lazy val value: String = ""
+    override lazy val typeDefinition: TypeDefinition = Pattern.typeDefinition
+  }
+
+  lazy val Null: Pattern = apply()
+
 }
-sealed trait Action extends BodyElement {
+
+trait Action extends BodyElement {
   val variables: Seq[Variable]
   val values: Seq[Value]
 }
-object Action extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Action", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _elements = Seq (
-      Fixed ("variables", "Seq[Variable]"),
-      Fixed ("values", "Seq[Value]")
-    ),
-    _factory = Factory ("Action", _parameters = Seq (
-      Parameter ("variables", "Seq[Variable]", "Seq.empty"),
-      Parameter ("values", "Seq[Value]", "Seq.empty"),
-      Parameter ("body", "Seq[BodyElement]", "Seq.empty")
-    ))
-  )
+
+object Action extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Action", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Action] = Type[Action] (typeDefinition)
-  def apply (
-              _variables: Seq[Variable] = Seq.empty,
-              _values: Seq[Value] = Seq.empty,
-              _body: Seq[BodyElement]
-            ) : Action = new Action {
-    override val name: String = "ctx"
-    override val valueType: String = "org.evrete.api.RHSContext => Unit"
-    override val value: String = ""
-    override val body: Seq[BodyElement] = _body
-    override val variables: Seq[Variable] = _variables
-    override val values: Seq[Value] = _values
-  }
-  lazy val Null: Action = Action (_variables = Seq.empty, _values = Seq.empty, _body = Seq.empty)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
   private lazy val codec = Codec.sub[TypeElement, Action](TypeElement.encoder, TypeElement.decoder)
   implicit def encoder: Encoder[Action] = codec.encoder
   implicit def decoder: Decoder[Action] = codec.decoder
-}
-sealed trait Condition extends BodyElement
 
-object Condition extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Condition", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _factory = Factory ("Condition", _parameters = Seq (
-      Parameter ("parameters", "Seq[Parameter]", "Seq.empty"),
-      Parameter ("value", "String", "")
-    ))
-  )
-  lazy val dracoType: Type[Condition] = Type[Condition] (typeDefinition)
   def apply (
-              _parameters: Seq[Parameter],
-              _value: String
-            ) : Condition = new Condition {
-    override val name: String = ""
-    override val parameters: Seq[Parameter] = _parameters
-    override val body: Seq[BodyElement] = Seq ()
-    override val valueType: String = "Boolean"
-    override val value: String = _value
+    _variables: Seq[Variable] = Seq.empty,
+    _values: Seq[Value] = Seq.empty,
+    _body: Seq[BodyElement] = Seq.empty
+  ) : Action = new Action {
+    override lazy val variables: Seq[Variable] = _variables
+    override lazy val values: Seq[Value] = _values
+    override lazy val body: Seq[BodyElement] = _body
+    override lazy val name: String = "ctx"
+    override lazy val valueType: String = "org.evrete.api.RHSContext => Unit"
+    override lazy val value: String = ""
+    override lazy val typeDefinition: TypeDefinition = Action.typeDefinition
   }
 
-  lazy val Null: Condition = Condition (_parameters = Seq.empty, _value = "")
+  lazy val Null: Action = apply()
+
+}
+
+trait Condition extends BodyElement
+
+object Condition extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Condition", _namePackage = Seq ("draco")))
+  lazy val dracoType: Type[Condition] = Type[Condition] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
   private lazy val codec = Codec.sub[TypeElement, Condition](TypeElement.encoder, TypeElement.decoder)
   implicit def encoder: Encoder[Condition] = codec.encoder
   implicit def decoder: Decoder[Condition] = codec.decoder
+
+  def apply (
+    _parameters: Seq[Parameter] = Seq.empty,
+    _value: String
+  ) : Condition = new Condition {
+    override lazy val parameters: Seq[Parameter] = _parameters
+    override lazy val value: String = _value
+    override lazy val name: String = ""
+    override lazy val valueType: String = "Boolean"
+    override lazy val typeDefinition: TypeDefinition = Condition.typeDefinition
+  }
+
+  lazy val Null: Condition = apply(
+    _parameters = Seq.empty,
+    _value = ""
+  )
+
 }
 
+trait Variable extends BodyElement
 
-sealed trait Variable extends BodyElement
-
-object Variable extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Variable", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _factory = Factory ("Variable", _parameters = Seq (
-      Parameter ("name", "String", ""),
-      Parameter ("valueType", "String", "")
-    ))
-  )
+object Variable extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Variable", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Variable] = Type[Variable] (typeDefinition)
-  def apply (
-              _variableName: String,
-              _variableType: String
-            ) : Variable = new Variable {
-    override val name: String = _variableName
-    override val valueType: String = _variableType
-    override val value: String = ""
-    override val parameters: Seq[Parameter] = Seq ()
-    override val body: Seq[BodyElement] = Seq ()
-  }
-  lazy val Null: Variable = Variable (_variableName = "", _variableType = "")
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
   private lazy val codec = Codec.sub[TypeElement, Variable](TypeElement.encoder, TypeElement.decoder)
   implicit def encoder: Encoder[Variable] = codec.encoder
   implicit def decoder: Decoder[Variable] = codec.decoder
-}
 
-sealed trait Factory extends BodyElement
-
-object Factory extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName ("Factory", _namePackage = Seq ("draco")),
-    _derivation = Seq (TypeName ("BodyElement", _namePackage = Seq ("draco"))),
-    _factory = Factory ("Factory", _parameters = Seq (
-      Parameter ("valueType", "String", ""),
-      Parameter ("parameters", "Seq[Parameter]", "Seq.empty"),
-      Parameter ("body", "Seq[BodyElement]", "Seq.empty")
-    ))
-  )
-  lazy val dracoType: Type[Factory] = Type[Factory] (typeDefinition)
-  def apply(
-    _fullName: String,
-    _parameters: Seq[Parameter] = Seq.empty,
-    _body: Seq[BodyElement] = Seq.empty
-  ): Factory = new Factory {
-    override val name: String = ""
-    override val valueType: String = _fullName
-    override val value: String = ""
-    override val parameters: Seq[Parameter] = _parameters
-    override val body: Seq[BodyElement] = _body
+  def apply (
+    _name: String,
+    _valueType: String
+  ) : Variable = new Variable {
+    override lazy val name: String = _name
+    override lazy val valueType: String = _valueType
+    override lazy val value: String = ""
+    override lazy val typeDefinition: TypeDefinition = Variable.typeDefinition
   }
 
-  lazy val Null: Factory = Factory("")
+  lazy val Null: Variable = apply(
+    _name = "",
+    _valueType = ""
+  )
+
+}
+
+trait Factory extends BodyElement
+
+object Factory extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Factory", _namePackage = Seq ("draco")))
+  lazy val dracoType: Type[Factory] = Type[Factory] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   private lazy val codec = Codec.sub[TypeElement, Factory](TypeElement.encoder, TypeElement.decoder)
   implicit def encoder: Encoder[Factory] = codec.encoder
   implicit def decoder: Decoder[Factory] = codec.decoder
+
+  def apply (
+    _valueType: String,
+    _parameters: Seq[Parameter] = Seq.empty,
+    _body: Seq[BodyElement] = Seq.empty
+  ) : Factory = new Factory {
+    override lazy val valueType: String = _valueType
+    override lazy val parameters: Seq[Parameter] = _parameters
+    override lazy val body: Seq[BodyElement] = _body
+    override lazy val name: String = ""
+    override lazy val value: String = ""
+    override lazy val typeDefinition: TypeDefinition = Factory.typeDefinition
+  }
+
+  lazy val Null: Factory = apply(
+    _valueType = "",
+    _parameters = Seq.empty,
+    _body = Seq.empty
+  )
+
 }

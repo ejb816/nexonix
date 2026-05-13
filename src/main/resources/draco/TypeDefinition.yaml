@@ -1,36 +1,65 @@
 typeName:
   name: TypeDefinition
   namePackage:
-    - draco
+  - draco
 dracoAspect:
   derivation:
-    - name: Aspects
-      namePackage:
-        - draco
+  - name: Aspects
+    namePackage:
+    - draco
   elements:
-    - kind: Fixed
-      name: typeName
-      valueType: TypeName
+  - kind: Fixed
+    name: typeName
+    valueType: TypeName
   factory:
     kind: Factory
     valueType: TypeDefinition
     parameters:
-      - kind: Parameter
-        name: typeName
-        valueType: TypeName
-      - kind: Parameter
-        name: dracoAspect
-        valueType: DracoAspect
-        value: DracoAspect.Null
-      - kind: Parameter
-        name: domainAspect
-        valueType: DomainAspect
-        value: DomainAspect.Null
-      - kind: Parameter
-        name: ruleAspect
-        valueType: RuleAspect
-        value: RuleAspect.Null
-      - kind: Parameter
-        name: actorAspect
-        valueType: ActorAspect
-        value: ActorAspect.Null
+    - kind: Parameter
+      name: typeName
+      valueType: TypeName
+    - kind: Parameter
+      name: dracoAspect
+      valueType: DracoAspect
+      value: DracoAspect.Null
+    - kind: Parameter
+      name: domainAspect
+      valueType: DomainAspect
+      value: DomainAspect.Null
+    - kind: Parameter
+      name: ruleAspect
+      valueType: RuleAspect
+      value: RuleAspect.Null
+    - kind: Parameter
+      name: actorAspect
+      valueType: ActorAspect
+      value: ActorAspect.Null
+  globalElements:
+  - kind: Monadic
+    value: |-
+      implicit lazy val encoder: Encoder[TypeDefinition] = Encoder.instance { td =>
+        val fields = Seq(
+          Some("typeName" -> td.typeName.asJson),
+          if (!DracoAspect.isEmpty(td.dracoAspect))   Some("dracoAspect"  -> td.dracoAspect.asJson)  else None,
+          if (!DomainAspect.isEmpty(td.domainAspect)) Some("domainAspect" -> td.domainAspect.asJson) else None,
+          if (!RuleAspect.isEmpty(td.ruleAspect))     Some("ruleAspect"   -> td.ruleAspect.asJson)   else None,
+          if (!ActorAspect.isEmpty(td.actorAspect))   Some("actorAspect"  -> td.actorAspect.asJson)  else None
+        ).flatten
+        Json.obj(fields: _*)
+      }
+  - kind: Monadic
+    value: |-
+      implicit lazy val decoder: Decoder[TypeDefinition] = Decoder.instance { cursor =>
+        for {
+          _typeName     <- cursor.downField("typeName").as[TypeName]
+          _dracoAspect  <- cursor.downField("dracoAspect").as[Option[DracoAspect]].map(_.getOrElse(DracoAspect.Null))
+          _domainAspect <- cursor.downField("domainAspect").as[Option[DomainAspect]].map(_.getOrElse(DomainAspect.Null))
+          _ruleAspect   <- cursor.downField("ruleAspect").as[Option[RuleAspect]].map(_.getOrElse(RuleAspect.Null))
+          _actorAspect  <- cursor.downField("actorAspect").as[Option[ActorAspect]].map(_.getOrElse(ActorAspect.Null))
+        } yield apply(_typeName, _dracoAspect, _domainAspect, _ruleAspect, _actorAspect)
+      }
+domainAspect:
+  typeName:
+    name: Draco
+    namePackage:
+    - draco

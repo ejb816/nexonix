@@ -6,7 +6,20 @@
     ]
   },
   "dracoAspect" : {
+    "derivation" : [
+      {
+        "name" : "DracoType",
+        "namePackage" : [
+          "draco"
+        ]
+      }
+    ],
     "elements" : [
+      {
+        "kind" : "Fixed",
+        "name" : "typeName",
+        "valueType" : "TypeName"
+      },
       {
         "kind" : "Fixed",
         "name" : "elementTypeNames",
@@ -19,10 +32,28 @@
       "parameters" : [
         {
           "kind" : "Parameter",
+          "name" : "typeName",
+          "valueType" : "TypeName"
+        },
+        {
+          "kind" : "Parameter",
           "name" : "elementTypeNames",
-          "valueType" : "Seq[String]",
-          "value" : "Seq.empty"
+          "valueType" : "Seq[String]"
         }
+      ]
+    },
+    "globalElements" : [
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit"
+      }
+    ]
+  },
+  "domainAspect" : {
+    "typeName" : {
+      "name" : "Draco",
+      "namePackage" : [
+        "draco"
       ]
     }
   }

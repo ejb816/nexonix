@@ -1,0 +1,33 @@
+{
+  "typeName": {
+    "name": "DomainTransform",
+    "namePackage": [
+      "draco"
+    ],
+    "typeParameters": [
+      "S <: DomainType",
+      "T <: DomainType"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Holon",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "(S, T)"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

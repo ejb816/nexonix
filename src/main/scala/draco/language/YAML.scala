@@ -5,7 +5,7 @@ import io.circe.{Json, parser => jsonParser}
 import io.circe.syntax.EncoderOps
 import io.circe.yaml.{parser => yamlParser, printer => yamlPrinter}
 
-trait YAML extends Extensible
+trait YAML
 
 object YAML extends App {
   lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("YAML", _namePackage = Seq ("draco", "language")))

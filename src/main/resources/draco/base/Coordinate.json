@@ -28,5 +28,14 @@
         "valueType": "T"
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Base",
+      "namePackage": [
+        "draco",
+        "base"
+      ]
+    }
   }
 }

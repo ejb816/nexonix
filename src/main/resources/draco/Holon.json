@@ -11,21 +11,19 @@
   "dracoAspect": {
     "derivation": [
       {
-        "name": "Primal",
+        "name": "DracoType",
         "namePackage": [
           "draco"
-        ],
-        "typeParameters": [
-          "T"
         ]
       }
-    ],
-    "elements": [
-      {
-        "kind": "Fixed",
-        "name": "value",
-        "valueType": "T"
-      }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
   }
 }

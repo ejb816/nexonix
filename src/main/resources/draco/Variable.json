@@ -30,9 +30,32 @@
         }
       ],
       "body": [
-        { "kind": "Fixed", "name": "name",      "valueType": "String", "value": "_name" },
-        { "kind": "Fixed", "name": "valueType", "valueType": "String", "value": "_valueType" },
-        { "kind": "Fixed", "name": "value",     "valueType": "String", "value": "\"\"" }
+        {
+          "kind": "Fixed",
+          "name": "name",
+          "valueType": "String",
+          "value": "_name"
+        },
+        {
+          "kind": "Fixed",
+          "name": "valueType",
+          "valueType": "String",
+          "value": "_valueType"
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "String",
+          "value": "\"\""
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
       ]
     }
   }

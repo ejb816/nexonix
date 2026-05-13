@@ -189,6 +189,7 @@ class RETEEngine {
           }
           Right(betaNode)
         case List(singleNode) => singleNode
+        case other => sys.error(s"grouped(2) produced unexpected list: $other")
       }.toList
       previousNodes = newPreviousNodes
     }

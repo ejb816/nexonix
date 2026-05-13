@@ -42,5 +42,14 @@
       "kind": "Factory",
       "valueType": "Accumulator"
     }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Primes",
+      "namePackage": [
+        "draco",
+        "primes"
+      ]
+    }
   }
 }

@@ -50,5 +50,13 @@
         }
       ]
     }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
   }
 }

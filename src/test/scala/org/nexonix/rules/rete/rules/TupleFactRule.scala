@@ -9,15 +9,14 @@ import org._
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait TupleFactRule extends Extensible
+trait TupleFactRule
 
 object TupleFactRule extends App {
-  lazy val typeDefinition: TypeDefinition = draco.Generator.loadRuleType(TypeName ("TupleFact", _namePackage = Seq("org", "nexonix", "rules", "rete", "rules")))
-  def w0(fact: (Int,Int,Int)): Boolean = fact._1.equals(1) && fact._2.equals(2) && fact._3.equals(3)
+  lazy val typeDefinition: TypeDefinition = Generator.loadRuleType(TypeName ("TupleFact", _namePackage = Seq ("org", "nexonix", "rules", "rete", "rules")))
+  lazy val dracoType: Type[TupleFactRule] = Type[TupleFactRule] (typeDefinition)
+
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
-      val fact: (Int,Int,Int) = ctx.get[(Int,Int,Int)]("$fact")
-      println(fact)
-      println((fact._1, fact._2, fact._3))
+
   }
 
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
@@ -25,9 +24,9 @@ object TupleFactRule extends App {
     .builder()
     .newRule ("org.nexonix.rules.rete.rules.TupleFact.rule")
     .forEach (
-      "$fact", classOf[(Int,Int,Int)]
+
     )
-    .where("org.nexonix.rules.rete.rules.TupleFactRule.w0($fact)")
+
     .execute (action)
     .build()
   }

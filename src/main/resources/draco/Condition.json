@@ -31,10 +31,38 @@
         }
       ],
       "body": [
-        { "kind": "Fixed", "name": "parameters", "valueType": "Seq[Parameter]", "value": "_parameters" },
-        { "kind": "Fixed", "name": "value",      "valueType": "String",         "value": "_value" },
-        { "kind": "Fixed", "name": "name",       "valueType": "String",         "value": "\"\"" },
-        { "kind": "Fixed", "name": "valueType",  "valueType": "String",         "value": "\"Boolean\"" }
+        {
+          "kind": "Fixed",
+          "name": "parameters",
+          "valueType": "Seq[Parameter]",
+          "value": "_parameters"
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "String",
+          "value": "_value"
+        },
+        {
+          "kind": "Fixed",
+          "name": "name",
+          "valueType": "String",
+          "value": "\"\""
+        },
+        {
+          "kind": "Fixed",
+          "name": "valueType",
+          "valueType": "String",
+          "value": "\"Boolean\""
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
       ]
     }
   }

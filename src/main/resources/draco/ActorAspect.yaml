@@ -1,24 +1,38 @@
 typeName:
   name: ActorAspect
   namePackage:
-    - draco
+  - draco
 dracoAspect:
+  derivation:
+  - name: DracoType
+    namePackage:
+    - draco
   elements:
-    - kind: Fixed
-      name: messageAction
-      valueType: Action
-    - kind: Fixed
-      name: signalAction
-      valueType: Action
+  - kind: Fixed
+    name: messageAction
+    valueType: Action
+  - kind: Fixed
+    name: signalAction
+    valueType: Action
   factory:
     kind: Factory
     valueType: ActorAspect
     parameters:
-      - kind: Parameter
-        name: messageAction
-        valueType: Action
-        value: Action.Null
-      - kind: Parameter
-        name: signalAction
-        valueType: Action
-        value: Action.Null
+    - kind: Parameter
+      name: messageAction
+      valueType: Action
+      value: Action.Null
+    - kind: Parameter
+      name: signalAction
+      valueType: Action
+      value: Action.Null
+  globalElements:
+  - kind: Monadic
+    value: |-
+      lazy val isEmpty: ActorAspect => Boolean = aa =>
+        aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty
+domainAspect:
+  typeName:
+    name: Draco
+    namePackage:
+    - draco

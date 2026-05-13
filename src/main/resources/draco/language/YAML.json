@@ -5,5 +5,14 @@
       "draco",
       "language"
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Language",
+      "namePackage": [
+        "draco",
+        "language"
+      ]
+    }
   }
 }

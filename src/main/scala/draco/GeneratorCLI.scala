@@ -16,8 +16,8 @@ import java.nio.file.{Files, Paths}
  *
  *  Subcommands (MVP):
  *    generate       <json-path>             print Scala source that Generator.generate emits
- *    compile        <json-path>             generate + RuntimeCompiler.compile a single source
- *    compile-multi  <json-path>...          generate each + RuntimeCompiler.compileMulti
+ *    compile        <json-path>             generate + Generator.compile a single source
+ *    compile-multi  <json-path>...          generate each + Generator.compileMulti
  *                                           (use when sources have inter-file dependencies,
  *                                            e.g. sub-domain extends super-domain)
  *    inspect        <json-path>             print parsed TypeDefinition as pretty JSON
@@ -36,7 +36,7 @@ object GeneratorCLI {
         |
         |subcommands:
         |  generate       <json>           print Scala emitted by Generator.generate(td)
-        |  compile        <json>           single-source compile via RuntimeCompiler.compile
+        |  compile        <json>           single-source compile via Generator.compile
         |  compile-multi  <json>...        multi-source compile (one unit) via compileMulti;
         |                                  use for sources with inter-file dependencies
         |  inspect        <json>           print parsed TypeDefinition as pretty JSON
@@ -76,7 +76,7 @@ object GeneratorCLI {
     val td     = loadTypeDefinition(path)
     val source = Generator.generate(td)
     val name   = td.typeName.name.replaceAll("\\[.*", "")
-    RuntimeCompiler.compile(source, s"$name.scala") match {
+    Generator.compile(source, s"$name.scala") match {
       case Right(classDir) =>
         println(s"OK  $name  (classes in ${classDir.getAbsolutePath})")
       case Left(errors) =>
@@ -104,7 +104,7 @@ object GeneratorCLI {
     val sourcesForCompiler = pairs.map { case (_, src, fn) => (src, fn) }
     val displayNames       = pairs.map(_._1).mkString(", ")
 
-    RuntimeCompiler.compileMulti(sourcesForCompiler) match {
+    Generator.compileMulti(sourcesForCompiler) match {
       case Right(classDir) =>
         println(s"OK  [$displayNames]  (classes in ${classDir.getAbsolutePath})")
       case Left(errors) =>

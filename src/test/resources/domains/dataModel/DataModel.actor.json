@@ -5,5 +5,14 @@
       "domains",
       "dataModel"
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DataModel",
+      "namePackage": [
+        "domains",
+        "dataModel"
+      ]
+    }
   }
 }

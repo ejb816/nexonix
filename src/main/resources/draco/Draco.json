@@ -6,28 +6,55 @@
     ]
   },
   "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    },
     "elementTypeNames": [
+      "Action",
       "Actor",
+      "ActorAspect",
+      "ActorType",
+      "Aspects",
+      "BodyElement",
       "CLI",
+      "Condition",
       "ContentSink",
       "Dictionary",
       "Domain",
+      "DomainAspect",
       "DomainDictionary",
+      "DomainTransform",
       "DomainType",
-      "Extensible",
+      "DracoAspect",
+      "DracoType",
+      "Dynamic",
+      "Factory",
+      "Fixed",
       "Generator",
+      "Holon",
       "Main",
+      "Monadic",
+      "Mutable",
+      "Parameter",
+      "Pattern",
       "Primal",
       "REPL",
       "Rule",
+      "RuleAspect",
+      "RuleType",
       "SourceContent",
-      "Specifically",
       "Test",
+      "Type",
       "TypeDefinition",
       "TypeDictionary",
       "TypeElement",
       "TypeName",
-      "Value"
+      "TypeTransform",
+      "Value",
+      "Variable"
     ]
   }
 }

@@ -1,7 +1,7 @@
 package draco
 
-import java.net.{URI, URL}
-import scala.io.{BufferedSource, Source}
+import java.net.URI
+import scala.io.BufferedSource
 
 trait SourceContent extends DracoType {
   val source: BufferedSource
@@ -10,19 +10,24 @@ trait SourceContent extends DracoType {
 }
 
 object SourceContent extends App with DracoType {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("SourceContent"))
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("SourceContent", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[SourceContent] = Type[SourceContent] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
-  private lazy val NullSourceContent: URL = classOf[SourceContent].getResource("/NullSourceContent")
   def apply (
-              _sourceRoot: URI,
-              _logicalPath: String
-            ) : SourceContent = new SourceContent {
-    override val typeDefinition: TypeDefinition = SourceContent.typeDefinition
-    val sourceURI: URI = _sourceRoot.resolve(URI.create(_logicalPath))
-    override val source: BufferedSource = Source.fromFile(sourceURI)
-    override val sourceLines: Seq[String] = source.getLines.toSeq
-    override val sourceString: String = sourceLines.mkString("\n")
-    source.close()
+    _sourceRoot: URI,
+    _logicalPath: String
+  ) : SourceContent = new SourceContent {
+    val sourceURI: java.net.URI = _sourceRoot.resolve(java.net.URI.create(_logicalPath))
+    override lazy val source: BufferedSource = scala.io.Source.fromFile(sourceURI)
+    override lazy val sourceLines: Seq[String] = try source.getLines().toSeq finally source.close()
+    override lazy val sourceString: String = sourceLines.mkString("\n")
+    override lazy val typeDefinition: TypeDefinition = SourceContent.typeDefinition
   }
+
+  lazy val Null: SourceContent = apply(
+    _sourceRoot = null.asInstanceOf[URI],
+    _logicalPath = ""
+  )
+
 }

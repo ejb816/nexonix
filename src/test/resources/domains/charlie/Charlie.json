@@ -16,5 +16,14 @@
         ]
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Charlie",
+      "namePackage": [
+        "domains",
+        "charlie"
+      ]
+    }
   }
 }

@@ -1,27 +1,31 @@
 package draco
 
 import java.net.URI
-import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Path, Paths}
-
 
 trait ContentSink extends DracoType {
   def write(content: String): Unit
 }
 
 object ContentSink extends App with DracoType {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("ContentSink"))
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("ContentSink", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[ContentSink] = Type[ContentSink] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
-  def apply(
-             _sinkRoot: URI,
-             _logicalPath: String
-           ): ContentSink = new ContentSink {
-    override val typeDefinition: TypeDefinition = ContentSink.typeDefinition
+  def apply (
+    _sinkRoot: URI,
+    _logicalPath: String
+  ) : ContentSink = new ContentSink {
+    val sinkPath: java.nio.file.Path = java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))
     override def write(content: String): Unit = {
-      Files.createDirectories(sinkPath.getParent)
-      Files.write(sinkPath, content.getBytes(StandardCharsets.UTF_8))
+      java.nio.file.Files.createDirectories(sinkPath.getParent)
+      java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))
     }
-    val sinkPath: Path = Paths.get(_sinkRoot.resolve(_logicalPath))
+    override lazy val typeDefinition: TypeDefinition = ContentSink.typeDefinition
   }
+
+  lazy val Null: ContentSink = apply(
+    _sinkRoot = null.asInstanceOf[URI],
+    _logicalPath = ""
+  )
+
 }

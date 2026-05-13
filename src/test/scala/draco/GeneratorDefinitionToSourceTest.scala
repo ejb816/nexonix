@@ -137,10 +137,6 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
     generateAndVerify("draco/DracoType.json", "DracoType")
   }
 
-  test("Generate Extensible") {
-    generateAndVerify("draco/Extensible.json", "Extensible")
-  }
-
   test("Generate Main") {
     generateAndVerify("draco/Main.json", "Main")
   }
@@ -157,9 +153,6 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
     generateAndVerify("draco/RuleType.json", "RuleType")
   }
 
-  test("Generate Specifically") {
-    generateAndVerify("draco/Specifically.json", "Specifically")
-  }
 
   test("Generate SourceContent") {
     generateAndVerify("draco/SourceContent.json", "SourceContent")

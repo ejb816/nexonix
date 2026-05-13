@@ -1,8 +1,8 @@
 package draco
 
-import org.evrete.api.{Knowledge, RhsContext}
-
 import java.util.function.Consumer
+import org.evrete.api.Knowledge
+import org.evrete.api.RhsContext
 
 trait RuleType extends DracoType {
   val ruleDefinition: TypeDefinition
@@ -10,34 +10,26 @@ trait RuleType extends DracoType {
   val pattern: Consumer[Knowledge]
 }
 
-object RuleType extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "RuleType",
-      _namePackage = Seq ("draco")
-    ),
-    _derivation =  Seq (
-      TypeName (
-        _name = "DracoType",
-        _namePackage = Seq ("draco")
-      )
-    ),
-    _elements = Seq (
-      Fixed (
-        _name = "ruleDefinition",
-        _valueType = "TypeDefinition"
-      )
-    )
-  )
+object RuleType extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("RuleType", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[RuleType] = Type[RuleType] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
   def apply (
-            _ruleDefinition: TypeDefinition,
-            _pattern: Consumer[Knowledge],
-            _action: Consumer[RhsContext]
-            ) : RuleType = new RuleType {
-    override val ruleDefinition: TypeDefinition = _ruleDefinition
-    override val typeDefinition: TypeDefinition = _ruleDefinition
-    override val action: Consumer[RhsContext] = _action
-    override val pattern: Consumer[Knowledge] = _pattern
+    _ruleDefinition: TypeDefinition,
+    _pattern: Consumer[Knowledge],
+    _action: Consumer[RhsContext]
+  ) : RuleType = new RuleType {
+    override lazy val ruleDefinition: TypeDefinition = _ruleDefinition
+    override lazy val typeDefinition: TypeDefinition = _ruleDefinition
+    override lazy val action: Consumer[RhsContext] = _action
+    override lazy val pattern: Consumer[Knowledge] = _pattern
   }
+
+  lazy val Null: RuleType = apply(
+    _ruleDefinition = null.asInstanceOf[TypeDefinition],
+    _pattern = null.asInstanceOf[Consumer[Knowledge]],
+    _action = null.asInstanceOf[Consumer[RhsContext]]
+  )
+
 }

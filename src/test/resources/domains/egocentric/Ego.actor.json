@@ -5,5 +5,14 @@
       "domains",
       "egocentric"
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Egocentric",
+      "namePackage": [
+        "domains",
+        "egocentric"
+      ]
+    }
   }
 }

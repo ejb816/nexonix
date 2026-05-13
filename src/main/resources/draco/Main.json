@@ -44,8 +44,18 @@
         }
       ],
       "body": [
-        { "kind": "Fixed", "name": "sourceRoot", "valueType": "URI", "value": "classOf[Main].getResource(\"/\").toURI.resolve(java.net.URI.create(s\"../../../src/main/${_sourceName}/\"))" },
-        { "kind": "Fixed", "name": "sinkRoot",   "valueType": "URI", "value": "classOf[Test].getResource(\"/\").toURI.resolve(java.net.URI.create(s\"../../../src/main/${_sinkName}/\"))" }
+        {
+          "kind": "Fixed",
+          "name": "sourceRoot",
+          "valueType": "URI",
+          "value": "classOf[Main].getResource(\"/\").toURI.resolve(java.net.URI.create(s\"../../../src/main/${_sourceName}/\"))"
+        },
+        {
+          "kind": "Fixed",
+          "name": "sinkRoot",
+          "valueType": "URI",
+          "value": "classOf[Test].getResource(\"/\").toURI.resolve(java.net.URI.create(s\"../../../src/main/${_sinkName}/\"))"
+        }
       ]
     },
     "globalElements": [
@@ -56,5 +66,13 @@
         "value": "Main (\"resources\", \"scala\")"
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
   }
 }

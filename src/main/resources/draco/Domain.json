@@ -16,6 +16,45 @@
           "draco"
         ]
       }
-    ]
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Domain[T]",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "domainDefinition",
+          "valueType": "TypeDefinition"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "domainDefinition",
+          "valueType": "TypeDefinition",
+          "value": "_domainDefinition"
+        },
+        {
+          "kind": "Fixed",
+          "name": "typeDefinition",
+          "valueType": "TypeDefinition",
+          "value": "_domainDefinition"
+        },
+        {
+          "kind": "Fixed",
+          "name": "typeDictionary",
+          "valueType": "TypeDictionary",
+          "value": "TypeDictionary(_domainDefinition)"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
   }
 }

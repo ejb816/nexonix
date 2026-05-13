@@ -18,6 +18,13 @@
     ]
   },
   "domainAspect": {
+    "typeName": {
+      "name": "Egocentric",
+      "namePackage": [
+        "domains",
+        "egocentric"
+      ]
+    },
     "elementTypeNames": [
       "Direction",
       "Distance",

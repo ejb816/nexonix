@@ -1,6 +1,6 @@
 package org.nexonix.format.json
 
-import draco.{Factory, Fixed, Generator, TypeElement, Parameter, TypeDefinition, TypeName}
+import draco.{DomainAspect, DracoAspect, Factory, Fixed, Generator, Parameter, TypeDefinition, TypeElement, TypeName}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
@@ -8,26 +8,26 @@ import org.scalatest.funsuite.AnyFunSuite
 class TestTypeModule extends AnyFunSuite  {
   val dracoDomainDefinition: TypeDefinition = TypeDefinition (
     TypeName ("Draco", _namePackage = Seq("draco")),
-    _elementTypeNames = Seq (
-      "Base"))
+    _domainAspect = DomainAspect (_elementTypeNames = Seq (
+      "Base")))
   println(s"${dracoDomainDefinition.typeName.name} namePackage: ${dracoDomainDefinition.typeName.namePackage}")
 
   val baseDomainDefinition: TypeDefinition = TypeDefinition (
     TypeName ("Base", _namePackage = Seq("draco", "base")),
-    _elementTypeNames = Seq (
+    _domainAspect = DomainAspect (_elementTypeNames = Seq (
       "Unit",
       "Orientable",
-      "Coordinates"))
+      "Coordinates")))
   println(s"${baseDomainDefinition.typeName.name} namePackage: ${baseDomainDefinition.typeName.namePackage}")
 
   val unitDomainDefinition: TypeDefinition = TypeDefinition (
     TypeName ("Unit", _namePackage = Seq("draco", "base", "unit")),
-    _elementTypeNames = Seq (
+    _domainAspect = DomainAspect (_elementTypeNames = Seq (
       "Measure",
       "Angle",
       "Radians",
       "Distance",
-      "Meters"))
+      "Meters")))
   println(s"${unitDomainDefinition.typeName.name} namePackage: ${unitDomainDefinition.typeName.namePackage}")
 
   val measureTypeName: TypeName = TypeName ("Measure", _namePackage = Seq("draco", "base", "unit"))
@@ -38,13 +38,13 @@ class TestTypeModule extends AnyFunSuite  {
 
   val orientableDomainDefinition: TypeDefinition = TypeDefinition (
     TypeName ("Orientable", _namePackage = Seq("draco", "base", "orientable")),
-    _elementTypeNames = Seq (
+    _domainAspect = DomainAspect (_elementTypeNames = Seq (
       "Left",
       "Right",
       "Upper",
       "Lower",
       "Front",
-      "Back"))
+      "Back")))
   println(s"${orientableDomainDefinition.typeName.name} TypePackage: ${orientableDomainDefinition.typeName.namePackage}")
 
   val valueParameter: Parameter = Parameter ("value", "T", "")
@@ -72,7 +72,7 @@ class TestTypeModule extends AnyFunSuite  {
   )
   val coordinatesDomainDefinition: TypeDefinition = TypeDefinition (
     TypeName ("Coordinates", _namePackage = Seq("draco", "base", "coordinates")),
-    _elementTypeNames = Seq ("Spherical"))
+    _domainAspect = DomainAspect (_elementTypeNames = Seq ("Spherical")))
   println(s"${coordinatesDomainDefinition.typeName.name} TypePackage: ${coordinatesDomainDefinition.typeName.namePackage}")
 
   val sphericalTypeName: TypeName = TypeName("Spherical", _namePackage = Seq("draco", "base", "coordinates"))
@@ -106,75 +106,93 @@ class TestTypeModule extends AnyFunSuite  {
   val tdList: Seq[TypeDefinition] = Seq[TypeDefinition] (
     TypeDefinition(
       _typeName = unitDomainDefinition.typeName,
-      _derivation = Seq (baseDomainDefinition.typeName)
+      _dracoAspect = DracoAspect (_derivation = Seq (baseDomainDefinition.typeName))
     ),
     TypeDefinition(
       _typeName = measureTypeName,
-      _derivation = Seq (baseDomainDefinition.typeName)
+      _dracoAspect = DracoAspect (_derivation = Seq (baseDomainDefinition.typeName))
     ),
     TypeDefinition(
       _typeName = angleTypeName,
-      _derivation = Seq (measureTypeName)
+      _dracoAspect = DracoAspect (_derivation = Seq (measureTypeName))
     ),
     TypeDefinition(
       _typeName = radiansTypeName,
-      _derivation = Seq (angleTypeName)
+      _dracoAspect = DracoAspect (_derivation = Seq (angleTypeName))
     ),
     TypeDefinition(
       _typeName = distanceTypeName,
-      _derivation = Seq (measureTypeName)
+      _dracoAspect = DracoAspect (_derivation = Seq (measureTypeName))
     ),
     TypeDefinition(
       _typeName = metersTypeName,
-      _derivation = Seq (distanceTypeName)
+      _dracoAspect = DracoAspect (_derivation = Seq (distanceTypeName))
     ),
     TypeDefinition(
       _typeName = leftTypeName,
-      _derivation = Seq (measureTypeName),
-      _factory = Factory(leftTypeName.namePath, orientableParameters)
+      _dracoAspect = DracoAspect (
+        _derivation = Seq (measureTypeName),
+        _factory = Factory(leftTypeName.namePath, orientableParameters)
+      )
     ),
     TypeDefinition(
       _typeName = rightTypeName,
-      _derivation = Seq (measureTypeName),
-      _factory = Factory(rightTypeName.namePath, orientableParameters)
+      _dracoAspect = DracoAspect (
+        _derivation = Seq (measureTypeName),
+        _factory = Factory(rightTypeName.namePath, orientableParameters)
+      )
     ),
     TypeDefinition(
       _typeName = upperTypeName,
-      _derivation = Seq (measureTypeName),
-      _factory = Factory(upperTypeName.namePath, orientableParameters)
+      _dracoAspect = DracoAspect (
+        _derivation = Seq (measureTypeName),
+        _factory = Factory(upperTypeName.namePath, orientableParameters)
+      )
     ),
     TypeDefinition(
       _typeName = lowerTypeName,
-      _derivation = Seq (measureTypeName),
-      _factory = Factory(lowerTypeName.namePath, orientableParameters)
+      _dracoAspect = DracoAspect (
+        _derivation = Seq (measureTypeName),
+        _factory = Factory(lowerTypeName.namePath, orientableParameters)
+      )
     ),
     TypeDefinition(
       _typeName = frontTypeName,
-      _derivation = Seq (measureTypeName),
-      _factory = Factory(frontTypeName.namePath, orientableParameters)
+      _dracoAspect = DracoAspect (
+        _derivation = Seq (measureTypeName),
+        _factory = Factory(frontTypeName.namePath, orientableParameters)
+      )
     ),
     TypeDefinition(
       _typeName = backTypeName,
-      _derivation = Seq (measureTypeName),
-      _factory = Factory(backTypeName.namePath, orientableParameters)
+      _dracoAspect = DracoAspect (
+        _derivation = Seq (measureTypeName),
+        _factory = Factory(backTypeName.namePath, orientableParameters)
+      )
     ),
     TypeDefinition(
       _typeName = boundingBoxTypeName,
-      _derivation = Seq (orientableDomainDefinition.typeName),
-      _elements = boundingBoxElements,
-      _factory = Factory(boundingBoxTypeName.namePath, orientableParameters)
+      _dracoAspect = DracoAspect (
+        _derivation = Seq (orientableDomainDefinition.typeName),
+        _elements = boundingBoxElements,
+        _factory = Factory(boundingBoxTypeName.namePath, orientableParameters)
+      )
     ),
     TypeDefinition(
       _typeName = sphericalTypeName,
-      _derivation = Seq (coordinatesDomainDefinition.typeName),
-      _elements = sphericalElements,
-      _factory = Factory(sphericalTypeName.namePath, sphericalParameters)
+      _dracoAspect = DracoAspect (
+        _derivation = Seq (coordinatesDomainDefinition.typeName),
+        _elements = sphericalElements,
+        _factory = Factory(sphericalTypeName.namePath, sphericalParameters)
+      )
     ),
     TypeDefinition(
       _typeName = sphericalBoundsTypeName,
-      _derivation = Seq (boundingBoxTypeName),
-      _elements = sphericalBoundsElements,
-      _factory = Factory(sphericalBoundsTypeName.namePath, sphericalBoundsParameters)
+      _dracoAspect = DracoAspect (
+        _derivation = Seq (boundingBoxTypeName),
+        _elements = sphericalBoundsElements,
+        _factory = Factory(sphericalBoundsTypeName.namePath, sphericalBoundsParameters)
+      )
     )
   )
   def testTypeDefinitionEncode(td: TypeDefinition): Unit = {

@@ -47,11 +47,36 @@
         }
       ],
       "body": [
-        { "kind": "Monadic", "value": "val sourceURI: java.net.URI = _sourceRoot.resolve(java.net.URI.create(_logicalPath))" },
-        { "kind": "Fixed", "name": "source",       "valueType": "BufferedSource", "value": "scala.io.Source.fromFile(sourceURI)" },
-        { "kind": "Fixed", "name": "sourceLines",  "valueType": "Seq[String]",    "value": "source.getLines.toSeq" },
-        { "kind": "Fixed", "name": "sourceString", "valueType": "String",         "value": "sourceLines.mkString(\"\\n\")" },
-        { "kind": "Monadic", "value": "source.close()" }
+        {
+          "kind": "Monadic",
+          "value": "val sourceURI: java.net.URI = _sourceRoot.resolve(java.net.URI.create(_logicalPath))"
+        },
+        {
+          "kind": "Fixed",
+          "name": "source",
+          "valueType": "BufferedSource",
+          "value": "scala.io.Source.fromFile(sourceURI)"
+        },
+        {
+          "kind": "Fixed",
+          "name": "sourceLines",
+          "valueType": "Seq[String]",
+          "value": "try source.getLines().toSeq finally source.close()"
+        },
+        {
+          "kind": "Fixed",
+          "name": "sourceString",
+          "valueType": "String",
+          "value": "sourceLines.mkString(\"\\n\")"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
       ]
     }
   }

@@ -60,10 +60,24 @@
             }
           ],
           "body": [
-            { "kind": "Monadic", "value": "java.nio.file.Files.createDirectories(sinkPath.getParent)" },
-            { "kind": "Monadic", "value": "java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))" }
+            {
+              "kind": "Monadic",
+              "value": "java.nio.file.Files.createDirectories(sinkPath.getParent)"
+            },
+            {
+              "kind": "Monadic",
+              "value": "java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))"
+            }
           ]
         }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
       ]
     }
   }

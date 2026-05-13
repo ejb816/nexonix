@@ -23,5 +23,14 @@
         ]
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Alpha",
+      "namePackage": [
+        "domains",
+        "alpha"
+      ]
+    }
   }
 }

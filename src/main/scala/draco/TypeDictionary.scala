@@ -1,34 +1,24 @@
 package draco
 
-trait TypeDictionary extends Dictionary[TypeName,TypeDefinition] {
-  val  elementTypes: Seq[TypeDefinition]
+trait TypeDictionary extends Dictionary[TypeName, TypeDefinition] {
+  val elementTypes: Seq[TypeDefinition]
 }
 
-object TypeDictionary extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "TypeDictionary",
-      _namePackage = Seq ("draco")
-    ),
-    _derivation = Seq (
-      TypeName ("Dictionary", _namePackage = Seq ("draco"), _typeParameters = Seq ("TypeName", "TypeDefinition"))
-    ),
-    _elements = Seq (
-      Fixed ("elementTypes", "Seq[TypeDefinition]")
-    ),
-    _factory = Factory (
-      "TypeDictionary",
-      _parameters = Seq (
-        Parameter ("domainDefinition", "TypeDefinition", "")
-      )
-    )
-  )
+object TypeDictionary extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("TypeDictionary", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[TypeDictionary] = Type[TypeDictionary] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
-  def apply (_domainDefinition: TypeDefinition) : TypeDictionary = new TypeDictionary {
-    override val elementTypes: Seq[TypeDefinition] = _domainDefinition.domainAspect.elementTypeNames.map (name =>
-      TypeDefinition (TypeName (name, _namePackage = _domainDefinition.typeName.namePackage)))
-    override val kvMap: Map[TypeName, TypeDefinition]  = elementTypes.map (td => (td.typeName, td)).toMap
+  def apply (
+    _domainDefinition: TypeDefinition
+  ) : TypeDictionary = new TypeDictionary {
+    override lazy val elementTypes: Seq[TypeDefinition] = _domainDefinition.domainAspect.elementTypeNames.map(name => TypeDefinition(TypeName(name, _namePackage = _domainDefinition.typeName.namePackage)))
+    override lazy val kvMap: Map[TypeName, TypeDefinition] = elementTypes.map(td => (td.typeName, td)).toMap
+    override lazy val typeDefinition: TypeDefinition = TypeDictionary.typeDefinition
   }
-  lazy val Null: TypeDictionary = TypeDictionary(TypeDefinition.Null)
+
+  lazy val Null: TypeDictionary = apply(
+    _domainDefinition = null.asInstanceOf[TypeDefinition]
+  )
+
 }

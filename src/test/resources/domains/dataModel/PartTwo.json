@@ -23,5 +23,14 @@
         "valueType": "String"
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DataModel",
+      "namePackage": [
+        "domains",
+        "dataModel"
+      ]
+    }
   }
 }

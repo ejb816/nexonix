@@ -1,6 +1,6 @@
 package draco
 
-trait Dictionary[K,V] extends Map[K, V] {
+trait Dictionary[K, V] extends Map[K, V] with DracoType {
   val kvMap: Map[K, V]
   def removed(key: K): Map[K, V] = kvMap.removed(key)
   def updated[V1 >: V](key: K, value: V1): Map[K, V1] = kvMap.updated(key, value)
@@ -8,8 +8,8 @@ trait Dictionary[K,V] extends Map[K, V] {
   def iterator: Iterator[(K, V)] = kvMap.iterator
 }
 
-object Dictionary {
-  def apply[K,V] (_kvMap: Dictionary[K,V]) : Dictionary[K,V] = new Dictionary[K,V] {
-    override val kvMap: Map[K, V] = _kvMap
-  }
+object Dictionary extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Dictionary", _namePackage = Seq ("draco")))
+  lazy val dracoType: Type[Dictionary[_, _]] = Type[Dictionary[_, _]] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 }

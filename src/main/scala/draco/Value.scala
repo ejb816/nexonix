@@ -1,7 +1,7 @@
 package draco
 
-import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
+import io.circe.syntax.EncoderOps
 
 trait Value {
   val name: String
@@ -12,51 +12,39 @@ trait Value {
     }.orNull
     if (pathValue != null) pathValue.as[T].getOrElse(null.asInstanceOf[T])
     else null.asInstanceOf[T]
-  }}
+  }
+}
 
 object Value extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "Value",
-      _namePackage = Seq ("draco")
-    ),
-    _elements = Seq (
-      Fixed ("name", "String"),
-      Fixed ("pathElements", "Seq[String]")
-    ),
-    _factory = Factory (
-      "Value",
-      _parameters = Seq (
-        Parameter ("name", "String", ""),
-        Parameter ("pathElements", "Seq[String]", "")
-      )
-    )
-  )
+  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Value", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Value] = Type[Value] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
-  def apply(_name: String, _pathElements: Seq[String]): Value = {
-    new Value {
-      override val name: String = _name
-      override val pathElements: Seq[String] = _pathElements
-    }
-  }
-
-  implicit lazy val encoder: Encoder[Value] = Encoder.instance { v =>
+  implicit lazy val encoder: Encoder[Value] = Encoder.instance { x =>
     val fields = Seq(
-      if (v.name.nonEmpty) Some("name" -> v.name.asJson) else None,
-      if (v.pathElements.nonEmpty) Some("pathElements" -> v.pathElements.asJson) else None
+      Some("name" -> x.name.asJson),
+      Some("pathElements" -> x.pathElements.asJson)
     ).flatten
-
     Json.obj(fields: _*)
   }
-
   implicit lazy val decoder: Decoder[Value] = Decoder.instance { cursor =>
     for {
-      _name         <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
+      _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
       _pathElements <- cursor.downField("pathElements").as[Option[Seq[String]]].map(_.getOrElse(Seq.empty))
-    } yield Value (
-      _name,
-      _pathElements
-    )
+    } yield Value (_name, _pathElements)
   }
+
+  def apply (
+    _name: String,
+    _pathElements: Seq[String]
+  ) : Value = new Value {
+    override lazy val name: String = _name
+    override lazy val pathElements: Seq[String] = _pathElements
+  }
+
+  lazy val Null: Value = apply(
+    _name = "",
+    _pathElements = Seq.empty
+  )
+
 }

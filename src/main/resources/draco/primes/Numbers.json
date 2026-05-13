@@ -45,5 +45,14 @@
         }
       ]
     }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Primes",
+      "namePackage": [
+        "draco",
+        "primes"
+      ]
+    }
   }
 }

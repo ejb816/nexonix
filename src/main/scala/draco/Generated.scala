@@ -10,14 +10,16 @@ object Generated extends App {
       _name = "Generated",
       _namePackage = Seq ("draco")
     ),
-    _derivation = Seq (
-      TypeName ("Main", _namePackage = Seq ("draco"))
-    ),
-    _factory = Factory (
-      "Generated",
-      _parameters = Seq (
-        Parameter ("sourceName", "String", ""),
-        Parameter ("sinkName", "String", "")
+    _dracoAspect = DracoAspect (
+      _derivation = Seq (
+        TypeName ("Main", _namePackage = Seq ("draco"))
+      ),
+      _factory = Factory (
+        "Generated",
+        _parameters = Seq (
+          Parameter ("sourceName", "String", ""),
+          Parameter ("sinkName", "String", "")
+        )
       )
     )
   )

@@ -1,45 +1,63 @@
 typeName:
   name: RuleAspect
   namePackage:
-    - draco
+  - draco
 dracoAspect:
+  derivation:
+  - name: DracoType
+    namePackage:
+    - draco
   elements:
-    - kind: Fixed
-      name: variables
-      valueType: Seq[Variable]
-    - kind: Fixed
-      name: conditions
-      valueType: Seq[Condition]
-    - kind: Fixed
-      name: values
-      valueType: Seq[Value]
-    - kind: Fixed
-      name: pattern
-      valueType: Pattern
-    - kind: Fixed
-      name: action
-      valueType: Action
+  - kind: Fixed
+    name: variables
+    valueType: Seq[Variable]
+  - kind: Fixed
+    name: conditions
+    valueType: Seq[Condition]
+  - kind: Fixed
+    name: values
+    valueType: Seq[Value]
+  - kind: Fixed
+    name: pattern
+    valueType: Pattern
+  - kind: Fixed
+    name: action
+    valueType: Action
   factory:
     kind: Factory
     valueType: RuleAspect
     parameters:
-      - kind: Parameter
-        name: variables
-        valueType: Seq[Variable]
-        value: Seq.empty
-      - kind: Parameter
-        name: conditions
-        valueType: Seq[Condition]
-        value: Seq.empty
-      - kind: Parameter
-        name: values
-        valueType: Seq[Value]
-        value: Seq.empty
-      - kind: Parameter
-        name: pattern
-        valueType: Pattern
-        value: Pattern.Null
-      - kind: Parameter
-        name: action
-        valueType: Action
-        value: Action.Null
+    - kind: Parameter
+      name: variables
+      valueType: Seq[Variable]
+      value: Seq.empty
+    - kind: Parameter
+      name: conditions
+      valueType: Seq[Condition]
+      value: Seq.empty
+    - kind: Parameter
+      name: values
+      valueType: Seq[Value]
+      value: Seq.empty
+    - kind: Parameter
+      name: pattern
+      valueType: Pattern
+      value: Pattern.Null
+    - kind: Parameter
+      name: action
+      valueType: Action
+      value: Action.Null
+  globalElements:
+  - kind: Monadic
+    value: |-
+      lazy val isEmpty: RuleAspect => Boolean = ra =>
+        ra.variables.isEmpty &&
+        ra.conditions.isEmpty &&
+        ra.values.isEmpty &&
+        ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty &&
+        ra.action.body.isEmpty
+domainAspect:
+  typeName:
+    name: Draco
+    namePackage:
+    - draco

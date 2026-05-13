@@ -6,6 +6,14 @@
     ]
   },
   "dracoAspect" : {
+    "derivation" : [
+      {
+        "name" : "DracoType",
+        "namePackage" : [
+          "draco"
+        ]
+      }
+    ],
     "elements" : [
       {
         "kind" : "Fixed",
@@ -28,5 +36,13 @@
         "valueType" : "ActorAspect"
       }
     ]
+  },
+  "domainAspect" : {
+    "typeName" : {
+      "name" : "Draco",
+      "namePackage" : [
+        "draco"
+      ]
+    }
   }
 }

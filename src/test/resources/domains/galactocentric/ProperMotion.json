@@ -25,5 +25,14 @@
         ]
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Galactocentric",
+      "namePackage": [
+        "domains",
+        "galactocentric"
+      ]
+    }
   }
 }

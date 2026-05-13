@@ -52,10 +52,38 @@
         }
       ],
       "body": [
-        { "kind": "Fixed", "name": "ruleDefinition", "valueType": "TypeDefinition",       "value": "_ruleDefinition" },
-        { "kind": "Fixed", "name": "typeDefinition", "valueType": "TypeDefinition",       "value": "_ruleDefinition" },
-        { "kind": "Fixed", "name": "action",         "valueType": "Consumer[RhsContext]", "value": "_action" },
-        { "kind": "Fixed", "name": "pattern",        "valueType": "Consumer[Knowledge]",  "value": "_pattern" }
+        {
+          "kind": "Fixed",
+          "name": "ruleDefinition",
+          "valueType": "TypeDefinition",
+          "value": "_ruleDefinition"
+        },
+        {
+          "kind": "Fixed",
+          "name": "typeDefinition",
+          "valueType": "TypeDefinition",
+          "value": "_ruleDefinition"
+        },
+        {
+          "kind": "Fixed",
+          "name": "action",
+          "valueType": "Consumer[RhsContext]",
+          "value": "_action"
+        },
+        {
+          "kind": "Fixed",
+          "name": "pattern",
+          "valueType": "Consumer[Knowledge]",
+          "value": "_pattern"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
       ]
     }
   }

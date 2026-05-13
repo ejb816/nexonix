@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "Transform",
+    "name": "TypeTransform",
     "namePackage": [
       "draco"
     ],
@@ -20,13 +20,14 @@
           "(S, T)"
         ]
       }
-    ],
-    "elements": [
-      {
-        "kind": "Fixed",
-        "name": "value",
-        "valueType": "(S, T)"
-      }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
   }
 }

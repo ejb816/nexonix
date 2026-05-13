@@ -2,24 +2,21 @@ package draco
 
 trait Domain[T] extends DomainType
 
-object Domain extends App {
-  // Provisional until type parameters are handled in TypeName
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "Domain[T]",
-      _namePackage = Seq ("draco")
-    ),
-    _derivation = Seq (
-      TypeName ("DomainType", _namePackage = Seq ("draco"))
-    )
-  )
+object Domain extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Domain", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Domain[_]] = Type[Domain[_]] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   def apply[T] (
-                 _domainDefinition: TypeDefinition
-               ) : Domain[T] = new Domain[T] {
-    override val domainDefinition: TypeDefinition = _domainDefinition
-    override val typeDefinition: TypeDefinition = _domainDefinition
-    override val typeDictionary: TypeDictionary = TypeDictionary (_domainDefinition)
+    _domainDefinition: TypeDefinition
+  ) : Domain[T] = new Domain[T] {
+    override lazy val domainDefinition: TypeDefinition = _domainDefinition
+    override lazy val typeDefinition: TypeDefinition = _domainDefinition
+    override lazy val typeDictionary: TypeDictionary = TypeDictionary(_domainDefinition)
   }
+
+  lazy val Null: Domain[_] = apply[Nothing](
+    _domainDefinition = null.asInstanceOf[TypeDefinition]
+  )
+
 }

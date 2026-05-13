@@ -1,28 +1,19 @@
 package draco
 
-trait DomainDictionary extends Dictionary[DomainType,TypeDictionary] {}
+trait DomainDictionary extends Dictionary[DomainType, TypeDictionary]
 
-object DomainDictionary extends App {
-  lazy val typeDefinition: TypeDefinition = TypeDefinition (
-    _typeName = TypeName (
-      _name = "DomainDictionary",
-      _namePackage = Seq ("draco")
-    ),
-    _derivation = Seq (
-      TypeName ("Dictionary[DomainType,TypeDictionary]", _namePackage = Seq ("org", "nexonix", "domains"))
-    ),
-    _factory = Factory (
-      "DomainDictionary",
-      _parameters = Seq (
-        Parameter ("domains", "Seq[DomainType]", "Seq()")
-      )
-    )
-  )
+object DomainDictionary extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("DomainDictionary", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[DomainDictionary] = Type[DomainDictionary] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
-  def apply(
-             _domains: Seq[DomainType] = Seq()
-           ) : DomainDictionary = new DomainDictionary {
-    override val kvMap: Map[DomainType, TypeDictionary] = _domains.map(domain => (domain, domain.typeDictionary)).toMap
+  def apply (
+    _domains: Seq[DomainType] = Seq()
+  ) : DomainDictionary = new DomainDictionary {
+    override lazy val kvMap: Map[DomainType, TypeDictionary] = _domains.map(domain => (domain, domain.typeDictionary)).toMap
+    override lazy val typeDefinition: TypeDefinition = DomainDictionary.typeDefinition
   }
+
+  lazy val Null: DomainDictionary = apply()
+
 }

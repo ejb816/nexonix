@@ -59,5 +59,13 @@
         "value": "new KnowledgeService ()"
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
   }
 }

@@ -23,5 +23,14 @@
         "valueType": "Int"
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DataModel",
+      "namePackage": [
+        "domains",
+        "dataModel"
+      ]
+    }
   }
 }

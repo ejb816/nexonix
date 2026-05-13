@@ -8,7 +8,8 @@ import domains.cosmocentric._
 trait Galactocentric extends Cosmocentric 
 
 object Galactocentric extends App with DracoType {
-  lazy val typeDefinition: TypeDefinition = draco.Generator.loadType(TypeName ("Galactocentric", _namePackage = Seq("domains", "galactocentric")))
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Galactocentric", _namePackage = Seq ("domains", "galactocentric")))
+  lazy val dracoType: Type[Galactocentric] = Type[Galactocentric] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ("Parallax", "ProperMotion", "RadialVelocity", "Trajectory")
 

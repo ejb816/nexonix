@@ -43,24 +43,22 @@ class GenerateAndCompileTest extends AnyFunSuite {
     "draco/Dictionary.json",
     "draco/Domain.json",
     "draco/DomainDictionary.json",
+    "draco/DomainTransform.json",
     "draco/DomainType.json",
     "draco/Draco.json",
     "draco/DracoType.json",
-    "draco/Extensible.json",
     "draco/Holon.json",
     "draco/Main.json",
     "draco/Primal.json",
     "draco/REPL.json",
     "draco/Rule.json",
     "draco/RuleType.json",
-    "draco/RuntimeCompiler.json",
     "draco/SourceContent.json",
-    "draco/Specifically.json",
     "draco/Test.json",
-    "draco/Transform.json",
     "draco/Type.json",
     "draco/TypeDictionary.json",
     "draco/TypeName.json",
+    "draco/TypeTransform.json",
     "draco/Value.json"
   )
 
@@ -120,7 +118,7 @@ class GenerateAndCompileTest extends AnyFunSuite {
         TestRecord(groupName, s"[${tds.size} types]", jsonParsed = true,
           sourceGenerated = false, compiled = false, errors = Seq(err))
       case Right(source) =>
-        RuntimeCompiler.compile(source, s"$groupName.scala") match {
+        Generator.compile(source, s"$groupName.scala") match {
           case Right(_) =>
             TestRecord(groupName, s"[${tds.size} types]", jsonParsed = true,
               sourceGenerated = true, compiled = true, errors = Seq.empty)

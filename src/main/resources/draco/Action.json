@@ -50,12 +50,50 @@
         }
       ],
       "body": [
-        { "kind": "Fixed", "name": "variables", "valueType": "Seq[Variable]",    "value": "_variables" },
-        { "kind": "Fixed", "name": "values",    "valueType": "Seq[Value]",       "value": "_values" },
-        { "kind": "Fixed", "name": "body",      "valueType": "Seq[BodyElement]", "value": "_body" },
-        { "kind": "Fixed", "name": "name",      "valueType": "String",           "value": "\"ctx\"" },
-        { "kind": "Fixed", "name": "valueType", "valueType": "String",           "value": "\"org.evrete.api.RHSContext => Unit\"" },
-        { "kind": "Fixed", "name": "value",     "valueType": "String",           "value": "\"\"" }
+        {
+          "kind": "Fixed",
+          "name": "variables",
+          "valueType": "Seq[Variable]",
+          "value": "_variables"
+        },
+        {
+          "kind": "Fixed",
+          "name": "values",
+          "valueType": "Seq[Value]",
+          "value": "_values"
+        },
+        {
+          "kind": "Fixed",
+          "name": "body",
+          "valueType": "Seq[BodyElement]",
+          "value": "_body"
+        },
+        {
+          "kind": "Fixed",
+          "name": "name",
+          "valueType": "String",
+          "value": "\"ctx\""
+        },
+        {
+          "kind": "Fixed",
+          "name": "valueType",
+          "valueType": "String",
+          "value": "\"org.evrete.api.RHSContext => Unit\""
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "String",
+          "value": "\"\""
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
       ]
     }
   }

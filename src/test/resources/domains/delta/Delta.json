@@ -16,5 +16,14 @@
         ]
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Delta",
+      "namePackage": [
+        "domains",
+        "delta"
+      ]
+    }
   }
 }

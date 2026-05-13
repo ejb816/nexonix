@@ -6,6 +6,14 @@
     ]
   },
   "dracoAspect" : {
+    "derivation" : [
+      {
+        "name" : "DracoType",
+        "namePackage" : [
+          "draco"
+        ]
+      }
+    ],
     "elements" : [
       {
         "kind" : "Fixed",
@@ -60,57 +68,62 @@
         {
           "kind" : "Parameter",
           "name" : "superDomain",
-          "valueType" : "TypeName",
-          "value" : "TypeName.Null"
+          "valueType" : "TypeName"
         },
         {
           "kind" : "Parameter",
           "name" : "modules",
-          "valueType" : "Seq[TypeName]",
-          "value" : "Seq.empty"
+          "valueType" : "Seq[TypeName]"
         },
         {
           "kind" : "Parameter",
           "name" : "extensible",
-          "valueType" : "TypeName",
-          "value" : "TypeName.Null"
+          "valueType" : "TypeName"
         },
         {
           "kind" : "Parameter",
           "name" : "derivation",
-          "valueType" : "Seq[TypeName]",
-          "value" : "Seq.empty"
+          "valueType" : "Seq[TypeName]"
         },
         {
           "kind" : "Parameter",
           "name" : "elements",
-          "valueType" : "Seq[TypeElement]",
-          "value" : "Seq.empty"
+          "valueType" : "Seq[TypeElement]"
         },
         {
           "kind" : "Parameter",
           "name" : "factory",
-          "valueType" : "Factory",
-          "value" : "Factory.Null"
+          "valueType" : "Factory"
         },
         {
           "kind" : "Parameter",
           "name" : "globalElements",
-          "valueType" : "Seq[BodyElement]",
-          "value" : "Seq.empty"
+          "valueType" : "Seq[BodyElement]"
         },
         {
           "kind" : "Parameter",
           "name" : "source",
-          "valueType" : "TypeName",
-          "value" : "TypeName.Null"
+          "valueType" : "TypeName"
         },
         {
           "kind" : "Parameter",
           "name" : "target",
-          "valueType" : "TypeName",
-          "value" : "TypeName.Null"
+          "valueType" : "TypeName"
         }
+      ]
+    },
+    "globalElements" : [
+      {
+        "kind" : "Monadic",
+        "valueType" : "Unit"
+      }
+    ]
+  },
+  "domainAspect" : {
+    "typeName" : {
+      "name" : "Draco",
+      "namePackage" : [
+        "draco"
       ]
     }
   }

@@ -9,11 +9,20 @@
   "dracoAspect": {
     "derivation": [
       {
-        "name": "DracoType",
+        "name": "DomainType",
         "namePackage": [
           "draco"
         ]
       }
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Cosmocentric",
+      "namePackage": [
+        "domains",
+        "cosmocentric"
+      ]
+    }
   }
 }

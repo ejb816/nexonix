@@ -11,44 +11,46 @@ class TypeDefinitionTest extends AnyFunSuite {
       _name = "TypeDefinition",
       _namePackage = Seq("draco")
     ),
-    _modules = Seq.empty,
-    _derivation = Seq.empty,
-    _elements = Seq(
-      Fixed("typeName", "TypeName"),
-      Fixed("modules", "Seq[TypeName]"),
-      Fixed("derivation", "Seq[TypeName]"),
-      Fixed("elements", "Seq[TypeElement]"),
-      Fixed("factory", "Factory"),
-      Fixed("globalElements", "Seq[BodyElement]")
-    ),
-    _factory = Factory(
-      _fullName = "draco.TypeDefinition",
-      _parameters = Seq(
-        Parameter("typeName", "TypeName", ""),
-        Parameter("modules", "Seq[TypeName]", "Seq.empty"),
-        Parameter("derivation", "Seq[TypeName]", "Seq.empty"),
-        Parameter("elements", "Seq[TypeElement]", "Seq.empty"),
-        Parameter("factory", "Factory", "Factory.Null"),
-        Parameter("globalElements", "Seq[BodyElement]", "Seq.empty")
+    _dracoAspect = DracoAspect(
+      _modules = Seq.empty,
+      _derivation = Seq.empty,
+      _elements = Seq(
+        Fixed("typeName", "TypeName"),
+        Fixed("modules", "Seq[TypeName]"),
+        Fixed("derivation", "Seq[TypeName]"),
+        Fixed("elements", "Seq[TypeElement]"),
+        Fixed("factory", "Factory"),
+        Fixed("globalElements", "Seq[BodyElement]")
       ),
-      _body = Seq(
-        Fixed("typeName", "TypeName", "_typeName"),
-        Fixed("modules", "Seq[TypeName]", "_modules"),
-        Fixed("derivation", "Seq[TypeName]", "_derivation"),
-        Fixed("elements", "Seq[TypeElement]", "_elements"),
-        Fixed("factory", "Factory", "_factory"),
-        Fixed("globalElements", "Seq[BodyElement]", "_globalElements")
-      )
-    ),
-    _globalElements = Seq(
-      Dynamic(
-        "load",
-        "TypeDefinition",
-        Seq(Parameter("typeName", "TypeName", "")),
-        Seq(
-          Fixed("sourceContent", "SourceContent", "SourceContent(Generator.main.sourceRoot, typeName.resourcePath)"),
-          Fixed("sourceJSON", "Json", "parser.parse(sourceContent.sourceString).getOrElse(TypeDefinition(typeName).asJson)"),
-          Fixed("result", "TypeDefinition", "sourceJSON.as[TypeDefinition].getOrElse(Null)")
+      _factory = Factory(
+        _valueType = "draco.TypeDefinition",
+        _parameters = Seq(
+          Parameter("typeName", "TypeName", ""),
+          Parameter("modules", "Seq[TypeName]", "Seq.empty"),
+          Parameter("derivation", "Seq[TypeName]", "Seq.empty"),
+          Parameter("elements", "Seq[TypeElement]", "Seq.empty"),
+          Parameter("factory", "Factory", "Factory.Null"),
+          Parameter("globalElements", "Seq[BodyElement]", "Seq.empty")
+        ),
+        _body = Seq(
+          Fixed("typeName", "TypeName", "_typeName"),
+          Fixed("modules", "Seq[TypeName]", "_modules"),
+          Fixed("derivation", "Seq[TypeName]", "_derivation"),
+          Fixed("elements", "Seq[TypeElement]", "_elements"),
+          Fixed("factory", "Factory", "_factory"),
+          Fixed("globalElements", "Seq[BodyElement]", "_globalElements")
+        )
+      ),
+      _globalElements = Seq(
+        Dynamic(
+          "load",
+          "TypeDefinition",
+          Seq(Parameter("typeName", "TypeName", "")),
+          Seq(
+            Fixed("sourceContent", "SourceContent", "SourceContent(Generator.main.sourceRoot, typeName.resourcePath)"),
+            Fixed("sourceJSON", "Json", "parser.parse(sourceContent.sourceString).getOrElse(TypeDefinition(typeName).asJson)"),
+            Fixed("result", "TypeDefinition", "sourceJSON.as[TypeDefinition].getOrElse(Null)")
+          )
         )
       )
     )
@@ -81,9 +83,11 @@ class TypeDefinitionTest extends AnyFunSuite {
         _name = "Constants",
         _namePackage = Seq("foo", "bar")
       ),
-      _globalElements = Seq(
-        Fixed("MAX_SIZE", "Int", "1024"),
-        Fixed("DEFAULT_NAME", "String", "\"unnamed\"")
+      _dracoAspect = DracoAspect(
+        _globalElements = Seq(
+          Fixed("MAX_SIZE", "Int", "1024"),
+          Fixed("DEFAULT_NAME", "String", "\"unnamed\"")
+        )
       )
     )
     println("TypeDefinition with globalElements only:")
@@ -142,15 +146,19 @@ class TypeDefinitionTest extends AnyFunSuite {
   test("Multi-type generation: simple parent-child (Animal/Dog)") {
     val animalTd = TypeDefinition(
       _typeName = TypeName("Animal", _namePackage = Seq("test", "zoo")),
-      _modules = Seq(TypeName("Dog", _namePackage = Seq("test", "zoo"))),
-      _elements = Seq(Fixed("name", "String"))
+      _dracoAspect = DracoAspect(
+        _modules = Seq(TypeName("Dog", _namePackage = Seq("test", "zoo"))),
+        _elements = Seq(Fixed("name", "String"))
+      )
     )
     val dogTd = TypeDefinition(
       _typeName = TypeName("Dog", _namePackage = Seq("test", "zoo")),
-      _derivation = Seq(TypeName("Animal", _namePackage = Seq("test", "zoo"))),
-      _factory = Factory("Dog", _parameters = Seq(
-        Parameter("name", "String", "\"Fido\"")
-      ))
+      _dracoAspect = DracoAspect(
+        _derivation = Seq(TypeName("Animal", _namePackage = Seq("test", "zoo"))),
+        _factory = Factory("Dog", _parameters = Seq(
+          Parameter("name", "String", "\"Fido\"")
+        ))
+      )
     )
     // Pass in reversed order to verify ordering
     val output = Generator.generate(Seq(dogTd, animalTd))

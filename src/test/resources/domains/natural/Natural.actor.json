@@ -5,5 +5,14 @@
       "domains",
       "natural"
     ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Natural",
+      "namePackage": [
+        "domains",
+        "natural"
+      ]
+    }
   }
 }

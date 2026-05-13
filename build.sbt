@@ -48,6 +48,14 @@ lazy val root = (project in file("."))
      fork := true,
      javaOptions += "-Dslf4j.provider=ch.qos.logback.classic.spi.LogbackServiceProvider",
 
+     // Silence the "X has a valid main method ... but will not have an entry point on the JVM"
+     // warning. Draco type companion objects extend App for IDE/sbt run convenience; the JVM
+     // static-forwarder conflict with the same-named companion trait is benign in our workflow.
+     scalacOptions += "-Wconf:msg=will not have an entry point on the JVM:s",
+
+     // Print full deprecation messages (no "re-run with -deprecation" indirection).
+     scalacOptions += "-deprecation",
+
     libraryDependencies ++= Seq(
       dependencies.pekkoActorTyped,
       dependencies.pekkoActorTestkitTyped,

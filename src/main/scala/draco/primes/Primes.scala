@@ -2,7 +2,7 @@ package draco.primes
 
 import draco._
 
-trait Primes extends Extensible {
+trait Primes {
   val knowledge: org.evrete.api.Knowledge = Rule.knowledgeService.newKnowledge("Primes")
 }
 
