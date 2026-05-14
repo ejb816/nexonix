@@ -42,9 +42,6 @@
         "domains",
         "natural"
       ]
-    },
-    "elementTypeNames": [
-      "Natural.actor"
-    ]
+    }
   }
 }
