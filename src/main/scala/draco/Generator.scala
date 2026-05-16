@@ -57,7 +57,7 @@ object Generator extends App {
     * the corpus migrates. */
   private def tryLoad (typeName: TypeName, aspect: String = "") : Option[TypeDefinition] =
     loadFromResource(resourcePath(typeName, aspect, "yaml"))
-      .orElse(loadFromResource(resourcePath(typeName, aspect, "json")))
+      .orElse(loadFromResource(resourcePath(typeName, aspect)))
 
   def loadType (typeName: TypeName) : TypeDefinition =
     tryLoad(typeName).getOrElse(TypeDefinition(typeName))
@@ -268,7 +268,7 @@ object Generator extends App {
       // the absolute body-indent prefix.
       def indentBlock(v: String): String =
         v.linesIterator
-          .map(line => if (line.isEmpty) "" else s"${bodyPad}${line}")
+          .map(line => if (line.isEmpty) "" else s"$bodyPad$line")
           .mkString("\n")
       val init = body.init.map {
         case f: Fixed    => s"${bodyPad}val ${f.name}: ${f.valueType} = ${f.value}"
@@ -278,9 +278,9 @@ object Generator extends App {
       }
       val last = body.last match {
         case mo: Monadic => indentBlock(mo.value)
-        case other       => s"${bodyPad}${other.value}"
+        case other       => s"$bodyPad${other.value}"
       }
-      s"{\n${init.mkString("\n")}\n${last}\n${bracePad}}"
+      s"{\n${init.mkString("\n")}\n$last\n$bracePad}"
     }
   }
 
@@ -341,21 +341,18 @@ object Generator extends App {
         Some(s"    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition")
       else None
     ).flatten
-    if (factory.body.nonEmpty) {
-      val overrides = factory.body.map {
+    val overrides =
+      if (factory.body.nonEmpty) factory.body.map {
         case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType} = ${f.value}"
         case m: Mutable => s"    override var ${m.name}: ${m.valueType} = ${m.value}"
         case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, methodIndent = 4)}"
         case mo: Monadic => s"    ${mo.value}"
         case be: BodyElement => s"    override lazy val ${be.name}: ${be.valueType} = ${be.value}"
       }
-      s"{\n${(overrides ++ instanceOverrides).mkString("\n")}\n  }"
-    } else {
-      val overrides = factory.parameters.map { p =>
+      else factory.parameters.map { p =>
         s"    override lazy val ${p.name}: ${p.valueType} = _${p.name}"
       }
-      s"{\n${(overrides ++ instanceOverrides).mkString("\n")}\n  }"
-    }
+    s"{\n${(overrides ++ instanceOverrides).mkString("\n")}\n  }"
   }
 
   /** Check if globalElements contain an explicit main method (Dynamic named "main").
@@ -418,16 +415,16 @@ object Generator extends App {
 
   // --- Codec generation helpers ---
 
-  private def elisionCheck (p: Parameter, instanceVar: String) : Option[String] = {
+  private def elisionCheck (p: Parameter) : Option[String] = {
     if (p.value.isEmpty) None  // required field — always encode
     else p.valueType match {
-      case "String"                    => Some(s"$instanceVar.${p.name}.nonEmpty")
-      case s if s.startsWith("Seq[")   => Some(s"$instanceVar.${p.name}.nonEmpty")
-      case s if s.startsWith("Map[")   => Some(s"$instanceVar.${p.name}.nonEmpty")
-      case "Factory"                   => Some(s"$instanceVar.${p.name}.valueType.nonEmpty")
-      case "Action"                    => Some(s"$instanceVar.${p.name}.body.nonEmpty")
-      case "Pattern"                   => Some(s"$instanceVar.${p.name}.variables.nonEmpty")
-      case "TypeName"                  => Some(s"$instanceVar.${p.name}.name.nonEmpty")
+      case "String"                    => Some(s"x.${p.name}.nonEmpty")
+      case s if s.startsWith("Seq[")   => Some(s"x.${p.name}.nonEmpty")
+      case s if s.startsWith("Map[")   => Some(s"x.${p.name}.nonEmpty")
+      case "Factory"                   => Some(s"x.${p.name}.valueType.nonEmpty")
+      case "Action"                    => Some(s"x.${p.name}.body.nonEmpty")
+      case "Pattern"                   => Some(s"x.${p.name}.variables.nonEmpty")
+      case "TypeName"                  => Some(s"x.${p.name}.name.nonEmpty")
       case _                           => None  // no natural emptiness — always encode
     }
   }
@@ -468,16 +465,16 @@ object Generator extends App {
     }
   }
 
-  private def fieldElisionEncoder (params: Seq[Parameter], instanceVar: String) : String = {
+  private def fieldElisionEncoder (params: Seq[Parameter]) : String = {
     val fields = params.map { p =>
-      elisionCheck(p, instanceVar) match {
+      elisionCheck(p) match {
         case Some(check) =>
-          s"""      if ($check) Some("${p.name}" -> $instanceVar.${p.name}.asJson) else None"""
+          s"""      if ($check) Some("${p.name}" -> x.${p.name}.asJson) else None"""
         case None =>
-          s"""      Some("${p.name}" -> $instanceVar.${p.name}.asJson)"""
+          s"""      Some("${p.name}" -> x.${p.name}.asJson)"""
       }
     }
-    s"""Encoder.instance { $instanceVar =>
+    s"""Encoder.instance { x =>
        |    val fields = Seq(
        |${fields.mkString(",\n")}
        |    ).flatten
@@ -520,7 +517,7 @@ object Generator extends App {
     val name = td.typeName.name
     val wName = wildcardTypeName(td.typeName)
     val params = td.dracoAspect.factory.parameters
-    s"""  implicit lazy val encoder: Encoder[$wName] = ${fieldElisionEncoder(params, "x")}
+    s"""  implicit lazy val encoder: Encoder[$wName] = ${fieldElisionEncoder(params)}
        |  implicit lazy val decoder: Decoder[$wName] = ${fieldElisionDecoder(params, name)}""".stripMargin
   }
 
@@ -548,7 +545,7 @@ object Generator extends App {
          |    }
          |    val fields = Seq(
          |      Some("kind" -> Json.fromString(kind)),
-         |${encoderFieldLines("x", td, leaves, familyMap)}
+         |${encoderFieldLines(td, leaves, familyMap)}
          |    ).flatten
          |    Json.obj(fields: _*)
          |  }""".stripMargin
@@ -602,7 +599,6 @@ object Generator extends App {
     * Subtype-specific fields (like Pattern.variables) are handled by the parent's
     * accessor if declared in elements, or omitted (decoded per-case in the decoder). */
   private def encoderFieldLines (
-    instanceVar: String,
     parentTd: TypeDefinition,
     leaves: Seq[String],
     familyMap: Map[String, TypeDefinition]
@@ -621,14 +617,14 @@ object Generator extends App {
       val hasNonEmpty = p.valueType == "String" ||
         p.valueType.startsWith("Seq[") ||
         p.valueType.startsWith("Map[")
-      elisionCheck(p, instanceVar) match {
+      elisionCheck(p) match {
         case Some(check) =>
-          s"""      if ($check) Some("${p.name}" -> $instanceVar.${p.name}.asJson) else None"""
+          s"""      if ($check) Some("${p.name}" -> x.${p.name}.asJson) else None"""
         case None if hasNonEmpty =>
           // For discriminated union fields, use .nonEmpty as default elision for String/Seq/Map
-          s"""      if ($instanceVar.${p.name}.nonEmpty) Some("${p.name}" -> $instanceVar.${p.name}.asJson) else None"""
+          s"""      if (x.${p.name}.nonEmpty) Some("${p.name}" -> x.${p.name}.asJson) else None"""
         case None =>
-          s"""      Some("${p.name}" -> $instanceVar.${p.name}.asJson)"""
+          s"""      Some("${p.name}" -> x.${p.name}.asJson)"""
       }
     }.mkString(",\n")
   }
@@ -918,6 +914,13 @@ object Generator extends App {
   private def isObjectOnly (td: TypeDefinition) : Boolean =
     td.dracoAspect.elements.isEmpty && td.dracoAspect.factory.valueType.isEmpty && td.dracoAspect.derivation.isEmpty && td.dracoAspect.globalElements.nonEmpty
 
+  /** Leaf type: none of the structural categories above. Names the negative case
+    * so `generate()` reads as a flat dispatch table rather than a fall-through.
+    * Leaves and actors share the same emission template (differentiated by
+    * `nameSuffix` and `instanceType`), so the dispatcher pairs `isLeaf || isActor`. */
+  private def isLeaf (td: TypeDefinition) : Boolean =
+    !isDomain(td) && !isRule(td) && !isActor(td) && !isObjectOnly(td)
+
   // --- Main generate methods ---
 
   lazy val main: Main = Main.roots
@@ -1069,7 +1072,10 @@ object Generator extends App {
          |$imports
          |${objectGlobal(td)}
          |""".stripMargin
-    } else {
+    } else if (isLeaf(td) || isActor(td)) {
+      // Leaves and actors share the unified trait+global emission;
+      // `nameSuffix` ("Actor" iff td.typeName.name ends in ".actor") and `instanceType`
+      // ("actor" iff isActor) differentiate the two.
       val isActorType = isActor(td)
       val instanceType = if (isActorType) "actor" else ""
       // Suffix is only applied to actor-aspect TDs (name ending in `.actor`),
@@ -1084,6 +1090,11 @@ object Generator extends App {
          |
          |${typeGlobal(td, nameSuffix = nameSuffix)}
          |""".stripMargin
+    } else {
+      // Unreachable: the four predicates above partition the type space.
+      // This branch exists only to satisfy if-chain exhaustivity; if it fires,
+      // a predicate has drifted and Generator.generate has lost a case.
+      throw new IllegalStateException(s"Generator.generate: no branch matched ${td.typeName.name}")
     }
   }
 
