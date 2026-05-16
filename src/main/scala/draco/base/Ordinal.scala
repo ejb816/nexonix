@@ -1,13 +1,11 @@
 package draco.base
 
-import draco.Primal
+import draco._
 
-trait Ordinal extends Unit with Primal[Enumeration] {
-  override val name: String = "Ordinal"
-  override val description: String = "Values associated with an ordered sequence"
-}
+trait Ordinal extends Unit with Primal[Enumeration]
 
-object Ordinal extends App {
-  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Ordinal", _namePackage = Seq("draco", "base")))
-  lazy val dracoType: draco.Type[Ordinal] = draco.Type[Ordinal] (typeDefinition)
+object Ordinal extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Ordinal", _namePackage = Seq ("draco", "base")))
+  lazy val dracoType: Type[Ordinal] = Type[Ordinal] (typeDefinition)
+  lazy val domainType: Domain[Base] = Domain[Base] (typeDefinition)
 }

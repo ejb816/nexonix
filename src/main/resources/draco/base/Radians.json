@@ -19,18 +19,6 @@
         ]
       }
     ],
-    "elements": [
-      {
-        "kind": "Fixed",
-        "name": "name",
-        "valueType": "String"
-      },
-      {
-        "kind": "Fixed",
-        "name": "description",
-        "valueType": "String"
-      }
-    ],
     "factory": {
       "kind": "Factory",
       "valueType": "Radians",

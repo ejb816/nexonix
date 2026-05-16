@@ -1,16 +1,23 @@
 package draco.base
 
-trait Radians extends Rotation[Double] {
-  override val name: String = "Radians"
-  override val description: String = "Arc length divided by radius"
-}
+import draco._
 
-object Radians extends App {
-  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Radians", _namePackage = Seq("draco", "base")))
-  lazy val dracoType: draco.Type[Radians] = draco.Type[Radians] (typeDefinition)
+trait Radians extends Rotation[Double]
 
-  def apply (_value: Double) : Radians = new Radians {
-    override val value: Double = _value
-    override val typeDefinition: draco.TypeDefinition = Radians.typeDefinition
+object Radians extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Radians", _namePackage = Seq ("draco", "base")))
+  lazy val dracoType: Type[Radians] = Type[Radians] (typeDefinition)
+  lazy val domainType: Domain[Base] = Domain[Base] (typeDefinition)
+
+  def apply (
+    _value: Double
+  ) : Radians = new Radians {
+    override lazy val value: Double = _value
+    override lazy val typeDefinition: TypeDefinition = Radians.typeDefinition
   }
+
+  lazy val Null: Radians = apply(
+    _value = 0.0
+  )
+
 }

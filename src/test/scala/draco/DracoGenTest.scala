@@ -97,14 +97,7 @@ class DracoGenTest extends AnyFunSuite {
     "draco/language/YAML.json"             -> "Hand-written has Scala-specific YAML/JSON conversion helpers (loadTypeDefinition/emit/fromJson/toJson)",
     "draco/primes/Primes.json"             -> "Hand-written has Scala-only LazyList helpers (filter/naturals/composites/nPrimes) used by tests",
     "draco/primes/Numbers.json"            -> "Hand-written factory body computes via Primes.* helpers (Scala-only)",
-    "draco/primes/Accumulator.json"        -> "Hand-written has scala.collection.mutable defaults; trait declares val (not var) per Scala convention",
-    "draco/base/Cardinal.json"             -> "Hand-written carries vestigial name/description constants; not load-bearing",
-    "draco/base/Nominal.json"              -> "Same as Cardinal — vestigial metadata constants",
-    "draco/base/Ordinal.json"              -> "Same as Cardinal — vestigial metadata constants",
-    "draco/base/Rotation.json"             -> "Same as Cardinal — vestigial metadata constants",
-    "draco/base/Unit.json"                 -> "Same as Cardinal — vestigial metadata constants",
-    "draco/base/Meters.json"               -> "Same as Cardinal, plus hand-written single-line factory style",
-    "draco/base/Radians.json"              -> "Same as Cardinal, plus hand-written single-line factory style"
+    "draco/primes/Accumulator.json"        -> "Hand-written has scala.collection.mutable defaults; trait declares val (not var) per Scala convention"
   )
 
   /** TypeElement sealed-trait family — generated as one Scala source file
@@ -168,7 +161,7 @@ class DracoGenTest extends AnyFunSuite {
       val h = handLines.lift(i).getOrElse("")
       val g = genLines.lift(i).getOrElse("")
       val marker = if (h == g) "  " else "!!"
-      f"$marker ${i + 1}%3d | ${h}%-60s | $g"
+      f"$marker ${i + 1}%3d | $h%-60s | $g"
     }
     "\n        hand-written" + " " * 48 + "| generated\n" + rows.mkString("\n")
   }

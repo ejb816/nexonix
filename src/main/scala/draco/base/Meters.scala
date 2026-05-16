@@ -1,16 +1,23 @@
 package draco.base
 
-trait Meters extends Distance[Double] {
-  override val name: String = "Meters"
-  override val description: String = "Distance or length measure"
-}
+import draco._
 
-object Meters extends App {
-  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Meters", _namePackage = Seq("draco", "base")))
-  lazy val dracoType: draco.Type[Meters] = draco.Type[Meters] (typeDefinition)
+trait Meters extends Distance[Double]
 
-  def apply (_value: Double) : Meters = new Meters {
-    override val value: Double = _value
-    override val typeDefinition: draco.TypeDefinition = Meters.typeDefinition
+object Meters extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Meters", _namePackage = Seq ("draco", "base")))
+  lazy val dracoType: Type[Meters] = Type[Meters] (typeDefinition)
+  lazy val domainType: Domain[Base] = Domain[Base] (typeDefinition)
+
+  def apply (
+    _value: Double
+  ) : Meters = new Meters {
+    override lazy val value: Double = _value
+    override lazy val typeDefinition: TypeDefinition = Meters.typeDefinition
   }
+
+  lazy val Null: Meters = apply(
+    _value = 0.0
+  )
+
 }

@@ -24,18 +24,6 @@
           "String"
         ]
       }
-    ],
-    "elements": [
-      {
-        "kind": "Fixed",
-        "name": "name",
-        "valueType": "String"
-      },
-      {
-        "kind": "Fixed",
-        "name": "description",
-        "valueType": "String"
-      }
     ]
   },
   "domainAspect": {

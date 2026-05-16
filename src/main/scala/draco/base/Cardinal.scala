@@ -1,14 +1,11 @@
 package draco.base
 
-import draco.Primal
+import draco._
 
-trait Cardinal[T] extends Unit with Primal[T] {
-  override val name: String = "Cardinal"
-  override val description: String = "Atomic primitive or reference value"
+trait Cardinal[T] extends Unit with Primal[T]
+
+object Cardinal extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Cardinal", _namePackage = Seq ("draco", "base")))
+  lazy val dracoType: Type[Cardinal[_]] = Type[Cardinal[_]] (typeDefinition)
+  lazy val domainType: Domain[Base] = Domain[Base] (typeDefinition)
 }
-
-object Cardinal extends App {
-  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Cardinal", _namePackage = Seq("draco", "base")))
-  lazy val dracoType: draco.Type[Cardinal[_]] = draco.Type[Cardinal[_]] (typeDefinition)
-}
-
