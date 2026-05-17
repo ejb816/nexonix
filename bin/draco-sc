@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Run a draco mod script under src/mods/scala/scripts/ against the assembled draco jar.
+#
+# Usage:   bin/draco-sc <script-name> [args...]
+# Example: bin/draco-sc inspect-type Primal draco
+#
+# Looks up src/mods/scala/scripts/<script-name>.scala, runs it via scala-cli with
+# the local draco-*.jar on the classpath. Rebuild the jar via `sbt assembly` when
+# draco source changes — scripts compile against whatever's in the jar.
+#
+# IDE code intelligence comes through sbt's mods subproject (which sees these as
+# compilable Scala sources). No separate BSP config setup is needed.
+
+set -euo pipefail
+
+if [[ $# -lt 1 ]]; then
+  echo "usage: $(basename "$0") <script-name> [args...]" >&2
+  echo "       scripts available under src/mods/scala/scripts/*.scala" >&2
+  exit 2
+fi
+
+script_name="$1"
+shift
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+project_root="$(cd "$script_dir/.." && pwd)"
+
+scripts_dir="$project_root/src/mods/scala/scripts"
+script_path="$scripts_dir/${script_name}.scala"
+if [[ ! -f "$script_path" ]]; then
+  echo "error: no script at $script_path" >&2
+  echo "       available scripts:" >&2
+  ls "$scripts_dir/"*.scala 2>/dev/null | sed 's|^|         |' >&2 || echo "         (none)" >&2
+  exit 1
+fi
+
+jar="$(ls -1t "$project_root"/target/scala-2.13/draco-*.jar 2>/dev/null | head -n 1 || true)"
+if [[ -z "$jar" ]]; then
+  echo "error: no draco-*.jar under $project_root/target/scala-2.13/" >&2
+  echo "       run  sbt assembly  first" >&2
+  exit 1
+fi
+
+exec scala-cli run "$script_path" --jar "$jar" -- "$@"

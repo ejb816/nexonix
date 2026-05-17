@@ -1,11 +1,12 @@
-/.bsp/
-/.idea/
-/target/
+.bsp/
+.scala-build/
+.idea/
+target/
 /project/project/
-/project/target/
 /src/generated/
 /.draco/
 /.draco-tmp/
+.DS_Store
 
 # AI platform symlinks — canonical files are DRACO.md and .draco/
 CLAUDE.md

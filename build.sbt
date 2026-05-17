@@ -83,6 +83,22 @@ lazy val root = (project in file("."))
     }
   )
 
+// The "mods" tier — content that uses draco-as-a-dependency, modeled on what
+// an external author would write on top of the published jar. Depends on the
+// root project's compiled output (so it sees draco's API) but intentionally
+// introduces NO new third-party dependencies of its own. See src/mods/README.md.
+lazy val mods = (project in file("src/mods"))
+  .dependsOn(root)
+  .settings(
+    name := "draco-mods",
+    Compile / scalaSource      := baseDirectory.value / "scala",
+    Compile / resourceDirectory := baseDirectory.value / "resources",
+    // Silence main-method-without-entry-point warnings same as root.
+    scalacOptions += "-Wconf:msg=will not have an entry point on the JVM:s",
+    // No libraryDependencies — see README for rationale.
+    publish / skip := true
+  )
+
 ThisBuild / managedScalaInstance := false
 
 // Add the configuration for the dependencies on Scala tool jars
