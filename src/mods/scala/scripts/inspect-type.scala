@@ -74,7 +74,7 @@ object InspectType {
 
     println()
     println(s"=== RuleAspect ===")
-    println(s"  variables        = ${if (td.ruleAspect.variables.isEmpty) "(none)" else td.ruleAspect.variables.size + " var(s)"}")
+    println(s"  variables        = ${if (td.ruleAspect.variables.isEmpty) "(none)" else s"${td.ruleAspect.variables.size} var(s)"}")
 
     println()
     println(s"=== ActorAspect ===")

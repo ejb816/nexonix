@@ -95,7 +95,16 @@ lazy val mods = (project in file("src/mods"))
     Compile / resourceDirectory := baseDirectory.value / "resources",
     // Silence main-method-without-entry-point warnings same as root.
     scalacOptions += "-Wconf:msg=will not have an entry point on the JVM:s",
-    // No libraryDependencies — see README for rationale.
+    // Print full deprecation messages (matches root's setting).
+    scalacOptions += "-deprecation",
+    // ThisBuild sets `managedScalaInstance := false`, which means every project
+    // must supply its own scala-tool config. Replicate root's setup; no new
+    // 3rd-party deps beyond what scala itself requires.
+    ivyConfigurations += Configurations.ScalaTool,
+    libraryDependencies ++= Seq(
+      "org.scala-lang" % "scala-library"  % scalaVersion.value,
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "scala-tool"
+    ),
     publish / skip := true
   )
 
