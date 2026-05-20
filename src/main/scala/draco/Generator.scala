@@ -30,34 +30,28 @@ object Generator extends App {
 
   // --- Type loading ---
 
-  /** Parse text as YAML if the path ends in .yaml, otherwise as JSON.
-    * Both produce a circe `Json` AST; the TypeDefinition decoder is shape-tolerant
-    * to either source format. */
+  /** Parse a JSON resource as a TypeDefinition. JSON is the normative source form
+    * for type definitions at load time. YAML files (if present) are an authoring
+    * stand-in only — converted to JSON via `bin/draco-gen from-yaml` — and are
+    * ignored here. */
   private def loadFromResource (resourcePath: String) : Option[TypeDefinition] = {
     val stream = getClass.getResourceAsStream(resourcePath)
     if (stream == null) return None
     val source = scala.io.Source.fromInputStream(stream)
     try {
       val text = source.mkString
-      val parsed =
-        if (resourcePath.endsWith(".yaml")) io.circe.yaml.parser.parse(text)
-        else parser.parse(text)
-      parsed.flatMap(_.as[TypeDefinition]).toOption
+      parser.parse(text).flatMap(_.as[TypeDefinition]).toOption
     } finally source.close()
   }
 
-  private def resourcePath (typeName: TypeName, aspect: String = "", ext: String = "json") : String = {
+  private def resourcePath (typeName: TypeName, aspect: String = "") : String = {
     val np = typeName.namePackage.mkString("/")
     val n = typeName.name
-    if (aspect.isEmpty) s"/$np/$n.$ext" else s"/$np/$n.$aspect.$ext"
+    if (aspect.isEmpty) s"/$np/$n.json" else s"/$np/$n.$aspect.json"
   }
 
-  /** Try the YAML resource first, fall back to JSON. YAML is the normative authoring
-    * format going forward; JSON remains supported for backward compatibility while
-    * the corpus migrates. */
   private def tryLoad (typeName: TypeName, aspect: String = "") : Option[TypeDefinition] =
-    loadFromResource(resourcePath(typeName, aspect, "yaml"))
-      .orElse(loadFromResource(resourcePath(typeName, aspect)))
+    loadFromResource(resourcePath(typeName, aspect))
 
   def loadType (typeName: TypeName) : TypeDefinition =
     tryLoad(typeName).getOrElse(TypeDefinition(typeName))

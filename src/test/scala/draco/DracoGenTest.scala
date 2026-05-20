@@ -17,12 +17,13 @@ import scala.util.Using
  *  with a documentation comment as the value. The TypeElement sealed-trait family
  *  is excluded from per-type tests and validated as a multi-type group at the bottom.
  *
- *  When both `.yaml` and `.json` exist for the same logical type (the bootstrap
- *  aspect TDs and TypeDefinition), `.yaml` is preferred (canonical authoring format).
+ *  JSON is the normative source form for type definitions; the walker reads only
+ *  `.json` files. YAML companions (where present) are human-authoring stand-ins
+ *  managed via `bin/draco-gen from-yaml` / `to-yaml` and are ignored at load time.
  *
  *  NOTE: many hand-written files in `src/main/scala/draco/` predate the current
  *  generator and intentionally diverge. Failures here are expected and informative —
- *  each surfaces a place where hand-written Scala has drifted from JSON/YAML +
+ *  each surfaces a place where hand-written Scala has drifted from JSON +
  *  Generator emission.
  */
 class DracoGenTest extends AnyFunSuite {
@@ -33,18 +34,18 @@ class DracoGenTest extends AnyFunSuite {
 
   /** Map a resource path to its corresponding hand-written .scala path:
    *    "draco/X.json"            -> "draco/X.scala"
-   *    "draco/X.yaml"            -> "draco/X.scala"
    *    "draco/X.rule.json"       -> "draco/XRule.scala"
    *    "draco/X.actor.json"      -> "draco/XActor.scala" */
   private def deriveScalaPath(resourcePath: String): String = {
-    val base = resourcePath.stripSuffix(".json").stripSuffix(".yaml")
+    val base = resourcePath.stripSuffix(".json")
     if (base.endsWith(".rule"))       base.stripSuffix(".rule")  + "Rule.scala"
     else if (base.endsWith(".actor")) base.stripSuffix(".actor") + "Actor.scala"
     else                              base + ".scala"
   }
 
-  /** Walk `src/main/resources/draco/` and collect every regular .json / .yaml
-   *  file as a logical resource path (relative to the resource root). */
+  /** Walk `src/main/resources/draco/` and collect every regular `.json` file as
+   *  a logical resource path (relative to the resource root). YAML companions
+   *  are ignored — JSON is the normative source. */
   private def discoverResourcePaths(): Seq[String] = {
     val resourceRoot = Paths.get(Main.roots.sourceRoot)
     val dracoDir     = resourceRoot.resolve("draco")
@@ -52,17 +53,10 @@ class DracoGenTest extends AnyFunSuite {
       stream.iterator.asScala
         .filter(p => Files.isRegularFile(p))
         .map(p => resourceRoot.relativize(p).toString.replace('\\', '/'))
-        .filter(s => s.endsWith(".json") || s.endsWith(".yaml"))
+        .filter(_.endsWith(".json"))
         .toList
         .sorted
     }
-  }
-
-  /** When both `.yaml` and `.json` exist for the same logical type, prefer
-   *  the `.yaml` (drop the corresponding `.json`). */
-  private def dedupeYamlPreferred(paths: Seq[String]): Seq[String] = {
-    val yamlBases = paths.iterator.filter(_.endsWith(".yaml")).map(_.stripSuffix(".yaml")).toSet
-    paths.filterNot(p => p.endsWith(".json") && yamlBases.contains(p.stripSuffix(".json")))
   }
 
   /** Excluded from per-type comparison, with reason documented as the value.
@@ -97,7 +91,12 @@ class DracoGenTest extends AnyFunSuite {
     "draco/language/YAML.json"             -> "Hand-written has Scala-specific YAML/JSON conversion helpers (loadTypeDefinition/emit/fromJson/toJson)",
     "draco/primes/Primes.json"             -> "Hand-written has Scala-only LazyList helpers (filter/naturals/composites/nPrimes) used by tests",
     "draco/primes/Numbers.json"            -> "Hand-written factory body computes via Primes.* helpers (Scala-only)",
-    "draco/primes/Accumulator.json"        -> "Hand-written has scala.collection.mutable defaults; trait declares val (not var) per Scala convention"
+    "draco/primes/Accumulator.json"        -> "Hand-written has scala.collection.mutable defaults; trait declares val (not var) per Scala convention",
+    "draco/DracoAspect.json"               -> "Hand-written has Scala-specific encoder customizations (conditional field emission, defaulted apply params, isEmpty predicate) not expressible in current TypeDefinition schema; flagged for follow-up to fix TypeElement codec asymmetry (decoder reads `value`, encoder drops it)",
+    "draco/DomainAspect.json"              -> "Hand-written has Scala-specific encoder customizations (conditional field emission, defaulted apply params, isEmpty predicate) not expressible in current TypeDefinition schema",
+    "draco/RuleAspect.json"                -> "Hand-written has Scala-specific encoder customizations (conditional field emission, defaulted apply params, isEmpty predicate) not expressible in current TypeDefinition schema",
+    "draco/ActorAspect.json"               -> "Hand-written has Scala-specific encoder customizations (conditional field emission, defaulted apply params, isEmpty predicate) not expressible in current TypeDefinition schema",
+    "draco/TypeDefinition.json"            -> "Hand-written has Scala-specific encoder/decoder for TypeDefinition (with conditional emission per aspect.isEmpty) and defaulted aspect params; not expressible in current TypeDefinition schema"
   )
 
   /** TypeElement sealed-trait family — generated as one Scala source file
@@ -119,7 +118,7 @@ class DracoGenTest extends AnyFunSuite {
   )
 
   private val perTypeTypes: Seq[Ty] =
-    dedupeYamlPreferred(discoverResourcePaths())
+    discoverResourcePaths()
       .filterNot(excluded.contains)
       .map(rp => Ty(rp, deriveScalaPath(rp)))
 
@@ -127,9 +126,7 @@ class DracoGenTest extends AnyFunSuite {
 
   private def loadTypeDefinition(rp: String): TypeDefinition = {
     val sourceContent = SourceContent(Main.roots.sourceRoot, rp)
-    val jsonContent: Json =
-      if (rp.endsWith(".yaml")) io.circe.yaml.parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
-      else                      parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
+    val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
   }
 
@@ -188,7 +185,7 @@ class DracoGenTest extends AnyFunSuite {
         println(s"\n--- ${ty.scalaPath}: hand-written (normalized) ---\n$handNorm")
         fail(
           s"${ty.resourcePath}: generated source differs from hand-written ${ty.scalaPath}.\n" +
-          s"Resolve by either (a) updating the JSON/YAML / Generator so emission matches the hand-written file, " +
+          s"Resolve by either (a) updating the JSON / Generator so emission matches the hand-written file, " +
           s"or (b) replacing the hand-written file with the generated output:\n" +
           s"    bin/draco-gen generate src/main/resources/${ty.resourcePath} > src/main/scala/${ty.scalaPath}\n" +
           diffReport(handNorm, genNorm)

@@ -1,128 +1,128 @@
 {
-  "typeName" : {
-    "name" : "DracoAspect",
-    "namePackage" : [
+  "typeName": {
+    "name": "DracoAspect",
+    "namePackage": [
       "draco"
     ]
   },
-  "dracoAspect" : {
-    "derivation" : [
+  "dracoAspect": {
+    "derivation": [
       {
-        "name" : "DracoType",
-        "namePackage" : [
+        "name": "DracoType",
+        "namePackage": [
           "draco"
         ]
       }
     ],
-    "elements" : [
+    "elements": [
       {
-        "kind" : "Fixed",
-        "name" : "superDomain",
-        "valueType" : "TypeName"
+        "kind": "Fixed",
+        "name": "superDomain",
+        "valueType": "TypeName"
       },
       {
-        "kind" : "Fixed",
-        "name" : "modules",
-        "valueType" : "Seq[TypeName]"
+        "kind": "Fixed",
+        "name": "modules",
+        "valueType": "Seq[TypeName]"
       },
       {
-        "kind" : "Fixed",
-        "name" : "extensible",
-        "valueType" : "TypeName"
+        "kind": "Fixed",
+        "name": "extensible",
+        "valueType": "TypeName"
       },
       {
-        "kind" : "Fixed",
-        "name" : "derivation",
-        "valueType" : "Seq[TypeName]"
+        "kind": "Fixed",
+        "name": "derivation",
+        "valueType": "Seq[TypeName]"
       },
       {
-        "kind" : "Fixed",
-        "name" : "elements",
-        "valueType" : "Seq[TypeElement]"
+        "kind": "Fixed",
+        "name": "elements",
+        "valueType": "Seq[TypeElement]"
       },
       {
-        "kind" : "Fixed",
-        "name" : "factory",
-        "valueType" : "Factory"
+        "kind": "Fixed",
+        "name": "factory",
+        "valueType": "Factory"
       },
       {
-        "kind" : "Fixed",
-        "name" : "globalElements",
-        "valueType" : "Seq[BodyElement]"
+        "kind": "Fixed",
+        "name": "globalElements",
+        "valueType": "Seq[BodyElement]"
       },
       {
-        "kind" : "Fixed",
-        "name" : "source",
-        "valueType" : "TypeName"
+        "kind": "Fixed",
+        "name": "source",
+        "valueType": "TypeName"
       },
       {
-        "kind" : "Fixed",
-        "name" : "target",
-        "valueType" : "TypeName"
+        "kind": "Fixed",
+        "name": "target",
+        "valueType": "TypeName"
       }
     ],
-    "factory" : {
-      "kind" : "Factory",
-      "valueType" : "DracoAspect",
-      "parameters" : [
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DracoAspect",
+      "parameters": [
         {
-          "kind" : "Parameter",
-          "name" : "superDomain",
-          "valueType" : "TypeName"
+          "kind": "Parameter",
+          "name": "superDomain",
+          "valueType": "TypeName"
         },
         {
-          "kind" : "Parameter",
-          "name" : "modules",
-          "valueType" : "Seq[TypeName]"
+          "kind": "Parameter",
+          "name": "modules",
+          "valueType": "Seq[TypeName]"
         },
         {
-          "kind" : "Parameter",
-          "name" : "extensible",
-          "valueType" : "TypeName"
+          "kind": "Parameter",
+          "name": "extensible",
+          "valueType": "TypeName"
         },
         {
-          "kind" : "Parameter",
-          "name" : "derivation",
-          "valueType" : "Seq[TypeName]"
+          "kind": "Parameter",
+          "name": "derivation",
+          "valueType": "Seq[TypeName]"
         },
         {
-          "kind" : "Parameter",
-          "name" : "elements",
-          "valueType" : "Seq[TypeElement]"
+          "kind": "Parameter",
+          "name": "elements",
+          "valueType": "Seq[TypeElement]"
         },
         {
-          "kind" : "Parameter",
-          "name" : "factory",
-          "valueType" : "Factory"
+          "kind": "Parameter",
+          "name": "factory",
+          "valueType": "Factory"
         },
         {
-          "kind" : "Parameter",
-          "name" : "globalElements",
-          "valueType" : "Seq[BodyElement]"
+          "kind": "Parameter",
+          "name": "globalElements",
+          "valueType": "Seq[BodyElement]"
         },
         {
-          "kind" : "Parameter",
-          "name" : "source",
-          "valueType" : "TypeName"
+          "kind": "Parameter",
+          "name": "source",
+          "valueType": "TypeName"
         },
         {
-          "kind" : "Parameter",
-          "name" : "target",
-          "valueType" : "TypeName"
+          "kind": "Parameter",
+          "name": "target",
+          "valueType": "TypeName"
         }
       ]
     },
-    "globalElements" : [
+    "globalElements": [
       {
-        "kind" : "Monadic",
-        "valueType" : "Unit"
+        "kind": "Monadic",
+        "valueType": "Unit"
       }
     ]
   },
-  "domainAspect" : {
-    "typeName" : {
-      "name" : "Draco",
-      "namePackage" : [
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
         "draco"
       ]
     }

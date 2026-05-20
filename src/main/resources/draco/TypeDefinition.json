@@ -1,72 +1,72 @@
 {
-  "typeName" : {
-    "name" : "TypeDefinition",
-    "namePackage" : [
+  "typeName": {
+    "name": "TypeDefinition",
+    "namePackage": [
       "draco"
     ]
   },
-  "dracoAspect" : {
-    "derivation" : [
+  "dracoAspect": {
+    "derivation": [
       {
-        "name" : "Aspects",
-        "namePackage" : [
+        "name": "Aspects",
+        "namePackage": [
           "draco"
         ]
       }
     ],
-    "elements" : [
+    "elements": [
       {
-        "kind" : "Fixed",
-        "name" : "typeName",
-        "valueType" : "TypeName"
+        "kind": "Fixed",
+        "name": "typeName",
+        "valueType": "TypeName"
       }
     ],
-    "factory" : {
-      "kind" : "Factory",
-      "valueType" : "TypeDefinition",
-      "parameters" : [
+    "factory": {
+      "kind": "Factory",
+      "valueType": "TypeDefinition",
+      "parameters": [
         {
-          "kind" : "Parameter",
-          "name" : "typeName",
-          "valueType" : "TypeName"
+          "kind": "Parameter",
+          "name": "typeName",
+          "valueType": "TypeName"
         },
         {
-          "kind" : "Parameter",
-          "name" : "dracoAspect",
-          "valueType" : "DracoAspect"
+          "kind": "Parameter",
+          "name": "dracoAspect",
+          "valueType": "DracoAspect"
         },
         {
-          "kind" : "Parameter",
-          "name" : "domainAspect",
-          "valueType" : "DomainAspect"
+          "kind": "Parameter",
+          "name": "domainAspect",
+          "valueType": "DomainAspect"
         },
         {
-          "kind" : "Parameter",
-          "name" : "ruleAspect",
-          "valueType" : "RuleAspect"
+          "kind": "Parameter",
+          "name": "ruleAspect",
+          "valueType": "RuleAspect"
         },
         {
-          "kind" : "Parameter",
-          "name" : "actorAspect",
-          "valueType" : "ActorAspect"
+          "kind": "Parameter",
+          "name": "actorAspect",
+          "valueType": "ActorAspect"
         }
       ]
     },
-    "globalElements" : [
+    "globalElements": [
       {
-        "kind" : "Monadic",
-        "valueType" : "Unit"
+        "kind": "Monadic",
+        "valueType": "Unit"
       },
       {
-        "kind" : "Monadic",
-        "valueType" : "Unit"
+        "kind": "Monadic",
+        "valueType": "Unit"
       }
     ]
   },
-  "domainAspect" : {
-    "typeName" : {
-      "name" : "Draco",
-      "namePackage" : [
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
         "draco"
       ]
     }

@@ -1,58 +1,58 @@
 {
-  "typeName" : {
-    "name" : "DomainAspect",
-    "namePackage" : [
+  "typeName": {
+    "name": "DomainAspect",
+    "namePackage": [
       "draco"
     ]
   },
-  "dracoAspect" : {
-    "derivation" : [
+  "dracoAspect": {
+    "derivation": [
       {
-        "name" : "DracoType",
-        "namePackage" : [
+        "name": "DracoType",
+        "namePackage": [
           "draco"
         ]
       }
     ],
-    "elements" : [
+    "elements": [
       {
-        "kind" : "Fixed",
-        "name" : "typeName",
-        "valueType" : "TypeName"
+        "kind": "Fixed",
+        "name": "typeName",
+        "valueType": "TypeName"
       },
       {
-        "kind" : "Fixed",
-        "name" : "elementTypeNames",
-        "valueType" : "Seq[String]"
+        "kind": "Fixed",
+        "name": "elementTypeNames",
+        "valueType": "Seq[String]"
       }
     ],
-    "factory" : {
-      "kind" : "Factory",
-      "valueType" : "DomainAspect",
-      "parameters" : [
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DomainAspect",
+      "parameters": [
         {
-          "kind" : "Parameter",
-          "name" : "typeName",
-          "valueType" : "TypeName"
+          "kind": "Parameter",
+          "name": "typeName",
+          "valueType": "TypeName"
         },
         {
-          "kind" : "Parameter",
-          "name" : "elementTypeNames",
-          "valueType" : "Seq[String]"
+          "kind": "Parameter",
+          "name": "elementTypeNames",
+          "valueType": "Seq[String]"
         }
       ]
     },
-    "globalElements" : [
+    "globalElements": [
       {
-        "kind" : "Monadic",
-        "valueType" : "Unit"
+        "kind": "Monadic",
+        "valueType": "Unit"
       }
     ]
   },
-  "domainAspect" : {
-    "typeName" : {
-      "name" : "Draco",
-      "namePackage" : [
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
         "draco"
       ]
     }

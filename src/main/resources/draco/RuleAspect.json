@@ -1,88 +1,88 @@
 {
-  "typeName" : {
-    "name" : "RuleAspect",
-    "namePackage" : [
+  "typeName": {
+    "name": "RuleAspect",
+    "namePackage": [
       "draco"
     ]
   },
-  "dracoAspect" : {
-    "derivation" : [
+  "dracoAspect": {
+    "derivation": [
       {
-        "name" : "DracoType",
-        "namePackage" : [
+        "name": "DracoType",
+        "namePackage": [
           "draco"
         ]
       }
     ],
-    "elements" : [
+    "elements": [
       {
-        "kind" : "Fixed",
-        "name" : "variables",
-        "valueType" : "Seq[Variable]"
+        "kind": "Fixed",
+        "name": "variables",
+        "valueType": "Seq[Variable]"
       },
       {
-        "kind" : "Fixed",
-        "name" : "conditions",
-        "valueType" : "Seq[Condition]"
+        "kind": "Fixed",
+        "name": "conditions",
+        "valueType": "Seq[Condition]"
       },
       {
-        "kind" : "Fixed",
-        "name" : "values",
-        "valueType" : "Seq[Value]"
+        "kind": "Fixed",
+        "name": "values",
+        "valueType": "Seq[Value]"
       },
       {
-        "kind" : "Fixed",
-        "name" : "pattern",
-        "valueType" : "Pattern"
+        "kind": "Fixed",
+        "name": "pattern",
+        "valueType": "Pattern"
       },
       {
-        "kind" : "Fixed",
-        "name" : "action",
-        "valueType" : "Action"
+        "kind": "Fixed",
+        "name": "action",
+        "valueType": "Action"
       }
     ],
-    "factory" : {
-      "kind" : "Factory",
-      "valueType" : "RuleAspect",
-      "parameters" : [
+    "factory": {
+      "kind": "Factory",
+      "valueType": "RuleAspect",
+      "parameters": [
         {
-          "kind" : "Parameter",
-          "name" : "variables",
-          "valueType" : "Seq[Variable]"
+          "kind": "Parameter",
+          "name": "variables",
+          "valueType": "Seq[Variable]"
         },
         {
-          "kind" : "Parameter",
-          "name" : "conditions",
-          "valueType" : "Seq[Condition]"
+          "kind": "Parameter",
+          "name": "conditions",
+          "valueType": "Seq[Condition]"
         },
         {
-          "kind" : "Parameter",
-          "name" : "values",
-          "valueType" : "Seq[Value]"
+          "kind": "Parameter",
+          "name": "values",
+          "valueType": "Seq[Value]"
         },
         {
-          "kind" : "Parameter",
-          "name" : "pattern",
-          "valueType" : "Pattern"
+          "kind": "Parameter",
+          "name": "pattern",
+          "valueType": "Pattern"
         },
         {
-          "kind" : "Parameter",
-          "name" : "action",
-          "valueType" : "Action"
+          "kind": "Parameter",
+          "name": "action",
+          "valueType": "Action"
         }
       ]
     },
-    "globalElements" : [
+    "globalElements": [
       {
-        "kind" : "Monadic",
-        "valueType" : "Unit"
+        "kind": "Monadic",
+        "valueType": "Unit"
       }
     ]
   },
-  "domainAspect" : {
-    "typeName" : {
-      "name" : "Draco",
-      "namePackage" : [
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
         "draco"
       ]
     }

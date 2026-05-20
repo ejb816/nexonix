@@ -65,9 +65,7 @@ class GenerateAndCompileTest extends AnyFunSuite {
   private def loadTypeDefinition(rp: String): Either[String, (TypeDefinition, String)] = {
     try {
       val sourceContent = SourceContent(resourceRoot, rp)
-      val jsonContent: Json =
-        if (rp.endsWith(".yaml")) io.circe.yaml.parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
-        else parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
+      val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
       val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
       if (td == null || td == TypeDefinition.Null)
         Left(s"Failed to parse TypeDefinition from $rp")

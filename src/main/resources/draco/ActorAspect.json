@@ -1,58 +1,58 @@
 {
-  "typeName" : {
-    "name" : "ActorAspect",
-    "namePackage" : [
+  "typeName": {
+    "name": "ActorAspect",
+    "namePackage": [
       "draco"
     ]
   },
-  "dracoAspect" : {
-    "derivation" : [
+  "dracoAspect": {
+    "derivation": [
       {
-        "name" : "DracoType",
-        "namePackage" : [
+        "name": "DracoType",
+        "namePackage": [
           "draco"
         ]
       }
     ],
-    "elements" : [
+    "elements": [
       {
-        "kind" : "Fixed",
-        "name" : "messageAction",
-        "valueType" : "Action"
+        "kind": "Fixed",
+        "name": "messageAction",
+        "valueType": "Action"
       },
       {
-        "kind" : "Fixed",
-        "name" : "signalAction",
-        "valueType" : "Action"
+        "kind": "Fixed",
+        "name": "signalAction",
+        "valueType": "Action"
       }
     ],
-    "factory" : {
-      "kind" : "Factory",
-      "valueType" : "ActorAspect",
-      "parameters" : [
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ActorAspect",
+      "parameters": [
         {
-          "kind" : "Parameter",
-          "name" : "messageAction",
-          "valueType" : "Action"
+          "kind": "Parameter",
+          "name": "messageAction",
+          "valueType": "Action"
         },
         {
-          "kind" : "Parameter",
-          "name" : "signalAction",
-          "valueType" : "Action"
+          "kind": "Parameter",
+          "name": "signalAction",
+          "valueType": "Action"
         }
       ]
     },
-    "globalElements" : [
+    "globalElements": [
       {
-        "kind" : "Monadic",
-        "valueType" : "Unit"
+        "kind": "Monadic",
+        "valueType": "Unit"
       }
     ]
   },
-  "domainAspect" : {
-    "typeName" : {
-      "name" : "Draco",
-      "namePackage" : [
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
         "draco"
       ]
     }
