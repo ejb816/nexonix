@@ -6,6 +6,14 @@
     ]
   },
   "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
     "globalElements": [
       {
         "kind": "Dynamic",

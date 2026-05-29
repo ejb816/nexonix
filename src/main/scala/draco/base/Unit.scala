@@ -2,10 +2,10 @@ package draco.base
 
 import draco._
 
-trait Unit
+trait Unit extends DracoType
 
-object Unit extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Unit", _namePackage = Seq ("draco", "base")))
+object Unit extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Unit", _namePackage = Seq ("draco", "base")))
   lazy val dracoType: Type[Unit] = Type[Unit] (typeDefinition)
   lazy val domainType: Domain[Base] = Domain[Base] (typeDefinition)
 }

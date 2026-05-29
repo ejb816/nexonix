@@ -87,17 +87,7 @@ class DracoGenTest extends AnyFunSuite {
    *        constants) that only the Scala source uses for self-description;
    *        propagating it through inheritance overrides is generator-mechanics
    *        burden disproportionate to the value. */
-  private val comparisonOnlyExcluded: Map[String, String] = Map(
-    "draco/language/YAML.json"             -> "Hand-written has Scala-specific YAML/JSON conversion helpers (loadTypeDefinition/emit/fromJson/toJson)",
-    "draco/primes/Primes.json"             -> "Hand-written has Scala-only LazyList helpers (filter/naturals/composites/nPrimes) used by tests",
-    "draco/primes/Numbers.json"            -> "Hand-written factory body computes via Primes.* helpers (Scala-only)",
-    "draco/primes/Accumulator.json"        -> "Hand-written has scala.collection.mutable defaults; trait declares val (not var) per Scala convention",
-    "draco/DracoAspect.json"               -> "Hand-written has Scala-specific encoder customizations (conditional field emission, defaulted apply params, isEmpty predicate) not expressible in current TypeDefinition schema; flagged for follow-up to fix TypeElement codec asymmetry (decoder reads `value`, encoder drops it)",
-    "draco/DomainAspect.json"              -> "Hand-written has Scala-specific encoder customizations (conditional field emission, defaulted apply params, isEmpty predicate) not expressible in current TypeDefinition schema",
-    "draco/RuleAspect.json"                -> "Hand-written has Scala-specific encoder customizations (conditional field emission, defaulted apply params, isEmpty predicate) not expressible in current TypeDefinition schema",
-    "draco/ActorAspect.json"               -> "Hand-written has Scala-specific encoder customizations (conditional field emission, defaulted apply params, isEmpty predicate) not expressible in current TypeDefinition schema",
-    "draco/TypeDefinition.json"            -> "Hand-written has Scala-specific encoder/decoder for TypeDefinition (with conditional emission per aspect.isEmpty) and defaulted aspect params; not expressible in current TypeDefinition schema"
-  )
+  private val comparisonOnlyExcluded: Map[String, String] = Map.empty
 
   /** TypeElement sealed-trait family — generated as one Scala source file
    *  (TypeElement.scala) by `Generator.generate(Seq[TypeDefinition])`.

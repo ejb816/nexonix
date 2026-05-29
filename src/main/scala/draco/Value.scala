@@ -3,7 +3,7 @@ package draco
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
-trait Value {
+trait Value extends DracoType {
   val name: String
   val pathElements: Seq[String]
   def value[T] (_source: Json)(implicit decoder: Decoder[T]): T = {
@@ -15,8 +15,8 @@ trait Value {
   }
 }
 
-object Value extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Value", _namePackage = Seq ("draco")))
+object Value extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Value", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Value] = Type[Value] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -40,6 +40,7 @@ object Value extends App {
   ) : Value = new Value {
     override lazy val name: String = _name
     override lazy val pathElements: Seq[String] = _pathElements
+    override lazy val typeDefinition: TypeDefinition = Value.typeDefinition
   }
 
   lazy val Null: Value = apply(

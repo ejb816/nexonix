@@ -41,12 +41,6 @@
           "name": "valueType",
           "valueType": "String",
           "value": "_valueType"
-        },
-        {
-          "kind": "Fixed",
-          "name": "value",
-          "valueType": "String",
-          "value": "\"\""
         }
       ]
     }

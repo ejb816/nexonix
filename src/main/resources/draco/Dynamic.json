@@ -65,12 +65,6 @@
           "name": "body",
           "valueType": "Seq[BodyElement]",
           "value": "_body"
-        },
-        {
-          "kind": "Fixed",
-          "name": "value",
-          "valueType": "String",
-          "value": "\"\""
         }
       ]
     }

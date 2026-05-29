@@ -3,11 +3,15 @@ package draco.primes
 import draco._
 
 trait Primes {
-  val knowledge: org.evrete.api.Knowledge = Rule.knowledgeService.newKnowledge("Primes")
+  lazy val knowledge: org.evrete.api.Knowledge = Rule.knowledgeService.newKnowledge("Primes")
 }
 
 object Primes extends App {
   lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Primes", _namePackage = Seq ("draco", "primes")))
+  lazy val dracoType: Type[Primes] = Type[Primes] (typeDefinition)
+
+  lazy val elementTypeNames: Seq[String] = Seq ("Accumulator", "Numbers", "AddNaturalSequence.rule", "PrimesFromNaturalSequence.rule", "RemoveCompositeNumbers.rule")
+
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 
   def filter(naturals: LazyList[Int]): LazyList[Int] = {

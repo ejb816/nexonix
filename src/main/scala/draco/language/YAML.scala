@@ -1,15 +1,16 @@
 package draco.language
 
 import draco._
-import io.circe.{Json, parser => jsonParser}
+import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
-import io.circe.yaml.{parser => yamlParser, printer => yamlPrinter}
 
-trait YAML
+object YAML extends DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("YAML", _namePackage = Seq ("draco", "language")))
+  lazy val dracoType: DracoType = this
+  lazy val domainType: Domain[Language] = Domain[Language] (typeDefinition)
 
-object YAML extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("YAML", _namePackage = Seq ("draco", "language")))
-  lazy val dracoType: Type[YAML] = Type[YAML] (typeDefinition)
+  import io.circe.{parser => jsonParser}
+  import io.circe.yaml.{parser => yamlParser, printer => yamlPrinter}
 
   /** Parse a YAML string into a TypeDefinition. */
   def loadTypeDefinition(yaml: String): TypeDefinition =

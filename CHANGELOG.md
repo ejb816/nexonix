@@ -4,49 +4,117 @@ All notable changes to the Nexonix/Draco project will be documented in this file
 
 ## [Unreleased]
 
+_No unreleased changes yet._
+
+---
+
+## [2.0.0-alpha.4] - 2026-05-29
+
+The JSON-normative release: JSON is the sole runtime load path, the entire `src/main/scala/draco/` package is byte-equivalent to Generator output, and the user-facing tooling (`bin/draco-gen`, `bin/draco-sc`, `src/mods`) and README are brought current. Covers dev-journal chapters 37–39.
+
 ### Added
 
-- **`draco.Holon[T <: Product]`** — Base trait for primal type values (T has accessible substructure: tuples, case classes). `extends Extensible with Primal[T]`. Companion uses `Generator.loadType`.
+- **`TypeElement.value` field** — A `Fixed` element (default `""`) so default-bearing elements survive a YAML→JSON round-trip without their defaults being stripped. The trait carries `lazy val value: String = ""`; the encoder emits `value` when non-empty (closes #28, #18).
 
-- **`draco.Transform[S <: DracoType, T <: DracoType]`** — First two-parameter draco type. `extends Extensible with Holon[(S, T)]`. Primal type value whose `value` is a 2-tuple of source and target references, captured via the companion-as-instance pattern to avoid circular initialization.
+- **`bin/draco-gen from-yaml` / `to-yaml`** — Convert between a JSON definition and its human-authoring YAML twin, with git-aware safety (a conversion refuses to clobber dirty/untracked work without `--force`).
 
-- **`draco.RuntimeCompiler`** — `compile`, `compileMulti`, and `loadClass` helpers wrapping `scala.tools.nsc.Global` for runtime Scala compilation in tests (`scala-compiler` was already a dependency).
+- **`bin/draco-gen discover` / `verify`** — `verify <domain-json>` checks a domain's `elementTypeNames` against its package siblings on disk (exits non-zero on drift); `discover <domain-json> [--force]` rewrites the list from directory contents, sorted types → rules → actors (closes #9).
 
-- **`draco.GenerateAndCompileTest`** — Comprehensive regression test: every JSON definition under `src/main/resources/draco/` is loaded, run through `Generator.generate`, and compiled via `RuntimeCompiler`. Baseline: 31 passed, 17 failed, 48 total. The `TypeElement` sealed hierarchy compiles as one unit via `compileMulti`.
+- **`bin/draco-sc` + `src/mods/scala/scripts/`** — A scala-cli script runner over the assembled draco jar, plus the first script batch: `list-domain`, `list-domains`, `who-extends`, `diff-type` (joining `inspect-type`, `derivation-chain`). For runtime queries a jar-only user would otherwise need a test for.
 
-- **`draco.RuntimeCompilerTest`** — Four tests covering the full cycle: simple standalone class, source referencing draco types (classpath bridging), full cycle from JSON (Holon), and error reporting.
-
-- **`draco.GeneratorCLI` + `bin/draco-gen`** — Bash-invocable Generator CLI, packaged in the sbt-assembly fat JAR. Subcommands: `generate`, `compile`, `compile-multi`, `inspect`. Rebuild with `sbt assembly`. Enables fast iteration on Generator output and source-definition debugging.
-
-- **Reference-frame example domains (Increment A)** — Cosmocentric super-domain plus Egocentric/Geocentric/Heliocentric/Galactocentric peer sub-domain skeletons under `src/test/{resources,scala}/domains/<frame>/`. No leaves or transforms yet — Increments B and C remain.
-
-- **`domains.ReferenceFramesGenTest`** — 12-assertion verification harness: per-frame JSON parse + whitespace-normalized match of generator output to committed Scala, plus Cosmocentric standalone compile and family-wide `compileMulti`. Failure messages include the exact `bin/draco-gen generate ... > ...` recipe to reconcile drift.
-
-- **Chapter 20 of draco-dev-journal** — Covers the reference-frame Increment A session, including the CLI pivot and the Generator cross-package import bug discovery.
-
-- **draco-dev-journal extraction tooling** — Scripts under `draco-dev-journal/tools/` for extracting user↔assistant pairs from Claude Code JSONL session files (`extract_sessions.py`), matching them against existing chapters to identify gaps (`map_and_detect_gaps.py`), and producing per-chapter insertion/merged-draft files (`gaps/build_chapter.py`, `gaps/integrate_chapter.py`, `gaps/process_gaps.py`). Scripts use dynamic project-root resolution (no hardcoded paths); per-chapter scripts take the chapter number via argv. Outputs are regenerable and excluded via `.gitignore`.
+- **Getting Started walkthrough (README)** — A minimal define-JSON → generate → register → use → verify loop, seeded for later expansion.
 
 ### Changed
 
-- **`draco.Primal[T]`** now extends `TypeInstance` (was `DracoType`). All factory anonymous classes use `override lazy val typeInstance` to break circular initialization. Applies to `TypeElement` (11 factories), `Coordinate`, `Meters`, `Radians`, and the `Primal` companion itself.
+- **JSON-normative load path** — `Generator` loading is JSON-only: `tryLoad` does a single JSON lookup, `loadFromResource` lost its YAML branch, and `resourcePath` no longer takes an extension parameter. YAML is a human-authoring stand-in visible only to `from-yaml` / `to-yaml`, never to the loader.
 
-- **`draco.base.Coordinate`** retargets from `Primal[T]` to `Holon[T]`. Downstream types still see `Primal[T]` by transitivity.
+- **`DracoGenTest.comparisonOnlyExcluded` → `Map.empty`** — The last four hand-customized type declarations (`Accumulator`, `Numbers`, `Primes`, `YAML`) were re-expressed in generator-canonical form, so every file under `src/main/scala/draco/` is now byte-equivalent to Generator emission. `Generator` gained targeted `import scala.collection.mutable` emission when any `valueType` contains `mutable.` (closes #29).
 
-- **Inline `TypeDefinition` eliminated for leaf types** — `Coordinate`, `Unit`, `Cardinal`, `Nominal`, `Ordinal`, `Distance`, `Rotation`, `Meters`, `Radians`, `Accumulator`, `Numbers`. All 11 leaf companions' `typeDefinition` now delegates to `Generator.loadType(TypeName(...))`; TypeDefinition data lives exclusively in JSON resource files. Domain-root types (`Draco`, `Base`, `Primes`) retain inline `TypeDefinition` for now.
+- **`DracoType` derivation declared on `CLI` / `REPL` / `Value` / `Unit`** — First PoC batch of the canonicalization umbrella: each gains `dracoAspect.derivation: [DracoType]` in JSON, regenerated to match. `who-extends DracoType` coverage rose 44 → 48 (#38, 4 of 12).
 
-- **`Generator.typeImports`** — New `referencedPackageImports` helper emits `import <pkg>._` for any cross-package `TypeName` in `derivation` / `modules` / `superDomain` / `source` / `target`. Unblocks any sub-type whose supertype lives in a non-parent package (e.g. `Egocentric extends Cosmocentric` where `Cosmocentric` lives in `domains.cosmocentric`). Purely additive — `GenerateAndCompileTest` baseline unchanged.
+- **`src/mods/` layer policy** — Codified as a permanent third source tier for speculative outer layers (`draco.dreams`, `draco.dreams.orion`); `mods → main` references allowed, `main → mods` forbidden.
 
-- **Chapters 01-19 of draco-dev-journal** — Content updates from running the gap-filling pipeline against source session data; adds Chapter 19 (Holon / Transform[S,T] / RuntimeCompiler design session).
+- **README.md** — Full rewrite (+319 / −200) aligning it with the post-alpha.3 architecture: DracoType-as-root, the companion-val convention, aspect blocks, the four endogenous domains as the example backbone, the 5-way Generator dispatch, JSON-normative policy, and the current tooling.
+
+- **`build.sbt`** — Version `2.0.0-alpha.3` → `2.0.0-alpha.4`.
 
 ### Fixed
 
-- **`PrimesRulesTest.indexDifference`** — Returns `List.empty` for lists with fewer than 2 elements instead of crashing with `UnsupportedOperationException: tail of empty list`.
+- **Codec asymmetry** — Defaults were silently stripped on YAML→JSON round-trip because `TypeElement` omitted `value` from its encoded form (closes #28, #18; root cause shared with #29).
 
-- **CI `release.yml`** — Adds an explicit sbt install step before the test/release phase, resolving a CI failure where sbt was unavailable on the runner.
+- **`TypeName` reference-equality** — `TypeName` has no structural `equals`/`hashCode`, so `apply`-produced instances compared unequal by reference and `domainAspect.typeName == typeName` was always false. Worked around with `.namePath == .namePath` in five sites (`GeneratorCLI` + mods scripts); structural-equality root fix tracked in #37.
+
+- **`inspect-type` / `derivation-chain` null check** — The `td == TypeDefinition.Null` guard never fired (`loadType` returns a typeName-only placeholder, not `Null` on miss); replaced with aspect-emptiness detection. Also removed a stale `PrimeOrdinal` entry from `Primes.json` surfaced by `verify`.
 
 ### Removed
 
-- **`draco.dreams.Transform`** — Obsolete runtime-only transform type, superseded by `draco.Transform[S, T]`. Scala source and JSON resource both deleted.
+- **`YamlToJsonBootstrap.scala`** — One-shot bootstrap superseded by the `bin/draco-gen from-yaml` CLI.
+
+---
+
+## [2.0.0-alpha.3] - 2026-05-17
+
+The architectural-consolidation release. `DracoType` becomes the universal root, the type system is reorganized into aspect blocks, and the whole `draco.*` package becomes generatable from — and byte-equivalent to — its JSON. Several scaffolding types from the alpha.2 era are eliminated. Covers dev-journal chapters 20–36. Closes #1, #6, #8, #17, #24, #26, #27.
+
+### Added
+
+- **`draco.Holon[T <: Product]`** — Perspective marker onto composite structure; an axis distinct from `Primal[T]` (value). Now `extends DracoType`.
+
+- **Aspect blocks** — `TypeDefinition` reorganized to extend a new `Aspects` parent carrying four sub-aspects: `DracoAspect` (shared structure), `DomainAspect` (membership), `RuleAspect` (rule LHS/RHS), `ActorAspect` (handlers). Each is itself a `DracoType` with its own JSON definition.
+
+- **`DomainAspect.typeName`** — Every type declares its containing domain: a self-loop means the type *is* a domain, a container-pointer means it is a leaf. The universal domain-vs-leaf discriminator, replacing package-scan heuristics.
+
+- **`isLeaf` predicate + flat dispatcher** — `Generator.generate` restructured into an explicit `isRule` / `isDomain` / `isObjectOnly` / `isLeaf` / `isActor` table with an exhaustivity guard (closes #24, #27).
+
+- **`TypeTransform[S, T]` and `DomainTransform[S, T]`** — The overloaded `Transform[S, T]` split into a type-to-type and a domain-to-domain transform; both `extend Holon[(S, T)]`.
+
+- **`draco.language` sub-domain + YAML authoring** — `Language` and `YAML` types; YAML promoted to a human-authoring surface alongside the canonical JSON.
+
+- **`draco.GeneratorCLI` + `bin/draco-gen`** — Bash-invocable Generator CLI in the sbt-assembly fat JAR (`generate` / `compile` / `compile-multi` / `inspect`).
+
+- **`src/mods/` source tier** — A third tier alongside `main` and `test`, with the script toolkit migrated in under an sbt `mods` subproject.
+
+- **Reference-frame example domains (Increments A–C)** — Cosmocentric super-domain plus the Egocentric / Geocentric / Heliocentric / Galactocentric peer frames and the full 4×3 transform matrix, with `domains.DomainsGenTest` (renamed from `ReferenceFramesGenTest`). Retained under `src/test/` but de-prioritized as teaching material.
+
+- **draco-dev-journal extraction tooling** — Scripts under `draco-dev-journal/tools/` that pull user↔assistant pairs from Claude Code session logs, match them against committed chapters, and surface gaps. Outputs are regenerable and gitignored.
+
+- **GitHub Issues backlog** — Project backlog migrated from `MEMORY.md` to GitHub Issues with a label lifecycle (`roadmap` → `next-feature` → `priority-next`) and a tracking-issue pattern.
+
+### Changed
+
+- **`DracoType` as universal root** — Every type in `draco.*` extends `DracoType` and carries its own `typeDefinition`; the whole package is generatable from JSON.
+
+- **Companion val collapse** — The per-companion `typeInstance` val became `dracoType` / `domainType` (plus `ruleType` / `actorType` where relevant). Companions drop `extends … with TypeInstance`.
+
+- **Actors consolidated into `actorAspect`** — An actor is no longer a separate `.actor` sibling type; its behavior lives as the `actorAspect` block on its parent type's `TypeDefinition` (closes #8, #26).
+
+- **`draco.base` canonicalization** — The seven base measurement types stripped of vestigial `name`/`description` metadata, leaving minimal self-describing types (closes #17).
+
+- **Generator-canonical package** — `src/main/scala/draco/*` swept to be byte-equivalent to Generator emission; `DracoGenTest` walks the resource tree and compares per type.
+
+### Fixed
+
+- **`SourceContent` whitespace** — `sourceLines.mkString` → `mkString("\n")`; a latent bug masked while only JSON (whitespace-immaterial) was consumed, surfaced by the first YAML file read.
+
+- **`PrimesRulesTest.indexDifference`** — Returns `List.empty` for lists with fewer than two elements instead of throwing on `tail of empty list`.
+
+- **CI `release.yml`** — Adds an explicit sbt install step before the test/release phase, resolving a runner failure where sbt was unavailable.
+
+### Removed
+
+- **The `*Instance` trait family** — `TypeInstance`, `DomainInstance`, `RuleInstance`, `ActorInstance` dissolved into the companion-val convention.
+
+- **`Extensible`** — Eliminated mid-sweep; all core traits chain to `DracoType` directly.
+
+- **`Specifically[T]`** — Tag-style trait with no live use.
+
+- **`draco.RuntimeCompiler`** — `compile` / `compileMulti` / `loadClass` migrated onto `Generator`; the standalone type and its test deleted.
+
+- **Inline `TypeDefinition`s** — Removed from all remaining hand-written companions; definition data lives exclusively in JSON resources.
+
+- **`draco.dreams.Transform`** — Obsolete runtime-only transform, superseded by the `Transform` split.
+
+- **Hand-written example-domain test scaffolds** — `Alpha` / `Bravo` / `Charlie` / `Delta` / `DataModel` (and their actors/rules) removed; per-package generation walks now cover their round-trip semantics.
 
 ---
 

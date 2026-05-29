@@ -33,19 +33,22 @@
         {
           "kind": "Parameter",
           "name": "typeName",
-          "valueType": "TypeName"
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
         },
         {
           "kind": "Parameter",
           "name": "elementTypeNames",
-          "valueType": "Seq[String]"
+          "valueType": "Seq[String]",
+          "value": "Seq.empty"
         }
       ]
     },
     "globalElements": [
       {
         "kind": "Monadic",
-        "valueType": "Unit"
+        "valueType": "Unit",
+        "value": "lazy val isEmpty: DomainAspect => Boolean = da =>\n  da.typeName.name.isEmpty && da.elementTypeNames.isEmpty"
       }
     ]
   },

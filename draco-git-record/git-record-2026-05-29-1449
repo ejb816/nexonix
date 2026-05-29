@@ -1,0 +1,116 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+# New journal chapters (chapter 38 — #28/#29/#9/mods/PoC session; chapter 39 — README alignment)
+git add draco-dev-journal/draco-dev-chapter-38.md
+git add draco-dev-journal/draco-dev-chapter-39.md
+
+# This audit-trail file
+git add draco-git-record/git-record-2026-05-29-1449
+
+# New mods scripts born across the bundled sessions
+git add src/mods/scala/scripts/diff-type.scala
+git add src/mods/scala/scripts/list-domain.scala
+git add src/mods/scala/scripts/list-domains.scala
+git add src/mods/scala/scripts/who-extends.scala
+
+# Everything else — modifications across two sessions:
+#   chapter 38: #28 (TypeElement.value + 5 aspect JSONs restored), #29 (Accumulator/Numbers/Primes/YAML
+#     decanonicalization → Map.empty; Generator gains scala.collection.mutable import emission), #9
+#     (GeneratorCLI discover/verify), #38 PoC canonicalization of CLI/REPL/Value/Unit, #37 TypeName
+#     .namePath workaround in five places, inspect-type/derivation-chain aspect-emptiness fix, mods README.
+#   chapter 39: README.md full rewrite (+319 / −200), CHANGELOG.md (alpha.4 section + reconciled alpha.3
+#     net-change section replacing the stale [Unreleased] block), and the build.sbt bump to 2.0.0-alpha.4.
+git add -u
+
+git commit -m "$(cat <<'EOF'
+Release prep v2.0.0-alpha.4 — close #28/#29/#18/#9, mods script batch + PoC canonicalization (#37/#38), README brought current
+
+Bundles two uncommitted sessions (chapters 38 and 39) into one release commit. Last commit (62f50ac, 2026-05-19) was the JSON-normative migration; this is the first commit since, and carries the alpha.4 version bump.
+
+== Chapter 38 — codec asymmetry, comparison-map clearing, tooling, canonicalization PoC ==
+
+#28 TypeElement codec asymmetry (also closes #18, same root cause):
+- TypeElement.json gains a `value` Fixed element (default ""); trait carries `lazy val value: String = ""`,
+  concrete on parent, overridden by leaves whose factory.parameters declare value.
+- Encoder emits `value` when nonEmpty. Redundant value:"" overrides removed from Dynamic/Pattern/Action/
+  Variable/Factory factory bodies (now inherit the trait default).
+- Five aspect JSONs restored from their YAML twins (DracoAspect/DomainAspect/RuleAspect/ActorAspect/
+  TypeDefinition) — regained factory-parameter defaults (TypeName.Null, Pattern.Null, Action.Null, ...) and
+  Monadic global-element bodies (isEmpty predicates + TypeDefinition encoder/decoder). Hand-authored rather
+  than via from-yaml because the assembly hadn't been rebuilt with the new encoder yet.
+
+#29 comparisonOnlyExcluded → Map.empty (last 4 hand-customized type declarations cleared):
+- Accumulator: Mutable → Fixed elements; factory.body gains four Fixed initializers. Generator gains a
+  targeted `import scala.collection.mutable` emission when any valueType contains `mutable.`.
+- Numbers: factory.body computes via Primes.nPrimes(_n) / naturals / composites; param n → _n to match the
+  Generator's _<name> convention.
+- Primes: knowledge becomes a Fixed lazy-val element; five LazyList helpers packed into one verbatim Monadic
+  globalElement preserving comments + blank lines; hand-written gains canonical dracoType + elementTypeNames.
+- YAML: four conversion helpers + import aliases into one Monadic globalElement; empty trait dropped, routes
+  through Generator.objectGlobal (isObjectOnly path) → `extends DracoType` with `dracoType: DracoType = this`.
+- DracoGenTest.comparisonOnlyExcluded is now Map.empty: every file under src/main/scala/draco/ is
+  byte-equivalent to Generator emission. No hand-customizations remain on type declarations.
+
+#9 bin/draco-gen discover + verify:
+- verify <domain-json> — read-only; compares elementTypeNames against package siblings on disk, exits 5 on
+  drift with missing/extra/order report.
+- discover <domain-json> [--force] — rewrites elementTypeNames from directory contents (types → rules →
+  actors, each group alphabetical); same git-safety as from-yaml. Caught a stale PrimeOrdinal entry in
+  Primes.json (referenced a type absent from disk) — removed from JSON and hand-written.
+
+mods script batch:
+- New: list-domain, list-domains, who-extends, diff-type. Side-fix to inspect-type / derivation-chain — the
+  broken `td == TypeDefinition.Null` check (loadType returns a typeName-only placeholder, never Null) replaced
+  with aspect-emptiness detection. (Scripts list-domains/who-extends/list-domain were also touched by #37 below.)
+
+#37 TypeName reference-equality workaround:
+- TypeName is a hand-written trait with no equals/hashCode; apply returns an anonymous instance each call, so
+  `domainAspect.typeName == typeName` was always false (default reference equality). Replaced `==` with
+  `.namePath == .namePath` in five places (GeneratorCLI + mods scripts). Root-cause fix (structural
+  equals/hashCode via the JSON-authoring path) tracked in #37.
+
+#38 canonicalization umbrella — PoC batch (4 of 12 outliers):
+- who-extends DracoType surfaced ~9 types whose JSON-declared derivation chain doesn't reach DracoType despite
+  the 2026-05-09 architectural shift. Per the dev's principle ("the fix is via changing the type definition not
+  writing Scala code"), declared DracoType derivation on Unit, REPL, Value, CLI: JSON gains
+  dracoAspect.derivation [DracoType] → trait gains `extends DracoType` → object gains `with DracoType` →
+  typeDefinition gains override → factory anonymous class gains typeDefinition override. who-extends rerun:
+  44 → 48 matches. CLI is the interesting case — adding derivation re-routes it from objectGlobal's
+  isObjectOnly path to typeGlobal (trait + lazy val dracoType: Type[CLI]); hasExplicitMain keeps `extends App`
+  off so the header stays `extends DracoType` alone, matching build.sbt's mainClass := draco.CLI.
+
+== Chapter 39 — README alignment (+319 / −200) ==
+
+Last README touch was 2026-04-15 (before Stages 2c/2d/2e, DracoType-as-root, the aspect-block redesign, the
+JSON-normative migration, and src/mods). Rewritten in eight approval-gated steps:
+- Type System: DracoType-as-root diagram; "Instance Triad" → "Companion Val Convention" (dracoType/domainType,
+  no TypeInstance/*Instance, no typeInstance val). Primal (value) and Holon (perspective) as orthogonal axes.
+- TypeDefinition: flat field table → four aspect-block tables (DracoAspect/DomainAspect/RuleAspect/ActorAspect),
+  structural role predicates including isLeaf + the domainAspect.typeName self-loop, TypeElement.value field.
+- Example backbone pivoted from the *centric reference frames to draco's four endogenous domains
+  (Draco/Base/Primes/Language) — a domain dictionary that is itself a coherent ontology.
+- Code Generation: real 5-way dispatch (isRule/isDomain/isObjectOnly/isLeaf||isActor + exhaustivity throw);
+  removed TypeDefinition.load; added JSON-normative loading, generator-canonical package (empty exclusion map),
+  YAML-as-authoring-stand-in. Semantic Preservation rewritten to TypeTransform/DomainTransform.
+- Working Features regrouped and curated against source; Work in Progress points at GitHub Issues.
+- Building gains sbt assembly + bin tooling + alpha.1–alpha.3 release line; minimal Getting Started walkthrough
+  (Celsius leaf: write JSON → generate to stdout → register → use → verify); Project Structure rebuilt from the
+  real tree (flat primes rules, language/, src/mods/, bin/, dreams/ scaffold).
+- Terminology audit: no stale survivors (TypeInstance/TypeDefinition.load/TransformDomain/RuntimeCompiler/etc.).
+
+build.sbt: version 2.0.0-alpha.3 → 2.0.0-alpha.4.
+
+Test state: full corpus green (DracoGenTest with comparisonOnlyExcluded = Map.empty; assembly + test run
+green per dev at chapter-38 close).
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+EOF
+)"
+
+git push
+
+# --- Release v2.0.0-alpha.4 (push tag; CI auto-creates the GitHub release + uploads the jar) ---
+git tag v2.0.0-alpha.4
+git push origin v2.0.0-alpha.4
+# Then, once CI has created the release, swap in curated notes:
+#   gh release edit v2.0.0-alpha.4 --notes-file <curated-notes.md>

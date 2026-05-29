@@ -47,6 +47,12 @@
         "name": "body",
         "valueType": "Seq[BodyElement]",
         "value": "Seq.empty"
+      },
+      {
+        "kind": "Fixed",
+        "name": "value",
+        "valueType": "String",
+        "value": "\"\""
       }
     ]
   },

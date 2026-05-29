@@ -67,12 +67,6 @@
           "name": "valueType",
           "valueType": "String",
           "value": "\"org.evrete.api.Knowledge => Unit\""
-        },
-        {
-          "kind": "Fixed",
-          "name": "value",
-          "valueType": "String",
-          "value": "\"\""
         }
       ]
     }

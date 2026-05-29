@@ -8,6 +8,7 @@ sealed trait TypeElement extends Primal[String] {
   val valueType: String
   lazy val parameters: Seq[Parameter] = Seq.empty
   lazy val body: Seq[BodyElement] = Seq.empty
+  lazy val value: String = ""
 }
 
 object TypeElement extends App with DracoType {
@@ -33,7 +34,8 @@ object TypeElement extends App with DracoType {
       if (x.name.nonEmpty) Some("name" -> x.name.asJson) else None,
       if (x.valueType.nonEmpty) Some("valueType" -> x.valueType.asJson) else None,
       if (x.parameters.nonEmpty) Some("parameters" -> x.parameters.asJson) else None,
-      if (x.body.nonEmpty) Some("body" -> x.body.asJson) else None
+      if (x.body.nonEmpty) Some("body" -> x.body.asJson) else None,
+      if (x.value.nonEmpty) Some("value" -> x.value.asJson) else None
     ).flatten
     Json.obj(fields: _*)
   }
@@ -204,7 +206,6 @@ object Dynamic extends App with DracoType {
     override lazy val valueType: String = _valueType
     override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val body: Seq[BodyElement] = _body
-    override lazy val value: String = ""
     override lazy val typeDefinition: TypeDefinition = Dynamic.typeDefinition
   }
 
@@ -295,7 +296,6 @@ object Pattern extends App with DracoType {
     override lazy val conditions: Seq[Condition] = _conditions
     override lazy val name: String = ""
     override lazy val valueType: String = "org.evrete.api.Knowledge => Unit"
-    override lazy val value: String = ""
     override lazy val typeDefinition: TypeDefinition = Pattern.typeDefinition
   }
 
@@ -327,7 +327,6 @@ object Action extends App with DracoType {
     override lazy val body: Seq[BodyElement] = _body
     override lazy val name: String = "ctx"
     override lazy val valueType: String = "org.evrete.api.RHSContext => Unit"
-    override lazy val value: String = ""
     override lazy val typeDefinition: TypeDefinition = Action.typeDefinition
   }
 
@@ -381,7 +380,6 @@ object Variable extends App with DracoType {
   ) : Variable = new Variable {
     override lazy val name: String = _name
     override lazy val valueType: String = _valueType
-    override lazy val value: String = ""
     override lazy val typeDefinition: TypeDefinition = Variable.typeDefinition
   }
 
@@ -412,7 +410,6 @@ object Factory extends App with DracoType {
     override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val body: Seq[BodyElement] = _body
     override lazy val name: String = ""
-    override lazy val value: String = ""
     override lazy val typeDefinition: TypeDefinition = Factory.typeDefinition
   }
 

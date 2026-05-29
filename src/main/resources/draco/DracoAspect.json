@@ -68,54 +68,64 @@
         {
           "kind": "Parameter",
           "name": "superDomain",
-          "valueType": "TypeName"
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
         },
         {
           "kind": "Parameter",
           "name": "modules",
-          "valueType": "Seq[TypeName]"
+          "valueType": "Seq[TypeName]",
+          "value": "Seq.empty"
         },
         {
           "kind": "Parameter",
           "name": "extensible",
-          "valueType": "TypeName"
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
         },
         {
           "kind": "Parameter",
           "name": "derivation",
-          "valueType": "Seq[TypeName]"
+          "valueType": "Seq[TypeName]",
+          "value": "Seq.empty"
         },
         {
           "kind": "Parameter",
           "name": "elements",
-          "valueType": "Seq[TypeElement]"
+          "valueType": "Seq[TypeElement]",
+          "value": "Seq.empty"
         },
         {
           "kind": "Parameter",
           "name": "factory",
-          "valueType": "Factory"
+          "valueType": "Factory",
+          "value": "Factory.Null"
         },
         {
           "kind": "Parameter",
           "name": "globalElements",
-          "valueType": "Seq[BodyElement]"
+          "valueType": "Seq[BodyElement]",
+          "value": "Seq.empty"
         },
         {
           "kind": "Parameter",
           "name": "source",
-          "valueType": "TypeName"
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
         },
         {
           "kind": "Parameter",
           "name": "target",
-          "valueType": "TypeName"
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
         }
       ]
     },
     "globalElements": [
       {
         "kind": "Monadic",
-        "valueType": "Unit"
+        "valueType": "Unit",
+        "value": "lazy val isEmpty: DracoAspect => Boolean = da =>\n  da.superDomain.name.isEmpty &&\n  da.modules.isEmpty &&\n  da.extensible.name.isEmpty &&\n  da.derivation.isEmpty &&\n  da.elements.isEmpty &&\n  da.factory.valueType.isEmpty &&\n  da.globalElements.isEmpty &&\n  da.source.name.isEmpty &&\n  da.target.name.isEmpty"
       }
     ]
   },

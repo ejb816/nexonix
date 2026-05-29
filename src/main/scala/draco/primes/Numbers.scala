@@ -1,4 +1,5 @@
 package draco.primes
+
 import draco._
 
 trait Numbers extends Primes {
@@ -8,12 +9,18 @@ trait Numbers extends Primes {
 }
 
 object Numbers extends App {
-  lazy val typeDefinition: draco.TypeDefinition = draco.Generator.loadType(draco.TypeName ("Numbers", _namePackage = Seq("draco", "primes")))
-  lazy val dracoType: draco.Type[Numbers] = Type[Numbers] (typeDefinition)
+  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Numbers", _namePackage = Seq ("draco", "primes")))
+  lazy val dracoType: Type[Numbers] = Type[Numbers] (typeDefinition)
+  lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 
-  def apply (n: Int = 22): Numbers = new Numbers {
-    override val primeSequence: Seq[Int] = Primes.nPrimes(n)
-    override val naturalSequence: Seq[Int] = Primes.naturals(2).take(primeSequence.last-1)
-    override val compositeSequence: Seq[Int] = Primes.composites(primeSequence)
+  def apply (
+    _n: Int = 22
+  ) : Numbers = new Numbers {
+    override lazy val primeSequence: Seq[Int] = Primes.nPrimes(_n)
+    override lazy val naturalSequence: Seq[Int] = Primes.naturals(2).take(primeSequence.last - 1)
+    override lazy val compositeSequence: Seq[Int] = Primes.composites(primeSequence)
   }
+
+  lazy val Null: Numbers = apply()
+
 }

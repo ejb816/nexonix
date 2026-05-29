@@ -48,34 +48,40 @@
         {
           "kind": "Parameter",
           "name": "variables",
-          "valueType": "Seq[Variable]"
+          "valueType": "Seq[Variable]",
+          "value": "Seq.empty"
         },
         {
           "kind": "Parameter",
           "name": "conditions",
-          "valueType": "Seq[Condition]"
+          "valueType": "Seq[Condition]",
+          "value": "Seq.empty"
         },
         {
           "kind": "Parameter",
           "name": "values",
-          "valueType": "Seq[Value]"
+          "valueType": "Seq[Value]",
+          "value": "Seq.empty"
         },
         {
           "kind": "Parameter",
           "name": "pattern",
-          "valueType": "Pattern"
+          "valueType": "Pattern",
+          "value": "Pattern.Null"
         },
         {
           "kind": "Parameter",
           "name": "action",
-          "valueType": "Action"
+          "valueType": "Action",
+          "value": "Action.Null"
         }
       ]
     },
     "globalElements": [
       {
         "kind": "Monadic",
-        "valueType": "Unit"
+        "valueType": "Unit",
+        "value": "lazy val isEmpty: RuleAspect => Boolean = ra =>\n  ra.variables.isEmpty &&\n  ra.conditions.isEmpty &&\n  ra.values.isEmpty &&\n  ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty &&\n  ra.action.body.isEmpty"
       }
     ]
   },

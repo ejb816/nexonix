@@ -18,29 +18,55 @@
     ],
     "elements": [
       {
-        "kind": "Mutable",
+        "kind": "Fixed",
         "name": "primeSet",
         "valueType": "mutable.Set[Int]"
       },
       {
-        "kind": "Mutable",
+        "kind": "Fixed",
         "name": "compositeSet",
         "valueType": "mutable.Set[Int]"
       },
       {
-        "kind": "Mutable",
+        "kind": "Fixed",
         "name": "naturalSet",
         "valueType": "mutable.Set[Int]"
       },
       {
-        "kind": "Mutable",
+        "kind": "Fixed",
         "name": "intervalTextSet",
-        "valueType": "mutable.Set[(Long,String)]"
+        "valueType": "mutable.Set[(Long, String)]"
       }
     ],
     "factory": {
       "kind": "Factory",
-      "valueType": "Accumulator"
+      "valueType": "Accumulator",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "primeSet",
+          "valueType": "mutable.Set[Int]",
+          "value": "mutable.Set[Int] ()"
+        },
+        {
+          "kind": "Fixed",
+          "name": "compositeSet",
+          "valueType": "mutable.Set[Int]",
+          "value": "mutable.Set[Int] ()"
+        },
+        {
+          "kind": "Fixed",
+          "name": "naturalSet",
+          "valueType": "mutable.Set[Int]",
+          "value": "mutable.Set[Int] ()"
+        },
+        {
+          "kind": "Fixed",
+          "name": "intervalTextSet",
+          "valueType": "mutable.Set[(Long, String)]",
+          "value": "mutable.Set[(Long, String)] ()"
+        }
+      ]
     }
   },
   "domainAspect": {

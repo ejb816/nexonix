@@ -6,6 +6,23 @@
       "primes"
     ]
   },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "knowledge",
+        "valueType": "org.evrete.api.Knowledge",
+        "value": "Rule.knowledgeService.newKnowledge(\"Primes\")"
+      }
+    ],
+    "globalElements": [
+      {
+        "kind": "Monadic",
+        "valueType": "Unit",
+        "value": "\ndef filter(naturals: LazyList[Int]): LazyList[Int] = {\n  val p = naturals.head\n  // The #:: operator constructs a LazyList (like : in Haskell)\n  // We remove all multiples of p from the remainder, then recurse\n  p #:: filter(naturals.tail.filter(_ % p != 0))\n}\n\ndef naturals(start: Int = 0, step: Int = 1): LazyList[Int] = LazyList.from(start, step)\n\ndef composites(primes: Seq[Int]): Seq[Int] = {\n  naturals(2).filterNot(primes.contains(_)).take(primes.last - 1)\n}\n\ndef primesFromComposites (composites: Seq[Int]) : Seq[Int] = {\n  naturals(2).filterNot(composites.contains(_)).take(composites.last - composites.length)\n}\n// List of n primes\ndef nPrimes(n: Int): Seq[Int] = {\n  // Convert the first n primes to a List\n  filter(naturals(2)).take(n)\n}"
+      }
+    ]
+  },
   "domainAspect": {
     "typeName": {
       "name": "Primes",
@@ -17,7 +34,6 @@
     "elementTypeNames": [
       "Accumulator",
       "Numbers",
-      "PrimeOrdinal",
       "AddNaturalSequence.rule",
       "PrimesFromNaturalSequence.rule",
       "RemoveCompositeNumbers.rule"

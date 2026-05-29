@@ -31,6 +31,14 @@ object DerivationChain {
       s"${tn.namePath}$params"
     }
 
+    // Generator.loadType returns a placeholder (input typeName, all aspects empty)
+    // when the resource is missing — not TypeDefinition.Null. Detect via aspect emptiness.
+    def loaded(td: TypeDefinition): Boolean =
+      !DracoAspect.isEmpty(td.dracoAspect) ||
+      !DomainAspect.isEmpty(td.domainAspect) ||
+      !RuleAspect.isEmpty(td.ruleAspect) ||
+      !ActorAspect.isEmpty(td.actorAspect)
+
     def walk(tn: TypeName, depth: Int, seen: mutable.Set[String]): Unit = {
       val key = tn.namePath
       if (seen.contains(key)) {
@@ -42,13 +50,13 @@ object DerivationChain {
       val td = Generator.loadType(tn)
       val marker = if (depth == 0) "■" else "└─"
       val suffix =
-        if (td == TypeDefinition.Null) "  [no TypeDefinition resource found]"
+        if (!loaded(td)) "  [no TypeDefinition resource found]"
         else if (td.dracoAspect.derivation.isEmpty) "  [root: no further derivation]"
         else ""
 
       println(s"${"  " * depth}$marker ${fmt(tn)}$suffix")
 
-      if (td != TypeDefinition.Null) {
+      if (loaded(td)) {
         td.dracoAspect.derivation.foreach(child => walk(child, depth + 1, seen))
       }
     }

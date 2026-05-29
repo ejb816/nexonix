@@ -60,12 +60,6 @@
           "name": "name",
           "valueType": "String",
           "value": "\"\""
-        },
-        {
-          "kind": "Fixed",
-          "name": "value",
-          "valueType": "String",
-          "value": "\"\""
         }
       ]
     }

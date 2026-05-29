@@ -4,7 +4,9 @@ import io.circe.{Json, Printer, parser}
 import io.circe.syntax._
 import io.circe.yaml.{parser => yamlParser, printer => yamlPrinter}
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.{Files, Path, Paths}
+import scala.jdk.CollectionConverters._
+import scala.util.Using
 
 /** CLI wrapper around Generator. Built into the sbt-assembly fat JAR,
  *  invoked by Claude via:
@@ -28,13 +30,22 @@ import java.nio.file.{Files, Paths}
  *                                           passed. Recovery after --force: git checkout.
  *    to-yaml        <json-path>             convert JSON to YAML sibling. Always safe —
  *                                           YAML is non-normative and freely regenerable.
+ *    discover       <domain-json> [--force] scan the domain JSON's package directory and
+ *                                           rewrite its `elementTypeNames` to match the
+ *                                           sibling type JSONs on disk. Same git-safety as
+ *                                           from-yaml: refuses dirty/untracked JSON without
+ *                                           --force.
+ *    verify         <domain-json>           read-only check that the domain JSON's
+ *                                           `elementTypeNames` matches its package siblings.
+ *                                           Exits 5 on drift; reports what's missing or extra.
  *
  *  Exit codes:
  *    0 ok
  *    1 usage error
  *    2 read/parse/decode error
  *    3 compile failure (compile / compile-multi)
- *    4 safety refusal (from-yaml dirty JSON without --force)
+ *    4 safety refusal (from-yaml / discover dirty JSON without --force)
+ *    5 verify drift detected
  */
 object GeneratorCLI {
 
@@ -56,6 +67,10 @@ object GeneratorCLI {
         |  from-yaml      <yaml> [--force]  convert YAML to canonical JSON sibling
         |                                   (refuses dirty JSON overwrite without --force)
         |  to-yaml        <json>            convert JSON to YAML sibling (always safe)
+        |  discover       <json> [--force]  rewrite domain JSON's elementTypeNames from
+        |                                   sibling files on disk (refuses dirty without --force)
+        |  verify         <json>            read-only check that domain elementTypeNames
+        |                                   matches package siblings; exits 5 on drift
         |""".stripMargin)
     sys.exit(1)
   }
@@ -221,6 +236,110 @@ object GeneratorCLI {
     }
   }
 
+  /** True iff this TypeDefinition declares itself as the domain (its
+    * `domainAspect.typeName` equals its own `typeName`). Discover/verify
+    * are meaningful only for domain JSONs. */
+  private def isDomainJson(td: TypeDefinition): Boolean = {
+    val daName = td.domainAspect.typeName
+    daName != null && daName.name.nonEmpty && daName.namePath == td.typeName.namePath
+  }
+
+  /** Sort key for an element name: types first (0), then rules (1), then
+    * actors (2), each group alphabetical. Matches the order used in the
+    * existing hand-authored elementTypeNames lists. */
+  private def elementCategory(name: String): Int =
+    if (name.endsWith(".rule")) 1
+    else if (name.endsWith(".actor")) 2
+    else 0
+
+  /** Scan the domain JSON's parent directory for sibling type JSONs and
+    * return the canonical elementTypeNames list. Excludes the domain JSON
+    * itself, subdirectories, and non-JSON files. */
+  private def discoverElementTypeNames(domainPath: String): Seq[String] = {
+    val p   = Paths.get(domainPath)
+    val dir = p.getParent
+    val selfFile = p.getFileName.toString
+    Using.resource(Files.list(dir)) { stream =>
+      stream.iterator.asScala
+        .filter(Files.isRegularFile(_))
+        .map(_.getFileName.toString)
+        .filter(_.endsWith(".json"))
+        .filterNot(_ == selfFile)
+        .map(_.stripSuffix(".json"))
+        .toSeq
+    }.sortBy(name => (elementCategory(name), name))
+  }
+
+  private def runDiscover(path: String, force: Boolean): Unit = {
+    if (!path.endsWith(".json")) {
+      System.err.println(s"error: expected a .json path, got: $path")
+      sys.exit(2)
+    }
+    val td = loadTypeDefinition(path)
+    if (!isDomainJson(td)) {
+      System.err.println(s"error: $path is not a domain JSON (domainAspect.typeName must equal typeName)")
+      sys.exit(2)
+    }
+
+    val newElements = discoverElementTypeNames(path)
+    val updated = TypeDefinition(
+      _typeName     = td.typeName,
+      _dracoAspect  = td.dracoAspect,
+      _domainAspect = DomainAspect(
+        _typeName         = td.domainAspect.typeName,
+        _elementTypeNames = newElements
+      ),
+      _ruleAspect   = td.ruleAspect,
+      _actorAspect  = td.actorAspect
+    )
+
+    val newJsonText = canonicalJsonPrinter.print(updated.asJson) + "\n"
+    val jsonP       = Paths.get(path)
+    val existing    = new String(Files.readAllBytes(jsonP))
+    if (existing == newJsonText) {
+      println(s"unchanged  $path  (${newElements.size} elementTypeNames)")
+      return
+    }
+    if (!force && !isGitClean(path)) {
+      System.err.println(s"refused: $path has uncommitted changes or is untracked.")
+      System.err.println(s"   commit or stash them first, or pass --force to overwrite.")
+      System.err.println(s"   recovery after --force: git checkout -- $path")
+      sys.exit(4)
+    }
+    Files.write(jsonP, newJsonText.getBytes)
+    println(s"OK  $path  (${newElements.size} elementTypeNames; recovery: git checkout -- $path)")
+  }
+
+  private def runVerify(path: String): Unit = {
+    if (!path.endsWith(".json")) {
+      System.err.println(s"error: expected a .json path, got: $path")
+      sys.exit(2)
+    }
+    val td = loadTypeDefinition(path)
+    if (!isDomainJson(td)) {
+      System.err.println(s"error: $path is not a domain JSON (domainAspect.typeName must equal typeName)")
+      sys.exit(2)
+    }
+
+    val expected = discoverElementTypeNames(path)
+    val actual   = td.domainAspect.elementTypeNames
+
+    if (expected == actual) {
+      println(s"OK  $path  (${actual.size} elementTypeNames in sync)")
+    } else {
+      val expectedSet = expected.toSet
+      val actualSet   = actual.toSet
+      val missing     = (expectedSet -- actualSet).toSeq.sorted
+      val extra       = (actualSet -- expectedSet).toSeq.sorted
+      System.err.println(s"DRIFT  $path")
+      if (missing.nonEmpty) System.err.println(s"   missing in JSON: ${missing.mkString(", ")}")
+      if (extra.nonEmpty)   System.err.println(s"   extra in JSON:   ${extra.mkString(", ")}")
+      if (missing.isEmpty && extra.isEmpty) System.err.println(s"   order differs")
+      System.err.println(s"   run: bin/draco-gen discover $path")
+      sys.exit(5)
+    }
+  }
+
   private def runToYaml(jsonPath: String): Unit = {
     if (!jsonPath.endsWith(".json")) {
       System.err.println(s"error: expected a .json path, got: $jsonPath")
@@ -255,6 +374,14 @@ object GeneratorCLI {
         case _        => usage()
       }
     case "to-yaml"       :: p :: Nil           => runToYaml(p)
+    case "discover"      :: rest if rest.nonEmpty =>
+      val force = rest.contains("--force")
+      val paths = rest.filterNot(_ == "--force")
+      paths match {
+        case p :: Nil => runDiscover(p, force)
+        case _        => usage()
+      }
+    case "verify"        :: p :: Nil           => runVerify(p)
     case _                                     => usage()
   }
 }

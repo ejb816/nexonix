@@ -33,19 +33,22 @@
         {
           "kind": "Parameter",
           "name": "messageAction",
-          "valueType": "Action"
+          "valueType": "Action",
+          "value": "Action.Null"
         },
         {
           "kind": "Parameter",
           "name": "signalAction",
-          "valueType": "Action"
+          "valueType": "Action",
+          "value": "Action.Null"
         }
       ]
     },
     "globalElements": [
       {
         "kind": "Monadic",
-        "valueType": "Unit"
+        "valueType": "Unit",
+        "value": "lazy val isEmpty: ActorAspect => Boolean = aa =>\n  aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty"
       }
     ]
   },

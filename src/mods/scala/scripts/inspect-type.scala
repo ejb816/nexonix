@@ -26,9 +26,17 @@ object InspectType {
 
     val td = Generator.loadType(TypeName(name, _namePackage = pkg))
 
-    if (td == TypeDefinition.Null) {
+    // Generator.loadType returns a placeholder (input typeName, all aspects empty)
+    // when the resource is missing — not TypeDefinition.Null. Detect via aspect emptiness.
+    val loaded =
+      !DracoAspect.isEmpty(td.dracoAspect) ||
+      !DomainAspect.isEmpty(td.domainAspect) ||
+      !RuleAspect.isEmpty(td.ruleAspect) ||
+      !ActorAspect.isEmpty(td.actorAspect)
+
+    if (!loaded) {
       System.err.println(s"error: no TypeDefinition found for ${pkg.mkString(".")}.$name")
-      System.err.println(s"       expected resource: ${if (pkg.isEmpty) "" else pkg.mkString("/", "/", "/")}$name.{yaml,json}")
+      System.err.println(s"       expected resource: ${if (pkg.isEmpty) "" else pkg.mkString("/", "/", "/")}$name.json")
       sys.exit(1)
     }
 
@@ -68,7 +76,7 @@ object InspectType {
     println()
     println(s"=== DomainAspect ===")
     val dom = td.domainAspect
-    val isSelfDomain = dom.typeName.name.nonEmpty && dom.typeName == td.typeName
+    val isSelfDomain = dom.typeName.name.nonEmpty && dom.typeName.namePath == td.typeName.namePath
     println(s"  typeName         = ${if (dom.typeName.name.isEmpty) "(none)" else dom.typeName.namePath}${if (isSelfDomain) "  [SELF — this type IS a domain]" else ""}")
     println(s"  elementTypeNames = ${if (dom.elementTypeNames.isEmpty) "(none)" else dom.elementTypeNames.mkString(", ")}")
 

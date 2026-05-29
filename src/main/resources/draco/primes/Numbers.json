@@ -43,6 +43,26 @@
           "valueType": "Int",
           "value": "22"
         }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "primeSequence",
+          "valueType": "Seq[Int]",
+          "value": "Primes.nPrimes(_n)"
+        },
+        {
+          "kind": "Fixed",
+          "name": "naturalSequence",
+          "valueType": "Seq[Int]",
+          "value": "Primes.naturals(2).take(primeSequence.last - 1)"
+        },
+        {
+          "kind": "Fixed",
+          "name": "compositeSequence",
+          "valueType": "Seq[Int]",
+          "value": "Primes.composites(primeSequence)"
+        }
       ]
     }
   },

@@ -948,7 +948,9 @@ object Generator extends App {
       td.dracoAspect.globalElements.map(_.valueType) ++
       td.dracoAspect.derivation.map(_.name)
     val typeNames = allValueTypes.flatMap(extractTypeNames).distinct
-    typeNames.flatMap(externalTypeImports.get).distinct.sorted
+    val standard = typeNames.flatMap(externalTypeImports.get)
+    val mutableRef = if (allValueTypes.exists(_.contains("mutable."))) Seq("import scala.collection.mutable") else Seq.empty
+    (standard ++ mutableRef).distinct.sorted
   }
 
   private lazy val circeImports: Seq[String] = Seq(
