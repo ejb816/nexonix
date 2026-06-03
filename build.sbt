@@ -1,5 +1,5 @@
 ThisBuild / organization := "org.nexonix"
-ThisBuild / version := "2.0.0-alpha.4"
+ThisBuild / version := "2.0.0-alpha.5"
 ThisBuild / scalaVersion := "2.13.16"
 publishMavenStyle := true
 
@@ -56,6 +56,14 @@ lazy val root = (project in file("."))
      // Print full deprecation messages (no "re-run with -deprecation" indirection).
      scalacOptions += "-deprecation",
 
+     // Staging tier: src/mods/scala/draco holds library stand-ins for draco
+     // features still under development (e.g. DomainBuilder). They are compiled
+     // *into root* — so they ship in the draco jar for early-access users to call,
+     // are conflict-checked against src/main/scala/draco as same-package/same-project
+     // (a duplicate FQN is a hard compile error), and are testable from src/test with
+     // no cross-project cycle. The `mods` subproject below stays scoped to scripts.
+     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "mods" / "scala" / "draco",
+
     libraryDependencies ++= Seq(
       dependencies.pekkoActorTyped,
       dependencies.pekkoActorTestkitTyped,
@@ -70,7 +78,8 @@ lazy val root = (project in file("."))
       dependencies.scalaTest,
       dependencies.scalaReflect,
       dependencies.scalaSwing,
-      dependencies.scalaCompiler
+      dependencies.scalaCompiler,
+      dependencies.jline
     ),
 
     assembly / mainClass := Some("draco.CLI"),
@@ -91,34 +100,30 @@ lazy val mods = (project in file("src/mods"))
   .dependsOn(root)
   .settings(
     name := "draco-mods",
-    Compile / scalaSource      := baseDirectory.value / "scala",
+    // Scoped to scripts only — library stand-ins under scala/draco are compiled by
+    // `root` (see its unmanagedSourceDirectories), not here, to avoid a duplicate
+    // draco.* FQN across the two projects and to keep this subproject's sole job the
+    // scala-cli scripts.
+    Compile / scalaSource      := baseDirectory.value / "scala" / "scripts",
     Compile / resourceDirectory := baseDirectory.value / "resources",
     // Silence main-method-without-entry-point warnings same as root.
     scalacOptions += "-Wconf:msg=will not have an entry point on the JVM:s",
     // Print full deprecation messages (matches root's setting).
     scalacOptions += "-deprecation",
-    // ThisBuild sets `managedScalaInstance := false`, which means every project
-    // must supply its own scala-tool config. Replicate root's setup; no new
-    // 3rd-party deps beyond what scala itself requires.
-    ivyConfigurations += Configurations.ScalaTool,
-    libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-library"  % scalaVersion.value,
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "scala-tool"
-    ),
+    // No scala-tool config needed: sbt manages the Scala instance (compiler /
+    // library / compiler-bridge) automatically. (This build formerly set
+    // `managedScalaInstance := false` and hand-supplied scala-tool deps; sbt 1.12's
+    // Zinc could not drive that manual bridge setup, so it was dropped 2026-06-01.)
     publish / skip := true
   )
 
-ThisBuild / managedScalaInstance := false
-
-// Add the configuration for the dependencies on Scala tool jars
-// You can also use a manually constructed configuration like:
-//   config("scala-tool").hide
-ivyConfigurations += Configurations.ScalaTool
-
-  // Add the usual dependency on the library as well on the compiler in the
-  //  'scala-tool' configuration
-  libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-library" % scalaVersion.value,
-  "org.scala-lang" % "scala-compiler" % scalaVersion.value % "scala-tool",
-  "org.jline" % "jline" % "3.22.0"
-)
+// sbt manages the Scala instance automatically (managedScalaInstance defaults to
+// true), which resolves the matching compiler bridge for 2.13.16 on its own.
+//
+// Removed 2026-06-01: the former `ThisBuild / managedScalaInstance := false` plus the
+// hand-supplied `scala-tool` configuration (scala-library / scala-compiler /
+// scala2-sbt-bridge). sbt 1.12's Zinc could not instantiate the manually-provided
+// compiler bridge — it tried to load `scala.tools.xsbt.CompilerBridge` via the
+// CompilerInterface2 ServiceLoader (no-arg ctor) and failed with
+// `ServiceConfigurationError`. Letting sbt manage the instance fixes it.
+// `jline` (used at runtime by the REPL) moved into root's libraryDependencies above.

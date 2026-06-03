@@ -16,9 +16,36 @@ the kind of code an external author would write on top of the published jar.
 ```
 src/mods/
 ├── resources/        TypeDefinitions in JSON/YAML (empty initially)
-└── scala/            Scala emission target (and hand-authored Scala mods)
-    └── scripts/      Toolkit scripts — see catalog below
+└── scala/
+    ├── draco/        Hand-written Scala in package `draco`, compiled INTO root
+    └── scripts/      Toolkit scripts (the `mods` subproject) — see catalog below
 ```
+
+### Two compilation tracks
+
+`src/mods/scala/` holds two kinds of content with **different build wiring**:
+
+- **`scala/scripts/`** is the `mods` sbt subproject (`dependsOn(root)`). It compiles
+  *against* the published draco jar and consumes it like an external author would.
+  This is where the scala-cli toolkit scripts live (catalog below).
+
+- **`scala/draco/`** is compiled **into `root`** via `root`'s
+  `Compile / unmanagedSourceDirectories` (see build.sbt). Files here are in
+  `package draco` and ship in the draco jar, but are deliberately **outside the
+  JSON self-describing type system** — they have no `.json` twin and are not walked
+  by `DracoGenTest`. Two reasons a file lives here:
+    1. **Stand-ins** for under-development core/dreams/orion features, given to
+       early-access users now (e.g. `DomainBuilder`). Promotes to `src/main` later.
+    2. **Permanent hand-written engine code** that is core but not a self-describing
+       type — currently `Generator` (the imperative load/generate/compile engine).
+       It is *not* a Draco domain member; the typed self-describing generator will
+       arrive separately as `draco.generator.Generator`
+       ([#11](https://github.com/ejb816/nexonix/issues/11)).
+
+  Because `scala/draco/` shares the `draco` package with `src/main/scala/draco/`
+  *in the same root project*, a duplicate FQN is a hard compile error — conflict
+  detection comes for free, and the invariant **"a declared Draco domain member is
+  JSON-backed"** is enforceable (it's exactly what `DomainBuilder.validate` checks).
 
 Future language directories (`mods/haskell/`, `mods/lean/`) will land alongside
 `scala/` when `Generator[L]` (issue [#11](https://github.com/ejb816/nexonix/issues/11))

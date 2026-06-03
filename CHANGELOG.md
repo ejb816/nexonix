@@ -8,6 +8,26 @@ _No unreleased changes yet._
 
 ---
 
+## [2.0.0-alpha.5] - 2026-06-03
+
+The first `src/mods` usability/scalability stand-in. `DomainBuilder` makes a domain dictionary buildable, validatable, and generatable from JSON alone; its rigorous `validate` over the four endogenous domains drove `Generator`/`GeneratorCLI` out of the JSON-backed type system into a root-compiled `src/mods/scala/draco` staging tier; and the toolchain moved to sbt 1.12.9. Covers dev-journal chapter 40.
+
+### Added
+
+- **`draco.DomainBuilder`** (`src/mods/scala/draco/`) — First `src/mods` usability/scalability stand-in for an under-development core capability: comprehensively build a domain dictionary from JSON, stand up a *populated* concrete instance, validate it, and generate code. Public-API-only (no new deps). Functions: `define` (loads a domain plus every member's full `TypeDefinition` — the non-hollow counterpart to `TypeDictionary.apply`), `dictionary`, `validate` (self-declaration + completeness + derivation resolvability), `generate` (skeleton-tolerant). Tested by `DomainBuilderTest` over Draco/Base/Primes/Language.
+
+- **`src/mods/scala/draco` staging tier** — A second mods compilation track: this directory is compiled *into* `root` (via `Compile / unmanagedSourceDirectories`), so hand-written Scala there ships in the draco jar, is conflict-checked against `src/main/scala/draco` as same-package/same-project, and is testable from `src/test` with no cross-project cycle. The `mods` subproject is scoped to `scala/scripts`. Documented in `src/mods/README.md`.
+
+### Changed
+
+- **`Generator` and `GeneratorCLI` relocated to `src/mods/scala/draco/`** — The hand-written engine and its CLI move out of `src/main/scala/draco/` (still compiled into root via `unmanagedSourceDirectories`, so all ~50 `Generator.loadType` callers are unchanged and `draco.Generator` stays in the jar). `Generator` is removed from `Draco.json` / `Draco.scala` `elementTypeNames` — it is infrastructure, not a JSON-backed domain member. Establishes `src/mods/scala/draco/` as "hand-written Scala in the jar, outside the JSON type system" (stand-ins + permanent engine code), enforcing the invariant that a declared Draco domain member is JSON-backed (what `DomainBuilder.validate` checks).
+
+### Build
+
+- **sbt 1.7.3 → 1.12.9** — `project/build.properties` bumped to the current sbt 1.x. This required **removing** the build's `managedScalaInstance := false` setting and both hand-supplied `scala-tool` configurations (root + `mods`): sbt 1.12's Zinc loads the compiler bridge via the `CompilerInterface2` `ServiceLoader`, which the manual bridge setup couldn't satisfy (`ServiceConfigurationError: ... CompilerBridge Unable to get public no-arg constructor`). Letting sbt auto-manage the Scala instance resolves the matching `2.13.16` bridge correctly. `jline` (a REPL runtime dependency, previously only in the scala-tool config) is now a normal `libraryDependencies` entry.
+
+---
+
 ## [2.0.0-alpha.4] - 2026-05-29
 
 The JSON-normative release: JSON is the sole runtime load path, the entire `src/main/scala/draco/` package is byte-equivalent to Generator output, and the user-facing tooling (`bin/draco-gen`, `bin/draco-sc`, `src/mods`) and README are brought current. Covers dev-journal chapters 37–39.

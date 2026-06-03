@@ -1,0 +1,101 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+# New journal chapter (chapter 40 — DomainBuilder, staging tier, Generator relocation, sbt 1.12.9)
+git add draco-dev-journal/draco-dev-chapter-40.md
+
+# This audit-trail file
+git add draco-git-record/git-record-2026-06-03-0957
+
+# New source: the first src/mods stand-in + its test
+git add src/mods/scala/draco/DomainBuilder.scala
+git add src/test/scala/draco/DomainBuilderTest.scala
+
+# Relocated into the root-compiled staging tier (git mv from src/main/scala/draco/).
+# Adding the new paths; `git add -u` below stages the old-path deletions so git records the renames.
+git add src/mods/scala/draco/Generator.scala
+git add src/mods/scala/draco/GeneratorCLI.scala
+
+# Everything else — modifications:
+#   build.sbt           — version → 2.0.0-alpha.5; removed managedScalaInstance:=false + both manual
+#                         scala-tool blocks; added root staging unmanagedSourceDirectories; mods scoped to
+#                         scala/scripts; jline → normal libraryDependencies.
+#   project/build.properties — sbt 1.7.3 → 1.12.9.
+#   src/main/resources/draco/Draco.json + src/main/scala/draco/Draco.scala — drop "Generator" from elementTypeNames.
+#   src/mods/README.md  — two-track layout (scripts subproject vs root-compiled scala/draco staging tier).
+#   CHANGELOG.md        — [2.0.0-alpha.5] section.
+git add -u
+
+git commit -m "$(cat <<'EOF'
+Release prep v2.0.0-alpha.5 — DomainBuilder (first src/mods stand-in), Generator/GeneratorCLI relocation, sbt 1.12.9
+
+First commit since alpha.4 (e7e01dc). Begins the usability/scalability work: src/mods now hosts user-callable
+stand-ins for under-development core/dreams/orion features, with a clean promotion path into the framework.
+Covers dev-journal chapter 40.
+
+== DomainBuilder — the first stand-in ==
+
+draco.DomainBuilder (src/mods/scala/draco/DomainBuilder.scala), public-API-only (no new deps):
+- define(name, namePackage): DomainType — loads the domain definition AND every member's full TypeDefinition
+  via Generator.loadType, returning a Domain whose typeDictionary is *populated*. This is the non-hollow
+  counterpart to core's TypeDictionary.apply, which builds members from the empty TypeDefinition(TypeName)
+  constructor and so holds member names without content — the gap that justifies the stand-in.
+- dictionary(domains*): DomainDictionary — assembles the cross-domain registry from defined domains.
+- validate(domain): Seq[String] — rigor battery: self-declaration (domainAspect.typeName == typeName),
+  completeness (no member is a stub), draco-internal derivation resolvability (every ancestor loads; external
+  supertypes skipped). Returns human-readable problems; empty == well-formed.
+- generate(name, namePackage): Map[TypeName, String] — emits Scala for the domain + each member,
+  skeleton-tolerant. Capability stays tolerant (user domains have holes); the test holds the endogenous
+  domains to zero.
+- DomainBuilderTest (src/test/scala/draco/) builds Draco/Base/Primes/Language; 13 tests green.
+
+== src/mods/scala/draco — root-compiled staging tier ==
+
+A second mods compilation track distinct from the scripts subproject:
+- root compiles src/mods/scala/draco via Compile / unmanagedSourceDirectories — so files there are
+  package draco, ship in the jar (early-access users call them against the binary), are conflict-checked
+  against src/main/scala/draco as same-package/same-project (duplicate FQN = hard compile error), and are
+  testable from src/test with no cross-project cycle.
+- The mods sbt subproject is scoped to scala/scripts only (Compile / scalaSource).
+- Documented in src/mods/README.md ("Two compilation tracks").
+
+== Generator + GeneratorCLI relocated out of the JSON type system ==
+
+DomainBuilder.validate over Draco caught a real defect: Draco.json declared "Generator" as a member, but
+Generator was the lone one of 42 with no .json (the last inline-TypeDefinition holdout from 2026-04-15).
+- git mv src/main/scala/draco/{Generator,GeneratorCLI}.scala -> src/mods/scala/draco/. They still compile
+  into root (staging tier), so all ~50 Generator.loadType callers resolve unchanged and draco.Generator
+  stays in the jar — a source-location move, not a tier change; no main -> mods violation.
+- Removed "Generator" from Draco.json + Draco.scala elementTypeNames (42 -> 41). Establishes the invariant:
+  a declared Draco domain member is JSON-backed (exactly what validate checks). The engine is infrastructure,
+  not a self-describing member; the typed generator will arrive separately as draco.generator.Generator (#11).
+- DracoGenTest caught the expected coupling (Draco.scala keeps its own elementTypeNames list) and it was synced.
+
+== Build — sbt 1.7.3 -> 1.12.9 ==
+
+- project/build.properties bumped to current sbt 1.x.
+- Required REMOVING the build's managedScalaInstance := false + both hand-supplied scala-tool blocks. sbt 1.12's
+  Zinc loads the compiler bridge via the CompilerInterface2 ServiceLoader (no-arg ctor), which the manual setup
+  could not satisfy (ServiceConfigurationError ... CompilerBridge Unable to get public no-arg constructor).
+  NOTE: adding scala2-sbt-bridge to scala-tool did NOT fix it (mechanism, not missing dep) — dropping the
+  manual apparatus and letting sbt auto-manage the instance does. jline (REPL runtime dep, formerly only in
+  scala-tool) moved into root's normal libraryDependencies.
+
+== Docs ==
+
+- src/mods/README.md: two-track layout + the "stand-ins and permanent non-JSON engine code" meaning of scala/draco.
+- CHANGELOG.md: [2.0.0-alpha.5] section.
+- dev-journal chapter 40 (preserves the wrong-first sbt fix and the Generator A/B forks that were abandoned).
+
+Test state: full suite green on sbt 1.12.9 (DracoGenTest + DomainBuilderTest = 110, plus the rest of the corpus).
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+)"
+
+git push
+
+# --- Release v2.0.0-alpha.5 (push tag; CI auto-creates the GitHub release + uploads the jar) ---
+git tag v2.0.0-alpha.5
+git push origin v2.0.0-alpha.5
+# Then, once CI has created the release, swap in curated notes:
+#   gh release edit v2.0.0-alpha.5 --notes-file <curated-notes.md>
