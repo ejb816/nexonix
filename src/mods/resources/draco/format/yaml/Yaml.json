@@ -1,0 +1,34 @@
+{
+  "typeName": {
+    "name": "Yaml",
+    "namePackage": [
+      "draco",
+      "format",
+      "yaml"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Format",
+        "namePackage": [
+          "draco",
+          "format"
+        ],
+        "typeParameters": [
+          "String"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Yaml",
+      "namePackage": [
+        "draco",
+        "format",
+        "yaml"
+      ]
+    }
+  }
+}

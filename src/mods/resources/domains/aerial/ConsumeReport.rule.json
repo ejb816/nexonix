@@ -1,0 +1,38 @@
+{
+  "typeName": {
+    "name": "ConsumeReport.rule",
+    "namePackage": [
+      "domains",
+      "aerial"
+    ]
+  },
+  "ruleAspect": {
+    "variables": [
+      {
+        "kind": "Variable",
+        "name": "report",
+        "valueType": "PositionReport"
+      }
+    ],
+    "action": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "domains.aerial.AerialSink.record(report.value.noSpaces)"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Aerial",
+      "namePackage": [
+        "domains",
+        "aerial"
+      ]
+    }
+  }
+}

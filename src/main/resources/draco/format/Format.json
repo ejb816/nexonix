@@ -1,0 +1,34 @@
+{
+  "typeName": {
+    "name": "Format",
+    "namePackage": [
+      "draco",
+      "format"
+    ],
+    "typeParameters": [
+      "T"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "T"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Format",
+      "namePackage": [
+        "draco",
+        "format"
+      ]
+    }
+  }
+}

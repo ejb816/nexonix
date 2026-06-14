@@ -1,0 +1,21 @@
+{
+  "typeName": {
+    "name": "Aerial",
+    "namePackage": [
+      "domains",
+      "aerial"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Aerial",
+      "namePackage": [
+        "domains",
+        "aerial"
+      ]
+    },
+    "elementTypeNames": [
+      "PositionReport"
+    ]
+  }
+}

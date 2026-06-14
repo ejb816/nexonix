@@ -861,6 +861,107 @@ object Generator extends App {
        |}""".stripMargin
   }
 
+  // --- Actor companion generation ---
+
+  /** True when a TypeDefinition carries actor behavior (a non-empty messageAction
+    * or signalAction). Such a type is emitted as an actor — a companion whose
+    * `actorType` is a live `Actor[T]` with generated receive/receiveSignal — even
+    * when it also carries a domainAspect (it then owns a rule-domain: its
+    * `elementTypeNames` are the rules its session loads). Detected ahead of
+    * `isDomain` in `generate`, so an actor-that-owns-rules routes here rather than
+    * to plain domain emission. Empty for every non-actor type, so existing
+    * emission is unaffected. */
+  private def hasActorBehavior (td: TypeDefinition) : Boolean =
+    !ActorAspect.isEmpty(td.actorAspect)
+
+  /** The actor's message type — the type argument of its `Actor[T]` derivation
+    * (e.g. `draco.format.json.Json`). Falls back to `Any` if unspecified. */
+  private def actorMessageType (td: TypeDefinition) : String =
+    td.dracoAspect.derivation
+      .find(_.name == "Actor")
+      .flatMap(_.typeParameters.headOption)
+      .getOrElse("Any")
+
+  private def actorImports (td: TypeDefinition) : String = {
+    val pkg = packageHierarchyImports(td.typeName.namePackage)
+    val refs = referencedPackageImports(td)
+    val frame = pekkoImports :+ "import org.evrete.api.Knowledge"
+    val codec = if (referencesCirce(td)) circeImports else Seq.empty
+    val external = externalImports(td)
+    val all = (pkg ++ refs).distinct ++ frame ++ codec ++ external
+    if (all.isEmpty) "" else s"\n${all.mkString("\n")}\n"
+  }
+
+  /** Build the actor's private Knowledge by walking its own `elementTypeNames`
+    * (its rule set) and accepting each rule's pattern. This reuses domain
+    * membership for the actor->rules binding — there is no separate rule-list
+    * field. Rule object names carry the Generator's `Rule` suffix. */
+  private def actorKnowledge (td: TypeDefinition) : String = {
+    val rules = td.domainAspect.elementTypeNames
+    val tag = td.typeName.name
+    if (rules.isEmpty)
+      s"""  private lazy val knowledge: Knowledge = Rule.knowledgeService.newKnowledge("$tag")"""
+    else {
+      val accepts = rules.map(r => s"    ${stripAspect(r)}Rule.ruleType.pattern.accept(k)").mkString("\n")
+      s"""  private lazy val knowledge: Knowledge = {
+         |    val k = Rule.knowledgeService.newKnowledge("$tag")
+         |$accepts
+         |    k
+         |  }""".stripMargin
+    }
+  }
+
+  /** Emit a receive/receiveSignal body from an Action's body elements. Unlike a
+    * rule action this has no Evrete ctx variable bindings — the actor body
+    * operates on `knowledge`, the message/`signal`, and `ctx`. */
+  private def actorActionBody (action: Action) : String =
+    action.body.map {
+      case f: Fixed if f.name.nonEmpty   => s"      val ${f.name}: ${f.valueType} = ${f.value}"
+      case m: Mutable if m.name.nonEmpty => s"      var ${m.name}: ${m.valueType} = ${m.value}"
+      case be: BodyElement               => s"      ${be.value}"
+    }.mkString("\n")
+
+  private def actorBehavior (td: TypeDefinition, msgType: String) : String = {
+    val objName = td.typeName.name
+    val recv = actorActionBody(td.actorAspect.messageAction)
+    val sig  = actorActionBody(td.actorAspect.signalAction)
+    val recvBlock = if (recv.nonEmpty) s"$recv\n" else ""
+    val sigBlock  = if (sig.nonEmpty)  s"$sig\n"  else ""
+    s"""  lazy val actorType: ActorType = new Actor[$msgType] {
+       |    override lazy val actorDefinition: TypeDefinition = $objName.typeDefinition
+       |    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition
+       |
+       |    override def receive(ctx: TypedActorContext[$msgType], msg: $msgType): Behavior[$msgType] = {
+       |$recvBlock      Behaviors.same[$msgType]
+       |    }
+       |
+       |    override def receiveSignal(ctx: TypedActorContext[$msgType], signal: Signal): Behavior[$msgType] = {
+       |$sigBlock      Behaviors.same[$msgType]
+       |    }
+       |  }""".stripMargin
+  }
+
+  private def actorGlobal (td: TypeDefinition) : String = {
+    val objName = td.typeName.name
+    val msgType = actorMessageType(td)
+    val wName = wildcardTypeName(td.typeName)
+    val tdLiteral = s"  override lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
+    val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
+    val etn = elementTypeNamesLiteral(td)
+    val knowledge = actorKnowledge(td)
+    val behavior = actorBehavior(td, msgType)
+    s"""object $objName extends App with DracoType {
+       |$tdLiteral
+       |$tiLiteral
+       |
+       |$etn
+       |
+       |$knowledge
+       |
+       |$behavior
+       |}""".stripMargin
+  }
+
   // --- Module ordering (topological sort) ---
 
   private def moduleOrder (tds: Seq[TypeDefinition]) : Seq[TypeDefinition] = {
@@ -1051,6 +1152,15 @@ object Generator extends App {
          |trait $ruleName
          |
          |${ruleGlobal(td)}
+         |""".stripMargin
+    } else if (hasActorBehavior(td)) {
+      val imports = actorImports(td)
+      s"""
+         |package ${td.typeName.namePackage.mkString(".")}
+         |$imports
+         |${traitDeclaration(td)}
+         |
+         |${actorGlobal(td)}
          |""".stripMargin
     } else if (isDomain(td)) {
       val imports = typeImports(td, hasCodec(td), "domain")

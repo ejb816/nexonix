@@ -1,0 +1,34 @@
+{
+  "typeName": {
+    "name": "Xml",
+    "namePackage": [
+      "draco",
+      "format",
+      "xml"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Format",
+        "namePackage": [
+          "draco",
+          "format"
+        ],
+        "typeParameters": [
+          "String"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Xml",
+      "namePackage": [
+        "draco",
+        "format",
+        "xml"
+      ]
+    }
+  }
+}

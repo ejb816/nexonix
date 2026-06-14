@@ -1,0 +1,108 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+# First commit since alpha.5 (ca45694). Covers dev-journal chapter 41: the Format
+# domain, the Generator's first actor-from-actorAspect emission, and a green
+# end-to-end Aerial Consumer actor+rule generated entirely from JSON.
+#
+# Staging everything with `git add -A`. Note: an `air`/`media` experiment was
+# created and then deleted within this uncommitted window (the recapitulation
+# pivot, then the Aerial rename). Those files are staged-added + worktree-deleted
+# (AD in `git status`); `git add -A` records their net removal, so they leave no
+# trace in history. The new work lands under domains.aerial + draco.format.
+
+git add -A
+
+# What `git add -A` is staging (for the record):
+#
+#  Format domain (the missing draco.format layer):
+#   A src/main/resources/draco/format/Format.json
+#   A src/main/scala/draco/format/Format.scala          — trait Format[T] extends Primal[T]
+#   A src/mods/resources/draco/format/json/Json.json
+#   A src/mods/scala/draco/format/json/Json.scala        — Json extends Format[io.circe.Json] (real)
+#   A src/mods/resources/draco/format/{yaml/Yaml,xml/Xml}.json
+#   A src/mods/scala/draco/format/{yaml/Yaml,xml/Xml}.scala  — Format[String] stubs
+#
+#  Generator — first actor emission from actorAspect:
+#   M src/mods/scala/draco/Generator.scala — new hasActorBehavior(td) branch BEFORE isDomain;
+#     emits actorType = new Actor[T] with receive/receiveSignal from actorAspect.messageAction/
+#     signalAction, and a private knowledge built by walking the actor's elementTypeNames
+#     (<Rule>.ruleType.pattern.accept). hasActorBehavior is false for every existing TD, so all
+#     prior emission is byte-identical and DracoGenTest is unaffected.
+#
+#  Aerial execution context (domains.aerial, src/mods) — Phase 1, isolated, creation-only:
+#   A src/mods/resources/domains/aerial/Aerial.json + scala/domains/aerial/Aerial.scala       — the domain
+#   A src/mods/resources/domains/aerial/PositionReport.json + .../PositionReport.scala         — message shell, extends Aerial with Json
+#   A src/mods/resources/domains/aerial/Consumer.json + .../Consumer.scala                     — actor (Generator-produced)
+#   A src/mods/resources/domains/aerial/ConsumeReport.rule.json + .../ConsumeReportRule.scala  — rule (Generator-produced)
+#   A src/mods/scala/domains/aerial/AerialSink.scala                                           — hand-written observability boundary
+#
+#  Tests:
+#   A src/test/scala/domains/aerial/AerialShellTest.scala  — shell wraps loose JSON; Format link
+#   A src/test/scala/domains/aerial/AerialActorTest.scala  — rule-direct + actor-loose, both green
+#   A src/test/scala/domains/aerial/AerialGenTest.scala    — generate-then-compile runner (writes Consumer/ConsumeReportRule .scala)
+#
+#  Build + docs:
+#   M build.sbt                                            — root now root-compiles src/mods/scala/domains
+#                                                            and reads src/mods/resources (loadType classpath)
+#   A draco-dev-journal/draco-dev-chapter-41.md            — full session, incl. abandoned paths (ruleTypeNames, media.air)
+#   A draco-git-record/git-record-2026-06-14-1246          — this file
+#   A draco-git-record/release-notes-v2.0.0-alpha.5.md     — alpha.5 release notes (was staged pre-session; lands now)
+
+git commit -m "$(cat <<'EOF'
+Format domain + Generator actor emission + Aerial Phase-1 execution context
+
+First commit since alpha.5 (ca45694). Covers dev-journal chapter 41. Begins the
+message-domain example (Aerial/Terrain/Marine/Ethereal under a future World
+super-domain) that will be TransformBuilder's real fixture, and the draco-supplied
+execution context — actors and rules generated from JSON — that it needs.
+
+== draco.format — the Format domain ==
+
+New draco.format.Format[T] extends Primal[T] (src/main): external content carried as
+value: T. Sub-domains in src/mods: draco.format.json.Json extends Format[io.circe.Json]
+(the one real format), draco.format.yaml.Yaml / draco.format.xml.Xml as Format[String]
+stubs. Message shells carry their payload as a Json format rather than raw circe.
+
+== Generator — emit actorType from actorAspect ==
+
+src/mods/scala/draco/Generator.scala gains a hasActorBehavior(td) dispatch branch,
+checked BEFORE isDomain so a type that is both an actor and a rule-owning domain routes
+to actor emission. It emits:
+  - actorType: ActorType = new Actor[T] with receive/receiveSignal generated from
+    actorAspect.messageAction / signalAction (thin membrane: insert -> fire);
+  - private knowledge built by walking the actor's OWN domainAspect.elementTypeNames
+    and accepting each rule's pattern — the actor<->ruleset binding reuses domain
+    membership; no new ActorAspect field.
+Safe by construction: hasActorBehavior is false for every existing TypeDefinition, so
+all prior emission is byte-identical and the DracoGenTest sweep is unaffected.
+
+== Aerial — Phase 1 execution context (domains.aerial, src/mods) ==
+
+Four media (Aerial/Terrain/Marine/Ethereal) are independently-developed message sets;
+Aerial is built first, in isolation (creation-only; streaming/cross-domain wait on the
+World super-domain). Messages stay loose io.circe.Json; only the execution context is
+strongly typed:
+  - Aerial domain + PositionReport shell (extends Aerial with Json), hand-templated
+    from Language/Distance;
+  - Consumer actor + ConsumeReport rule, Generator-produced from JSON via AerialGenTest;
+  - AerialSink, a hand-written consumer-output observability boundary.
+AerialShellTest + AerialActorTest (rule-direct and actor-loose) are green — a generated
+actor, its knowledge assembled from elementTypeNames, firing a generated rule through a
+thin-membrane receive, all from JSON.
+
+== Build ==
+
+build.sbt: root now root-compiles src/mods/scala/domains and reads src/mods/resources so
+Generator.loadType resolves the example + format JSON on the classpath.
+
+Design notes (full detail in chapter 41): an ActorAspect.ruleTypeNames field was proposed
+and dropped — rule-set membership reuses DomainAspect.elementTypeNames. An air/media
+namespace experiment was created and removed within this window (recapitulation pivot +
+Aerial rename), leaving no trace. Next (6c): Creator->Provider cross-actor sends, which
+need a rule-RHS-to-ActorRef pattern that does not yet exist (framework design).
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+EOF
+)"
+
+git push
