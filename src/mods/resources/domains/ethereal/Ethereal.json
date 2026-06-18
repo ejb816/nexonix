@@ -1,9 +1,9 @@
 {
   "typeName": {
-    "name": "Aerial",
+    "name": "Ethereal",
     "namePackage": [
       "domains",
-      "aerial"
+      "ethereal"
     ]
   },
   "dracoAspect": {
@@ -19,15 +19,15 @@
   },
   "domainAspect": {
     "typeName": {
-      "name": "Aerial",
+      "name": "Ethereal",
       "namePackage": [
         "domains",
-        "aerial"
+        "ethereal"
       ]
     },
     "elementTypeNames": [
-      "FlightIntent",
-      "PositionReport"
+      "LaunchIntent",
+      "EphemerisReport"
     ]
   }
 }

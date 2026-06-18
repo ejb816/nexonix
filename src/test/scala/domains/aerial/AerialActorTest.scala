@@ -17,11 +17,11 @@ import org.scalatest.funsuite.AnyFunSuite
   */
 class AerialActorTest extends AnyFunSuite {
 
-  private def report(callsign: String, altFt: Int): PositionReport = {
+  private def report(callsign: String, altitudeFeet: Int): PositionReport = {
     val payload = Json.obj(
-      "msg"      -> Json.fromString("POS"),
-      "callsign" -> Json.fromString(callsign),
-      "altFt"    -> Json.fromInt(altFt)
+      "message"      -> Json.fromString("POSITION"),
+      "callsign"     -> Json.fromString(callsign),
+      "altitudeFeet" -> Json.fromInt(altitudeFeet)
     )
     new PositionReport {
       override lazy val typeDefinition: TypeDefinition = PositionReport.typeDefinition

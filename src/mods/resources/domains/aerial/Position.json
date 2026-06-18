@@ -1,0 +1,70 @@
+{
+  "typeName": {
+    "name": "Position",
+    "namePackage": [
+      "domains",
+      "aerial"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Aerial",
+        "namePackage": [
+          "domains",
+          "aerial"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "latitude",
+        "valueType": "Double"
+      },
+      {
+        "kind": "Fixed",
+        "name": "longitude",
+        "valueType": "Double"
+      },
+      {
+        "kind": "Fixed",
+        "name": "altitudeFeet",
+        "valueType": "Int"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Position",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "latitude",
+          "valueType": "Double",
+          "value": "0.0"
+        },
+        {
+          "kind": "Parameter",
+          "name": "longitude",
+          "valueType": "Double",
+          "value": "0.0"
+        },
+        {
+          "kind": "Parameter",
+          "name": "altitudeFeet",
+          "valueType": "Int",
+          "value": "0"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Aerial",
+      "namePackage": [
+        "domains",
+        "aerial"
+      ]
+    }
+  }
+}

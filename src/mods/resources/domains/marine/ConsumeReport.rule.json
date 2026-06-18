@@ -1,0 +1,38 @@
+{
+  "typeName": {
+    "name": "ConsumeReport.rule",
+    "namePackage": [
+      "domains",
+      "marine"
+    ]
+  },
+  "ruleAspect": {
+    "variables": [
+      {
+        "kind": "Variable",
+        "name": "report",
+        "valueType": "FixReport"
+      }
+    ],
+    "action": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "domains.marine.MarineSink.record(report.value.noSpaces)"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Marine",
+      "namePackage": [
+        "domains",
+        "marine"
+      ]
+    }
+  }
+}

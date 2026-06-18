@@ -1,0 +1,44 @@
+{
+  "typeName": {
+    "name": "OriginateReport.rule",
+    "namePackage": [
+      "domains",
+      "ethereal"
+    ]
+  },
+  "ruleAspect": {
+    "variables": [
+      {
+        "kind": "Variable",
+        "name": "intent",
+        "valueType": "LaunchIntent"
+      }
+    ],
+    "action": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "consumer",
+          "valueType": "org.apache.pekko.actor.typed.ActorRef[draco.format.json.Json]",
+          "value": "ctx.getRuntime().get[org.apache.pekko.actor.typed.ActorRef[draco.format.json.Json]](\"consumer\")"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "consumer ! originate(intent)"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ethereal",
+      "namePackage": [
+        "domains",
+        "ethereal"
+      ]
+    }
+  }
+}

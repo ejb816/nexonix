@@ -1,0 +1,19 @@
+{
+  "typeName": {
+    "name": "World",
+    "namePackage": [
+      "domains",
+      "world"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "World",
+      "namePackage": [
+        "domains",
+        "world"
+      ]
+    },
+    "elementTypeNames": []
+  }
+}

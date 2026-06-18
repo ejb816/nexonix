@@ -1,0 +1,37 @@
+{
+  "typeName": {
+    "name": "MarchIntent",
+    "namePackage": [
+      "domains",
+      "terrestrial"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Terrestrial",
+        "namePackage": [
+          "domains",
+          "terrestrial"
+        ]
+      },
+      {
+        "name": "Json",
+        "namePackage": [
+          "draco",
+          "format",
+          "json"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Terrestrial",
+      "namePackage": [
+        "domains",
+        "terrestrial"
+      ]
+    }
+  }
+}

@@ -1,9 +1,9 @@
 {
   "typeName": {
-    "name": "Aerial",
+    "name": "Marine",
     "namePackage": [
       "domains",
-      "aerial"
+      "marine"
     ]
   },
   "dracoAspect": {
@@ -19,15 +19,15 @@
   },
   "domainAspect": {
     "typeName": {
-      "name": "Aerial",
+      "name": "Marine",
       "namePackage": [
         "domains",
-        "aerial"
+        "marine"
       ]
     },
     "elementTypeNames": [
-      "FlightIntent",
-      "PositionReport"
+      "VoyageIntent",
+      "FixReport"
     ]
   }
 }

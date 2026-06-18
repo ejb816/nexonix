@@ -1,0 +1,59 @@
+{
+  "typeName": {
+    "name": "Observable",
+    "namePackage": [
+      "domains",
+      "world"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "World",
+        "namePackage": [
+          "domains",
+          "world"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "geocentric",
+        "valueType": "Cartesian"
+      },
+      {
+        "kind": "Fixed",
+        "name": "heliocentric",
+        "valueType": "Cartesian"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Observable",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "geocentric",
+          "valueType": "Cartesian",
+          "value": "Cartesian.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "heliocentric",
+          "valueType": "Cartesian",
+          "value": "Cartesian.Null"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "World",
+      "namePackage": [
+        "domains",
+        "world"
+      ]
+    }
+  }
+}

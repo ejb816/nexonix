@@ -1,0 +1,38 @@
+{
+  "typeName": {
+    "name": "ConsumeReport.rule",
+    "namePackage": [
+      "domains",
+      "terrestrial"
+    ]
+  },
+  "ruleAspect": {
+    "variables": [
+      {
+        "kind": "Variable",
+        "name": "report",
+        "valueType": "LocationReport"
+      }
+    ],
+    "action": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "domains.terrestrial.TerrestrialSink.record(report.value.noSpaces)"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Terrestrial",
+      "namePackage": [
+        "domains",
+        "terrestrial"
+      ]
+    }
+  }
+}

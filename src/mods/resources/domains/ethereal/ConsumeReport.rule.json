@@ -1,0 +1,38 @@
+{
+  "typeName": {
+    "name": "ConsumeReport.rule",
+    "namePackage": [
+      "domains",
+      "ethereal"
+    ]
+  },
+  "ruleAspect": {
+    "variables": [
+      {
+        "kind": "Variable",
+        "name": "report",
+        "valueType": "EphemerisReport"
+      }
+    ],
+    "action": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "domains.ethereal.EtherealSink.record(report.value.noSpaces)"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ethereal",
+      "namePackage": [
+        "domains",
+        "ethereal"
+      ]
+    }
+  }
+}

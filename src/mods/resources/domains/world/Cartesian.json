@@ -1,0 +1,69 @@
+{
+  "typeName": {
+    "name": "Cartesian",
+    "namePackage": [
+      "domains",
+      "world"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "x",
+        "valueType": "Double"
+      },
+      {
+        "kind": "Fixed",
+        "name": "y",
+        "valueType": "Double"
+      },
+      {
+        "kind": "Fixed",
+        "name": "z",
+        "valueType": "Double"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Cartesian",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "x",
+          "valueType": "Double",
+          "value": "0.0"
+        },
+        {
+          "kind": "Parameter",
+          "name": "y",
+          "valueType": "Double",
+          "value": "0.0"
+        },
+        {
+          "kind": "Parameter",
+          "name": "z",
+          "valueType": "Double",
+          "value": "0.0"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "World",
+      "namePackage": [
+        "domains",
+        "world"
+      ]
+    }
+  }
+}

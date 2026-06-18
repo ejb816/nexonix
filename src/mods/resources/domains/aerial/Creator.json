@@ -1,0 +1,61 @@
+{
+  "typeName": {
+    "name": "Creator",
+    "namePackage": [
+      "domains",
+      "aerial"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Actor",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "draco.format.json.Json"
+        ]
+      }
+    ]
+  },
+  "actorAspect": {
+    "messageAction": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "session",
+          "valueType": "org.evrete.api.StatefulSession",
+          "value": "knowledge.newStatefulSession()"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "session.set(\"consumer\", consumer)"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "session.insert(Seq(msg): _*)"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "session.fire()"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "session.close()"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "elementTypeNames": [
+      "OriginateReport"
+    ]
+  }
+}

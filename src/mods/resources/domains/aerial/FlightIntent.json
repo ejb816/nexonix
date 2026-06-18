@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "Aerial",
+    "name": "FlightIntent",
     "namePackage": [
       "domains",
       "aerial"
@@ -9,10 +9,18 @@
   "dracoAspect": {
     "derivation": [
       {
-        "name": "World",
+        "name": "Aerial",
         "namePackage": [
           "domains",
-          "world"
+          "aerial"
+        ]
+      },
+      {
+        "name": "Json",
+        "namePackage": [
+          "draco",
+          "format",
+          "json"
         ]
       }
     ]
@@ -24,10 +32,6 @@
         "domains",
         "aerial"
       ]
-    },
-    "elementTypeNames": [
-      "FlightIntent",
-      "PositionReport"
-    ]
+    }
   }
 }

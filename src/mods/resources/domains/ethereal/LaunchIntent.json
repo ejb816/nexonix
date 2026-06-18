@@ -1,33 +1,37 @@
 {
   "typeName": {
-    "name": "Aerial",
+    "name": "LaunchIntent",
     "namePackage": [
       "domains",
-      "aerial"
+      "ethereal"
     ]
   },
   "dracoAspect": {
     "derivation": [
       {
-        "name": "World",
+        "name": "Ethereal",
         "namePackage": [
           "domains",
-          "world"
+          "ethereal"
+        ]
+      },
+      {
+        "name": "Json",
+        "namePackage": [
+          "draco",
+          "format",
+          "json"
         ]
       }
     ]
   },
   "domainAspect": {
     "typeName": {
-      "name": "Aerial",
+      "name": "Ethereal",
       "namePackage": [
         "domains",
-        "aerial"
+        "ethereal"
       ]
-    },
-    "elementTypeNames": [
-      "FlightIntent",
-      "PositionReport"
-    ]
+    }
   }
 }

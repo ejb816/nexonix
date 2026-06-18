@@ -1,0 +1,70 @@
+{
+  "typeName": {
+    "name": "Location",
+    "namePackage": [
+      "domains",
+      "terrestrial"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Terrestrial",
+        "namePackage": [
+          "domains",
+          "terrestrial"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "latitude",
+        "valueType": "Double"
+      },
+      {
+        "kind": "Fixed",
+        "name": "longitude",
+        "valueType": "Double"
+      },
+      {
+        "kind": "Fixed",
+        "name": "elevationMetres",
+        "valueType": "Int"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Location",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "latitude",
+          "valueType": "Double",
+          "value": "0.0"
+        },
+        {
+          "kind": "Parameter",
+          "name": "longitude",
+          "valueType": "Double",
+          "value": "0.0"
+        },
+        {
+          "kind": "Parameter",
+          "name": "elevationMetres",
+          "valueType": "Int",
+          "value": "0"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Terrestrial",
+      "namePackage": [
+        "domains",
+        "terrestrial"
+      ]
+    }
+  }
+}
