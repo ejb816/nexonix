@@ -1,0 +1,50 @@
+{
+  "typeName": {
+    "name": "Input",
+    "namePackage": [
+      "domains",
+      "aerial"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Actor",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "draco.format.json.Json"
+        ]
+      }
+    ]
+  },
+  "actorAspect": {
+    "messageAction": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "cursor",
+          "valueType": "io.circe.HCursor",
+          "value": "msg.value.hcursor"
+        },
+        {
+          "kind": "Fixed",
+          "name": "position",
+          "valueType": "domains.aerial.Position",
+          "value": "Position(_latitude = cursor.get[Double](\"latitude\").getOrElse(0.0), _longitude = cursor.get[Double](\"longitude\").getOrElse(0.0), _altitudeFeet = cursor.get[Int](\"altitudeFeet\").getOrElse(0))"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "worldConsumer ! position"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "elementTypeNames": []
+  }
+}

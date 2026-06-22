@@ -3,7 +3,7 @@ package draco
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
-class GenerateAndCompileTest extends AnyFunSuite {
+class GenerateAndCompileTest extends AnyFunSuite with PersistentTestLog {
 
   private val resourceRoot = Generator.main.sourceRoot
 
@@ -127,8 +127,8 @@ class GenerateAndCompileTest extends AnyFunSuite {
             try {
               val pw = new java.io.PrintWriter(dumpPath)
               try pw.write(source) finally pw.close()
-              println(s"\n[generated source dumped to $dumpPath]")
-              println(s"[group members: ${typeNames.mkString(", ")}]")
+              log.info(s"\n[generated source dumped to $dumpPath]")
+              log.info(s"[group members: ${typeNames.mkString(", ")}]")
             } catch { case _: Throwable => () }
             TestRecord(groupName, s"[${tds.size} types]", jsonParsed = true,
               sourceGenerated = true, compiled = false, errors = errs.take(20))
@@ -137,16 +137,16 @@ class GenerateAndCompileTest extends AnyFunSuite {
   }
 
   private def reportRecord(r: TestRecord): Unit = {
-    println()
-    println("=" * 100)
-    println(f"  ${r.status}%-14s ${r.typeName}  ${r.resourcePath}")
-    println("=" * 100)
+    log.info("")
+    log.info("=" * 100)
+    log.info(f"  ${r.status}%-14s ${r.typeName}  ${r.resourcePath}")
+    log.info("=" * 100)
     if (r.errors.nonEmpty) {
-      println()
-      println("DETAILS:")
-      r.errors.foreach(e => println(s"  $e"))
+      log.info("")
+      log.info("DETAILS:")
+      r.errors.foreach(e => log.info(s"  $e"))
     }
-    println()
+    log.info("")
   }
 
   test("TypeElement group: generate and compile") {

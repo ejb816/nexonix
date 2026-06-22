@@ -21,14 +21,14 @@ import java.nio.charset.StandardCharsets
   * It writes source, so it is not part of the normal suite's assertions — running
   * it is a deliberate generation step.
   */
-class AerialGenTest extends AnyFunSuite {
+class AerialGenTest extends AnyFunSuite with PersistentTestLog {
 
   private val outDir = Paths.get("src", "mods", "scala", "domains", "aerial")
 
   private def emit(fileName: String, scala: String): Unit = {
     val path = outDir.resolve(fileName)
     Files.write(path, scala.getBytes(StandardCharsets.UTF_8))
-    println(s"\n--- wrote $path ---\n$scala")
+    log.info(s"\n--- wrote $path ---\n$scala")
   }
 
   test("generate Consumer actor and ConsumeReport rule") {

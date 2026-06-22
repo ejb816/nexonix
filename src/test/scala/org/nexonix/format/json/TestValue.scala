@@ -1,11 +1,12 @@
 package org.nexonix.format.json
+import draco.PersistentTestLog
 
 import draco.{Generator, SourceContent, TypeDefinition, TypeName, Value}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
-class TestValue extends AnyFunSuite {
+class TestValue extends AnyFunSuite with PersistentTestLog {
   test("Test Value") {
     val json: Json = parser.parse("""
 {
@@ -31,9 +32,9 @@ class TestValue extends AnyFunSuite {
 }
 """).getOrElse(Json.Null)
     val phoneNumber = Value("phoneNumber", Seq[String]("order", "customer", "contactDetails", "phone")).value[String](json)
-    println(phoneNumber)
+    log.info(phoneNumber)
     val itemID = Value("itemID", Seq[String]("order", "items", "0", "id")).value[Int](json)
-    println(itemID)
+    log.info(s"$itemID")
   }
   test ("test rule json") {
     val jsonFilePaths: Seq[String] = Seq (
@@ -48,15 +49,15 @@ class TestValue extends AnyFunSuite {
       val rule = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
       val ruleSource: String = Generator.generate(rule)
       if (jsonContent.equals(rule.asJson)) {
-        println(content)
+        log.info(content)
       } else {
         val checked =
           s"""Content of $fn does not exactly match encoder result:
              |Check emitted rule source code against current source code.
              |""".stripMargin
-        print(checked)
+        log.info(checked)
       }
-      println(ruleSource)
+      log.info(ruleSource)
     }
     jsonFilePaths.map (checkJson)
   }

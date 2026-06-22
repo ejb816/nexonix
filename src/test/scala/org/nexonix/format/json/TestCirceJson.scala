@@ -1,11 +1,12 @@
 package org.nexonix.format.json
+import draco.PersistentTestLog
 
 import io.circe.optics.JsonPath.root
 import io.circe.{Json, parser}
 import monocle.Optional
 import org.scalatest.funsuite.AnyFunSuite
 
-class TestCirceJson extends AnyFunSuite {
+class TestCirceJson extends AnyFunSuite with PersistentTestLog {
 
   test("Circe Examples") {
     val json: Json = parser.parse("""
@@ -39,13 +40,13 @@ class TestCirceJson extends AnyFunSuite {
       get[String]("phone").
       toOption
     // phoneNumFromCursor: Option[String] = Some(value = "0123-456-789")
-    println(phoneNumFromCursor)
+    log.info(s"$phoneNumFromCursor")
 
     val _phoneNum: Optional[Json, String] = root.order.customer.contactDetails.phone.string
 
     val phoneNum: Option[String] = _phoneNum.getOption(json)
     // phoneNum: Option[String] = Some(value = "0123-456-789")
-    println(phoneNum)
+    log.info(s"$phoneNum")
 
     val itemsFromCursor: Vector[Json] = json.hcursor.
       downField("order").
@@ -61,12 +62,12 @@ class TestCirceJson extends AnyFunSuite {
     val quantities: Vector[Int] =
       itemsFromCursor.flatMap(_.hcursor.get[Int]("quantity").toOption)
     // quantities: Vector[Int] = Vector(1, 2)
-    println(quantities)
+    log.info(s"$quantities")
 
     val items: List[Int] =
       root.order.items.each.quantity.int.getAll(json)
     // items: List[Int] = List(1, 2)
-    println(items)
+    log.info(s"$items")
   }
 
   test("Extended Examples") {

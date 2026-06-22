@@ -1,0 +1,38 @@
+{
+  "typeName": {
+    "name": "Ego",
+    "namePackage": [
+      "domains",
+      "sentient"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Sentient",
+        "namePackage": [
+          "domains",
+          "sentient"
+        ]
+      },
+      {
+        "name": "Holon",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "(Percept, Effect)"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Sentient",
+      "namePackage": [
+        "domains",
+        "sentient"
+      ]
+    }
+  }
+}

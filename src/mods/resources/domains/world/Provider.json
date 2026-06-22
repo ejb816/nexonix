@@ -1,0 +1,31 @@
+{
+  "typeName": {
+    "name": "Provider",
+    "namePackage": [
+      "domains",
+      "world"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Actor",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "domains.world.World"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "World",
+      "namePackage": [
+        "domains",
+        "world"
+      ]
+    }
+  }
+}

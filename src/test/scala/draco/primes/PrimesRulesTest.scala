@@ -1,12 +1,12 @@
 package draco.primes
 
-import draco.{ContentSink, Generator, SourceContent, TypeDefinition, TypeName}
+import draco.{ContentSink, Generator, PersistentTestLog, SourceContent, TypeDefinition, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService
 import org.evrete.api.{Knowledge, RhsContext, StatefulSession}
 import org.scalatest.funsuite.AnyFunSuite
 
-class PrimesRulesTest extends AnyFunSuite {
+class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
   test("PrimesFromNaturalSequence") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge = service.newKnowledge("PrimesFromNaturalSequence")
@@ -40,39 +40,39 @@ class PrimesRulesTest extends AnyFunSuite {
     val resourcePath = "draco/primes/PrimesFromNaturalSequence.rule.json"
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
-    println(jsonContent.spaces2)
+    log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
     val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/PrimesFromNaturalSequenceRule.scala")
     contentSink.write(ruleSource)
-    println(ruleSource)
+    log.info(ruleSource)
   }
 
   test("Generate AddNaturalSequence") {
     val resourcePath = "draco/primes/AddNaturalSequence.rule.json"
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
-    println(jsonContent.spaces2)
+    log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
     val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/AddNaturalSequenceRule.scala")
     contentSink.write(ruleSource)
-    println(ruleSource)
+    log.info(ruleSource)
   }
 
   test("Generate RemoveCompositeNumbers") {
     val resourcePath = "draco/primes/RemoveCompositeNumbers.rule.json"
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
-    println(jsonContent.spaces2)
+    log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
     val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/RemoveCompositeNumbersRule.scala")
     contentSink.write(ruleSource)
-    println(ruleSource)
+    log.info(ruleSource)
   }
 
   def printResult (accumulator: Accumulator, numbers: Numbers) : Unit = {
@@ -88,17 +88,17 @@ class PrimesRulesTest extends AnyFunSuite {
       accumulator.primeSet.toSeq.toList
     }
     val prefixLength: Int = "List".length
-    println(s"Input Natural.json.json Sequence:${numbers.naturalSequence.toList.toString().substring(prefixLength)}")
-    println(s"Result Prime Sequence: ${primeList.sorted.toString().substring(prefixLength)}")
+    log.info(s"Input Natural.json.json Sequence:${numbers.naturalSequence.toList.toString().substring(prefixLength)}")
+    log.info(s"Result Prime Sequence: ${primeList.sorted.toString().substring(prefixLength)}")
     val firstOrder = indexDifference(primeList.sorted)
     val twinPrimeIndices = firstOrder.zipWithIndex.collect { case (2, i) => i }
     val secondOrder = indexDifference(twinPrimeIndices)
-    println(s"Result Inter-prime Difference Sequence: ${firstOrder.toString().substring(prefixLength)}")
-    println(s"Result Twin Prime Index Sequence: ${twinPrimeIndices.toString().substring(prefixLength)}")
-    println(s"Result Twin Prime Spacing Sequence: ${secondOrder.toString().substring(prefixLength)}")
-    println(s"Result Composite Sequence: ${accumulator.compositeSet.toList.sorted.toString().substring(prefixLength)}")
-    println(s"firstTime = $firstTime")
-    println(s"Rule Results with Fire Interval:\n00000${timedText.mkString("\n")}")
+    log.info(s"Result Inter-prime Difference Sequence: ${firstOrder.toString().substring(prefixLength)}")
+    log.info(s"Result Twin Prime Index Sequence: ${twinPrimeIndices.toString().substring(prefixLength)}")
+    log.info(s"Result Twin Prime Spacing Sequence: ${secondOrder.toString().substring(prefixLength)}")
+    log.info(s"Result Composite Sequence: ${accumulator.compositeSet.toList.sorted.toString().substring(prefixLength)}")
+    log.info(s"firstTime = $firstTime")
+    log.info(s"Rule Results with Fire Interval:\n00000${timedText.mkString("\n")}")
   }
   def inputNaturalSequence (session: StatefulSession, accumulator: Accumulator, numbers: Numbers) : Unit = {
     try { // Inject candidates

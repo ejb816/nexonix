@@ -1,16 +1,17 @@
 package org.nexonix.format.json
+import draco.PersistentTestLog
 
 import draco.{DomainAspect, DracoAspect, Factory, Fixed, Generator, Parameter, TypeDefinition, TypeElement, TypeName}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
-class TestTypeModule extends AnyFunSuite  {
+class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
   val dracoDomainDefinition: TypeDefinition = TypeDefinition (
     TypeName ("Draco", _namePackage = Seq("draco")),
     _domainAspect = DomainAspect (_elementTypeNames = Seq (
       "Base")))
-  println(s"${dracoDomainDefinition.typeName.name} namePackage: ${dracoDomainDefinition.typeName.namePackage}")
+  log.info(s"${dracoDomainDefinition.typeName.name} namePackage: ${dracoDomainDefinition.typeName.namePackage}")
 
   val baseDomainDefinition: TypeDefinition = TypeDefinition (
     TypeName ("Base", _namePackage = Seq("draco", "base")),
@@ -18,7 +19,7 @@ class TestTypeModule extends AnyFunSuite  {
       "Unit",
       "Orientable",
       "Coordinates")))
-  println(s"${baseDomainDefinition.typeName.name} namePackage: ${baseDomainDefinition.typeName.namePackage}")
+  log.info(s"${baseDomainDefinition.typeName.name} namePackage: ${baseDomainDefinition.typeName.namePackage}")
 
   val unitDomainDefinition: TypeDefinition = TypeDefinition (
     TypeName ("Unit", _namePackage = Seq("draco", "base", "unit")),
@@ -28,7 +29,7 @@ class TestTypeModule extends AnyFunSuite  {
       "Radians",
       "Distance",
       "Meters")))
-  println(s"${unitDomainDefinition.typeName.name} namePackage: ${unitDomainDefinition.typeName.namePackage}")
+  log.info(s"${unitDomainDefinition.typeName.name} namePackage: ${unitDomainDefinition.typeName.namePackage}")
 
   val measureTypeName: TypeName = TypeName ("Measure", _namePackage = Seq("draco", "base", "unit"))
   val angleTypeName: TypeName = TypeName ("Angle", _namePackage = Seq("draco", "base", "unit"))
@@ -45,7 +46,7 @@ class TestTypeModule extends AnyFunSuite  {
       "Lower",
       "Front",
       "Back")))
-  println(s"${orientableDomainDefinition.typeName.name} TypePackage: ${orientableDomainDefinition.typeName.namePackage}")
+  log.info(s"${orientableDomainDefinition.typeName.name} TypePackage: ${orientableDomainDefinition.typeName.namePackage}")
 
   val valueParameter: Parameter = Parameter ("value", "T", "")
   val leftTypeName: TypeName = TypeName ("Left", _namePackage = Seq("draco", "base", "orientable"))
@@ -73,7 +74,7 @@ class TestTypeModule extends AnyFunSuite  {
   val coordinatesDomainDefinition: TypeDefinition = TypeDefinition (
     TypeName ("Coordinates", _namePackage = Seq("draco", "base", "coordinates")),
     _domainAspect = DomainAspect (_elementTypeNames = Seq ("Spherical")))
-  println(s"${coordinatesDomainDefinition.typeName.name} TypePackage: ${coordinatesDomainDefinition.typeName.namePackage}")
+  log.info(s"${coordinatesDomainDefinition.typeName.name} TypePackage: ${coordinatesDomainDefinition.typeName.namePackage}")
 
   val sphericalTypeName: TypeName = TypeName("Spherical", _namePackage = Seq("draco", "base", "coordinates"))
   val azimuthParameter: Parameter = Parameter ("_azimuth", "Radians", "")
@@ -197,19 +198,19 @@ class TestTypeModule extends AnyFunSuite  {
   )
   def testTypeDefinitionEncode(td: TypeDefinition): Unit = {
     val sourceString: String = td.asJson.spaces2
-    println(s"${td.typeName.namePath}:")
-    println(sourceString)
+    log.info(s"${td.typeName.namePath}:")
+    log.info(sourceString)
   }
 
   def testTypeDefinitionDecode(td: TypeDefinition): Unit = {
     val sourceString: String = td.asJson.spaces2
     val jsonObject = parser.parse(sourceString).getOrElse(Json.Null)
     val tdInstance: TypeDefinition = jsonObject.as[TypeDefinition].toTry.get
-    println(s"${tdInstance.typeName.namePath}:")
-    println(tdInstance.asJson.spaces2)
+    log.info(s"${tdInstance.typeName.namePath}:")
+    log.info(tdInstance.asJson.spaces2)
   }
   def testTypeDefinitionGenerate(td: TypeDefinition): Unit = {
-    println(Generator.generate(td))
+    log.info(Generator.generate(td))
   }
 
   test("Test Type Definition Encode") {

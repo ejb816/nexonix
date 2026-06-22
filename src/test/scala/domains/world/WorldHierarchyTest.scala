@@ -44,4 +44,9 @@ class WorldHierarchyTest extends AnyFunSuite {
     assert(aerial.isInstanceOf[domains.aerial.Aerial])
     assert(aerial.isInstanceOf[draco.format.json.Json])
   }
+
+  test("Sentient is a subdomain of World") {
+    // Compile-time evidence: this line fails to compile if Sentient does not derive World.
+    implicitly[domains.sentient.Sentient <:< World]
+  }
 }

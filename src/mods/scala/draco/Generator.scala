@@ -805,8 +805,8 @@ object Generator extends App {
     val etnLiteral = elementTypeNamesLiteral(td)
     val codec = codecDeclaration(td, familyContext)
     val codecBlock = if (codec.nonEmpty) s"\n$codec\n" else ""
-    val dtLiteral = domainTypeLiteral(objName)
     val wName = wildcardTypeName(td.typeName)
+    val dtLiteral = domainTypeLiteral(wName)
     val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
     val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.dracoAspect.globalElements)}" else ""
 
@@ -988,13 +988,16 @@ object Generator extends App {
     name.stripSuffix(".rule").stripSuffix(".actor")
 
   /** A TypeDefinition is a domain when its `domainAspect.typeName` self-loops
-    * (i.e., declares itself as the domain). The `elementTypeNames.nonEmpty` and
-    * `(source && target)` clauses are transitional fallbacks for hand-constructed
-    * fixtures or transform-domain JSONs that haven't yet had
-    * `domainAspect.typeName = self` populated. */
+    * (i.e., declares itself as the domain). Compared on name + package only, not
+    * full `TypeName` equality: a parameterized self-domain (e.g. `Format[T]`) need
+    * not restate its type parameters in the self-reference. The
+    * `elementTypeNames.nonEmpty` and `(source && target)` clauses are transitional
+    * fallbacks for hand-constructed fixtures or transform-domain JSONs that haven't
+    * yet had `domainAspect.typeName = self` populated. */
   private def isDomain (td: TypeDefinition) : Boolean =
     (td.domainAspect.typeName.name.nonEmpty &&
-     td.domainAspect.typeName == td.typeName) ||
+     td.domainAspect.typeName.name == td.typeName.name &&
+     td.domainAspect.typeName.namePackage == td.typeName.namePackage) ||
     td.domainAspect.elementTypeNames.nonEmpty ||
     (td.dracoAspect.source.name.nonEmpty && td.dracoAspect.target.name.nonEmpty)
 
@@ -1082,8 +1085,8 @@ object Generator extends App {
     * covered by packageHierarchyImports.
     *
     * Without this, a type whose derivation points at another package (e.g.
-    * Egocentric extends Cosmocentric where Cosmocentric lives in
-    * domains.cosmocentric) compiles to "not found: type Cosmocentric". */
+    * Aerial extends World where World lives in domains.world) compiles to
+    * "not found: type World". */
   /** Namespaces that always have specific imports emitted via the static
     * lists (pekkoImports, circeImports, ruleFrameworkImports) or via
     * externalTypeImports. Wildcard imports for these are redundant. */

@@ -1,11 +1,12 @@
 package org.nexonix.rules.rete
+import draco.PersistentTestLog
 
 import org.scalatest.funsuite.AnyFunSuite
 //import org.nexonix.rete.Rete.{Network, addFact, addProduction, fireRules}
-class TestRete  extends AnyFunSuite {
+class TestRete  extends AnyFunSuite with PersistentTestLog {
   test("Rete Test") {
     def action(fact: Fact): Unit = {
-      println(fact)
+      log.info(s"$fact")
     }
 //    val testPattern: Pattern = Map[String,String] (("Hello", "World"))
 //    val testFact: Fact = Map[String,String] (("Hello", "World"))

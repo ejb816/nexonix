@@ -3,7 +3,7 @@ package draco
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
-class GeneratorDefinitionToSourceTest extends AnyFunSuite {
+class GeneratorDefinitionToSourceTest extends AnyFunSuite with PersistentTestLog {
 
   /** Output path with .scala.generated extension */
   private def generatedOutputPath(typeName: String): String =
@@ -71,12 +71,12 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
   private def generateAndVerify(resourcePath: String, typeName: String): Unit = {
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
-    println(jsonContent.spaces2)
+    log.info(jsonContent.spaces2)
 
     val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
     val generatedSource = Generator.generate(td)
     val output = appendDiff(generatedSource, td)
-    println(output)
+    log.info(output)
 
     val outputPath = generatedOutputPath(typeName)
     val contentSink: ContentSink = ContentSink(Generator.generated.sinkRoot, outputPath)
@@ -89,12 +89,12 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite {
       val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
       jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
     }
-    typeDefinitions.foreach(td => println(td.typeName.name))
+    typeDefinitions.foreach(td => log.info(td.typeName.name))
 
     val generatedSource = Generator.generate(typeDefinitions)
     // Use first type for diff comparison (the root of the hierarchy)
     val output = appendDiff(generatedSource, typeDefinitions.head)
-    println(output)
+    log.info(output)
 
     val outputPath = generatedOutputPath(typeName)
     val contentSink: ContentSink = ContentSink(Generator.generated.sinkRoot, outputPath)

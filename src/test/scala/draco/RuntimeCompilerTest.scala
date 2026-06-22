@@ -3,7 +3,7 @@ package draco
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
-class RuntimeCompilerTest extends AnyFunSuite {
+class RuntimeCompilerTest extends AnyFunSuite with PersistentTestLog {
 
   test("Compile simple generated source") {
     val source =
@@ -57,16 +57,16 @@ class RuntimeCompilerTest extends AnyFunSuite {
     val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
     val generatedSource = Generator.generate(td)
 
-    println(s"Generated source for ${td.typeName.name}:")
-    println(generatedSource)
+    log.info(s"Generated source for ${td.typeName.name}:")
+    log.info(generatedSource)
 
     val result = Generator.compile(generatedSource, "Holon.scala")
     result match {
       case Right(classDir) =>
-        println(s"Compilation successful: $classDir")
+        log.info(s"Compilation successful: $classDir")
       case Left(errors) =>
-        println(s"Compilation errors (expected for types with complex dependencies):")
-        errors.foreach(e => println(s"  $e"))
+        log.info(s"Compilation errors (expected for types with complex dependencies):")
+        errors.foreach(e => log.info(s"  $e"))
     }
   }
 
@@ -83,7 +83,7 @@ class RuntimeCompilerTest extends AnyFunSuite {
     assert(result.isLeft, "Expected compilation to fail")
     val errors = result.left.getOrElse(Seq.empty)
     assert(errors.nonEmpty, "Expected at least one error")
-    println(s"Correctly reported ${errors.size} error(s):")
-    errors.foreach(e => println(s"  $e"))
+    log.info(s"Correctly reported ${errors.size} error(s):")
+    errors.foreach(e => log.info(s"  $e"))
   }
 }

@@ -27,7 +27,7 @@ import java.io.File
   * JSON_PARSE_FAIL / JSON_DECODE_FAIL are reported but don't fail the test, so a
   * pre-existing JSON regression doesn't masquerade as a YAML problem.
   */
-class YAMLRoundTripTest extends AnyFunSuite {
+class YAMLRoundTripTest extends AnyFunSuite with PersistentTestLog {
 
   private case class Outcome(path: String, status: String, detail: String = "") {
     def isYamlFailure: Boolean =
@@ -116,25 +116,26 @@ class YAMLRoundTripTest extends AnyFunSuite {
     val passed = byStatus.getOrElse("PASS", 0)
     val yamlFailures = outcomes.count(_.isYamlFailure)
 
-    println()
-    println("=" * 100)
-    println(f"  YAML ROUND-TRIP REPORT: $passed%d / $total%d passed, $yamlFailures%d YAML failures")
-    println("=" * 100)
-    byStatus.toSeq.sortBy(-_._2).foreach { case (s, n) => println(f"    $s%-18s $n%d") }
+    log.info("")
+    log.info("=" * 100)
+    console.info(f"  YAML ROUND-TRIP REPORT: $passed%d / $total%d passed, $yamlFailures%d YAML failures")
+    log.info(f"  YAML ROUND-TRIP REPORT: $passed%d / $total%d passed, $yamlFailures%d YAML failures")
+    log.info("=" * 100)
+    byStatus.toSeq.sortBy(-_._2).foreach { case (s, n) => log.info(f"    $s%-18s $n%d") }
 
     val failures = outcomes.filterNot(_.status == "PASS")
     if (failures.nonEmpty) {
-      println()
-      println("DETAILS:")
+      log.info("")
+      log.info("DETAILS:")
       failures.foreach { o =>
-        println(s"  [${o.status}] ${o.path}")
+        log.info(s"  [${o.status}] ${o.path}")
         if (o.detail.nonEmpty) {
           val truncated = if (o.detail.length > 800) o.detail.take(800) + "\n    ...(truncated)" else o.detail
-          truncated.linesIterator.foreach(line => println(s"      $line"))
+          truncated.linesIterator.foreach(line => log.info(s"      $line"))
         }
       }
     }
-    println()
+    log.info("")
 
     assert(
       yamlFailures == 0,

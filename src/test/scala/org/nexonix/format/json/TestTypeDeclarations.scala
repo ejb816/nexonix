@@ -1,11 +1,12 @@
 package org.nexonix.format.json
+import draco.PersistentTestLog
 
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, Json}
 import org.scalatest.funsuite.AnyFunSuite
 
 
-class TestTypeDeclarations extends AnyFunSuite {
+class TestTypeDeclarations extends AnyFunSuite with PersistentTestLog {
 
   trait UserParameters {
     val name: String
@@ -55,13 +56,13 @@ class TestTypeDeclarations extends AnyFunSuite {
 
     // Using the encoder via .asJson
     val json = userParameters.asJson             // produces io.circe.Json
-    println(s"Encoded JSON:\n${json.spaces2}")
+    log.info(s"Encoded JSON:\n${json.spaces2}")
     val processed =
       s"""Processing decoded UserParameters:
          |  ${userParameters.name},
          |  ${userParameters.age},
          |  ${userParameters.country}""".stripMargin
-    println(processed)
+    log.info(processed)
   }
 
 

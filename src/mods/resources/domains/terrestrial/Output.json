@@ -1,0 +1,50 @@
+{
+  "typeName": {
+    "name": "Output",
+    "namePackage": [
+      "domains",
+      "terrestrial"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Actor",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "domains.world.World"
+        ]
+      }
+    ]
+  },
+  "actorAspect": {
+    "messageAction": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "payload",
+          "valueType": "io.circe.Json",
+          "value": "io.circe.Json.obj(\"type\" -> io.circe.Json.fromString(\"LOCATION\"), \"latitude\" -> io.circe.Json.fromDoubleOrNull(location.latitude), \"longitude\" -> io.circe.Json.fromDoubleOrNull(location.longitude), \"elevationMetres\" -> io.circe.Json.fromInt(location.elevationMetres))"
+        },
+        {
+          "kind": "Fixed",
+          "name": "report",
+          "valueType": "domains.terrestrial.LocationReport",
+          "value": "new LocationReport {\n      override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition\n      override val value: io.circe.Json = payload\n    }"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "consumer ! report"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "elementTypeNames": []
+  }
+}

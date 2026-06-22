@@ -4,7 +4,13 @@ All notable changes to the Nexonix/Draco project will be documented in this file
 
 ## [Unreleased]
 
-_No unreleased changes yet._
+### Changed
+
+- **`Egocentric` → `Sentient`, reparented to `World`** — the perspective frame was renamed and pulled out of the (now-deleted) reference-frame family to become a `World` subdomain (`trait Sentient extends World`), a media peer of Aerial/Terrestrial/Marine/Ethereal. Relocated from `src/test/.../domains/egocentric/` to `src/mods/.../domains/sentient/`; its six Egocentric↔{Geo,Helio,Galacto} transforms were deleted (it now crosses through the `Observable` world-fact rather than the `DomainTransform` matrix). `WorldHierarchyTest` asserts `Sentient <:< World`. Covers dev-journal chapter 47.
+
+### Removed
+
+- **Reference-frame example domains** — `Cosmocentric` and the `Geocentric` / `Heliocentric` / `Galactocentric` peer frames, their leaves, the surviving transform matrix, and `domains.DomainsGenTest` were deleted: a significant maintenance surface with minimal return. Closed issues #2/#3/#4/#7 (now moot); #5/#19/#25 stay open, retargeted at the surviving `Sentient` types. World's `geocentric`/`heliocentric` are coordinate-frame field names on `Observable`/`Cartesian` and are unaffected.
 
 ---
 

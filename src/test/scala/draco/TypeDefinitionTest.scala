@@ -3,7 +3,7 @@ package draco
 import io.circe.syntax.EncoderOps
 import org.scalatest.funsuite.AnyFunSuite
 
-class TypeDefinitionTest extends AnyFunSuite {
+class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
 
   // TypeDefinition describing itself
   val typeDefinitionTypeDefinition: TypeDefinition = TypeDefinition(
@@ -57,13 +57,13 @@ class TypeDefinitionTest extends AnyFunSuite {
   )
 
   test("TypeDefinition as JSON") {
-    println("TypeDefinition as JSON:")
-    println(typeDefinitionTypeDefinition.asJson.spaces2)
+    log.info("TypeDefinition as JSON:")
+    log.info(typeDefinitionTypeDefinition.asJson.spaces2)
   }
 
   test("TypeDefinition generates Scala code") {
-    println("Generated Scala code:")
-    println(Generator.generate(typeDefinitionTypeDefinition))
+    log.info("Generated Scala code:")
+    log.info(Generator.generate(typeDefinitionTypeDefinition))
   }
 
   test("Minimal TypeDefinition (no factory)") {
@@ -73,8 +73,8 @@ class TypeDefinitionTest extends AnyFunSuite {
         _namePackage = Seq("foo", "bar")
       )
     )
-    println("Minimal TypeDefinition (no factory):")
-    println(Generator.generate(minimal))
+    log.info("Minimal TypeDefinition (no factory):")
+    log.info(Generator.generate(minimal))
   }
 
   test("TypeDefinition with globalElements only") {
@@ -90,8 +90,8 @@ class TypeDefinitionTest extends AnyFunSuite {
         )
       )
     )
-    println("TypeDefinition with globalElements only:")
-    println(Generator.generate(withGlobals))
+    log.info("TypeDefinition with globalElements only:")
+    log.info(Generator.generate(withGlobals))
   }
 
   test("TypeElement hierarchy as JSON") {
@@ -109,8 +109,8 @@ class TypeDefinitionTest extends AnyFunSuite {
       Variable.typeDefinition,
       Factory.typeDefinition
     )
-    println("TypeElement hierarchy as JSON:")
-    types.foreach(td => println(td.asJson.spaces2))
+    log.info("TypeElement hierarchy as JSON:")
+    types.foreach(td => log.info(td.asJson.spaces2))
   }
 
   test("Multi-type generation: TypeElement hierarchy") {
@@ -129,8 +129,8 @@ class TypeDefinitionTest extends AnyFunSuite {
       Factory.typeDefinition
     )
     val output = Generator.generate(types)
-    println("Multi-type generation (TypeElement hierarchy):")
-    println(output)
+    log.info("Multi-type generation (TypeElement hierarchy):")
+    log.info(output)
 
     // TypeElement should appear before BodyElement (parent before child)
     assert(output.indexOf("sealed trait TypeElement") < output.indexOf("sealed trait BodyElement"),
@@ -162,8 +162,8 @@ class TypeDefinitionTest extends AnyFunSuite {
     )
     // Pass in reversed order to verify ordering
     val output = Generator.generate(Seq(dogTd, animalTd))
-    println("Multi-type generation (Animal/Dog):")
-    println(output)
+    log.info("Multi-type generation (Animal/Dog):")
+    log.info(output)
 
     // Animal should appear before Dog despite reversed input
     assert(output.indexOf("sealed trait Animal") < output.indexOf("trait Dog"),

@@ -1,0 +1,36 @@
+{
+  "typeName": {
+    "name": "Course",
+    "namePackage": [
+      "domains",
+      "sentient"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Sentient",
+        "namePackage": [
+          "domains",
+          "sentient"
+        ]
+      },
+      {
+        "name": "Direction",
+        "namePackage": [
+          "domains",
+          "sentient"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Sentient",
+      "namePackage": [
+        "domains",
+        "sentient"
+      ]
+    }
+  }
+}

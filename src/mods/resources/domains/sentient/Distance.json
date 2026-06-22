@@ -1,0 +1,38 @@
+{
+  "typeName": {
+    "name": "Distance",
+    "namePackage": [
+      "domains",
+      "sentient"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Sentient",
+        "namePackage": [
+          "domains",
+          "sentient"
+        ]
+      },
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "Double"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Sentient",
+      "namePackage": [
+        "domains",
+        "sentient"
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "typeName": {
+    "name": "Percept",
+    "namePackage": [
+      "domains",
+      "sentient"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Sentient",
+        "namePackage": [
+          "domains",
+          "sentient"
+        ]
+      },
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "(Gaze, Distance)"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Sentient",
+      "namePackage": [
+        "domains",
+        "sentient"
+      ]
+    }
+  }
+}

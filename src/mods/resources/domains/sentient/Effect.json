@@ -1,0 +1,38 @@
+{
+  "typeName": {
+    "name": "Effect",
+    "namePackage": [
+      "domains",
+      "sentient"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Sentient",
+        "namePackage": [
+          "domains",
+          "sentient"
+        ]
+      },
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "Unit"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Sentient",
+      "namePackage": [
+        "domains",
+        "sentient"
+      ]
+    }
+  }
+}

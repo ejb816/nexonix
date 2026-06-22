@@ -1,0 +1,133 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+# First commit since 5acecc5. One large session covering dev-journal chapters 47 + 48:
+#   1. Egocentric -> Sentient, reparented from Cosmocentric to World, relocated to src/mods
+#   2. All *centric reference-frame domains deleted (a significant time sink, minimal value)
+#   3. Generator fix for the parameterized self-domain `Format` (latent since 96d39ac)
+#   4. Slice B — the World transformation service as a running actor graph (first
+#      cross-medium transform end-to-end)
+#   5. Test-output logging migration — bulky println off the console into per-suite files
+#   6. Docs + journal
+#
+# Full suite verified 184/184 green, console clean (only framework-level SLF4J-init and
+# Evrete-JUL lines remain). Renames/relocations appear in status as delete+add, not
+# git-detected renames (content changed too); `git add -A` records the net result.
+
+git add -A
+
+# What `git add -A` stages (grouped for the record):
+#
+#  Egocentric -> Sentient (rename + reparent + relocate):
+#   A src/mods/{resources,scala}/domains/sentient/*  — Sentient + 10 leaves + EgoActor,
+#       package domains.sentient, `trait Sentient extends World`, derivation [World]
+#   D src/test/{resources,scala}/domains/egocentric/* — old location (incl. 3 outbound Ego transforms)
+#
+#  Reference frames deleted (Cosmocentric/Geocentric/Heliocentric/Galactocentric):
+#   D src/test/{resources,scala}/domains/{cosmo,geo,helio,galacto}centric/**  — frames, leaves,
+#       the surviving 6-transform matrix, and the 3 inbound Ego transforms
+#   D src/test/scala/domains/DomainsGenTest.scala  — existed only to exercise the frames
+#   (World's `geocentric`/`heliocentric` are coordinate-FRAME field names on Observable/
+#    Cartesian — unrelated, untouched. GitHub: #2/#3/#4/#7 closed moot; #5/#19/#25
+#    retargeted at Sentient; `reference-frames` label retired.)
+#
+#  Generator — parameterized self-domain fix:
+#   M src/mods/scala/draco/Generator.scala — isDomain compares domainAspect.typeName by
+#       name+package (not full TypeName, which carries type params), so `Format[T]` is
+#       recognized; domainGlobal emits the container via wildcardTypeName (Domain[Format[_]]).
+#       No-op for every non-parameterized domain.
+#
+#  Slice B — World transformation service (domains.world / adapters, src/mods):
+#   A src/mods/scala/domains/world/{Consumer,Provider}.scala + .../world/{Consumer,Provider}.json
+#       — World.Consumer (transform interior: Position->Observable->Location) + World.Provider (routing)
+#   A src/mods/scala/domains/aerial/Input.scala  + resources/domains/aerial/Input.json
+#       — Aerial input adapter (loose PositionReport Json -> typed Position)
+#   A src/mods/scala/domains/terrestrial/Output.scala + resources/domains/terrestrial/Output.json
+#       — Terrestrial output adapter (typed Location -> loose LocationReport Json)
+#   A src/test/scala/domains/world/WorldTransformServiceTest.scala  — end-to-end, meaning preserved
+#   M src/test/scala/domains/world/WorldHierarchyTest.scala         — asserts Sentient <:< World
+#   (All four actors definition-backed; only the irreducible Pekko/Evrete/geodesy bodies
+#    are hand-written, awaiting the JSON-rules + Generator-fold precursors.)
+#
+#  Test-output logging migration:
+#   A src/test/scala/draco/PersistentTestLog.scala  — mix-in: `log` (file) + `console` (clean line)
+#   M src/test/resources/logback-test.xml           — test.output SiftingAppender -> per-suite file
+#                                                      (truncated each run, off console); test.report console
+#   M (suites) PrimesRulesTest, PrimesTest, DracoGenTest, AerialGenTest, GenerateAndCompileTest,
+#       GeneratorDefinitionToSourceTest, RuntimeCompilerTest, TypeDefinitionTest, NaturalActorTest,
+#       YAMLRoundTripTest, TestCirceJson, TestTypeDeclarations, TestTypeModule, TestValue,
+#       TestRete, TupleFactReteTest  — println -> log.info (YAML keeps its one-line headline on console)
+#   M src/test/scala/domains/natural/NaturalActor.scala, src/mods/scala/domains/sentient/EgoActor.scala
+#       — shipped/test-support actors: class logger at debug (no more println in shipped code)
+#   (CLI/tools/demos keep println — stdout is the product: CLI, GeneratorCLI, scripts/*, RETEExample.)
+#
+#  Docs + journal:
+#   M README.md        — reference-frame mentions replaced with the World example; src-tree lines updated
+#   M CHANGELOG.md      — [Unreleased]: Egocentric->Sentient + reference-frame removal
+#                         (Slice B + logging not yet added — see note below)
+#   A draco-dev-journal/draco-dev-chapter-47.md  — rename + deletion + Format fix
+#   A draco-dev-journal/draco-dev-chapter-48.md  — Slice B + define-before-handwrite + logging migration
+#   A draco-git-record/git-record-2026-06-22-1025  — this file
+
+git commit -m "$(cat <<'EOF'
+Retire reference frames (Egocentric->Sentient/World), Slice B transform service, test-output logging
+
+First commit since 5acecc5. One session, dev-journal chapters 47 + 48. Full suite
+184/184 green, console clean.
+
+== Egocentric -> Sentient, reparented to World ==
+
+The perspective frame is renamed Sentient, pulled out of the Cosmocentric reference-frame
+family, and made a subdomain of World (trait Sentient extends World) — a media peer of
+Aerial/Terrestrial/Marine/Ethereal. Relocated from src/test/.../domains/egocentric/ to
+src/mods/.../domains/sentient/ (10 leaves + EgoActor along for the ride; the Ego Holon
+keeps its name). Its six Egocentric<->{Geo,Helio,Galacto} transforms are deleted — Sentient
+crosses through the Observable world-fact like the other media, not via the DomainTransform
+matrix. WorldHierarchyTest asserts Sentient <:< World.
+
+== Reference frames deleted ==
+
+Cosmocentric and the Geocentric/Heliocentric/Galactocentric peer frames, their leaves, the
+surviving 6-transform matrix, and domains.DomainsGenTest are removed: a significant
+maintenance surface with minimal return. World's geocentric/heliocentric are coordinate-frame
+field names on Observable/Cartesian and are unaffected. GitHub issues #2/#3/#4/#7 closed as
+moot; #5/#19/#25 stay open, retargeted at the surviving Sentient types; the reference-frames
+label is retired.
+
+== Generator — parameterized self-domain fix ==
+
+Format is the corpus's only parameterized self-domain (Format[T], domainAspect.typeName =
+itself). Two coupled gaps, latent since 96d39ac: isDomain compared domainAspect.typeName by
+full TypeName equality (which includes type parameters the self-reference omits), so Format
+fell through to the leaf path; and domainGlobal emitted the container as the bare object name
+(Domain[Format], which would not compile). Fix: isDomain compares name + package only;
+domainGlobal emits the container through wildcardTypeName (Domain[Format[_]]). Both are no-ops
+for every non-parameterized domain.
+
+== Slice B — World transformation service ==
+
+The chapter-46 semantic core (Position -> Observable -> Location, meaning preserved) is wired
+into a running Pekko actor graph: Aerial.Input (decode loose PositionReport Json -> typed
+Position) -> World.Consumer (the transform interior; geodesy concentrated here) -> World.Provider
+(routing) -> Terrestrial.Output (encode typed Location -> loose LocationReport Json) ->
+Terrestrial.Consumer -> sink. WorldTransformServiceTest runs a PositionReport(51.5, -0.12,
+35000 ft) through the whole graph and recovers the world point (lat/lon < 1e-6, 35000 ft ->
+10668 m). All four actors are definition-backed (their own JSON); only the irreducible
+Pekko/Evrete/geodesy bodies stay hand-written, awaiting the JSON-rules (#2) and Generator
+actor-emission fold (#3) precursors to TransformBuilder.
+
+== Test-output logging migration ==
+
+Bulky println floods the IntelliJ sbt console and overwrites the start of a full run. New
+draco.PersistentTestLog (mix-in) exposes `log` (SLF4J test.output, routed by a SiftingAppender
+on a per-suite MDC key to target/test-output/<suite>.log, truncated each run, never on the
+console) and `console` (a clean one-line headline). ScalaTest's per-test PASS/FAIL still shows
+(via sbt's logger, not stdout), plus one pointer per suite. All println-heavy suites migrated
+(println -> log.info); YAMLRoundTripTest keeps only its one-line summary on the console.
+Shipped/test-support actors (NaturalActor, EgoActor) use a class logger at debug. CLI/tools/demos
+keep println, since their stdout is the product (CLI, GeneratorCLI, scripts/*, RETEExample).
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+)"
+
+git push

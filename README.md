@@ -373,7 +373,7 @@ When data moves between domains (e.g., from a sensor domain to an analysis domai
 - **Base** measurement hierarchy (Unit, Cardinal, Distance/Meters, Rotation/Radians, Ordinal, Nominal, Coordinate), stripped of vestigial `name`/`description`.
 - **Primes** rule domain (Accumulator, Numbers, three rules), fully canonicalized to Generator form.
 - **Language** sub-domain (Language, YAML).
-- Reference-frame example domains remain under `src/test/` (no longer a development focus).
+- **World** message-domain example under `src/mods/` — Aerial/Terrestrial/Marine/Ethereal media (plus `Sentient`) as subdomains of `World`, crossing through the `Observable` world-fact (meaning-preserving transform proven by `AerialTerrestrialTransformTest`).
 
 **Tooling**
 - `bin/draco-gen` — Bash-invocable Generator CLI (sbt-assembly fat JAR): `generate` / `compile` / `compile-multi` / `inspect` / `discover` / `verify` / `from-yaml` / `to-yaml`.
@@ -494,13 +494,15 @@ src/
   test/
     resources/
       draco/                          -- Framework test JSON
-      domains/                        -- Example-domain JSON (natural, *centric frames)
+      domains/                        -- Example-domain JSON (natural)
       logback-test.xml                -- Test logging config
     scala/
       draco/                          -- Framework + generation tests (DracoGenTest, ...)
-      domains/                        -- Example domains (natural, reference frames)
+      domains/                        -- Example-domain tests (natural, World media)
       org/nexonix/                    -- Additional rule and format tests
   mods/                               -- Third source tier: speculative outer layers
+    resources/domains/                -- World example-domain JSON (world, aerial, sentient, ...)
+    scala/domains/                    -- World example domains (world, aerial/.../ethereal, sentient)
     scala/scripts/                    -- bin/draco-sc scripts (list-domains, who-extends, ...)
 bin/
   draco-gen                           -- Generator CLI (generate/verify/from-yaml/...)

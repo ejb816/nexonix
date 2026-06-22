@@ -1,0 +1,41 @@
+{
+  "typeName": {
+    "name": "Sentient",
+    "namePackage": [
+      "domains",
+      "sentient"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "World",
+        "namePackage": [
+          "domains",
+          "world"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Sentient",
+      "namePackage": [
+        "domains",
+        "sentient"
+      ]
+    },
+    "elementTypeNames": [
+      "Direction",
+      "Distance",
+      "Course",
+      "Gaze",
+      "Percept",
+      "Lean",
+      "Effect",
+      "Waypoint",
+      "Path",
+      "Ego"
+    ]
+  }
+}

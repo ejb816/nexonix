@@ -26,7 +26,7 @@ import scala.util.Using
  *  each surfaces a place where hand-written Scala has drifted from JSON +
  *  Generator emission.
  */
-class DracoGenTest extends AnyFunSuite {
+class DracoGenTest extends AnyFunSuite with PersistentTestLog {
 
   /** A draco type. resourcePath is logical (within `Main.roots.sourceRoot`),
    *  scalaPath is logical (within `Main.roots.sinkRoot`). */
@@ -171,8 +171,8 @@ class DracoGenTest extends AnyFunSuite {
       val handNorm = normalize(readHandWritten(ty.scalaPath))
 
       if (genNorm != handNorm) {
-        println(s"\n--- ${ty.resourcePath}: generated (normalized) ---\n$genNorm")
-        println(s"\n--- ${ty.scalaPath}: hand-written (normalized) ---\n$handNorm")
+        log.info(s"\n--- ${ty.resourcePath}: generated (normalized) ---\n$genNorm")
+        log.info(s"\n--- ${ty.scalaPath}: hand-written (normalized) ---\n$handNorm")
         fail(
           s"${ty.resourcePath}: generated source differs from hand-written ${ty.scalaPath}.\n" +
           s"Resolve by either (a) updating the JSON / Generator so emission matches the hand-written file, " +
@@ -192,8 +192,8 @@ class DracoGenTest extends AnyFunSuite {
     val handNorm = normalize(readHandWritten("draco/TypeElement.scala"))
 
     if (genNorm != handNorm) {
-      println(s"\n--- TypeElement family: generated (normalized) ---\n$genNorm")
-      println(s"\n--- draco/TypeElement.scala: hand-written (normalized) ---\n$handNorm")
+      log.info(s"\n--- TypeElement family: generated (normalized) ---\n$genNorm")
+      log.info(s"\n--- draco/TypeElement.scala: hand-written (normalized) ---\n$handNorm")
       fail(
         s"TypeElement family: generated source differs from hand-written draco/TypeElement.scala.\n" +
         diffReport(handNorm, genNorm)
