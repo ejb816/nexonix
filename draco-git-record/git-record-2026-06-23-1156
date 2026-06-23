@@ -1,0 +1,74 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+# Small, focused commit since 8317309. Covers dev-journal chapter 49: the actor-emission
+# model (signalAction = run-once setup, messageAction = per-message) — its first half
+# landed in the Generator — plus a discovery scaffold that maps which example-domain
+# types already generate vs which still need the actor fold.
+#
+# Full suite verified 185/185 green; ExampleDomainsGenTest reports 26 match / 22 differ /
+# 0 error (of 48), unchanged before vs after the Generator edit (a deliberate no-op
+# regression check — no existing actor populates signalAction, so emission is byte-identical).
+
+git add -A
+
+# What `git add -A` stages:
+#
+#   M src/mods/scala/draco/Generator.scala
+#       actorActionBody gains an `indent` param; actorBehavior now emits signalAction as a
+#       run-once CONSTRUCTION block (4-space instance scope) so its `session`/bindings persist
+#       and are in scope for receive, and messageAction in `receive`. receiveSignal is a no-op
+#       (PostStop cleanup deferred). Empty-signalAction actors (every current one) emit exactly
+#       as before — byte-identical.
+#
+#   A src/test/scala/domains/ExampleDomainsGenTest.scala
+#       Non-failing discovery report: walks src/mods/resources/domains/**.json, generates,
+#       diffs against the hand-written .scala, logs a per-type MATCH/DIFF/ERROR map (+ console
+#       summary). Asserts only that definitions were found. Harden to assert(differ == 0) once
+#       the actor fold + reconciliations close the gaps. Current map: 26 match / 22 differ /
+#       0 error of 48 — the 22 = 8 factory actors + 4 OriginateReport rules (real gap), 6 domain
+#       shells (import-style only), 4 (Position/Location codec + Observable/Cartesian custom logic).
+#
+#   A draco-dev-journal/draco-dev-chapter-49.md     — the design dialogue + this work
+#   A draco-git-record/git-record-2026-06-23-1156   — this file
+
+git commit -m "$(cat <<'EOF'
+Actor signalAction->setup emission + example-domain gen-map scaffold
+
+Covers dev-journal chapter 49. Toward generating the example domains.
+
+== Generator: the actor-emission signal/message split ==
+
+ActorAspect already carries two Action elements; this wires their agreed semantics.
+actorBehavior now emits `signalAction` as a run-once construction block (instance scope)
+so its session and other bindings persist and are visible to `receive`, and `messageAction`
+in `receive` (typically insert + fire). `receiveSignal` is a no-op for now (PostStop session
+cleanup is a later refinement). actorActionBody gains an `indent` parameter to place setup at
+4-space instance scope vs the 6-space receive body.
+
+Safe by construction: no example actor populates `signalAction` yet (they cram the lifecycle
+into `messageAction`), so every existing actor emits byte-identically and the suite is
+unaffected. This lands the signal/message split; the remaining fold piece — how an actor
+declares its downstream role->type so `def actorType(role: ActorRef[T])` + the `session.set`
+seed can be emitted — is deferred to the authoring pass.
+
+== ExampleDomainsGenTest — generate-vs-handwritten discovery map ==
+
+New non-failing test (modeled on DracoGenTest) that walks every JSON-backed type in the
+src/mods example domains, generates, and diffs against the committed hand-written Scala,
+reporting a per-type MATCH/DIFF/ERROR map to its log + a one-line console summary. It asserts
+only that definitions were found — most example types are deliberately hand-written ahead of
+the Generator, so DIFF is expected; tighten to assert(differ == 0) once the gaps close.
+
+Map: 26 match / 22 differ / 0 error (of 48). The 22 differ split into: 12 genuine capability
+gaps (8 factory actors + 4 OriginateReport rules — the actor fold), 6 domain shells differing
+only in import style, and 4 alignment cases (Position/Location, where the Generator emits a
+derived codec the hand-written omits; Observable/Cartesian custom geodesy). 0 errors: the
+Generator chokes on no shape.
+
+Full suite: 185/185 green.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+)"
+
+git push

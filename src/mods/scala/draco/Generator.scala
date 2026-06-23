@@ -911,32 +911,40 @@ object Generator extends App {
     }
   }
 
-  /** Emit a receive/receiveSignal body from an Action's body elements. Unlike a
-    * rule action this has no Evrete ctx variable bindings — the actor body
-    * operates on `knowledge`, the message/`signal`, and `ctx`. */
-  private def actorActionBody (action: Action) : String =
+  /** Emit an actor Action body from its body elements, at the given indent.
+    * `messageAction` is emitted into `receive` (6-space indent); `signalAction` is
+    * emitted once at actor construction (4-space indent) so its bindings — the
+    * session, any seeded refs — persist and are in scope for `receive`. No Evrete
+    * ctx variable bindings: the body operates on `knowledge`, the message, and `ctx`. */
+  private def actorActionBody (action: Action, indent: String = "      ") : String =
     action.body.map {
-      case f: Fixed if f.name.nonEmpty   => s"      val ${f.name}: ${f.valueType} = ${f.value}"
-      case m: Mutable if m.name.nonEmpty => s"      var ${m.name}: ${m.valueType} = ${m.value}"
-      case be: BodyElement               => s"      ${be.value}"
+      case f: Fixed if f.name.nonEmpty   => s"${indent}val ${f.name}: ${f.valueType} = ${f.value}"
+      case m: Mutable if m.name.nonEmpty => s"${indent}var ${m.name}: ${m.valueType} = ${m.value}"
+      case be: BodyElement               => s"${indent}${be.value}"
     }.mkString("\n")
 
+  /** `signalAction` runs ONCE at actor construction — session creation (stateful or
+    * stateless), rule/data loading, downstream-ref seeding — so its `session` (and
+    * any other bindings) persist for `receive` to reuse. `messageAction` runs per
+    * message in `receive` (typically insert + fire). `receiveSignal` is a no-op for
+    * now; PostStop session cleanup is a later refinement. Actors with an empty
+    * `signalAction` emit exactly as before. */
   private def actorBehavior (td: TypeDefinition, msgType: String) : String = {
     val objName = td.typeName.name
-    val recv = actorActionBody(td.actorAspect.messageAction)
-    val sig  = actorActionBody(td.actorAspect.signalAction)
-    val recvBlock = if (recv.nonEmpty) s"$recv\n" else ""
-    val sigBlock  = if (sig.nonEmpty)  s"$sig\n"  else ""
+    val setup = actorActionBody(td.actorAspect.signalAction, "    ")
+    val recv  = actorActionBody(td.actorAspect.messageAction)
+    val setupSection = if (setup.nonEmpty) s"$setup\n\n" else ""
+    val recvBlock    = if (recv.nonEmpty)  s"$recv\n"     else ""
     s"""  lazy val actorType: ActorType = new Actor[$msgType] {
        |    override lazy val actorDefinition: TypeDefinition = $objName.typeDefinition
        |    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition
        |
-       |    override def receive(ctx: TypedActorContext[$msgType], msg: $msgType): Behavior[$msgType] = {
+       |${setupSection}    override def receive(ctx: TypedActorContext[$msgType], msg: $msgType): Behavior[$msgType] = {
        |$recvBlock      Behaviors.same[$msgType]
        |    }
        |
        |    override def receiveSignal(ctx: TypedActorContext[$msgType], signal: Signal): Behavior[$msgType] = {
-       |$sigBlock      Behaviors.same[$msgType]
+       |      Behaviors.same[$msgType]
        |    }
        |  }""".stripMargin
   }
