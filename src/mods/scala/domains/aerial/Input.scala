@@ -4,15 +4,6 @@ import draco._
 import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
-/** Aerial input adapter (codec, World-bound): decodes a loose `PositionReport` Json
-  * into the typed `Position` — a direct subtype of `Aerial`, hence an indirect
-  * subtype of `World` — and hands it to `World.Consumer`. The only place that knows
-  * Aerial's wire schema; World itself deals only in typed values.
-  *
-  * Definition-backed (`Input.json`, `actorAspect.messageAction`) like the medium's
-  * `Creator`/`Consumer`; the Scala body stays hand-written until the actor-emission
-  * Generator fold. Not a `domainAspect` member of Aerial — actors are defined types
-  * but not message-type members, matching the `Creator`/`Consumer` convention. */
 trait Input extends Actor[draco.format.json.Json]
 
 object Input extends App with DracoType {

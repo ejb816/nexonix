@@ -44,7 +44,7 @@ class WorldTransformServiceTest extends AnyFunSuite {
 
     val guardian: Behavior[draco.format.json.Json] = Behaviors.setup { ctx =>
       val terrConsumer: ActorRef[draco.format.json.Json] =
-        ctx.spawn(domains.terrestrial.Consumer.actorType.asInstanceOf[Actor[draco.format.json.Json]], "terrConsumer")
+        ctx.spawn(domains.terrestrial.Consumer.actorType().asInstanceOf[Actor[draco.format.json.Json]], "terrConsumer")
       val output: ActorRef[World] =
         ctx.spawn(domains.terrestrial.Output.actorType(terrConsumer).asInstanceOf[Actor[World]], "output")
       val provider: ActorRef[World] =

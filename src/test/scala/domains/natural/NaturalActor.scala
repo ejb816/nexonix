@@ -12,7 +12,7 @@ object NaturalActor extends App {
   private lazy val log = LoggerFactory.getLogger(getClass)
 
   lazy val typeDefinition: TypeDefinition = Natural.typeDefinition
-  lazy val actorType: ActorType = new Actor[Natural] {
+  def actorType(): ActorType = new Actor[Natural] {
     override val actorDefinition: TypeDefinition = Natural.typeDefinition
     override val typeDefinition: TypeDefinition = Natural.typeDefinition
 

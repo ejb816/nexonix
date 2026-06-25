@@ -14,11 +14,6 @@ object OriginateReportRule extends App {
   lazy val dracoType: Type[OriginateReportRule] = Type[OriginateReportRule] (typeDefinition)
   lazy val domainType: Domain[Marine] = Domain[Marine] (typeDefinition)
 
-  // Creation phase: originate a FixReport algorithmically from the voyage intent.
-  // Marine's native representation diverges from the other media — discriminator
-  // "kind", id "vessel", depth in fathoms not feet/metres, and the report concept
-  // is a "FIX" (a determination one takes), distinct from position/location. The
-  // origination is a clean unit transform (metres -> fathoms).
   private def originate(intent: VoyageIntent): FixReport = {
     val cur          = intent.value.hcursor
     val vessel       = cur.get[String]("vessel").getOrElse("UNKNOWN")

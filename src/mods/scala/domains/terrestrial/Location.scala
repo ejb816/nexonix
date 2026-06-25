@@ -2,10 +2,6 @@ package domains.terrestrial
 
 import draco._
 
-/** The TYPED Terrestrial location form — a direct subtype of `Terrestrial` (hence
-  * `World`), the strong composition tree the output adapter encodes an `Observable`
-  * into before re-serialising to a loose `LocationReport`. Geodetic horizontal
-  * (degrees) + elevation in metres. */
 trait Location extends Terrestrial {
   val latitude: Double
   val longitude: Double

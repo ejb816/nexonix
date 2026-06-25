@@ -17,7 +17,18 @@
           "draco.format.json.Json"
         ]
       }
-    ]
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ActorType",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "consumer",
+          "valueType": "ActorRef[draco.format.json.Json]"
+        }
+      ]
+    }
   },
   "actorAspect": {
     "messageAction": {

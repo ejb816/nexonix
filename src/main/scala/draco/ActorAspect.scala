@@ -6,6 +6,7 @@ import io.circe.syntax.EncoderOps
 trait ActorAspect extends DracoType {
   val messageAction: Action
   val signalAction: Action
+  val setupAction: Action
 }
 
 object ActorAspect extends App with DracoType {
@@ -16,7 +17,8 @@ object ActorAspect extends App with DracoType {
   implicit lazy val encoder: Encoder[ActorAspect] = Encoder.instance { x =>
     val fields = Seq(
       if (x.messageAction.body.nonEmpty) Some("messageAction" -> x.messageAction.asJson) else None,
-      if (x.signalAction.body.nonEmpty) Some("signalAction" -> x.signalAction.asJson) else None
+      if (x.signalAction.body.nonEmpty) Some("signalAction" -> x.signalAction.asJson) else None,
+      if (x.setupAction.body.nonEmpty) Some("setupAction" -> x.setupAction.asJson) else None
     ).flatten
     Json.obj(fields: _*)
   }
@@ -24,20 +26,23 @@ object ActorAspect extends App with DracoType {
     for {
       _messageAction <- cursor.downField("messageAction").as[Option[Action]].map(_.getOrElse(Action.Null))
       _signalAction <- cursor.downField("signalAction").as[Option[Action]].map(_.getOrElse(Action.Null))
-    } yield ActorAspect (_messageAction, _signalAction)
+      _setupAction <- cursor.downField("setupAction").as[Option[Action]].map(_.getOrElse(Action.Null))
+    } yield ActorAspect (_messageAction, _signalAction, _setupAction)
   }
 
   def apply (
     _messageAction: Action = Action.Null,
-    _signalAction: Action = Action.Null
+    _signalAction: Action = Action.Null,
+    _setupAction: Action = Action.Null
   ) : ActorAspect = new ActorAspect {
     override lazy val messageAction: Action = _messageAction
     override lazy val signalAction: Action = _signalAction
+    override lazy val setupAction: Action = _setupAction
     override lazy val typeDefinition: TypeDefinition = ActorAspect.typeDefinition
   }
 
   lazy val Null: ActorAspect = apply()
 
   lazy val isEmpty: ActorAspect => Boolean = aa =>
-    aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty
+    aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty && aa.setupAction.body.isEmpty
 }

@@ -9,11 +9,6 @@ import org.evrete.api.Knowledge
 
 trait Creator extends Actor[draco.format.json.Json]
 
-// The source face of the medium's SourceSink (Brahma): receives a seed intent,
-// whose OriginateReport rule originates a report and sends it — via the rule↔ref
-// seam — to the medium's Consumer, seeded as "consumer" in the session Environment.
-// With the per-medium relay stripped, the Creator hands directly to the Consumer;
-// cross-medium transforms live in World, not inside a Format domain.
 object Creator extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Creator", _namePackage = Seq ("domains", "marine")))
   lazy val dracoType: Type[Creator] = Type[Creator] (typeDefinition)

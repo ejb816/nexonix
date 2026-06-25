@@ -20,7 +20,7 @@
     ]
   },
   "actorAspect": {
-    "messageAction": {
+    "setupAction": {
       "kind": "Action",
       "valueType": "Unit",
       "body": [
@@ -31,6 +31,23 @@
           "value": "knowledge.newStatefulSession()"
         },
         {
+          "kind": "Fixed",
+          "name": "consumed",
+          "valueType": "java.util.ArrayList[String]",
+          "value": "new java.util.ArrayList[String]()"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "session.set(\"consumed\", consumed)"
+        }
+      ]
+    },
+    "messageAction": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
           "kind": "Monadic",
           "valueType": "Unit",
           "value": "session.insert(Seq(msg): _*)"
@@ -39,6 +56,17 @@
           "kind": "Monadic",
           "valueType": "Unit",
           "value": "session.fire()"
+        }
+      ]
+    },
+    "signalAction": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "consumed.forEach((e: String) => domains.aerial.AerialSink.record(e))"
         },
         {
           "kind": "Monadic",

@@ -2,10 +2,6 @@ package domains.aerial
 
 import draco._
 
-/** The TYPED Aerial position form — a direct subtype of `Aerial` (hence `World`),
-  * the strong composition tree the input adapter decodes a loose `PositionReport`
-  * into. Geodetic horizontal (degrees) + altitude in feet; the discriminator is
-  * subsumed by the type itself. */
 trait Position extends Aerial {
   val latitude: Double
   val longitude: Double

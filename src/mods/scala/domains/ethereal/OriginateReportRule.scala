@@ -14,12 +14,6 @@ object OriginateReportRule extends App {
   lazy val dracoType: Type[OriginateReportRule] = Type[OriginateReportRule] (typeDefinition)
   lazy val domainType: Domain[Ethereal] = Domain[Ethereal] (typeDefinition)
 
-  // Creation phase: originate an EphemerisReport algorithmically from the launch
-  // intent. Ethereal's native representation diverges from the other media —
-  // discriminator "category", id "object", altitude in kilometres, and the report
-  // concept is an "EPHEMERIS" (a position computed from orbital mechanics), distinct
-  // from position/location/fix. The origination is a clean unit transform (nautical
-  // miles -> kilometres).
   private def originate(intent: LaunchIntent): EphemerisReport = {
     val cur                 = intent.value.hcursor
     val obj                 = cur.get[String]("object").getOrElse("UNKNOWN")

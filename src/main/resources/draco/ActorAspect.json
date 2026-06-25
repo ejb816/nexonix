@@ -24,6 +24,11 @@
         "kind": "Fixed",
         "name": "signalAction",
         "valueType": "Action"
+      },
+      {
+        "kind": "Fixed",
+        "name": "setupAction",
+        "valueType": "Action"
       }
     ],
     "factory": {
@@ -41,6 +46,12 @@
           "name": "signalAction",
           "valueType": "Action",
           "value": "Action.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "setupAction",
+          "valueType": "Action",
+          "value": "Action.Null"
         }
       ]
     },
@@ -48,7 +59,7 @@
       {
         "kind": "Monadic",
         "valueType": "Unit",
-        "value": "lazy val isEmpty: ActorAspect => Boolean = aa =>\n  aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty"
+        "value": "lazy val isEmpty: ActorAspect => Boolean = aa =>\n  aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty && aa.setupAction.body.isEmpty"
       }
     ]
   },

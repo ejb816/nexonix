@@ -14,13 +14,6 @@ object OriginateReportRule extends App {
   lazy val dracoType: Type[OriginateReportRule] = Type[OriginateReportRule] (typeDefinition)
   lazy val domainType: Domain[Terrestrial] = Domain[Terrestrial] (typeDefinition)
 
-  // Creation phase: originate a LocationReport algorithmically from the march
-  // intent. Terrestrial's native representation diverges from Aerial's — different
-  // keys (type/unit/elevationMetres vs message/callsign/altitudeFeet), metres not
-  // feet, "LOCATION" (weakly fixed) not "POSITION" (a point in motion). The
-  // origination is a clean unit transform (feet -> metres) carrying the unit id
-  // through; this is the divergence a future Aerial=>Terrestrial transform must
-  // bridge.
   private def originate(intent: MarchIntent): LocationReport = {
     val cur         = intent.value.hcursor
     val unit        = cur.get[String]("unit").getOrElse("UNKNOWN")

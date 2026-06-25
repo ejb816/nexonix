@@ -5,15 +5,22 @@ import io.circe.Json
 import org.apache.pekko.actor.typed.ActorSystem
 import org.scalatest.funsuite.AnyFunSuite
 
-/** Sub-step 6b behavioral test — the generated `Consumer` actor + `ConsumeReport`
-  * rule, in isolation (no cross-actor sends; that is 6c).
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import scala.jdk.CollectionConverters._
+
+/** Behavioral test — the generated stateful `Consumer` actor + `ConsumeReport`
+  * rule, in isolation (no cross-actor sends; that is `AerialChainTest`).
   *
   * Two angles, mirroring the Primes precedent:
-  *  - rule-direct: build a session, insert a `PositionReport`, fire, observe the
-  *    sink — validates the rule's logic independent of any actor;
-  *  - actor-loose: send a `PositionReport` to `Consumer.actorType` and observe the
-  *    sink — validates the *generated* actor: its `knowledge` built from
-  *    `elementTypeNames`, and its thin-membrane receive (insert → fire).
+  *  - rule-direct: build a session, seed the `consumed` buffer the way the actor's
+  *    `setupAction` does, insert a `PositionReport`, fire, observe the buffer —
+  *    validates the rule's logic (append to the session's consumed buffer) independent
+  *    of any actor;
+  *  - actor-loose: send a `PositionReport` to `Consumer.actorType()`, stop it, and
+  *    observe the sink — validates the *generated* stateful actor: `setupAction` stands
+  *    up the session + buffer, `messageAction` accumulates, `signalAction` reaps to the
+  *    sink at `PostStop`. So the sink fills on stop — hence the await.
   */
 class AerialActorTest extends AnyFunSuite {
 
@@ -29,23 +36,25 @@ class AerialActorTest extends AnyFunSuite {
     }
   }
 
-  test("ConsumeReport rule records a report inserted directly into a session") {
-    AerialSink.clear()
+  test("ConsumeReport rule appends an inserted report to the session's consumed buffer") {
     val knowledge = Rule.knowledgeService.newKnowledge("AerialConsumeRuleTest")
     ConsumeReportRule.ruleType.pattern.accept(knowledge)
     val session = knowledge.newStatefulSession()
+    val consumed = new java.util.ArrayList[String]()
+    session.set("consumed", consumed)
     session.insert(Seq(report("NX1042", 35000)): _*)
     session.fire()
     session.close()
-    assert(AerialSink.recorded.exists(_.contains("NX1042")))
+    assert(consumed.asScala.exists(_.contains("NX1042")))
   }
 
-  test("Consumer actor consumes a PositionReport via its generated behavior") {
+  test("Consumer actor accumulates a PositionReport and reaps it to the sink at PostStop") {
     AerialSink.clear()
-    val system = ActorSystem(Consumer.actorType.asInstanceOf[Actor[draco.format.json.Json]], "aerialConsumer")
+    val system = ActorSystem(Consumer.actorType().asInstanceOf[Actor[draco.format.json.Json]], "aerialConsumer")
     system ! report("NX2087", 28000)
     Thread.sleep(200)
     system.terminate()
+    Await.result(system.whenTerminated, 3.seconds)
     assert(AerialSink.recorded.exists(_.contains("NX2087")))
   }
 }

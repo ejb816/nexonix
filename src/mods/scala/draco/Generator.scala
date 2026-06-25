@@ -885,7 +885,13 @@ object Generator extends App {
   private def actorImports (td: TypeDefinition) : String = {
     val pkg = packageHierarchyImports(td.typeName.namePackage)
     val refs = referencedPackageImports(td)
-    val frame = pekkoImports :+ "import org.evrete.api.Knowledge"
+    // Fold ActorRef into the typed brace import when a construction param references it,
+    // matching the hand-written convention (one import line, not a trailing separate one).
+    val needsActorRef = td.dracoAspect.factory.parameters.exists(_.valueType.contains("ActorRef"))
+    val typedImport =
+      if (needsActorRef) "import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}"
+      else               "import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}"
+    val frame = Seq(typedImport, "import org.apache.pekko.actor.typed.scaladsl.Behaviors", "import org.evrete.api.Knowledge")
     val codec = if (referencesCirce(td)) circeImports else Seq.empty
     val external = externalImports(td)
     val all = (pkg ++ refs).distinct ++ frame ++ codec ++ external
@@ -931,11 +937,31 @@ object Generator extends App {
     * `signalAction` emit exactly as before. */
   private def actorBehavior (td: TypeDefinition, msgType: String) : String = {
     val objName = td.typeName.name
-    val setup = actorActionBody(td.actorAspect.signalAction, "    ")
+    val setup = actorActionBody(td.actorAspect.setupAction, "    ")
     val recv  = actorActionBody(td.actorAspect.messageAction)
     val setupSection = if (setup.nonEmpty) s"$setup\n\n" else ""
     val recvBlock    = if (recv.nonEmpty)  s"$recv\n"     else ""
-    s"""  lazy val actorType: ActorType = new Actor[$msgType] {
+    // signalAction is the actor's receiveSignal handler: at PostStop the author reads the
+    // accumulated working memory (post-rule-execution harvest) and runs cleanup. Empty ⇒
+    // a bare `Behaviors.same`, byte-identical to a no-op receiveSignal.
+    val signal = actorActionBody(td.actorAspect.signalAction, "          ")
+    val signalBody =
+      if (signal.isEmpty) s"      Behaviors.same[$msgType]"
+      else
+        s"""      signal match {
+           |        case org.apache.pekko.actor.typed.PostStop =>
+           |$signal
+           |          Behaviors.same[$msgType]
+           |        case _ => Behaviors.same[$msgType]
+           |      }""".stripMargin
+    val params = td.dracoAspect.factory.parameters
+    // Every actor is a mintable factory (`def actorType`), never a shared `val`:
+    // a `def` carries no multiplicity commitment, so Orion alone chooses cardinality
+    // (call once = single instance, call N = many, each with its own session).
+    // Construction params (e.g. a downstream ref) pass through; nullary when none.
+    val actorDecl =
+      s"def actorType(${params.map(p => s"${p.name}: ${p.valueType}").mkString(", ")}): ActorType"
+    s"""  $actorDecl = new Actor[$msgType] {
        |    override lazy val actorDefinition: TypeDefinition = $objName.typeDefinition
        |    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition
        |
@@ -944,7 +970,7 @@ object Generator extends App {
        |    }
        |
        |    override def receiveSignal(ctx: TypedActorContext[$msgType], signal: Signal): Behavior[$msgType] = {
-       |      Behaviors.same[$msgType]
+       |$signalBody
        |    }
        |  }""".stripMargin
   }

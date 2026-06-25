@@ -4,10 +4,6 @@ import draco._
 import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
-/** World.Provider — the transform OUTPUT face: re-dispatches a transformed typed
-  * value (a World subtype) to the target subdomain's output path. Thin in this
-  * first vertical (one configured downstream); type-directed routing across many
-  * targets arrives with the JSON-backed transform rules. */
 trait Provider extends Actor[World]
 
 object Provider extends App with DracoType {

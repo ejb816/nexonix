@@ -14,6 +14,9 @@ dracoAspect:
   - kind: Fixed
     name: signalAction
     valueType: Action
+  - kind: Fixed
+    name: setupAction
+    valueType: Action
   factory:
     kind: Factory
     valueType: ActorAspect
@@ -26,11 +29,15 @@ dracoAspect:
       name: signalAction
       valueType: Action
       value: Action.Null
+    - kind: Parameter
+      name: setupAction
+      valueType: Action
+      value: Action.Null
   globalElements:
   - kind: Monadic
     value: |-
       lazy val isEmpty: ActorAspect => Boolean = aa =>
-        aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty
+        aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty && aa.setupAction.body.isEmpty
 domainAspect:
   typeName:
     name: Draco

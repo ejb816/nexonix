@@ -6,14 +6,19 @@ import org.apache.pekko.actor.typed.{ActorRef, ActorSystem, Behavior}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.scalatest.funsuite.AnyFunSuite
 
-/** The Aerial medium as a Phase-1 SourceSink: the `Creator` receives a seed
-  * `FlightIntent`, its `OriginateReport` rule originates a `PositionReport`
-  * (FL390 -> 39000 ft) and sends it — from inside the rule's RHS, over the Evrete
-  * Environment seam — to the medium's `Consumer`, which records it.
+import scala.concurrent.Await
+import scala.concurrent.duration._
+
+/** The Aerial medium as a Phase-1 SourceSink, now with a STATEFUL `Consumer`: the
+  * `Creator` receives seed `FlightIntent`s, its `OriginateReport` rule originates a
+  * `PositionReport` each (FLnnn -> nnn00 ft) and sends it — from the rule's RHS over
+  * the Evrete Environment seam — to the medium's `Consumer`.
   *
-  * The per-medium relay is gone: cross-medium transforms live in `World` (Phase 2),
-  * not inside a Format domain. What remains is the rule-RHS -> ActorRef send (the
-  * pattern proven in 6c) carrying an originated message from Creator to Consumer.
+  * The `Consumer` is multi-instance stateful: `setupAction` stands up a persistent
+  * per-instance session plus an accumulation buffer; `messageAction` inserts+fires
+  * each report into it (the `ConsumeReport` rule appends to the buffer); and
+  * `signalAction` reaps the accumulated buffer to `AerialSink` at `PostStop`. So the
+  * sink fills once, on shutdown — hence the test awaits termination before asserting.
   */
 class AerialChainTest extends AnyFunSuite {
 
@@ -29,12 +34,12 @@ class AerialChainTest extends AnyFunSuite {
     }
   }
 
-  test("Creator originates a PositionReport from a FlightIntent and the Consumer records it") {
+  test("the stateful Consumer accumulates originated PositionReports and reaps them at PostStop") {
     AerialSink.clear()
 
     val guardian: Behavior[draco.format.json.Json] = Behaviors.setup { ctx =>
       val consumer: ActorRef[draco.format.json.Json] =
-        ctx.spawn(Consumer.actorType.asInstanceOf[Actor[draco.format.json.Json]], "consumer")
+        ctx.spawn(Consumer.actorType().asInstanceOf[Actor[draco.format.json.Json]], "consumer")
       val creator: ActorRef[draco.format.json.Json] =
         ctx.spawn(Creator.actorType(consumer).asInstanceOf[Actor[draco.format.json.Json]], "creator")
       Behaviors.receiveMessage { msg =>
@@ -45,11 +50,15 @@ class AerialChainTest extends AnyFunSuite {
 
     val system = ActorSystem(guardian, "aerialCreation")
     system ! intent("NX5500", 390)   // FL390 -> 39000 ft
-    Thread.sleep(300)
+    system ! intent("NX6600", 350)   // FL350 -> 35000 ft
+    Thread.sleep(300)                // let both originate and accumulate in the Consumer's session
     system.terminate()
+    Await.result(system.whenTerminated, 3.seconds)  // PostStop reaps the accumulated reports
 
     val recorded = AerialSink.recorded
     assert(recorded.exists(_.contains("NX5500")))
     assert(recorded.exists(_.contains("39000")))
+    assert(recorded.exists(_.contains("NX6600")))
+    assert(recorded.exists(_.contains("35000")))
   }
 }

@@ -21,20 +21,28 @@ object Consumer extends App with DracoType {
     k
   }
 
-  lazy val actorType: ActorType = new Actor[draco.format.json.Json] {
+  def actorType(): ActorType = new Actor[draco.format.json.Json] {
     override lazy val actorDefinition: TypeDefinition = Consumer.typeDefinition
     override lazy val typeDefinition: TypeDefinition = Consumer.typeDefinition
 
+    val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
+    val consumed: java.util.ArrayList[String] = new java.util.ArrayList[String]()
+    session.set("consumed", consumed)
+
     override def receive(ctx: TypedActorContext[draco.format.json.Json], msg: draco.format.json.Json): Behavior[draco.format.json.Json] = {
-      val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
       session.insert(Seq(msg): _*)
       session.fire()
-      session.close()
       Behaviors.same[draco.format.json.Json]
     }
 
     override def receiveSignal(ctx: TypedActorContext[draco.format.json.Json], signal: Signal): Behavior[draco.format.json.Json] = {
-      Behaviors.same[draco.format.json.Json]
+      signal match {
+        case org.apache.pekko.actor.typed.PostStop =>
+          consumed.forEach((e: String) => domains.aerial.AerialSink.record(e))
+          session.close()
+          Behaviors.same[draco.format.json.Json]
+        case _ => Behaviors.same[draco.format.json.Json]
+      }
     }
   }
 }

@@ -14,10 +14,6 @@ object OriginateReportRule extends App {
   lazy val dracoType: Type[OriginateReportRule] = Type[OriginateReportRule] (typeDefinition)
   lazy val domainType: Domain[Aerial] = Domain[Aerial] (typeDefinition)
 
-  // Creation phase: the report is *originated algorithmically* from the intent —
-  // no JSON fixture. Here the origination is a unit transform (flight level, in
-  // hundreds of feet, → altitude in feet) carrying the callsign through. This is
-  // the seam where a real medium would synthesize its native representation.
   private def originate(intent: FlightIntent): PositionReport = {
     val cur      = intent.value.hcursor
     val callsign = cur.get[String]("callsign").getOrElse("UNKNOWN")

@@ -21,7 +21,7 @@
         {
           "kind": "Monadic",
           "valueType": "Unit",
-          "value": "domains.aerial.AerialSink.record(report.value.noSpaces)"
+          "value": "ctx.getRuntime().get[java.util.List[String]](\"consumed\").add(report.value.noSpaces)"
         }
       ]
     }

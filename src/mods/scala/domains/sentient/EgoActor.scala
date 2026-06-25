@@ -12,7 +12,7 @@ object EgoActor extends App {
   private lazy val log = LoggerFactory.getLogger(getClass)
 
   lazy val typeDefinition: TypeDefinition = Ego.typeDefinition
-  lazy val actorType: ActorType = new Actor[Ego] {
+  def actorType(): ActorType = new Actor[Ego] {
     override val actorDefinition: TypeDefinition = Ego.typeDefinition
     override val typeDefinition: TypeDefinition = Ego.typeDefinition
 
