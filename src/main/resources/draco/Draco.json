@@ -18,6 +18,8 @@
       "ActorAspect",
       "ActorType",
       "Aspects",
+      "Assembly",
+      "Binding",
       "BodyElement",
       "CLI",
       "Condition",

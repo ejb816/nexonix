@@ -1,0 +1,17 @@
+domain draco Draco
+type Pattern from BodyElement
+  elements [
+    fix variables [Variable]
+    fix conditions [Condition]
+  ]
+  factory Pattern
+    parameters [
+      par variables [Variable] []
+      par conditions [Condition] []
+    ]
+    body [
+      fix variables [Variable] _variables
+      fix conditions [Condition] _conditions
+      fix name String ""
+      fix valueType String "org.evrete.api.Knowledge => Unit"
+    ]

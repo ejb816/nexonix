@@ -1,0 +1,8 @@
+domain draco Draco
+type Fixed from BodyElement
+  factory Fixed
+    parameters [
+      par name String
+      par valueType String
+      par value String ""
+    ]

@@ -40,8 +40,8 @@ object TypeName extends App {
     override lazy val name: String = _name
     override lazy val namePackage: Seq[String] = _namePackage
     override lazy val typeParameters: Seq[String] = _typeParameters
-    override lazy val namePath: String = fullNamePath(namePackage, name)
-    override lazy val resourcePath: String = fullResourcePath(namePackage, name)
+    override lazy val namePath: String = if (namePackage.isEmpty) name else s"${namePackage.mkString(".")}.${name}"
+    override lazy val resourcePath: String = s"/${namePackage.mkString("/")}/$name.json"
   }
 
   lazy val Null: TypeName = apply(
@@ -50,6 +50,4 @@ object TypeName extends App {
     _typeParameters = Seq()
   )
 
-  def fullNamePath(np: Seq[String], n: String): String = if (np.isEmpty) n else s"${np.mkString(".")}.${n}"
-  def fullResourcePath(np: Seq[String], n: String): String = s"/${np.mkString("/")}/$n.json"
 }

@@ -1,0 +1,67 @@
+{
+  "typeName": {
+    "name": "Assembly",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "members",
+        "valueType": "Seq[TypeName]"
+      },
+      {
+        "kind": "Fixed",
+        "name": "bindings",
+        "valueType": "Seq[Binding]"
+      },
+      {
+        "kind": "Fixed",
+        "name": "entry",
+        "valueType": "TypeName"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Assembly",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "members",
+          "valueType": "Seq[TypeName]",
+          "value": "Seq.empty"
+        },
+        {
+          "kind": "Parameter",
+          "name": "bindings",
+          "valueType": "Seq[Binding]",
+          "value": "Seq.empty"
+        },
+        {
+          "kind": "Parameter",
+          "name": "entry",
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+domain draco Draco
+type Condition from BodyElement
+  factory Condition
+    parameters [
+      par parameters [Parameter] []
+      par value String
+    ]
+    body [
+      fix parameters [Parameter] _parameters
+      fix value String _value
+      fix name String ""
+      fix valueType String "Boolean"
+    ]

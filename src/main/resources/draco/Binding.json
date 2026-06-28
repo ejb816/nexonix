@@ -1,0 +1,67 @@
+{
+  "typeName": {
+    "name": "Binding",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "from",
+        "valueType": "TypeName"
+      },
+      {
+        "kind": "Fixed",
+        "name": "param",
+        "valueType": "String"
+      },
+      {
+        "kind": "Fixed",
+        "name": "to",
+        "valueType": "TypeName"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Binding",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "from",
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "param",
+          "valueType": "String",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "to",
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

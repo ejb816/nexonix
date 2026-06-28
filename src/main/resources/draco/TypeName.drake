@@ -1,0 +1,22 @@
+domain draco Draco
+type TypeName
+  elements [
+    fix name String
+    fix namePackage [String]
+    fix typeParameters [String]
+    fix namePath String
+    fix resourcePath String
+  ]
+  factory TypeName
+    parameters [
+      par name String
+      par namePackage [String] []
+      par typeParameters [String] []
+    ]
+    body [
+      fix name String _name
+      fix namePackage [String] _namePackage
+      fix typeParameters [String] _typeParameters
+      fix namePath String if (namePackage.isEmpty) name else s"${namePackage.mkString(".")}.${name}"
+      fix resourcePath String s"/${namePackage.mkString("/")}/$name.json"
+    ]

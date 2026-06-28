@@ -1,0 +1,9 @@
+domain draco Draco
+type TypeElement from Primal(String) modules [BodyElement]
+  elements [
+    fix name String
+    fix valueType String
+    fix parameters [Parameter] []
+    fix body [BodyElement] []
+    fix value String ""
+  ]

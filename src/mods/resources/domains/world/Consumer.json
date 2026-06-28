@@ -17,7 +17,18 @@
           "domains.world.World"
         ]
       }
-    ]
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ActorType",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "provider",
+          "valueType": "ActorRef[domains.world.World]"
+        }
+      ]
+    }
   },
   "domainAspect": {
     "typeName": {

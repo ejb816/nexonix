@@ -10,7 +10,7 @@ import scala.concurrent.duration._
 import scala.jdk.CollectionConverters._
 
 /** Behavioral test — the generated stateful `Consumer` actor + `ConsumeReport`
-  * rule, in isolation (no cross-actor sends; that is `AerialChainTest`).
+  * rule, in isolation (no cross-actor sends; the wired chain is `AerialAssemblyTest`).
   *
   * Two angles, mirroring the Primes precedent:
   *  - rule-direct: build a session, seed the `consumed` buffer the way the actor's

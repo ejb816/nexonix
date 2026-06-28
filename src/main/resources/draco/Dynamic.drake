@@ -1,0 +1,15 @@
+domain draco Draco
+type Dynamic from BodyElement
+  factory Dynamic
+    parameters [
+      par name String
+      par valueType String
+      par parameters [Parameter] []
+      par body [BodyElement] []
+    ]
+    body [
+      fix name String _name
+      fix valueType String _valueType
+      fix parameters [Parameter] _parameters
+      fix body [BodyElement] _body
+    ]

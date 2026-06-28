@@ -1,0 +1,11 @@
+domain draco Draco
+type Monadic from BodyElement
+  factory Monadic
+    parameters [
+      par value String
+    ]
+    body [
+      fix name String ""
+      fix valueType String "Unit"
+      fix value String _value
+    ]

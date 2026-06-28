@@ -1,0 +1,8 @@
+domain draco Draco
+type Mutable from BodyElement
+  factory Mutable
+    parameters [
+      par name String
+      par valueType String
+      par value String ""
+    ]
