@@ -123,9 +123,10 @@
     },
     "globalElements": [
       {
-        "kind": "Monadic",
-        "valueType": "Unit",
-        "value": "lazy val isEmpty: DracoAspect => Boolean = da =>\n  da.superDomain.name.isEmpty &&\n  da.modules.isEmpty &&\n  da.extensible.name.isEmpty &&\n  da.derivation.isEmpty &&\n  da.elements.isEmpty &&\n  da.factory.valueType.isEmpty &&\n  da.globalElements.isEmpty &&\n  da.source.name.isEmpty &&\n  da.target.name.isEmpty"
+        "kind": "Fixed",
+        "name": "isEmpty",
+        "valueType": "DracoAspect => Boolean",
+        "value": "da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty"
       }
     ]
   },

@@ -43,6 +43,5 @@ object ActorAspect extends App with DracoType {
 
   lazy val Null: ActorAspect = apply()
 
-  lazy val isEmpty: ActorAspect => Boolean = aa =>
-    aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty && aa.setupAction.body.isEmpty
+  lazy val isEmpty: ActorAspect => Boolean = aa => aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty && aa.setupAction.body.isEmpty
 }

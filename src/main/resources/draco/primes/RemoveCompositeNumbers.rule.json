@@ -7,52 +7,55 @@
     ]
   },
   "ruleAspect": {
-    "variables": [
-      {
-        "kind": "Variable",
-        "name": "accumulator",
-        "valueType": "Accumulator"
-      },
-      {
-        "kind": "Variable",
-        "name": "i1",
-        "valueType": "Int"
-      },
-      {
-        "kind": "Variable",
-        "name": "i2",
-        "valueType": "Int"
-      },
-      {
-        "kind": "Variable",
-        "name": "i3",
-        "valueType": "Int"
-      }
-    ],
-    "conditions": [
-      {
-        "kind": "Condition",
-        "valueType": "Boolean",
-        "value": "i1 * i2 == i3",
-        "parameters": [
-          {
-            "kind": "Parameter",
-            "name": "i1",
-            "valueType": "Int"
-          },
-          {
-            "kind": "Parameter",
-            "name": "i2",
-            "valueType": "Int"
-          },
-          {
-            "kind": "Parameter",
-            "name": "i3",
-            "valueType": "Int"
-          }
-        ]
-      }
-    ],
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "accumulator",
+          "valueType": "Accumulator"
+        },
+        {
+          "kind": "Variable",
+          "name": "i1",
+          "valueType": "Int"
+        },
+        {
+          "kind": "Variable",
+          "name": "i2",
+          "valueType": "Int"
+        },
+        {
+          "kind": "Variable",
+          "name": "i3",
+          "valueType": "Int"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "valueType": "Boolean",
+          "value": "i1 * i2 == i3",
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "i1",
+              "valueType": "Int"
+            },
+            {
+              "kind": "Parameter",
+              "name": "i2",
+              "valueType": "Int"
+            },
+            {
+              "kind": "Parameter",
+              "name": "i3",
+              "valueType": "Int"
+            }
+          ]
+        }
+      ]
+    },
     "action": {
       "kind": "Action",
       "valueType": "Unit",

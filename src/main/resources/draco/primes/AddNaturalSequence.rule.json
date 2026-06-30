@@ -7,18 +7,21 @@
     ]
   },
   "ruleAspect": {
-    "variables": [
-      {
-        "kind": "Variable",
-        "name": "accumulator",
-        "valueType": "Accumulator"
-      },
-      {
-        "kind": "Variable",
-        "name": "i",
-        "valueType": "Integer"
-      }
-    ],
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "accumulator",
+          "valueType": "Accumulator"
+        },
+        {
+          "kind": "Variable",
+          "name": "i",
+          "valueType": "Integer"
+        }
+      ]
+    },
     "action": {
       "kind": "Action",
       "valueType": "Unit",

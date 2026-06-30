@@ -1,0 +1,16 @@
+domain draco Draco
+type DomainAspect
+  elements [
+    fix typeName TypeName
+    fix elementTypeNames [String]
+  ]
+  factory DomainAspect
+    parameters [
+      par typeName TypeName TypeName.Null
+      par elementTypeNames [String] []
+    ]
+  globalElements [
+    fix isEmpty (DomainAspect => Boolean) da =>
+      da.typeName.name.isEmpty &&
+      da.elementTypeNames.isEmpty
+  ]

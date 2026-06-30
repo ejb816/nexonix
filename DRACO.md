@@ -81,7 +81,7 @@ These are deliberately kept structurally symmetric — none is parameterized. Wh
 | `Type.scala` | `Type[T]` — generic type wrapper created via `Type[X](typeDefinition)` |
 | `TypeInstance.scala` | Trait for self-registering companion objects |
 | `TypeName.scala` | Qualified name with package path and type parameters |
-| `TypeDefinition.scala` | Unified schema descriptor: typeName, modules, derivation, elements, factory, globalElements, plus domain fields (elementTypeNames, source, target), rule fields (variables, conditions, values, pattern, action), and actor fields (messageAction, signalAction) |
+| `TypeDefinition.scala` | Unified schema descriptor: typeName, modules, derivation, elements, factory, globalElements, plus domain fields (elementTypeNames, source, target), rule fields (pattern — which carries variables, conditions — plus values, action), and actor fields (messageAction, signalAction) |
 | `TypeElement.scala` | Sealed element hierarchy (Fixed, Mutable, Dynamic, Parameter, Monadic, Pattern, Action, Condition, Variable, Factory) |
 | `Codec.scala` | `Codec[T]` encoder/decoder pair; `Codec.sub` for subtype codec derivation |
 | `Domain.scala` | `Domain[T]` — generic domain container created from `TypeDefinition` |

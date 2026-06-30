@@ -57,9 +57,10 @@
     },
     "globalElements": [
       {
-        "kind": "Monadic",
-        "valueType": "Unit",
-        "value": "lazy val isEmpty: ActorAspect => Boolean = aa =>\n  aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty && aa.setupAction.body.isEmpty"
+        "kind": "Fixed",
+        "name": "isEmpty",
+        "valueType": "ActorAspect => Boolean",
+        "value": "aa => aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty && aa.setupAction.body.isEmpty"
       }
     ]
   },

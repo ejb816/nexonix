@@ -36,7 +36,17 @@ object TypeElement extends App with DracoType {
       if (x.parameters.nonEmpty) Some("parameters" -> x.parameters.asJson) else None,
       if (x.body.nonEmpty) Some("body" -> x.body.asJson) else None,
       if (x.value.nonEmpty) Some("value" -> x.value.asJson) else None
-    ).flatten
+    ).flatten ++ (x match {
+      case x: Pattern => Seq(
+        if (x.variables.nonEmpty) Some("variables" -> x.variables.asJson) else None,
+        if (x.conditions.nonEmpty) Some("conditions" -> x.conditions.asJson) else None
+      ).flatten
+      case x: Action => Seq(
+        if (x.variables.nonEmpty) Some("variables" -> x.variables.asJson) else None,
+        if (x.values.nonEmpty) Some("values" -> x.values.asJson) else None
+      ).flatten
+      case _ => Seq.empty
+    })
     Json.obj(fields: _*)
   }
   implicit lazy val decoder: Decoder[TypeElement] = Decoder.instance { cursor =>

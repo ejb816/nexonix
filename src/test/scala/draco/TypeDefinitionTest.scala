@@ -173,4 +173,31 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
     // Single package declaration
     assert(output.contains("package test.zoo"), "Should have package declaration")
   }
+
+  test("subtype-only fields round-trip through the TypeElement codec (Pattern, Action)") {
+    // The discriminated TypeElement encoder must emit fields that live only on a
+    // subtype (Pattern.variables/conditions, Action.variables/values), not just the
+    // parent-trait fields. Before the fix these were dropped on encode.
+    val pattern = Pattern(
+      _variables = Seq(Variable("accumulator", "Accumulator"), Variable("i", "Integer"))
+    )
+    val patternJson = pattern.asJson
+    assert(patternJson.spaces2.contains("\"variables\""),
+      s"encoded Pattern must carry its variables, got:\n${patternJson.spaces2}")
+    val patternBack = io.circe.Decoder[Pattern].decodeJson(patternJson).getOrElse(Pattern.Null)
+    assert(patternBack.variables.map(_.name) == Seq("accumulator", "i"),
+      s"Pattern variables lost on round-trip: ${patternBack.variables.map(_.name)}")
+
+    val action = Action(
+      _variables = Seq(Variable("i", "Integer")),
+      _body = Seq(Monadic("println(i)"))
+    )
+    val actionJson = action.asJson
+    assert(actionJson.spaces2.contains("\"variables\""),
+      s"encoded Action must carry its variables, got:\n${actionJson.spaces2}")
+    val actionBack = io.circe.Decoder[Action].decodeJson(actionJson).getOrElse(Action.Null)
+    assert(actionBack.variables.map(_.name) == Seq("i"),
+      s"Action variables lost on round-trip: ${actionBack.variables.map(_.name)}")
+    log.info(s"Pattern round-trip JSON:\n${patternJson.spaces2}")
+  }
 }

@@ -1,0 +1,12 @@
+domain draco primes Primes
+type AddNaturalSequence
+rule
+  pattern
+    variables [
+      var accumulator Accumulator
+      var i Integer ]
+  action
+    mon accumulator.primeSet.addOne(i)
+    mon accumulator.naturalSet.addOne(i)
+    fix text String s"Added $i to primeSet and naturalSet."
+    mon accumulator.intervalTextSet.addOne((System.nanoTime(), text))

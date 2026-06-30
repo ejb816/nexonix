@@ -38,6 +38,5 @@ object DomainAspect extends App with DracoType {
 
   lazy val Null: DomainAspect = apply()
 
-  lazy val isEmpty: DomainAspect => Boolean = da =>
-    da.typeName.name.isEmpty && da.elementTypeNames.isEmpty
+  lazy val isEmpty: DomainAspect => Boolean = da => da.typeName.name.isEmpty && da.elementTypeNames.isEmpty
 }

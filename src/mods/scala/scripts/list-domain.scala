@@ -70,7 +70,7 @@ object ListDomain {
       } else {
         val detail = kind match {
           case "RULE" =>
-            val vars   = elementTd.ruleAspect.variables.size
+            val vars   = elementTd.ruleAspect.pattern.variables.size
             val steps  = elementTd.ruleAspect.action.body.size
             s"$vars var(s), $steps-step action"
           case "ACTOR" =>

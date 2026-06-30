@@ -1,0 +1,19 @@
+domain draco Draco
+type ActorAspect
+  elements [
+    fix messageAction Action
+    fix signalAction Action
+    fix setupAction Action
+  ]
+  factory ActorAspect
+    parameters [
+      par messageAction Action Action.Null
+      par signalAction Action Action.Null
+      par setupAction Action Action.Null
+    ]
+  globalElements [
+    fix isEmpty (ActorAspect => Boolean) aa =>
+      aa.messageAction.body.isEmpty &&
+      aa.signalAction.body.isEmpty &&
+      aa.setupAction.body.isEmpty
+  ]

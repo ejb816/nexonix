@@ -17,23 +17,13 @@
     "elements": [
       {
         "kind": "Fixed",
-        "name": "variables",
-        "valueType": "Seq[Variable]"
-      },
-      {
-        "kind": "Fixed",
-        "name": "conditions",
-        "valueType": "Seq[Condition]"
+        "name": "pattern",
+        "valueType": "Pattern"
       },
       {
         "kind": "Fixed",
         "name": "values",
         "valueType": "Seq[Value]"
-      },
-      {
-        "kind": "Fixed",
-        "name": "pattern",
-        "valueType": "Pattern"
       },
       {
         "kind": "Fixed",
@@ -47,27 +37,15 @@
       "parameters": [
         {
           "kind": "Parameter",
-          "name": "variables",
-          "valueType": "Seq[Variable]",
-          "value": "Seq.empty"
-        },
-        {
-          "kind": "Parameter",
-          "name": "conditions",
-          "valueType": "Seq[Condition]",
-          "value": "Seq.empty"
+          "name": "pattern",
+          "valueType": "Pattern",
+          "value": "Pattern.Null"
         },
         {
           "kind": "Parameter",
           "name": "values",
           "valueType": "Seq[Value]",
           "value": "Seq.empty"
-        },
-        {
-          "kind": "Parameter",
-          "name": "pattern",
-          "valueType": "Pattern",
-          "value": "Pattern.Null"
         },
         {
           "kind": "Parameter",
@@ -79,9 +57,10 @@
     },
     "globalElements": [
       {
-        "kind": "Monadic",
-        "valueType": "Unit",
-        "value": "lazy val isEmpty: RuleAspect => Boolean = ra =>\n  ra.variables.isEmpty &&\n  ra.conditions.isEmpty &&\n  ra.values.isEmpty &&\n  ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty &&\n  ra.action.body.isEmpty"
+        "kind": "Fixed",
+        "name": "isEmpty",
+        "valueType": "RuleAspect => Boolean",
+        "value": "ra => ra.values.isEmpty && ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty && ra.action.body.isEmpty"
       }
     ]
   },

@@ -7,13 +7,16 @@
     ]
   },
   "ruleAspect": {
-    "variables": [
-      {
-        "kind": "Variable",
-        "name": "report",
-        "valueType": "LocationReport"
-      }
-    ],
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "report",
+          "valueType": "LocationReport"
+        }
+      ]
+    },
     "action": {
       "kind": "Action",
       "valueType": "Unit",

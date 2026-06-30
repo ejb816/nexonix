@@ -1,2 +1,13 @@
 domain draco Draco
-type BodyElement from TypeElement modules [Fixed, Mutable, Dynamic, Parameter, Monadic, Pattern, Action, Condition, Variable, Factory]
+type BodyElement from TypeElement modules [
+  Fixed,
+  Mutable,
+  Dynamic,
+  Parameter,
+  Monadic,
+  Pattern,
+  Action,
+  Condition,
+  Variable,
+  Factory
+]

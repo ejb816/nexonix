@@ -7,13 +7,16 @@
     ]
   },
   "ruleAspect": {
-    "variables": [
-      {
-        "kind": "Variable",
-        "name": "intent",
-        "valueType": "FlightIntent"
-      }
-    ],
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "intent",
+          "valueType": "FlightIntent"
+        }
+      ]
+    },
     "action": {
       "kind": "Action",
       "valueType": "Unit",

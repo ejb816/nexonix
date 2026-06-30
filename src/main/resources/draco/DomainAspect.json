@@ -46,9 +46,10 @@
     },
     "globalElements": [
       {
-        "kind": "Monadic",
-        "valueType": "Unit",
-        "value": "lazy val isEmpty: DomainAspect => Boolean = da =>\n  da.typeName.name.isEmpty && da.elementTypeNames.isEmpty"
+        "kind": "Fixed",
+        "name": "isEmpty",
+        "valueType": "DomainAspect => Boolean",
+        "value": "da => da.typeName.name.isEmpty && da.elementTypeNames.isEmpty"
       }
     ]
   },

@@ -73,14 +73,5 @@ object DracoAspect extends App with DracoType {
 
   lazy val Null: DracoAspect = apply()
 
-  lazy val isEmpty: DracoAspect => Boolean = da =>
-    da.superDomain.name.isEmpty &&
-    da.modules.isEmpty &&
-    da.extensible.name.isEmpty &&
-    da.derivation.isEmpty &&
-    da.elements.isEmpty &&
-    da.factory.valueType.isEmpty &&
-    da.globalElements.isEmpty &&
-    da.source.name.isEmpty &&
-    da.target.name.isEmpty
+  lazy val isEmpty: DracoAspect => Boolean = da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty
 }

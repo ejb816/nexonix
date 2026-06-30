@@ -540,7 +540,7 @@ object Generator extends App {
          |    val fields = Seq(
          |      Some("kind" -> Json.fromString(kind)),
          |${encoderFieldLines(td, leaves, familyMap)}
-         |    ).flatten
+         |    ).flatten${subtypeExtraFields(td, leaves, familyMap)}
          |    Json.obj(fields: _*)
          |  }""".stripMargin
 
@@ -621,6 +621,37 @@ object Generator extends App {
           s"""      Some("${p.name}" -> x.${p.name}.asJson)"""
       }
     }.mkString(",\n")
+  }
+
+  /** Per-subtype encoder fields for a discriminated union: each leaf's factory
+    * params that are NOT declared on the parent trait (e.g. Pattern.variables/
+    * conditions, Action.variables/values). Without these the shared parent encoder
+    * silently drops subtype-only fields that the decoder reads back, breaking
+    * round-trip. Returns "" when no leaf carries extra fields. */
+  private def subtypeExtraFields (
+    td: TypeDefinition,
+    leaves: Seq[String],
+    familyMap: Map[String, TypeDefinition]
+  ) : String = {
+    val parentFieldNames = (td.dracoAspect.elements.map(_.name) ++ td.dracoAspect.factory.parameters.map(_.name)).distinct
+    val arms = leaves.flatMap { leaf =>
+      val params = familyMap.get(leaf).map(_.dracoAspect.factory.parameters).getOrElse(Seq.empty)
+      val extras = params.filterNot(p => parentFieldNames.contains(p.name))
+      if (extras.isEmpty) None
+      else {
+        val lines = extras.map { p =>
+          val hasNonEmpty = p.valueType == "String" || p.valueType.startsWith("Seq[") || p.valueType.startsWith("Map[")
+          elisionCheck(p) match {
+            case Some(check)         => s"""        if ($check) Some("${p.name}" -> x.${p.name}.asJson) else None"""
+            case None if hasNonEmpty => s"""        if (x.${p.name}.nonEmpty) Some("${p.name}" -> x.${p.name}.asJson) else None"""
+            case None                => s"""        Some("${p.name}" -> x.${p.name}.asJson)"""
+          }
+        }.mkString(",\n")
+        Some(s"      case x: $leaf => Seq(\n$lines\n      ).flatten")
+      }
+    }
+    if (arms.isEmpty) ""
+    else s" ++ (x match {\n${arms.mkString("\n")}\n      case _ => Seq.empty\n    })"
   }
 
   private def subtypeCodecDeclaration (td: TypeDefinition, parentName: String) : String = {
@@ -836,9 +867,9 @@ object Generator extends App {
     s"""$header {
        |  ${tdOverride}lazy val typeDefinition: TypeDefinition = ${ruleDefinitionLoad(td)}
        |$tiLiteral$dtBlock
-       |${conditionFunctions(td.ruleAspect.conditions)}
+       |${conditionFunctions(td.ruleAspect.pattern.conditions)}
        |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
-       |${actionBody(td.ruleAspect.action, td.ruleAspect.variables, td.ruleAspect.values)}
+       |${actionBody(td.ruleAspect.action, td.ruleAspect.pattern.variables, td.ruleAspect.values)}
        |  }
        |
        |  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
@@ -846,9 +877,9 @@ object Generator extends App {
        |    .builder()
        |    .newRule ("${td.typeName.namePath}")
        |    .forEach (
-       |${factVariables(td.ruleAspect.variables)}
+       |${factVariables(td.ruleAspect.pattern.variables)}
        |    )
-       |${whereConditions(td.ruleAspect.conditions, stripAspect(td.typeName.namePath) + "Rule")}
+       |${whereConditions(td.ruleAspect.pattern.conditions, stripAspect(td.typeName.namePath) + "Rule")}
        |    .execute (action)
        |    .build()
        |  }
@@ -1036,7 +1067,7 @@ object Generator extends App {
     (td.dracoAspect.source.name.nonEmpty && td.dracoAspect.target.name.nonEmpty)
 
   private def isRule (td: TypeDefinition) : Boolean =
-    td.typeName.name.endsWith(".rule") || td.ruleAspect.variables.nonEmpty
+    td.typeName.name.endsWith(".rule") || td.ruleAspect.pattern.variables.nonEmpty
 
   private def isActor (td: TypeDefinition) : Boolean =
     td.typeName.name.endsWith(".actor") || td.dracoAspect.derivation.exists(tn => Set("ActorType", "ExtensibleBehavior").contains(tn.name))

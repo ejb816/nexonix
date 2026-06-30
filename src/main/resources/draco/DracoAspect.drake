@@ -1,0 +1,37 @@
+domain draco Draco
+type DracoAspect
+  elements [
+    fix superDomain TypeName
+    fix modules [TypeName]
+    fix extensible TypeName
+    fix derivation [TypeName]
+    fix elements [TypeElement]
+    fix factory Factory
+    fix globalElements [BodyElement]
+    fix source TypeName
+    fix target TypeName
+  ]
+  factory DracoAspect
+    parameters [
+      par superDomain TypeName TypeName.Null
+      par modules [TypeName] []
+      par extensible TypeName TypeName.Null
+      par derivation [TypeName] []
+      par elements [TypeElement] []
+      par factory Factory Factory.Null
+      par globalElements [BodyElement] []
+      par source TypeName TypeName.Null
+      par target TypeName TypeName.Null
+    ]
+  globalElements [
+    fix isEmpty (DracoAspect => Boolean) da =>
+      da.superDomain.name.isEmpty &&
+      da.modules.isEmpty &&
+      da.extensible.name.isEmpty &&
+      da.derivation.isEmpty &&
+      da.elements.isEmpty &&
+      da.factory.valueType.isEmpty &&
+      da.globalElements.isEmpty &&
+      da.source.name.isEmpty &&
+      da.target.name.isEmpty
+  ]

@@ -1,0 +1,13 @@
+domain draco Draco
+type TypeDefinition from Aspects
+  elements [
+    fix typeName TypeName
+  ]
+  factory TypeDefinition
+    parameters [
+      par typeName TypeName
+      par dracoAspect DracoAspect DracoAspect.Null
+      par domainAspect DomainAspect DomainAspect.Null
+      par ruleAspect RuleAspect RuleAspect.Null
+      par actorAspect ActorAspect ActorAspect.Null
+    ]

@@ -7,13 +7,16 @@
     ]
   },
   "ruleAspect": {
-    "variables": [
-      {
-        "kind": "Variable",
-        "name": "intent",
-        "valueType": "MarchIntent"
-      }
-    ],
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "intent",
+          "valueType": "MarchIntent"
+        }
+      ]
+    },
     "action": {
       "kind": "Action",
       "valueType": "Unit",
