@@ -13,7 +13,6 @@ object NaturalActor extends App {
 
   lazy val typeDefinition: TypeDefinition = Natural.typeDefinition
   def actorType(): ActorType = new Actor[Natural] {
-    override val actorDefinition: TypeDefinition = Natural.typeDefinition
     override val typeDefinition: TypeDefinition = Natural.typeDefinition
 
     override def receive(ctx: TypedActorContext[Natural], msg: Natural): Behavior[Natural] = {

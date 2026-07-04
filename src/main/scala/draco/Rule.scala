@@ -16,18 +16,15 @@ object Rule extends App with DracoType {
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   def apply[T] (
-    _ruleDefinition: TypeDefinition = TypeDefinition.Null,
     _pattern: Consumer[Knowledge],
     _action: Consumer[RhsContext]
   ) : Rule[T] = new Rule[T] {
-    override lazy val ruleDefinition: TypeDefinition = _ruleDefinition
     override lazy val pattern: Consumer[Knowledge] = _pattern
     override lazy val action: Consumer[RhsContext] = _action
     override lazy val typeDefinition: TypeDefinition = Rule.typeDefinition
   }
 
   lazy val Null: Rule[_] = apply[Nothing](
-    _ruleDefinition = TypeDefinition.Null,
     _pattern = null.asInstanceOf[Consumer[Knowledge]],
     _action = null.asInstanceOf[Consumer[RhsContext]]
   )

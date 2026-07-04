@@ -11,7 +11,6 @@ object Provider extends App with DracoType {
   lazy val dracoType: Type[Provider] = Type[Provider] (typeDefinition)
 
   def actorType(target: ActorRef[World]): ActorType = new Actor[World] {
-    override lazy val actorDefinition: TypeDefinition = Provider.typeDefinition
     override lazy val typeDefinition: TypeDefinition = Provider.typeDefinition
 
     override def receive(ctx: TypedActorContext[World], msg: World): Behavior[World] = {

@@ -22,7 +22,6 @@ object Consumer extends App with DracoType {
   }
 
   def actorType(): ActorType = new Actor[draco.format.json.Json] {
-    override lazy val actorDefinition: TypeDefinition = Consumer.typeDefinition
     override lazy val typeDefinition: TypeDefinition = Consumer.typeDefinition
 
     override def receive(ctx: TypedActorContext[draco.format.json.Json], msg: draco.format.json.Json): Behavior[draco.format.json.Json] = {

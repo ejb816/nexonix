@@ -1,0 +1,26 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+DRAKE aspect-heads + retire Definition-alias triad + dead-factory cleanup
+
+DRAKE grammar: mandatory type+domain prefix, optional rule/actor heads,
+canonical order type -> domain -> rule -> actor, two domain forms
+(membership vs is-a-domain).
+
+Issue A: remove Actor[T] vestigial factory; move ExtensibleBehavior into the
+extensible field (derivation=[ActorType]); three Generator import fixes
+(scan the extensible field, gate pekko imports on factory presence, fold
+extensibles into the multi-type merge).
+
+Issue B: retire redundant domainDefinition / ruleDefinition / actorDefinition
+aliases of typeDefinition across the symmetric triad; ActorType collapses to
+a marker trait; ruleGlobal positional arg dropped across all rule companions.
+
+Dead-factory cleanup: remove RuleType uncalled apply/Null (now a pure
+abstract trait, symmetric with DomainType/ActorType).
+
+Full suite 200/200.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

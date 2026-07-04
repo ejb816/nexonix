@@ -40,7 +40,6 @@ object PrimesFromNaturalSequenceRule extends App {
   }
 
   lazy val ruleType: RuleType = Rule[PrimesFromNaturalSequenceRule] (
-    typeDefinition,
     _pattern = pattern,
     _action = action
   )

@@ -30,12 +30,6 @@
       "body": [
         {
           "kind": "Fixed",
-          "name": "domainDefinition",
-          "valueType": "TypeDefinition",
-          "value": "_domainDefinition"
-        },
-        {
-          "kind": "Fixed",
           "name": "typeDefinition",
           "valueType": "TypeDefinition",
           "value": "_domainDefinition"

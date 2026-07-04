@@ -40,7 +40,6 @@ object RemoveCompositeNumbersRule extends App {
   }
 
   lazy val ruleType: RuleType = Rule[RemoveCompositeNumbersRule] (
-    typeDefinition,
     _pattern = pattern,
     _action = action
   )

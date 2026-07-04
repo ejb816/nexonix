@@ -40,14 +40,14 @@ class DomainBuilderTest extends AnyFunSuite {
     test(s"$name — define yields a populated, correctly-keyed dictionary") {
       val domain = DomainBuilder.define(name, pkg)
 
-      assert(domain.domainDefinition.typeName.name == name,
-        s"expected domainDefinition named $name")
+      assert(domain.typeDefinition.typeName.name == name,
+        s"expected typeDefinition named $name")
 
       val members = domain.typeDictionary.elementTypes
       assert(members.nonEmpty, s"$name should have at least one member")
 
       // Dictionary size matches the names declared in JSON.
-      assert(members.size == domain.domainDefinition.domainAspect.elementTypeNames.size,
+      assert(members.size == domain.typeDefinition.domainAspect.elementTypeNames.size,
         s"$name dictionary should hold every declared member")
 
       // Each member is retrievable by its own TypeName.
@@ -86,7 +86,7 @@ class DomainBuilderTest extends AnyFunSuite {
 
     built.foreach { d =>
       assert(registry.get(d).exists(_.elementTypes.nonEmpty),
-        s"${d.domainDefinition.typeName.name} should map to a populated dictionary")
+        s"${d.typeDefinition.typeName.name} should map to a populated dictionary")
     }
   }
 }

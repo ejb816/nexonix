@@ -9,98 +9,27 @@
     ]
   },
   "dracoAspect": {
+    "extensible": {
+      "name": "ExtensibleBehavior",
+      "namePackage": [
+        "org",
+        "apache",
+        "pekko",
+        "actor",
+        "typed"
+      ],
+      "typeParameters": [
+        "T"
+      ]
+    },
     "derivation": [
-      {
-        "name": "ExtensibleBehavior",
-        "namePackage": [
-          "org",
-          "apache",
-          "pekko",
-          "actor",
-          "typed"
-        ],
-        "typeParameters": [
-          "T"
-        ]
-      },
       {
         "name": "ActorType",
         "namePackage": [
           "draco"
         ]
       }
-    ],
-    "factory": {
-      "kind": "Factory",
-      "valueType": "Actor[T]",
-      "parameters": [
-        {
-          "kind": "Parameter",
-          "name": "actorDefinition",
-          "valueType": "TypeDefinition"
-        }
-      ],
-      "body": [
-        {
-          "kind": "Fixed",
-          "name": "typeDefinition",
-          "valueType": "TypeDefinition",
-          "value": "_actorDefinition"
-        },
-        {
-          "kind": "Fixed",
-          "name": "actorDefinition",
-          "valueType": "TypeDefinition",
-          "value": "_actorDefinition"
-        },
-        {
-          "kind": "Dynamic",
-          "name": "receive",
-          "valueType": "Behavior[T]",
-          "parameters": [
-            {
-              "kind": "Parameter",
-              "name": "ctx",
-              "valueType": "TypedActorContext[T]"
-            },
-            {
-              "kind": "Parameter",
-              "name": "msg",
-              "valueType": "T"
-            }
-          ],
-          "body": [
-            {
-              "kind": "Monadic",
-              "value": "Behaviors.same[T]"
-            }
-          ]
-        },
-        {
-          "kind": "Dynamic",
-          "name": "receiveSignal",
-          "valueType": "Behavior[T]",
-          "parameters": [
-            {
-              "kind": "Parameter",
-              "name": "ctx",
-              "valueType": "TypedActorContext[T]"
-            },
-            {
-              "kind": "Parameter",
-              "name": "msg",
-              "valueType": "Signal"
-            }
-          ],
-          "body": [
-            {
-              "kind": "Monadic",
-              "value": "Behaviors.same[T]"
-            }
-          ]
-        }
-      ]
-    }
+    ]
   },
   "domainAspect": {
     "typeName": {

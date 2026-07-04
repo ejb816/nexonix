@@ -35,12 +35,6 @@
       "parameters": [
         {
           "kind": "Parameter",
-          "name": "ruleDefinition",
-          "valueType": "TypeDefinition",
-          "value": "TypeDefinition.Null"
-        },
-        {
-          "kind": "Parameter",
           "name": "pattern",
           "valueType": "Consumer[Knowledge]"
         },

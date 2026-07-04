@@ -32,7 +32,6 @@ object TupleFactRule extends App {
   }
 
   lazy val ruleType: RuleType = Rule[TupleFactRule] (
-    typeDefinition,
     _pattern = pattern,
     _action = action
   )

@@ -13,7 +13,6 @@ object EgoActor extends App {
 
   lazy val typeDefinition: TypeDefinition = Ego.typeDefinition
   def actorType(): ActorType = new Actor[Ego] {
-    override val actorDefinition: TypeDefinition = Ego.typeDefinition
     override val typeDefinition: TypeDefinition = Ego.typeDefinition
 
     override def receive(ctx: TypedActorContext[Ego], msg: Ego): Behavior[Ego] = {

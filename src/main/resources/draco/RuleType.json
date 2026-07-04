@@ -17,11 +17,6 @@
     "elements": [
       {
         "kind": "Fixed",
-        "name": "ruleDefinition",
-        "valueType": "TypeDefinition"
-      },
-      {
-        "kind": "Fixed",
         "name": "action",
         "valueType": "Consumer[RhsContext]"
       },
@@ -30,54 +25,7 @@
         "name": "pattern",
         "valueType": "Consumer[Knowledge]"
       }
-    ],
-    "factory": {
-      "kind": "Factory",
-      "valueType": "RuleType",
-      "parameters": [
-        {
-          "kind": "Parameter",
-          "name": "ruleDefinition",
-          "valueType": "TypeDefinition"
-        },
-        {
-          "kind": "Parameter",
-          "name": "pattern",
-          "valueType": "Consumer[Knowledge]"
-        },
-        {
-          "kind": "Parameter",
-          "name": "action",
-          "valueType": "Consumer[RhsContext]"
-        }
-      ],
-      "body": [
-        {
-          "kind": "Fixed",
-          "name": "ruleDefinition",
-          "valueType": "TypeDefinition",
-          "value": "_ruleDefinition"
-        },
-        {
-          "kind": "Fixed",
-          "name": "typeDefinition",
-          "valueType": "TypeDefinition",
-          "value": "_ruleDefinition"
-        },
-        {
-          "kind": "Fixed",
-          "name": "action",
-          "valueType": "Consumer[RhsContext]",
-          "value": "_action"
-        },
-        {
-          "kind": "Fixed",
-          "name": "pattern",
-          "valueType": "Consumer[Knowledge]",
-          "value": "_pattern"
-        }
-      ]
-    }
+    ]
   },
   "domainAspect": {
     "typeName": {

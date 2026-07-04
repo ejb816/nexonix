@@ -1,8 +1,6 @@
 package draco
 
-trait ActorType extends DracoType {
-  val actorDefinition: TypeDefinition
-}
+trait ActorType extends DracoType
 
 object ActorType extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("ActorType", _namePackage = Seq ("draco")))

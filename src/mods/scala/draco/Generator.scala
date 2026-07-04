@@ -885,7 +885,6 @@ object Generator extends App {
        |  }
        |
        |  lazy val ruleType: RuleType = Rule[$name] (
-       |    typeDefinition,
        |    _pattern = pattern,
        |    _action = action
        |  )
@@ -993,7 +992,6 @@ object Generator extends App {
     val actorDecl =
       s"def actorType(${params.map(p => s"${p.name}: ${p.valueType}").mkString(", ")}): ActorType"
     s"""  $actorDecl = new Actor[$msgType] {
-       |    override lazy val actorDefinition: TypeDefinition = $objName.typeDefinition
        |    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition
        |
        |${setupSection}    override def receive(ctx: TypedActorContext[$msgType], msg: $msgType): Behavior[$msgType] = {
@@ -1115,7 +1113,8 @@ object Generator extends App {
       td.dracoAspect.factory.parameters.map(_.valueType) ++
       td.dracoAspect.factory.body.map(_.valueType) ++
       td.dracoAspect.globalElements.map(_.valueType) ++
-      td.dracoAspect.derivation.map(_.name)
+      td.dracoAspect.derivation.map(_.name) ++
+      Seq(td.dracoAspect.extensible.name)
     val typeNames = allValueTypes.flatMap(extractTypeNames).distinct
     val standard = typeNames.flatMap(externalTypeImports.get)
     val mutableRef = if (allValueTypes.exists(_.contains("mutable."))) Seq("import scala.collection.mutable") else Seq.empty
@@ -1251,7 +1250,10 @@ object Generator extends App {
       // `nameSuffix` ("Actor" iff td.typeName.name ends in ".actor") and `instanceType`
       // ("actor" iff isActor) differentiate the two.
       val isActorType = isActor(td)
-      val instanceType = if (isActorType) "actor" else ""
+      // pekko behaviour imports (Behavior/Signal/TypedActorContext/Behaviors) are only
+      // used by factory-emitted receive/receiveSignal bodies; a factory-less actor
+      // container (e.g. the base Actor[T] trait) needs none.
+      val instanceType = if (isActorType && td.dracoAspect.factory.valueType.nonEmpty) "actor" else ""
       // Suffix is only applied to actor-aspect TDs (name ending in `.actor`),
       // not to every type that uses the Pekko actor framework. Without this
       // restriction the base `Actor` type itself becomes `ActorActor`.
@@ -1282,7 +1284,8 @@ object Generator extends App {
     val mergedTd = TypeDefinition(
       _typeName = ordered.head.typeName,
       _dracoAspect = DracoAspect(
-        _derivation = ordered.flatMap(_.dracoAspect.derivation),
+        _derivation = ordered.flatMap(_.dracoAspect.derivation) ++
+          ordered.map(_.dracoAspect.extensible).filter(_.name.nonEmpty),
         _elements = ordered.flatMap(_.dracoAspect.elements),
         _factory = Factory("", _parameters = ordered.flatMap(_.dracoAspect.factory.parameters)),
         _globalElements = ordered.flatMap(_.dracoAspect.globalElements)

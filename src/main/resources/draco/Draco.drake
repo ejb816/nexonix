@@ -1,0 +1,46 @@
+type Draco
+domain draco Draco
+  types [
+  Action
+  Actor
+  ActorAspect
+  ActorType
+  Aspects
+  Assembly
+  Binding
+  BodyElement
+  CLI
+  Condition
+  ContentSink
+  Dictionary
+  Domain
+  DomainAspect
+  DomainDictionary
+  DomainTransform
+  DomainType
+  DracoAspect
+  DracoType
+  Dynamic
+  Factory
+  Fixed
+  Holon
+  Main
+  Monadic
+  Mutable
+  Parameter
+  Pattern
+  Primal
+  REPL
+  Rule
+  RuleAspect
+  RuleType
+  SourceContent
+  Test
+  Type
+  TypeDefinition
+  TypeDictionary
+  TypeElement
+  TypeName
+  TypeTransform
+  Value
+  Variable ]

@@ -1,19 +1,23 @@
-domain draco Draco
 type Action from BodyElement
   elements [
     fix variables [Variable]
-    fix values [Value]
-  ]
+    fix values [Value] ]
   factory Action
     parameters [
       par variables [Variable] []
       par values [Value] []
-      par body [BodyElement] []
-    ]
+      par body [BodyElement] [] ]
     body [
       fix variables [Variable] _variables
       fix values [Value] _values
       fix body [BodyElement] _body
       fix name String "ctx"
-      fix valueType String "org.evrete.api.RHSContext => Unit"
-    ]
+      fix valueType String "org.evrete.api.RHSContext => Unit" ]
+domain draco Draco
+rule
+  pattern
+  action
+actor
+  start
+  message
+  signal

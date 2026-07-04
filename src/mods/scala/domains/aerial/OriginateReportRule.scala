@@ -49,7 +49,6 @@ object OriginateReportRule extends App {
   }
 
   lazy val ruleType: RuleType = Rule[OriginateReportRule] (
-    typeDefinition,
     _pattern = pattern,
     _action = action
   )

@@ -17,11 +17,6 @@
     "elements": [
       {
         "kind": "Fixed",
-        "name": "domainDefinition",
-        "valueType": "TypeDefinition"
-      },
-      {
-        "kind": "Fixed",
         "name": "typeDictionary",
         "valueType": "TypeDictionary"
       }

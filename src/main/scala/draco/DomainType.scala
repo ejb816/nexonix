@@ -1,7 +1,6 @@
 package draco
 
 trait DomainType extends DracoType {
-  val domainDefinition: TypeDefinition
   val typeDictionary: TypeDictionary
 }
 

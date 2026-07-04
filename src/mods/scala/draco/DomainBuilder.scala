@@ -62,7 +62,6 @@ object DomainBuilder {
     }
 
     new Domain[Any] {
-      override lazy val domainDefinition: TypeDefinition = domainDef
       override lazy val typeDefinition: TypeDefinition = domainDef
       override lazy val typeDictionary: TypeDictionary = populated
     }
@@ -93,7 +92,7 @@ object DomainBuilder {
     *     (non-`draco` packages, e.g. Pekko/Evrete) are out of scope and skipped.
     */
   def validate(domain: DomainType): Seq[String] = {
-    val td = domain.domainDefinition
+    val td = domain.typeDefinition
 
     val selfDeclaration: Seq[String] =
       if (td.domainAspect.typeName.name == td.typeName.name &&
@@ -130,7 +129,7 @@ object DomainBuilder {
     * never sinks the whole batch. */
   def generate(name: String, namePackage: Seq[String]): Map[TypeName, String] = {
     val domain = define(name, namePackage)
-    val all: Seq[TypeDefinition] = domain.domainDefinition +: domain.typeDictionary.elementTypes
+    val all: Seq[TypeDefinition] = domain.typeDefinition +: domain.typeDictionary.elementTypes
     all.map(td => td.typeName -> safeGenerate(td)).toMap
   }
 

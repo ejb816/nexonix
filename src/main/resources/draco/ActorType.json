@@ -13,13 +13,6 @@
           "draco"
         ]
       }
-    ],
-    "elements": [
-      {
-        "kind": "Fixed",
-        "name": "actorDefinition",
-        "valueType": "TypeDefinition"
-      }
     ]
   },
   "domainAspect": {

@@ -1,0 +1,3 @@
+type Actor(T) from ActorType
+  extensible org apache pekko actor typed ExtensibleBehavior(T)
+domain draco Draco

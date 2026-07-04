@@ -31,7 +31,6 @@ object ConsumeReportRule extends App {
   }
 
   lazy val ruleType: RuleType = Rule[ConsumeReportRule] (
-    typeDefinition,
     _pattern = pattern,
     _action = action
   )

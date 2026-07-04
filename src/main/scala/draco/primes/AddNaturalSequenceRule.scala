@@ -35,7 +35,6 @@ object AddNaturalSequenceRule extends App {
   }
 
   lazy val ruleType: RuleType = Rule[AddNaturalSequenceRule] (
-    typeDefinition,
     _pattern = pattern,
     _action = action
   )

@@ -11,7 +11,6 @@ object Input extends App with DracoType {
   lazy val dracoType: Type[Input] = Type[Input] (typeDefinition)
 
   def actorType(worldConsumer: ActorRef[domains.world.World]): ActorType = new Actor[draco.format.json.Json] {
-    override lazy val actorDefinition: TypeDefinition = Input.typeDefinition
     override lazy val typeDefinition: TypeDefinition = Input.typeDefinition
 
     override def receive(ctx: TypedActorContext[draco.format.json.Json], msg: draco.format.json.Json): Behavior[draco.format.json.Json] = {
