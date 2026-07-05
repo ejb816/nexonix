@@ -1,0 +1,17 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+drake.dlt: canonical DRAKE definition-language template
+
+Merge the interim drake-grammar + drake-symbols into one self-describing
+reference, drake.dlt (dlt = definition language template):
+- notation legend, fill-ins, value-type table, conventions
+- the grammar, each line annotated with the JSON element it emits
+- type-parameter bounds: (T <: Product), (S <: DracoType, T <: DracoType)
+- DIVERGENCES section (actor start/message/signal vs setupAction/...; par _name)
+
+Design-only doc; no code or JSON behavior changes.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

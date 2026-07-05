@@ -1,0 +1,88 @@
+DRAKE type-definition template  (.dlt = definition language template)
+Hand-authoring reference until the .drake -> JSON parser exists.
+Each template line shows the drake syntax on the left and, after ->, the JSON
+TypeDefinition element it emits.
+
+NOTATION
+  keyword          a literal drake keyword
+  *keyword         an optional keyword / section (omit when unused; emits no JSON)
+  <fill-in>        a name or value you supply
+  *<fill-in>       an optional operand
+  a|b|c            choose one
+  ...              the preceding line repeats
+  indentation      structural nesting
+  [ ] { } ( )      literal drake Seq / Set / tuple-or-type-application
+  ->               "emits"; a trailing [] on the right = a JSON array (one entry per line)
+  { a, b }         a JSON object with those fields; kind=X sets the kind discriminator
+
+FILL-INS
+  <name>           an identifier
+  <type>           a type name
+  <T>              a type parameter: <name>, or upper-bounded as <name> <: <bound>
+  <bound>          the type after <: (e.g. Product, DracoType)
+  <value-type>     a type expression (see VALUE-TYPES)
+  <value>          an expression or "quoted literal"
+  <default-value>  a parameter default
+  <bool-value>     a Boolean expression
+  <unit-value>     a side-effecting statement (Unit)
+  <pkg-seq>        a space-separated package path -> a namePackage array
+
+VALUE-TYPES  (drake type-expression -> JSON valueType string)
+  [<T>]            Seq[<T>]
+  {<T>}            Set[<T>]
+  mut {<T>}        mutable.Set[<T>]
+  <F>(<A> ...)     <F>[<A> ...]        type application
+  (<A>, <B>)       (<A>, <B>)          tuple, unchanged
+  <Name>           <Name>              plain type, unchanged
+
+CONVENTIONS
+  factory          takes no name: it constructs the enclosing type <name> *(<T>, ...) (that is its valueType)
+  par _<name>      the leading _ is part of the JSON parameter name; a universal guard against a
+                   parameter colliding with a same-named body element during mapping
+  (<T>, ...)       type parameters -> typeName.typeParameters[], one entry per param, verbatim with any bound:
+                     (T <: Product)                    -> [ "T <: Product" ]
+                     (S <: DracoType, T <: DracoType)  -> [ "S <: DracoType", "T <: DracoType" ]
+
+TEMPLATE
+
+type <name> *(<T>, ...) *from <type>            -> TypeDefinition ; typeName.name , typeName.typeParameters[] ; dracoAspect.derivation[]
+  *modules [ <module> ... ]                -> dracoAspect.modules[]
+  *extensible <pkg-seq> <ExtType> *(<T>, ...)   -> dracoAspect.extensible
+  *elements                                -> dracoAspect.elements[]
+    fix|mut|dyn <name> <value-type> *<value>   -> { kind=Fixed|Mutable|Dynamic , name , valueType , value }
+    ...
+  *factory                                 -> dracoAspect.factory   { kind=Factory , valueType = enclosing type }
+    parameters                             -> factory.parameters[]
+      par _<name> <value-type> *<default-value>  -> { kind=Parameter , name , valueType , value }
+      ...
+    *body                                  -> factory.body[]
+      fix|mut|dyn <name> <value-type> *<value>   -> BodyElement
+      ...
+  *globals                                 -> dracoAspect.globalElements[]
+    fix|mut|dyn <name> <value-type> *<value>   -> BodyElement
+    ...
+domain <pkg-seq> <name>                    -> domainAspect.typeName { namePackage[] , name }   (namePackage also sets each type's namePackage)
+  *types [ <name> ... ]                    -> domainAspect.elementTypeNames[]   (rule/actor members keep their aspect suffix, e.g. AddNaturalSequence.rule)
+  *super <pkg-seq> <name>                  -> dracoAspect.superDomain   (NOTE: dracoAspect, not domainAspect)
+*rule                                      -> ruleAspect
+  pattern                                  -> ruleAspect.pattern   { kind=Pattern }
+    variables                              -> pattern.variables[]
+      var <name> <value-type>              -> { kind=Variable , name , valueType }
+      ...
+    *conditions                            -> pattern.conditions[]
+      con <bool-value>                     -> { kind=Condition , value }
+      ...
+  action                                   -> ruleAspect.action   { kind=Action }
+    fix <name> <value-type> <value>        -> action.body[] { kind=Fixed }
+    ...
+    mon <unit-value>                       -> action.body[] { kind=Monadic , value }
+    ...
+                                              ( ruleAspect.values[] has no drake token: the Generator derives it during action generation )
+*actor                                     -> actorAspect
+  *start                                   -> actorAspect.setupAction     ( an Action )
+  *message                                 -> actorAspect.messageAction   ( an Action )
+  *signal                                  -> actorAspect.signalAction    ( an Action )
+
+DIVERGENCES  (drake surface vs current JSON — pending reconciliation)
+  actor start | message | signal    <->   JSON setupAction | messageAction | signalAction
+  par _<name>                       <->   current JSON stores the name without _ (Generator prepends); target keeps _ in the name
