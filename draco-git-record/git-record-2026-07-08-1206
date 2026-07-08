@@ -1,0 +1,23 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+CodecAspect + TypeDefinition codec derivation; retire YAML definition-language; drake presence/inference model
+
+- CodecAspect: fifth aspect (discriminator field), wired through Aspects + TypeDefinition;
+  Generator consumes discriminator for the discriminated-union tag (fallback "kind") + proof test.
+- TypeDefinition codec now DERIVES: elisionCheck *Aspect case + codec gate follows `derivation`
+  to inherited elements (guarded by ownElementNames.nonEmpty); Monadic encoder/decoder escape
+  hatch removed. No hand-authored codec strings remain anywhere in the corpus.
+- Retire YAML as a definition language: remove draco.language.YAML + the Language sub-domain,
+  bin/draco-gen from-yaml/to-yaml, the circe-yaml dependency, YAMLRoundTripTest, and the 6 orphaned
+  .yaml companions. Kept draco.format.yaml.Yaml (message-format, different axis).
+- drake.dlt: presence (absent / present-empty / present-full; * presence-significant vs ~ elidable)
+  and inference (explicit iff not reconstructable) principles; codec substructure + encoder/decoder
+  selector sketch. All deep model deferred to the typed Generator[L]; procedural Generator unchanged.
+- draco-dev-journal chapters 55-58.
+
+Suite 195/195.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

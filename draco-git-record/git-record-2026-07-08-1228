@@ -1,0 +1,12 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+draco-git-record: ex post facto record for 3c71f8f
+
+Add git-record-2026-07-08-1206 for the prior push (CodecAspect + codec
+derivation + YAML retirement + drake presence/inference model), written after
+the fact, plus this commit's own record.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push
