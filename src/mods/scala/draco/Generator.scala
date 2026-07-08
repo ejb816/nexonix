@@ -31,9 +31,7 @@ object Generator extends App {
   // --- Type loading ---
 
   /** Parse a JSON resource as a TypeDefinition. JSON is the normative source form
-    * for type definitions at load time. YAML files (if present) are an authoring
-    * stand-in only — converted to JSON via `bin/draco-gen from-yaml` — and are
-    * ignored here. */
+    * for type definitions at load time. */
   private def loadFromResource (resourcePath: String) : Option[TypeDefinition] = {
     val stream = getClass.getResourceAsStream(resourcePath)
     if (stream == null) return None
@@ -419,6 +417,7 @@ object Generator extends App {
       case "Action"                    => Some(s"x.${p.name}.body.nonEmpty")
       case "Pattern"                   => Some(s"x.${p.name}.variables.nonEmpty")
       case "TypeName"                  => Some(s"x.${p.name}.name.nonEmpty")
+      case s if s.endsWith("Aspect")   => Some(s"!$s.isEmpty(x.${p.name})")
       case _                           => None  // no natural emptiness — always encode
     }
   }
@@ -457,6 +456,28 @@ object Generator extends App {
           Seq(name)
       }
     }
+  }
+
+  /** Element names a type inherits by composition — walk `derivation` transitively
+    * and union each ancestor's own elements. Lets the simple-codec gate treat a
+    * factory param backed by an inherited field (e.g. TypeDefinition's aspects,
+    * declared on its `Aspects` parent) as accessible, without re-listing it on the
+    * child. Ancestors are read from `familyMap` when present, else loaded from the
+    * classpath; a not-found parent contributes nothing (empty elements). */
+  private def inheritedElementNames (
+    td: TypeDefinition,
+    familyMap: Map[String, TypeDefinition],
+    seen: Set[String] = Set.empty
+  ) : Set[String] = {
+    td.dracoAspect.derivation.flatMap { tn =>
+      val name = baseName(tn.name)
+      if (seen.contains(name)) Set.empty[String]
+      else {
+        val parentTd = familyMap.getOrElse(name, loadType(tn))
+        parentTd.dracoAspect.elements.map(_.name).toSet ++
+          inheritedElementNames(parentTd, familyMap, seen + name)
+      }
+    }.toSet
   }
 
   private def fieldElisionEncoder (params: Seq[Parameter]) : String = {
@@ -522,6 +543,9 @@ object Generator extends App {
     val name = td.typeName.name
     val wName = wildcardTypeName(td.typeName)
     val leaves = collectLeafModules(td, familyMap)
+    // The wire key for the type tag: authored via CodecAspect.discriminator,
+    // defaulting to "kind" when unset so existing emission is unchanged.
+    val discriminator = if (td.codecAspect.discriminator.nonEmpty) td.codecAspect.discriminator else "kind"
 
     // Encoder: pattern match on each leaf subtype.
     // The parent trait is sealed (discriminatedCodecDeclaration only runs when
@@ -538,7 +562,7 @@ object Generator extends App {
          |$matchArms
          |    }
          |    val fields = Seq(
-         |      Some("kind" -> Json.fromString(kind)),
+         |      Some("$discriminator" -> Json.fromString(kind)),
          |${encoderFieldLines(td, leaves, familyMap)}
          |    ).flatten${subtypeExtraFields(td, leaves, familyMap)}
          |    Json.obj(fields: _*)
@@ -567,7 +591,7 @@ object Generator extends App {
     val fallbackYieldArgs = fallbackParams.map(p => s"_${p.name}").mkString(", ")
     val fallbackCase = if (fallbackParams.isEmpty) {
       s"""      case other =>
-         |        Left(io.circe.DecodingFailure(s"Unknown $name kind: $$other", cursor.history))""".stripMargin
+         |        Left(io.circe.DecodingFailure(s"Unknown $name $discriminator: $$other", cursor.history))""".stripMargin
     } else {
       s"""      case _ =>
          |        for {
@@ -577,7 +601,7 @@ object Generator extends App {
 
     val decoderBody =
       s"""  implicit lazy val decoder: Decoder[$wName] = Decoder.instance { cursor =>
-         |    cursor.downField("kind").as[String].flatMap {
+         |    cursor.downField("$discriminator").as[String].flatMap {
          |$decoderCases
          |
          |$fallbackCase
@@ -676,12 +700,19 @@ object Generator extends App {
           // Pattern 2: discriminated union (top-level sealed trait)
           discriminatedCodecDeclaration(td, familyMap)
         } else if (td.dracoAspect.factory.valueType.nonEmpty && td.dracoAspect.factory.parameters.nonEmpty) {
-          // Pattern 1: simple field-based — only when factory params are accessible as
-          // trait elements AND no param has a function-like type (those have no circe codec).
-          val elementNames = td.dracoAspect.elements.map(_.name).toSet
+          // Pattern 1: simple field-based — only when the type declares at least one
+          // element of its own AND every factory param is accessible as a trait element
+          // (own or inherited via derivation) AND no param has a function-like type
+          // (those have no circe codec). The own-element requirement keeps a pure
+          // inheritance wrapper (every param delegated to a parent's field — e.g.
+          // Meters/Radians on Distance/Rotation, Type on DracoType) codec-less, while a
+          // record that composes inherited fields onto its own (TypeDefinition: typeName
+          // + the Aspects) derives its codec.
+          val ownElementNames = td.dracoAspect.elements.map(_.name).toSet
+          val elementNames = ownElementNames ++ inheritedElementNames(td, familyMap)
           val paramNames = td.dracoAspect.factory.parameters.map(_.name).toSet
           val anyFunctionLike = td.dracoAspect.factory.parameters.exists(p => isFunctionLikeType(p.valueType))
-          if (paramNames.subsetOf(elementNames) && !anyFunctionLike) simpleCodecDeclaration(td)
+          if (ownElementNames.nonEmpty && paramNames.subsetOf(elementNames) && !anyFunctionLike) simpleCodecDeclaration(td)
           else ""
         } else {
           // No codec (abstract type)

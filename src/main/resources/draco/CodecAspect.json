@@ -1,0 +1,53 @@
+{
+  "typeName": {
+    "name": "CodecAspect",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "discriminator",
+        "valueType": "String"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "CodecAspect",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "discriminator",
+          "valueType": "String",
+          "value": "\"\""
+        }
+      ]
+    },
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "isEmpty",
+        "valueType": "CodecAspect => Boolean",
+        "value": "ca => ca.discriminator.isEmpty"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

@@ -6,7 +6,7 @@
 // target, find every type — across the canonical scan set — whose chain reaches it.
 // Cycle-protected like derivation-chain.
 //
-// Scan set: Draco, Base, Primes, Language. Sub-domains in src/mods are not scanned by
+// Scan set: Draco, Base, Primes. Sub-domains in src/mods are not scanned by
 // default. Rules and actors typically have no dracoAspect.derivation, so they don't appear.
 //
 // Usage:   bin/draco-sc who-extends <name> [namePackage...]
@@ -22,8 +22,7 @@ object WhoExtends {
   private val scanDomains: Seq[(String, Seq[String])] = Seq(
     ("Draco",    Seq("draco")),
     ("Base",     Seq("draco", "base")),
-    ("Primes",   Seq("draco", "primes")),
-    ("Language", Seq("draco", "language"))
+    ("Primes",   Seq("draco", "primes"))
   )
 
   def main(args: Array[String]): Unit = {

@@ -53,21 +53,15 @@
           "name": "actorAspect",
           "valueType": "ActorAspect",
           "value": "ActorAspect.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "codecAspect",
+          "valueType": "CodecAspect",
+          "value": "CodecAspect.Null"
         }
       ]
-    },
-    "globalElements": [
-      {
-        "kind": "Monadic",
-        "valueType": "Unit",
-        "value": "implicit lazy val encoder: Encoder[TypeDefinition] = Encoder.instance { td =>\n  val fields = Seq(\n    Some(\"typeName\" -> td.typeName.asJson),\n    if (!DracoAspect.isEmpty(td.dracoAspect))   Some(\"dracoAspect\"  -> td.dracoAspect.asJson)  else None,\n    if (!DomainAspect.isEmpty(td.domainAspect)) Some(\"domainAspect\" -> td.domainAspect.asJson) else None,\n    if (!RuleAspect.isEmpty(td.ruleAspect))     Some(\"ruleAspect\"   -> td.ruleAspect.asJson)   else None,\n    if (!ActorAspect.isEmpty(td.actorAspect))   Some(\"actorAspect\"  -> td.actorAspect.asJson)  else None\n  ).flatten\n  Json.obj(fields: _*)\n}"
-      },
-      {
-        "kind": "Monadic",
-        "valueType": "Unit",
-        "value": "implicit lazy val decoder: Decoder[TypeDefinition] = Decoder.instance { cursor =>\n  for {\n    _typeName     <- cursor.downField(\"typeName\").as[TypeName]\n    _dracoAspect  <- cursor.downField(\"dracoAspect\").as[Option[DracoAspect]].map(_.getOrElse(DracoAspect.Null))\n    _domainAspect <- cursor.downField(\"domainAspect\").as[Option[DomainAspect]].map(_.getOrElse(DomainAspect.Null))\n    _ruleAspect   <- cursor.downField(\"ruleAspect\").as[Option[RuleAspect]].map(_.getOrElse(RuleAspect.Null))\n    _actorAspect  <- cursor.downField(\"actorAspect\").as[Option[ActorAspect]].map(_.getOrElse(ActorAspect.Null))\n  } yield apply(_typeName, _dracoAspect, _domainAspect, _ruleAspect, _actorAspect)\n}"
-      }
-    ]
+    }
   },
   "domainAspect": {
     "typeName": {

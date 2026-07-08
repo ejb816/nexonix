@@ -34,6 +34,11 @@
         "kind": "Fixed",
         "name": "actorAspect",
         "valueType": "ActorAspect"
+      },
+      {
+        "kind": "Fixed",
+        "name": "codecAspect",
+        "valueType": "CodecAspect"
       }
     ]
   },

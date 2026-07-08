@@ -6,7 +6,7 @@
 // confirms it self-declares as a domain (domainAspect.typeName == typeName),
 // and reports element count + composition (types / rules / actors).
 //
-// Default probe set: Draco, Base, Primes, Language. Override by passing
+// Default probe set: Draco, Base, Primes. Override by passing
 // dotted fully-qualified names:
 //
 //   bin/draco-sc list-domains
@@ -22,8 +22,7 @@ object ListDomains {
   private val defaultDomains: Seq[(String, Seq[String])] = Seq(
     ("Draco",    Seq("draco")),
     ("Base",     Seq("draco", "base")),
-    ("Primes",   Seq("draco", "primes")),
-    ("Language", Seq("draco", "language"))
+    ("Primes",   Seq("draco", "primes"))
   )
 
   // Parse dotted FQN to (simpleName, packageComponents).

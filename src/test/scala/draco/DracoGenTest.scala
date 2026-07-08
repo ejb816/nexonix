@@ -18,8 +18,7 @@ import scala.util.Using
  *  is excluded from per-type tests and validated as a multi-type group at the bottom.
  *
  *  JSON is the normative source form for type definitions; the walker reads only
- *  `.json` files. YAML companions (where present) are human-authoring stand-ins
- *  managed via `bin/draco-gen from-yaml` / `to-yaml` and are ignored at load time.
+ *  `.json` files.
  *
  *  NOTE: many hand-written files in `src/main/scala/draco/` predate the current
  *  generator and intentionally diverge. Failures here are expected and informative —
@@ -44,8 +43,7 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
   }
 
   /** Walk `src/main/resources/draco/` and collect every regular `.json` file as
-   *  a logical resource path (relative to the resource root). YAML companions
-   *  are ignored — JSON is the normative source. */
+   *  a logical resource path (relative to the resource root). */
   private def discoverResourcePaths(): Seq[String] = {
     val resourceRoot = Paths.get(Main.roots.sourceRoot)
     val dracoDir     = resourceRoot.resolve("draco")

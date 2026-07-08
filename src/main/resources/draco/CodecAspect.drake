@@ -1,0 +1,13 @@
+domain draco Draco
+type CodecAspect
+  elements [
+    fix discriminator String
+  ]
+  factory CodecAspect
+    parameters [
+      par discriminator String ""
+    ]
+  globalElements [
+    fix isEmpty (CodecAspect => Boolean) ca =>
+      ca.discriminator.isEmpty
+  ]

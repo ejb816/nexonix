@@ -11,7 +11,7 @@ import org.scalatest.funsuite.AnyFunSuite
   * payload. This proves the Format link compiles and that the shell carries the
   * payload without strongly typing the message's fields — the actor pipeline and
   * rules (sub-step 6b) build on top of this. No Generator actor-emission is
-  * exercised here; the domain mirrors `Language`, the shell mirrors `Distance`.
+  * exercised here; the domain mirrors `Base`, the shell mirrors `Distance`.
   */
 class AerialShellTest extends AnyFunSuite {
 

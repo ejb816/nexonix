@@ -5,7 +5,11 @@ TypeDefinition element it emits.
 
 NOTATION
   keyword          a literal drake keyword
-  *keyword         an optional keyword / section (omit when unused; emits no JSON)
+  *keyword         PRESENCE-SIGNIFICANT optional section — may be omitted, but its presence-vs-absence
+                   carries meaning: writing it (even empty) is a positive statement; omitting it makes
+                   the facet absent. present-empty != absent.
+  ~keyword         ELIDABLE field — present-empty == absent (emptiness carries no information; only
+                   content matters). Empty is omitted from JSON. Combine: *~keyword (optional AND elidable).
   <fill-in>        a name or value you supply
   *<fill-in>       an optional operand
   a|b|c            choose one
@@ -25,6 +29,7 @@ FILL-INS
   <default-value>  a parameter default
   <bool-value>     a Boolean expression
   <unit-value>     a side-effecting statement (Unit)
+  <wire-key>       the JSON key a field encodes to / decodes from (defaults to <name>)
   <pkg-seq>        a space-separated package path -> a namePackage array
 
 VALUE-TYPES  (drake type-expression -> JSON valueType string)
@@ -43,46 +48,130 @@ CONVENTIONS
                      (T <: Product)                    -> [ "T <: Product" ]
                      (S <: DracoType, T <: DracoType)  -> [ "S <: DracoType", "T <: DracoType" ]
 
+PRESENCE  (absent vs present-empty vs present-full — the elision principle)
+  Every facet and field is in one of three states; preserve the distinction wherever it carries meaning:
+    absent         not part of the definition                     -> key omitted
+    present-empty  applies, at its default/zero                    -> key emitted, empty/zero value
+    present-full   an explicit value / override                   -> key emitted with the value
+
+  ~  ELIDABLE: present-empty == absent. Emptiness says nothing — an empty collection is just "no items";
+     a DEFAULT-WHEN-OMITTED field simply takes its default. Empty is omitted from JSON.
+
+  *  (without ~) PRESENCE-SIGNIFICANT: present-empty != absent. Two distinct uses:
+       (a) FACET-CREATING — an optional ASPECT whose very presence brings the facet into being.
+           rule / actor: present (even empty) = the type IS a rule/actor; absent = not one at all.
+       (b) SELECTOR — a field whose presence chooses whether it is generated (codec encoder / decoder).
+
+  Two FIELD behaviours, and they determine what an aspect's present-empty state means:
+    DEFAULT-WHEN-OMITTED  an omitted field still generates its default (rule/actor fields; a collection
+                          defaults to empty). An aspect whose fields are ALL default-when-omitted is
+                          meaningful present-empty (= a fully-defaulted, if trivial, facet)  -> *aspect.
+    SELECTOR              an omitted field is SUPPRESSED — generates nothing (codec encoder/decoder). An
+                          aspect whose fields are selectors is nothing when present-empty (all suppressed)
+                          == absent  -> *~aspect, and absent = the facet is simply not generated.
+
+  The OPTIONAL facets (rule / actor / codec) are OPT-IN: each exists only if its aspect is present, and
+  none is computed-by-default — in particular a type with no codec aspect gets no codec. (draco / domain
+  are structural and always determinable — see INFERENCE.)
+
+INFERENCE  (authored vs derived — which aspect json must be explicit)
+  An aspect is INFERABLE when its json can be reconstructed from information already present; otherwise it
+  must be EXPLICIT — carried through verbatim, never conjured.
+    rule, actor, codec   NEVER inferred — explicit in BOTH drake and json. They carry irreducible authored
+                         intent (a rule's logic, an actor's behaviour, the decision to serialize and how);
+                         no structural analysis produces them.
+    draco aspect         explicit in drake (the type structure you author); its json is a PROJECTION of
+                         that drake authoring (inferred drake -> json).
+    domain aspect        INFERABLE from TypeName — its namePackage / name already fix membership
+                         (e.g. draco.base.Meters -> the Base domain), so the json domain aspect is derived
+                         rather than independently authored.
+  This settles the codec question: codec is DECLARED, never inferred. A type serializes iff it declares a
+  codec aspect; the structural "infer a codec for any eligible record" gate (ch.57) is retired.
+
 TEMPLATE
 
 type <name> *(<T>, ...) *from <type>            -> TypeDefinition ; typeName.name , typeName.typeParameters[] ; dracoAspect.derivation[]
-  *modules [ <module> ... ]                -> dracoAspect.modules[]
-  *extensible <pkg-seq> <ExtType> *(<T>, ...)   -> dracoAspect.extensible
-  *elements                                -> dracoAspect.elements[]
+  *~modules [ <module> ... ]               -> dracoAspect.modules[]
+  *~extensible <pkg-seq> <ExtType> *(<T>, ...)  -> dracoAspect.extensible
+  *~elements                               -> dracoAspect.elements[]
     fix|mut|dyn <name> <value-type> *<value>   -> { kind=Fixed|Mutable|Dynamic , name , valueType , value }
     ...
-  *factory                                 -> dracoAspect.factory   { kind=Factory , valueType = enclosing type }
-    parameters                             -> factory.parameters[]
+  *~factory                                -> dracoAspect.factory   { kind=Factory , valueType = enclosing type }
+    ~parameters                            -> factory.parameters[]
       par _<name> <value-type> *<default-value>  -> { kind=Parameter , name , valueType , value }
       ...
-    *body                                  -> factory.body[]
+    *~body                                 -> factory.body[]
       fix|mut|dyn <name> <value-type> *<value>   -> BodyElement
       ...
-  *globals                                 -> dracoAspect.globalElements[]
+  *~globals                                -> dracoAspect.globalElements[]
     fix|mut|dyn <name> <value-type> *<value>   -> BodyElement
     ...
 domain <pkg-seq> <name>                    -> domainAspect.typeName { namePackage[] , name }   (namePackage also sets each type's namePackage)
-  *types [ <name> ... ]                    -> domainAspect.elementTypeNames[]   (rule/actor members keep their aspect suffix, e.g. AddNaturalSequence.rule)
-  *super <pkg-seq> <name>                  -> dracoAspect.superDomain   (NOTE: dracoAspect, not domainAspect)
-*rule                                      -> ruleAspect
-  pattern                                  -> ruleAspect.pattern   { kind=Pattern }
-    variables                              -> pattern.variables[]
+  *~types [ <name> ... ]                   -> domainAspect.elementTypeNames[]   (rule/actor members keep their aspect suffix, e.g. AddNaturalSequence.rule)
+  *~super <pkg-seq> <name>                 -> dracoAspect.superDomain   (NOTE: dracoAspect, not domainAspect)
+*rule                                      -> ruleAspect                    (presence-significant, FACET-CREATING: present = is a rule, every field defaults & is overridable; absent = not a rule)
+  *~pattern                                -> ruleAspect.pattern   { kind=Pattern }    ( default when omitted; content overrides )
+    *~variables                            -> pattern.variables[]
       var <name> <value-type>              -> { kind=Variable , name , valueType }
       ...
-    *conditions                            -> pattern.conditions[]
+    *~conditions                           -> pattern.conditions[]
       con <bool-value>                     -> { kind=Condition , value }
       ...
-  action                                   -> ruleAspect.action   { kind=Action }
+  *~action                                 -> ruleAspect.action   { kind=Action }     ( default when omitted; content overrides )
     fix <name> <value-type> <value>        -> action.body[] { kind=Fixed }
     ...
     mon <unit-value>                       -> action.body[] { kind=Monadic , value }
     ...
                                               ( ruleAspect.values[] has no drake token: the Generator derives it during action generation )
-*actor                                     -> actorAspect
-  *start                                   -> actorAspect.setupAction     ( an Action )
-  *message                                 -> actorAspect.messageAction   ( an Action )
-  *signal                                  -> actorAspect.signalAction    ( an Action )
+*actor                                     -> actorAspect                   (presence-significant, FACET-CREATING: present = is an actor, every action defaults & is overridable; absent = not an actor)
+  *~start                                  -> actorAspect.setupAction       ( default behaviour generated regardless of presence; content overrides )
+  *~message                                -> actorAspect.messageAction     ( default behaviour generated regardless of presence; content overrides )
+  *~signal                                 -> actorAspect.signalAction      ( default behaviour generated regardless of presence; content overrides )
+*~codec                                    -> codecAspect                   (absent = NO codec for this type. present = a codec is needed; its fields are SELECTORS, so a present codec must carry >=1 of encoder/decoder — never both absent. present-empty == absent)
+  *~discriminator <value>                  -> codecAspect.discriminator     ( OPEN: carried from the earlier increment as a String field driving the union tag ("kind"). Field vs derived is unsettled — see NOTES )
+  *encoder                                 -> codecAspect.encoder   { kind=Encoder }   ( SELECTOR — present generates the encoder (default or custom); absent SUPPRESSES it )
+    *~fields                               -> encoder.fields[]
+      enc <name> *as <wire-key> *when <bool-value> *value <value>  -> { kind=EncoderField , name , wireKey , when , value }
+      ...
+  *decoder                                 -> codecAspect.decoder   { kind=Decoder }   ( SELECTOR — present generates the decoder (default or custom); absent SUPPRESSES it )
+    *~fields                               -> decoder.fields[]
+      dec <name> *from <wire-key> *default <default-value>         -> { kind=DecoderField , name , wireKey , default }
+      ...
+  ( CODEC SELECTOR — a present codec generates exactly the sides that are present; an omitted side is
+    SUPPRESSED, not defaulted (the difference from rule/actor). At least one side is required:
+        no codec aspect (absent)          -> no codec at all
+        encoder present, decoder present  -> both
+        encoder present, decoder absent   -> encoder only  (decoder suppressed)
+        decoder present, encoder absent   -> decoder only  (encoder suppressed)
+        both absent inside a codec        -> invalid — that is just "no codec" == absent
+    A side present-empty ⇒ its default (one field per factory parameter); present-with-fields ⇒ custom.
+    An EncoderField emits `if (when) Some("<wire-key>" -> <value>.asJson) else None`;
+    a DecoderField emits `_<name> <- downField("<wire-key>").as[...].getOrElse(<default>)`. )
 
-DIVERGENCES  (drake surface vs current JSON — pending reconciliation)
+NOTES  (deferred to the typed Generator[L] — NOT pending on the procedural draco.Generator)
+  The deep model here stays open until `Generator` becomes a domain type parameterized by target language,
+  with per-target operation rules. The procedural draco.Generator is unchanged for any of it.
+  discriminator   DECIDED for now: keep as the existing top-level String field on codecAspect (default
+                  "kind"). Per INFERENCE it is not reconstructable from other data (a free tag choice), so
+                  it must be explicit — a field is the honest form. No code change; no immediate concern.
+  Encoder/Decoder subelement types (Encoder, Decoder, EncoderField, DecoderField) — DEFERRED. No custom
+  override codecs are needed yet; the procedural Generator keeps deriving the default both-sided codec.
+  Their shape (as/when/value, from/default) is a sketch for Generator[L], not a current commitment.
+
+DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
+  The target rows below (PRESENCE, CODEC-declared) belong to the future typed Generator[L]; the procedural
+  draco.Generator implements only the current behaviour noted on the right, and is not being changed for them.
   actor start | message | signal    <->   JSON setupAction | messageAction | signalAction
   par _<name>                       <->   current JSON stores the name without _ (Generator prepends); target keeps _ in the name
+  PRESENCE model (this template)    <->   current Generator/JSON still ELIDE uniformly: TypeDefinition's encoder
+                                          omits an aspect via X.isEmpty, and every field elides on empty. The template
+                                          above is the target — preserve presence for *; elide for ~ — not yet built.
+                                          In particular rule/actor are NOT yet presence-significant in the impl
+                                          (a present-empty rule currently elides to absent), and the codec selector /
+                                          suppress-vs-default distinction is not implemented.
+  CODEC declared, not inferred      <->   CONFIRMED direction (see INFERENCE): codec is never inferred. Current Generator
+    (target — future migration)           does the opposite — it INFERS a default codec for any eligible record (>=1 own
+                                          element, via the ownElementNames gate + inheritedElementNames walk, ch.57).
+                                          Migration: retire that gate; add an explicit `codec` aspect to every type that
+                                          today auto-derives one (TypeName, the aspects, the TypeElement family, ...).
+                                          Scoped separately; not started.

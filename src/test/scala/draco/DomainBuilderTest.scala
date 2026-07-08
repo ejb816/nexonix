@@ -11,7 +11,7 @@ import org.scalatest.funsuite.AnyFunSuite
  *  into `root` (see build.sbt's `unmanagedSourceDirectories`), which is why this
  *  test in the root project can reference it directly with no cross-project cycle.
  *
- *  These tests "build" each domain — Draco, Base, Primes, Language — and assert:
+ *  These tests "build" each domain — Draco, Base, Primes — and assert:
  *   - `define` returns a domain whose dictionary is *populated* (loaded member
  *     definitions, not the hollow name-only `TypeDictionary.apply` shells);
  *   - `validate` reports zero problems — the endogenous domains are held to the
@@ -31,8 +31,7 @@ class DomainBuilderTest extends AnyFunSuite {
   private val domains: Seq[(String, Seq[String])] = Seq(
     ("Draco",    Seq("draco")),
     ("Base",     Seq("draco", "base")),
-    ("Primes",   Seq("draco", "primes")),
-    ("Language", Seq("draco", "language"))
+    ("Primes",   Seq("draco", "primes"))
   )
 
   for ((name, pkg) <- domains) {

@@ -30,7 +30,8 @@ class GenerateAndCompileTest extends AnyFunSuite with PersistentTestLog {
     "draco/DracoAspect.json",
     "draco/DomainAspect.json",
     "draco/RuleAspect.json",
-    "draco/ActorAspect.json"
+    "draco/ActorAspect.json",
+    "draco/CodecAspect.json"
   )
 
   /** All other types defined under `src/main/resources/draco/` root. Compiled as a

@@ -15,7 +15,7 @@ the kind of code an external author would write on top of the published jar.
 
 ```
 src/mods/
-├── resources/        TypeDefinitions in JSON/YAML (empty initially)
+├── resources/        TypeDefinitions in JSON (empty initially)
 └── scala/
     ├── draco/        Hand-written Scala in package `draco`, compiled INTO root
     └── scripts/      Toolkit scripts (the `mods` subproject) — see catalog below
@@ -62,7 +62,7 @@ question — useful for both human and AI-agent draco users.
 | [`inspect-type.scala`](scala/scripts/inspect-type.scala) | Load a `TypeDefinition` by `TypeName` and pretty-print its aspect-by-aspect shape. Exercises `Generator.loadType` (production API), groups output by aspect. Differs from `bin/draco-gen inspect` which takes a filesystem path and dumps raw JSON. |
 | [`derivation-chain.scala`](scala/scripts/derivation-chain.scala) | Walk `dracoAspect.derivation` transitively (cycle-protected) and print each ancestor. Useful for "does X transitively extend DracoType?" and full-picture inheritance questions. |
 | [`list-domain.scala`](scala/scripts/list-domain.scala) | Load a domain's `TypeDefinition` and summarize each member named in `elementTypeNames` — `extends X` for types, var/action counts for rules, message/signal counts for actors. One-screen mental model of a domain's surface. Reports stale entries (named in JSON but no resource on disk) as `[MISSING]` and exits 1, complementing `bin/draco-gen verify`. |
-| [`list-domains.scala`](scala/scripts/list-domains.scala) | Discovery counterpart to `list-domain`. Probes the canonical first-party domains (Draco, Base, Primes, Language) — or a passed dotted-FQN set — and prints element count + composition (N types, M rules, K actors) for each. Answers the first-question-asked by a new draco explorer: *what domains live here?* |
+| [`list-domains.scala`](scala/scripts/list-domains.scala) | Discovery counterpart to `list-domain`. Probes the canonical first-party domains (Draco, Base, Primes) — or a passed dotted-FQN set — and prints element count + composition (N types, M rules, K actors) for each. Answers the first-question-asked by a new draco explorer: *what domains live here?* |
 | [`who-extends.scala`](scala/scripts/who-extends.scala) | Inverse of `derivation-chain`: given a target type, find every type whose `dracoAspect.derivation` chain transitively reaches it across the canonical scan set. Cycle-protected. Useful for "what concrete types implement this interface?" and similar reverse-lookup questions. |
 | [`diff-type.scala`](scala/scripts/diff-type.scala) | Compare `Generator.generate(td)` against the hand-written `.scala` for a single type. Same whitespace-normalized side-by-side diff that `DracoGenTest` runs, but on demand. Use when iterating on a Generator change or JSON edit and you want fast feedback without running the full test suite. |
 

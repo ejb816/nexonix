@@ -10,4 +10,5 @@ type TypeDefinition from Aspects
       par domainAspect DomainAspect DomainAspect.Null
       par ruleAspect RuleAspect RuleAspect.Null
       par actorAspect ActorAspect ActorAspect.Null
+      par codecAspect CodecAspect CodecAspect.Null
     ]

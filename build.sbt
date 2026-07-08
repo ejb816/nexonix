@@ -24,7 +24,6 @@ lazy val dependencies =
     val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
     val circeParser = "io.circe" %% "circe-parser" % circeVersion
     val circeOptics =  "io.circe" %% "circe-optics" % circeVersion
-    val circeYaml = "io.circe" %% "circe-yaml" % circeVersion
     val evreteCore = "org.evrete" % "evrete-core" % evreteVersion
     val evreteJavaDsl = "org.evrete" % "evrete-dsl-java" % evreteVersion
     val scalaTest = "org.scalatest" %% "scalatest" % scalaTestVersion % Test
@@ -80,7 +79,6 @@ lazy val root = (project in file("."))
       dependencies.circeCore,
       dependencies.circeGeneric,
       dependencies.circeParser,
-      dependencies.circeYaml,
       dependencies.circeOptics,
       dependencies.evreteCore,
       dependencies.evreteJavaDsl,

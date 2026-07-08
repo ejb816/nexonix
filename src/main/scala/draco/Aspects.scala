@@ -5,6 +5,7 @@ trait Aspects extends DracoType {
   val domainAspect: DomainAspect
   val ruleAspect: RuleAspect
   val actorAspect: ActorAspect
+  val codecAspect: CodecAspect
 }
 
 object Aspects extends App with DracoType {

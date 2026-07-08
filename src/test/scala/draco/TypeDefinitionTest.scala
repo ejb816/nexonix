@@ -174,6 +174,38 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
     assert(output.contains("package test.zoo"), "Should have package declaration")
   }
 
+  test("CodecAspect.discriminator overrides the default \"kind\" tag in the discriminated codec") {
+    // Same Animal/Dog discriminated union as above, but the parent authors a
+    // CodecAspect.discriminator. The generator must emit that tag as the wire key
+    // in both encoder and decoder, and leave no default "kind" behind.
+    val animalTd = TypeDefinition(
+      _typeName = TypeName("Animal", _namePackage = Seq("test", "zoo")),
+      _dracoAspect = DracoAspect(
+        _modules = Seq(TypeName("Dog", _namePackage = Seq("test", "zoo"))),
+        _elements = Seq(Fixed("name", "String"))
+      ),
+      _codecAspect = CodecAspect("species")
+    )
+    val dogTd = TypeDefinition(
+      _typeName = TypeName("Dog", _namePackage = Seq("test", "zoo")),
+      _dracoAspect = DracoAspect(
+        _derivation = Seq(TypeName("Animal", _namePackage = Seq("test", "zoo"))),
+        _factory = Factory("Dog", _parameters = Seq(
+          Parameter("name", "String", "\"Fido\"")
+        ))
+      )
+    )
+    val output = Generator.generate(Seq(dogTd, animalTd))
+    log.info("Animal/Dog with authored discriminator:\n" + output)
+
+    assert(output.contains("\"species\" -> Json.fromString"),
+      "encoder should emit the authored discriminator as the wire key")
+    assert(output.contains("cursor.downField(\"species\").as[String]"),
+      "decoder should read the authored discriminator field")
+    assert(!output.contains("\"kind\""),
+      "no default \"kind\" tag should remain once a discriminator is authored")
+  }
+
   test("subtype-only fields round-trip through the TypeElement codec (Pattern, Action)") {
     // The discriminated TypeElement encoder must emit fields that live only on a
     // subtype (Pattern.variables/conditions, Action.variables/values), not just the

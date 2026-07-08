@@ -5,4 +5,5 @@ type Aspects
     fix domainAspect DomainAspect
     fix ruleAspect RuleAspect
     fix actorAspect ActorAspect
+    fix codecAspect CodecAspect
   ]
