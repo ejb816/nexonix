@@ -1,0 +1,6 @@
+type Radians from Rotation(Double)
+  factory Radians
+    parameters [
+      par value Double
+    ]
+domain draco base Base

@@ -239,16 +239,20 @@ object Generator extends App {
     }
   }
 
-  /** Emit a method body. `methodIndent` is the column where the `def` itself
+  /** Emit a method body. `body` holds only STATEMENTS (Local/Fixed bindings,
+    * Monadic effects); `value` is the method's RESULT expression — empty for
+    * Unit methods. `methodIndent` is the column where the `def` itself
     * starts; body lines indent two further, and the closing brace aligns
     * with the `def`. */
   private def methodBody (
     body: Seq[BodyElement],
+    value: String,
     methodIndent: Int = 2
   ) : String = {
-    if (body.isEmpty) "???"
-    else if (body.size == 1) {
-      // Single expression - just the value
+    if (body.isEmpty && value.isEmpty) "???"
+    else if (body.isEmpty) value
+    else if (body.size == 1 && value.isEmpty) {
+      // Single statement - just its value (a Unit method's lone effect)
       val be = body.head
       if (be.value.isEmpty) "???" else be.value
     } else {
@@ -262,17 +266,15 @@ object Generator extends App {
         v.linesIterator
           .map(line => if (line.isEmpty) "" else s"$bodyPad$line")
           .mkString("\n")
-      val init = body.init.map {
+      val statements = body.map {
         case f: Fixed    => s"${bodyPad}val ${f.name}: ${f.valueType} = ${f.value}"
         case m: Mutable  => s"${bodyPad}var ${m.name}: ${m.valueType} = ${m.value}"
+        case l: Local    => s"${bodyPad}val ${l.name}: ${l.valueType} = ${l.value}"
         case mo: Monadic => indentBlock(mo.value)
         case be: BodyElement => s"${bodyPad}val ${be.name}: ${be.valueType} = ${be.value}"
       }
-      val last = body.last match {
-        case mo: Monadic => indentBlock(mo.value)
-        case other       => s"$bodyPad${other.value}"
-      }
-      s"{\n${init.mkString("\n")}\n$last\n$bracePad}"
+      val result = if (value.isEmpty) Seq.empty else Seq(indentBlock(value))
+      s"{\n${(statements ++ result).mkString("\n")}\n$bracePad}"
     }
   }
 
@@ -292,7 +294,7 @@ object Generator extends App {
           if (m.value.nonEmpty) s"  var ${m.name}: ${m.valueType} = ${m.value}"
           else s"  var ${m.name}: ${m.valueType}"
         case d: Dynamic =>
-          if (d.body.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body)}"
+          if (d.body.nonEmpty || d.value.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, d.value)}"
           else s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType}"
         case mo: Monadic =>
           // Verbatim Scala source — for declarations that exceed the
@@ -337,8 +339,9 @@ object Generator extends App {
       if (factory.body.nonEmpty) factory.body.map {
         case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType} = ${f.value}"
         case m: Mutable => s"    override var ${m.name}: ${m.valueType} = ${m.value}"
-        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, methodIndent = 4)}"
+        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, d.value, methodIndent = 4)}"
         case mo: Monadic => s"    ${mo.value}"
+        case l: Local   => s"    val ${l.name}: ${l.valueType} = ${l.value}"
         case be: BodyElement => s"    override lazy val ${be.name}: ${be.valueType} = ${be.value}"
       }
       else factory.parameters.map { p =>
@@ -365,7 +368,7 @@ object Generator extends App {
           val init = if (m.value.isEmpty) s"null.asInstanceOf[${m.valueType}]" else m.value
           s"  var ${m.name}: ${m.valueType} = $init"
         case d: Dynamic =>
-          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body)}"
+          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, d.value)}"
         case mo: Monadic =>
           // Indent every line so multi-line global blocks (encoder/decoder/etc.)
           // emit at the correct object-body indent level.

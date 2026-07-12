@@ -1,0 +1,5 @@
+type DomainType
+  elements [
+    fix typeDictionary TypeDictionary
+  ]
+domain draco Draco

@@ -66,6 +66,12 @@
         "namePackage": [
           "draco"
         ]
+      },
+      {
+        "name": "Local",
+        "namePackage": [
+          "draco"
+        ]
       }
     ],
     "derivation": [

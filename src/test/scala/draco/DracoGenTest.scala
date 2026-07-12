@@ -58,7 +58,7 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
   }
 
   /** Excluded from per-type comparison, with reason documented as the value.
-   *  All 12 TypeElement family members live in a single hand-written
+   *  All 13 TypeElement family members live in a single hand-written
    *  `TypeElement.scala`; they're validated as a multi-type group at the bottom. */
   private val excluded: Map[String, String] = Map(
     "draco/TypeElement.json"  -> "Sealed-trait family root; validated by group test below",
@@ -72,7 +72,8 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
     "draco/Action.json"       -> "TypeElement family member; validated by group test below",
     "draco/Condition.json"    -> "TypeElement family member; validated by group test below",
     "draco/Variable.json"     -> "TypeElement family member; validated by group test below",
-    "draco/Factory.json"      -> "TypeElement family member; validated by group test below"
+    "draco/Factory.json"      -> "TypeElement family member; validated by group test below",
+    "draco/Local.json"        -> "TypeElement family member; validated by group test below"
   )
 
   /** Excluded from per-type *comparison* only — JSON parses test still runs.
@@ -102,7 +103,8 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
     "draco/Action.json",
     "draco/Condition.json",
     "draco/Variable.json",
-    "draco/Factory.json"
+    "draco/Factory.json",
+    "draco/Local.json"
   )
 
   private val perTypeTypes: Seq[Ty] =

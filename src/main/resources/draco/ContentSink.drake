@@ -1,0 +1,19 @@
+type ContentSink
+  elements [
+    dyn write Unit
+      parameters
+        par content String
+  ]
+  factory
+    parameters
+      par sinkRoot URI
+      par logicalPath String
+    body [
+      loc sinkPath java.nio.file.Path java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))
+      dyn write Unit
+        parameters
+          par content String
+        mon java.nio.file.Files.createDirectories(sinkPath.getParent)
+        mon java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))
+    ]
+domain draco Draco

@@ -1,0 +1,43 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+drake corpus complete (64/64); Local + Dynamic.value result; CLI(L) commands-as-data; scalasource.ScalaSource
+
+Drake corpus buildout finished: every JSON definition under
+src/main/resources/draco/ now has a .drake sibling (journal ch.59-60 +
+loose-ends session, 2026-07-08..10; full suite 197/197).
+
+- 35 .drake hand-authored for the settled-syntax corpus (draco core, base,
+  format, primes incl. the two remaining rules).
+- New BodyElement kind Local (drake `loc`): a construction-local strict val,
+  distinct from factory-body `fix` (override lazy val). ContentSink.sinkPath /
+  SourceContent.sourceURI reclassified Monadic->Local; byte-identical emission.
+- Dynamic result model: body[] holds statements only; the result expression is
+  the Dynamic's own `value` field (drake `=` line, or trailing value on a
+  no-param leaf dyn). Dictionary's four methods migrated off mon-as-result.
+- Host-code tail dissolved: Primes' sieve blob -> 5 structured dyn globals;
+  Value's implicit-param signature -> context bound value[T: Decoder] (call-
+  compatible). Every Monadic in the corpus is now a genuine Unit effect.
+- dyn-with-body + bracket-optional-except-nesting model in drake.dlt: a
+  bracket-less block may hold only leaf members; a block containing a
+  sub-block opener must be bracketed (under-bracketing = local parse error).
+- CLI(L): commands-as-data (Map[String, Seq[String] => Unit]), load/version/
+  inspect/generate globals, one-expression dispatch main — build.sbt's declared
+  mainClass draco.CLI is now a real entry point (GeneratorCLI unchanged as the
+  heavy mods backend).
+- draco.scalasource.ScalaSource: first language-capability domain; generator
+  global binds the procedural Generator.generate as the Scala source target;
+  CLI generate routes through it. NOT draco.scala: Scala's relative package
+  resolution means a draco.scala package (even materialized by a resources
+  DIRECTORY on the classpath) shadows root scala for all of package draco —
+  empirically verified on 2.13 and 3. A trailing-underscore emission escape was
+  implemented and then removed: the domain convention couples package element
+  to type name case-insensitively (scala <-> Scala), so no per-element escape
+  is coherent. Resolution recorded in drake.dlt DIVERGENCES: name the
+  capability, not the host language; definition-time lint queued.
+- drake.dlt: DYN-WITH-BODY, BRACKETS, loc convention, context-bound <T>,
+  host-reserved-domain-names divergence row.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+EOF
+git push

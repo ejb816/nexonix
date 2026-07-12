@@ -61,6 +61,7 @@ object InspectType {
         case _: Condition => "Condition"
         case _: Variable  => "Variable"
         case _: Factory   => "Factory"
+        case _: Local     => "Local"
         case _            => "?"
       }
       println(s"    - $kind ${e.name}: ${e.valueType}${if (e.value.isEmpty) "" else s" = ${e.value}"}")

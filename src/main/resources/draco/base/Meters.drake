@@ -1,0 +1,6 @@
+type Meters from Distance(Double)
+  factory Meters
+    parameters [
+      par value Double
+    ]
+domain draco base Base

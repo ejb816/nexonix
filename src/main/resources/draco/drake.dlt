@@ -22,7 +22,8 @@ NOTATION
 FILL-INS
   <name>           an identifier
   <type>           a type name
-  <T>              a type parameter: <name>, or upper-bounded as <name> <: <bound>
+  <T>              a type parameter: <name>, upper-bounded as <name> <: <bound>, or
+                   context-bounded as <name>: <bound> (e.g. T: Decoder — carried verbatim)
   <bound>          the type after <: (e.g. Product, DracoType)
   <value-type>     a type expression (see VALUE-TYPES)
   <value>          an expression or "quoted literal"
@@ -42,11 +43,46 @@ VALUE-TYPES  (drake type-expression -> JSON valueType string)
 
 CONVENTIONS
   factory          takes no name: it constructs the enclosing type <name> *(<T>, ...) (that is its valueType)
+  loc <name> <value-type> <value>   a factory/method LOCAL binding -> { kind=Local }: emits a strict
+                   `val <name>: <value-type> = <value>`, NOT a declared element (no trait member, no
+                   override/lazy). Contrast `fix` in a factory body -> `override lazy val` (a declared element).
+                   Use for construction-local intermediates (ContentSink.sinkPath, SourceContent.sourceURI).
   par _<name>      the leading _ is part of the JSON parameter name; a universal guard against a
                    parameter colliding with a same-named body element during mapping
   (<T>, ...)       type parameters -> typeName.typeParameters[], one entry per param, verbatim with any bound:
                      (T <: Product)                    -> [ "T <: Product" ]
                      (S <: DracoType, T <: DracoType)  -> [ "S <: DracoType", "T <: DracoType" ]
+
+DYN-WITH-BODY  (a Dynamic element/global carrying parameters, statements, and a result — i.e. a method)
+  A leaf dyn stays one line: `dyn <name> <value-type> *<value>` — the trailing value, when present, IS the
+  method's result expression (a no-param one-liner: `dyn iterator Iterator((K, V)) kvMap.iterator`).
+  Adding parameters/statements makes it a block method:
+  dyn <name> <value-type>                  -> { kind=Dynamic , name , valueType , parameters[] , body[] , value }
+    ~parameters                            -> parameters[]   ( same block shape as factory.parameters )
+      par _<name> <value-type> *<default>  -> { kind=Parameter , ... }
+    ( statements sit DIRECTLY under the dyn — no `body` head; each line one statement )
+    *~loc|fix|mut <name> <value-type> <value>    -> body[] BodyElement   ( STATEMENTS ONLY — bindings/effects, never the result )
+    *~mon <unit-value>                     -> body[] { kind=Monadic , value }
+    *= <expr>                              -> value    ( the RESULT expression, on its own `=`-opening line;
+                                                         absent for Unit methods — their body is all effects )
+  RESULT-vs-STATEMENT: a Dynamic's `body` never carries its result. The result is the Dynamic's own `value`
+  field (empty = Unit). A `mon` in a body is a genuine Unit effect — a non-Unit expression in last position
+  was the old (retired) convention and is the Monadic-axiom abuse to lint for.
+  A method type-parameter rides the name via the ( ) convention: `dyn updated(V1 >: V) ...` -> name "updated[V1 >: V]".
+  Valid wherever an element list is: elements, factory body, globalElements.
+
+BRACKETS  (list-block [ ] — optional except at nesting; whitespace is otherwise insignificant)
+  A list-block (elements, parameters, body, globalElements, variables, conditions, modules, types) is
+  written head-then-members. Whitespace — spaces, newlines, indentation — is INSIGNIFICANT, purely for
+  readability: member values parse as expressions, and the reserved section/member keywords bound each member.
+    LEAF block     every member is a leaf (fix/mut/mon/par/var/con — opens no sub-block)   -> NO brackets
+    NESTING block  holds a member that opens its own sub-block (a dyn-with-body, ...)       -> [ ] REQUIRED
+  The [ ] mark where a nesting block ends, so a following member cannot mis-attach across the overlap between
+  the inner and outer blocks. Omitting them is a DETECTABLE error, local to the token: a block-opening member
+  found inside a bracket-less block is rejected there ("nesting requires [ ]"). Conservative — brackets are
+  required whenever an opener is present, whether or not the overlap would actually bite. Note the container of
+  the opener is what brackets (e.g. `elements` around a dyn-with-body), not the opener's own leaf sub-blocks.
+  Value-type brackets [T] {T} (A, B) are unaffected — they are inline type expressions, not blocks.
 
 PRESENCE  (absent vs present-empty vs present-full — the elision principle)
   Every facet and field is in one of three states; preserve the distinction wherever it carries meaning:
@@ -101,7 +137,7 @@ type <name> *(<T>, ...) *from <type>            -> TypeDefinition ; typeName.nam
       par _<name> <value-type> *<default-value>  -> { kind=Parameter , name , valueType , value }
       ...
     *~body                                 -> factory.body[]
-      fix|mut|dyn <name> <value-type> *<value>   -> BodyElement
+      fix|mut|dyn|loc <name> <value-type> *<value>   -> BodyElement
       ...
   *~globals                                -> dracoAspect.globalElements[]
     fix|mut|dyn <name> <value-type> *<value>   -> BodyElement
@@ -175,3 +211,17 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           Migration: retire that gate; add an explicit `codec` aspect to every type that
                                           today auto-derives one (TypeName, the aspects, the TypeElement family, ...).
                                           Scoped separately; not started.
+  host-reserved domain names        <->   a domain named `scala` or `java` is INVALID for the JVM target: Scala resolves
+                                          packages relatively, and classpath DIRECTORIES (even a resource dir like
+                                          draco/scala/) materialize the package, shadowing the real root scala/java for
+                                          the whole enclosing package tree. An emission-side escape cannot fix this:
+                                          the domain convention couples the package element to the type name
+                                          case-insensitively (scala <-> Scala), so escaping the package half alone breaks
+                                          the domain invariant and escaping both mangles every type reference.
+                                          RESOLUTION: name the capability, not the host language — scalasource.ScalaSource,
+                                          haskellsource.HaskellSource. A definition-time lint rejecting host-reserved
+                                          domain names (per target) is the enforcement; queued with the Monadic lint.
+  BRACKETS optional-except-nesting  <->   TARGET (no parser yet). The existing concrete corpus uniformly brackets EVERY
+    (target — Phase-2a sweep)              list-block, leaf ones included. Dictionary + ContentSink are the first files in
+                                          the new model (leaf blocks unbracketed; brackets only at a dyn-with-body). The
+                                          Phase-2a sweep strips brackets from every leaf block across the rest of the corpus.

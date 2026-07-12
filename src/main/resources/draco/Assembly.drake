@@ -1,0 +1,13 @@
+type Assembly
+  elements [
+    fix members [TypeName]
+    fix bindings [Binding]
+    fix entry TypeName
+  ]
+  factory Assembly
+    parameters [
+      par members [TypeName] Seq.empty
+      par bindings [Binding] Seq.empty
+      par entry TypeName TypeName.Null
+    ]
+domain draco Draco

@@ -6,12 +6,9 @@ import io.circe.syntax.EncoderOps
 trait Value extends DracoType {
   val name: String
   val pathElements: Seq[String]
-  def value[T] (_source: Json)(implicit decoder: Decoder[T]): T = {
-    val pathValue: Json = pathElements.foldLeft(Option(_source)) {
-      (e, a) => e.flatMap(j => if (j.isArray) j.hcursor.downN(a.toInt).focus else j.hcursor.downField(a).focus)
-    }.orNull
-    if (pathValue != null) pathValue.as[T].getOrElse(null.asInstanceOf[T])
-    else null.asInstanceOf[T]
+  def value[T: Decoder](_source: Json): T = {
+    val pathValue: Json = pathElements.foldLeft(Option(_source))((e, a) => e.flatMap(j => if (j.isArray) j.hcursor.downN(a.toInt).focus else j.hcursor.downField(a).focus)).orNull
+    if (pathValue != null) pathValue.as[T].getOrElse(null.asInstanceOf[T]) else null.asInstanceOf[T]
   }
 }
 

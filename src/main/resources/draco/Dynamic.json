@@ -39,6 +39,12 @@
           "name": "body",
           "valueType": "Seq[BodyElement]",
           "value": "Seq.empty"
+        },
+        {
+          "kind": "Parameter",
+          "name": "value",
+          "valueType": "String",
+          "value": "\"\""
         }
       ],
       "body": [
@@ -65,6 +71,12 @@
           "name": "body",
           "valueType": "Seq[BodyElement]",
           "value": "_body"
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "String",
+          "value": "_value"
         }
       ]
     }

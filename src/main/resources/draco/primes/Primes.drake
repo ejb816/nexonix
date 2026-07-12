@@ -1,0 +1,35 @@
+type Primes
+  elements [
+    fix knowledge org.evrete.api.Knowledge Rule.knowledgeService.newKnowledge("Primes")
+  ]
+  globalElements [
+    dyn filter LazyList(Int)
+      parameters
+        par naturals LazyList(Int)
+      loc p Int naturals.head
+      = p #:: filter(naturals.tail.filter(_ % p != 0))
+    dyn naturals LazyList(Int)
+      parameters
+        par start Int 0
+        par step Int 1
+      = LazyList.from(start, step)
+    dyn composites [Int]
+      parameters
+        par primes [Int]
+      = naturals(2).filterNot(primes.contains(_)).take(primes.last - 1)
+    dyn primesFromComposites [Int]
+      parameters
+        par composites [Int]
+      = naturals(2).filterNot(composites.contains(_)).take(composites.last - composites.length)
+    dyn nPrimes [Int]
+      parameters
+        par n Int
+      = filter(naturals(2)).take(n)
+  ]
+domain draco primes Primes
+  types [
+  Accumulator
+  Numbers
+  AddNaturalSequence.rule
+  PrimesFromNaturalSequence.rule
+  RemoveCompositeNumbers.rule ]

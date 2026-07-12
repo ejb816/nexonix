@@ -3,6 +3,9 @@
     "name": "CLI",
     "namePackage": [
       "draco"
+    ],
+    "typeParameters": [
+      "L"
     ]
   },
   "dracoAspect": {
@@ -17,6 +20,86 @@
     "globalElements": [
       {
         "kind": "Dynamic",
+        "name": "load",
+        "valueType": "TypeDefinition",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "path",
+            "valueType": "String"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Local",
+            "name": "source",
+            "valueType": "scala.io.BufferedSource",
+            "value": "scala.io.Source.fromFile(path)"
+          },
+          {
+            "kind": "Local",
+            "name": "text",
+            "valueType": "String",
+            "value": "try source.mkString finally source.close()"
+          }
+        ],
+        "value": "io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "version",
+        "valueType": "Unit",
+        "body": [
+          {
+            "kind": "Monadic",
+            "value": "println(\"Draco 2.0.0-alpha.1\")"
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "inspect",
+        "valueType": "Unit",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "path",
+            "valueType": "String"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Monadic",
+            "value": "println(TypeDefinition.encoder(load(path)).spaces2)"
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "generate",
+        "valueType": "Unit",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "path",
+            "valueType": "String"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Monadic",
+            "value": "println(scalasource.ScalaSource.generator(load(path)))"
+          }
+        ]
+      },
+      {
+        "kind": "Fixed",
+        "name": "commands",
+        "valueType": "Map[String, Seq[String] => Unit]",
+        "value": "Map(\"version\" -> (_ => version), \"inspect\" -> (as => inspect(as.head)), \"generate\" -> (as => generate(as.head)))"
+      },
+      {
+        "kind": "Dynamic",
         "name": "main",
         "valueType": "Unit",
         "parameters": [
@@ -26,12 +109,7 @@
             "valueType": "Array[String]"
           }
         ],
-        "body": [
-          {
-            "kind": "Monadic",
-            "value": "println(\"Draco 2.0.0-alpha.1\")"
-          }
-        ]
+        "value": "commands.getOrElse(args.headOption.getOrElse(\"version\"), (_: Seq[String]) => version)(args.drop(1).toSeq)"
       }
     ]
   },

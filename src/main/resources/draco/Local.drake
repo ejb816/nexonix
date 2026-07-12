@@ -1,0 +1,8 @@
+domain draco Draco
+type Local from BodyElement
+  factory Local
+    parameters [
+      par name String
+      par valueType String
+      par value String
+    ]

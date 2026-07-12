@@ -1,0 +1,5 @@
+type ScalaSource
+  globalElements [
+    fix generator (TypeDefinition => String) Generator.generate
+  ]
+domain draco scalasource ScalaSource

@@ -1,0 +1,14 @@
+type Rule(T) from RuleType
+  elements [
+    fix pattern Consumer(Knowledge)
+    fix action Consumer(RhsContext)
+  ]
+  factory Rule
+    parameters [
+      par pattern Consumer(Knowledge)
+      par action Consumer(RhsContext)
+    ]
+  globalElements [
+    fix knowledgeService KnowledgeService new KnowledgeService ()
+  ]
+domain draco Draco

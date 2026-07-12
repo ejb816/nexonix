@@ -1,0 +1,2 @@
+type Distance(T) from Cardinal(T)
+domain draco base Base

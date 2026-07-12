@@ -9,7 +9,8 @@ type BodyElement from TypeElement
     Action
     Condition
     Variable
-    Factory ]
+    Factory
+    Local ]
 domain draco Draco
 rule
   pattern

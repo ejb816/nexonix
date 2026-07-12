@@ -1,0 +1,13 @@
+type Binding
+  elements [
+    fix from TypeName
+    fix param String
+    fix to TypeName
+  ]
+  factory Binding
+    parameters [
+      par from TypeName TypeName.Null
+      par param String ""
+      par to TypeName TypeName.Null
+    ]
+domain draco Draco

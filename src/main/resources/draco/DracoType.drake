@@ -1,0 +1,5 @@
+type DracoType
+  elements [
+    fix typeDefinition TypeDefinition
+  ]
+domain draco Draco

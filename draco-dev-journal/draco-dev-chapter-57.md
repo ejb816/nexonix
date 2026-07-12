@@ -1,39 +1,84 @@
 # Draco Dev Journal — Chapter 57
 
-**Session date:** July 7, 2026
-**Topic:** Closing the codec loop. `TypeDefinition` was the **only** type in the corpus hand-authoring its codec (aspect-`isEmpty`-guarded encoder/decoder embedded as Monadic `globalElements` strings). Chapter 55 argued this was a *derivation gap, not an irreducible codec*. This chapter proves it: one new `elisionCheck` case makes the codec derive, the Monadic escape hatch is deleted, and the sole counterexample to "every codec derives from JSON" is gone. Suite **195/195**.
+**Session date:** July 7, 2026 (continues ch.56)
+**Topic:** Closing the codec loop. `TypeDefinition` was the only type in the corpus hand-authoring its codec (aspect-`isEmpty`-guarded encoder/decoder embedded as Monadic `globalElements` strings); ch.55 argued this was a derivation gap, not an irreducible codec. This chapter proves it — one new `elisionCheck` case makes the codec derive, the Monadic escape hatch is deleted, and the re-declaration wart is then erased by teaching the codec gate to follow `derivation`. Suite **195/195**. Transcript.
 
 ---
 
-## 1. The one-line mechanism
+*(The first exchange chronologically preceded the YAML retirement of ch.56 — it scoped the increment that was then executed after YAML was cleared.)*
 
-The whole gap was that `elisionCheck` had no case for aspect-typed fields, so they fell through to "always encode" — which is *not* the intended elision (`TypeDefinition` elides an empty aspect via that aspect's own `isEmpty`). One case closes it:
+**[Dev]** How does TypeDefinition.json have to change to make sure that the proper codec is generated from it? Are there any other json definition files that have to me modified for the Generator to generate the expected encoder and decoder?
 
+**[Claude]** Good question — this is exactly the `elisionCheck` follow-up made concrete. Let me verify the precise gate that decides whether a codec is auto-derived, rather than answer from memory.
+
+**The gate that currently blocks derivation.** `codecDeclaration` reaches the simple-codec path for `TypeDefinition`, but this test fails:
+
+```scala
+val elementNames = td.dracoAspect.elements.map(_.name).toSet   // {typeName}
+val paramNames   = td.dracoAspect.factory.parameters.map(_.name).toSet  // {typeName, dracoAspect, …, codecAspect}
+if (paramNames.subsetOf(elementNames) && !anyFunctionLike) simpleCodecDeclaration(td) else ""
 ```
-case s if s.endsWith("Aspect")   => Some(s"!$s.isEmpty(x.${p.name})")
+
+The five aspect params aren't in `elements` (they're inherited from `Aspects`), so `subsetOf` is false → no auto-codec → that's *why* the Monadic escape hatch exists.
+
+**What `TypeDefinition.json` must change:** (1) add the five aspects to `elements` (as `Fixed`), so `paramNames ⊆ elementNames` and the gate passes; (2) delete the two Monadic `globalElements`. But `elements` alone isn't enough: with the current `elisionCheck`, aspect params fall through to `None` → the derived encoder would emit `Some("dracoAspect" -> …)` *unconditionally*, dropping the empty-aspect elision and changing the wire form. So this **requires the Generator rule** —
+
+```scala
+case s if s.endsWith("Aspect") => Some(s"!$s.isEmpty(x.${p.name})")
 ```
 
-placed after the `Seq[`/`Map[` cases (so `Seq[DracoAspect]` still routes to the Seq case). It emits exactly `if (!DracoAspect.isEmpty(x.dracoAspect)) Some("dracoAspect" -> x.dracoAspect.asJson) else None` — the hand-authored form, now derived. It fires only for aspect-typed *factory parameters*, and `TypeDefinition` is the only type with those, so no other type's emission moved (the 50 other `DracoGenTest` byte-compares confirm it).
+— added to `elisionCheck`, placed after the `Seq[`/`Map[` cases (so `Seq[DracoAspect]` still routes to the Seq case). (3) Regenerate the mirror `TypeDefinition.scala` — the byte-for-byte `DracoGenTest` target shifts: the codec block moves *above* `apply`/`Null` (companion emission order), the lambda binds `x` not `td`, the aligned columns collapse to single spaces, and the decoder yields `TypeDefinition (…)` not `apply(…)`. Semantically identical.
 
-## 2. Satisfying the codec gate — and the honesty wart
+**Other JSON files: none.** The `endsWith("Aspect")` rule only fires on factory **parameters** of an aspect type — and a grep confirms `TypeDefinition` is the only definition with those. The matches in the five `*Aspect.json` files are their own factory *return* `valueType` (never run through `elisionCheck`), and `Aspects.json` has no factory.
 
-`codecDeclaration`'s simple-codec path gates on `paramNames.subsetOf(elementNames)`. `TypeDefinition`'s aspect params are accessible only via inheritance from `Aspects`, so the gate failed — which is *why* the escape hatch existed. Two ways to satisfy it were on the table (ch. "how does TypeDefinition.json change"):
+Two caveats worth deciding on first: **redundant trait redeclaration** — adding aspects to `elements` makes the generated trait redeclare the abstract vals it already inherits from `Aspects`; the *cleaner* alternative is to teach the gate about inherited members (walk `derivation`), which is arguably the more honest fix. And the rule assumes every `*Aspect` has a companion `isEmpty` — true for all five today; an invariant to keep. My recommendation: the gate-relaxation variant. Want me to implement it that way?
 
-- **(A) list the aspects in `TypeDefinition.json`'s `elements`** — self-contained, verifiable, but re-declares inherited fields.
-- **(B) relax the gate to see inherited elements** — honest, but needs the Generator to load the parent (`Aspects`) during single-type generation.
+---
 
-Took **(A)** for this increment: self-contained and byte-verifiable without new cross-type loading. The cost is a wart — the generated trait now re-declares the five aspect vals it already inherits, and `TypeDefinition.json`'s `elements` re-list them purely to pass the gate. The **`.drake` was left unchanged** (`type TypeDefinition from Aspects` + `typeName`) because it's the *honest* shape statement — `from Aspects` already implies the aspects. So there's a deliberate drake-vs-JSON asymmetry, flagged for the Dev: option (B) remains available as a follow-up to erase it.
+**[Dev]** Yes
 
-## 3. What was deleted, and the milestone
+*(Answering the closing offer of ch.56 — take on the codec-derivation increment next. For this increment the self-contained path was taken first; the gate-relaxation follows two exchanges later.)*
 
-`TypeDefinition.json` lost its two Monadic `globalElements` (the raw embedded `encoder`/`decoder` Scala strings). `TypeDefinition.scala` was regenerated: the codec block moves above `apply` (companion emission order), the lambda binds `x` not `td`, columns collapse to single spaces, the decoder yields `TypeDefinition (...)` not `apply(...)`. Behaviourally identical — same fields, same elision, same round-trip (the derived encoder even preserved the empty-aspect elision, so no corpus JSON changed shape). The one gen-test miss was a missing blank line before the closing `}` — the Generator's convention for a factory+codec type with no trailing `globalElements` (`TypeName.scala` has it too); added, green.
+**[Claude]** Executing the codec-derivation increment.
 
-**Milestone:** with the escape hatch gone, **every codec under `src/main/scala/draco/` now derives from JSON** — no hand-authored codec strings remain anywhere in the corpus. `comparisonOnlyExcluded` was already `Map.empty`; now the last type that *needed* a hand-authored escape (even though it lived in the JSON, not an exclusion) is gone too. The Scala-leak that ch.55 §4 identified as the one open codec residue is closed. See [[project_codec_aspect]].
+1. **Generator.scala** — `elisionCheck` gains the one case above. This is the whole mechanism: aspect-typed fields now elide via their companion `isEmpty`. It only fires for aspect-typed *factory params* — and `TypeDefinition` is the only type with those, so no other type's emission changes.
+2. **TypeDefinition.json** — added the five aspects to `elements` (satisfies the `paramNames ⊆ elementNames` codec gate) and **deleted the two Monadic `globalElements`** — the hand-authored escape hatch is gone.
+3. **TypeDefinition.scala** — rewritten to match the now-*derived* emission: codec block above `apply`, `x` lambda, `TypeDefinition (...)` yield, trait lists all six fields. Semantically identical to the old hand-authored codec (same fields, same elision).
 
-## 4. Erasing the wart — refer, don't re-declare
+**One honesty note I want to flag:** re-listing the aspects in `TypeDefinition.json`'s `elements` is a Generator-gate mechanic, not a pure shape statement — the drake's `type TypeDefinition from Aspects` already implies them. So I **left `TypeDefinition.drake` unchanged** (its `from Aspects` + `typeName` is the cleaner truth). If you'd rather not carry that JSON-vs-drake asymmetry, the alternative is the gate-relaxation — a deeper Generator change I can do as a follow-up. For now this is the self-contained, verifiable path.
 
-The Dev pushed on §2's wart: *can `TypeDefinition.json` refer to the aspects the way `BodyElement.json` refers to its subtypes?* The answer sharpened the design. `BodyElement`'s `modules` is a **sum-type** list ("these are my subtypes") that drives the discriminated codec — categorically wrong for aspects, which `TypeDefinition` **has all of simultaneously** (a product). But the by-reference instinct was right: that mechanism already exists as **`derivation` / `from Aspects`**. The aspects are referenced there, once. The re-listing in `elements` was only a codec-gate crutch.
+*(Delegated action — Dev ran the gen tests: **103/104, 1 failure** — the `TypeDefinition.scala` byte-compare.)*
 
-So option (B) got built: a new `inheritedElementNames(td, familyMap)` walks `derivation` transitively (ancestors from `familyMap`, else `loadType` from classpath; cycle-guarded), and the simple-codec gate unions those with own elements. Then `TypeDefinition.json`'s `elements` dropped back to `[typeName]`, its trait back to `val typeName` alone, and the `.drake`'s `from Aspects` is now the whole truth — no asymmetry.
+The diff is a perfect match except one thing: the generated output has a **blank line before the closing `}`**, which my hand-written file lacks. That's the Generator's convention for a factory+codec type with no trailing `globalElements` — `TypeName.scala` has exactly that blank line too. Fixed; everything else matched byte-for-byte, which confirms the derived codec is exactly right.
 
-The relaxation is **monotonic** (only grows the accessible-name set), so it can't disable an existing codec — but it *over-triggered* on the first run: `Type[T]`, `Meters`, `Radians` newly got codecs. Each is a **pure inheritance wrapper** — zero own elements, its single factory param delegated to a parent's field (`typeDefinition` from `DracoType`; `value` from `Distance`/`Rotation`) — and each was intentionally codec-less. The distinguishing signal: `TypeDefinition` declares an own element (`typeName`) and *composes* the inherited aspects onto it, whereas the wrappers declare nothing of their own. So the gate gained an `ownElementNames.nonEmpty` guard: **a type earns a simple codec only if it declares ≥1 field of its own AND every param is reachable (own or inherited).** Every pre-existing simple-codec type already has nonempty own elements, so no regression; `Type`/`Meters`/`Radians` stay codec-less; `TypeDefinition` derives. Suite **195/195**. The wart is gone and the rule is now a defensible semantic, not a crutch.
+*(Delegated action — Dev re-ran the gen tests, then the full suite: **195/195**. Wrote journal chapter 57; closed out the open thread in `project_codec_aspect` memory.)*
+
+**The codec loop is closed at 195/195.** Milestone: **every codec under `src/main/scala/draco/` now derives from JSON** — no hand-authored codec strings remain anywhere in the corpus. The Scala-leak that chapter 55 flagged as the one open codec residue is gone. One thing left on the table (your call): I took the self-contained path, whose cost is the deliberate wart — the generated trait re-declares the five vals it inherits from `Aspects`, and there's a drake↔JSON `elements` asymmetry. The gate-relaxation erases it but needs the Generator to load the parent during single-type generation. Not urgent, and everything's green either way.
+
+---
+
+**[Dev]** So can  we have TypeDefinition.json refer to the aspects similar to how BodyElement.json refers to its subtypes?
+
+**[Claude]** Good instinct to probe — let me look at exactly how `BodyElement.json` references its subtypes before answering, because the mechanism matters.
+
+`BodyElement.json`'s `modules` is a **sum-type** mechanism — "these are my subtypes" — and it drives the *discriminated-union* codec (pattern-match on subtype, emit a `"kind"` tag). Aspects are the opposite: `TypeDefinition` **has all five simultaneously** (a product), not "is one of." So `modules` would be categorically wrong here — it'd generate a `sealed trait TypeDefinition` with a tag-dispatching codec.
+
+But your instinct — *reference the aspects by name instead of re-declaring them* — is exactly right, and that mechanism **already exists**: it's `derivation` / the drake's `type TypeDefinition from Aspects`. The aspects are referenced there, once. The only reason I *also* re-listed them in `elements` was that the codec gate doesn't look *through* `derivation` to inherited fields. So the clean answer is: make the gate honor the reference that's already there. Implemented:
+
+- **Generator.scala** — new helper `inheritedElementNames(td, familyMap)` walks `derivation` transitively (ancestors from `familyMap`, else `loadType` from classpath; cycle-guarded); the simple-codec gate unions those with own elements.
+- **TypeDefinition.json** — `elements` back to `[typeName]`; aspects referenced once via `derivation: [Aspects]`.
+- **TypeDefinition.scala** — trait back to `val typeName` alone; codec still derives.
+- **TypeDefinition.drake** — unchanged and now *consistent*; the drake↔JSON asymmetry is gone.
+
+The gate change is **monotonic** — it can only make *more* types eligible for a simple codec, never fewer — so it can't break an existing simple-codec type. The one thing to watch is whether any *other* type newly qualifies; `DracoGenTest`'s byte-compare will flag any surprise.
+
+*(Delegated action — Dev ran the gen tests: **101/104, 3 failures** — `Type`, `Meters`, `Radians`.)*
+
+As I flagged, the monotonic relaxation over-triggered: `Type[T]`, `Meters`, and `Radians` newly got codecs. Their factory param is a *single inherited field* (`typeDefinition` from `DracoType`; `value` from `Distance`/`Rotation`) — they're **pure inheritance wrappers** with **zero own elements**, and were intentionally codec-less. `TypeDefinition` differs: it has an own element (`typeName`) *plus* the inherited aspects. So the right narrowing is an `ownElementNames.nonEmpty` guard — **a type earns a simple codec only if it declares ≥1 field of its own AND every param is reachable (own or inherited).** That keeps pure wrappers codec-less while letting a record compose inherited fields, and every existing simple-codec type already has nonempty own elements, so no regression.
+
+*(Delegated action — Dev re-ran the gen tests, then the full suite: **195/195** — `TypeDefinition` keeps its derived codec, `Type`/`Meters`/`Radians` revert to codec-less, every existing type untouched. Updated chapter 57 and the `project_codec_aspect` memory to mark the wart resolved.)*
+
+So the answer to your question: **not via `modules`** (sum-type mechanism → discriminated codec), **but yes via `derivation`** — which was already there. The codec gate now follows it, so `TypeDefinition.json` references the aspects *once* with no re-listing, and `from Aspects` is the whole truth in both surfaces. This closes the whole arc cleanly — a natural stopping point.
+
+## Status
+Suite **195/195**. Every codec under `src/main/scala/draco/` derives from JSON — the Monadic escape hatch is deleted and the "derivation gap, not irreducible codec" thesis is proven by construction. The gate is now a defensible semantic (`ownElementNames.nonEmpty` + `inheritedElementNames` via `derivation`), not a crutch; drake and JSON agree. See [[project_codec_aspect]].

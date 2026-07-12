@@ -1,0 +1,2 @@
+type Nominal from Unit Primal(String)
+domain draco base Base

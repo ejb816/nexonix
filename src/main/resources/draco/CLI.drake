@@ -1,0 +1,25 @@
+type CLI(L)
+  globalElements [
+    dyn load TypeDefinition
+      parameters
+        par path String
+      loc source scala.io.BufferedSource scala.io.Source.fromFile(path)
+      loc text String try source.mkString finally source.close()
+      = io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
+    dyn version Unit
+      mon println("Draco 2.0.0-alpha.1")
+    dyn inspect Unit
+      parameters
+        par path String
+      mon println(TypeDefinition.encoder(load(path)).spaces2)
+    dyn generate Unit
+      parameters
+        par path String
+      mon println(scalasource.ScalaSource.generator(load(path)))
+    fix commands Map(String, [String] => Unit) Map("version" -> (_ => version), "inspect" -> (as => inspect(as.head)), "generate" -> (as => generate(as.head)))
+    dyn main Unit
+      parameters
+        par args Array(String)
+      = commands.getOrElse(args.headOption.getOrElse("version"), (_: Seq[String]) => version)(args.drop(1).toSeq)
+  ]
+domain draco Draco

@@ -1,0 +1,5 @@
+type Coordinate(T <: Product) from Holon(T)
+  elements [
+    fix value T
+  ]
+domain draco base Base

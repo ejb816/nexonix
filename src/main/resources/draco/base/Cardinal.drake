@@ -1,0 +1,2 @@
+type Cardinal(T) from Unit Primal(T)
+domain draco base Base

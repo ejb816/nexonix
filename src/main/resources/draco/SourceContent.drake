@@ -1,0 +1,15 @@
+type SourceContent
+  elements
+    fix source BufferedSource
+    fix sourceLines [String]
+    fix sourceString String
+  factory
+    parameters
+      par sourceRoot URI
+      par logicalPath String
+    body
+      loc sourceURI java.net.URI _sourceRoot.resolve(java.net.URI.create(_logicalPath))
+      fix source BufferedSource scala.io.Source.fromFile(sourceURI)
+      fix sourceLines [String] try source.getLines().toSeq finally source.close()
+      fix sourceString String sourceLines.mkString("\n")
+domain draco Draco

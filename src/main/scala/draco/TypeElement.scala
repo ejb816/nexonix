@@ -28,6 +28,7 @@ object TypeElement extends App with DracoType {
       case _: Condition => "Condition"
       case _: Variable => "Variable"
       case _: Factory => "Factory"
+      case _: Local => "Local"
     }
     val fields = Seq(
       Some("kind" -> Json.fromString(kind)),
@@ -71,7 +72,8 @@ object TypeElement extends App with DracoType {
           _valueType <- cursor.downField("valueType").as[Option[String]].map(_.getOrElse(""))
           _parameters <- cursor.downField("parameters").as[Option[Seq[Parameter]]].map(_.getOrElse(Seq.empty))
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
-        } yield Dynamic (_name, _valueType, _parameters, _body)
+          _value <- cursor.downField("value").as[Option[String]].map(_.getOrElse(""))
+        } yield Dynamic (_name, _valueType, _parameters, _body, _value)
 
       case "Parameter" =>
         for {
@@ -116,6 +118,13 @@ object TypeElement extends App with DracoType {
           _parameters <- cursor.downField("parameters").as[Option[Seq[Parameter]]].map(_.getOrElse(Seq.empty))
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
         } yield Factory (_valueType, _parameters, _body)
+
+      case "Local" =>
+        for {
+          _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
+          _valueType <- cursor.downField("valueType").as[Option[String]].map(_.getOrElse(""))
+          _value <- cursor.downField("value").as[Option[String]].map(_.getOrElse(""))
+        } yield Local (_name, _valueType, _value)
 
       case other =>
         Left(io.circe.DecodingFailure(s"Unknown TypeElement kind: $other", cursor.history))
@@ -210,12 +219,14 @@ object Dynamic extends App with DracoType {
     _name: String,
     _valueType: String,
     _parameters: Seq[Parameter] = Seq.empty,
-    _body: Seq[BodyElement] = Seq.empty
+    _body: Seq[BodyElement] = Seq.empty,
+    _value: String = ""
   ) : Dynamic = new Dynamic {
     override lazy val name: String = _name
     override lazy val valueType: String = _valueType
     override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val body: Seq[BodyElement] = _body
+    override lazy val value: String = _value
     override lazy val typeDefinition: TypeDefinition = Dynamic.typeDefinition
   }
 
@@ -223,7 +234,8 @@ object Dynamic extends App with DracoType {
     _name = "",
     _valueType = "",
     _parameters = Seq.empty,
-    _body = Seq.empty
+    _body = Seq.empty,
+    _value = ""
   )
 
 }
@@ -427,6 +439,36 @@ object Factory extends App with DracoType {
     _valueType = "",
     _parameters = Seq.empty,
     _body = Seq.empty
+  )
+
+}
+
+trait Local extends BodyElement
+
+object Local extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Local", _namePackage = Seq ("draco")))
+  lazy val dracoType: Type[Local] = Type[Local] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
+  private lazy val codec = Codec.sub[TypeElement, Local](TypeElement.encoder, TypeElement.decoder)
+  implicit def encoder: Encoder[Local] = codec.encoder
+  implicit def decoder: Decoder[Local] = codec.decoder
+
+  def apply (
+    _name: String,
+    _valueType: String,
+    _value: String
+  ) : Local = new Local {
+    override lazy val name: String = _name
+    override lazy val valueType: String = _valueType
+    override lazy val value: String = _value
+    override lazy val typeDefinition: TypeDefinition = Local.typeDefinition
+  }
+
+  lazy val Null: Local = apply(
+    _name = "",
+    _valueType = "",
+    _value = ""
   )
 
 }

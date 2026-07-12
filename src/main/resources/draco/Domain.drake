@@ -1,0 +1,10 @@
+type Domain(T) from DomainType
+  factory Domain
+    parameters [
+      par domainDefinition TypeDefinition
+    ]
+    body [
+      fix typeDefinition TypeDefinition _domainDefinition
+      fix typeDictionary TypeDictionary TypeDictionary(_domainDefinition)
+    ]
+domain draco Draco

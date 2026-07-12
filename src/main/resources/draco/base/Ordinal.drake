@@ -1,0 +1,2 @@
+type Ordinal from Unit Primal(Enumeration)
+domain draco base Base

@@ -48,8 +48,10 @@
       ],
       "body": [
         {
-          "kind": "Monadic",
-          "value": "val sourceURI: java.net.URI = _sourceRoot.resolve(java.net.URI.create(_logicalPath))"
+          "kind": "Local",
+          "name": "sourceURI",
+          "valueType": "java.net.URI",
+          "value": "_sourceRoot.resolve(java.net.URI.create(_logicalPath))"
         },
         {
           "kind": "Fixed",

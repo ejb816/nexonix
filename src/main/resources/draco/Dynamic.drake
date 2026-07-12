@@ -6,10 +6,12 @@ type Dynamic from BodyElement
       par valueType String
       par parameters [Parameter] []
       par body [BodyElement] []
+      par value String ""
     ]
     body [
       fix name String _name
       fix valueType String _valueType
       fix parameters [Parameter] _parameters
       fix body [BodyElement] _body
+      fix value String _value
     ]

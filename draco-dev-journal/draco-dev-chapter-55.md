@@ -1,67 +1,84 @@
 # Draco Dev Journal — Chapter 55
 
 **Session date:** July 7, 2026
-**Topic:** A fifth aspect enters the `TypeDefinition` canon. `CodecAspect` joins `Draco`/`Domain`/`Rule`/`Actor` as a peer, carrying a single field — `discriminator: String` — that lifts the one hardcoded codec magic string (`"kind"`) out of the Generator and into the definition surface. Landed in two test-gated increments: (A) `CodecAspect` as a standalone canonical type, (B) wiring it through `Aspects` + `TypeDefinition`. Suite ends **202/202**.
+**Topic:** A fifth aspect enters the `TypeDefinition` canon — `CodecAspect`, carrying a single field `discriminator: String` that lifts the one hardcoded codec magic string (`"kind"`) out of the Generator. Landed in two test-gated increments, followed by the criterion for aspect fields and consumption of the discriminator in emission. Transcript.
 
 ---
 
-## 1. The opening scope question — what does a codec aspect *carry*?
+**[Dev]** Let's continue with adding CodecAspect to the type definition canon.
 
-The Dev asked to "continue with adding CodecAspect to the type definition canon." No prior CodecAspect design existed in the codebase or chapter 54, so the first act was reconstructing the four-aspect pattern and finding where a fifth would sit.
+**[Claude]** *(after reading the four aspect files, `Aspects`, `TypeDefinition`, the Generator's codec path, and the chapter-54 journal tail)* No prior CodecAspect design exists — this is a fresh addition to the canon, so let me confirm the shape before writing files. *(Editorial note: the July 5 tail of the Chapter 54 session had in fact discussed codec-as-fifth-aspect and three-state semantics — see ch.54's closing exchanges; the in-session claim understated that groundwork.)*
 
-The four existing aspects each own a concern: **DracoAspect** = structure (derivation/elements/factory/globalElements/source/target), **DomainAspect** = membership (typeName self-loop + elementTypeNames), **RuleAspect** = production (pattern/values/action), **ActorAspect** = membrane (messageAction/signalAction/setupAction). Reading the Generator's codec path (`simpleCodecDeclaration` / `discriminatedCodecDeclaration` / `subtypeCodecDeclaration`, dispatched by `codecDeclaration`) showed the codec **strategy** is already fully *derived* from `DracoAspect` structure — modules force a discriminated union, derivation-from-a-discriminated-parent forces `Codec.sub`, else a simple field-elision codec. The only genuinely codec-specific, **non-derivable** fact was the discriminator field name `"kind"`, hardcoded as a string literal in `discriminatedCodecDeclaration`.
+I now understand the full shape. The four aspects each own a concern (Draco=structure, Domain=membership, Rule=production, Actor=membrane), and the codec **strategy** (simple / discriminated / subtype) is already fully *derived* by the Generator from `DracoAspect` structure. The one genuinely codec-specific, non-derivable fact currently living as a hardcoded magic string in the Generator is the discriminator field name `"kind"`.
 
-That framed a real fork the Dev had to settle — put to them as one question, recommendation first:
+Adding `CodecAspect` as the fifth aspect is mechanically regular (mirror the other four across: `CodecAspect.scala`, `CodecAspect.json`, `CodecAspect.drake`, plus wiring into `Aspects`, `TypeDefinition`, and their JSON/drake/encoder/decoder). But what the aspect should *carry* is a canon-design decision that's yours, and I don't want to guess it wrong before writing seven files. *(Put the fork to Dev as a question, recommendation first. Dev chose **discriminator only** — a single `discriminator: String` field, empty = no discrimination, `"kind"` for sealed families; codec strategy stays Generator-derived from `DracoAspect`, not duplicated into the aspect.)*
 
-> **Dev's choice:** `discriminator only` — a single `discriminator: String` field (empty = no discrimination; `"kind"` for sealed families). Codec strategy stays Generator-derived from `DracoAspect`; we do **not** duplicate it into the aspect.
+The key test is `DracoGenTest`: it auto-discovers new JSON and requires `Generator.generate(CodecAspect.json)` to exactly match a hand-written `CodecAspect.scala` byte-for-byte (whitespace-normalized). So I traced the exact String-field elision idiom the Generator produces (`fieldElisionEncoder`/`fieldElisionDecoder`/`elisionCheck`/`decoderForLine`) rather than guess — the subtlety being that `elisionCheck` returns `None` (always-encode) when a parameter's `value` is empty, so an elidable `discriminator` needs `"value": "\"\""` (the empty-string-default JSON idiom already used by `Binding`/`Fixed`/`Monadic`). And the critical structural question — how `TypeDefinition.scala`'s aspect-aware encoder/decoder are emitted — resolved to: they're authored as **Monadic `globalElements` strings** in `TypeDefinition.json`, emitted verbatim by the Generator.
 
-The smallest honest step: name the one thing that was a magic constant, leave everything derivable derived.
+I'll proceed in a focused first increment: **introduce `CodecAspect` as a standalone canonical draco type** (its JSON/Scala/drake + `Draco` registration), get it test-green, and *then* wire it into `Aspects`/`TypeDefinition` as a second step. This de-risks my Generator-emission prediction on the simplest file before touching load-bearing `TypeDefinition`.
 
-## 2. Increment A — CodecAspect as a standalone canonical type
+Increment A landed:
+- **New:** `CodecAspect.json` (one elided `String` field `discriminator`, default `""`, `isEmpty` global, `Draco` membership), `CodecAspect.scala` (hand-written to match Generator emission), `CodecAspect.drake` (`par discriminator String ""` — the discovered convention).
+- **Registration:** `"CodecAspect"` in `Draco.json` + `Draco.scala` `elementTypeNames` (alphabetical, after `CLI`), and `GenerateAndCompileTest`'s `typeDefinitionGroup`.
 
-Before touching the load-bearing `TypeDefinition`, `CodecAspect` landed on its own so the Generator-emission match could be verified on the simplest possible file.
+Recommend running the two generator tests to green-light this before Increment B.
 
-The test that governs this is `DracoGenTest`: it **filesystem-walks** `src/main/resources/draco/` for `.json`, auto-including any new definition, and for each asserts (a) it parses and (b) `Generator.generate(json)` matches the hand-written `.scala` **byte-for-byte** (whitespace-normalized). So the hand-written `CodecAspect.scala` had to reproduce Generator output exactly. Rather than guess, I traced `fieldElisionEncoder` / `fieldElisionDecoder` / `elisionCheck` / `decoderForLine`: a `String` param with a non-empty `value` (default) elides on `.nonEmpty` in the encoder and defaults to `""` via `.getOrElse("")` in the decoder. The key subtlety: `elisionCheck` returns `None` (always-encode) when `p.value.isEmpty` — so to make `discriminator` *elidable*, its factory parameter needs `"value": "\"\""` (the JSON idiom for an empty-string default, already used by `Binding`/`Fixed`/`Monadic`/etc.).
+*(Delegated action — Dev ran `sbt "testOnly draco.DracoGenTest draco.GenerateAndCompileTest"`: **108/108**, including `CodecAspect.json: Generator output matches CodecAspect.scala`. The emission trace was exact on the first run.)*
 
-Files:
-- **New:** `CodecAspect.json` (shape), `CodecAspect.scala` (mirrors the other four aspect companions), `CodecAspect.drake` (`par discriminator String ""` — the discovered empty-string-default convention).
-- **Register:** `"CodecAspect"` into `Draco.json` + `Draco.scala` `elementTypeNames` (alphabetical, after `CLI`), and into `GenerateAndCompileTest`'s `typeDefinitionGroup`.
+Increment A is green. Now **Increment B**: wire `codecAspect` into `Aspects` + `TypeDefinition`. First confirmed via grep that `TypeDefinition.scala` is the **only** implementer of `Aspects` — the new abstract val breaks nothing else. Then:
 
-Suite gate: **108/108** on the two generator tests, including `CodecAspect.json: Generator output matches CodecAspect.scala`. The emission trace was exact on the first run.
+- **`Aspects`** (`.json`/`.scala`/`.drake`) — added `val codecAspect: CodecAspect`.
+- **`TypeDefinition`** (`.json`/`.scala`/`.drake`) — new `codecAspect` factory param (`CodecAspect.Null` default) + the `codecAspect` line in the Monadic encoder/decoder strings (emitted verbatim, so JSON and `.scala` edited in lockstep), `apply`/`Null`/decoder round-trip, `par codecAspect CodecAspect CodecAspect.Null`.
 
-## 3. Increment B — wiring codecAspect into Aspects + TypeDefinition
+Design notes: appended **last** (draco→domain→rule→actor→**codec**) rather than inserted mid-list — keeps every positional `TypeDefinition(...)` call site working (all params after `typeName` default), and additive-at-the-end matches how the canon has evolved. The alignment in the encoder/decoder strings lines up exactly because `CodecAspect`/`codecAspect` are the same width as `ActorAspect`/`actorAspect`.
 
-With the type verified, the canon integration. First a safety check: `grep` confirmed `TypeDefinition` is the **only** implementer of `Aspects` (its `apply` anonymous class is the sole site overriding the aspect vals), so a new abstract `codecAspect` val on the trait could break nothing else.
+The load-bearing change is `TypeDefinition`'s JSON round-trip, so: fast emission check first, then the full suite as the push gate.
 
-The revealing detail is *how* `TypeDefinition`'s aspect-aware encoder/decoder survive the byte-for-byte gen test at all: they aren't derived by the Generator's generic codec path (which would emit `Some("dracoAspect" -> …)` with no elision). They're authored as **Monadic `globalElements` strings** inside `TypeDefinition.json` — raw Scala embedded verbatim, using each aspect's own `X.isEmpty(...)` as the elision guard. So wiring codecAspect meant editing those embedded strings *and* the mirror `.scala` in lockstep:
+*(Delegated action — Dev ran the gen tests then `sbt test`: **202/202** — including `YAMLRoundTripTest 66/66` and `TypeDefinitionTest` encode/decode, which round-trip a `TypeDefinition` now carrying `codecAspect`; the empty aspect elides, so no existing corpus JSON changed shape. Wrote journal chapter 55 and a new `project_codec_aspect` memory.)*
 
-- **Aspects** (`.json`/`.scala`/`.drake`): `+ val codecAspect: CodecAspect`.
-- **TypeDefinition** (`.json`/`.scala`/`.drake`): new `codecAspect` factory param (`CodecAspect.Null` default) + `if (!CodecAspect.isEmpty(td.codecAspect)) Some("codecAspect" -> …)` in the encoder Monadic + the decoder `for`-line and 6-arg `apply(...)` yield.
+CodecAspect is fully in the canon. The natural next increment: the field is *authored* but not yet *consumed* — the Generator still hardcodes `"kind"` in `discriminatedCodecDeclaration`. Closing the loop means having that emitter read `td.codecAspect.discriminator` (falling back to `"kind"` when empty), which is the whole justification for the field. I've held it as a separate step.
 
-Two deliberate choices:
-1. **Appended last** (draco→domain→rule→actor→**codec**), not inserted. Every positional `TypeDefinition(...)` call site keeps working because all params after `typeName` default; additive-at-the-end mirrors how the canon has grown.
-2. The encoder/decoder alignment columns line up **for free** — `CodecAspect`/`codecAspect` are the same character width as `ActorAspect`/`actorAspect`, so the existing aligned `Some(... -> ...)` spacing needed no rework.
+---
 
-Full suite: **202/202**. The load-bearing evidence is `YAMLRoundTripTest 66/66` and `TypeDefinitionTest` encode/decode — both round-trip a `TypeDefinition` that now carries `codecAspect`, and both stayed green, confirming the field elides when empty (so no existing corpus JSON changed shape) and reconstructs when present.
+**[Dev]** When should we add encoder and decoder as fields (and discriminators) in CodecAspect?
 
-## 4. The criterion for aspect fields — and why encoder/decoder don't qualify yet
+**[Claude]** Good question — it's really a question about the *criterion* for a field earning its place in the canon, not just timing. Grounded answer: today **exactly one** type hand-authors a codec — `TypeDefinition` itself (the `.yaml` is just its companion). Every other type's codec is Generator-*derived*. That single fact drives the whole answer.
 
-Before consuming the field, the Dev asked the sharper question: *when* should `CodecAspect` gain `encoder`/`decoder` fields (and discriminators)? The answer turned out to be a criterion, not a date. A field earns canon-membership only if it is **both** (i) non-derivable from the rest of the `TypeDefinition`, and (ii) something a cross-language backend would consume ([[feedback_haskell_test]]). `discriminator` passed both — the tag string is a free choice, and any Aeson/whatever backend emitting a tagged union needs it.
+**The criterion (not the calendar).** A field earns a place in `CodecAspect` only if it's **both**: (1) **non-derivable** from the rest of the `TypeDefinition` (elements/factory/derivation/modules), and (2) something a **cross-language backend would consume** — the Haskell/Aeson test from [[feedback_haskell_test]]. `discriminator` passed both: the tag string `"kind"` is a free choice, not a function of structure, and any backend emitting a tagged union needs it. That's *why* it was the right — and so far only — field.
 
-Grounding it in the corpus: a `grep` showed **exactly one** type hand-authors a codec — `TypeDefinition` itself (its aspect-`isEmpty`-guarded encoder/decoder, embedded as Monadic `globalElements` strings). Every other type's codec is Generator-*derived*. And that one custom case isn't irreducible: it's hand-authored only because `elisionCheck` has no `*Aspect` case, so aspect fields fall through to "always encode." Add one rule — `case s if s.endsWith("Aspect") => Some(s"!$s.isEmpty(x.${p.name})")` — and `simpleCodecDeclaration` reproduces it, retiring the escape hatch. So it's a **derivation gap, not an irreducible codec.**
+**Why encoder/decoder don't qualify yet.** Derived codecs fail test #1 — the strategy is already a function of `DracoAspect`. The one hand-authored codec (`TypeDefinition`'s aspect-`isEmpty`-guarded encoder, embedded as Monadic `globalElements` strings) looks like the forcing case, but it isn't irreducible: it's hand-authored only because `elisionCheck` has no `*Aspect` case, so aspect fields fall through to "always encode." That's a **derivation gap, not an irreducible codec.** Add one rule —
 
-Conclusion: there is currently **zero** forcing case for `encoder`/`decoder` fields. They become warranted only for a codec that resists all three reductions (structural derivation, a discriminator, a small declarative elision/rename delta) — and even then must enter as a *structured* description, never embedded Scala strings, or they just relocate the Scala-leak. One example is a special case; ≥2 irreducible codecs before generalizing a shape. Likely never.
-
-## 5. Consuming the discriminator
-
-With the criterion settled, the loop closed. `discriminatedCodecDeclaration` now derives its wire key:
-
+```scala
+case s if s.endsWith("Aspect") => Some(s"!$s.isEmpty(x.${p.name})")
 ```
+
+— and `simpleCodecDeclaration` reproduces `TypeDefinition`'s codec, retiring the Monadic escape hatch entirely. No `CodecAspect` field needed. So: **there is currently zero forcing case for encoder/decoder fields.**
+
+**When they *do* become right:** only when we hit a codec that resists **all three** reductions — structural derivation, a discriminator, and a small declarative elision/rename delta. And even then the field must be a **structured description** (a field → wire-key → elision-rule plan), never an embedded Scala string — otherwise it just relocates the Scala-leak and still fails the Haskell test. One example is a special case; I'd want **≥2** genuinely-irreducible codecs before generalizing a shape.
+
+Recommended sequence: (1) consume `discriminator`; (2) add the `*Aspect` `elisionCheck` case — makes `TypeDefinition`'s codec derive and *proves* the "custom codec was really a derivation gap" thesis by deleting the sole counterexample; (3) revisit encoder/decoder fields only if a truly irreducible codec appears after that — likely never, and if so, structured-only.
+
+---
+
+**[Dev]** Consume the discriminator
+
+**[Claude]** Implementing: `discriminatedCodecDeclaration` will read `td.codecAspect.discriminator`, falling back to `"kind"`. Since no discriminated type sets the field yet, the fallback keeps all generated output byte-identical — tests stay green, proving no regression.
+
+**Generator.scala** — `discriminatedCodecDeclaration` now derives the wire key from the aspect:
+
+```scala
 val discriminator = if (td.codecAspect.discriminator.nonEmpty) td.codecAspect.discriminator else "kind"
 ```
 
-threaded into the three emitted sites — encoder wire key, decoder `downField`, and the decode-failure message. The generated local `val kind` (which holds the tag *value*) keeps its name, so nothing else shifts. The `"kind"` fallback is exact: every discriminated type today has an empty `discriminator`, so every byte of generated output is unchanged — which the 51 byte-for-byte `DracoGenTest` comparisons confirm.
+threaded into the three emitted spots — encoder wire key, decoder `downField`, and the decode-failure message. The generated local `val kind` (the tag *value* holder) keeps its name, so nothing else shifts.
 
-A proof test (`TypeDefinitionTest`) rebuilds the Animal/Dog union with `CodecAspect("species")` on the parent and asserts `"species"` flows into both encoder and decoder with no `"kind"` left behind. Suite **203/203**.
+**TypeDefinitionTest.scala** — new proof case: the change is a no-op on all existing output, so the test rebuilds the in-memory `Animal`/`Dog` discriminated union with `CodecAspect("species")` on the parent and asserts the authored tag flows into both encoder and decoder, with no default `"kind"` left behind.
 
-`TypeDefinition` is now five aspects wide, and the fifth is fully live — authored in the canon, consumed in emission. The named next step is the `*Aspect` `elisionCheck` rule from §4: making `TypeDefinition`'s own codec derive, which would delete the sole hand-authored-codec counterexample and prove the "custom codec was a derivation gap" thesis by construction. Held for a separate increment.
+Why this is safe: the fallback is exact — every discriminated type today has an empty `codecAspect.discriminator`, so every byte of generated output is unchanged, which is precisely what the byte-for-byte `DracoGenTest` comparison will confirm.
+
+*(Delegated action — Dev ran `sbt test`: **203/203** — the new discriminator test green, all 51 `DracoGenTest` byte-for-byte comparisons still match, `YAMLRoundTripTest 66/66` holds. Updated the journal chapter and `project_codec_aspect` memory.)*
+
+The loop is closed: `CodecAspect.discriminator` is both *authored* (canon) and *consumed* (emission). The one open thread, if you want it later: the `*Aspect` case in `elisionCheck`, which would make `TypeDefinition`'s own aspect-guarded codec *derive* from `simpleCodecDeclaration`, letting you delete the hand-authored Monadic encoder/decoder strings from `TypeDefinition.json` — retiring the sole Scala-leak escape hatch. Clean place to stop for now, though.
+
+## Status
+`TypeDefinition` is five aspects wide, and the fifth is fully live — authored in the canon, consumed in emission. Suite **203/203**. Aspect-field criterion settled: non-derivable AND cross-language-consumable; zero forcing case for `encoder`/`decoder` fields today. Queued: the `*Aspect` `elisionCheck` rule to make `TypeDefinition`'s own codec derive — held for a separate increment.

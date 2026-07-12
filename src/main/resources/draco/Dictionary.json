@@ -42,12 +42,7 @@
             "valueType": "K"
           }
         ],
-        "body": [
-          {
-            "kind": "Monadic",
-            "value": "kvMap.removed(key)"
-          }
-        ]
+        "value": "kvMap.removed(key)"
       },
       {
         "kind": "Dynamic",
@@ -65,12 +60,7 @@
             "valueType": "V1"
           }
         ],
-        "body": [
-          {
-            "kind": "Monadic",
-            "value": "kvMap.updated(key, value)"
-          }
-        ]
+        "value": "kvMap.updated(key, value)"
       },
       {
         "kind": "Dynamic",
@@ -83,24 +73,14 @@
             "valueType": "K"
           }
         ],
-        "body": [
-          {
-            "kind": "Monadic",
-            "value": "kvMap.get(key)"
-          }
-        ]
+        "value": "kvMap.get(key)"
       },
       {
         "kind": "Dynamic",
         "name": "iterator",
         "valueType": "Iterator[(K, V)]",
         "parameters": [],
-        "body": [
-          {
-            "kind": "Monadic",
-            "value": "kvMap.iterator"
-          }
-        ]
+        "value": "kvMap.iterator"
       }
     ]
   },

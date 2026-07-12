@@ -1,0 +1,2 @@
+type Format(T) from Primal(T)
+domain draco format Format

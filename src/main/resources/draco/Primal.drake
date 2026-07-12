@@ -1,0 +1,5 @@
+type Primal(T)
+  elements [
+    fix value T
+  ]
+domain draco Draco

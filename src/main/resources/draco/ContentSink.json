@@ -45,8 +45,10 @@
       ],
       "body": [
         {
-          "kind": "Monadic",
-          "value": "val sinkPath: java.nio.file.Path = java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))"
+          "kind": "Local",
+          "name": "sinkPath",
+          "valueType": "java.nio.file.Path",
+          "value": "java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))"
         },
         {
           "kind": "Dynamic",

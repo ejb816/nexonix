@@ -1,0 +1,2 @@
+type TypeTransform(S <: DracoType, T <: DracoType) from Holon((S, T))
+domain draco Draco

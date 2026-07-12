@@ -1,0 +1,14 @@
+type Test from Main
+  factory Test
+    parameters [
+      par sourceName String ""
+      par sinkName String ""
+    ]
+    body [
+      fix sourceRoot URI classOf[Test].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/test/${_sourceName}/"))
+      fix sinkRoot URI classOf[Test].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/test/${_sinkName}/"))
+    ]
+  globalElements [
+    fix roots Test Test ("resources", "scala")
+  ]
+domain draco Draco
