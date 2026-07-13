@@ -75,7 +75,7 @@
           "kind": "Parameter",
           "name": "modules",
           "valueType": "Seq[TypeName]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
@@ -87,13 +87,13 @@
           "kind": "Parameter",
           "name": "derivation",
           "valueType": "Seq[TypeName]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
           "name": "elements",
           "valueType": "Seq[TypeElement]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
@@ -105,7 +105,7 @@
           "kind": "Parameter",
           "name": "globalElements",
           "valueType": "Seq[BodyElement]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",

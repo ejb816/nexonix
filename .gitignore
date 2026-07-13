@@ -17,3 +17,4 @@ CLAUDE.md
 /draco-dev-journal/tools/gaps/chapter-*-insertions.md
 /draco-dev-journal/tools/gaps/chapter-*-updated.md
 /draco-dev-journal/tools/mapping.json
+__pycache__/

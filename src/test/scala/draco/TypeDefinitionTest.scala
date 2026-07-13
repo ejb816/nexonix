@@ -1,5 +1,6 @@
 package draco
 
+import io.circe.Json
 import io.circe.syntax.EncoderOps
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -25,31 +26,31 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       _factory = Factory(
         _valueType = "draco.TypeDefinition",
         _parameters = Seq(
-          Parameter("typeName", "TypeName", ""),
-          Parameter("modules", "Seq[TypeName]", "Seq.empty"),
-          Parameter("derivation", "Seq[TypeName]", "Seq.empty"),
-          Parameter("elements", "Seq[TypeElement]", "Seq.empty"),
-          Parameter("factory", "Factory", "Factory.Null"),
-          Parameter("globalElements", "Seq[BodyElement]", "Seq.empty")
+          Parameter("typeName", "TypeName", Json.Null),
+          Parameter("modules", "Seq[TypeName]", Json.fromString("Seq.empty")),
+          Parameter("derivation", "Seq[TypeName]", Json.fromString("Seq.empty")),
+          Parameter("elements", "Seq[TypeElement]", Json.fromString("Seq.empty")),
+          Parameter("factory", "Factory", Json.fromString("Factory.Null")),
+          Parameter("globalElements", "Seq[BodyElement]", Json.fromString("Seq.empty"))
         ),
         _body = Seq(
-          Fixed("typeName", "TypeName", "_typeName"),
-          Fixed("modules", "Seq[TypeName]", "_modules"),
-          Fixed("derivation", "Seq[TypeName]", "_derivation"),
-          Fixed("elements", "Seq[TypeElement]", "_elements"),
-          Fixed("factory", "Factory", "_factory"),
-          Fixed("globalElements", "Seq[BodyElement]", "_globalElements")
+          Fixed("typeName", "TypeName", Json.fromString("_typeName")),
+          Fixed("modules", "Seq[TypeName]", Json.fromString("_modules")),
+          Fixed("derivation", "Seq[TypeName]", Json.fromString("_derivation")),
+          Fixed("elements", "Seq[TypeElement]", Json.fromString("_elements")),
+          Fixed("factory", "Factory", Json.fromString("_factory")),
+          Fixed("globalElements", "Seq[BodyElement]", Json.fromString("_globalElements"))
         )
       ),
       _globalElements = Seq(
         Dynamic(
           "load",
           "TypeDefinition",
-          Seq(Parameter("typeName", "TypeName", "")),
+          Seq(Parameter("typeName", "TypeName", Json.Null)),
           Seq(
-            Fixed("sourceContent", "SourceContent", "SourceContent(Generator.main.sourceRoot, typeName.resourcePath)"),
-            Fixed("sourceJSON", "Json", "parser.parse(sourceContent.sourceString).getOrElse(TypeDefinition(typeName).asJson)"),
-            Fixed("result", "TypeDefinition", "sourceJSON.as[TypeDefinition].getOrElse(Null)")
+            Fixed("sourceContent", "SourceContent", Json.fromString("SourceContent(Generator.main.sourceRoot, typeName.resourcePath)")),
+            Fixed("sourceJSON", "Json", Json.fromString("parser.parse(sourceContent.sourceString).getOrElse(TypeDefinition(typeName).asJson)")),
+            Fixed("result", "TypeDefinition", Json.fromString("sourceJSON.as[TypeDefinition].getOrElse(Null)"))
           )
         )
       )
@@ -85,8 +86,8 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       ),
       _dracoAspect = DracoAspect(
         _globalElements = Seq(
-          Fixed("MAX_SIZE", "Int", "1024"),
-          Fixed("DEFAULT_NAME", "String", "\"unnamed\"")
+          Fixed("MAX_SIZE", "Int", Json.fromString("1024")),
+          Fixed("DEFAULT_NAME", "String", Json.fromString("\"unnamed\""))
         )
       )
     )
@@ -156,7 +157,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       _dracoAspect = DracoAspect(
         _derivation = Seq(TypeName("Animal", _namePackage = Seq("test", "zoo"))),
         _factory = Factory("Dog", _parameters = Seq(
-          Parameter("name", "String", "\"Fido\"")
+          Parameter("name", "String", Json.fromString("\"Fido\""))
         ))
       )
     )
@@ -191,7 +192,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       _dracoAspect = DracoAspect(
         _derivation = Seq(TypeName("Animal", _namePackage = Seq("test", "zoo"))),
         _factory = Factory("Dog", _parameters = Seq(
-          Parameter("name", "String", "\"Fido\"")
+          Parameter("name", "String", Json.fromString("\"Fido\""))
         ))
       )
     )
@@ -222,7 +223,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
 
     val action = Action(
       _variables = Seq(Variable("i", "Integer")),
-      _body = Seq(Monadic("println(i)"))
+      _body = Seq(Monadic(Json.fromString("println(i)")))
     )
     val actionJson = action.asJson
     assert(actionJson.spaces2.contains("\"variables\""),

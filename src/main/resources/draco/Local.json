@@ -31,7 +31,7 @@
         {
           "kind": "Parameter",
           "name": "value",
-          "valueType": "String"
+          "valueType": "Json"
         }
       ]
     }

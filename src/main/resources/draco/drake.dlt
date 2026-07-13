@@ -26,7 +26,7 @@ FILL-INS
                    context-bounded as <name>: <bound> (e.g. T: Decoder — carried verbatim)
   <bound>          the type after <: (e.g. Product, DracoType)
   <value-type>     a type expression (see VALUE-TYPES)
-  <value>          an expression or "quoted literal"
+  <value>          an expression or "quoted literal" (see EXPRESSIONS)
   <default-value>  a parameter default
   <bool-value>     a Boolean expression
   <unit-value>     a side-effecting statement (Unit)
@@ -40,6 +40,60 @@ VALUE-TYPES  (drake type-expression -> JSON valueType string)
   <F>(<A> ...)     <F>[<A> ...]        type application
   (<A>, <B>)       (<A>, <B>)          tuple, unchanged
   <Name>           <Name>              plain type, unchanged
+
+EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
+  A <value> emits to JSON in one of two forms; the value's own JSON structure IS the
+  classification (no flag, no version field):
+    string             HOST-OPAQUE source text, carried verbatim (the legacy/default form).
+                       A bare string is source text / a symbol reference; a string literal
+                       keeps its embedded quotes ("\"ctx\""). Json null == absent == "".
+    { op: [operands] } a structured expression TREE: a single-key object applying the
+                       operator symbol op to its operands, each operand itself an
+                       expression (string leaf or nested tree).
+  OPERATORS — the op key is a SYMBOL REFERENCE, to be resolved against declared symbols:
+    "."   path join / selection; FLAT VARIADIC — associative operators flatten
+          ({".": ["org","evrete","api","RhsContext"]}), non-associative stay binary
+    "->"  function/type arrow — HASKELL FORM; binary, right-associative at the surface;
+          ScalaSource renders " => " (in a String-typed slot the quoted rendering carries
+          the target spelling: {"->": [RhsContext-path, "Unit"]} -> "org.evrete.api.RhsContext => Unit")
+    "*"   numeric product; "==" equality — infix, operands joined with the operator
+          ({"==": [{"*": ["i1","i2"]}, "i3"]} renders "i1 * i2 == i3")
+    "()"  application — first operand applied to the rest; a literal argument keeps its
+          embedded quotes ({"()": [{".": ["Rule","knowledgeService","newKnowledge"]}, "\"Primes\""]}
+          renders Rule.knowledgeService.newKnowledge("Primes"))
+    "\"   lambda — HASKELL FORM: leading operands are the parameters, last is the body.
+          drake surface \e a -> body ; ScalaSource renders (e, a) => body (bare param when single).
+          The tree carries no arrow token — structure separates params from body.
+    "if"  conditional — HASKELL FORM: [cond, then, else]. drake surface if c then t else e ;
+          ScalaSource renders if (c) t else e.
+    "!="  inequality — infix, operands joined with the operator
+    (further operators arrive with corpus conversion, each declared before use)
+  HASKELL-FORM SURFACE — drake adopts Haskell's syntactic forms for value-expression
+  constructs (\ lambda, if-then-else); the tree is form-neutral and each Generator[L]
+  target renders its own spelling (ScalaSource shown above). Host-bound vocabulary inside
+  a construct (null, asInstanceOf, hcursor) stays verbatim — form is drake's, atoms may
+  be the target's. First exemplar: Value.drake's dyn value (lambdas + if-then-else).
+  FIXITY lives ONLY at the drake surface: a JSON tree is already associated, so precedence
+  and associativity are pure parse/print concerns. The (future) surface grammar is two-layer:
+    expr := app (opsym app)*      -- operator layer parsed FLAT; no precedence in the grammar
+    app  := atom atom*            -- application by juxtaposition; binds tightest
+    atom := name | literal | ( expr ) | ( opsym ) | `name`
+  with a fixity-resolution pass (Haskell-style) reassociating the flat operator sequence
+  from each operator symbol's declared precedence/associativity (default infixl 9).
+  Symbolic names apply infix, alphanumeric names prefix; (op) uses an operator as a value,
+  `name` uses an identifier infix. Composition is not special syntax — it is just another
+  declared 2-ary symbol.
+  RENDERING (procedural Generator, current): Generator.expression renders a tree back to
+  its Scala surface — "." dot-joins, "*"/"=="/"!=" join with the spaced operator, "->"
+  joins with " => ", "()" applies, "\" and "if" render their Scala spellings. Rendering
+  is FLAT (no parenthesization): minimal parens require the fixity table, so they arrive
+  with the surface grammar; until then authored trees must read back correctly under the
+  target's precedence, parenthesizing explicitly inside a host-opaque leaf when they would
+  not. A tree in a String-typed slot
+  renders as a string literal: the slot's runtime type is String, so the tree denotes its
+  surface text (TypeElement's own valueType field is the exemplar). TypeElement.value is
+  Json; a string value passes through expression() verbatim, so the whole legacy corpus is
+  unchanged. isString = host-opaque tail (measured, not hidden); isObject = drake-native.
 
 CONVENTIONS
   factory          takes no name: it constructs the enclosing type <name> *(<T>, ...) (that is its valueType)

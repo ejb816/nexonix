@@ -4,5 +4,5 @@ type Mutable from BodyElement
     parameters [
       par name String
       par valueType String
-      par value String ""
+      par value Json Json.Null
     ]

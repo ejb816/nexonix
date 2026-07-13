@@ -39,13 +39,13 @@
           "kind": "Parameter",
           "name": "members",
           "valueType": "Seq[TypeName]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
           "name": "bindings",
           "valueType": "Seq[Binding]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",

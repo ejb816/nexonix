@@ -21,7 +21,7 @@
           "draco"
         ],
         "typeParameters": [
-          "String"
+          "Json"
         ]
       }
     ],
@@ -40,19 +40,19 @@
         "kind": "Fixed",
         "name": "parameters",
         "valueType": "Seq[Parameter]",
-        "value": "Seq.empty"
+        "value": { ".": ["Seq", "empty"] }
       },
       {
         "kind": "Fixed",
         "name": "body",
         "valueType": "Seq[BodyElement]",
-        "value": "Seq.empty"
+        "value": { ".": ["Seq", "empty"] }
       },
       {
         "kind": "Fixed",
         "name": "value",
-        "valueType": "String",
-        "value": "\"\""
+        "valueType": "Json",
+        "value": "Json.Null"
       }
     ]
   },

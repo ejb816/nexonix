@@ -12,7 +12,7 @@ type Action from BodyElement
       fix values [Value] _values
       fix body [BodyElement] _body
       fix name String "ctx"
-      fix valueType String "org.evrete.api.RHSContext => Unit" ]
+      fix valueType String org.evrete.api.RhsContext -> Unit ]
 domain draco Draco
 rule
   pattern

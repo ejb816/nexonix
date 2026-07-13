@@ -34,19 +34,19 @@
           "kind": "Parameter",
           "name": "variables",
           "valueType": "Seq[Variable]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
           "name": "values",
           "valueType": "Seq[Value]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
           "name": "body",
           "valueType": "Seq[BodyElement]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         }
       ],
       "body": [
@@ -78,7 +78,14 @@
           "kind": "Fixed",
           "name": "valueType",
           "valueType": "String",
-          "value": "\"org.evrete.api.RHSContext => Unit\""
+          "value": {
+            "->": [
+              {
+                ".": ["org", "evrete", "api", "RhsContext"]
+              },
+              "Unit"
+            ]
+          }
         }
       ]
     }

@@ -1,0 +1,58 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+Expression trees: TypeElement.value String -> Json; Haskell-form constructs; Value fully tree-native
+
+Normative JSON expression trees for value expressions (session 2026-07-13;
+full suite 197/197 after every increment).
+
+- TypeElement.value: Json (was String). A string value = host-opaque source
+  text carried verbatim (whole legacy corpus unchanged on the wire); an object
+  value = structured expression tree {op: [operands]} — single-key object, the
+  operator symbol as the key, operands themselves expressions. isString /
+  isObject IS the host-opaque vs drake-native classification; Json.Null = the
+  absent value. Definitions updated across the family: TypeElement from
+  Primal(Json), fix value Json Json.Null; Fixed/Mutable/Dynamic/Parameter/
+  Monadic/Condition/Local par value Json (+ factory-body fix value Json).
+- Generator.expression: public tree renderer — the ScalaSource projection.
+  Operator set (drake-canonical, Haskell-form constructs): "." n-ary path
+  join; "->" function/type arrow (renders " => "); "()" application (first
+  operand applied to the rest); "\" lambda (\p1 p2 -> body; renders
+  (p1, p2) => body, bare when single param); "if" ([cond,then,else]; renders
+  if (c) t else e); infix "*" "==" "!=". FLAT rendering — no parenthesization
+  (minimal parens arrive with the surface fixity model). initializer(): a tree
+  in a String-typed slot renders as a quoted string literal — the quoted
+  rendering carries the target spelling (RhsContext arrow exemplar).
+- Codec derivation: Json-typed fields elide on null-or-empty-string
+  (jsonNonEmpty / defaultElision), decode as[Option[Json]] default Json.Null,
+  typeZero/nullValueFor "Json" -> Json.Null. TypeElement.scala hand-synced;
+  regenerates byte-identical (comparisonOnlyExcluded stays empty).
+- Corpus trees landed: Action.json valueType = {"->": [RhsContext-path,
+  "Unit"]} (the prototype); all 20 "Seq.empty" values across 10 metamodel
+  jsons -> {".": ["Seq","empty"]}; both Primes rule conditions ->
+  {"==": [{"*": ["i1","i2"]}, "i3"]} (nested infix, feeds RETE where-
+  compilation); Primes knowledge -> "()" application with "\"Primes\""
+  literal leaf (embedded quotes = literal, bare string = reference);
+  Value's dyn value fully tree-native — foldLeft + nested \e a -> / \j ->
+  lambdas + if-then-else, five levels deep, renders the committed source
+  character-for-character.
+- HASKELL-FORM SURFACE principle (drake.dlt): drake adopts Haskell's
+  syntactic forms for value-expression constructs (\ lambda, if-then-else,
+  -> arrow); the tree is form-neutral; each Generator[L] target renders its
+  own spelling. Host-bound ATOMS (null, asInstanceOf, hcursor) stay verbatim
+  — form is drake's, atoms may be the target's. Value.drake + Action.drake
+  surfaces updated to Haskell form; fixity lives ONLY at the drake surface
+  (JSON trees are already associated).
+- drake.dlt EXPRESSIONS section: two normative value forms, operator
+  catalog with renderings, two-layer surface grammar sketch (flat operator
+  parse + Haskell-style fixity resolution against declared symbols,
+  default infixl 9), leaf conventions, flat-rendering contract.
+- RhsContext spelling fix (was RHSContext) across Action.{drake,json} +
+  TypeElement.scala — opaque strings hid it; symbol resolution over trees
+  is the lint class that catches this rot.
+- Consumers migrated: Generated.scala, TypeDefinitionTest, TestTypeModule,
+  scripts/inspect-type.scala (Json.fromString / Json.Null / expression()).
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+EOF
+git push

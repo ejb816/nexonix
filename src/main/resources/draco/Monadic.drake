@@ -2,10 +2,10 @@ domain draco Draco
 type Monadic from BodyElement
   factory Monadic
     parameters [
-      par value String
+      par value Json
     ]
     body [
       fix name String ""
       fix valueType String "Unit"
-      fix value String _value
+      fix value Json _value
     ]

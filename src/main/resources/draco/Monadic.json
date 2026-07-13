@@ -21,7 +21,7 @@
         {
           "kind": "Parameter",
           "name": "value",
-          "valueType": "String"
+          "valueType": "Json"
         }
       ],
       "body": [
@@ -40,7 +40,7 @@
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "String",
+          "valueType": "Json",
           "value": "_value"
         }
       ]

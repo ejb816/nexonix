@@ -32,19 +32,19 @@
           "kind": "Parameter",
           "name": "parameters",
           "valueType": "Seq[Parameter]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
           "name": "body",
           "valueType": "Seq[BodyElement]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
           "name": "value",
-          "valueType": "String",
-          "value": "\"\""
+          "valueType": "Json",
+          "value": "Json.Null"
         }
       ],
       "body": [
@@ -75,7 +75,7 @@
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "String",
+          "valueType": "Json",
           "value": "_value"
         }
       ]

@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across sixty-one chapters of development sessions between March 22 and July 11, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions are transcribed as dialogues between Dev (the framework's creator) and the model (Claude, serving as pair-programming partner), capturing not just the code changes but the reasoning, missteps, and discoveries along the way.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across sixty-two chapters of development sessions between March 22 and July 13, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions are transcribed as dialogues between Dev (the framework's creator) and the model (Claude, serving as pair-programming partner), capturing not just the code changes but the reasoning, missteps, and discoveries along the way.
 
 ## Journal Conventions
 
@@ -34,7 +34,7 @@ When the first session began, Draco already had a working type hierarchy, a RETE
 
 **The World example domains (Chapters 40–50, June 1–24).** `DomainBuilder` and the two-track build model opened the movement; the missing TransformBuilder fixture became a whole example world of message domains (Aerial/Terrestrial/Marine/Ethereal under `World`). The Evrete Environment emerged as the rule↔ActorRef seam keeping generated rules Pekko-agnostic. Draco's founding thesis crystallized — *a transform is correct iff it preserves meaning* — and became a passing assertion when an Aerial `Position` crossed to a Terrestrial `Location` through the `Observable` world-fact with WGS84 geodesy. The reference frames were deleted wholesale; actor emission folded into the Generator via the `setupAction`/`messageAction`/`signalAction` model; `Assembly` made actor topology pure data.
 
-**DRAKE (Chapters 51–61, June 25–July 11).** Draco's native definition language was named — DRAKE, "domain rules actor knowledge engine" — with JSON remaining canonical and `.drake` the human-authoring surface. The metamodel was authored in DRAKE, aspect-head grammar settled, YAML retired entirely, `CodecAspect` became the fifth aspect, and every codec under `src/main` now derives from JSON — no hand-authored codec strings remain. The corpus buildout (60 `.drake` files against 63 JSONs) surfaced a genuinely missing metamodel piece (`Local`/`loc`) and the deepest methodological lesson of the journal: round-trip tests preserve mis-modeling; validating a model requires a second, more opinionated projection that rejects what the lax one tolerates.
+**DRAKE (Chapters 51–62, June 25–July 13).** Draco's native definition language was named — DRAKE, "domain rules actor knowledge engine" — with JSON remaining canonical and `.drake` the human-authoring surface. The metamodel was authored in DRAKE, aspect-head grammar settled, YAML retired entirely, `CodecAspect` became the fifth aspect, and every codec under `src/main` now derives from JSON — no hand-authored codec strings remain. The corpus buildout (60 `.drake` files against 63 JSONs) surfaced a genuinely missing metamodel piece (`Local`/`loc`) and the deepest methodological lesson of the journal: round-trip tests preserve mis-modeling; validating a model requires a second, more opinionated projection that rejects what the lax one tolerates.
 
 ### The Breakthroughs
 
@@ -80,7 +80,7 @@ Selected moments that shifted the framework's trajectory:
 
 The recurring theme across all sixty sessions is that self-description creates complexity: a type system closed over itself means every change to a foundational type can create circular dependencies, initialization-order bugs, and shadowing issues. The `lazy val` discipline, deferred factory defaults, classpath loading, the Haskell test, and finally DRAKE-as-recognizer are all engineering responses to the same mathematical property. The framework is learning to describe itself without tripping over its own reflection.
 
-**Status at Chapter 61:** JSON corpus 64, `.drake` corpus 64 (complete), full suite 197/197.
+**Status at Chapter 62:** JSON corpus 64, `.drake` corpus 64 (complete), full suite 197/197; value expressions now structured trees (`TypeElement.value: Json`), with the principle "form is drake's, atoms may be the target's."
 
 ---
 
@@ -328,4 +328,8 @@ The `dyn`-in-body gap led through the bracket-optional grammar rule to a genuine
 
 ### [Chapter 61 — Corpus Complete: Loose Ends, CLI(L), the scala Package Saga](draco-dev-chapter-61.md)
 
-Journal duty formally handed to Cowork. Parser readiness settled emitter-first, then the loose ends closed: result-as-`Dynamic.value`, Primes and Value decomposed out of host code, CLI reconceived as CLI(L) with commands as data. The `draco.scala` package-shadowing saga killed the escape rule in favor of capability naming (`draco.scalasource.ScalaSource`). The `.drake` corpus reached completeness — 64 of 64 — at 197/197.
+Journal duty formally handed to Cowork. Parser readiness settled emitter-first, then the loose ends closed: result-as-`Dynamic.value`, Primes and Value decomposed out of host code, CLI reconceived as CLI(L) with commands as data. The `draco.scala` package-shadowing saga killed the escape rule in favor of capability naming (`draco.scalasource.ScalaSource`). The `.drake` corpus reached completeness — 64 of 64 — at 197/197, committed and pushed with its audit record.
+
+### [Chapter 62 — Value Expressions as Structured Trees](draco-dev-chapter-62.md)
+
+Value-expression syntax settled: operator-ness is a property of the symbol, not the grammar. Dev's Action.json prototype (S-expression trees in JSON) exposed a misspelled `RHSContext` the opaque string had never caught — vindicating the recognizer lesson of Chapter 60. `TypeElement.value` went `String → Json`, expression trees spread incrementally through the corpus (Seq.empty, Primes' infix conditions, Value's five-level Haskell-form trees), and the governing principle emerged: form is drake's, atoms may be the target's. Five green runs, 197/197.

@@ -22,12 +22,12 @@
           "kind": "Parameter",
           "name": "parameters",
           "valueType": "Seq[Parameter]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
           "name": "value",
-          "valueType": "String"
+          "valueType": "Json"
         }
       ],
       "body": [
@@ -40,7 +40,7 @@
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "String",
+          "valueType": "Json",
           "value": "_value"
         },
         {

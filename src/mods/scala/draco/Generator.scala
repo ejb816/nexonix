@@ -1,6 +1,6 @@
 package draco
 
-import io.circe.parser
+import io.circe.{Json, parser}
 import io.circe.syntax.EncoderOps
 import scala.tools.nsc.{Global, Settings}
 import scala.tools.nsc.reporters.StoreReporter
@@ -21,7 +21,7 @@ object Generator extends App {
       _factory = Factory (
         "Generator",
         _parameters = Seq (
-          Parameter ("typeDictionary", "TypeDictionary", "")
+          Parameter ("typeDictionary", "TypeDictionary", Json.Null)
         )
       )
     )
@@ -78,6 +78,56 @@ object Generator extends App {
         catch { case _: Throwable => false }
       }
     }
+  }
+
+  // --- Expression rendering ---
+
+  /** Render a TypeElement `value` to its Scala surface form. A string value is
+    * host-opaque source text, passed through verbatim; Json.Null is the absent
+    * value (""). An object value is a structured expression tree: a single-key
+    * object {op: [operands]} applying the operator symbol to its operands.
+    * Operators: "." (n-ary path join), "->" (binary function/type arrow —
+    * Haskell form; ScalaSource renders " => "), "()"
+    * (application — first operand applied to the rest), "\" (lambda — Haskell
+    * form \p1 p2 -> body: leading operands are parameters, last is the body),
+    * "if" (Haskell form if c then t else e: [cond, then, else]), and the infix
+    * set ("*", "==", "!=") joining operands with the operator. A string-literal
+    * leaf keeps its embedded quotes ("\"Primes\"") and passes through verbatim.
+    * This renderer is the ScalaSource projection: lambda renders (p1, p2) =>
+    * body (bare param when single), if renders if (c) t else e.
+    * Rendering is FLAT — no parenthesization; minimal parens arrive with the
+    * surface fixity model (drake.dlt EXPRESSIONS), so authored trees must be
+    * ones whose flat rendering reads back correctly under Scala precedence. */
+  def expression (value: Json) : String = {
+    if (value == null || value.isNull) ""
+    else value.asString.getOrElse {
+      value.asObject.map(_.toList) match {
+        case Some((op, operands) :: Nil) =>
+          val args = operands.asArray.getOrElse(Vector(operands)).map(expression)
+          op match {
+            case "."        => args.mkString(".")
+            case "->"       => args.mkString(" => ")
+            case "()"       => s"${args.head}(${args.tail.mkString(", ")})"
+            case "\\"       =>
+              val params = if (args.size == 2) args.head else args.init.mkString("(", ", ", ")")
+              s"$params => ${args.last}"
+            case "if"       => s"if (${args(0)}) ${args(1)} else ${args(2)}"
+            case "*" | "==" | "!=" => args.mkString(s" $op ")
+            case _          => sys.error(s"Generator.expression: unknown operator '$op' in ${value.noSpaces}")
+          }
+        case _ => sys.error(s"Generator.expression: unrenderable value ${value.noSpaces}")
+      }
+    }
+  }
+
+  /** Render a `value` destined for a typed slot (`name: <valueType> = <init>`).
+    * An expression tree denotes surface text; when the slot's runtime type is
+    * String the rendering is emitted as a string literal (e.g. a type expression
+    * stored in a String-typed field). String values already carry their own
+    * quoting and pass through expression() verbatim. */
+  private def initializer (valueType: String, value: Json) : String = {
+    val rendered = expression(value)
+    if (value != null && value.isObject && valueType == "String") "\"" + rendered + "\"" else rendered
   }
 
   // --- Literal generation helpers ---
@@ -154,7 +204,7 @@ object Generator extends App {
     if (_conditions.isEmpty) ""
     else _conditions.zipWithIndex.map { case (c, idx) =>
       val params = c.parameters.map(p => s"${p.name}: ${p.valueType}").mkString(", ")
-      s"  def w$idx($params): Boolean = ${c.value}"
+      s"  def w$idx($params): Boolean = ${expression(c.value)}"
     }.mkString("\n")
   }
 
@@ -183,18 +233,18 @@ object Generator extends App {
     // Generate body statements from Action.body
     val bodyStatements = action.body.map {
       case f: Fixed =>
-        if (f.name.nonEmpty) s"      val ${f.name}: ${f.valueType} = ${f.value}"
-        else s"      ${f.value}"
+        if (f.name.nonEmpty) s"      val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
+        else s"      ${expression(f.value)}"
       case m: Mutable =>
-        if (m.name.nonEmpty) s"      var ${m.name}: ${m.valueType} = ${m.value}"
-        else s"      ${m.value}"
+        if (m.name.nonEmpty) s"      var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
+        else s"      ${expression(m.value)}"
       case d: Dynamic =>
-        if (d.name.nonEmpty) s"      def ${d.name}: ${d.valueType} = ${d.value}"
-        else s"      ${d.value}"
+        if (d.name.nonEmpty) s"      def ${d.name}: ${d.valueType} = ${initializer(d.valueType, d.value)}"
+        else s"      ${expression(d.value)}"
       case v: Variable =>
         s"      val ${v.name}: ${v.valueType} = ctx.get[${v.valueType}](\"$$${v.name}\")"
       case te: BodyElement =>
-        s"      ${te.value}"
+        s"      ${expression(te.value)}"
     }.mkString("\n")
 
     if (bodyStatements.isEmpty) varBindings
@@ -232,7 +282,8 @@ object Generator extends App {
     if (parameters.isEmpty) ""
     else {
       val params = parameters.map { p =>
-        val default = if (p.value.isEmpty) "" else s" = ${p.value}"
+        val d = initializer(p.valueType, p.value)
+        val default = if (d.isEmpty) "" else s" = $d"
         s"${p.name}: ${p.valueType}$default"
       }
       s"(${params.mkString(", ")})"
@@ -253,8 +304,8 @@ object Generator extends App {
     else if (body.isEmpty) value
     else if (body.size == 1 && value.isEmpty) {
       // Single statement - just its value (a Unit method's lone effect)
-      val be = body.head
-      if (be.value.isEmpty) "???" else be.value
+      val v = expression(body.head.value)
+      if (v.isEmpty) "???" else v
     } else {
       val bodyPad  = " " * (methodIndent + 2)
       val bracePad = " " * methodIndent
@@ -267,11 +318,11 @@ object Generator extends App {
           .map(line => if (line.isEmpty) "" else s"$bodyPad$line")
           .mkString("\n")
       val statements = body.map {
-        case f: Fixed    => s"${bodyPad}val ${f.name}: ${f.valueType} = ${f.value}"
-        case m: Mutable  => s"${bodyPad}var ${m.name}: ${m.valueType} = ${m.value}"
-        case l: Local    => s"${bodyPad}val ${l.name}: ${l.valueType} = ${l.value}"
-        case mo: Monadic => indentBlock(mo.value)
-        case be: BodyElement => s"${bodyPad}val ${be.name}: ${be.valueType} = ${be.value}"
+        case f: Fixed    => s"${bodyPad}val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
+        case m: Mutable  => s"${bodyPad}var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
+        case l: Local    => s"${bodyPad}val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
+        case mo: Monadic => indentBlock(expression(mo.value))
+        case be: BodyElement => s"${bodyPad}val ${be.name}: ${be.valueType} = ${initializer(be.valueType, be.value)}"
       }
       val result = if (value.isEmpty) Seq.empty else Seq(indentBlock(value))
       s"{\n${(statements ++ result).mkString("\n")}\n$bracePad}"
@@ -288,20 +339,23 @@ object Generator extends App {
           // `lazy val` (not plain `val`) when a default is present so subtypes
           // can override with `lazy val` — concrete non-lazy vals cannot be
           // overridden by `lazy val`.
-          if (f.value.nonEmpty) s"  lazy val ${f.name}: ${f.valueType} = ${f.value}"
+          val init = initializer(f.valueType, f.value)
+          if (init.nonEmpty) s"  lazy val ${f.name}: ${f.valueType} = $init"
           else s"  val ${f.name}: ${f.valueType}"
         case m: Mutable =>
-          if (m.value.nonEmpty) s"  var ${m.name}: ${m.valueType} = ${m.value}"
+          val init = initializer(m.valueType, m.value)
+          if (init.nonEmpty) s"  var ${m.name}: ${m.valueType} = $init"
           else s"  var ${m.name}: ${m.valueType}"
         case d: Dynamic =>
-          if (d.body.nonEmpty || d.value.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, d.value)}"
+          val result = expression(d.value)
+          if (d.body.nonEmpty || result.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, result)}"
           else s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType}"
         case mo: Monadic =>
           // Verbatim Scala source — for declarations that exceed the
           // Fixed/Mutable/Dynamic vocabulary (method type params, implicit
           // parameter lists, multi-line bodies, etc.). Each line indented
           // by the trait body's two spaces.
-          mo.value.linesIterator.map(l => s"  $l").mkString("\n")
+          expression(mo.value).linesIterator.map(l => s"  $l").mkString("\n")
         case p: Parameter => s"  val ${p.name}: ${p.valueType}"
         case te: TypeElement => s"  val ${te.name}: ${te.valueType}"
       }
@@ -315,7 +369,8 @@ object Generator extends App {
     if (parameters.isEmpty) ""
     else {
       val params = parameters.map { p =>
-        val default = if (p.value.isEmpty) "" else s" = ${p.value}"
+        val d = initializer(p.valueType, p.value)
+        val default = if (d.isEmpty) "" else s" = $d"
         s"_${p.name}: ${p.valueType}$default"
       }
       s"\n    ${params.mkString(",\n    ")}\n  "
@@ -337,12 +392,12 @@ object Generator extends App {
     ).flatten
     val overrides =
       if (factory.body.nonEmpty) factory.body.map {
-        case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType} = ${f.value}"
-        case m: Mutable => s"    override var ${m.name}: ${m.valueType} = ${m.value}"
-        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, d.value, methodIndent = 4)}"
-        case mo: Monadic => s"    ${mo.value}"
-        case l: Local   => s"    val ${l.name}: ${l.valueType} = ${l.value}"
-        case be: BodyElement => s"    override lazy val ${be.name}: ${be.valueType} = ${be.value}"
+        case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
+        case m: Mutable => s"    override var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
+        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, expression(d.value), methodIndent = 4)}"
+        case mo: Monadic => s"    ${expression(mo.value)}"
+        case l: Local   => s"    val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
+        case be: BodyElement => s"    override lazy val ${be.name}: ${be.valueType} = ${initializer(be.valueType, be.value)}"
       }
       else factory.parameters.map { p =>
         s"    override lazy val ${p.name}: ${p.valueType} = _${p.name}"
@@ -362,21 +417,24 @@ object Generator extends App {
     else {
       val globals = globalElements.map {
         case f: Fixed =>
-          val init = if (f.value.isEmpty) s"null.asInstanceOf[${f.valueType}]" else f.value
+          val rendered = initializer(f.valueType, f.value)
+          val init = if (rendered.isEmpty) s"null.asInstanceOf[${f.valueType}]" else rendered
           s"  lazy val ${f.name}: ${f.valueType} = $init"
         case m: Mutable =>
-          val init = if (m.value.isEmpty) s"null.asInstanceOf[${m.valueType}]" else m.value
+          val rendered = initializer(m.valueType, m.value)
+          val init = if (rendered.isEmpty) s"null.asInstanceOf[${m.valueType}]" else rendered
           s"  var ${m.name}: ${m.valueType} = $init"
         case d: Dynamic =>
-          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, d.value)}"
+          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, expression(d.value))}"
         case mo: Monadic =>
           // Indent every line so multi-line global blocks (encoder/decoder/etc.)
           // emit at the correct object-body indent level.
-          mo.value.linesIterator
+          expression(mo.value).linesIterator
             .map(line => if (line.isEmpty) "" else s"  $line")
             .mkString("\n")
         case be: BodyElement =>
-          val init = if (be.value.isEmpty) s"null.asInstanceOf[${be.valueType}]" else be.value
+          val rendered = initializer(be.valueType, be.value)
+          val init = if (rendered.isEmpty) s"null.asInstanceOf[${be.valueType}]" else rendered
           s"  val ${be.name}: ${be.valueType} = $init"
       }
       globals.mkString("\n")
@@ -404,6 +462,7 @@ object Generator extends App {
       case "Int" | "Long"             => "0"
       case "Double" | "Float"         => "0.0"
       case "Boolean"                  => "false"
+      case "Json"                     => "Json.Null"
       case _                          => s"null.asInstanceOf[$valueType]"
     }
   }
@@ -411,11 +470,12 @@ object Generator extends App {
   // --- Codec generation helpers ---
 
   private def elisionCheck (p: Parameter) : Option[String] = {
-    if (p.value.isEmpty) None  // required field — always encode
+    if (expression(p.value).isEmpty) None  // required field — always encode
     else p.valueType match {
       case "String"                    => Some(s"x.${p.name}.nonEmpty")
       case s if s.startsWith("Seq[")   => Some(s"x.${p.name}.nonEmpty")
       case s if s.startsWith("Map[")   => Some(s"x.${p.name}.nonEmpty")
+      case "Json"                      => Some(jsonNonEmpty(p.name))
       case "Factory"                   => Some(s"x.${p.name}.valueType.nonEmpty")
       case "Action"                    => Some(s"x.${p.name}.body.nonEmpty")
       case "Pattern"                   => Some(s"x.${p.name}.variables.nonEmpty")
@@ -423,6 +483,23 @@ object Generator extends App {
       case s if s.endsWith("Aspect")   => Some(s"!$s.isEmpty(x.${p.name})")
       case _                           => None  // no natural emptiness — always encode
     }
+  }
+
+  /** Wire-emptiness test for a Json-typed field: absent (Json.Null) or a
+    * present-empty string value elides, everything else — including an
+    * expression tree — encodes. Mirrors the String field's `.nonEmpty`. */
+  private def jsonNonEmpty (field: String) : String =
+    s"!x.$field.isNull && x.$field.asString.forall(_.nonEmpty)"
+
+  /** Default wire-elision test for a field with a natural emptiness, used in
+    * discriminated unions when `elisionCheck` (default-bearing params) does
+    * not apply. */
+  private def defaultElision (p: Parameter) : Option[String] = p.valueType match {
+    case "String"                  => Some(s"x.${p.name}.nonEmpty")
+    case s if s.startsWith("Seq[") => Some(s"x.${p.name}.nonEmpty")
+    case s if s.startsWith("Map[") => Some(s"x.${p.name}.nonEmpty")
+    case "Json"                    => Some(jsonNonEmpty(p.name))
+    case _                         => None
   }
 
   /** Find the root discriminated union parent by walking up the derivation chain.
@@ -509,9 +586,11 @@ object Generator extends App {
       case "String"                    => Some("\"\"")
       case s if s.startsWith("Seq[")   => Some("Seq.empty")
       case s if s.startsWith("Map[")   => Some("Map.empty")
+      case "Json"                      => Some("Json.Null")
       case _                           => None
     }
-    val defaultOpt: Option[String] = typeZero.orElse(if (p.value.nonEmpty) Some(p.value) else None)
+    val explicitDefault = initializer(p.valueType, p.value)
+    val defaultOpt: Option[String] = typeZero.orElse(if (explicitDefault.nonEmpty) Some(explicitDefault) else None)
     defaultOpt match {
       case Some(d) =>
         s"""${indent}_${p.name} <- cursor.downField("${p.name}").as[Option[${p.valueType}]].map(_.getOrElse($d))"""
@@ -630,20 +709,17 @@ object Generator extends App {
     // Find representative Parameter for each parent field (from factory params or synthesize from elements)
     val parentParams: Seq[Parameter] = parentFieldNames.flatMap { name =>
       parentTd.dracoAspect.factory.parameters.find(_.name == name).orElse {
-        parentTd.dracoAspect.elements.find(_.name == name).map(e => Parameter(e.name, e.valueType, ""))
+        parentTd.dracoAspect.elements.find(_.name == name).map(e => Parameter(e.name, e.valueType, Json.Null))
       }
     }
 
     parentParams.map { p =>
-      val hasNonEmpty = p.valueType == "String" ||
-        p.valueType.startsWith("Seq[") ||
-        p.valueType.startsWith("Map[")
-      elisionCheck(p) match {
+      // For discriminated union fields, defaultElision supplies the natural
+      // emptiness test (String/Seq/Map .nonEmpty, Json null-or-empty-string)
+      // when elisionCheck (default-bearing params) does not apply.
+      elisionCheck(p).orElse(defaultElision(p)) match {
         case Some(check) =>
           s"""      if ($check) Some("${p.name}" -> x.${p.name}.asJson) else None"""
-        case None if hasNonEmpty =>
-          // For discriminated union fields, use .nonEmpty as default elision for String/Seq/Map
-          s"""      if (x.${p.name}.nonEmpty) Some("${p.name}" -> x.${p.name}.asJson) else None"""
         case None =>
           s"""      Some("${p.name}" -> x.${p.name}.asJson)"""
       }
@@ -667,11 +743,9 @@ object Generator extends App {
       if (extras.isEmpty) None
       else {
         val lines = extras.map { p =>
-          val hasNonEmpty = p.valueType == "String" || p.valueType.startsWith("Seq[") || p.valueType.startsWith("Map[")
-          elisionCheck(p) match {
-            case Some(check)         => s"""        if ($check) Some("${p.name}" -> x.${p.name}.asJson) else None"""
-            case None if hasNonEmpty => s"""        if (x.${p.name}.nonEmpty) Some("${p.name}" -> x.${p.name}.asJson) else None"""
-            case None                => s"""        Some("${p.name}" -> x.${p.name}.asJson)"""
+          elisionCheck(p).orElse(defaultElision(p)) match {
+            case Some(check) => s"""        if ($check) Some("${p.name}" -> x.${p.name}.asJson) else None"""
+            case None        => s"""        Some("${p.name}" -> x.${p.name}.asJson)"""
           }
         }.mkString(",\n")
         Some(s"      case x: $leaf => Seq(\n$lines\n      ).flatten")
@@ -734,14 +808,14 @@ object Generator extends App {
     val wName = wildcardTypeName(typeName) + nameSuffix
     val typeParams = if (typeName.typeParameters.isEmpty) "" else s"[${typeName.typeParameters.map(_ => "Nothing").mkString(", ")}]"
     if (factory.valueType.nonEmpty) {
-      val allHaveDefaults = factory.parameters.nonEmpty && factory.parameters.forall(_.value.nonEmpty)
+      val allHaveDefaults = factory.parameters.nonEmpty && factory.parameters.forall(p => expression(p.value).nonEmpty)
       if (allHaveDefaults) {
         // All parameters carry default values — emit a bare `apply()` and let
         // Scala's default-argument resolution provide each one.
         s"lazy val Null: $wName = apply$typeParams()"
       } else {
         val nullArgs = factory.parameters.map { p =>
-          s"    _${p.name} = ${nullValueFor(p.valueType, p.value)}"
+          s"    _${p.name} = ${nullValueFor(p.valueType, initializer(p.valueType, p.value))}"
         }
         if (nullArgs.isEmpty) s"lazy val Null: $wName = apply$typeParams()"
         else s"lazy val Null: $wName = apply$typeParams(\n${nullArgs.mkString(",\n")}\n  )"
@@ -988,9 +1062,9 @@ object Generator extends App {
     * ctx variable bindings: the body operates on `knowledge`, the message, and `ctx`. */
   private def actorActionBody (action: Action, indent: String = "      ") : String =
     action.body.map {
-      case f: Fixed if f.name.nonEmpty   => s"${indent}val ${f.name}: ${f.valueType} = ${f.value}"
-      case m: Mutable if m.name.nonEmpty => s"${indent}var ${m.name}: ${m.valueType} = ${m.value}"
-      case be: BodyElement               => s"${indent}${be.value}"
+      case f: Fixed if f.name.nonEmpty   => s"${indent}val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
+      case m: Mutable if m.name.nonEmpty => s"${indent}var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
+      case be: BodyElement               => s"${indent}${expression(be.value)}"
     }.mkString("\n")
 
   /** `signalAction` runs ONCE at actor construction — session creation (stateful or
@@ -1221,9 +1295,9 @@ object Generator extends App {
     * rather than receiving an auto-generated codec block. */
   private def referencesCirce (td: TypeDefinition) : Boolean = {
     val texts: Iterator[String] =
-      td.dracoAspect.globalElements.iterator.map(_.value) ++
-      td.dracoAspect.globalElements.iterator.flatMap(_.body.map(_.value)) ++
-      td.dracoAspect.factory.body.iterator.map(_.value)
+      td.dracoAspect.globalElements.iterator.map(e => expression(e.value)) ++
+      td.dracoAspect.globalElements.iterator.flatMap(_.body.map(b => expression(b.value))) ++
+      td.dracoAspect.factory.body.iterator.map(e => expression(e.value))
     val markers = Seq("Encoder[", "Decoder[", "Encoder.instance", "Decoder.instance", "Json.obj", "Json.fromString", ".asJson", "io.circe")
     texts.exists(t => t != null && markers.exists(t.contains))
   }

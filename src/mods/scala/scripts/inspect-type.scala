@@ -64,7 +64,8 @@ object InspectType {
         case _: Local     => "Local"
         case _            => "?"
       }
-      println(s"    - $kind ${e.name}: ${e.valueType}${if (e.value.isEmpty) "" else s" = ${e.value}"}")
+      val v = Generator.expression(e.value)
+      println(s"    - $kind ${e.name}: ${e.valueType}${if (v.isEmpty) "" else s" = $v"}")
     }
     val f = td.dracoAspect.factory
     if (f.valueType.nonEmpty) {

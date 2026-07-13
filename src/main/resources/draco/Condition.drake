@@ -3,11 +3,11 @@ type Condition from BodyElement
   factory Condition
     parameters [
       par parameters [Parameter] []
-      par value String
+      par value Json
     ]
     body [
       fix parameters [Parameter] _parameters
-      fix value String _value
+      fix value Json _value
       fix name String ""
       fix valueType String "Boolean"
     ]

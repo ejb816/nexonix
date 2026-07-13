@@ -1,5 +1,7 @@
 package draco
 
+import io.circe.Json
+
 import java.net.URI
 
 trait Generated extends Main
@@ -17,8 +19,8 @@ object Generated extends App {
       _factory = Factory (
         "Generated",
         _parameters = Seq (
-          Parameter ("sourceName", "String", ""),
-          Parameter ("sinkName", "String", "")
+          Parameter ("sourceName", "String", Json.Null),
+          Parameter ("sinkName", "String", Json.Null)
         )
       )
     )

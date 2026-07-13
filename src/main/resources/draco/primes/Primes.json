@@ -12,7 +12,12 @@
         "kind": "Fixed",
         "name": "knowledge",
         "valueType": "org.evrete.api.Knowledge",
-        "value": "Rule.knowledgeService.newKnowledge(\"Primes\")"
+        "value": {
+          "()": [
+            { ".": ["Rule", "knowledgeService", "newKnowledge"] },
+            "\"Primes\""
+          ]
+        }
       }
     ],
     "globalElements": [

@@ -34,13 +34,13 @@
           "kind": "Parameter",
           "name": "variables",
           "valueType": "Seq[Variable]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         },
         {
           "kind": "Parameter",
           "name": "conditions",
           "valueType": "Seq[Condition]",
-          "value": "Seq.empty"
+          "value": { ".": ["Seq", "empty"] }
         }
       ],
       "body": [
