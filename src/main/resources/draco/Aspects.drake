@@ -1,9 +1,8 @@
-domain draco Draco
 type Aspects
-  elements [
+  elements
     fix dracoAspect DracoAspect
     fix domainAspect DomainAspect
     fix ruleAspect RuleAspect
     fix actorAspect ActorAspect
     fix codecAspect CodecAspect
-  ]
+domain draco Draco

@@ -1,12 +1,13 @@
 type Base
 domain draco base Base
   types [
-  Cardinal
-  Coordinate
-  Distance
-  Meters
-  Nominal
-  Ordinal
-  Radians
-  Rotation
-  Unit ]
+    Cardinal
+    Coordinate
+    Distance
+    Meters
+    Nominal
+    Ordinal
+    Radians
+    Rotation
+    Unit
+  ]

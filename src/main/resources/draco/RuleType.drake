@@ -1,6 +1,5 @@
 type RuleType
-  elements [
+  elements
     fix action Consumer(RhsContext)
     fix pattern Consumer(Knowledge)
-  ]
 domain draco Draco

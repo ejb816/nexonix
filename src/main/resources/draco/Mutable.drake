@@ -1,8 +1,7 @@
-domain draco Draco
 type Mutable from BodyElement
-  factory Mutable
-    parameters [
+  factory
+    parameters
       par name String
       par valueType String
       par value Json Json.Null
-    ]
+domain draco Draco

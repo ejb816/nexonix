@@ -1,5 +1,5 @@
 type CLI(L)
-  globalElements [
+  globals [
     dyn load TypeDefinition
       parameters
         par path String

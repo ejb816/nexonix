@@ -1,16 +1,13 @@
 type Numbers from Primes
-  elements [
+  elements
     fix primeSequence [Int]
     fix naturalSequence [Int]
     fix compositeSequence [Int]
-  ]
-  factory Numbers
-    parameters [
+  factory
+    parameters
       par n Int 22
-    ]
-    body [
+    body
       fix primeSequence [Int] Primes.nPrimes(_n)
       fix naturalSequence [Int] Primes.naturals(2).take(primeSequence.last - 1)
       fix compositeSequence [Int] Primes.composites(primeSequence)
-    ]
 domain draco primes Primes

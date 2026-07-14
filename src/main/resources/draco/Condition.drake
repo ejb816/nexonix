@@ -1,13 +1,11 @@
-domain draco Draco
 type Condition from BodyElement
-  factory Condition
-    parameters [
+  factory
+    parameters
       par parameters [Parameter] []
       par value Json
-    ]
-    body [
+    body
       fix parameters [Parameter] _parameters
       fix value Json _value
       fix name String ""
       fix valueType String "Boolean"
-    ]
+domain draco Draco

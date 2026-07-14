@@ -1,9 +1,7 @@
 type DomainDictionary from Dictionary(DomainType, TypeDictionary)
-  factory DomainDictionary
-    parameters [
-      par domains [DomainType] Seq()
-    ]
-    body [
+  factory
+    parameters
+      par domains [DomainType] []
+    body
       fix kvMap Map(DomainType, TypeDictionary) _domains.map(domain => (domain, domain.typeDictionary)).toMap
-    ]
 domain draco Draco

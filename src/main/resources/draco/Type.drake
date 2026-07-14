@@ -1,6 +1,5 @@
 type Type(T)
-  factory Type
-    parameters [
+  factory
+    parameters
       par typeDefinition TypeDefinition
-    ]
 domain draco Draco

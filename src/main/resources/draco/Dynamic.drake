@@ -1,17 +1,15 @@
-domain draco Draco
 type Dynamic from BodyElement
-  factory Dynamic
-    parameters [
+  factory
+    parameters
       par name String
       par valueType String
       par parameters [Parameter] []
       par body [BodyElement] []
       par value Json Json.Null
-    ]
-    body [
+    body
       fix name String _name
       fix valueType String _valueType
       fix parameters [Parameter] _parameters
       fix body [BodyElement] _body
       fix value Json _value
-    ]
+domain draco Draco

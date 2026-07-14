@@ -1,9 +1,11 @@
-domain draco Draco
-type TypeElement from Primal(Json) modules [BodyElement]
-  elements [
+type TypeElement from Primal(Json)
+  modules [
+    BodyElement
+  ]
+  elements
     fix name String
     fix valueType String
     fix parameters [Parameter] []
     fix body [BodyElement] []
     fix value Json Json.Null
-  ]
+domain draco Draco

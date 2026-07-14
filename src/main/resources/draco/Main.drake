@@ -1,18 +1,14 @@
 type Main
-  elements [
+  elements
     fix sourceRoot URI
     fix sinkRoot URI
-  ]
-  factory Main
-    parameters [
-      par sourceName String ""
-      par sinkName String ""
-    ]
-    body [
+  factory
+    parameters
+      par sourceName String
+      par sinkName String
+    body
       fix sourceRoot URI classOf[Main].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/main/${_sourceName}/"))
       fix sinkRoot URI classOf[Test].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/main/${_sinkName}/"))
-    ]
-  globalElements [
+  globals
     fix roots Main Main ("resources", "scala")
-  ]
 domain draco Draco

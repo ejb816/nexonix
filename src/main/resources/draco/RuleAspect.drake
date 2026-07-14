@@ -1,20 +1,13 @@
-domain draco Draco
 type RuleAspect
-  elements [
+  elements
     fix pattern Pattern
     fix values [Value]
     fix action Action
-  ]
-  factory RuleAspect
-    parameters [
+  factory
+    parameters
       par pattern Pattern Pattern.Null
       par values [Value] []
       par action Action Action.Null
-    ]
-  globalElements [
-    fix isEmpty (RuleAspect => Boolean) ra =>
-      ra.values.isEmpty &&
-      ra.pattern.variables.isEmpty &&
-      ra.pattern.conditions.isEmpty &&
-      ra.action.body.isEmpty
-  ]
+  globals
+    fix isEmpty (RuleAspect => Boolean) ra => ra.values.isEmpty && ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty && ra.action.body.isEmpty
+domain draco Draco

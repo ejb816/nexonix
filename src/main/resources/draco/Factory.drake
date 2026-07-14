@@ -1,14 +1,12 @@
-domain draco Draco
 type Factory from BodyElement
-  factory Factory
-    parameters [
+  factory
+    parameters
       par valueType String
       par parameters [Parameter] []
       par body [BodyElement] []
-    ]
-    body [
+    body
       fix valueType String _valueType
       fix parameters [Parameter] _parameters
       fix body [BodyElement] _body
       fix name String ""
-    ]
+domain draco Draco

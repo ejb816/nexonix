@@ -130,6 +130,264 @@ object Generator extends App {
     if (value != null && value.isObject && valueType == "String") "\"" + rendered + "\"" else rendered
   }
 
+  // --- Drake emission (JSON TypeDefinition -> .drake surface) ---
+  //
+  // The drake projection, sibling of the ScalaSource projection above: where
+  // expression() renders a value tree to Scala's spelling, drakeExpression()
+  // renders the same tree to its drake surface (Haskell forms — \ lambda,
+  // if-then-else, -> arrow). drake() emits the canonical new-model surface per
+  // drake.dlt: bare `factory`, leaf list-blocks unbracketed ([ ] only when a
+  // member opens its own sub-block), `globals` keyword, `from` omitted when the
+  // derivation is DracoType alone. This increment covers the plain-type template
+  // only — rule / actor / codec aspects arrive in the next increments.
+
+  /** Render a TypeElement `value` to its drake surface form. Same tree contract
+    * as expression(): a string is host-opaque source text passed through
+    * verbatim; {op: [operands]} applies the operator. Haskell-form spellings:
+    * "->" renders " -> ", "\" renders \p1 p2 -> body, "if" renders
+    * if c then t else e. A tree in a String-typed slot needs no quoting here —
+    * the drake surface carries the expression itself (Action.drake's unquoted
+    * arrow), quoting is the ScalaSource projection's concern. */
+  def drakeExpression (value: Json) : String = {
+    if (value == null || value.isNull) ""
+    else value.asString.getOrElse {
+      value.asObject.map(_.toList) match {
+        case Some((op, operands) :: Nil) =>
+          val args = operands.asArray.getOrElse(Vector(operands)).map(drakeExpression)
+          op match {
+            case "."        => args.mkString(".")
+            case "->"       => args.mkString(" -> ")
+            case "()"       => s"${args.head}(${args.tail.mkString(", ")})"
+            case "\\"       => s"\\${args.init.mkString(" ")} -> ${args.last}"
+            case "if"       => s"if ${args(0)} then ${args(1)} else ${args(2)}"
+            case "*" | "==" | "!=" => args.mkString(s" $op ")
+            case _          => sys.error(s"Generator.drakeExpression: unknown operator '$op' in ${value.noSpaces}")
+          }
+        case _ => sys.error(s"Generator.drakeExpression: unrenderable value ${value.noSpaces}")
+      }
+    }
+  }
+
+  /** Split a type-expression argument list on top-level commas only
+    * (commas nested in [ ], ( ), { } belong to an inner expression). */
+  private def splitTypeArguments (s: String) : Seq[String] = {
+    val args = Seq.newBuilder[String]
+    val current = new StringBuilder
+    var depth = 0
+    s.foreach {
+      case c @ ('[' | '(' | '{') => depth += 1; current.append(c)
+      case c @ (']' | ')' | '}') => depth -= 1; current.append(c)
+      case ',' if depth == 0     => args += current.result().trim; current.clear()
+      case c                     => current.append(c)
+    }
+    val last = current.result().trim
+    if (last.nonEmpty) args += last
+    args.result()
+  }
+
+  /** Split a type expression on top-level " => " function arrows (arrows nested
+    * in [ ], ( ), { } belong to an inner type). One segment = no arrow. */
+  private def splitTopArrow (s: String) : Seq[String] = {
+    val parts = Seq.newBuilder[String]
+    var depth, start, i = 0
+    while (i < s.length) {
+      s(i) match {
+        case '[' | '(' | '{' => depth += 1
+        case ']' | ')' | '}' => depth -= 1
+        case ' ' if depth == 0 && s.startsWith(" => ", i) =>
+          parts += s.substring(start, i); start = i + 4; i += 3
+        case _ =>
+      }
+      i += 1
+    }
+    parts += s.substring(start)
+    parts.result()
+  }
+
+  /** JSON valueType string -> drake type expression (drake.dlt VALUE-TYPES, inverted):
+    * Seq[T] -> [T], Set[T] -> {T}, mutable.Set[T] -> mut {T}, F[A, B] -> F(A, B),
+    * (A, B) tuple unchanged (components recursed), A => B arrows recursed on each
+    * side, plain names verbatim. */
+  private def drakeValueType (valueType: String) : String = {
+    val s = valueType.trim
+    if (s.isEmpty) s
+    else if (splitTopArrow(s).size > 1)
+      splitTopArrow(s).map(drakeValueType).mkString(" => ")
+    else if (s.startsWith("(") && s.endsWith(")"))
+      splitTypeArguments(s.substring(1, s.length - 1)).map(drakeValueType).mkString("(", ", ", ")")
+    else {
+      val idx = s.indexOf('[')
+      if (idx < 0 || !s.endsWith("]")) s
+      else {
+        val head = s.substring(0, idx)
+        val args = splitTypeArguments(s.substring(idx + 1, s.length - 1)).map(drakeValueType)
+        head match {
+          case "Seq" if args.size == 1          => s"[${args.head}]"
+          case "Set" if args.size == 1          => s"{${args.head}}"
+          case "mutable.Set" if args.size == 1  => s"mut {${args.head}}"
+          case _                                => s"$head(${args.mkString(", ")})"
+        }
+      }
+    }
+  }
+
+  /** ValueType as it sits in a name-valueType-value line: a top-level function
+    * arrow is parenthesized so the value-type reads as one token-group between
+    * the name and the value (fix isEmpty (RuleAspect => Boolean) ra => ...);
+    * an arrow nested inside a type application needs none (Map(String, [String] => Unit)). */
+  private def drakeValueTypeSlot (valueType: String) : String = {
+    val converted = drakeValueType(valueType)
+    if (splitTopArrow(valueType.trim).size > 1) s"($converted)" else converted
+  }
+
+  /** Element name to drake surface: a method type-parameter rides the name via
+    * the ( ) convention — JSON "updated[V1 >: V]" -> drake updated(V1 >: V). */
+  private def drakeElementName (name: String) : String = {
+    val idx = name.indexOf('[')
+    if (idx < 0 || !name.endsWith("]")) name
+    else name.substring(0, idx) + "(" + name.substring(idx + 1, name.length - 1) + ")"
+  }
+
+  /** TypeName reference on the drake surface: name with type parameters in the
+    * ( ) type-application form — Map[K, V]'s TypeName -> Map(K, V). */
+  private def drakeTypeRef (tn: TypeName) : String =
+    if (tn.typeParameters.isEmpty) tn.name
+    else s"${tn.name}(${tn.typeParameters.mkString(", ")})"
+
+  /** A dyn-with-body opens its own sub-block; its container needs [ ]. */
+  private def opensBlock (element: TypeElement) : Boolean = element match {
+    case d: Dynamic => d.parameters.nonEmpty || d.body.nonEmpty
+    case _          => false
+  }
+
+  /** Empty-collection default in the value position of a name-valueType-value
+    * line: [] = Seq.empty, {} = Set.empty. Both host spellings a JSON value may
+    * carry (the Seq.empty tree renders "Seq.empty"; legacy strings say "Seq()")
+    * collapse to the drake surface form. */
+  private def drakeDefault (rendered: String) : String = rendered match {
+    case "Seq.empty" | "Seq()" => "[]"
+    case "Set.empty" | "Set()" => "{}"
+    case other                 => other
+  }
+
+  /** One leaf element line: `kw name value-type value?` (mon carries value only). */
+  private def drakeLeaf (indent: String, keyword: String, element: TypeElement) : String = {
+    element match {
+      case _: Monadic => s"$indent$keyword ${drakeExpression(element.value)}"
+      case e =>
+        val value = drakeDefault(drakeExpression(e.value))
+        val tail = if (value.nonEmpty) s" $value" else ""
+        s"$indent$keyword ${drakeElementName(e.name)} ${drakeValueTypeSlot(e.valueType)}$tail"
+    }
+  }
+
+  private def drakeKeyword (element: TypeElement) : String = element match {
+    case _: Fixed     => "fix"
+    case _: Mutable   => "mut"
+    case _: Dynamic   => "dyn"
+    case _: Parameter => "par"
+    case _: Local     => "loc"
+    case _: Monadic   => "mon"
+    case e            => sys.error(s"Generator.drake: no drake keyword for element '${e.name}' (${e.getClass.getSimpleName})")
+  }
+
+  /** Render one element at `level` (2 spaces per level). A leaf renders one line;
+    * a dyn-with-body renders its parameters block, its body statements directly
+    * under the dyn, and its result on an `=` line (absent for Unit methods). */
+  private def drakeElement (element: TypeElement, level: Int) : Seq[String] = {
+    val indent = "  " * level
+    if (!opensBlock(element)) Seq(drakeLeaf(indent, drakeKeyword(element), element))
+    else {
+      val d = element.asInstanceOf[Dynamic]
+      val header = s"$indent${drakeKeyword(d)} ${drakeElementName(d.name)} ${drakeValueTypeSlot(d.valueType)}"
+      val parameters =
+        if (d.parameters.isEmpty) Seq.empty
+        else drakeSection("parameters", d.parameters, level + 1)
+      val statements = d.body.flatMap(drakeElement(_, level + 1))
+      val result = drakeExpression(d.value) match {
+        case ""       => Seq.empty
+        case rendered => Seq(s"$indent  = $rendered")
+      }
+      header +: (parameters ++ statements ++ result)
+    }
+  }
+
+  /** A list-block: head keyword, members one level deeper, [ ] only when a
+    * member opens its own sub-block (drake.dlt BRACKETS). */
+  private def drakeSection (keyword: String, members: Seq[TypeElement], level: Int) : Seq[String] = {
+    val indent = "  " * level
+    val nesting = members.exists(opensBlock)
+    val head = if (nesting) s"$indent$keyword [" else s"$indent$keyword"
+    val body = members.flatMap(drakeElement(_, level + 1))
+    val tail = if (nesting) Seq(s"$indent]") else Seq.empty
+    (head +: body) ++ tail
+  }
+
+  /** A bracketed name list (modules / types): names carry no bounding keyword,
+    * so the [ ] are always required. */
+  private def drakeNameList (keyword: String, names: Seq[String], level: Int) : Seq[String] = {
+    val indent = "  " * level
+    (s"$indent$keyword [" +: names.map(n => s"$indent  $n")) :+ s"$indent]"
+  }
+
+  /** Emit the .drake surface for a plain-type TypeDefinition (the drake.dlt
+    * TEMPLATE, plain-type sections + domain). Rule / actor / codec aspects are
+    * the next increments and are rejected loudly rather than silently dropped. */
+  def drake (td: TypeDefinition) : String = {
+    if (!RuleAspect.isEmpty(td.ruleAspect) || !ActorAspect.isEmpty(td.actorAspect) || !CodecAspect.isEmpty(td.codecAspect))
+      sys.error(s"Generator.drake: rule/actor/codec aspects not yet emitted (next increment): ${td.typeName.name}")
+
+    val da = td.dracoAspect
+    val typeParameters =
+      if (td.typeName.typeParameters.isEmpty) ""
+      else s"(${td.typeName.typeParameters.mkString(", ")})"
+    val fromClause = da.derivation.map(drakeTypeRef) match {
+      case Seq()           => ""
+      case Seq("DracoType") => ""  // the universal root alone is inferable
+      case refs            => s" from ${refs.mkString(" ")}"
+    }
+    val header = s"type ${td.typeName.name}$typeParameters$fromClause"
+
+    val modules =
+      if (da.modules.isEmpty) Seq.empty
+      else drakeNameList("modules", da.modules.map(drakeTypeRef), 1)
+    val extensible =
+      if (da.extensible.name.isEmpty) Seq.empty
+      else Seq(s"  extensible ${(da.extensible.namePackage :+ drakeTypeRef(da.extensible)).mkString(" ")}")
+    val elements =
+      if (da.elements.isEmpty) Seq.empty
+      else drakeSection("elements", da.elements, 1)
+    val factory =
+      if (da.factory.valueType.isEmpty) Seq.empty
+      else {
+        val parameters =
+          if (da.factory.parameters.isEmpty) Seq.empty
+          else drakeSection("parameters", da.factory.parameters, 2)
+        val body =
+          if (da.factory.body.isEmpty) Seq.empty
+          else drakeSection("body", da.factory.body, 2)
+        "  factory" +: (parameters ++ body)
+      }
+    val globals =
+      if (da.globalElements.isEmpty) Seq.empty
+      else drakeSection("globals", da.globalElements, 1)
+
+    val domain =
+      if (td.domainAspect.typeName.name.isEmpty) Seq.empty
+      else {
+        val head = s"domain ${(td.domainAspect.typeName.namePackage :+ td.domainAspect.typeName.name).mkString(" ")}"
+        val superDomain =
+          if (da.superDomain.name.isEmpty) Seq.empty
+          else Seq(s"  super ${(da.superDomain.namePackage :+ da.superDomain.name).mkString(" ")}")
+        val types =
+          if (td.domainAspect.elementTypeNames.isEmpty) Seq.empty
+          else drakeNameList("types", td.domainAspect.elementTypeNames, 1)
+        head +: (superDomain ++ types)
+      }
+
+    ((header +: (modules ++ extensible ++ elements ++ factory ++ globals)) ++ domain).mkString("", "\n", "\n")
+  }
+
   // --- Literal generation helpers ---
 
   private def wildcardName (name: String): String = {

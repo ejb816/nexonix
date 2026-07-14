@@ -1,8 +1,7 @@
 type Primes
-  elements [
+  elements
     fix knowledge org.evrete.api.Knowledge Rule.knowledgeService.newKnowledge("Primes")
-  ]
-  globalElements [
+  globals [
     dyn filter LazyList(Int)
       parameters
         par naturals LazyList(Int)
@@ -28,8 +27,9 @@ type Primes
   ]
 domain draco primes Primes
   types [
-  Accumulator
-  Numbers
-  AddNaturalSequence.rule
-  PrimesFromNaturalSequence.rule
-  RemoveCompositeNumbers.rule ]
+    Accumulator
+    Numbers
+    AddNaturalSequence.rule
+    PrimesFromNaturalSequence.rule
+    RemoveCompositeNumbers.rule
+  ]

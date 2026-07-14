@@ -1,6 +1,5 @@
 type Meters from Distance(Double)
-  factory Meters
-    parameters [
+  factory
+    parameters
       par value Double
-    ]
 domain draco base Base

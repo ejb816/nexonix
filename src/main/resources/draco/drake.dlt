@@ -97,6 +97,9 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
 
 CONVENTIONS
   factory          takes no name: it constructs the enclosing type <name> *(<T>, ...) (that is its valueType)
+  [] | {}          in the VALUE position of a name-valueType-value line: the empty-collection default —
+                   [] = Seq.empty, {} = Set.empty. Surface form only; the JSON value carries the host
+                   expression (the {".": ["Seq","empty"]} tree, or a legacy "Seq()" string).
   loc <name> <value-type> <value>   a factory/method LOCAL binding -> { kind=Local }: emits a strict
                    `val <name>: <value-type> = <value>`, NOT a declared element (no trait member, no
                    override/lazy). Contrast `fix` in a factory body -> `override lazy val` (a declared element).
