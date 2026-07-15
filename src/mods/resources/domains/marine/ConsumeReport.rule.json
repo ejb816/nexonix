@@ -24,7 +24,7 @@
         {
           "kind": "Monadic",
           "valueType": "Unit",
-          "value": "domains.marine.MarineSink.record(report.value.noSpaces)"
+          "value": "domains.marine.MarineSink.record(report.json.noSpaces)"
         }
       ]
     }

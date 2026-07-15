@@ -16,7 +16,7 @@
         ]
       },
       {
-        "name": "Json",
+        "name": "JSON",
         "namePackage": [
           "draco",
           "format",

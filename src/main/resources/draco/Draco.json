@@ -55,7 +55,6 @@
       "TypeElement",
       "TypeName",
       "TypeTransform",
-      "Value",
       "Variable"
     ]
   }

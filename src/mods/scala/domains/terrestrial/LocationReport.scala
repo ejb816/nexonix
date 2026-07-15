@@ -4,7 +4,7 @@ import draco._
 import domains._
 import draco.format.json._
 
-trait LocationReport extends Terrestrial with Json
+trait LocationReport extends Terrestrial with JSON
 
 object LocationReport extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("LocationReport", _namePackage = Seq ("domains", "terrestrial")))

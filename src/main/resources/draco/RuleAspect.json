@@ -22,11 +22,6 @@
       },
       {
         "kind": "Fixed",
-        "name": "values",
-        "valueType": "Seq[Value]"
-      },
-      {
-        "kind": "Fixed",
         "name": "action",
         "valueType": "Action"
       }
@@ -43,12 +38,6 @@
         },
         {
           "kind": "Parameter",
-          "name": "values",
-          "valueType": "Seq[Value]",
-          "value": { ".": ["Seq", "empty"] }
-        },
-        {
-          "kind": "Parameter",
           "name": "action",
           "valueType": "Action",
           "value": "Action.Null"
@@ -60,7 +49,7 @@
         "kind": "Fixed",
         "name": "isEmpty",
         "valueType": "RuleAspect => Boolean",
-        "value": "ra => ra.values.isEmpty && ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty && ra.action.body.isEmpty"
+        "value": "ra => ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty && ra.action.body.isEmpty"
       }
     ]
   },

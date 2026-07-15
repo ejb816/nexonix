@@ -1,7 +1,8 @@
 package org.nexonix.format.json
 import draco.PersistentTestLog
 
-import draco.{Generator, SourceContent, TypeDefinition, TypeName, Value}
+import draco.{Generator, SourceContent, TypeDefinition, TypeName}
+import draco.format.json.{JSON, Value}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
@@ -31,9 +32,9 @@ class TestValue extends AnyFunSuite with PersistentTestLog {
   }
 }
 """).getOrElse(Json.Null)
-    val phoneNumber = Value("phoneNumber", Seq[String]("order", "customer", "contactDetails", "phone")).value[String](json)
+    val phoneNumber = Value("phoneNumber", Seq[String]("order", "customer", "contactDetails", "phone")).value[String](JSON(json))
     log.info(phoneNumber)
-    val itemID = Value("itemID", Seq[String]("order", "items", "0", "id")).value[Int](json)
+    val itemID = Value("itemID", Seq[String]("order", "items", "0", "id")).value[Int](JSON(json))
     log.info(s"$itemID")
   }
   test ("test rule json") {

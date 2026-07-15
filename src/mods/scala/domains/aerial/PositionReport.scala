@@ -4,7 +4,7 @@ import draco._
 import domains._
 import draco.format.json._
 
-trait PositionReport extends Aerial with Json
+trait PositionReport extends Aerial with JSON
 
 object PositionReport extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("PositionReport", _namePackage = Seq ("domains", "aerial")))

@@ -15,7 +15,7 @@ object OriginateReportRule extends App {
   lazy val domainType: Domain[Marine] = Domain[Marine] (typeDefinition)
 
   private def originate(intent: VoyageIntent): FixReport = {
-    val cur          = intent.value.hcursor
+    val cur          = intent.json.hcursor
     val vessel       = cur.get[String]("vessel").getOrElse("UNKNOWN")
     val depthMetres  = cur.get[Int]("depthMetres").getOrElse(0)
     val depthFathoms = (depthMetres * 10000) / 18288   // metres -> fathoms, integer
@@ -26,14 +26,14 @@ object OriginateReportRule extends App {
     )
     new FixReport {
       override lazy val typeDefinition: TypeDefinition = FixReport.typeDefinition
-      override val value: io.circe.Json = payload
+      override val json: io.circe.Json = payload
     }
   }
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val intent: VoyageIntent = ctx.get[VoyageIntent]("$intent")
-      val consumer: ActorRef[draco.format.json.Json] =
-        ctx.getRuntime().get[ActorRef[draco.format.json.Json]]("consumer")
+      val consumer: ActorRef[draco.format.json.JSON] =
+        ctx.getRuntime().get[ActorRef[draco.format.json.JSON]]("consumer")
       consumer ! originate(intent)
   }
 

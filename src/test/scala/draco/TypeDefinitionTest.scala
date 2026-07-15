@@ -209,7 +209,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
 
   test("subtype-only fields round-trip through the TypeElement codec (Pattern, Action)") {
     // The discriminated TypeElement encoder must emit fields that live only on a
-    // subtype (Pattern.variables/conditions, Action.variables/values), not just the
+    // subtype (Pattern.variables/conditions, Action.variables), not just the
     // parent-trait fields. Before the fix these were dropped on encode.
     val pattern = Pattern(
       _variables = Seq(Variable("accumulator", "Accumulator"), Variable("i", "Integer"))

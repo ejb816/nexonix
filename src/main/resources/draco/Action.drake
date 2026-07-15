@@ -1,15 +1,12 @@
 type Action from BodyElement
   elements [
-    fix variables [Variable]
-    fix values [Value] ]
+    fix variables [Variable] ]
   factory Action
     parameters [
       par variables [Variable] []
-      par values [Value] []
       par body [BodyElement] [] ]
     body [
       fix variables [Variable] _variables
-      fix values [Value] _values
       fix body [BodyElement] _body
       fix name String "ctx"
       fix valueType String org.evrete.api.RhsContext -> Unit ]

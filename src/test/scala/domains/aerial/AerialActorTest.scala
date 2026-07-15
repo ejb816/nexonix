@@ -32,7 +32,7 @@ class AerialActorTest extends AnyFunSuite {
     )
     new PositionReport {
       override lazy val typeDefinition: TypeDefinition = PositionReport.typeDefinition
-      override val value: Json = payload
+      override val json: Json = payload
     }
   }
 
@@ -50,7 +50,7 @@ class AerialActorTest extends AnyFunSuite {
 
   test("Consumer actor accumulates a PositionReport and reaps it to the sink at PostStop") {
     AerialSink.clear()
-    val system = ActorSystem(Consumer.actorType().asInstanceOf[Actor[draco.format.json.Json]], "aerialConsumer")
+    val system = ActorSystem(Consumer.actorType().asInstanceOf[Actor[draco.format.json.JSON]], "aerialConsumer")
     system ! report("NX2087", 28000)
     Thread.sleep(200)
     system.terminate()

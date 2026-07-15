@@ -1,0 +1,9 @@
+type Value(F)
+  elements [
+    fix name String
+    fix pathElements [String]
+    dyn value(T: Decoder) T
+      parameters
+        par _source F
+  ]
+domain draco format Format

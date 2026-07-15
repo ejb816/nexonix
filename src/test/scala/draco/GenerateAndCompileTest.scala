@@ -59,8 +59,7 @@ class GenerateAndCompileTest extends AnyFunSuite with PersistentTestLog {
     "draco/Type.json",
     "draco/TypeDictionary.json",
     "draco/TypeName.json",
-    "draco/TypeTransform.json",
-    "draco/Value.json"
+    "draco/TypeTransform.json"
   )
 
   private def loadTypeDefinition(rp: String): Either[String, (TypeDefinition, String)] = {

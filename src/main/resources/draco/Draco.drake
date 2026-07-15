@@ -43,6 +43,5 @@ domain draco Draco
     TypeElement
     TypeName
     TypeTransform
-    Value
     Variable
   ]

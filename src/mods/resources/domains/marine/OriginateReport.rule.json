@@ -24,8 +24,8 @@
         {
           "kind": "Fixed",
           "name": "consumer",
-          "valueType": "org.apache.pekko.actor.typed.ActorRef[draco.format.json.Json]",
-          "value": "ctx.getRuntime().get[org.apache.pekko.actor.typed.ActorRef[draco.format.json.Json]](\"consumer\")"
+          "valueType": "org.apache.pekko.actor.typed.ActorRef[draco.format.json.JSON]",
+          "value": "ctx.getRuntime().get[org.apache.pekko.actor.typed.ActorRef[draco.format.json.JSON]](\"consumer\")"
         },
         {
           "kind": "Monadic",

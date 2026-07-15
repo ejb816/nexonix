@@ -15,7 +15,7 @@ object ConsumeReportRule extends App {
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val report: EphemerisReport = ctx.get[EphemerisReport]("$report")
-      domains.ethereal.EtherealSink.record(report.value.noSpaces)
+      domains.ethereal.EtherealSink.record(report.json.noSpaces)
   }
 
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {

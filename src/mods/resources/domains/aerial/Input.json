@@ -14,7 +14,7 @@
           "draco"
         ],
         "typeParameters": [
-          "draco.format.json.Json"
+          "draco.format.json.JSON"
         ]
       }
     ],

@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "Xml",
+    "name": "XML",
     "namePackage": [
       "draco",
       "format",
@@ -16,14 +16,14 @@
           "format"
         ],
         "typeParameters": [
-          "String"
+          "XML"
         ]
       }
     ]
   },
   "domainAspect": {
     "typeName": {
-      "name": "Xml",
+      "name": "XML",
       "namePackage": [
         "draco",
         "format",

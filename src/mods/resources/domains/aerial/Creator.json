@@ -14,7 +14,7 @@
           "draco"
         ],
         "typeParameters": [
-          "draco.format.json.Json"
+          "draco.format.json.JSON"
         ]
       }
     ],
@@ -25,7 +25,7 @@
         {
           "kind": "Parameter",
           "name": "consumer",
-          "valueType": "ActorRef[draco.format.json.Json]"
+          "valueType": "ActorRef[draco.format.json.JSON]"
         }
       ]
     }

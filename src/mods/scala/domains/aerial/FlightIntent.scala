@@ -4,7 +4,7 @@ import draco._
 import domains._
 import draco.format.json._
 
-trait FlightIntent extends Aerial with Json
+trait FlightIntent extends Aerial with JSON
 
 object FlightIntent extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("FlightIntent", _namePackage = Seq ("domains", "aerial")))

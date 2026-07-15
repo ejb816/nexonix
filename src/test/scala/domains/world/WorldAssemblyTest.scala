@@ -45,7 +45,7 @@ class WorldAssemblyTest extends AnyFunSuite {
     _entry = Input
   )
 
-  private type J = draco.format.json.Json
+  private type J = draco.format.json.JSON
   private val constructors: Map[String, AssemblySpawner.Constructor] = Map(
     Input.namePath ->
       ((refs: Seq[ActorRef[Any]]) =>
@@ -74,7 +74,7 @@ class WorldAssemblyTest extends AnyFunSuite {
     )
     new domains.aerial.PositionReport {
       override lazy val typeDefinition: TypeDefinition = domains.aerial.PositionReport.typeDefinition
-      override val value: Json = payload
+      override val json: Json = payload
     }
   }
 

@@ -19,19 +19,19 @@ class WorldHierarchyTest extends AnyFunSuite {
   test("each medium derives World, and its message shells are indirect World subtypes") {
     val aerial = new domains.aerial.PositionReport {
       override lazy val typeDefinition: TypeDefinition = domains.aerial.PositionReport.typeDefinition
-      override val value: Json = Json.obj()
+      override val json: Json = Json.obj()
     }
     val terrestrial = new domains.terrestrial.LocationReport {
       override lazy val typeDefinition: TypeDefinition = domains.terrestrial.LocationReport.typeDefinition
-      override val value: Json = Json.obj()
+      override val json: Json = Json.obj()
     }
     val marine = new domains.marine.FixReport {
       override lazy val typeDefinition: TypeDefinition = domains.marine.FixReport.typeDefinition
-      override val value: Json = Json.obj()
+      override val json: Json = Json.obj()
     }
     val ethereal = new domains.ethereal.EphemerisReport {
       override lazy val typeDefinition: TypeDefinition = domains.ethereal.EphemerisReport.typeDefinition
-      override val value: Json = Json.obj()
+      override val json: Json = Json.obj()
     }
 
     // indirect World subtype, via medium
@@ -42,7 +42,7 @@ class WorldHierarchyTest extends AnyFunSuite {
 
     // still a direct subtype of its own medium, and a Format shell
     assert(aerial.isInstanceOf[domains.aerial.Aerial])
-    assert(aerial.isInstanceOf[draco.format.json.Json])
+    assert(aerial.isInstanceOf[draco.format.json.JSON])
   }
 
   test("Sentient is a subdomain of World") {

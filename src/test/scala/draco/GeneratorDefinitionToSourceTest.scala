@@ -195,6 +195,6 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite with PersistentTestLog
   }
 
   test("Generate Value") {
-    generateAndVerify("draco/Value.json", "Value")
+    generateAndVerify("draco/format/Value.json", "Value")
   }
 }

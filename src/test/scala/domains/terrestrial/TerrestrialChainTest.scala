@@ -23,18 +23,18 @@ class TerrestrialChainTest extends AnyFunSuite {
     )
     new MarchIntent {
       override lazy val typeDefinition: TypeDefinition = MarchIntent.typeDefinition
-      override val value: Json = payload
+      override val json: Json = payload
     }
   }
 
   test("Creator originates a LocationReport from a MarchIntent (elevationFeet -> elevationMetres) and the Consumer records it") {
     TerrestrialSink.clear()
 
-    val guardian: Behavior[draco.format.json.Json] = Behaviors.setup { ctx =>
-      val consumer: ActorRef[draco.format.json.Json] =
-        ctx.spawn(Consumer.actorType().asInstanceOf[Actor[draco.format.json.Json]], "consumer")
-      val creator: ActorRef[draco.format.json.Json] =
-        ctx.spawn(Creator.actorType(consumer).asInstanceOf[Actor[draco.format.json.Json]], "creator")
+    val guardian: Behavior[draco.format.json.JSON] = Behaviors.setup { ctx =>
+      val consumer: ActorRef[draco.format.json.JSON] =
+        ctx.spawn(Consumer.actorType().asInstanceOf[Actor[draco.format.json.JSON]], "consumer")
+      val creator: ActorRef[draco.format.json.JSON] =
+        ctx.spawn(Creator.actorType(consumer).asInstanceOf[Actor[draco.format.json.JSON]], "creator")
       Behaviors.receiveMessage { msg =>
         creator ! msg
         Behaviors.same

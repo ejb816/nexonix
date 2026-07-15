@@ -19,11 +19,6 @@
         "kind": "Fixed",
         "name": "variables",
         "valueType": "Seq[Variable]"
-      },
-      {
-        "kind": "Fixed",
-        "name": "values",
-        "valueType": "Seq[Value]"
       }
     ],
     "factory": {
@@ -34,12 +29,6 @@
           "kind": "Parameter",
           "name": "variables",
           "valueType": "Seq[Variable]",
-          "value": { ".": ["Seq", "empty"] }
-        },
-        {
-          "kind": "Parameter",
-          "name": "values",
-          "valueType": "Seq[Value]",
           "value": { ".": ["Seq", "empty"] }
         },
         {
@@ -55,12 +44,6 @@
           "name": "variables",
           "valueType": "Seq[Variable]",
           "value": "_variables"
-        },
-        {
-          "kind": "Fixed",
-          "name": "values",
-          "valueType": "Seq[Value]",
-          "value": "_values"
         },
         {
           "kind": "Fixed",

@@ -23,18 +23,18 @@ class MarineChainTest extends AnyFunSuite {
     )
     new VoyageIntent {
       override lazy val typeDefinition: TypeDefinition = VoyageIntent.typeDefinition
-      override val value: Json = payload
+      override val json: Json = payload
     }
   }
 
   test("Creator originates a FixReport from a VoyageIntent (depthMetres -> depthFathoms) and the Consumer records it") {
     MarineSink.clear()
 
-    val guardian: Behavior[draco.format.json.Json] = Behaviors.setup { ctx =>
-      val consumer: ActorRef[draco.format.json.Json] =
-        ctx.spawn(Consumer.actorType().asInstanceOf[Actor[draco.format.json.Json]], "consumer")
-      val creator: ActorRef[draco.format.json.Json] =
-        ctx.spawn(Creator.actorType(consumer).asInstanceOf[Actor[draco.format.json.Json]], "creator")
+    val guardian: Behavior[draco.format.json.JSON] = Behaviors.setup { ctx =>
+      val consumer: ActorRef[draco.format.json.JSON] =
+        ctx.spawn(Consumer.actorType().asInstanceOf[Actor[draco.format.json.JSON]], "consumer")
+      val creator: ActorRef[draco.format.json.JSON] =
+        ctx.spawn(Creator.actorType(consumer).asInstanceOf[Actor[draco.format.json.JSON]], "creator")
       Behaviors.receiveMessage { msg =>
         creator ! msg
         Behaviors.same

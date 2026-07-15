@@ -1,2 +1,5 @@
-type Format(T) from Primal(T)
+type Format(F) from Primal(F)
 domain draco format Format
+  types [
+    Value
+  ]

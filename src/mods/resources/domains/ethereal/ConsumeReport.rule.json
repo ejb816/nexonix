@@ -24,7 +24,7 @@
         {
           "kind": "Monadic",
           "valueType": "Unit",
-          "value": "domains.ethereal.EtherealSink.record(report.value.noSpaces)"
+          "value": "domains.ethereal.EtherealSink.record(report.json.noSpaces)"
         }
       ]
     }

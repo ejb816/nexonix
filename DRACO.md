@@ -100,7 +100,7 @@ These are deliberately kept structurally symmetric — none is parameterized. Wh
 | `SourceContent.scala` | Reads source files from a URI root |
 | `ContentSink.scala` | Writes generated content to output paths |
 | `Main.scala` | Default source root (resources) and sink root (scala) URIs |
-| `Value.scala` | JSON path extractor: navigates pathElements to extract typed values |
+| `format/Value.scala` | `Value[F]` — path extractor over a format payload: name + pathElements + abstract `value[T: Decoder](_source: F)`; the json sub-domain's `Value` (extends `Value[JSON]`) carries the circe implementation |
 | `Draco.scala` | Root domain registering all framework types |
 
 ### TypeName

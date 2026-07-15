@@ -15,7 +15,7 @@ object OriginateReportRule extends App {
   lazy val domainType: Domain[Aerial] = Domain[Aerial] (typeDefinition)
 
   private def originate(intent: FlightIntent): PositionReport = {
-    val cur      = intent.value.hcursor
+    val cur      = intent.json.hcursor
     val callsign = cur.get[String]("callsign").getOrElse("UNKNOWN")
     val fl       = cur.get[Int]("flightLevel").getOrElse(0)
     val payload  = io.circe.Json.obj(
@@ -25,14 +25,14 @@ object OriginateReportRule extends App {
     )
     new PositionReport {
       override lazy val typeDefinition: TypeDefinition = PositionReport.typeDefinition
-      override val value: io.circe.Json = payload
+      override val json: io.circe.Json = payload
     }
   }
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val intent: FlightIntent = ctx.get[FlightIntent]("$intent")
-      val consumer: ActorRef[draco.format.json.Json] =
-        ctx.getRuntime().get[ActorRef[draco.format.json.Json]]("consumer")
+      val consumer: ActorRef[draco.format.json.JSON] =
+        ctx.getRuntime().get[ActorRef[draco.format.json.JSON]]("consumer")
       consumer ! originate(intent)
   }
 

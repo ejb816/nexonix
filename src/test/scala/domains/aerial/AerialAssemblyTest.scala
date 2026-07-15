@@ -35,7 +35,7 @@ class AerialAssemblyTest extends AnyFunSuite {
       ((_: Seq[ActorRef[Any]]) => Consumer.actorType().asInstanceOf[Behavior[Any]]),
     Creator.typeDefinition.typeName.namePath ->
       ((refs: Seq[ActorRef[Any]]) =>
-        Creator.actorType(refs.head.asInstanceOf[ActorRef[draco.format.json.Json]]).asInstanceOf[Behavior[Any]])
+        Creator.actorType(refs.head.asInstanceOf[ActorRef[draco.format.json.JSON]]).asInstanceOf[Behavior[Any]])
   )
 
   private def intent(callsign: String, flightLevel: Int): FlightIntent = {
@@ -46,7 +46,7 @@ class AerialAssemblyTest extends AnyFunSuite {
     )
     new FlightIntent {
       override lazy val typeDefinition: TypeDefinition = FlightIntent.typeDefinition
-      override val value: Json = payload
+      override val json: Json = payload
     }
   }
 
@@ -66,9 +66,9 @@ class AerialAssemblyTest extends AnyFunSuite {
   test("the spawner runs the assembly and the stateful Consumer reaps at PostStop") {
     AerialSink.clear()
 
-    val guardian: Behavior[draco.format.json.Json] = Behaviors.setup { ctx =>
-      val entry: ActorRef[draco.format.json.Json] =
-        AssemblySpawner.spawn[draco.format.json.Json](aerialChain, constructors)(ctx)
+    val guardian: Behavior[draco.format.json.JSON] = Behaviors.setup { ctx =>
+      val entry: ActorRef[draco.format.json.JSON] =
+        AssemblySpawner.spawn[draco.format.json.JSON](aerialChain, constructors)(ctx)
       Behaviors.receiveMessage { msg =>
         entry ! msg
         Behaviors.same

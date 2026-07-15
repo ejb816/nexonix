@@ -24,7 +24,7 @@
         {
           "kind": "Monadic",
           "valueType": "Unit",
-          "value": "domains.terrestrial.TerrestrialSink.record(report.value.noSpaces)"
+          "value": "domains.terrestrial.TerrestrialSink.record(report.json.noSpaces)"
         }
       ]
     }

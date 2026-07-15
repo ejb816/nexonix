@@ -15,7 +15,7 @@ object ConsumeReportRule extends App {
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val report: PositionReport = ctx.get[PositionReport]("$report")
-      ctx.getRuntime().get[java.util.List[String]]("consumed").add(report.value.noSpaces)
+      ctx.getRuntime().get[java.util.List[String]]("consumed").add(report.json.noSpaces)
   }
 
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {

@@ -68,9 +68,11 @@ object Generator extends App {
     * must override `typeDefinition` / `dracoType` (only required when the chain
     * actually reaches the trait that declares those abstract members). */
   private def chainHits (td: TypeDefinition, targetName: String, seen: Set[String] = Set.empty) : Boolean = {
-    if (seen.contains(td.typeName.name)) return false
+    // Cycle guard keys on the package-qualified path: a parent may share the
+    // type's simple name (draco.format.json.Value extends draco.format.Value).
+    if (seen.contains(td.typeName.namePath)) return false
     if (td.typeName.name == targetName) return true
-    val nextSeen = seen + td.typeName.name
+    val nextSeen = seen + td.typeName.namePath
     td.dracoAspect.derivation.exists { tn =>
       if (tn.name == targetName) true
       else {
@@ -323,12 +325,10 @@ object Generator extends App {
     (head +: body) ++ tail
   }
 
-  /** A bracketed name list (modules / types): names carry no bounding keyword,
-    * so the [ ] are always required. */
-  private def drakeNameList (keyword: String, names: Seq[String], level: Int) : Seq[String] = {
-    val indent = "  " * level
-    (s"$indent$keyword [" +: names.map(n => s"$indent  $n")) :+ s"$indent]"
-  }
+  /** A bracketed name list (modules / types — both top-level type sections):
+    * names carry no bounding keyword, so the [ ] are always required. */
+  private def drakeNameList (keyword: String, names: Seq[String]) : Seq[String] =
+    (s"  $keyword [" +: names.map(n => s"    $n")) :+ "  ]"
 
   /** Emit the .drake surface for a plain-type TypeDefinition (the drake.dlt
     * TEMPLATE, plain-type sections + domain). Rule / actor / codec aspects are
@@ -350,7 +350,7 @@ object Generator extends App {
 
     val modules =
       if (da.modules.isEmpty) Seq.empty
-      else drakeNameList("modules", da.modules.map(drakeTypeRef), 1)
+      else drakeNameList("modules", da.modules.map(drakeTypeRef))
     val extensible =
       if (da.extensible.name.isEmpty) Seq.empty
       else Seq(s"  extensible ${(da.extensible.namePackage :+ drakeTypeRef(da.extensible)).mkString(" ")}")
@@ -381,7 +381,7 @@ object Generator extends App {
           else Seq(s"  super ${(da.superDomain.namePackage :+ da.superDomain.name).mkString(" ")}")
         val types =
           if (td.domainAspect.elementTypeNames.isEmpty) Seq.empty
-          else drakeNameList("types", td.domainAspect.elementTypeNames, 1)
+          else drakeNameList("types", td.domainAspect.elementTypeNames)
         head +: (superDomain ++ types)
       }
 
@@ -480,8 +480,7 @@ object Generator extends App {
 
   private def actionBody (
      action: Action,
-     variables: Seq[Variable],
-     values: Seq[Value]
+     variables: Seq[Variable]
   ) : String = {
     // Extract rule variables from context
     val varBindings = variables.map { v =>
@@ -517,6 +516,18 @@ object Generator extends App {
     if (modules.isEmpty) "" else "sealed "
   }
 
+  /** A derivation reference on the extends clause. Package-qualified when the
+    * parent shares the type's own simple name (draco.format.json.Value extends
+    * draco.format.Value[JSON]) — an unqualified reference would resolve to the
+    * type being declared. */
+  private def derivationRef (td: TypeDefinition, tn: TypeName) : String = {
+    val base = parameterizedName(tn)
+    if (stripAspect(tn.name) == stripAspect(td.typeName.name) &&
+        tn.namePackage.nonEmpty && tn.namePackage != td.typeName.namePackage)
+      s"${tn.namePackage.mkString(".")}.$base"
+    else base
+  }
+
   private def typeExtends (
     td: TypeDefinition
   ) : String = {
@@ -525,10 +536,10 @@ object Generator extends App {
     if (ext.name.nonEmpty) {
       val head = parameterizedName(ext)
       if (derivation.isEmpty) s"extends $head"
-      else s"extends $head with ${derivation.map(parameterizedName).mkString(" with ")}"
+      else s"extends $head with ${derivation.map(derivationRef(td, _)).mkString(" with ")}"
     } else if (derivation.nonEmpty) {
-      val head = parameterizedName(derivation.head)
-      val tail = derivation.tail.map(parameterizedName)
+      val head = derivationRef(td, derivation.head)
+      val tail = derivation.tail.map(derivationRef(td, _))
       if (tail.isEmpty) s"extends $head"
       else s"extends $head with ${tail.mkString(" with ")}"
     } else ""
@@ -986,7 +997,7 @@ object Generator extends App {
 
   /** Per-subtype encoder fields for a discriminated union: each leaf's factory
     * params that are NOT declared on the parent trait (e.g. Pattern.variables/
-    * conditions, Action.variables/values). Without these the shared parent encoder
+    * conditions, Action.variables). Without these the shared parent encoder
     * silently drops subtype-only fields that the decoder reads back, breaking
     * round-trip. Returns "" when no leaf carries extra fields. */
   private def subtypeExtraFields (
@@ -1174,11 +1185,13 @@ object Generator extends App {
     s"  lazy val domainType: Domain[$containerName] = Domain[$containerName] (typeDefinition)"
 
   /** Container name to use when emitting `domainType` for a non-domain (leaf) type.
-    * Returns the simple Scala name from `domainAspect.typeName`, or empty if not set
-    * (in which case the caller should skip emission to permit partial migration). */
+    * Returns the simple Scala name from `domainAspect.typeName` — wildcarded when
+    * the reference carries type parameters (member of Format[F] -> Domain[Format[_]]) —
+    * or empty if not set (in which case the caller should skip emission to permit
+    * partial migration). */
   private def containerName (td: TypeDefinition) : String = {
     val tn = td.domainAspect.typeName
-    if (tn != null && tn.name.nonEmpty) stripAspect(tn.name) else ""
+    if (tn != null && tn.name.nonEmpty) wildcardTypeName(tn) else ""
   }
 
   /** Emit a Scala-visible mirror of the domain's elementTypeNames list. JSON remains
@@ -1206,6 +1219,19 @@ object Generator extends App {
     val dtLiteral = domainTypeLiteral(wName)
     val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
     val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.dracoAspect.globalElements)}" else ""
+    // A domain type may also be constructible (aspect co-presence): emit its
+    // factory apply + Null exactly as typeGlobal would (draco.format.json.JSON).
+    val factory = td.dracoAspect.factory
+    val factoryBlock =
+      if (factory.valueType.isEmpty) ""
+      else {
+        val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
+        s"""
+           |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType} = new ${factory.valueType} ${factoryBody(td)}
+           |
+           |  ${nullInstance(td.typeName, td.dracoAspect.elements, factory)}
+           |""".stripMargin
+      }
 
     s"""$header {
        |$tdLiteral
@@ -1213,7 +1239,7 @@ object Generator extends App {
        |
        |$etnLiteral
        |$codecBlock
-       |$dtLiteral$globals
+       |$dtLiteral$factoryBlock$globals
        |}""".stripMargin
   }
 
@@ -1235,7 +1261,7 @@ object Generator extends App {
        |$tiLiteral$dtBlock
        |${conditionFunctions(td.ruleAspect.pattern.conditions)}
        |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
-       |${actionBody(td.ruleAspect.action, td.ruleAspect.pattern.variables, td.ruleAspect.values)}
+       |${actionBody(td.ruleAspect.action, td.ruleAspect.pattern.variables)}
        |  }
        |
        |  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
@@ -1322,7 +1348,7 @@ object Generator extends App {
     action.body.map {
       case f: Fixed if f.name.nonEmpty   => s"${indent}val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
       case m: Mutable if m.name.nonEmpty => s"${indent}var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
-      case be: BodyElement               => s"${indent}${expression(be.value)}"
+      case be: BodyElement               => s"$indent${expression(be.value)}"
     }.mkString("\n")
 
   /** `signalAction` runs ONCE at actor construction — session creation (stateful or
@@ -1360,7 +1386,7 @@ object Generator extends App {
     s"""  $actorDecl = new Actor[$msgType] {
        |    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition
        |
-       |${setupSection}    override def receive(ctx: TypedActorContext[$msgType], msg: $msgType): Behavior[$msgType] = {
+       |$setupSection    override def receive(ctx: TypedActorContext[$msgType], msg: $msgType): Behavior[$msgType] = {
        |$recvBlock      Behaviors.same[$msgType]
        |    }
        |
@@ -1465,7 +1491,9 @@ object Generator extends App {
     "Consumer"            -> "import java.util.function.Consumer",
     "Knowledge"           -> "import org.evrete.api.Knowledge",
     "RhsContext"          -> "import org.evrete.api.RhsContext",
-    "ExtensibleBehavior"  -> "import org.apache.pekko.actor.typed.ExtensibleBehavior"
+    "ExtensibleBehavior"  -> "import org.apache.pekko.actor.typed.ExtensibleBehavior",
+    "Json"                -> "import io.circe.Json",
+    "Decoder"             -> "import io.circe.Decoder"
   )
 
   /** Extract all simple type names referenced in a string like "Consumer[Knowledge]" or "Seq[URI]" */
@@ -1475,10 +1503,16 @@ object Generator extends App {
 
   /** Collect external type imports needed by a TypeDefinition */
   private def externalImports (td: TypeDefinition) : Seq[String] = {
+    // Method-shaped elements (dyn-with-body) nest parameters and statements; a
+    // context-bounded name ("value[T: Decoder]") carries a type in its bound.
+    val methodShaped = td.dracoAspect.elements ++ td.dracoAspect.factory.body ++ td.dracoAspect.globalElements
+    val nested = methodShaped.flatMap(e => e.parameters.map(_.valueType) ++ e.body.map(_.valueType))
     val allValueTypes = td.dracoAspect.elements.map(_.valueType) ++
       td.dracoAspect.factory.parameters.map(_.valueType) ++
       td.dracoAspect.factory.body.map(_.valueType) ++
       td.dracoAspect.globalElements.map(_.valueType) ++
+      nested ++
+      methodShaped.map(_.name) ++
       td.dracoAspect.derivation.map(_.name) ++
       Seq(td.dracoAspect.extensible.name)
     val typeNames = allValueTypes.flatMap(extractTypeNames).distinct
@@ -1568,7 +1602,8 @@ object Generator extends App {
       case "actor" => pekkoImports
       case _ => Seq.empty
     }
-    val external = externalImports(td)
+    // The circe bundle already brings Decoder/Encoder/Json — drop the singles.
+    val external = externalImports(td).filterNot(i => codec.nonEmpty && i.startsWith("import io.circe"))
     val allImports = (pkg ++ refs).distinct ++ codec ++ instance ++ external
     if (allImports.isEmpty) "" else s"\n${allImports.mkString("\n")}\n"
   }

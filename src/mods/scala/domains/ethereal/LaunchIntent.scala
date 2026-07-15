@@ -4,7 +4,7 @@ import draco._
 import domains._
 import draco.format.json._
 
-trait LaunchIntent extends Ethereal with Json
+trait LaunchIntent extends Ethereal with JSON
 
 object LaunchIntent extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("LaunchIntent", _namePackage = Seq ("domains", "ethereal")))

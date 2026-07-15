@@ -5,30 +5,30 @@ import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.file.{Files, Paths}
 import scala.jdk.CollectionConverters._
-import scala.util.{Failure, Success, Try, Using}
+import scala.util.Using
 
-/** Emits .drake surface from TypeDefinition JSON (`Generator.drake`) and verifies
- *  it against the hand-authored corpus in `src/main/resources/draco/`.
+/** Emits .drake surface from each plain-type TypeDefinition JSON
+ *  (`Generator.drake`) and verifies it against the hand-authored corpus in
+ *  `src/main/resources/draco/` — the drake projection's drift guard, mirroring
+ *  DracoGenTest for the Scala projection.
  *
- *  Two tiers:
- *    1. EXACT MATCH — the new-model files (leaf list-blocks unbracketed, bare
- *       `factory`) must reproduce byte-for-byte (whitespace-normalized). These
- *       are the emitter's ground truth; a diff here is an emitter bug.
- *    2. CENSUS (report-only) — every other plain-type JSON is emitted and
- *       diffed against its hand-authored .drake. The corpus predates the
- *       new-model bracket/keyword conventions, so diffs are expected: the
- *       census output IS the Phase-2a sweep worklist, not a failure. The test
- *       fails only if emission itself throws on a plain type.
+ *  Since the Phase-2a sweep the plain-type corpus is emitter-canonical: every
+ *  plain type gets a per-type exact-match test (whitespace-normalized). A
+ *  failure means either the emitter regressed or a .drake was hand-edited
+ *  without its JSON — resolve by fixing the emitter or re-emitting the file.
  *
- *  Rule / actor / codec aspects are the next emitter increments; those files
- *  are skipped and counted. */
+ *  Rule / actor / codec aspects are the next emitter increments; `.rule.json` /
+ *  `.actor.json` files are filtered at discovery. A plain file that grows a
+ *  codec aspect will fail its test loudly (Generator.drake rejects it) — the
+ *  signal to build that increment. */
 class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
 
-  /** New-model files: emission must match the authored surface exactly. */
-  private val exactMatchTargets: Seq[String] = Seq(
-    "draco/Dictionary.json",
-    "draco/ContentSink.json",
-    "draco/SourceContent.json"
+  /** Excluded from comparison — hand-authored surface deliberately AHEAD of the
+   *  JSON (target-state syntax discovery the emitter cannot yet reconstruct). */
+  private val authoredAhead: Map[String, String] = Map(
+    "draco/Action.json"      -> "present-empty rule/actor heads (presence model not yet in JSON)",
+    "draco/BodyElement.json" -> "present-empty rule/actor heads (presence model not yet in JSON)",
+    "draco/ActorAspect.json" -> "present-empty heads + start/message/signal rename (Phase 2b)"
   )
 
   private def deriveDrakePath(resourcePath: String): String =
@@ -42,6 +42,7 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
         .filter(p => Files.isRegularFile(p))
         .map(p => resourceRoot.relativize(p).toString.replace('\\', '/'))
         .filter(_.endsWith(".json"))
+        .filterNot(p => p.endsWith(".rule.json") || p.endsWith(".actor.json"))
         .toList
         .sorted
     }
@@ -58,14 +59,8 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
     if (Files.isRegularFile(path)) Some(new String(Files.readAllBytes(path))) else None
   }
 
-  private def isPlainType(td: TypeDefinition): Boolean =
-    RuleAspect.isEmpty(td.ruleAspect) &&
-    ActorAspect.isEmpty(td.actorAspect) &&
-    CodecAspect.isEmpty(td.codecAspect)
-
   /** Same normalization as DracoGenTest: strip trailing whitespace, collapse
-   *  blank-line runs, trim leading/trailing blank lines. Indentation, token
-   *  order, and substantive content are preserved. */
+   *  blank-line runs, trim leading/trailing blank lines. */
   private def normalize(source: String): String = {
     val lines = source.replace("\r\n", "\n").split('\n').map(_.replaceAll("\\s+$", "")).toSeq
     val collapsed = lines.foldLeft(Seq.empty[String]) { (acc, line) =>
@@ -87,9 +82,9 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
     "\n        hand-authored" + " " * 47 + "| emitted\n" + rows.mkString("\n")
   }
 
-  // --- Tier 1: new-model files reproduce exactly ---
+  // --- Per-type: Generator.drake output matches the authored .drake ---
 
-  exactMatchTargets.foreach { rp =>
+  discoverResourcePaths().filterNot(authoredAhead.contains).foreach { rp =>
     val drakePath = deriveDrakePath(rp)
     test(s"$rp: Generator.drake matches $drakePath (whitespace-normalized)") {
       val td = loadTypeDefinition(rp)
@@ -103,42 +98,5 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
         fail(s"$rp: emitted drake differs from hand-authored $drakePath.\n" + diffReport(handNorm, genNorm))
       }
     }
-  }
-
-  // --- Tier 2: census over the plain corpus (report-only; the Phase-2a worklist) ---
-
-  test("drake census: every plain-type JSON emits without error; diffs vs authored corpus reported") {
-    val all = discoverResourcePaths()
-    var matches, diffs, missing, deferred = 0
-    var errors = Seq.empty[String]
-
-    all.foreach { rp =>
-      val td = loadTypeDefinition(rp)
-      if (td == TypeDefinition.Null || !isPlainType(td)) deferred += 1
-      else Try(Generator.drake(td)) match {
-        case Failure(e) =>
-          errors :+= s"$rp: ${e.getMessage}"
-        case Success(emitted) =>
-          readDrake(deriveDrakePath(rp)) match {
-            case None => missing += 1
-              log.info(s"$rp: no hand-authored .drake")
-            case Some(authored) =>
-              val genNorm  = normalize(emitted)
-              val handNorm = normalize(authored)
-              if (genNorm == handNorm) matches += 1
-              else {
-                diffs += 1
-                log.info(s"\n=== $rp: differs from authored ===" + diffReport(handNorm, genNorm))
-              }
-          }
-      }
-    }
-
-    val summary = s"drake census: $matches match, $diffs differ (Phase-2a worklist), " +
-      s"$missing without .drake, $deferred deferred (rule/actor/codec), ${errors.size} emission errors"
-    console.info(s"  $summary")
-    log.info(summary)
-    errors.foreach(e => log.info(s"EMISSION ERROR: $e"))
-    assert(errors.isEmpty, s"emission threw on plain types:\n  ${errors.mkString("\n  ")}")
   }
 }

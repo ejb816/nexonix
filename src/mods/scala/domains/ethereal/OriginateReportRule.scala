@@ -15,7 +15,7 @@ object OriginateReportRule extends App {
   lazy val domainType: Domain[Ethereal] = Domain[Ethereal] (typeDefinition)
 
   private def originate(intent: LaunchIntent): EphemerisReport = {
-    val cur                 = intent.value.hcursor
+    val cur                 = intent.json.hcursor
     val obj                 = cur.get[String]("object").getOrElse("UNKNOWN")
     val altitudeNauticalMi  = cur.get[Int]("altitudeNauticalMiles").getOrElse(0)
     val altitudeKm          = (altitudeNauticalMi * 1852) / 1000   // nautical miles -> kilometres, integer
@@ -26,14 +26,14 @@ object OriginateReportRule extends App {
     )
     new EphemerisReport {
       override lazy val typeDefinition: TypeDefinition = EphemerisReport.typeDefinition
-      override val value: io.circe.Json = payload
+      override val json: io.circe.Json = payload
     }
   }
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val intent: LaunchIntent = ctx.get[LaunchIntent]("$intent")
-      val consumer: ActorRef[draco.format.json.Json] =
-        ctx.getRuntime().get[ActorRef[draco.format.json.Json]]("consumer")
+      val consumer: ActorRef[draco.format.json.JSON] =
+        ctx.getRuntime().get[ActorRef[draco.format.json.JSON]]("consumer")
       consumer ! originate(intent)
   }
 

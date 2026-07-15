@@ -23,18 +23,18 @@ class EtherealChainTest extends AnyFunSuite {
     )
     new LaunchIntent {
       override lazy val typeDefinition: TypeDefinition = LaunchIntent.typeDefinition
-      override val value: Json = payload
+      override val json: Json = payload
     }
   }
 
   test("Creator originates an EphemerisReport from a LaunchIntent (nauticalMiles -> kilometres) and the Consumer records it") {
     EtherealSink.clear()
 
-    val guardian: Behavior[draco.format.json.Json] = Behaviors.setup { ctx =>
-      val consumer: ActorRef[draco.format.json.Json] =
-        ctx.spawn(Consumer.actorType().asInstanceOf[Actor[draco.format.json.Json]], "consumer")
-      val creator: ActorRef[draco.format.json.Json] =
-        ctx.spawn(Creator.actorType(consumer).asInstanceOf[Actor[draco.format.json.Json]], "creator")
+    val guardian: Behavior[draco.format.json.JSON] = Behaviors.setup { ctx =>
+      val consumer: ActorRef[draco.format.json.JSON] =
+        ctx.spawn(Consumer.actorType().asInstanceOf[Actor[draco.format.json.JSON]], "consumer")
+      val creator: ActorRef[draco.format.json.JSON] =
+        ctx.spawn(Creator.actorType(consumer).asInstanceOf[Actor[draco.format.json.JSON]], "creator")
       Behaviors.receiveMessage { msg =>
         creator ! msg
         Behaviors.same

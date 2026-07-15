@@ -4,7 +4,7 @@ import draco._
 import domains._
 import draco.format.json._
 
-trait EphemerisReport extends Ethereal with Json
+trait EphemerisReport extends Ethereal with JSON
 
 object EphemerisReport extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("EphemerisReport", _namePackage = Seq ("domains", "ethereal")))

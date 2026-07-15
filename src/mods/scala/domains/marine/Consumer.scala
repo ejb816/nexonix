@@ -7,7 +7,7 @@ import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.Knowledge
 
-trait Consumer extends Actor[draco.format.json.Json]
+trait Consumer extends Actor[draco.format.json.JSON]
 
 object Consumer extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Consumer", _namePackage = Seq ("domains", "marine")))
@@ -21,19 +21,19 @@ object Consumer extends App with DracoType {
     k
   }
 
-  def actorType(): ActorType = new Actor[draco.format.json.Json] {
+  def actorType(): ActorType = new Actor[draco.format.json.JSON] {
     override lazy val typeDefinition: TypeDefinition = Consumer.typeDefinition
 
-    override def receive(ctx: TypedActorContext[draco.format.json.Json], msg: draco.format.json.Json): Behavior[draco.format.json.Json] = {
+    override def receive(ctx: TypedActorContext[draco.format.json.JSON], msg: draco.format.json.JSON): Behavior[draco.format.json.JSON] = {
       val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
       session.insert(Seq(msg): _*)
       session.fire()
       session.close()
-      Behaviors.same[draco.format.json.Json]
+      Behaviors.same[draco.format.json.JSON]
     }
 
-    override def receiveSignal(ctx: TypedActorContext[draco.format.json.Json], signal: Signal): Behavior[draco.format.json.Json] = {
-      Behaviors.same[draco.format.json.Json]
+    override def receiveSignal(ctx: TypedActorContext[draco.format.json.JSON], signal: Signal): Behavior[draco.format.json.JSON] = {
+      Behaviors.same[draco.format.json.JSON]
     }
   }
 }

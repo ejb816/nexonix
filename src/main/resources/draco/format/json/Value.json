@@ -1,0 +1,216 @@
+{
+  "typeName": {
+    "name": "Value",
+    "namePackage": [
+      "draco",
+      "format",
+      "json"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Value",
+        "namePackage": [
+          "draco",
+          "format"
+        ],
+        "typeParameters": [
+          "JSON"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Value",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "name",
+          "valueType": "String"
+        },
+        {
+          "kind": "Parameter",
+          "name": "pathElements",
+          "valueType": "Seq[String]"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "name",
+          "valueType": "String",
+          "value": "_name"
+        },
+        {
+          "kind": "Fixed",
+          "name": "pathElements",
+          "valueType": "Seq[String]",
+          "value": "_pathElements"
+        },
+        {
+          "kind": "Dynamic",
+          "name": "value[T: Decoder]",
+          "valueType": "T",
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "_source",
+              "valueType": "JSON"
+            }
+          ],
+          "body": [
+            {
+              "kind": "Local",
+              "name": "pathValue",
+              "valueType": "Json",
+              "value": {
+                ".": [
+                  {
+                    "()": [
+                      {
+                        "()": [
+                          {
+                            ".": [
+                              "pathElements",
+                              "foldLeft"
+                            ]
+                          },
+                          {
+                            "()": [
+                              "Option",
+                              {
+                                ".": [
+                                  "_source",
+                                  "json"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "\\": [
+                          "e",
+                          "a",
+                          {
+                            "()": [
+                              {
+                                ".": [
+                                  "e",
+                                  "flatMap"
+                                ]
+                              },
+                              {
+                                "\\": [
+                                  "j",
+                                  {
+                                    "if": [
+                                      {
+                                        ".": [
+                                          "j",
+                                          "isArray"
+                                        ]
+                                      },
+                                      {
+                                        ".": [
+                                          {
+                                            "()": [
+                                              {
+                                                ".": [
+                                                  "j",
+                                                  "hcursor",
+                                                  "downN"
+                                                ]
+                                              },
+                                              {
+                                                ".": [
+                                                  "a",
+                                                  "toInt"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          "focus"
+                                        ]
+                                      },
+                                      {
+                                        ".": [
+                                          {
+                                            "()": [
+                                              {
+                                                ".": [
+                                                  "j",
+                                                  "hcursor",
+                                                  "downField"
+                                                ]
+                                              },
+                                              "a"
+                                            ]
+                                          },
+                                          "focus"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "orNull"
+                ]
+              }
+            }
+          ],
+          "value": {
+            "if": [
+              {
+                "!=": [
+                  "pathValue",
+                  "null"
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      "pathValue",
+                      "as[T]",
+                      "getOrElse"
+                    ]
+                  },
+                  {
+                    ".": [
+                      "null",
+                      "asInstanceOf[T]"
+                    ]
+                  }
+                ]
+              },
+              {
+                ".": [
+                  "null",
+                  "asInstanceOf[T]"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "JSON",
+      "namePackage": [
+        "draco",
+        "format",
+        "json"
+      ]
+    }
+  }
+}

@@ -215,7 +215,6 @@ domain <pkg-seq> <name>                    -> domainAspect.typeName { namePackag
     ...
     mon <unit-value>                       -> action.body[] { kind=Monadic , value }
     ...
-                                              ( ruleAspect.values[] has no drake token: the Generator derives it during action generation )
 *actor                                     -> actorAspect                   (presence-significant, FACET-CREATING: present = is an actor, every action defaults & is overridable; absent = not an actor)
   *~start                                  -> actorAspect.setupAction       ( default behaviour generated regardless of presence; content overrides )
   *~message                                -> actorAspect.messageAction     ( default behaviour generated regardless of presence; content overrides )

@@ -43,8 +43,7 @@ object TypeElement extends App with DracoType {
         if (x.conditions.nonEmpty) Some("conditions" -> x.conditions.asJson) else None
       ).flatten
       case x: Action => Seq(
-        if (x.variables.nonEmpty) Some("variables" -> x.variables.asJson) else None,
-        if (x.values.nonEmpty) Some("values" -> x.values.asJson) else None
+        if (x.variables.nonEmpty) Some("variables" -> x.variables.asJson) else None
       ).flatten
       case _ => Seq.empty
     })
@@ -96,9 +95,8 @@ object TypeElement extends App with DracoType {
       case "Action" =>
         for {
           _variables <- cursor.downField("variables").as[Option[Seq[Variable]]].map(_.getOrElse(Seq.empty))
-          _values <- cursor.downField("values").as[Option[Seq[Value]]].map(_.getOrElse(Seq.empty))
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
-        } yield Action (_variables, _values, _body)
+        } yield Action (_variables, _body)
 
       case "Condition" =>
         for {
@@ -327,7 +325,6 @@ object Pattern extends App with DracoType {
 
 trait Action extends BodyElement {
   val variables: Seq[Variable]
-  val values: Seq[Value]
 }
 
 object Action extends App with DracoType {
@@ -341,11 +338,9 @@ object Action extends App with DracoType {
 
   def apply (
     _variables: Seq[Variable] = Seq.empty,
-    _values: Seq[Value] = Seq.empty,
     _body: Seq[BodyElement] = Seq.empty
   ) : Action = new Action {
     override lazy val variables: Seq[Variable] = _variables
-    override lazy val values: Seq[Value] = _values
     override lazy val body: Seq[BodyElement] = _body
     override lazy val name: String = "ctx"
     override lazy val valueType: String = "org.evrete.api.RhsContext => Unit"

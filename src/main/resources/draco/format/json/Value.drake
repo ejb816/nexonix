@@ -1,0 +1,15 @@
+type Value from Value(JSON)
+  factory
+    parameters
+      par name String
+      par pathElements [String]
+    body [
+      fix name String _name
+      fix pathElements [String] _pathElements
+      dyn value(T: Decoder) T
+        parameters
+          par _source JSON
+        loc pathValue Json pathElements.foldLeft(Option(_source.json))(\e a -> e.flatMap(\j -> if j.isArray then j.hcursor.downN(a.toInt).focus else j.hcursor.downField(a).focus)).orNull
+        = if pathValue != null then pathValue.as[T].getOrElse(null.asInstanceOf[T]) else null.asInstanceOf[T]
+    ]
+domain draco format json JSON

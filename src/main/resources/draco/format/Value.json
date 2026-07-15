@@ -1,0 +1,58 @@
+{
+  "typeName": {
+    "name": "Value",
+    "namePackage": [
+      "draco",
+      "format"
+    ],
+    "typeParameters": [
+      "F"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "name",
+        "valueType": "String"
+      },
+      {
+        "kind": "Fixed",
+        "name": "pathElements",
+        "valueType": "Seq[String]"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "value[T: Decoder]",
+        "valueType": "T",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "_source",
+            "valueType": "F"
+          }
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Format",
+      "namePackage": [
+        "draco",
+        "format"
+      ],
+      "typeParameters": [
+        "F"
+      ]
+    }
+  }
+}

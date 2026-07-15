@@ -1,0 +1,69 @@
+{
+  "typeName": {
+    "name": "JSON",
+    "namePackage": [
+      "draco",
+      "format",
+      "json"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Format",
+        "namePackage": [
+          "draco",
+          "format"
+        ],
+        "typeParameters": [
+          "JSON"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "json",
+        "valueType": "Json"
+      },
+      {
+        "kind": "Fixed",
+        "name": "value",
+        "valueType": "JSON",
+        "value": "this"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "JSON",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "json",
+          "valueType": "Json"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "json",
+          "valueType": "Json",
+          "value": "_json"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "JSON",
+      "namePackage": [
+        "draco",
+        "format",
+        "json"
+      ]
+    },
+    "elementTypeNames": [
+      "Value"
+    ]
+  }
+}

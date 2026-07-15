@@ -1,0 +1,13 @@
+type JSON from Format(JSON)
+  elements
+    fix json Json
+    fix value JSON this
+  factory
+    parameters
+      par json Json
+    body
+      fix json Json _json
+domain draco format json JSON
+  types [
+    Value
+  ]

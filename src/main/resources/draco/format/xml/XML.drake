@@ -1,0 +1,2 @@
+type XML from Format(XML)
+domain draco format xml XML

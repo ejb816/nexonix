@@ -11,7 +11,7 @@ object Output extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Output", _namePackage = Seq ("domains", "terrestrial")))
   lazy val dracoType: Type[Output] = Type[Output] (typeDefinition)
 
-  def actorType(consumer: ActorRef[draco.format.json.Json]): ActorType = new Actor[domains.world.World] {
+  def actorType(consumer: ActorRef[draco.format.json.JSON]): ActorType = new Actor[domains.world.World] {
     override lazy val typeDefinition: TypeDefinition = Output.typeDefinition
 
     override def receive(ctx: TypedActorContext[domains.world.World], msg: domains.world.World): Behavior[domains.world.World] = {
@@ -25,7 +25,7 @@ object Output extends App with DracoType {
           )
           val report = new LocationReport {
             override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition
-            override val value: Json = payload
+            override val json: Json = payload
           }
           consumer ! report
         case _ => // not a Location; nothing to encode
