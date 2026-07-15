@@ -1186,9 +1186,9 @@ object Generator extends App {
 
   /** Container name to use when emitting `domainType` for a non-domain (leaf) type.
     * Returns the simple Scala name from `domainAspect.typeName` — wildcarded when
-    * the reference carries type parameters (member of Format[F] -> Domain[Format[_]]) —
-    * or empty if not set (in which case the caller should skip emission to permit
-    * partial migration). */
+    * the reference carries type parameters (a Format[F] member yields Domain of
+    * Format[_]) — or empty if not set (in which case the caller should skip
+    * emission to permit partial migration). */
   private def containerName (td: TypeDefinition) : String = {
     val tn = td.domainAspect.typeName
     if (tn != null && tn.name.nonEmpty) wildcardTypeName(tn) else ""

@@ -145,7 +145,7 @@ JSON serialization uses `"kind"` discriminator. `Codec.sub` creates subtype code
 
 Every companion object follows the same pattern:
 
-```scala
+```text
 object MyType extends App with TypeInstance {           // or DomainInstance, RuleInstance, ActorInstance
   lazy val typeDefinition: TypeDefinition = ...         // structural description
   lazy val typeInstance: Type[MyType] = Type[MyType](typeDefinition)
