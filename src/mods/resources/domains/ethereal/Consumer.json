@@ -20,7 +20,7 @@
     ]
   },
   "actorAspect": {
-    "messageAction": {
+    "message": {
       "kind": "Action",
       "valueType": "Unit",
       "body": [

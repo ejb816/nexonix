@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across sixty-two chapters of development sessions between March 22 and July 13, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions are transcribed as dialogues between Dev (the framework's creator) and the model (Claude, serving as pair-programming partner), capturing not just the code changes but the reasoning, missteps, and discoveries along the way.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across sixty-four chapters of development sessions between March 22 and July 16, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions are transcribed as dialogues between Dev (the framework's creator) and the model (Claude, serving as pair-programming partner), capturing not just the code changes but the reasoning, missteps, and discoveries along the way.
 
 ## Journal Conventions
 
@@ -34,7 +34,7 @@ When the first session began, Draco already had a working type hierarchy, a RETE
 
 **The World example domains (Chapters 40–50, June 1–24).** `DomainBuilder` and the two-track build model opened the movement; the missing TransformBuilder fixture became a whole example world of message domains (Aerial/Terrestrial/Marine/Ethereal under `World`). The Evrete Environment emerged as the rule↔ActorRef seam keeping generated rules Pekko-agnostic. Draco's founding thesis crystallized — *a transform is correct iff it preserves meaning* — and became a passing assertion when an Aerial `Position` crossed to a Terrestrial `Location` through the `Observable` world-fact with WGS84 geodesy. The reference frames were deleted wholesale; actor emission folded into the Generator via the `setupAction`/`messageAction`/`signalAction` model; `Assembly` made actor topology pure data.
 
-**DRAKE (Chapters 51–62, June 25–July 13).** Draco's native definition language was named — DRAKE, "domain rules actor knowledge engine" — with JSON remaining canonical and `.drake` the human-authoring surface. The metamodel was authored in DRAKE, aspect-head grammar settled, YAML retired entirely, `CodecAspect` became the fifth aspect, and every codec under `src/main` now derives from JSON — no hand-authored codec strings remain. The corpus buildout (60 `.drake` files against 63 JSONs) surfaced a genuinely missing metamodel piece (`Local`/`loc`) and the deepest methodological lesson of the journal: round-trip tests preserve mis-modeling; validating a model requires a second, more opinionated projection that rejects what the lax one tolerates.
+**DRAKE (Chapters 51–64, June 25–July 16).** Draco's native definition language was named — DRAKE, "domain rules actor knowledge engine" — with JSON remaining canonical and `.drake` the human-authoring surface. The metamodel was authored in DRAKE, aspect-head grammar settled, YAML retired entirely, `CodecAspect` became the fifth aspect, and every codec under `src/main` now derives from JSON — no hand-authored codec strings remain. The corpus buildout (60 `.drake` files against 63 JSONs) surfaced a genuinely missing metamodel piece (`Local`/`loc`) and the deepest methodological lesson of the journal: round-trip tests preserve mis-modeling; validating a model requires a second, more opinionated projection that rejects what the lax one tolerates.
 
 ### The Breakthroughs
 
@@ -70,7 +70,7 @@ Selected moments that shifted the framework's trajectory:
 
 - **Generator[L]** — the language-parameterized super-domain, the north star from Chapter 43 onward: generation reframed as `Format[Json] => Format[Draco] => Format[L]`, with actors and rules doing the generation work. The self-port to Haskell is the validating criterion. By Chapter 58, all open architecture (the presence/inference model, declared-codec migration, Encoder/Decoder subelements) is explicitly deferred to Generator[L]; the procedural `draco.Generator` is frozen.
 
-- **DRAKE** — draco's native authoring tongue (`.drake`), transparent to canonical JSON. The corpus is complete at 64 files — the drake-less and host-code tails both closed in Chapter 61. Next: the `JSON → .drake` emitter (emitter-first, parser after), with the Monadic-bare-expression and host-reserved-domain-name lints queued.
+- **DRAKE** — draco's native authoring tongue (`.drake`), transparent to canonical JSON. The corpus completed at Chapter 61; value expressions became structured trees at Chapter 62; the `JSON → .drake` emitter arrived in Chapters 63–64 (plain types, rules, actors — codec emission and the parser, #44, remain before a true round-trip). The Monadic-bare-expression, host-reserved-domain-name, and naming-collision lints are queued.
 
 - **Dreams** — the user development layer (Domain Rules Editor Actor Message Service), second layer of the three-layer charter stated in Chapter 40: draco → Dreams → Orion. `src/mods` hosts its early stand-ins (`DomainBuilder`, and eventually TransformBuilder — whose `validate` is exactly "does meaning survive the change of representation").
 
@@ -80,7 +80,7 @@ Selected moments that shifted the framework's trajectory:
 
 The recurring theme across all sixty sessions is that self-description creates complexity: a type system closed over itself means every change to a foundational type can create circular dependencies, initialization-order bugs, and shadowing issues. The `lazy val` discipline, deferred factory defaults, classpath loading, the Haskell test, and finally DRAKE-as-recognizer are all engineering responses to the same mathematical property. The framework is learning to describe itself without tripping over its own reflection.
 
-**Status at Chapter 62:** JSON corpus 64, `.drake` corpus 64 (complete), full suite 197/197; value expressions now structured trees (`TypeElement.value: Json`), with the principle "form is drake's, atoms may be the target's."
+**Status at Chapter 64:** JSON corpus 67, `.drake` corpus 67, full suite 271/271; the JSON → `.drake` emitter covers plain types, rules, and actors (parser #44 queued — no true round-trip yet); GitHub Issues revived (#39–#45) after a two-month lapse.
 
 ---
 
@@ -333,3 +333,11 @@ Journal duty formally handed to Cowork. Parser readiness settled emitter-first, 
 ### [Chapter 62 — Value Expressions as Structured Trees](draco-dev-chapter-62.md)
 
 Value-expression syntax settled: operator-ness is a property of the symbol, not the grammar. Dev's Action.json prototype (S-expression trees in JSON) exposed a misspelled `RHSContext` the opaque string had never caught — vindicating the recognizer lesson of Chapter 60. `TypeElement.value` went `String → Json`, expression trees spread incrementally through the corpus (Seq.empty, Primes' infix conditions, Value's five-level Haskell-form trees), and the governing principle emerged: form is drake's, atoms may be the target's. Five green runs, 197/197.
+
+### [Chapter 63 — The JSON → drake Emitter, the Case-Insensitivity Collision](draco-dev-chapter-63.md)
+
+"Are we ready to write drake from json?" — yes: `Generator.drake` landed with `DrakeGenTest`, the `[]`/`{}` default conventions settled, and the Phase-2a sweep promoted 42 files into a 58-test drift guard. `draco.format.Value[F]` arrived with JSON/XML sub-domains — and macOS case-insensitivity bit (`draco/format/json` vs `Json`), forcing a naming-collision audit. Ends 264/264, with a postscript on IntelliJ-GUI git noise.
+
+### [Chapter 64 — Rule and Actor Emission, Issues Revived](draco-dev-chapter-64.md)
+
+The emitter grew rule-aspect and actor-aspect coverage (first 3 mods `.drake` files ever), Phase-2b's field rename closed its DIVERGENCES row, and Dev's model corrections landed: the domain aspect is mandatory, and an actor's rule set is all of its domain's rules — reverting a "bare `types`" hack. The two-month GitHub-issues lapse was reversed: #39–#45 filed, the convention codified in DRACO.md. Suite 267 → 271, all green.

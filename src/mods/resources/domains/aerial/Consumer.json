@@ -20,7 +20,7 @@
     ]
   },
   "actorAspect": {
-    "setupAction": {
+    "start": {
       "kind": "Action",
       "valueType": "Unit",
       "body": [
@@ -43,7 +43,7 @@
         }
       ]
     },
-    "messageAction": {
+    "message": {
       "kind": "Action",
       "valueType": "Unit",
       "body": [
@@ -59,7 +59,7 @@
         }
       ]
     },
-    "signalAction": {
+    "signal": {
       "kind": "Action",
       "valueType": "Unit",
       "body": [
@@ -77,8 +77,12 @@
     }
   },
   "domainAspect": {
-    "elementTypeNames": [
-      "ConsumeReport"
-    ]
+    "typeName": {
+      "name": "Aerial",
+      "namePackage": [
+        "domains",
+        "aerial"
+      ]
+    }
   }
 }

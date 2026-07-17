@@ -89,9 +89,9 @@ object InspectType {
     println()
     println(s"=== ActorAspect ===")
     val a = td.actorAspect
-    val hasActor = a.messageAction.body.nonEmpty || a.signalAction.body.nonEmpty
-    println(s"  messageAction    = ${if (a.messageAction.body.isEmpty) "(none)" else s"${a.messageAction.body.size} body element(s)"}")
-    println(s"  signalAction     = ${if (a.signalAction.body.isEmpty) "(none)" else s"${a.signalAction.body.size} body element(s)"}")
+    val hasActor = a.message.body.nonEmpty || a.signal.body.nonEmpty
+    println(s"  message    = ${if (a.message.body.isEmpty) "(none)" else s"${a.message.body.size} body element(s)"}")
+    println(s"  signal     = ${if (a.signal.body.isEmpty) "(none)" else s"${a.signal.body.size} body element(s)"}")
     if (!hasActor) println(s"  (no actor behavior)")
   }
 }

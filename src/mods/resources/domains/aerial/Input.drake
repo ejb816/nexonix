@@ -1,0 +1,10 @@
+type Input from Actor(draco.format.json.JSON)
+  factory
+    parameters
+      par worldConsumer ActorRef(domains.world.World)
+domain domains aerial Aerial
+actor
+  message
+    fix cursor io.circe.HCursor msg.value.hcursor
+    fix position domains.aerial.Position Position(_latitude = cursor.get[Double]("latitude").getOrElse(0.0), _longitude = cursor.get[Double]("longitude").getOrElse(0.0), _altitudeFeet = cursor.get[Int]("altitudeFeet").getOrElse(0))
+    mon worldConsumer ! position

@@ -74,8 +74,8 @@ object ListDomain {
             val steps  = elementTd.ruleAspect.action.body.size
             s"$vars var(s), $steps-step action"
           case "ACTOR" =>
-            val msg = elementTd.actorAspect.messageAction.body.size
-            val sig = elementTd.actorAspect.signalAction.body.size
+            val msg = elementTd.actorAspect.message.body.size
+            val sig = elementTd.actorAspect.signal.body.size
             s"$msg message-step(s), $sig signal-step(s)"
           case _ =>
             if (elementTd.dracoAspect.derivation.isEmpty) "(no derivation)"

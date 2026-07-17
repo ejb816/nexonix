@@ -27,7 +27,9 @@
     },
     "elementTypeNames": [
       "FlightIntent",
-      "PositionReport"
+      "PositionReport",
+      "ConsumeReport.rule",
+      "OriginateReport.rule"
     ]
   }
 }

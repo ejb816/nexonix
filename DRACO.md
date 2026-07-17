@@ -8,6 +8,15 @@ A symlink `CLAUDE.md → DRACO.md` ensures Claude Code auto-loads this file.
 - **README.md** — Comprehensive overview of the framework, its architecture, semantic preservation goals, and current feature status
 - **CHANGELOG.md** — History of changes made with Claude Code assistance
 - **Auto-memory** — Persistent project memory at `~/.claude/projects/.../memory/MEMORY.md` with architectural decisions, lazy val rules, Generator naming conventions, and imminent task list
+- **GitHub Issues** — `github.com/ejb816/nexonix/issues` is the durable, shared backlog and forward work-tracker (see below)
+
+## Issue Tracking & Session Workflow
+
+GitHub Issues is the canonical, cross-session **backlog and decision log** — the shared, provider-agnostic complement to auto-memory (which holds *durable knowledge*: how the system works, conventions, user feedback). Roughly: **issues track work to do; memory records what is known.** Neither replaces `draco-git-record/` (audit trail) or the dev journal (historical narrative).
+
+- **At session start**, check the backlog for the pickup point: `gh issue list --label priority-next` (the `priority-next` label = "pick this up next session"). Fall back to `gh issue list` for the wider backlog.
+- **File an issue for deferred work.** When work is scoped out, a decision is deferred, or a bug is noticed in passing, open an issue (`gh issue create`) with a self-contained body — file paths and enough context to act without the originating conversation — rather than leaving it only in prose. Label it (`generator`, `cleanup`, `tooling`, `bug`, `next-feature`, `docs`, `roadmap`) and add `priority-next` if it's the natural next pickup.
+- **Close on completion**, and cross-link related issues instead of duplicating. Memory notes may cite issue numbers and vice versa.
 
 ## Build and Test Commands
 
@@ -81,7 +90,7 @@ These are deliberately kept structurally symmetric — none is parameterized. Wh
 | `Type.scala` | `Type[T]` — generic type wrapper created via `Type[X](typeDefinition)` |
 | `TypeInstance.scala` | Trait for self-registering companion objects |
 | `TypeName.scala` | Qualified name with package path and type parameters |
-| `TypeDefinition.scala` | Unified schema descriptor: typeName, modules, derivation, elements, factory, globalElements, plus domain fields (elementTypeNames, source, target), rule fields (pattern — which carries variables, conditions — plus values, action), and actor fields (messageAction, signalAction) |
+| `TypeDefinition.scala` | Unified schema descriptor: typeName, modules, derivation, elements, factory, globalElements, plus domain fields (elementTypeNames, source, target), rule fields (pattern — which carries variables, conditions — plus values, action), and actor fields (start, message, signal) |
 | `TypeElement.scala` | Sealed element hierarchy (Fixed, Mutable, Dynamic, Parameter, Monadic, Pattern, Action, Condition, Variable, Factory) |
 | `Codec.scala` | `Codec[T]` encoder/decoder pair; `Codec.sub` for subtype codec derivation |
 | `Domain.scala` | `Domain[T]` — generic domain container created from `TypeDefinition` |

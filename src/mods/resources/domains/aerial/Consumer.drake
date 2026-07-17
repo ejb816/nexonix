@@ -1,0 +1,13 @@
+type Consumer from Actor(draco.format.json.JSON)
+domain domains aerial Aerial
+actor
+  start
+    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
+    fix consumed java.util.ArrayList(String) new java.util.ArrayList[String]()
+    mon session.set("consumed", consumed)
+  message
+    mon session.insert(Seq(msg): _*)
+    mon session.fire()
+  signal
+    mon consumed.forEach((e: String) => domains.aerial.AerialSink.record(e))
+    mon session.close()

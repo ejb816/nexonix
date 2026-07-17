@@ -216,9 +216,9 @@ domain <pkg-seq> <name>                    -> domainAspect.typeName { namePackag
     mon <unit-value>                       -> action.body[] { kind=Monadic , value }
     ...
 *actor                                     -> actorAspect                   (presence-significant, FACET-CREATING: present = is an actor, every action defaults & is overridable; absent = not an actor)
-  *~start                                  -> actorAspect.setupAction       ( default behaviour generated regardless of presence; content overrides )
-  *~message                                -> actorAspect.messageAction     ( default behaviour generated regardless of presence; content overrides )
-  *~signal                                 -> actorAspect.signalAction      ( default behaviour generated regardless of presence; content overrides )
+  *~start                                  -> actorAspect.start             ( default behaviour generated regardless of presence; content overrides )
+  *~message                                -> actorAspect.message           ( default behaviour generated regardless of presence; content overrides )
+  *~signal                                 -> actorAspect.signal            ( default behaviour generated regardless of presence; content overrides )
 *~codec                                    -> codecAspect                   (absent = NO codec for this type. present = a codec is needed; its fields are SELECTORS, so a present codec must carry >=1 of encoder/decoder — never both absent. present-empty == absent)
   *~discriminator <value>                  -> codecAspect.discriminator     ( OPEN: carried from the earlier increment as a String field driving the union tag ("kind"). Field vs derived is unsettled — see NOTES )
   *encoder                                 -> codecAspect.encoder   { kind=Encoder }   ( SELECTOR — present generates the encoder (default or custom); absent SUPPRESSES it )
@@ -253,7 +253,6 @@ NOTES  (deferred to the typed Generator[L] — NOT pending on the procedural dra
 DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
   The target rows below (PRESENCE, CODEC-declared) belong to the future typed Generator[L]; the procedural
   draco.Generator implements only the current behaviour noted on the right, and is not being changed for them.
-  actor start | message | signal    <->   JSON setupAction | messageAction | signalAction
   par _<name>                       <->   current JSON stores the name without _ (Generator prepends); target keeps _ in the name
   PRESENCE model (this template)    <->   current Generator/JSON still ELIDE uniformly: TypeDefinition's encoder
                                           omits an aspect via X.isEmpty, and every field elides on empty. The template

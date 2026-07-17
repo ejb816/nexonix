@@ -2,13 +2,13 @@ type PrimesFromNaturalSequence
 domain draco primes Primes
 rule
   pattern
-    variables [
+    variables
       var accumulator Accumulator
       var i1 Integer
       var i2 Integer
-      var i3 Integer ]
-    conditions [
-      con i1 * i2 == i3 ]
+      var i3 Integer
+    conditions
+      con i1 * i2 == i3
   action
     fix newText (Long, String) (System.nanoTime(), s" Remove $i3 ->\t$i3 == $i1 * $i2")
     mon ctx.delete(i3)

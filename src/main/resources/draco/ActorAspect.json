@@ -17,17 +17,17 @@
     "elements": [
       {
         "kind": "Fixed",
-        "name": "messageAction",
+        "name": "message",
         "valueType": "Action"
       },
       {
         "kind": "Fixed",
-        "name": "signalAction",
+        "name": "signal",
         "valueType": "Action"
       },
       {
         "kind": "Fixed",
-        "name": "setupAction",
+        "name": "start",
         "valueType": "Action"
       }
     ],
@@ -37,19 +37,19 @@
       "parameters": [
         {
           "kind": "Parameter",
-          "name": "messageAction",
+          "name": "message",
           "valueType": "Action",
           "value": "Action.Null"
         },
         {
           "kind": "Parameter",
-          "name": "signalAction",
+          "name": "signal",
           "valueType": "Action",
           "value": "Action.Null"
         },
         {
           "kind": "Parameter",
-          "name": "setupAction",
+          "name": "start",
           "valueType": "Action",
           "value": "Action.Null"
         }
@@ -60,7 +60,7 @@
         "kind": "Fixed",
         "name": "isEmpty",
         "valueType": "ActorAspect => Boolean",
-        "value": "aa => aa.messageAction.body.isEmpty && aa.signalAction.body.isEmpty && aa.setupAction.body.isEmpty"
+        "value": "aa => aa.message.body.isEmpty && aa.signal.body.isEmpty && aa.start.body.isEmpty"
       }
     ]
   },

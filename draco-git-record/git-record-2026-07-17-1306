@@ -1,0 +1,53 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+Generator.drake rule+actor emission; actor rule-set derived from domain (aerial); Phase-2b start/message/signal rename; resume GitHub issue tracking
+
+Session 2026-07-16/17; full suite 271/271 after each increment.
+
+- Rule-aspect emission (Generator.drake): `rule` head with pattern
+  { variables, conditions } + action; drakeKeyword gains var/con; con
+  renders value-only; the type header strips the .rule aspect suffix.
+  variables/conditions are leaf blocks -> bracket-free per drake.dlt.
+  3 primes .rule .drake re-authored emitter-canonical (leaf brackets
+  dropped; AddNaturalSequence flipped domain-first -> type-first).
+  DrakeGenTest now walks .rule.json.
+
+- Phase-2b actor field rename setupAction/messageAction/signalAction ->
+  start/message/signal across ActorAspect (json + hand-synced scala,
+  codec keys, isEmpty), the Generator actor path, 10 mods actor JSONs,
+  mods scripts (inspect-type/list-domain), ActorAspect.drake, drake.dlt
+  (annotations + removed the now-resolved DIVERGENCES row), README/DRACO
+  field docs, AerialActorTest comments.
+
+- Actor-aspect emission (Generator.drake): `actor` head + start/message/
+  signal blocks (mirror the rule block). DrakeGenTest gains a mods-actor
+  walk (src/mods/resources/domains, filtered to a non-empty actorAspect):
+  exact-match the authored .drake, report the rest pending.
+
+- ACTOR RULE-SET = DOMAIN RULE-SET (model correction, aerial-scoped). An
+  actor's rules are ALL the rules in its domain, derived via the domain
+  aspect (self = is-a-domain, else membership domainAspect.typeName), not a
+  per-actor list. Generator.actorKnowledge resolves the domain and accepts
+  its .rule entries. Aerial: actor JSONs -> membership typeName=Aerial and
+  drop elementTypeNames; Aerial dictionary += its 2 rules; Consumer/Creator
+  knowledge accept both rules (Input is a pure forwarder, no knowledge);
+  aerial Consumer/Creator/Input .drake authored with the mandatory
+  `domain domains aerial Aerial` line. Safe: rules are fact-type-scoped so
+  the extra rule lies dormant (AerialActorTest + chain tests green).
+  Reverted the earlier "bare types without a domain head" emitter branch —
+  the domain aspect is mandatory and always emits after the draco aspect.
+  terrestrial/marine/ethereal remain old-shape (issue #39);
+  ExampleDomainsGenTest report-only shifted 30->24 as expected.
+
+- Resumed GitHub issue tracking after a ~2-month lapse: filed #39-#45 for the
+  live drake/actor threads; codified the workflow in DRACO.md ("Issue Tracking
+  & Session Workflow": check priority-next at session start, file a
+  self-contained issue for deferred work). #39 (actor sweep) is priority-next.
+
+- Also swept in (not this session's code work): draco-dev-journal chapters
+  63/64 + chapter-00-intro/62 updates (Cowork transcription).
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

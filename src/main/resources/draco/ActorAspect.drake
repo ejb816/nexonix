@@ -13,8 +13,8 @@ type ActorAspect
   globals [
     fix isEmpty (ActorAspect => Boolean) aa =>
       aa.start.body.isEmpty &&
-      aa.messageAction.body.isEmpty &&
-      aa.signalAction.body.isEmpty
+      aa.message.body.isEmpty &&
+      aa.signal.body.isEmpty
   ]
 domain draco Draco
 rule

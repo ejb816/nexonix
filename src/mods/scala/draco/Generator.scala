@@ -140,8 +140,8 @@ object Generator extends App {
   // if-then-else, -> arrow). drake() emits the canonical new-model surface per
   // drake.dlt: bare `factory`, leaf list-blocks unbracketed ([ ] only when a
   // member opens its own sub-block), `globals` keyword, `from` omitted when the
-  // derivation is DracoType alone. This increment covers the plain-type template
-  // only — rule / actor / codec aspects arrive in the next increments.
+  // derivation is DracoType alone. Covers the plain-type template + the rule
+  // aspect (rule / pattern / action); actor / codec aspects are next increments.
 
   /** Render a TypeElement `value` to its drake surface form. Same tree contract
     * as expression(): a string is host-opaque source text passed through
@@ -272,10 +272,12 @@ object Generator extends App {
     case other                 => other
   }
 
-  /** One leaf element line: `kw name value-type value?` (mon carries value only). */
+  /** One leaf element line: `kw name value-type value?`. A `mon` (Unit effect)
+    * and a `con` (rule condition predicate) carry a value only — no name or
+    * value-type; a `con`'s value is its boolean expression tree. */
   private def drakeLeaf (indent: String, keyword: String, element: TypeElement) : String = {
     element match {
-      case _: Monadic => s"$indent$keyword ${drakeExpression(element.value)}"
+      case _: Monadic | _: Condition => s"$indent$keyword ${drakeExpression(element.value)}"
       case e =>
         val value = drakeDefault(drakeExpression(e.value))
         val tail = if (value.nonEmpty) s" $value" else ""
@@ -290,6 +292,8 @@ object Generator extends App {
     case _: Parameter => "par"
     case _: Local     => "loc"
     case _: Monadic   => "mon"
+    case _: Variable  => "var"
+    case _: Condition => "con"
     case e            => sys.error(s"Generator.drake: no drake keyword for element '${e.name}' (${e.getClass.getSimpleName})")
   }
 
@@ -330,12 +334,12 @@ object Generator extends App {
   private def drakeNameList (keyword: String, names: Seq[String]) : Seq[String] =
     (s"  $keyword [" +: names.map(n => s"    $n")) :+ "  ]"
 
-  /** Emit the .drake surface for a plain-type TypeDefinition (the drake.dlt
-    * TEMPLATE, plain-type sections + domain). Rule / actor / codec aspects are
-    * the next increments and are rejected loudly rather than silently dropped. */
+  /** Emit the .drake surface for a TypeDefinition (the drake.dlt TEMPLATE:
+    * plain-type sections + domain + rule + actor). The codec aspect is the next
+    * increment and is rejected loudly rather than silently dropped. */
   def drake (td: TypeDefinition) : String = {
-    if (!RuleAspect.isEmpty(td.ruleAspect) || !ActorAspect.isEmpty(td.actorAspect) || !CodecAspect.isEmpty(td.codecAspect))
-      sys.error(s"Generator.drake: rule/actor/codec aspects not yet emitted (next increment): ${td.typeName.name}")
+    if (!CodecAspect.isEmpty(td.codecAspect))
+      sys.error(s"Generator.drake: codec aspect not yet emitted (next increment): ${td.typeName.name}")
 
     val da = td.dracoAspect
     val typeParameters =
@@ -346,7 +350,9 @@ object Generator extends App {
       case Seq("DracoType") => ""  // the universal root alone is inferable
       case refs            => s" from ${refs.mkString(" ")}"
     }
-    val header = s"type ${td.typeName.name}$typeParameters$fromClause"
+    // The `.rule`/`.actor` aspect suffix is a resource-naming device, not part
+    // of the concept — the drake surface names the bare type (AddNaturalSequence).
+    val header = s"type ${stripAspect(td.typeName.name)}$typeParameters$fromClause"
 
     val modules =
       if (da.modules.isEmpty) Seq.empty
@@ -373,8 +379,7 @@ object Generator extends App {
       else drakeSection("globals", da.globalElements, 1)
 
     val domain =
-      if (td.domainAspect.typeName.name.isEmpty) Seq.empty
-      else {
+      if (td.domainAspect.typeName.name.nonEmpty) {
         val head = s"domain ${(td.domainAspect.typeName.namePackage :+ td.domainAspect.typeName.name).mkString(" ")}"
         val superDomain =
           if (da.superDomain.name.isEmpty) Seq.empty
@@ -383,9 +388,46 @@ object Generator extends App {
           if (td.domainAspect.elementTypeNames.isEmpty) Seq.empty
           else drakeNameList("types", td.domainAspect.elementTypeNames)
         head +: (superDomain ++ types)
+      } else Seq.empty
+
+    // rule aspect (drake.dlt: `rule` head, then `pattern` { variables, conditions }
+    // and `action` body). variables/conditions are LEAF blocks (var/con open no
+    // sub-block) so drakeSection emits them bracket-free; the action body sits
+    // directly under `action`, one indent level deeper.
+    val rule =
+      if (RuleAspect.isEmpty(td.ruleAspect)) Seq.empty
+      else {
+        val ra = td.ruleAspect
+        val variables =
+          if (ra.pattern.variables.isEmpty) Seq.empty
+          else drakeSection("variables", ra.pattern.variables, 2)
+        val conditions =
+          if (ra.pattern.conditions.isEmpty) Seq.empty
+          else drakeSection("conditions", ra.pattern.conditions, 2)
+        val pattern =
+          if (variables.isEmpty && conditions.isEmpty) Seq.empty
+          else "  pattern" +: (variables ++ conditions)
+        val action =
+          if (ra.action.body.isEmpty) Seq.empty
+          else "  action" +: ra.action.body.flatMap(drakeElement(_, 2))
+        "rule" +: (pattern ++ action)
       }
 
-    ((header +: (modules ++ extensible ++ elements ++ factory ++ globals)) ++ domain).mkString("", "\n", "\n")
+    // actor aspect (drake.dlt: `actor` head, then start / message / signal action
+    // blocks — construction / receive / receiveSignal). Each block's body sits one
+    // indent level deeper, same shape as the rule `action` body. A block elides when
+    // its action carries no body (an actor typically populates only some of the three).
+    val actor =
+      if (ActorAspect.isEmpty(td.actorAspect)) Seq.empty
+      else {
+        val aa = td.actorAspect
+        def block(keyword: String, action: Action): Seq[String] =
+          if (action.body.isEmpty) Seq.empty
+          else s"  $keyword" +: action.body.flatMap(drakeElement(_, 2))
+        "actor" +: (block("start", aa.start) ++ block("message", aa.message) ++ block("signal", aa.signal))
+      }
+
+    ((header +: (modules ++ extensible ++ elements ++ factory ++ globals)) ++ domain ++ rule ++ actor).mkString("", "\n", "\n")
   }
 
   // --- Literal generation helpers ---
@@ -1285,14 +1327,13 @@ object Generator extends App {
 
   // --- Actor companion generation ---
 
-  /** True when a TypeDefinition carries actor behavior (a non-empty messageAction
-    * or signalAction). Such a type is emitted as an actor — a companion whose
-    * `actorType` is a live `Actor[T]` with generated receive/receiveSignal — even
-    * when it also carries a domainAspect (it then owns a rule-domain: its
-    * `elementTypeNames` are the rules its session loads). Detected ahead of
-    * `isDomain` in `generate`, so an actor-that-owns-rules routes here rather than
-    * to plain domain emission. Empty for every non-actor type, so existing
-    * emission is unaffected. */
+  /** True when a TypeDefinition carries actor behavior (a non-empty message
+    * or signal). Such a type is emitted as an actor — a companion whose
+    * `actorType` is a live `Actor[T]` with generated receive/receiveSignal. Its
+    * rule set comes from its DOMAIN (see `actorKnowledge`), reached via the domain
+    * aspect (is-a-domain or membership). Detected ahead of `isDomain` in `generate`
+    * so an actor routes here rather than to plain domain emission. Empty for every
+    * non-actor type, so existing emission is unaffected. */
   private def hasActorBehavior (td: TypeDefinition) : Boolean =
     !ActorAspect.isEmpty(td.actorAspect)
 
@@ -1320,13 +1361,20 @@ object Generator extends App {
     if (all.isEmpty) "" else s"\n${all.mkString("\n")}\n"
   }
 
-  /** Build the actor's private Knowledge by walking its own `elementTypeNames`
-    * (its rule set) and accepting each rule's pattern. This reuses domain
-    * membership for the actor->rules binding — there is no separate rule-list
-    * field. Rule object names carry the Generator's `Rule` suffix. */
+  /** Build the actor's private Knowledge from its DOMAIN's rule set — all the
+    * rules in the domain the actor belongs to (or is) — accepting each rule's
+    * pattern. The domain aspect is authoritative: an is-a-domain actor uses its own
+    * dictionary, a member actor loads the domain it names. Rule object names carry
+    * the Generator's `Rule` suffix. */
   private def actorKnowledge (td: TypeDefinition) : String = {
-    val rules = td.domainAspect.elementTypeNames
     val tag = td.typeName.name
+    val domainTd =
+      if (isDomain(td)) td
+      else if (td.domainAspect.typeName.name.nonEmpty) loadType(td.domainAspect.typeName)
+      else td
+    // Rules are identified by the `.rule` aspect suffix on the dictionary entry —
+    // the current discriminator; a later pass drops the suffix for a ruleAspect check.
+    val rules = domainTd.domainAspect.elementTypeNames.filter(_.endsWith(".rule"))
     if (rules.isEmpty)
       s"""  private lazy val knowledge: Knowledge = Rule.knowledgeService.newKnowledge("$tag")"""
     else {
@@ -1340,7 +1388,7 @@ object Generator extends App {
   }
 
   /** Emit an actor Action body from its body elements, at the given indent.
-    * `messageAction` is emitted into `receive` (6-space indent); `signalAction` is
+    * `message` is emitted into `receive` (6-space indent); `signal` is
     * emitted once at actor construction (4-space indent) so its bindings — the
     * session, any seeded refs — persist and are in scope for `receive`. No Evrete
     * ctx variable bindings: the body operates on `knowledge`, the message, and `ctx`. */
@@ -1351,22 +1399,22 @@ object Generator extends App {
       case be: BodyElement               => s"$indent${expression(be.value)}"
     }.mkString("\n")
 
-  /** `signalAction` runs ONCE at actor construction — session creation (stateful or
+  /** `signal` runs ONCE at actor construction — session creation (stateful or
     * stateless), rule/data loading, downstream-ref seeding — so its `session` (and
-    * any other bindings) persist for `receive` to reuse. `messageAction` runs per
+    * any other bindings) persist for `receive` to reuse. `message` runs per
     * message in `receive` (typically insert + fire). `receiveSignal` is a no-op for
     * now; PostStop session cleanup is a later refinement. Actors with an empty
-    * `signalAction` emit exactly as before. */
+    * `signal` emit exactly as before. */
   private def actorBehavior (td: TypeDefinition, msgType: String) : String = {
     val objName = td.typeName.name
-    val setup = actorActionBody(td.actorAspect.setupAction, "    ")
-    val recv  = actorActionBody(td.actorAspect.messageAction)
+    val setup = actorActionBody(td.actorAspect.start, "    ")
+    val recv  = actorActionBody(td.actorAspect.message)
     val setupSection = if (setup.nonEmpty) s"$setup\n\n" else ""
     val recvBlock    = if (recv.nonEmpty)  s"$recv\n"     else ""
-    // signalAction is the actor's receiveSignal handler: at PostStop the author reads the
+    // signal is the actor's receiveSignal handler: at PostStop the author reads the
     // accumulated working memory (post-rule-execution harvest) and runs cleanup. Empty ⇒
     // a bare `Behaviors.same`, byte-identical to a no-op receiveSignal.
-    val signal = actorActionBody(td.actorAspect.signalAction, "          ")
+    val signal = actorActionBody(td.actorAspect.signal, "          ")
     val signalBody =
       if (signal.isEmpty) s"      Behaviors.same[$msgType]"
       else

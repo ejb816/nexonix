@@ -2,13 +2,13 @@ type RemoveCompositeNumbers
 domain draco primes Primes
 rule
   pattern
-    variables [
+    variables
       var accumulator Accumulator
       var i1 Int
       var i2 Int
-      var i3 Int ]
-    conditions [
-      con i1 * i2 == i3 ]
+      var i3 Int
+    conditions
+      con i1 * i2 == i3
   action
     fix newText String s"Composite number $i3 removed -> $i1 * $i2 == $i3"
     mon ctx.delete(i3)

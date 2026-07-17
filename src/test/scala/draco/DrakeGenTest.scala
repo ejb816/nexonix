@@ -17,10 +17,11 @@ import scala.util.Using
  *  failure means either the emitter regressed or a .drake was hand-edited
  *  without its JSON — resolve by fixing the emitter or re-emitting the file.
  *
- *  Rule / actor / codec aspects are the next emitter increments; `.rule.json` /
- *  `.actor.json` files are filtered at discovery. A plain file that grows a
- *  codec aspect will fail its test loudly (Generator.drake rejects it) — the
- *  signal to build that increment. */
+ *  Plain types and rules (`.rule.json`) are covered; a rule JSON maps to its
+ *  base-name `.drake` (AddNaturalSequence.rule.json -> AddNaturalSequence.drake).
+ *  Actor / codec aspects are the next emitter increments; `.actor.json` files are
+ *  filtered at discovery. A file that grows a codec aspect will fail its test
+ *  loudly (Generator.drake rejects it) — the signal to build that increment. */
 class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
 
   /** Excluded from comparison — hand-authored surface deliberately AHEAD of the
@@ -32,7 +33,7 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
   )
 
   private def deriveDrakePath(resourcePath: String): String =
-    resourcePath.stripSuffix(".json") + ".drake"
+    resourcePath.stripSuffix(".json").stripSuffix(".rule").stripSuffix(".actor") + ".drake"
 
   private def discoverResourcePaths(): Seq[String] = {
     val resourceRoot = Paths.get(Main.roots.sourceRoot)
@@ -42,7 +43,7 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
         .filter(p => Files.isRegularFile(p))
         .map(p => resourceRoot.relativize(p).toString.replace('\\', '/'))
         .filter(_.endsWith(".json"))
-        .filterNot(p => p.endsWith(".rule.json") || p.endsWith(".actor.json"))
+        .filterNot(p => p.endsWith(".actor.json"))
         .toList
         .sorted
     }
@@ -98,5 +99,61 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
         fail(s"$rp: emitted drake differs from hand-authored $drakePath.\n" + diffReport(handNorm, genNorm))
       }
     }
+  }
+
+  // --- Mods actors: Generator.drake emits the actor aspect ---
+  //
+  // The actor corpus lives under src/mods/resources/domains (outside the draco
+  // walk above). This increment covers actor-aspect emission, so only the actor
+  // definitions are gated here — the plain/rule mods types are a later pass. Each
+  // mods actor with an authored .drake gets an exact-match test; the rest are
+  // reported as pending. (terrestrial/Output carries a multi-line host-code body —
+  // the out-of-drake tail — so it stays pending like Value/Primes.)
+
+  private val modsResourceRoot =
+    Paths.get(Main.roots.sourceRoot.resolve(java.net.URI.create("../../mods/resources/")))
+
+  private def discoverModsActorPaths(): Seq[String] = {
+    val domainsDir = modsResourceRoot.resolve("domains")
+    if (!Files.isDirectory(domainsDir)) Seq.empty
+    else Using.resource(Files.walk(domainsDir)) { stream =>
+      stream.iterator.asScala
+        .filter(p => Files.isRegularFile(p))
+        .map(p => modsResourceRoot.relativize(p).toString.replace('\\', '/'))
+        .filter(_.endsWith(".json"))
+        .toList
+        .sorted
+    }.filter(rp => !ActorAspect.isEmpty(loadModsTypeDefinition(rp).actorAspect))
+  }
+
+  private def loadModsTypeDefinition(rp: String): TypeDefinition = {
+    val bytes = Files.readAllBytes(modsResourceRoot.resolve(rp))
+    parser.parse(new String(bytes)).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
+  }
+
+  private val modsActorPaths: Seq[String] = discoverModsActorPaths()
+
+  modsActorPaths.foreach { rp =>
+    val drakePath = deriveDrakePath(rp)
+    if (Files.isRegularFile(modsResourceRoot.resolve(drakePath))) {
+      test(s"mods $rp: Generator.drake matches $drakePath (whitespace-normalized)") {
+        val td = loadModsTypeDefinition(rp)
+        assert(td != TypeDefinition.Null, s"failed to parse mods $rp")
+        val authored = new String(Files.readAllBytes(modsResourceRoot.resolve(drakePath)))
+        val genNorm  = normalize(Generator.drake(td))
+        val handNorm = normalize(authored)
+        if (genNorm != handNorm) {
+          log.info(s"\n--- mods $rp: emitted (normalized) ---\n$genNorm")
+          log.info(s"\n--- $drakePath: hand-authored (normalized) ---\n$handNorm")
+          fail(s"mods $rp: emitted drake differs from hand-authored $drakePath.\n" + diffReport(handNorm, genNorm))
+        }
+      }
+    }
+  }
+
+  test("mods actors still lacking a .drake (report only)") {
+    val pending = modsActorPaths.filterNot(rp => Files.isRegularFile(modsResourceRoot.resolve(deriveDrakePath(rp))))
+    log.info(s"mods actors pending .drake authoring (${pending.size}): ${pending.mkString(", ")}")
+    succeed
   }
 }

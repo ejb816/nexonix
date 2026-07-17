@@ -119,7 +119,7 @@ TypeDefinition  (extends Aspects)
 
 | Field | Type | Purpose |
 |-------|------|---------|
-| `messageAction` / `signalAction` | `Action` | Actor receive / signal handlers |
+| `start` / `message` / `signal` | `Action` | Actor construction / receive / signal handlers |
 
 A type's role is read **structurally** from these aspects rather than from a marker trait — the Generator's dispatch reduces to a few predicates:
 
@@ -291,7 +291,7 @@ ExtensibleBehavior[T]      (Pekko)
   +-- Actor[T]             -- generic actor container; extends ActorType
 ```
 
-`ActorAspect` carries two handlers — `messageAction` (Pekko's `receive`) and `signalAction` (`receiveSignal`). An actor is no longer a separate sibling type: rather than a standalone `.actor.json` file, an actor lives as the `actorAspect` block on its *parent* type's `TypeDefinition`, so a type and its behavior travel together. The Generator detects an actor when `dracoAspect.derivation` reaches `ActorType` / Pekko's `ExtensibleBehavior`, and emits Pekko imports plus an `Actor[T]`.
+`ActorAspect` carries three actions — `start` (run once at construction), `message` (Pekko's `receive`) and `signal` (`receiveSignal`). An actor is no longer a separate sibling type: rather than a standalone `.actor.json` file, an actor lives as the `actorAspect` block on its *parent* type's `TypeDefinition`, so a type and its behavior travel together. The Generator detects an actor when `dracoAspect.derivation` reaches `ActorType` / Pekko's `ExtensibleBehavior`, and emits Pekko imports plus an `Actor[T]`.
 
 To hand an `Actor[T]` to Pekko's typed `ActorSystem[T]`, cast at the integration boundary — this preserves the uniform companion convention rather than parameterizing it for actors alone:
 

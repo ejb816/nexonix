@@ -14,12 +14,12 @@ import scala.jdk.CollectionConverters._
   *
   * Two angles, mirroring the Primes precedent:
   *  - rule-direct: build a session, seed the `consumed` buffer the way the actor's
-  *    `setupAction` does, insert a `PositionReport`, fire, observe the buffer —
+  *    `start` action does, insert a `PositionReport`, fire, observe the buffer —
   *    validates the rule's logic (append to the session's consumed buffer) independent
   *    of any actor;
   *  - actor-loose: send a `PositionReport` to `Consumer.actorType()`, stop it, and
-  *    observe the sink — validates the *generated* stateful actor: `setupAction` stands
-  *    up the session + buffer, `messageAction` accumulates, `signalAction` reaps to the
+  *    observe the sink — validates the *generated* stateful actor: `start` stands
+  *    up the session + buffer, `message` accumulates, `signal` reaps to the
   *    sink at `PostStop`. So the sink fills on stop — hence the await.
   */
 class AerialActorTest extends AnyFunSuite {

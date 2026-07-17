@@ -1,10 +1,10 @@
-domain draco primes Primes
 type AddNaturalSequence
+domain draco primes Primes
 rule
   pattern
-    variables [
+    variables
       var accumulator Accumulator
-      var i Integer ]
+      var i Integer
   action
     mon accumulator.primeSet.addOne(i)
     mon accumulator.naturalSet.addOne(i)
