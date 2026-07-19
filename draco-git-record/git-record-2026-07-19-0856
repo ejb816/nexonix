@@ -1,0 +1,41 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+Sweep terrestrial/marine/ethereal actors to the domain-derived rule model (#39)
+
+Session 2026-07-18/19; full suite 277/277.
+
+Applies the aerial-scoped model correction from the previous commit (ACTOR
+RULE-SET = DOMAIN RULE-SET) to the other three media domains. An actor's rule
+set is ALL the rules in its domain, derived via the domain aspect, not a
+per-actor list.
+
+Per domain (terrestrial, marine, ethereal):
+
+- Domain .json + .scala `elementTypeNames` += `ConsumeReport.rule`,
+  `OriginateReport.rule` (mirrors what Aerial got).
+
+- Consumer/Creator .json: `domainAspect` -> membership (typeName = the
+  domain), per-actor `elementTypeNames` dropped.
+
+- Consumer/Creator .scala: `elementTypeNames` -> `Seq ()`; `knowledge` now
+  accepts both domain rules (ConsumeReportRule + OriginateReportRule),
+  matching Generator.actorKnowledge output.
+
+- Authored Consumer/Creator .drake with the mandatory `domain <pkg> <Domain>`
+  line — all 6 exact-match the emitter in DrakeGenTest's mods-actor walk
+  (previously pending).
+
+Deferred (as scoped in #39): terrestrial Output — its .json is migrated to
+membership form, but its .scala stays the hand-written forwarder (no
+knowledge, like aerial Input) and its .drake stays pending, because its
+`report` body carries the multi-line `new LocationReport {…}` host-code tail.
+
+Verification: TerrestrialChainTest / MarineChainTest / EtherealChainTest green
+— the extra accepted rule lies dormant (fact-type-scoped), same safety as
+aerial. ExampleDomainsGenTest restored to 30 match (from 24 when only aerial
+was migrated). Closed #39.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

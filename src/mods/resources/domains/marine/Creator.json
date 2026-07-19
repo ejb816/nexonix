@@ -65,8 +65,12 @@
     }
   },
   "domainAspect": {
-    "elementTypeNames": [
-      "OriginateReport"
-    ]
+    "typeName": {
+      "name": "Marine",
+      "namePackage": [
+        "domains",
+        "marine"
+      ]
+    }
   }
 }

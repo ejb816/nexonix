@@ -13,10 +13,11 @@ object Creator extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Creator", _namePackage = Seq ("domains", "marine")))
   lazy val dracoType: Type[Creator] = Type[Creator] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ("OriginateReport")
+  lazy val elementTypeNames: Seq[String] = Seq ()
 
   private lazy val knowledge: Knowledge = {
     val k = Rule.knowledgeService.newKnowledge("Creator")
+    ConsumeReportRule.ruleType.pattern.accept(k)
     OriginateReportRule.ruleType.pattern.accept(k)
     k
   }

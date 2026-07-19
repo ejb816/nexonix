@@ -27,7 +27,9 @@
     },
     "elementTypeNames": [
       "VoyageIntent",
-      "FixReport"
+      "FixReport",
+      "ConsumeReport.rule",
+      "OriginateReport.rule"
     ]
   }
 }

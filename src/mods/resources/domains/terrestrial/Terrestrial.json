@@ -27,7 +27,9 @@
     },
     "elementTypeNames": [
       "MarchIntent",
-      "LocationReport"
+      "LocationReport",
+      "ConsumeReport.rule",
+      "OriginateReport.rule"
     ]
   }
 }

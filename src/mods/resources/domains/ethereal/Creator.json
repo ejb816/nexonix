@@ -65,8 +65,12 @@
     }
   },
   "domainAspect": {
-    "elementTypeNames": [
-      "OriginateReport"
-    ]
+    "typeName": {
+      "name": "Ethereal",
+      "namePackage": [
+        "domains",
+        "ethereal"
+      ]
+    }
   }
 }

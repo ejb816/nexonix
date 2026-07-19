@@ -1,0 +1,12 @@
+type Creator from Actor(draco.format.json.JSON)
+  factory
+    parameters
+      par consumer ActorRef(draco.format.json.JSON)
+domain domains ethereal Ethereal
+actor
+  message
+    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
+    mon session.set("consumer", consumer)
+    mon session.insert(Seq(msg): _*)
+    mon session.fire()
+    mon session.close()

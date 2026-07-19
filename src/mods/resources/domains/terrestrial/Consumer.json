@@ -49,8 +49,12 @@
     }
   },
   "domainAspect": {
-    "elementTypeNames": [
-      "ConsumeReport"
-    ]
+    "typeName": {
+      "name": "Terrestrial",
+      "namePackage": [
+        "domains",
+        "terrestrial"
+      ]
+    }
   }
 }
