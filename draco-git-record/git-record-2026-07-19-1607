@@ -1,0 +1,22 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+DRACO.md: de-suffix load-path + JSON-naming docs after #40
+
+Follow-up to 7559d78 (removal of the .rule/.actor name-suffix holdover). Updates
+the now-stale documentation:
+
+- Generator load path: single `loadType` from bare `<name>.json` (dropped the
+  loadRuleType/loadActorType/loadAll + ruleDefinitionLoad references).
+- "Rule name suffix" section: only rules get a generated "Rule" suffix (detected
+  via a ruleAspect); actors keep their bare name — no "Actor" suffix.
+- "JSON as Single Source of Truth": every definition is a bare `<TypeName>.json`;
+  rule-/actor-ness is aspect presence, not a name suffix.
+- Primes example: `AddNaturalSequence.json` (was `.rule.json`).
+
+Docs-only; no code change. (Auto-memory project_generator_loading updated in
+tandem, outside the repo.)
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

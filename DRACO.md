@@ -105,7 +105,7 @@ These are deliberately kept structurally symmetric — none is parameterized. Wh
 | `Actor.scala` | `Actor[T]` — generic actor container extending `ExtensibleBehavior[T] with ActorType` |
 | `ActorType.scala` | Trait: actorDefinition (TypeDefinition) |
 | `ActorInstance.scala` | Trait for actor-owning companions |
-| `Generator.scala` | Code generation from TypeDefinition JSON; detects domain/rule/actor from content; owns all type loading (loadType/loadRuleType/loadActorType/loadAll) |
+| `Generator.scala` | Code generation from TypeDefinition JSON; detects domain/rule/actor from aspect content; owns all type loading (`loadType`) |
 | `SourceContent.scala` | Reads source files from a URI root |
 | `ContentSink.scala` | Writes generated content to output paths |
 | `Main.scala` | Default source root (resources) and sink root (scala) URIs |
@@ -189,9 +189,8 @@ object MyType extends App with TypeInstance {           // or DomainInstance, Ru
 
 Key internal methods:
 - `isDomain(td)` / `isRule(td)` / `isActor(td)` — detection helpers inspecting TypeDefinition content and derivation
-- `loadType(typeName)` / `loadRuleType(typeName)` / `loadActorType(typeName)` / `loadAll(typeName)` — classpath-based runtime type loading from `.json`, `.rule.json`, `.actor.json` respectively; `loadAll` returns all that exist for a given TypeName
-- `typeDefinitionLoad(td)` — emits `draco.Generator.loadType(TypeName(...))` in generated code
-- `ruleDefinitionLoad(td)` — emits `draco.Generator.loadRuleType(TypeName(...))` in generated code
+- `loadType(typeName)` — classpath-based runtime type loading from `<name>.json` (every type, rule, and actor loads via this single path; rule-/actor-ness is carried by the aspect, not a name suffix)
+- `typeDefinitionLoad(td)` — emits `draco.Generator.loadType(TypeName(...))` in generated code (for every type, rules included)
 - `parameterizedName(tn)` / `wildcardTypeName(tn)` — TypeName-aware helpers using `typeParameters` field
 - `factoryBody(factory)` — uses `Factory.body` when non-empty, parameter-derived overrides when empty; appends `override lazy val typeInstance/typeDefinition`
 - `nullInstance(typeName, elements, factory)` — uses `wildcardTypeName` for parameterized types (e.g., `Null: Actor[_]`); `apply[Nothing]()` for type params; `apply()` for simple factories; direct element overrides for computed factories
@@ -207,7 +206,7 @@ Key internal methods:
 - `conditionFunctions` / `whereConditions` — Evrete condition compilation (fully qualified class names required)
 - Codec generation: `simpleCodecDeclaration` (only when factory params ⊆ element names), `discriminatedCodecDeclaration`, `subtypeCodecDeclaration`
 
-**Auto-suffix convention:** Generator appends "Rule" or "Actor" to `td.typeName.name` when generating rule/actor code. The JSON `typeName.name` is the base concept only (e.g., `"AddNaturalSequence"` in JSON → `AddNaturalSequenceRule` in generated Scala). The `ruleGlobal` method uses `td.typeName.name + "Rule"` for the trait/object name; `traitDeclaration` and `typeGlobal` accept a `nameSuffix` parameter for actors.
+**Rule name suffix:** Generator appends "Rule" to `td.typeName.name` when generating a rule's Scala (a type is a rule by carrying a `ruleAspect`, detected via `isRule`). The JSON `typeName.name` is the base concept only (e.g., `"AddNaturalSequence"` in JSON → `AddNaturalSequenceRule` in generated Scala). The `ruleGlobal` method uses `td.typeName.name + "Rule"` for the trait/object name. Actors keep their bare name (no "Actor" suffix) — actor-ness is the `actorAspect`, and the object is named as authored (e.g., `Consumer`).
 
 **Important:** PrimesRulesTest "Generate" tests overwrite rule source files with Generator output. Generated code must include imports and use `private lazy val` for action/pattern/ruleDefinition.
 
@@ -215,10 +214,10 @@ Key internal methods:
 
 JSON definition files are the canonical representation for types, domains, rules, and actors:
 
-1. **JSON file is the source of truth** — every definition lives in a `.json` file using flat aspect naming: `Type.json` for types, `TypeName.rule.json` for rules, `TypeName.actor.json` for actors. All files live in the domain's resource directory (no `rules/` or `actor/` subdirectories).
+1. **JSON file is the source of truth** — every definition lives in a bare `<TypeName>.json` file (e.g. `AddNaturalSequence.json`, `Consumer.json`). Rule-/actor-ness is carried by the `ruleAspect`/`actorAspect`, never by a name suffix. All files live in the domain's resource directory (no `rules/` or `actor/` subdirectories).
 2. **Domain discovery** — a domain's JSON contains only its type identity (typeName + derivation). The Generator discovers the domain's contents by scanning the resource directory for valid TypeDefinition JSON files. No `elementTypeNames` in JSON.
-3. **Generator owns all type loading** — `Generator.loadType(typeName)`, `Generator.loadRuleType(typeName)`, `Generator.loadActorType(typeName)` load from classpath using `getResourceAsStream`. `Generator.loadAll(typeName)` returns all aspects that exist. `TypeDefinition.load` has been removed.
-4. **Generator emits load calls** — `draco.Generator.loadType(TypeName(...))` for types, `draco.Generator.loadRuleType(TypeName(...))` for rules (fully qualified for portability across packages)
+3. **Generator owns all type loading** — `Generator.loadType(typeName)` loads a definition from the classpath using `getResourceAsStream` (`<name>.json`), for every type regardless of aspect. `TypeDefinition.load` has been removed.
+4. **Generator emits load calls** — `draco.Generator.loadType(TypeName(...))` for every generated type, rules included (fully qualified for portability across packages)
 5. **Dreams edits JSON** — to create or modify a type, Dreams writes the `.json` file and invokes the Generator to regenerate Scala source. Dreams will use `SourceContent`/`ContentSink` for file I/O (not classpath loading).
 
 ### Domains
@@ -227,7 +226,7 @@ Domains are peers (Draco, Base, Primes) in the `DomainDictionary`, not hierarchi
 
 **Base domain** (`draco.base`): Cardinal[T], Distance[T], Meters, Rotation[T], Radians, Ordinal, Nominal, Coordinate[T <: Product]. Cardinal is unconstrained (no Numeric bound on T). Coordinate is compositionally self-describing (no named Cartesian/Polar/Spherical types).
 
-**Primes domain** (`draco.primes`): Working example of the rule engine. Accumulator (mutable state), Numbers (input sequences), PrimeOrdinal (recursive ordinal type), three rules defined in JSON with aspect naming (`AddNaturalSequence.rule.json`, etc.) and generated as suffixed Scala types (`AddNaturalSequenceRule`, `PrimesFromNaturalSequenceRule`, `RemoveCompositeNumbersRule`). Evrete working memory uses boxed `java.lang.Integer` — rule variables must use `classOf[Integer]`, not `classOf[Int]`.
+**Primes domain** (`draco.primes`): Working example of the rule engine. Accumulator (mutable state), Numbers (input sequences), PrimeOrdinal (recursive ordinal type), three rules defined in JSON (`AddNaturalSequence.json`, etc.) and generated as suffixed Scala types (`AddNaturalSequenceRule`, `PrimesFromNaturalSequenceRule`, `RemoveCompositeNumbersRule`). Evrete working memory uses boxed `java.lang.Integer` — rule variables must use `classOf[Integer]`, not `classOf[Int]`.
 
 **Transform domains** (in test): Examples: Alpha, Bravo, Charlie, Delta extend DataModel.
 
