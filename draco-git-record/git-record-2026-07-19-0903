@@ -1,0 +1,28 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+Fix aerial Input / terrestrial Output json-vs-value accessor drift (#45)
+
+Session 2026-07-19; full suite 277/277.
+
+On draco.format.json.JSON the overridable payload member is `json: Json` (the
+circe Json, which carries `.hcursor`); `value` is `lazy val value: JSON = this`
+(the JSON self-wrapper, no `.hcursor`). Two mods definitions had drifted to the
+wrong accessor — their committed, compiling .scala was correct, but the JSON
+(and one .drake) would have regenerated non-compiling code:
+
+- aerial/Input.json + Input.drake: `msg.value.hcursor` -> `msg.json.hcursor`.
+  (Input.scala already uses `.json`; DrakeGenTest exact-match kept green by
+  updating the .drake in tandem.)
+
+- terrestrial/Output.json: the `report` Fixed body override
+  `override val value: io.circe.Json` -> `override val json: io.circe.Json`,
+  matching the compiling Output.scala (LocationReport extends ... JSON, so
+  `json` is the overridable member). Output's .drake stays deferred (#42).
+
+Swept the rest of src/mods — no other `msg.value` / `override val value`
+drift remains. Closed #45.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

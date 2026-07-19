@@ -39,7 +39,7 @@
           "kind": "Fixed",
           "name": "cursor",
           "valueType": "io.circe.HCursor",
-          "value": "msg.value.hcursor"
+          "value": "msg.json.hcursor"
         },
         {
           "kind": "Fixed",

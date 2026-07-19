@@ -45,7 +45,7 @@
           "kind": "Fixed",
           "name": "report",
           "valueType": "domains.terrestrial.LocationReport",
-          "value": "new LocationReport {\n      override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition\n      override val value: io.circe.Json = payload\n    }"
+          "value": "new LocationReport {\n      override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition\n      override val json: io.circe.Json = payload\n    }"
         },
         {
           "kind": "Monadic",
