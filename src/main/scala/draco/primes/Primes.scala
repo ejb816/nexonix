@@ -10,7 +10,7 @@ object Primes extends App {
   lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Primes", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[Primes] = Type[Primes] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ("Accumulator", "Numbers", "AddNaturalSequence.rule", "PrimesFromNaturalSequence.rule", "RemoveCompositeNumbers.rule")
+  lazy val elementTypeNames: Seq[String] = Seq ("Accumulator", "Numbers", "AddNaturalSequence", "PrimesFromNaturalSequence", "RemoveCompositeNumbers")
 
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
   def filter(naturals: LazyList[Int]): LazyList[Int] = {

@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "OriginateReport.rule",
+    "name": "ConsumeReport",
     "namePackage": [
       "domains",
       "aerial"
@@ -12,8 +12,8 @@
       "variables": [
         {
           "kind": "Variable",
-          "name": "intent",
-          "valueType": "FlightIntent"
+          "name": "report",
+          "valueType": "PositionReport"
         }
       ]
     },
@@ -22,15 +22,9 @@
       "valueType": "Unit",
       "body": [
         {
-          "kind": "Fixed",
-          "name": "consumer",
-          "valueType": "org.apache.pekko.actor.typed.ActorRef[draco.format.json.JSON]",
-          "value": "ctx.getRuntime().get[org.apache.pekko.actor.typed.ActorRef[draco.format.json.JSON]](\"consumer\")"
-        },
-        {
           "kind": "Monadic",
           "valueType": "Unit",
-          "value": "consumer ! originate(intent)"
+          "value": "ctx.getRuntime().get[java.util.List[String]](\"consumed\").add(report.json.noSpaces)"
         }
       ]
     }

@@ -60,11 +60,11 @@ object ListDomain {
     case class Row(kind: String, name: String, detail: String, missing: Boolean)
 
     val rows: Seq[Row] = dom.elementTypeNames.map { elementName =>
-      val kind =
-        if (elementName.endsWith(".rule"))  "RULE"
-        else if (elementName.endsWith(".actor")) "ACTOR"
-        else                                 "TYPE"
       val elementTd = Generator.loadType(TypeName(elementName, _namePackage = pkg))
+      val kind =
+        if (!RuleAspect.isEmpty(elementTd.ruleAspect))  "RULE"
+        else if (!ActorAspect.isEmpty(elementTd.actorAspect)) "ACTOR"
+        else                                 "TYPE"
       if (!loaded(elementTd)) {
         Row(kind, elementName, "[MISSING — no resource found]", missing = true)
       } else {

@@ -42,26 +42,16 @@ object Generator extends App {
     } finally source.close()
   }
 
-  private def resourcePath (typeName: TypeName, aspect: String = "") : String = {
+  private def resourcePath (typeName: TypeName) : String = {
     val np = typeName.namePackage.mkString("/")
-    val n = typeName.name
-    if (aspect.isEmpty) s"/$np/$n.json" else s"/$np/$n.$aspect.json"
+    s"/$np/${typeName.name}.json"
   }
 
-  private def tryLoad (typeName: TypeName, aspect: String = "") : Option[TypeDefinition] =
-    loadFromResource(resourcePath(typeName, aspect))
+  private def tryLoad (typeName: TypeName) : Option[TypeDefinition] =
+    loadFromResource(resourcePath(typeName))
 
   def loadType (typeName: TypeName) : TypeDefinition =
     tryLoad(typeName).getOrElse(TypeDefinition(typeName))
-
-  def loadRuleType (typeName: TypeName) : TypeDefinition =
-    tryLoad(typeName, "rule").getOrElse(TypeDefinition(typeName))
-
-  def loadActorType (typeName: TypeName) : TypeDefinition =
-    tryLoad(typeName, "actor").getOrElse(TypeDefinition(typeName))
-
-  def loadAll (typeName: TypeName) : Seq[TypeDefinition] =
-    Seq("", "rule", "actor").flatMap(aspect => tryLoad(typeName, aspect))
 
   /** True iff `td` itself, or any transitive ancestor via `draco.derivation`, has a
     * typeName matching `targetName`. Used to decide whether emitted factory bodies
@@ -350,9 +340,9 @@ object Generator extends App {
       case Seq("DracoType") => ""  // the universal root alone is inferable
       case refs            => s" from ${refs.mkString(" ")}"
     }
-    // The `.rule`/`.actor` aspect suffix is a resource-naming device, not part
-    // of the concept — the drake surface names the bare type (AddNaturalSequence).
-    val header = s"type ${stripAspect(td.typeName.name)}$typeParameters$fromClause"
+    // The drake surface names the bare concept (AddNaturalSequence); rule-/actor-ness
+    // is carried by the ruleAspect/actorAspect, never by the type name.
+    val header = s"type ${td.typeName.name}$typeParameters$fromClause"
 
     val modules =
       if (da.modules.isEmpty) Seq.empty
@@ -442,18 +432,16 @@ object Generator extends App {
     if (idx < 0) name else name.substring(0, idx)
   }
 
-  /** Parameterized name from TypeName: "Primal[T]" or "Primal" if no typeParameters.
-    * Strips `.rule`/`.actor` aspect suffix so the result is a valid Scala identifier base. */
+  /** Parameterized name from TypeName: "Primal[T]" or "Primal" if no typeParameters. */
   private def parameterizedName (tn: TypeName) : String = {
-    val base = stripAspect(tn.name)
+    val base = tn.name
     if (tn.typeParameters.isEmpty) base
     else s"$base[${tn.typeParameters.mkString(", ")}]"
   }
 
-  /** Wildcard name from TypeName: "Primal[_]" or "Primal" if no typeParameters.
-    * Strips `.rule`/`.actor` aspect suffix. */
+  /** Wildcard name from TypeName: "Primal[_]" or "Primal" if no typeParameters. */
   private def wildcardTypeName (tn: TypeName) : String = {
-    val base = stripAspect(tn.name)
+    val base = tn.name
     if (tn.typeParameters.isEmpty) base
     else s"$base[${tn.typeParameters.map(_ => "_").mkString(", ")}]"
   }
@@ -479,13 +467,6 @@ object Generator extends App {
   private def typeDefinitionLoad (td: TypeDefinition) : String = {
     s"""Generator.loadType(${typeNameLiteralForLoad(td.typeName.name, td.typeName)})"""
   }
-
-  /** Emit `loadRuleType(TypeName(baseName, ...))` — the `.rule` aspect is added back
-    * by `loadRuleType` when resolving the JSON resource. */
-  private def ruleDefinitionLoad (td: TypeDefinition) : String = {
-    s"""Generator.loadRuleType(${typeNameLiteralForLoad(stripAspect(td.typeName.name), td.typeName)})"""
-  }
-
 
 
   // --- Rule generation helpers ---
@@ -564,7 +545,7 @@ object Generator extends App {
     * type being declared. */
   private def derivationRef (td: TypeDefinition, tn: TypeName) : String = {
     val base = parameterizedName(tn)
-    if (stripAspect(tn.name) == stripAspect(td.typeName.name) &&
+    if (tn.name == td.typeName.name &&
         tn.namePackage.nonEmpty && tn.namePackage != td.typeName.namePackage)
       s"${tn.namePackage.mkString(".")}.$base"
     else base
@@ -1151,7 +1132,7 @@ object Generator extends App {
     val factory = td.dracoAspect.factory
     val hasFactory = factory.valueType.nonEmpty
     val hasGlobalElements = td.dracoAspect.globalElements.nonEmpty
-    val objName = stripAspect(td.typeName.name) + nameSuffix
+    val objName = td.typeName.name + nameSuffix
     val wName = wildcardTypeName(td.typeName) + nameSuffix
     val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
 
@@ -1288,7 +1269,7 @@ object Generator extends App {
   // --- Rule companion generation ---
 
   private def ruleGlobal (td: TypeDefinition) : String = {
-    val name = stripAspect(td.typeName.name) + "Rule"
+    val name = td.typeName.name + "Rule"
     val parents = Seq(
       if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
       if (chainHits(td, "DracoType")) Some("DracoType") else None
@@ -1299,7 +1280,7 @@ object Generator extends App {
     val container = containerName(td)
     val dtBlock = if (container.nonEmpty) s"\n${domainTypeLiteral(container)}" else ""
     s"""$header {
-       |  ${tdOverride}lazy val typeDefinition: TypeDefinition = ${ruleDefinitionLoad(td)}
+       |  ${tdOverride}lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}
        |$tiLiteral$dtBlock
        |${conditionFunctions(td.ruleAspect.pattern.conditions)}
        |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
@@ -1313,7 +1294,7 @@ object Generator extends App {
        |    .forEach (
        |${factVariables(td.ruleAspect.pattern.variables)}
        |    )
-       |${whereConditions(td.ruleAspect.pattern.conditions, stripAspect(td.typeName.namePath) + "Rule")}
+       |${whereConditions(td.ruleAspect.pattern.conditions, td.typeName.namePath + "Rule")}
        |    .execute (action)
        |    .build()
        |  }
@@ -1372,13 +1353,16 @@ object Generator extends App {
       if (isDomain(td)) td
       else if (td.domainAspect.typeName.name.nonEmpty) loadType(td.domainAspect.typeName)
       else td
-    // Rules are identified by the `.rule` aspect suffix on the dictionary entry —
-    // the current discriminator; a later pass drops the suffix for a ruleAspect check.
-    val rules = domainTd.domainAspect.elementTypeNames.filter(_.endsWith(".rule"))
+    // A member is a rule iff it carries a ruleAspect — load each dictionary entry
+    // (from the domain's package) and test for one. Rule-ness is aspect presence,
+    // not a name suffix.
+    val rules = domainTd.domainAspect.elementTypeNames.filter { n =>
+      !RuleAspect.isEmpty(loadType(TypeName(n, _namePackage = domainTd.typeName.namePackage)).ruleAspect)
+    }
     if (rules.isEmpty)
       s"""  private lazy val knowledge: Knowledge = Rule.knowledgeService.newKnowledge("$tag")"""
     else {
-      val accepts = rules.map(r => s"    ${stripAspect(r)}Rule.ruleType.pattern.accept(k)").mkString("\n")
+      val accepts = rules.map(r => s"    ${r}Rule.ruleType.pattern.accept(k)").mkString("\n")
       s"""  private lazy val knowledge: Knowledge = {
          |    val k = Rule.knowledgeService.newKnowledge("$tag")
          |$accepts
@@ -1485,11 +1469,6 @@ object Generator extends App {
 
   // --- Detection helpers ---
 
-  /** Strip aspect suffix (`.rule` / `.actor`) from a raw TypeName.name or namePath
-    * so it can be used as a Scala identifier base before appending `Rule`/`Actor`. */
-  private def stripAspect (name: String) : String =
-    name.stripSuffix(".rule").stripSuffix(".actor")
-
   /** A TypeDefinition is a domain when its `domainAspect.typeName` self-loops
     * (i.e., declares itself as the domain). Compared on name + package only, not
     * full `TypeName` equality: a parameterized self-domain (e.g. `Format[T]`) need
@@ -1505,10 +1484,10 @@ object Generator extends App {
     (td.dracoAspect.source.name.nonEmpty && td.dracoAspect.target.name.nonEmpty)
 
   private def isRule (td: TypeDefinition) : Boolean =
-    td.typeName.name.endsWith(".rule") || td.ruleAspect.pattern.variables.nonEmpty
+    !RuleAspect.isEmpty(td.ruleAspect)
 
   private def isActor (td: TypeDefinition) : Boolean =
-    td.typeName.name.endsWith(".actor") || td.dracoAspect.derivation.exists(tn => Set("ActorType", "ExtensibleBehavior").contains(tn.name))
+    td.dracoAspect.derivation.exists(tn => Set("ActorType", "ExtensibleBehavior").contains(tn.name))
 
   /** Object-only type: no trait, no factory, no derivation, but has globalElements.
     * Emits object extending DracoType with dracoType = this. */
@@ -1659,7 +1638,7 @@ object Generator extends App {
   def generate (td: TypeDefinition) : String = {
     if (isRule(td)) {
       val imports = ruleImports(td.typeName.namePackage)
-      val ruleName = stripAspect(td.typeName.name) + "Rule"
+      val ruleName = td.typeName.name + "Rule"
       s"""
          |package ${td.typeName.namePackage.mkString(".")}
          |
@@ -1695,25 +1674,22 @@ object Generator extends App {
          |${objectGlobal(td)}
          |""".stripMargin
     } else if (isLeaf(td) || isActor(td)) {
-      // Leaves and actors share the unified trait+global emission;
-      // `nameSuffix` ("Actor" iff td.typeName.name ends in ".actor") and `instanceType`
-      // ("actor" iff isActor) differentiate the two.
+      // Leaves and actors share the unified trait+global emission, differentiated
+      // by `instanceType` ("actor" iff isActor). Actor types keep their bare name —
+      // the type IS an actor by carrying the actor derivation/aspect, not by a name
+      // suffix — so no nameSuffix is applied here.
       val isActorType = isActor(td)
       // pekko behaviour imports (Behavior/Signal/TypedActorContext/Behaviors) are only
       // used by factory-emitted receive/receiveSignal bodies; a factory-less actor
       // container (e.g. the base Actor[T] trait) needs none.
       val instanceType = if (isActorType && td.dracoAspect.factory.valueType.nonEmpty) "actor" else ""
-      // Suffix is only applied to actor-aspect TDs (name ending in `.actor`),
-      // not to every type that uses the Pekko actor framework. Without this
-      // restriction the base `Actor` type itself becomes `ActorActor`.
-      val nameSuffix = if (td.typeName.name.endsWith(".actor")) "Actor" else ""
       val imports = typeImports(td, hasCodec(td), instanceType)
       s"""
          |package ${td.typeName.namePackage.mkString(".")}
          |$imports
-         |${traitDeclaration(td, nameSuffix)}
+         |${traitDeclaration(td)}
          |
-         |${typeGlobal(td, nameSuffix = nameSuffix)}
+         |${typeGlobal(td)}
          |""".stripMargin
     } else {
       // Unreachable: the four predicates above partition the type space.

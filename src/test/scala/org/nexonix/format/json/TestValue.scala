@@ -39,9 +39,9 @@ class TestValue extends AnyFunSuite with PersistentTestLog {
   }
   test ("test rule json") {
     val jsonFilePaths: Seq[String] = Seq (
-      "draco/primes/AddNaturalSequence.rule.json",
-      "draco/primes/PrimesFromNaturalSequence.rule.json",
-      "draco/primes/RemoveCompositeNumbers.rule.json"
+      "draco/primes/AddNaturalSequence.json",
+      "draco/primes/PrimesFromNaturalSequence.json",
+      "draco/primes/RemoveCompositeNumbers.json"
     )
     val checkJson: String => Unit = fn => {
       val sourceContent = SourceContent(Generator.main.sourceRoot, fn)

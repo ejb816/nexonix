@@ -1,9 +1,9 @@
 {
   "typeName": {
-    "name": "OriginateReport.rule",
+    "name": "OriginateReport",
     "namePackage": [
       "domains",
-      "terrestrial"
+      "aerial"
     ]
   },
   "ruleAspect": {
@@ -13,7 +13,7 @@
         {
           "kind": "Variable",
           "name": "intent",
-          "valueType": "MarchIntent"
+          "valueType": "FlightIntent"
         }
       ]
     },
@@ -37,10 +37,10 @@
   },
   "domainAspect": {
     "typeName": {
-      "name": "Terrestrial",
+      "name": "Aerial",
       "namePackage": [
         "domains",
-        "terrestrial"
+        "aerial"
       ]
     }
   }

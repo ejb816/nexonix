@@ -33,7 +33,7 @@ class AerialGenTest extends AnyFunSuite with PersistentTestLog {
 
   test("generate Consumer actor and ConsumeReport rule") {
     val consumer = Generator.loadType(TypeName("Consumer", _namePackage = Seq("domains", "aerial")))
-    val consumeReport = Generator.loadRuleType(TypeName("ConsumeReport", _namePackage = Seq("domains", "aerial")))
+    val consumeReport = Generator.loadType(TypeName("ConsumeReport", _namePackage = Seq("domains", "aerial")))
 
     emit("Consumer.scala", Generator.generate(consumer))
     emit("ConsumeReportRule.scala", Generator.generate(consumeReport))

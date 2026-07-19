@@ -28,8 +28,8 @@
     "elementTypeNames": [
       "VoyageIntent",
       "FixReport",
-      "ConsumeReport.rule",
-      "OriginateReport.rule"
+      "ConsumeReport",
+      "OriginateReport"
     ]
   }
 }

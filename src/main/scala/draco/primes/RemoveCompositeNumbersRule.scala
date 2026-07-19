@@ -8,7 +8,7 @@ import java.util.function.Consumer
 trait RemoveCompositeNumbersRule
 
 object RemoveCompositeNumbersRule extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadRuleType(TypeName ("RemoveCompositeNumbers", _namePackage = Seq ("draco", "primes")))
+  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("RemoveCompositeNumbers", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[RemoveCompositeNumbersRule] = Type[RemoveCompositeNumbersRule] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
   def w0(i1: Int, i2: Int, i3: Int): Boolean = i1 * i2 == i3
@@ -27,7 +27,7 @@ object RemoveCompositeNumbersRule extends App {
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
     knowledge
     .builder()
-    .newRule ("draco.primes.RemoveCompositeNumbers.rule")
+    .newRule ("draco.primes.RemoveCompositeNumbers")
     .forEach (
       "$accumulator", classOf[Accumulator],
       "$i1", classOf[Int],

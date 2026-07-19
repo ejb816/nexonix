@@ -17,11 +17,11 @@ import scala.util.Using
  *  failure means either the emitter regressed or a .drake was hand-edited
  *  without its JSON — resolve by fixing the emitter or re-emitting the file.
  *
- *  Plain types and rules (`.rule.json`) are covered; a rule JSON maps to its
- *  base-name `.drake` (AddNaturalSequence.rule.json -> AddNaturalSequence.drake).
- *  Actor / codec aspects are the next emitter increments; `.actor.json` files are
- *  filtered at discovery. A file that grows a codec aspect will fail its test
- *  loudly (Generator.drake rejects it) — the signal to build that increment. */
+ *  Plain types and rules are covered; every type maps to its base-name `.drake`
+ *  (AddNaturalSequence.json -> AddNaturalSequence.drake). Rule-/actor-ness is
+ *  carried by the aspect, not a name suffix. A file that grows a codec aspect will
+ *  fail its test loudly (Generator.drake rejects it) — the signal to build that
+ *  increment. */
 class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
 
   /** Excluded from comparison — hand-authored surface deliberately AHEAD of the
@@ -33,7 +33,7 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
   )
 
   private def deriveDrakePath(resourcePath: String): String =
-    resourcePath.stripSuffix(".json").stripSuffix(".rule").stripSuffix(".actor") + ".drake"
+    resourcePath.stripSuffix(".json") + ".drake"
 
   private def discoverResourcePaths(): Seq[String] = {
     val resourceRoot = Paths.get(Main.roots.sourceRoot)

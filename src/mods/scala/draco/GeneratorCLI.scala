@@ -164,12 +164,12 @@ object GeneratorCLI {
     daName != null && daName.name.nonEmpty && daName.namePath == td.typeName.namePath
   }
 
-  /** Sort key for an element name: types first (0), then rules (1), then
-    * actors (2), each group alphabetical. Matches the order used in the
-    * existing hand-authored elementTypeNames lists. */
-  private def elementCategory(name: String): Int =
-    if (name.endsWith(".rule")) 1
-    else if (name.endsWith(".actor")) 2
+  /** Sort key for an element: types first (0), then rules (1), then actors (2),
+    * each group alphabetical. Matches the order used in the existing hand-authored
+    * elementTypeNames lists. Rule-/actor-ness is aspect presence, not a name suffix. */
+  private def elementCategory(td: TypeDefinition): Int =
+    if (!RuleAspect.isEmpty(td.ruleAspect)) 1
+    else if (!ActorAspect.isEmpty(td.actorAspect)) 2
     else 0
 
   /** Scan the domain JSON's parent directory for sibling type JSONs and
@@ -187,7 +187,7 @@ object GeneratorCLI {
         .filterNot(_ == selfFile)
         .map(_.stripSuffix(".json"))
         .toSeq
-    }.sortBy(name => (elementCategory(name), name))
+    }.sortBy(name => (elementCategory(loadTypeDefinition(dir.resolve(name + ".json").toString)), name))
   }
 
   private def runDiscover(path: String, force: Boolean): Unit = {

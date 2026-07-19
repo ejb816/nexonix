@@ -114,9 +114,9 @@
     "elementTypeNames": [
       "Accumulator",
       "Numbers",
-      "AddNaturalSequence.rule",
-      "PrimesFromNaturalSequence.rule",
-      "RemoveCompositeNumbers.rule"
+      "AddNaturalSequence",
+      "PrimesFromNaturalSequence",
+      "RemoveCompositeNumbers"
     ]
   }
 }

@@ -1,9 +1,9 @@
 {
   "typeName": {
-    "name": "OriginateReport.rule",
+    "name": "ConsumeReport",
     "namePackage": [
       "domains",
-      "marine"
+      "terrestrial"
     ]
   },
   "ruleAspect": {
@@ -12,8 +12,8 @@
       "variables": [
         {
           "kind": "Variable",
-          "name": "intent",
-          "valueType": "VoyageIntent"
+          "name": "report",
+          "valueType": "LocationReport"
         }
       ]
     },
@@ -22,25 +22,19 @@
       "valueType": "Unit",
       "body": [
         {
-          "kind": "Fixed",
-          "name": "consumer",
-          "valueType": "org.apache.pekko.actor.typed.ActorRef[draco.format.json.JSON]",
-          "value": "ctx.getRuntime().get[org.apache.pekko.actor.typed.ActorRef[draco.format.json.JSON]](\"consumer\")"
-        },
-        {
           "kind": "Monadic",
           "valueType": "Unit",
-          "value": "consumer ! originate(intent)"
+          "value": "domains.terrestrial.TerrestrialSink.record(report.json.noSpaces)"
         }
       ]
     }
   },
   "domainAspect": {
     "typeName": {
-      "name": "Marine",
+      "name": "Terrestrial",
       "namePackage": [
         "domains",
-        "marine"
+        "terrestrial"
       ]
     }
   }

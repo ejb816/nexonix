@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "PrimesFromNaturalSequence.rule",
+    "name": "PrimesFromNaturalSequence",
     "namePackage": [
       "draco",
       "primes"

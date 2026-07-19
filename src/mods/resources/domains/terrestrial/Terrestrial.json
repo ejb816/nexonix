@@ -28,8 +28,8 @@
     "elementTypeNames": [
       "MarchIntent",
       "LocationReport",
-      "ConsumeReport.rule",
-      "OriginateReport.rule"
+      "ConsumeReport",
+      "OriginateReport"
     ]
   }
 }

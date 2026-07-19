@@ -9,7 +9,7 @@ object Ethereal extends App {
   lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Ethereal", _namePackage = Seq ("domains", "ethereal")))
   lazy val dracoType: Type[Ethereal] = Type[Ethereal] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ("LaunchIntent", "EphemerisReport", "ConsumeReport.rule", "OriginateReport.rule")
+  lazy val elementTypeNames: Seq[String] = Seq ("LaunchIntent", "EphemerisReport", "ConsumeReport", "OriginateReport")
 
   lazy val domainType: Domain[Ethereal] = Domain[Ethereal] (typeDefinition)
 }

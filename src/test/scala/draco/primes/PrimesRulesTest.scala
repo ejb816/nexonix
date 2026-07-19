@@ -37,7 +37,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
     service.shutdown()
   }
   test("Generate PrimesFromNaturalSequence") {
-    val resourcePath = "draco/primes/PrimesFromNaturalSequence.rule.json"
+    val resourcePath = "draco/primes/PrimesFromNaturalSequence.json"
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     log.info(jsonContent.spaces2)
@@ -50,7 +50,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
   }
 
   test("Generate AddNaturalSequence") {
-    val resourcePath = "draco/primes/AddNaturalSequence.rule.json"
+    val resourcePath = "draco/primes/AddNaturalSequence.json"
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     log.info(jsonContent.spaces2)
@@ -63,7 +63,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
   }
 
   test("Generate RemoveCompositeNumbers") {
-    val resourcePath = "draco/primes/RemoveCompositeNumbers.rule.json"
+    val resourcePath = "draco/primes/RemoveCompositeNumbers.json"
     val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     log.info(jsonContent.spaces2)

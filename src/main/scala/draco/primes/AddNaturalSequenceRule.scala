@@ -8,7 +8,7 @@ import java.util.function.Consumer
 trait AddNaturalSequenceRule
 
 object AddNaturalSequenceRule extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadRuleType(TypeName ("AddNaturalSequence", _namePackage = Seq ("draco", "primes")))
+  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("AddNaturalSequence", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[AddNaturalSequenceRule] = Type[AddNaturalSequenceRule] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 
@@ -24,7 +24,7 @@ object AddNaturalSequenceRule extends App {
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
     knowledge
     .builder()
-    .newRule ("draco.primes.AddNaturalSequence.rule")
+    .newRule ("draco.primes.AddNaturalSequence")
     .forEach (
       "$accumulator", classOf[Accumulator],
       "$i", classOf[Integer]

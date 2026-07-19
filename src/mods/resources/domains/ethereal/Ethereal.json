@@ -28,8 +28,8 @@
     "elementTypeNames": [
       "LaunchIntent",
       "EphemerisReport",
-      "ConsumeReport.rule",
-      "OriginateReport.rule"
+      "ConsumeReport",
+      "OriginateReport"
     ]
   }
 }

@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "ConsumeReport.rule",
+    "name": "OriginateReport",
     "namePackage": [
       "domains",
       "ethereal"
@@ -12,8 +12,8 @@
       "variables": [
         {
           "kind": "Variable",
-          "name": "report",
-          "valueType": "EphemerisReport"
+          "name": "intent",
+          "valueType": "LaunchIntent"
         }
       ]
     },
@@ -22,9 +22,15 @@
       "valueType": "Unit",
       "body": [
         {
+          "kind": "Fixed",
+          "name": "consumer",
+          "valueType": "org.apache.pekko.actor.typed.ActorRef[draco.format.json.JSON]",
+          "value": "ctx.getRuntime().get[org.apache.pekko.actor.typed.ActorRef[draco.format.json.JSON]](\"consumer\")"
+        },
+        {
           "kind": "Monadic",
           "valueType": "Unit",
-          "value": "domains.ethereal.EtherealSink.record(report.json.noSpaces)"
+          "value": "consumer ! originate(intent)"
         }
       ]
     }

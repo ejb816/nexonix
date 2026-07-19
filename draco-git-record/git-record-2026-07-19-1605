@@ -1,0 +1,51 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+Remove the .rule/.actor name-suffix holdover — rule-ness is aspect presence (#40)
+
+Session 2026-07-19; full suite 277/277.
+
+The `.rule`/`.actor` suffix in type NAMES was a holdover from before aspects
+settled. A type IS a rule/actor by carrying a ruleAspect/actorAspect, never by a
+name discriminator. `.actor` was already unused (actors are bare-named, detected
+by actorAspect); this removes the remaining `.rule` suffix. No base-name
+collisions exist in the corpus, so files rename straight to bare `.json` (no
+merged-per-concept TypeDefinition needed).
+
+Corpus (12 rule files, all git-mv'd .rule.json -> .json, typeName.name bared):
+- draco.primes: AddNaturalSequence, PrimesFromNaturalSequence, RemoveCompositeNumbers.
+- media domains: ConsumeReport, OriginateReport x {aerial, terrestrial, marine, ethereal}.
+- test: org.nexonix.rules.rete.TupleFact.
+- Domain elementTypeNames (Primes + 4 media, json + scala mirrors + Primes.drake)
+  drop the `.rule` suffix on their rule entries.
+- Generated rule .scala: loadRuleType(...) -> loadType(...); the Evrete
+  `.newRule("<namePath>")` string loses its trailing `.rule` (object names and
+  whereConditions references are unchanged — they were always base + "Rule").
+
+Generator:
+- Loaders: drop the aspect-suffix machinery — resourcePath/tryLoad lose the
+  `aspect` param; loadRuleType / loadActorType / loadAll (unused) deleted; the
+  emitter's ruleDefinitionLoad folds into typeDefinitionLoad (both emit loadType).
+- stripAspect removed; all call sites now use the bare name directly.
+- isRule = !RuleAspect.isEmpty(ruleAspect); isActor drops the `.actor` name clause;
+  the actor emission branch drops its dead `.actor`->"Actor" nameSuffix (actors
+  keep their bare name).
+- actorKnowledge identifies a domain's rules by loading each elementTypeName member
+  and testing ruleAspect presence, not by `.endsWith(".rule")`.
+- drake header + parameterizedName/wildcardTypeName doc comments de-suffixed.
+
+Tests & tooling:
+- DracoGenTest / ExampleDomainsGenTest deriveScalaPath: rule-ness via ruleAspect
+  (a rule emits `...Rule.scala`; plain types and actors keep the bare name — the
+  dead `.actor`->`...Actor.scala` branch is gone). DrakeGenTest deriveDrakePath
+  simplified to `stripSuffix(".json") + ".drake"`.
+- Hardcoded `.rule.json` resource paths updated in PrimesRulesTest, TestValue,
+  TupleFactReteTest, AerialGenTest.
+- GeneratorCLI.elementCategory + the list-domain / list-domains / diff-type mods
+  scripts categorize by aspect instead of the name suffix.
+
+ExampleDomainsGenTest report-only map unchanged at 30 match / 18 differ. Closes #40.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

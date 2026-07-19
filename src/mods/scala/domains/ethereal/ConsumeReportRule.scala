@@ -9,7 +9,7 @@ import java.util.function.Consumer
 trait ConsumeReportRule
 
 object ConsumeReportRule extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadRuleType(TypeName ("ConsumeReport", _namePackage = Seq ("domains", "ethereal")))
+  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("ConsumeReport", _namePackage = Seq ("domains", "ethereal")))
   lazy val dracoType: Type[ConsumeReportRule] = Type[ConsumeReportRule] (typeDefinition)
   lazy val domainType: Domain[Ethereal] = Domain[Ethereal] (typeDefinition)
 
@@ -21,7 +21,7 @@ object ConsumeReportRule extends App {
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
     knowledge
     .builder()
-    .newRule ("domains.ethereal.ConsumeReport.rule")
+    .newRule ("domains.ethereal.ConsumeReport")
     .forEach (
       "$report", classOf[EphemerisReport]
     )

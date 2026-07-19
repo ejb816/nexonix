@@ -29,7 +29,7 @@ domain draco primes Primes
   types [
     Accumulator
     Numbers
-    AddNaturalSequence.rule
-    PrimesFromNaturalSequence.rule
-    RemoveCompositeNumbers.rule
+    AddNaturalSequence
+    PrimesFromNaturalSequence
+    RemoveCompositeNumbers
   ]

@@ -1,9 +1,9 @@
 {
   "typeName": {
-    "name": "ConsumeReport.rule",
+    "name": "ConsumeReport",
     "namePackage": [
       "domains",
-      "aerial"
+      "ethereal"
     ]
   },
   "ruleAspect": {
@@ -13,7 +13,7 @@
         {
           "kind": "Variable",
           "name": "report",
-          "valueType": "PositionReport"
+          "valueType": "EphemerisReport"
         }
       ]
     },
@@ -24,17 +24,17 @@
         {
           "kind": "Monadic",
           "valueType": "Unit",
-          "value": "ctx.getRuntime().get[java.util.List[String]](\"consumed\").add(report.json.noSpaces)"
+          "value": "domains.ethereal.EtherealSink.record(report.json.noSpaces)"
         }
       ]
     }
   },
   "domainAspect": {
     "typeName": {
-      "name": "Aerial",
+      "name": "Ethereal",
       "namePackage": [
         "domains",
-        "aerial"
+        "ethereal"
       ]
     }
   }

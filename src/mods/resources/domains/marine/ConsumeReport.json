@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "ConsumeReport.rule",
+    "name": "ConsumeReport",
     "namePackage": [
       "domains",
       "marine"

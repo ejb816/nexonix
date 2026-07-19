@@ -1,9 +1,9 @@
 {
   "typeName": {
-    "name": "OriginateReport.rule",
+    "name": "OriginateReport",
     "namePackage": [
       "domains",
-      "ethereal"
+      "terrestrial"
     ]
   },
   "ruleAspect": {
@@ -13,7 +13,7 @@
         {
           "kind": "Variable",
           "name": "intent",
-          "valueType": "LaunchIntent"
+          "valueType": "MarchIntent"
         }
       ]
     },
@@ -37,10 +37,10 @@
   },
   "domainAspect": {
     "typeName": {
-      "name": "Ethereal",
+      "name": "Terrestrial",
       "namePackage": [
         "domains",
-        "ethereal"
+        "terrestrial"
       ]
     }
   }

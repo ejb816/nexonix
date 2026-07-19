@@ -59,9 +59,10 @@ object ListDomains {
         val actual = if (td.domainAspect.typeName.name.isEmpty) "(none)" else td.domainAspect.typeName.namePath
         (path, NotDomain(actual))
       } else {
-        val items   = td.domainAspect.elementTypeNames
-        val rules   = items.count(_.endsWith(".rule"))
-        val actors  = items.count(_.endsWith(".actor"))
+        val items       = td.domainAspect.elementTypeNames
+        val loadedItems = items.map(n => Generator.loadType(TypeName(n, _namePackage = pkg)))
+        val rules   = loadedItems.count(t => !RuleAspect.isEmpty(t.ruleAspect))
+        val actors  = loadedItems.count(t => !ActorAspect.isEmpty(t.actorAspect))
         val types   = items.size - rules - actors
         (path, Domain(items.size, types, rules, actors))
       }

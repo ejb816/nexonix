@@ -22,12 +22,12 @@ import draco._
 import java.nio.file.{Files, Paths}
 
 object DiffType {
-  // Map a typeName.name to the conventional hand-written filename.
-  private def scalaFilename(name: String): String = {
-    if (name.endsWith(".rule"))       name.dropRight(".rule".length)  + "Rule.scala"
-    else if (name.endsWith(".actor")) name.dropRight(".actor".length) + "Actor.scala"
-    else                              name + ".scala"
-  }
+  // Map a type to the conventional hand-written filename. Rule-ness is aspect
+  // presence, not a name suffix: a ruleAspect emits a `Rule`-suffixed object;
+  // plain types and actors keep the bare name.
+  private def scalaFilename(name: String, td: TypeDefinition): String =
+    if (!RuleAspect.isEmpty(td.ruleAspect)) name + "Rule.scala"
+    else                                    name + ".scala"
 
   // DracoGenTest.normalize equivalent: strip trailing whitespace per line, collapse
   // blank-line runs to one, drop leading/trailing blanks. Preserves indentation and
@@ -78,7 +78,7 @@ object DiffType {
       sys.exit(2)
     }
 
-    val filename = scalaFilename(name)
+    val filename = scalaFilename(name, td)
     val pathParts: Array[String] = (pkg :+ filename).toArray
     val mainPath = Paths.get("src", ("main" +: "scala" +: pathParts): _*)
     val testPath = Paths.get("src", ("test" +: "scala" +: pathParts): _*)
