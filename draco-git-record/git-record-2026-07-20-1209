@@ -1,0 +1,41 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+drake multi-line application surface (Stage 1) + fix TupleFact #40 regression
+
+Session 2026-07-20; full suite 276/276.
+
+Two things, both needed for a green clean build:
+
+1. Fix a #40 regression that a stale incremental compile hid. TupleFact.json
+   used a LEGACY flat rule schema (top-level variables/conditions/action, not
+   under `ruleAspect`), so its `ruleAspect` decoded empty. #40 switched rule
+   detection from the `.rule` name suffix to ruleAspect-presence, so the
+   Generator stopped seeing it as a rule and emitted `object TupleFact` (plain)
+   instead of `object TupleFactRule` — which #40 then committed, breaking a
+   clean `sbt test` (TupleFactReteTest imports TupleFactRule). Migrated
+   TupleFact.json to the `ruleAspect` { pattern { variables, conditions },
+   action } schema; TupleFactRule.scala regenerates correctly (tuple-fact
+   forEach + Evrete condition compile fine). TupleFact was the only legacy-schema
+   rule in the corpus.
+
+2. Stage 1 of the universal multi-line application surface (drake). Author-driven
+   syntax discovery: an application value now renders as `<fn> parameters` + a
+   `par` block one indent deeper, instead of the flat `fn(args)`. This is a
+   DRAKE-SURFACE-ONLY change — the `{"()":…}` trees still render identical Scala
+   via the `expression` projection, so no .scala changes.
+   - Generator.drake: new `isApplication` / `applicationLines`; `drakeLeaf` now
+     returns Seq[String], routing a top-level `()` value to the multi-line form
+     (positional `par` args, nested applications recurse).
+   - Only currently-affected file: Primes.drake (`newKnowledge("Primes")` ->
+     `newKnowledge parameters` / `par "Primes"`), re-authored. Value is
+     unaffected — its `()` calls are nested under `.orNull`/foldLeft/lambda
+     (top-level op is `.`), so they stay flat.
+   - Deferred to Stage 2 (excluded from DrakeGenTest until their JSON values are
+     converted from opaque strings to trees + the anonymous-instantiation
+     operator lands): aerial/Input and terrestrial/Output, whose authored .drake
+     already use the new surface.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

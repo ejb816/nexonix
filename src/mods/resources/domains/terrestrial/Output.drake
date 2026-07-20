@@ -1,0 +1,16 @@
+type Output from Actor(domains.world.World)
+  factory
+    parameters
+      par consumer ActorRef(draco.format.json.JSON)
+domain domains terrestrial Terrestrial
+actor
+  message
+    fix payload io.circe.Json io.circe.Json.obj parameters
+      par ("type", io.circe.Json.fromString parameters par "LOCATION")
+      par ("latitude", io.circe.Json.fromDoubleOrNull parameters par location.latitude)
+      par ("longitude", io.circe.Json.fromDoubleOrNull parameters par location.longitude)
+      par ("elevationMetres", io.circe.Json.fromInt parameters par location.elevationMetres)
+    fix report domains.terrestrial.LocationReport parameters
+      par typeDefinition LocationReport.typeDefinition
+      par json payload
+    mon consumer ! report

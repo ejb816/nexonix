@@ -160,6 +160,28 @@ object Generator extends App {
     }
   }
 
+  /** True iff `value` is a single-key `()` application tree — the node that
+    * renders on the drake surface as the multi-line `<fn> parameters` / `par` form. */
+  private def isApplication (value: Json) : Boolean =
+    value != null && value.asObject.exists(o => o.size == 1 && o.contains("()"))
+
+  /** Render an application value as the multi-line drake surface: the applied
+    * function (operand 0, rendered flat) followed by ` parameters`, then each
+    * argument (operands 1..n) as a `par` line one level deeper. A `par` whose value
+    * is itself an application recurses into the same form. `head` is the text the
+    * application sits after on its first line (e.g. `fix name Type`, or `mon`);
+    * `indent` is that line's indent, so `par` entries sit at `indent + 2`. */
+  private def applicationLines (head: String, indent: String, value: Json) : Seq[String] = {
+    val operands = value.asObject.flatMap(_("()")).flatMap(_.asArray).getOrElse(Vector.empty)
+    val fn        = drakeExpression(operands.head)
+    val parIndent = indent + "  "
+    val argLines  = operands.tail.flatMap { arg =>
+      if (isApplication(arg)) applicationLines(s"${parIndent}par", parIndent, arg)
+      else Seq(s"${parIndent}par ${drakeExpression(arg)}")
+    }
+    s"$head $fn parameters" +: argLines
+  }
+
   /** Split a type-expression argument list on top-level commas only
     * (commas nested in [ ], ( ), { } belong to an inner expression). */
   private def splitTypeArguments (s: String) : Seq[String] = {
@@ -265,13 +287,19 @@ object Generator extends App {
   /** One leaf element line: `kw name value-type value?`. A `mon` (Unit effect)
     * and a `con` (rule condition predicate) carry a value only — no name or
     * value-type; a `con`'s value is its boolean expression tree. */
-  private def drakeLeaf (indent: String, keyword: String, element: TypeElement) : String = {
+  private def drakeLeaf (indent: String, keyword: String, element: TypeElement) : Seq[String] = {
     element match {
-      case _: Monadic | _: Condition => s"$indent$keyword ${drakeExpression(element.value)}"
+      case _: Monadic | _: Condition =>
+        if (isApplication(element.value)) applicationLines(s"$indent$keyword", indent, element.value)
+        else Seq(s"$indent$keyword ${drakeExpression(element.value)}")
       case e =>
-        val value = drakeDefault(drakeExpression(e.value))
-        val tail = if (value.nonEmpty) s" $value" else ""
-        s"$indent$keyword ${drakeElementName(e.name)} ${drakeValueTypeSlot(e.valueType)}$tail"
+        val prefix = s"$indent$keyword ${drakeElementName(e.name)} ${drakeValueTypeSlot(e.valueType)}"
+        if (isApplication(e.value)) applicationLines(prefix, indent, e.value)
+        else {
+          val value = drakeDefault(drakeExpression(e.value))
+          val tail = if (value.nonEmpty) s" $value" else ""
+          Seq(s"$prefix$tail")
+        }
     }
   }
 
@@ -292,7 +320,7 @@ object Generator extends App {
     * under the dyn, and its result on an `=` line (absent for Unit methods). */
   private def drakeElement (element: TypeElement, level: Int) : Seq[String] = {
     val indent = "  " * level
-    if (!opensBlock(element)) Seq(drakeLeaf(indent, drakeKeyword(element), element))
+    if (!opensBlock(element)) drakeLeaf(indent, drakeKeyword(element), element)
     else {
       val d = element.asInstanceOf[Dynamic]
       val header = s"$indent${drakeKeyword(d)} ${drakeElementName(d.name)} ${drakeValueTypeSlot(d.valueType)}"
