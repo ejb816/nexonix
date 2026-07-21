@@ -114,12 +114,52 @@ object Generator extends App {
     }
   }
 
+  /** Load the draco TypeDefinition named by a plain dotted `valueType`
+    * (`domains.aerial.Position`), or None when it names no such resource or carries
+    * type parameters / arrows (not a bare constructible type). */
+  private def loadDracoType (valueType: String) : Option[TypeDefinition] = {
+    val s = valueType.trim
+    if (s.isEmpty || s.exists("[(<".contains(_)) || !s.contains('.')) None
+    else {
+      val parts = s.split('.').toVector
+      val td = loadType(TypeName(parts.last, _namePackage = parts.init))
+      val da = td.dracoAspect
+      if (da.factory.valueType.isEmpty && da.elements.isEmpty && da.derivation.isEmpty) None else Some(td)
+    }
+  }
+
+  /** When `value` constructs the declared draco type `valueType` with NAMED
+    * arguments, render the call-site Scala. A type with a factory renders a
+    * factory-apply `T(_p = v, …)` — the `_` prefix matches the factory the
+    * Generator emits for that type (`def apply(_p: … )`). A factory-less type is an
+    * anonymous `new T { override … }`; that path (inherited-member resolution) is
+    * not yet handled, so it returns None and falls back to the plain projection.
+    * Only NAMED-arg constructions are intercepted, so positional application trees
+    * render exactly as before. */
+  private def constructionInitializer (valueType: String, value: Json) : Option[String] = {
+    if (!isApplication(value)) None
+    else {
+      val args = appOperands(value).tail
+      if (!args.exists(a => namedArg(a).isDefined)) None
+      else loadDracoType(valueType).filter(_.dracoAspect.factory.valueType.nonEmpty).map { _ =>
+        val rendered = args.map(a => namedArg(a) match {
+          case Some((name, v)) => s"_$name = ${expression(v)}"
+          case None            => expression(a)
+        })
+        s"${valueType.split('.').last}(${rendered.mkString(", ")})"
+      }
+    }
+  }
+
   /** Render a `value` destined for a typed slot (`name: <valueType> = <init>`).
     * An expression tree denotes surface text; when the slot's runtime type is
     * String the rendering is emitted as a string literal (e.g. a type expression
     * stored in a String-typed field). String values already carry their own
     * quoting and pass through expression() verbatim. */
-  private def initializer (valueType: String, value: Json) : String = {
+  private def initializer (valueType: String, value: Json) : String =
+    constructionInitializer(valueType, value).getOrElse(defaultInitializer(valueType, value))
+
+  private def defaultInitializer (valueType: String, value: Json) : String = {
     val rendered = expression(value)
     if (value != null && value.isObject && valueType == "String") "\"" + rendered + "\"" else rendered
   }

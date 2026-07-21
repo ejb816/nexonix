@@ -1,0 +1,33 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+drake Stage 2c (part 1): factory-apply _-prepend in the Scala projection (#2)
+
+Session 2026-07-20; full suite 278/278.
+
+The Scala projection of a named-arg construction tree now renders the call-site
+`_` prefix that matches the factory the Generator emits. `initializer` gains
+`constructionInitializer`: when a Fixed's value constructs its declared draco
+type via NAMED arguments and that type has a factory, it renders
+`T(_p = v, …)` (simple type name, `_`-prefixed parameter names). Input's
+`position` now generates
+  Position(_latitude = cursor.get[Double]("latitude").getOrElse(0.0), …)
+matching Position's generated `def apply(_latitude: Double = 0.0, …)`.
+
+Scoped tightly: only NAMED-arg constructions of a factory-bearing type are
+intercepted, so every existing positional application tree (Primes, Value, base
+factories) renders exactly as before — zero change to the DracoGenTest-gated
+output. `loadDracoType` resolves a plain dotted valueType to its TypeDefinition
+(None for library types like io.circe.Json or anything parameterized).
+
+Still deferred (part 2): the anonymous-`new` case — a factory-less type
+(LocationReport) renders `new T { override <lazy val|val> name: Type = v }`,
+which needs the overridden members' types and lazy-ness resolved from the
+derivation chain. `constructionInitializer` returns None for it today, so
+Output's `report` falls back to the plain projection (a report-only DIFF; the
+hand-written Output.scala is unaffected). Value's full-tree conversion (#3) is
+the other remaining thread.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push
