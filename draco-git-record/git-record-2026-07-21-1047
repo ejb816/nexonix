@@ -1,0 +1,21 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+draco-dev-journal: chapter 65 (Cowork transcription) + intro/64 sync
+
+Journal-only; no code changes.
+
+- New chapter 65 (draco-dev-chapter-65.md): the #39 pickup through the drake
+  application-surface work — #39 actor sweep (277/277, closed), #45 accessor
+  drift, #40 `.rule`/`.actor` suffix removal, the author-designed application
+  surface (Input/Output authored as the syntax oracle) built in stages 1/2a/2b
+  (278/278) plus the hidden TupleFact #40 regression, and Stage 2c begun.
+- chapter-00-intro.md: extended to sixty-five chapters / session-ongoing; DRAKE
+  arc now 51–65; status line refreshed (278/278, #39/#40/#45 closed, #46 open).
+- chapter-64.md: session date 15–17; trailing Dev prompt folded in.
+
+Authored by Cowork; committed from the Code session at Dev's request.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

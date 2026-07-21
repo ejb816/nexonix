@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across sixty-four chapters of development sessions between March 22 and July 16, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions are transcribed as dialogues between Dev (the framework's creator) and the model (Claude, serving as pair-programming partner), capturing not just the code changes but the reasoning, missteps, and discoveries along the way.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across sixty-five chapters of development sessions from March 22, 2026 onward (the latest chapter tracks a session still in progress). An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions are transcribed as dialogues between Dev (the framework's creator) and the model (Claude, serving as pair-programming partner), capturing not just the code changes but the reasoning, missteps, and discoveries along the way.
 
 ## Journal Conventions
 
@@ -34,7 +34,7 @@ When the first session began, Draco already had a working type hierarchy, a RETE
 
 **The World example domains (Chapters 40–50, June 1–24).** `DomainBuilder` and the two-track build model opened the movement; the missing TransformBuilder fixture became a whole example world of message domains (Aerial/Terrestrial/Marine/Ethereal under `World`). The Evrete Environment emerged as the rule↔ActorRef seam keeping generated rules Pekko-agnostic. Draco's founding thesis crystallized — *a transform is correct iff it preserves meaning* — and became a passing assertion when an Aerial `Position` crossed to a Terrestrial `Location` through the `Observable` world-fact with WGS84 geodesy. The reference frames were deleted wholesale; actor emission folded into the Generator via the `setupAction`/`messageAction`/`signalAction` model; `Assembly` made actor topology pure data.
 
-**DRAKE (Chapters 51–64, June 25–July 16).** Draco's native definition language was named — DRAKE, "domain rules actor knowledge engine" — with JSON remaining canonical and `.drake` the human-authoring surface. The metamodel was authored in DRAKE, aspect-head grammar settled, YAML retired entirely, `CodecAspect` became the fifth aspect, and every codec under `src/main` now derives from JSON — no hand-authored codec strings remain. The corpus buildout (60 `.drake` files against 63 JSONs) surfaced a genuinely missing metamodel piece (`Local`/`loc`) and the deepest methodological lesson of the journal: round-trip tests preserve mis-modeling; validating a model requires a second, more opinionated projection that rejects what the lax one tolerates.
+**DRAKE (Chapters 51–65, June 25 onward).** Draco's native definition language was named — DRAKE, "domain rules actor knowledge engine" — with JSON remaining canonical and `.drake` the human-authoring surface. The metamodel was authored in DRAKE, aspect-head grammar settled, YAML retired entirely, `CodecAspect` became the fifth aspect, and every codec under `src/main` now derives from JSON — no hand-authored codec strings remain. The corpus buildout (60 `.drake` files against 63 JSONs) surfaced a genuinely missing metamodel piece (`Local`/`loc`) and the deepest methodological lesson of the journal: round-trip tests preserve mis-modeling; validating a model requires a second, more opinionated projection that rejects what the lax one tolerates.
 
 ### The Breakthroughs
 
@@ -80,7 +80,7 @@ Selected moments that shifted the framework's trajectory:
 
 The recurring theme across all sixty sessions is that self-description creates complexity: a type system closed over itself means every change to a foundational type can create circular dependencies, initialization-order bugs, and shadowing issues. The `lazy val` discipline, deferred factory defaults, classpath loading, the Haskell test, and finally DRAKE-as-recognizer are all engineering responses to the same mathematical property. The framework is learning to describe itself without tripping over its own reflection.
 
-**Status at Chapter 64:** JSON corpus 67, `.drake` corpus 67, full suite 271/271; the JSON → `.drake` emitter covers plain types, rules, and actors (parser #44 queued — no true round-trip yet); GitHub Issues revived (#39–#45) after a two-month lapse.
+**Status at Chapter 65 (session ongoing):** full suite 278/278; the JSON → `.drake` emitter covers plain types, rules, and actors, with the drake application surface (no `new`, chain-unfolding) landing in stages; issues #39/#40/#45 closed, #46 open, parser #44 still queued — no true round-trip yet.
 
 ---
 
@@ -340,4 +340,8 @@ Value-expression syntax settled: operator-ness is a property of the symbol, not 
 
 ### [Chapter 64 — Rule and Actor Emission, Issues Revived](draco-dev-chapter-64.md)
 
-The emitter grew rule-aspect and actor-aspect coverage (first 3 mods `.drake` files ever), Phase-2b's field rename closed its DIVERGENCES row, and Dev's model corrections landed: the domain aspect is mandatory, and an actor's rule set is all of its domain's rules — reverting a "bare `types`" hack. The two-month GitHub-issues lapse was reversed: #39–#45 filed, the convention codified in DRACO.md. Suite 267 → 271, all green.
+The emitter grew rule-aspect and actor-aspect coverage (first 3 mods `.drake` files ever), Phase-2b's field rename closed its DIVERGENCES row, and Dev's model corrections landed: the domain aspect is mandatory, and an actor's rule set is all of its domain's rules — reverting a "bare `types`" hack. The two-month GitHub-issues lapse was reversed: #39–#45 filed, the convention codified in DRACO.md. Suite 267 → 271, all green; closed with commit `1295a82` and its git-record.
+
+### [Chapter 65 — The Sweep, the Drake Application Surface (ongoing)](draco-dev-chapter-65.md)
+
+The #39 pickup: terrestrial/marine/ethereal actors swept to the domain-derived rule model (277/277), then #45's accessor drift and #40's `.rule` suffix removal. Dev hand-authored Input.drake and Output.drake as the syntax oracle, driving the drake application surface — no `new` operator (factories referenced by name), `_`-prepend, chain-unfolding across lines, inline single-arg calls — built in gated stages to 278/278, with a hidden TupleFact regression caught and fixed. Session still in progress at Stage 2c; chapter to be extended.
