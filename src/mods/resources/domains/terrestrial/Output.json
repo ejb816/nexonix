@@ -39,13 +39,27 @@
           "kind": "Fixed",
           "name": "payload",
           "valueType": "io.circe.Json",
-          "value": "io.circe.Json.obj(\"type\" -> io.circe.Json.fromString(\"LOCATION\"), \"latitude\" -> io.circe.Json.fromDoubleOrNull(location.latitude), \"longitude\" -> io.circe.Json.fromDoubleOrNull(location.longitude), \"elevationMetres\" -> io.circe.Json.fromInt(location.elevationMetres))"
+          "value": {
+            "()": [
+              {".": ["io", "circe", "Json", "obj"]},
+              {"(,)": ["\"type\"", {"()": [{".": ["io", "circe", "Json", "fromString"]}, "\"LOCATION\""]}]},
+              {"(,)": ["\"latitude\"", {"()": [{".": ["io", "circe", "Json", "fromDoubleOrNull"]}, {".": ["location", "latitude"]}]}]},
+              {"(,)": ["\"longitude\"", {"()": [{".": ["io", "circe", "Json", "fromDoubleOrNull"]}, {".": ["location", "longitude"]}]}]},
+              {"(,)": ["\"elevationMetres\"", {"()": [{".": ["io", "circe", "Json", "fromInt"]}, {".": ["location", "elevationMetres"]}]}]}
+            ]
+          }
         },
         {
           "kind": "Fixed",
           "name": "report",
           "valueType": "domains.terrestrial.LocationReport",
-          "value": "new LocationReport {\n      override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition\n      override val json: io.circe.Json = payload\n    }"
+          "value": {
+            "()": [
+              {".": ["domains", "terrestrial", "LocationReport"]},
+              {"=": ["typeDefinition", {".": ["LocationReport", "typeDefinition"]}]},
+              {"=": ["json", "payload"]}
+            ]
+          }
         },
         {
           "kind": "Monadic",

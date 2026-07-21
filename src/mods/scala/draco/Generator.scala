@@ -105,6 +105,7 @@ object Generator extends App {
               s"$params => ${args.last}"
             case "if"       => s"if (${args(0)}) ${args(1)} else ${args(2)}"
             case "="        => s"${args(0)} = ${args(1)}"
+            case "(,)"      => args.mkString("(", ", ", ")")
             case "*" | "==" | "!=" => args.mkString(s" $op ")
             case _          => sys.error(s"Generator.expression: unknown operator '$op' in ${value.noSpaces}")
           }
@@ -153,6 +154,7 @@ object Generator extends App {
             case "()"       => s"${args.head}(${args.tail.mkString(", ")})"
             case "\\"       => s"\\${args.init.mkString(" ")} -> ${args.last}"
             case "if"       => s"if ${args(0)} then ${args(1)} else ${args(2)}"
+            case "(,)"      => args.mkString("(", ", ", ")")
             case "*" | "==" | "!=" => args.mkString(s" $op ")
             case _          => sys.error(s"Generator.drakeExpression: unknown operator '$op' in ${value.noSpaces}")
           }
@@ -202,12 +204,29 @@ object Generator extends App {
     }
   }
 
+  /** True iff `value` is a tuple node `{"(,)": [a, b, …]}`. */
+  private def isTuple (value: Json) : Boolean =
+    value.asObject.exists(o => o.size == 1 && o.contains("(,)"))
+
+  /** Render a value to a single inline line: a tuple as `(e1, e2)`; a lone call as
+    * `<fn> parameters par <arg> …`; anything else flat. Used inside a `par (…)`
+    * tuple, where every element sits on the one line. */
+  private def drakeInline (value: Json) : String =
+    if (isTuple(value))
+      value.asObject.flatMap(_("(,)")).flatMap(_.asArray).getOrElse(Vector.empty)
+        .map(drakeInline).mkString("(", ", ", ")")
+    else if (isApplication(value)) {
+      val ops = appOperands(value)
+      s"${drakeExpression(ops.head)} parameters ${ops.tail.map(a => s"par ${drakeInline(a)}").mkString(" ")}"
+    } else drakeExpression(value)
+
   /** Render a value expression whose first token follows `prefix` on the same line;
-    * any continuation lines indent under `contIndent`. Three shapes: a leaf/flat
+    * any continuation lines indent under `contIndent`. Shapes: a tuple or leaf/flat
     * expression renders inline; a chain unfolds to the base receiver + one
     * `.member parameters …` line per call; a lone call renders `<fn> parameters …`. */
   private def drakeValue (prefix: String, contIndent: String, value: Json) : Seq[String] = {
-    if (!isApplication(value)) Seq(s"$prefix ${drakeExpression(value)}")
+    if (isTuple(value)) Seq(s"$prefix ${drakeInline(value)}")
+    else if (!isApplication(value)) Seq(s"$prefix ${drakeExpression(value)}")
     else if (isChain(value)) {
       val (base, calls) = unfoldChain(value)
       val callIndent    = contIndent + "  "
@@ -349,8 +368,16 @@ object Generator extends App {
       case _: Monadic | _: Condition =>
         drakeValue(s"$indent$keyword", indent, element.value)
       case e =>
-        val prefix = s"$indent$keyword ${drakeElementName(e.name)} ${drakeValueTypeSlot(e.valueType)}"
-        if (isApplication(e.value)) drakeValue(prefix, indent, e.value)
+        val vtSlot = drakeValueTypeSlot(e.valueType)
+        val prefix = s"$indent$keyword ${drakeElementName(e.name)} $vtSlot"
+        if (isApplication(e.value)) {
+          // Anonymous construction of the declared value type (a factory-less type,
+          // e.g. `new LocationReport { … }`): the function IS the value type, so the
+          // head is redundant — emit just `<valueType> parameters` + the overrides.
+          if (!isChain(e.value) && drakeExpression(appOperands(e.value).head) == vtSlot)
+            drakeApply(prefix, indent, appOperands(e.value).tail)
+          else drakeValue(prefix, indent, e.value)
+        } else if (isTuple(e.value)) drakeValue(prefix, indent, e.value)
         else {
           val value = drakeDefault(drakeExpression(e.value))
           Seq(if (value.nonEmpty) s"$prefix $value" else prefix)

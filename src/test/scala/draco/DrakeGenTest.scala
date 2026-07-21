@@ -133,15 +133,7 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
 
   private val modsActorPaths: Seq[String] = discoverModsActorPaths()
 
-  // Authored ahead of the emitter: terrestrial/Output uses the multi-line
-  // application surface but its JSON `value`s are still opaque host strings (tree
-  // conversion + the anonymous-instantiation head-elision are the next stage).
-  // Excluded from the exact-match walk until then.
-  private val modsAuthoredAhead: Set[String] = Set(
-    "domains/terrestrial/Output.json"
-  )
-
-  modsActorPaths.filterNot(modsAuthoredAhead).foreach { rp =>
+  modsActorPaths.foreach { rp =>
     val drakePath = deriveDrakePath(rp)
     if (Files.isRegularFile(modsResourceRoot.resolve(drakePath))) {
       test(s"mods $rp: Generator.drake matches $drakePath (whitespace-normalized)") {

@@ -1,0 +1,38 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+drake application surface Stage 2b: tuples + anonymous head-elision (Output)
+
+Session 2026-07-20; full suite 278/278.
+
+Completes the drake surface for the media actors — terrestrial/Output now emits
+exactly from its JSON tree (un-deferred; DrakeGenTest's mods-actor walk has no
+exclusions left).
+
+Emitter additions (Generator.drake):
+  - Tuple node `{"(,)": [a, b]}` -> `(a, b)`, rendered inline via `drakeInline`
+    (a lone call inside a tuple renders `<fn> parameters par <arg>` on the one
+    line). Covers Json.obj's varargs: `par ("type", io.circe.Json.fromString
+    parameters par "LOCATION")`.
+  - Anonymous-construction head-elision: when a fix value is a lone application
+    whose function renders equal to the declared value-type slot, the head is
+    redundant and elided — `fix report domains.terrestrial.LocationReport
+    parameters` (a factory-less `new LocationReport { … }`), vs Position/Json.obj
+    which show their head. Tree-driven (the report node's function is the
+    fully-qualified type), no type resolution on the drake side.
+
+Both projections gain the `(,)` tuple case (expression -> Scala `(a, b)`,
+drakeExpression -> drake `(a, b)`).
+
+Output.json: `payload` (Json.obj over 2-tuple varargs per #3) and `report`
+(anonymous LocationReport with `typeDefinition`/`json` overrides) converted from
+opaque strings to trees.
+
+Still ahead (own stage): the Scala round-trip (#2) — prepend `_` to factory
+params, `new T{…}` vs `T(…)` from the factory — so Input/Output remain
+report-only DIFFs in ExampleDomainsGenTest (hand-written .scala unaffected); and
+Value's full-tree conversion (#3).
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push
