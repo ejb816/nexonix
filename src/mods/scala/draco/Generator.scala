@@ -104,6 +104,7 @@ object Generator extends App {
               val params = if (args.size == 2) args.head else args.init.mkString("(", ", ", ")")
               s"$params => ${args.last}"
             case "if"       => s"if (${args(0)}) ${args(1)} else ${args(2)}"
+            case "="        => s"${args(0)} = ${args(1)}"
             case "*" | "==" | "!=" => args.mkString(s" $op ")
             case _          => sys.error(s"Generator.expression: unknown operator '$op' in ${value.noSpaces}")
           }
@@ -161,25 +162,81 @@ object Generator extends App {
   }
 
   /** True iff `value` is a single-key `()` application tree — the node that
-    * renders on the drake surface as the multi-line `<fn> parameters` / `par` form. */
+    * renders on the drake surface as the `<fn> parameters` / `par` form. */
   private def isApplication (value: Json) : Boolean =
     value != null && value.asObject.exists(o => o.size == 1 && o.contains("()"))
 
-  /** Render an application value as the multi-line drake surface: the applied
-    * function (operand 0, rendered flat) followed by ` parameters`, then each
-    * argument (operands 1..n) as a `par` line one level deeper. A `par` whose value
-    * is itself an application recurses into the same form. `head` is the text the
-    * application sits after on its first line (e.g. `fix name Type`, or `mon`);
-    * `indent` is that line's indent, so `par` entries sit at `indent + 2`. */
-  private def applicationLines (head: String, indent: String, value: Json) : Seq[String] = {
-    val operands = value.asObject.flatMap(_("()")).flatMap(_.asArray).getOrElse(Vector.empty)
-    val fn        = drakeExpression(operands.head)
-    val parIndent = indent + "  "
-    val argLines  = operands.tail.flatMap { arg =>
-      if (isApplication(arg)) applicationLines(s"${parIndent}par", parIndent, arg)
-      else Seq(s"${parIndent}par ${drakeExpression(arg)}")
+  /** Operands of an application value: [fn, arg1, arg2, ...]. */
+  private def appOperands (value: Json) : Vector[Json] =
+    value.asObject.flatMap(_("()")).flatMap(_.asArray).getOrElse(Vector.empty)
+
+  /** A named argument `{"=": [name, value]}` -> (name, value). */
+  private def namedArg (value: Json) : Option[(String, Json)] =
+    value.asObject.filter(o => o.size == 1 && o.contains("=")).flatMap(_("=")).flatMap(_.asArray)
+      .filter(_.size == 2).flatMap(arr => arr(0).asString.map(_ -> arr(1)))
+
+  /** A chain is an application whose function is a `.`-path whose receiver (first
+    * path element) is itself an application — i.e. two or more calls composed
+    * (`a.f(x).g(y)`). A lone call (`Json.obj(...)`, `newKnowledge("Primes")`) is not
+    * a chain: its full function path stays on one line. */
+  private def isChain (value: Json) : Boolean =
+    isApplication(value) &&
+      appOperands(value).head.asObject.flatMap(_(".")).flatMap(_.asArray)
+        .exists(_.headOption.exists(isApplication))
+
+  /** Unfold a chain into (base receiver, ordered calls). Each call is
+    * (member, args): the `.member` applied to `args`. Recurses through the nested
+    * `()`/`.` spine down to the base variable/path. */
+  private def unfoldChain (value: Json) : (Json, Seq[(String, Vector[Json])]) = {
+    val ops       = appOperands(value)
+    val pathElems = ops.head.asObject.flatMap(_(".")).flatMap(_.asArray).getOrElse(Vector.empty)
+    val recv      = pathElems.head
+    val member    = pathElems.tail.map(drakeExpression).mkString(".")
+    if (isApplication(recv)) {
+      val (base, prior) = unfoldChain(recv)
+      (base, prior :+ (member, ops.tail))
+    } else {
+      // recv is a plain path/leaf: base = path minus its last element, member = last.
+      val base = if (pathElems.size <= 2) recv else Json.obj("." -> Json.fromValues(pathElems.init))
+      (base, Seq(drakeExpression(pathElems.last) -> ops.tail))
     }
-    s"$head $fn parameters" +: argLines
+  }
+
+  /** Render a value expression whose first token follows `prefix` on the same line;
+    * any continuation lines indent under `contIndent`. Three shapes: a leaf/flat
+    * expression renders inline; a chain unfolds to the base receiver + one
+    * `.member parameters …` line per call; a lone call renders `<fn> parameters …`. */
+  private def drakeValue (prefix: String, contIndent: String, value: Json) : Seq[String] = {
+    if (!isApplication(value)) Seq(s"$prefix ${drakeExpression(value)}")
+    else if (isChain(value)) {
+      val (base, calls) = unfoldChain(value)
+      val callIndent    = contIndent + "  "
+      s"$prefix ${drakeExpression(base)}" +:
+        calls.flatMap { case (member, args) => drakeApply(s"$callIndent.$member", callIndent, args) }
+    } else drakeApply(s"$prefix ${drakeExpression(appOperands(value).head)}", contIndent, appOperands(value).tail)
+  }
+
+  /** Emit a `parameters` block: `<prefix> parameters` then its arguments. A single
+    * leaf argument sits inline (`… parameters par x`); two or more (or a non-leaf
+    * single arg) each get their own `par` line one level deeper. */
+  private def drakeApply (prefix: String, indent: String, args: Vector[Json]) : Seq[String] = {
+    if (args.isEmpty) Seq(s"$prefix parameters")
+    else if (args.size == 1 && inlineableArg(args.head)) Seq(s"$prefix parameters ${inlinePar(args.head)}")
+    else s"$prefix parameters" +: args.flatMap(a => drakePar(indent + "  ", a))
+  }
+
+  /** An argument inlines when its value is a leaf (not itself an application). */
+  private def inlineableArg (arg: Json) : Boolean =
+    !isApplication(namedArg(arg).map(_._2).getOrElse(arg))
+
+  private def inlinePar (arg: Json) : String = namedArg(arg) match {
+    case Some((name, v)) => s"par $name ${drakeExpression(v)}"
+    case None            => s"par ${drakeExpression(arg)}"
+  }
+
+  private def drakePar (indent: String, arg: Json) : Seq[String] = namedArg(arg) match {
+    case Some((name, v)) => drakeValue(s"${indent}par $name", indent, v)
+    case None            => drakeValue(s"${indent}par", indent, arg)
   }
 
   /** Split a type-expression argument list on top-level commas only
@@ -290,15 +347,13 @@ object Generator extends App {
   private def drakeLeaf (indent: String, keyword: String, element: TypeElement) : Seq[String] = {
     element match {
       case _: Monadic | _: Condition =>
-        if (isApplication(element.value)) applicationLines(s"$indent$keyword", indent, element.value)
-        else Seq(s"$indent$keyword ${drakeExpression(element.value)}")
+        drakeValue(s"$indent$keyword", indent, element.value)
       case e =>
         val prefix = s"$indent$keyword ${drakeElementName(e.name)} ${drakeValueTypeSlot(e.valueType)}"
-        if (isApplication(e.value)) applicationLines(prefix, indent, e.value)
+        if (isApplication(e.value)) drakeValue(prefix, indent, e.value)
         else {
           val value = drakeDefault(drakeExpression(e.value))
-          val tail = if (value.nonEmpty) s" $value" else ""
-          Seq(s"$prefix$tail")
+          Seq(if (value.nonEmpty) s"$prefix $value" else prefix)
         }
     }
   }

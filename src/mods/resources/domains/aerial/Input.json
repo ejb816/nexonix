@@ -45,7 +45,14 @@
           "kind": "Fixed",
           "name": "position",
           "valueType": "domains.aerial.Position",
-          "value": "Position(_latitude = cursor.get[Double](\"latitude\").getOrElse(0.0), _longitude = cursor.get[Double](\"longitude\").getOrElse(0.0), _altitudeFeet = cursor.get[Int](\"altitudeFeet\").getOrElse(0))"
+          "value": {
+            "()": [
+              "Position",
+              {"=": ["latitude", {"()": [{".": [{"()": [{".": ["cursor", "get[Double]"]}, "\"latitude\""]}, "getOrElse"]}, "0.0"]}]},
+              {"=": ["longitude", {"()": [{".": [{"()": [{".": ["cursor", "get[Double]"]}, "\"longitude\""]}, "getOrElse"]}, "0.0"]}]},
+              {"=": ["altitudeFeet", {"()": [{".": [{"()": [{".": ["cursor", "get[Int]"]}, "\"altitudeFeet\""]}, "getOrElse"]}, "0"]}]}
+            ]
+          }
         },
         {
           "kind": "Monadic",

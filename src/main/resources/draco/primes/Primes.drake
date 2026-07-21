@@ -1,7 +1,6 @@
 type Primes
   elements
-    fix knowledge org.evrete.api.Knowledge Rule.knowledgeService.newKnowledge parameters
-      par "Primes"
+    fix knowledge org.evrete.api.Knowledge Rule.knowledgeService.newKnowledge parameters par "Primes"
   globals [
     dyn filter LazyList(Int)
       parameters

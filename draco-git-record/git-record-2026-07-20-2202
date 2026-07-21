@@ -1,0 +1,37 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+drake application surface Stage 2a: chains, named args, inline single-arg (Input)
+
+Session 2026-07-20; full suite 277/277.
+
+Extends the multi-line application emitter to reproduce the author-designed
+surface for aerial/Input's `position`. Emitter rules (confirmed against the
+authored .drake as the oracle):
+  - Single call keeps its full function path on one line (`Json.obj`,
+    `newKnowledge`); a chain (a call whose receiver is itself a call) unfolds to
+    the base receiver + one `.member parameters …` line per call.
+  - One leaf arg inlines (`… parameters par x`); two or more each get a `par`
+    line one level deeper.
+  - Named args render `par <name> <value>`; positional `par <value>`.
+
+Changes:
+  - Generator.drake: replaced `applicationLines` with `drakeValue` / `drakeApply`
+    / `drakePar` + `isChain` / `unfoldChain` / `namedArg`. `drakeLeaf` returns
+    Seq[String] via `drakeValue`.
+  - Input.json: `position` value converted from an opaque string to an
+    expression tree (named args `{"=": [name, value]}` with bare names per the
+    `_`-prepend rule; chains as the nested `()`/`.` spine). Input.drake now
+    emits exactly (un-deferred in DrakeGenTest).
+  - Primes.drake: `newKnowledge("Primes")` is a lone single-arg call, so it
+    collapses to one inline line (was two under the Stage-1 rule).
+  - Generator.expression (Scala projection): minimal `=` case so a named-arg
+    tree renders `name = value` instead of throwing. The full Stage-2c round-trip
+    — prepend `_` to factory parameters (#2) and choose `new T{…}` vs `T(…)` from
+    the target type's factory — is the next stage; until then Input's Scala is a
+    report-only DIFF (its hand-written .scala, with `_latitude`, is unaffected).
+  - terrestrial/Output still deferred (Stage 2b: tuples + anonymous head-elision).
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push
