@@ -10,7 +10,7 @@ trait Binding extends DracoType {
 }
 
 object Binding extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Binding", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Binding", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Binding] = Type[Binding] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 

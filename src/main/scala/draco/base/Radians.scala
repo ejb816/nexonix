@@ -5,7 +5,7 @@ import draco._
 trait Radians extends Rotation[Double]
 
 object Radians extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Radians", _namePackage = Seq ("draco", "base")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Radians", _namePackage = Seq ("draco", "base")))
   lazy val dracoType: Type[Radians] = Type[Radians] (typeDefinition)
   lazy val domainType: Domain[Base] = Domain[Base] (typeDefinition)
 

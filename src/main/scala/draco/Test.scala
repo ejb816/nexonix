@@ -5,7 +5,7 @@ import java.net.URI
 trait Test extends Main
 
 object Test extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Test", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Test", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Test] = Type[Test] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 

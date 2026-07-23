@@ -54,7 +54,7 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
     "."   path join / selection; FLAT VARIADIC — associative operators flatten
           ({".": ["org","evrete","api","RhsContext"]}), non-associative stay binary
     "->"  function/type arrow — HASKELL FORM; binary, right-associative at the surface;
-          ScalaSource renders " => " (in a String-typed slot the quoted rendering carries
+          ScalaTarget renders " => " (in a String-typed slot the quoted rendering carries
           the target spelling: {"->": [RhsContext-path, "Unit"]} -> "org.evrete.api.RhsContext => Unit")
     "*"   numeric product; "==" equality — infix, operands joined with the operator
           ({"==": [{"*": ["i1","i2"]}, "i3"]} renders "i1 * i2 == i3")
@@ -62,15 +62,15 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
           embedded quotes ({"()": [{".": ["Rule","knowledgeService","newKnowledge"]}, "\"Primes\""]}
           renders Rule.knowledgeService.newKnowledge("Primes"))
     "\"   lambda — HASKELL FORM: leading operands are the parameters, last is the body.
-          drake surface \e a -> body ; ScalaSource renders (e, a) => body (bare param when single).
+          drake surface \e a -> body ; ScalaTarget renders (e, a) => body (bare param when single).
           The tree carries no arrow token — structure separates params from body.
     "if"  conditional — HASKELL FORM: [cond, then, else]. drake surface if c then t else e ;
-          ScalaSource renders if (c) t else e.
+          ScalaTarget renders if (c) t else e.
     "!="  inequality — infix, operands joined with the operator
     (further operators arrive with corpus conversion, each declared before use)
   HASKELL-FORM SURFACE — drake adopts Haskell's syntactic forms for value-expression
   constructs (\ lambda, if-then-else); the tree is form-neutral and each Generator[L]
-  target renders its own spelling (ScalaSource shown above). Host-bound vocabulary inside
+  target renders its own spelling (ScalaTarget shown above). Host-bound vocabulary inside
   a construct (null, asInstanceOf, hcursor) stays verbatim — form is drake's, atoms may
   be the target's. First exemplar: Value.drake's dyn value (lambdas + if-then-else).
   FIXITY lives ONLY at the drake surface: a JSON tree is already associated, so precedence
@@ -273,7 +273,7 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           the domain convention couples the package element to the type name
                                           case-insensitively (scala <-> Scala), so escaping the package half alone breaks
                                           the domain invariant and escaping both mangles every type reference.
-                                          RESOLUTION: name the capability, not the host language — scalasource.ScalaSource,
+                                          RESOLUTION: name the capability, not the host language — scalatarget.ScalaTarget,
                                           haskellsource.HaskellSource. A definition-time lint rejecting host-reserved
                                           domain names (per target) is the enforcement; queued with the Monadic lint.
   BRACKETS optional-except-nesting  <->   TARGET (no parser yet). The existing concrete corpus uniformly brackets EVERY

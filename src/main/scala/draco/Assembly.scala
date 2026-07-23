@@ -10,7 +10,7 @@ trait Assembly extends DracoType {
 }
 
 object Assembly extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Assembly", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Assembly", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Assembly] = Type[Assembly] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 

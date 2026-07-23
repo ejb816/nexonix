@@ -6,7 +6,7 @@ import domains.world.World
 trait Terrestrial extends World
 
 object Terrestrial extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Terrestrial", _namePackage = Seq ("domains", "terrestrial")))
+  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Terrestrial", _namePackage = Seq ("domains", "terrestrial")))
   lazy val dracoType: Type[Terrestrial] = Type[Terrestrial] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ("MarchIntent", "LocationReport", "ConsumeReport", "OriginateReport")

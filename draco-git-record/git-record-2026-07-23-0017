@@ -1,0 +1,54 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+draco self-hosting groundwork: capability domains, TypeLoader, Source/ScalaTarget, validation rules, bare rule names
+
+Full suite 299/299. One continuous session pivoting from the drake parser (#46)
+onto the Generator-as-domain / procedural->inferential track. drake frozen at its
+non-parser state (emitter-only; DrakeGenTest is the drift guard).
+
+Generator-as-domain:
+- draco.drake.Drake + draco.generator.Generator[L] — capability domains beside
+  draco.scalatarget.ScalaTarget, each exposing generator: TypeDefinition => String.
+  Generator[L] is the first type both parameterized and self-domained (emitter
+  wildcards it: Domain[Generator[_]]).
+- draco.TypeLoader — loadType/tryLoad/loadFromResource moved OFF the mods Generator
+  tool onto a definition-backed Draco type; ends the self-shadow and the main->mods
+  runtime coupling (the root domain no longer leans on a speculative tool to load
+  itself). Emitter emits TypeLoader.loadType; swept across src/main + src/mods.
+- generate-multi subcommand in GeneratorCLI (sealed TypeElement family).
+- Generator.generate leading-\n fix: every branch opened its interpolator with a
+  newline stripMargin left and DracoGenTest.normalize silently forgave; output is
+  now byte-exact vs on-disk.
+
+Source / target rename:
+- draco.Source — neutral source-projection supertype (trait Source extends DracoType).
+- draco.scalasource.ScalaSource -> draco.scalatarget.ScalaTarget (package too),
+  deriving Source. Foreign languages are generation targets; drake/json stay source.
+  (First pass mistakenly renamed the neutral Source->Target; reverted.)
+
+Draco self-validation (new track):
+- draco.Problem fact + draco.Completeness rule (the isStub check as a rule; four
+  ANDed host-string Evrete conditions draco.*Aspect.isEmpty(...) compile and gate
+  green — proves the hand-authored rule mechanism end to end). First step toward
+  the Draco domain validating its own DracoDomainDictionary via rules, then a Draco
+  actor that runs them. Next: the Completeness Session firing proof.
+
+Bare rule names (completes #40 at the class-name level):
+- Rules now generate bare objects like actors — rule-ness is aspect presence, not a
+  name suffix. #40 had de-suffixed .rule filenames/typeNames but deliberately left
+  "object names ... unchanged"; this finishes the principle. Generator de-suffixed
+  (ruleGlobal name, whereConditions FQN base, generate-branch trait, actorKnowledge
+  ref); 3 primes + 8 mods *Report rules + the TupleFact fixture renamed; the
+  DracoGenTest/ExampleDomainsGenTest path-derivers collapsed to bare.
+
+Prototype (staging, deferred behind the validation track): SourceContract
+expression-rendering contract (SourceTemplates + ExpressionRenderer +
+Scala/Drake templates) reproducing Generator.expression/drakeExpression, + test.
+
+Docs/memory: DRACO.md rule-naming section corrected; project memory updated
+(generator-evolution, generator-loading, draco-self-validation).
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

@@ -7,7 +7,7 @@ trait ContentSink extends DracoType {
 }
 
 object ContentSink extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("ContentSink", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ContentSink", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[ContentSink] = Type[ContentSink] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 

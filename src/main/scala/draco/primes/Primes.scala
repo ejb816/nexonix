@@ -7,7 +7,7 @@ trait Primes {
 }
 
 object Primes extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Primes", _namePackage = Seq ("draco", "primes")))
+  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Primes", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[Primes] = Type[Primes] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ("Accumulator", "Numbers", "AddNaturalSequence", "PrimesFromNaturalSequence", "RemoveCompositeNumbers")

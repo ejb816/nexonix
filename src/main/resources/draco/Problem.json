@@ -1,0 +1,68 @@
+{
+  "typeName": {
+    "name": "Problem",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "subject",
+        "valueType": "TypeName"
+      },
+      {
+        "kind": "Fixed",
+        "name": "message",
+        "valueType": "String"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Problem",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "subject",
+          "valueType": "TypeName"
+        },
+        {
+          "kind": "Parameter",
+          "name": "message",
+          "valueType": "String"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "subject",
+          "valueType": "TypeName",
+          "value": "_subject"
+        },
+        {
+          "kind": "Fixed",
+          "name": "message",
+          "valueType": "String",
+          "value": "_message"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

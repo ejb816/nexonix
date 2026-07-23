@@ -9,7 +9,7 @@ trait Cartesian extends DracoType {
 }
 
 object Cartesian extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Cartesian", _namePackage = Seq ("domains", "world")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Cartesian", _namePackage = Seq ("domains", "world")))
   lazy val dracoType: Type[Cartesian] = Type[Cartesian] (typeDefinition)
   lazy val domainType: Domain[World] = Domain[World] (typeDefinition)
 

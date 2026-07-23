@@ -1,0 +1,4 @@
+type Drake
+  globals
+    fix generator (TypeDefinition => String) Generator.drake
+domain draco drake Drake

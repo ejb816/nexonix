@@ -1,0 +1,89 @@
+{
+  "typeName": {
+    "name": "Completeness",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "td",
+          "valueType": "TypeDefinition"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "valueType": "Boolean",
+          "value": "draco.DracoAspect.isEmpty(td.dracoAspect)",
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "td",
+              "valueType": "TypeDefinition"
+            }
+          ]
+        },
+        {
+          "kind": "Condition",
+          "valueType": "Boolean",
+          "value": "draco.DomainAspect.isEmpty(td.domainAspect)",
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "td",
+              "valueType": "TypeDefinition"
+            }
+          ]
+        },
+        {
+          "kind": "Condition",
+          "valueType": "Boolean",
+          "value": "draco.RuleAspect.isEmpty(td.ruleAspect)",
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "td",
+              "valueType": "TypeDefinition"
+            }
+          ]
+        },
+        {
+          "kind": "Condition",
+          "valueType": "Boolean",
+          "value": "draco.ActorAspect.isEmpty(td.actorAspect)",
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "td",
+              "valueType": "TypeDefinition"
+            }
+          ]
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "ctx.insert(Problem(td.typeName, s\"member ${td.typeName.name} is declared but unauthored (no JSON on disk)\"))"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

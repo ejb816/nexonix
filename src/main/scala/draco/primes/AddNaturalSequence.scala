@@ -1,15 +1,14 @@
-
 package draco.primes
 
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait AddNaturalSequenceRule
+trait AddNaturalSequence
 
-object AddNaturalSequenceRule extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("AddNaturalSequence", _namePackage = Seq ("draco", "primes")))
-  lazy val dracoType: Type[AddNaturalSequenceRule] = Type[AddNaturalSequenceRule] (typeDefinition)
+object AddNaturalSequence extends App {
+  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("AddNaturalSequence", _namePackage = Seq ("draco", "primes")))
+  lazy val dracoType: Type[AddNaturalSequence] = Type[AddNaturalSequence] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
@@ -34,7 +33,7 @@ object AddNaturalSequenceRule extends App {
     .build()
   }
 
-  lazy val ruleType: RuleType = Rule[AddNaturalSequenceRule] (
+  lazy val ruleType: RuleType = Rule[AddNaturalSequence] (
     _pattern = pattern,
     _action = action
   )

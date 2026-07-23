@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets
   * be reviewed before compiling.
   *
   * Workflow:
-  *   1. sbt "testOnly domains.aerial.AerialGenTest"   // writes Consumer.scala + ConsumeReportRule.scala
+  *   1. sbt "testOnly domains.aerial.AerialGenTest"   // writes Consumer.scala + ConsumeReport.scala
   *   2. reload / compile                              // picks up the generated sources
   *   3. run the behavioral test (added once this compiles)
   *
@@ -36,9 +36,9 @@ class AerialGenTest extends AnyFunSuite with PersistentTestLog {
     val consumeReport = Generator.loadType(TypeName("ConsumeReport", _namePackage = Seq("domains", "aerial")))
 
     emit("Consumer.scala", Generator.generate(consumer))
-    emit("ConsumeReportRule.scala", Generator.generate(consumeReport))
+    emit("ConsumeReport.scala", Generator.generate(consumeReport))
 
     assert(Files.exists(outDir.resolve("Consumer.scala")))
-    assert(Files.exists(outDir.resolve("ConsumeReportRule.scala")))
+    assert(Files.exists(outDir.resolve("ConsumeReport.scala")))
   }
 }

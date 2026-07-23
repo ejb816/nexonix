@@ -12,7 +12,7 @@ sealed trait TypeElement extends Primal[Json] {
 }
 
 object TypeElement extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("TypeElement", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("TypeElement", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[TypeElement] = Type[TypeElement] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -133,7 +133,7 @@ object TypeElement extends App with DracoType {
 sealed trait BodyElement extends TypeElement
 
 object BodyElement extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("BodyElement", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("BodyElement", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[BodyElement] = Type[BodyElement] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -145,7 +145,7 @@ object BodyElement extends App with DracoType {
 trait Fixed extends BodyElement
 
 object Fixed extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Fixed", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Fixed", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Fixed] = Type[Fixed] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -175,7 +175,7 @@ object Fixed extends App with DracoType {
 trait Mutable extends BodyElement
 
 object Mutable extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Mutable", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Mutable", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Mutable] = Type[Mutable] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -205,7 +205,7 @@ object Mutable extends App with DracoType {
 trait Dynamic extends BodyElement
 
 object Dynamic extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Dynamic", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Dynamic", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Dynamic] = Type[Dynamic] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -241,7 +241,7 @@ object Dynamic extends App with DracoType {
 trait Parameter extends BodyElement
 
 object Parameter extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Parameter", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Parameter", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Parameter] = Type[Parameter] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -271,7 +271,7 @@ object Parameter extends App with DracoType {
 trait Monadic extends BodyElement
 
 object Monadic extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Monadic", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Monadic", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Monadic] = Type[Monadic] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -300,7 +300,7 @@ trait Pattern extends BodyElement {
 }
 
 object Pattern extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Pattern", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Pattern", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Pattern] = Type[Pattern] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -328,7 +328,7 @@ trait Action extends BodyElement {
 }
 
 object Action extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Action", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Action", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Action] = Type[Action] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -354,7 +354,7 @@ object Action extends App with DracoType {
 trait Condition extends BodyElement
 
 object Condition extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Condition", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Condition", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Condition] = Type[Condition] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -383,7 +383,7 @@ object Condition extends App with DracoType {
 trait Variable extends BodyElement
 
 object Variable extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Variable", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Variable", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Variable] = Type[Variable] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -410,7 +410,7 @@ object Variable extends App with DracoType {
 trait Factory extends BodyElement
 
 object Factory extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Factory", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Factory", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Factory] = Type[Factory] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -441,7 +441,7 @@ object Factory extends App with DracoType {
 trait Local extends BodyElement
 
 object Local extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Local", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Local", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Local] = Type[Local] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 

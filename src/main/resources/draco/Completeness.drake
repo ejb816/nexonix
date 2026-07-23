@@ -1,0 +1,13 @@
+type Completeness
+domain draco Draco
+rule
+  pattern
+    variables
+      var td TypeDefinition
+    conditions
+      con draco.DracoAspect.isEmpty(td.dracoAspect)
+      con draco.DomainAspect.isEmpty(td.domainAspect)
+      con draco.RuleAspect.isEmpty(td.ruleAspect)
+      con draco.ActorAspect.isEmpty(td.actorAspect)
+  action
+    mon ctx.insert(Problem(td.typeName, s"member ${td.typeName.name} is declared but unauthored (no JSON on disk)"))

@@ -7,7 +7,7 @@ import domains._
 trait Waypoint extends Sentient with Primal[(Gaze, Distance)]
 
 object Waypoint extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Waypoint", _namePackage = Seq ("domains", "sentient")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Waypoint", _namePackage = Seq ("domains", "sentient")))
   lazy val dracoType: Type[Waypoint] = Type[Waypoint] (typeDefinition)
   lazy val domainType: Domain[Sentient] = Domain[Sentient] (typeDefinition)
 }

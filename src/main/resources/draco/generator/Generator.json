@@ -1,9 +1,12 @@
 {
   "typeName": {
-    "name": "ScalaSource",
+    "name": "Generator",
     "namePackage": [
       "draco",
-      "scalasource"
+      "generator"
+    ],
+    "typeParameters": [
+      "L"
     ]
   },
   "dracoAspect": {
@@ -15,21 +18,20 @@
         ]
       }
     ],
-    "globalElements": [
+    "elements": [
       {
         "kind": "Fixed",
         "name": "generator",
-        "valueType": "TypeDefinition => String",
-        "value": "Generator.generate"
+        "valueType": "TypeDefinition => String"
       }
     ]
   },
   "domainAspect": {
     "typeName": {
-      "name": "ScalaSource",
+      "name": "Generator",
       "namePackage": [
         "draco",
-        "scalasource"
+        "generator"
       ]
     }
   }

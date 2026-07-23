@@ -1,0 +1,16 @@
+type TypeLoader
+  globals [
+    dyn loadFromResource Option(TypeDefinition)
+      parameters
+        par resourcePath String
+      = Option(getClass.getResourceAsStream(resourcePath)).flatMap { stream => val source = scala.io.Source.fromInputStream(stream); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }
+    dyn tryLoad Option(TypeDefinition)
+      parameters
+        par typeName TypeName
+      = loadFromResource(typeName.resourcePath)
+    dyn loadType TypeDefinition
+      parameters
+        par typeName TypeName
+      = tryLoad(typeName).getOrElse(TypeDefinition(typeName))
+  ]
+domain draco Draco

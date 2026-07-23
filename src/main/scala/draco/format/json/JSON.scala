@@ -11,7 +11,7 @@ trait JSON extends Format[JSON] {
 }
 
 object JSON extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("JSON", _namePackage = Seq ("draco", "format", "json")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("JSON", _namePackage = Seq ("draco", "format", "json")))
   lazy val dracoType: Type[JSON] = Type[JSON] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ("Value")

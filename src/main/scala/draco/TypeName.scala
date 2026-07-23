@@ -12,7 +12,7 @@ trait TypeName {
 }
 
 object TypeName extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("TypeName", _namePackage = Seq ("draco")))
+  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("TypeName", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[TypeName] = Type[TypeName] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 

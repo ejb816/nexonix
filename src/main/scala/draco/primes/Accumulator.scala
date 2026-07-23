@@ -11,7 +11,7 @@ trait Accumulator extends Primes {
 }
 
 object Accumulator extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Accumulator", _namePackage = Seq ("draco", "primes")))
+  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Accumulator", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[Accumulator] = Type[Accumulator] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 

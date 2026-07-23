@@ -9,7 +9,7 @@ trait Location extends Terrestrial {
 }
 
 object Location extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Location", _namePackage = Seq ("domains", "terrestrial")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Location", _namePackage = Seq ("domains", "terrestrial")))
   lazy val dracoType: Type[Location] = Type[Location] (typeDefinition)
   lazy val domainType: Domain[Terrestrial] = Domain[Terrestrial] (typeDefinition)
 

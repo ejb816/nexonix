@@ -4,7 +4,7 @@ import draco.PersistentTestLog
 import draco.{ContentSink, Generator, SourceContent, TypeDefinition, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService
-import org.nexonix.rules.rete.rules.TupleFactRule
+import org.nexonix.rules.rete.rules.TupleFact
 import org.scalatest.funsuite.AnyFunSuite
 
 class TupleFactReteTest extends AnyFunSuite with PersistentTestLog {
@@ -17,18 +17,18 @@ class TupleFactReteTest extends AnyFunSuite with PersistentTestLog {
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource: String = Generator.generate(rule)
-    val contentSink: ContentSink = ContentSink(Generator.test.sinkRoot, "org/nexonix/rules/rete/rules/TupleFactRule.scala")
-    // Note: Generator auto-appends the "Rule" suffix for a ruleAspect-bearing type, so TupleFact.json generates TupleFactRule
+    val contentSink: ContentSink = ContentSink(Generator.test.sinkRoot, "org/nexonix/rules/rete/rules/TupleFact.scala")
+    // Rule-ness is aspect presence, not a name suffix: TupleFact.json generates a bare object TupleFact
     contentSink.write(ruleSource)
     log.info(ruleSource)
 
     log.info(s"$fact")
   }
 
-  test("TupleFactRule") {
+  test("TupleFact") {
     val service: KnowledgeService = new KnowledgeService()
-    val knowledge = service.newKnowledge("TupleFactRule.rule")
-    TupleFactRule.ruleType.pattern.accept(knowledge)
+    val knowledge = service.newKnowledge("TupleFact.rule")
+    TupleFact.ruleType.pattern.accept(knowledge)
     val session = knowledge.newStatefulSession()
     try {
       session.insert(Seq (fact): _*)

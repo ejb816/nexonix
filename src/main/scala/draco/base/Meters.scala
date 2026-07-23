@@ -5,7 +5,7 @@ import draco._
 trait Meters extends Distance[Double]
 
 object Meters extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Meters", _namePackage = Seq ("draco", "base")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Meters", _namePackage = Seq ("draco", "base")))
   lazy val dracoType: Type[Meters] = Type[Meters] (typeDefinition)
   lazy val domainType: Domain[Base] = Domain[Base] (typeDefinition)
 

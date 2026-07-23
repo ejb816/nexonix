@@ -206,7 +206,7 @@ Key internal methods:
 - `conditionFunctions` / `whereConditions` — Evrete condition compilation (fully qualified class names required)
 - Codec generation: `simpleCodecDeclaration` (only when factory params ⊆ element names), `discriminatedCodecDeclaration`, `subtypeCodecDeclaration`
 
-**Rule name suffix:** Generator appends "Rule" to `td.typeName.name` when generating a rule's Scala (a type is a rule by carrying a `ruleAspect`, detected via `isRule`). The JSON `typeName.name` is the base concept only (e.g., `"AddNaturalSequence"` in JSON → `AddNaturalSequenceRule` in generated Scala). The `ruleGlobal` method uses `td.typeName.name + "Rule"` for the trait/object name. Actors keep their bare name (no "Actor" suffix) — actor-ness is the `actorAspect`, and the object is named as authored (e.g., `Consumer`).
+**Rule names are bare (no suffix):** A rule generates a Scala object named for its bare concept — `"AddNaturalSequence"` in JSON → `object AddNaturalSequence` — exactly like actors and plain types. A type is a rule by carrying a `ruleAspect` (detected via `isRule`), never by a name suffix; `ruleGlobal` uses `td.typeName.name` directly. Actors likewise keep their bare name (no "Actor" suffix) — actor-ness is the `actorAspect`, object named as authored (e.g., `Consumer`). (The Generator historically appended "Rule" to rule objects — the last remnant of the `.rule`/`.actor` name-suffix holdover #40 retired; removed 2026-07-22 so generated class names obey the same "presence, not name" principle as the JSON filenames and rule/actor detection.)
 
 **Important:** PrimesRulesTest "Generate" tests overwrite rule source files with Generator output. Generated code must include imports and use `private lazy val` for action/pattern/ruleDefinition.
 
@@ -226,7 +226,7 @@ Domains are peers (Draco, Base, Primes) in the `DomainDictionary`, not hierarchi
 
 **Base domain** (`draco.base`): Cardinal[T], Distance[T], Meters, Rotation[T], Radians, Ordinal, Nominal, Coordinate[T <: Product]. Cardinal is unconstrained (no Numeric bound on T). Coordinate is compositionally self-describing (no named Cartesian/Polar/Spherical types).
 
-**Primes domain** (`draco.primes`): Working example of the rule engine. Accumulator (mutable state), Numbers (input sequences), PrimeOrdinal (recursive ordinal type), three rules defined in JSON (`AddNaturalSequence.json`, etc.) and generated as suffixed Scala types (`AddNaturalSequenceRule`, `PrimesFromNaturalSequenceRule`, `RemoveCompositeNumbersRule`). Evrete working memory uses boxed `java.lang.Integer` — rule variables must use `classOf[Integer]`, not `classOf[Int]`.
+**Primes domain** (`draco.primes`): Working example of the rule engine. Accumulator (mutable state), Numbers (input sequences), PrimeOrdinal (recursive ordinal type), three rules defined in JSON (`AddNaturalSequence.json`, etc.) and generated as bare Scala objects (`AddNaturalSequence`, `PrimesFromNaturalSequence`, `RemoveCompositeNumbers`). Evrete working memory uses boxed `java.lang.Integer` — rule variables must use `classOf[Integer]`, not `classOf[Int]`.
 
 **Transform domains** (in test): Examples: Alpha, Bravo, Charlie, Delta extend DataModel.
 

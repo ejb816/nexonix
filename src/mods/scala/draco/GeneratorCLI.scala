@@ -52,6 +52,8 @@ object GeneratorCLI {
         |
         |subcommands:
         |  generate       <json>            print Scala emitted by Generator.generate(td)
+        |  generate-multi <json>...         print one Scala source for a sealed family via
+        |                                   Generator.generate(Seq[TypeDefinition])
         |  compile        <json>            single-source compile via Generator.compile
         |  compile-multi  <json>...         multi-source compile (one unit) via compileMulti;
         |                                   use for sources with inter-file dependencies
@@ -88,6 +90,17 @@ object GeneratorCLI {
   private def runGenerate(path: String): Unit = {
     val td = loadTypeDefinition(path)
     val source = Generator.generate(td)
+    print(source)
+    if (!source.endsWith("\n")) println()
+  }
+
+  /** Multi-type generation: one Scala source for a sealed family, emitted by the
+    * `Generator.generate(Seq[TypeDefinition])` overload. Distinct from
+    * `compile-multi`, which generates each type separately and compiles them as
+    * one unit. Order of paths is preserved; the Generator topologically sorts. */
+  private def runGenerateMultiple(paths: Seq[String]): Unit = {
+    val tds    = paths.map(loadTypeDefinition)
+    val source = Generator.generate(tds)
     print(source)
     if (!source.endsWith("\n")) println()
   }
@@ -261,18 +274,19 @@ object GeneratorCLI {
   }
 
   def main(args: Array[String]): Unit = args.toList match {
-    case "generate"      :: p :: Nil           => runGenerate(p)
-    case "compile"       :: p :: Nil           => runCompile(p)
-    case "compile-multi" :: ps if ps.nonEmpty  => runCompileMulti(ps)
-    case "inspect"       :: p :: Nil           => runInspect(p)
-    case "discover"      :: rest if rest.nonEmpty =>
+    case "generate"       :: p :: Nil           => runGenerate(p)
+    case "generate-multi" :: ps if ps.nonEmpty  => runGenerateMultiple(ps)
+    case "compile"        :: p :: Nil           => runCompile(p)
+    case "compile-multi"  :: ps if ps.nonEmpty  => runCompileMulti(ps)
+    case "inspect"        :: p :: Nil           => runInspect(p)
+    case "discover"       :: rest if rest.nonEmpty =>
       val force = rest.contains("--force")
       val paths = rest.filterNot(_ == "--force")
       paths match {
         case p :: Nil => runDiscover(p, force)
         case _        => usage()
       }
-    case "verify"        :: p :: Nil           => runVerify(p)
-    case _                                     => usage()
+    case "verify"         :: p :: Nil           => runVerify(p)
+    case _                                      => usage()
   }
 }

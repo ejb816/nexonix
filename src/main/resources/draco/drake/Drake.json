@@ -1,0 +1,36 @@
+{
+  "typeName": {
+    "name": "Drake",
+    "namePackage": [
+      "draco",
+      "drake"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "generator",
+        "valueType": "TypeDefinition => String",
+        "value": "Generator.drake"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Drake",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  }
+}

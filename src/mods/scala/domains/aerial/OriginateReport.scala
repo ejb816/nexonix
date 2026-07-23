@@ -7,11 +7,11 @@ import org.apache.pekko.actor.typed.ActorRef
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait OriginateReportRule
+trait OriginateReport
 
-object OriginateReportRule extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("OriginateReport", _namePackage = Seq ("domains", "aerial")))
-  lazy val dracoType: Type[OriginateReportRule] = Type[OriginateReportRule] (typeDefinition)
+object OriginateReport extends App {
+  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("OriginateReport", _namePackage = Seq ("domains", "aerial")))
+  lazy val dracoType: Type[OriginateReport] = Type[OriginateReport] (typeDefinition)
   lazy val domainType: Domain[Aerial] = Domain[Aerial] (typeDefinition)
 
   private def originate(intent: FlightIntent): PositionReport = {
@@ -48,7 +48,7 @@ object OriginateReportRule extends App {
     .build()
   }
 
-  lazy val ruleType: RuleType = Rule[OriginateReportRule] (
+  lazy val ruleType: RuleType = Rule[OriginateReport] (
     _pattern = pattern,
     _action = action
   )

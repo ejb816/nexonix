@@ -6,11 +6,11 @@ import domains._
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait ConsumeReportRule
+trait ConsumeReport
 
-object ConsumeReportRule extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("ConsumeReport", _namePackage = Seq ("domains", "marine")))
-  lazy val dracoType: Type[ConsumeReportRule] = Type[ConsumeReportRule] (typeDefinition)
+object ConsumeReport extends App {
+  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ConsumeReport", _namePackage = Seq ("domains", "marine")))
+  lazy val dracoType: Type[ConsumeReport] = Type[ConsumeReport] (typeDefinition)
   lazy val domainType: Domain[Marine] = Domain[Marine] (typeDefinition)
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
@@ -30,7 +30,7 @@ object ConsumeReportRule extends App {
     .build()
   }
 
-  lazy val ruleType: RuleType = Rule[ConsumeReportRule] (
+  lazy val ruleType: RuleType = Rule[ConsumeReport] (
     _pattern = pattern,
     _action = action
   )

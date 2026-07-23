@@ -10,7 +10,7 @@ trait RuleType extends DracoType {
 }
 
 object RuleType extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("RuleType", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("RuleType", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[RuleType] = Type[RuleType] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 }

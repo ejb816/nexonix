@@ -8,7 +8,7 @@ trait Observable extends World {
 }
 
 object Observable extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Observable", _namePackage = Seq ("domains", "world")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Observable", _namePackage = Seq ("domains", "world")))
   lazy val dracoType: Type[Observable] = Type[Observable] (typeDefinition)
   lazy val domainType: Domain[World] = Domain[World] (typeDefinition)
 

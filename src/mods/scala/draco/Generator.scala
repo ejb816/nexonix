@@ -79,13 +79,13 @@ object Generator extends App {
     * value (""). An object value is a structured expression tree: a single-key
     * object {op: [operands]} applying the operator symbol to its operands.
     * Operators: "." (n-ary path join), "->" (binary function/type arrow —
-    * Haskell form; ScalaSource renders " => "), "()"
+    * Haskell form; ScalaTarget renders " => "), "()"
     * (application — first operand applied to the rest), "\" (lambda — Haskell
     * form \p1 p2 -> body: leading operands are parameters, last is the body),
     * "if" (Haskell form if c then t else e: [cond, then, else]), and the infix
     * set ("*", "==", "!=") joining operands with the operator. A string-literal
     * leaf keeps its embedded quotes ("\"Primes\"") and passes through verbatim.
-    * This renderer is the ScalaSource projection: lambda renders (p1, p2) =>
+    * This renderer is the ScalaTarget projection: lambda renders (p1, p2) =>
     * body (bare param when single), if renders if (c) t else e.
     * Rendering is FLAT — no parenthesization; minimal parens arrive with the
     * surface fixity model (drake.dlt EXPRESSIONS), so authored trees must be
@@ -166,7 +166,7 @@ object Generator extends App {
 
   // --- Drake emission (JSON TypeDefinition -> .drake surface) ---
   //
-  // The drake projection, sibling of the ScalaSource projection above: where
+  // The drake projection, sibling of the ScalaTarget projection above: where
   // expression() renders a value tree to Scala's spelling, drakeExpression()
   // renders the same tree to its drake surface (Haskell forms — \ lambda,
   // if-then-else, -> arrow). drake() emits the canonical new-model surface per
@@ -181,7 +181,7 @@ object Generator extends App {
     * "->" renders " -> ", "\" renders \p1 p2 -> body, "if" renders
     * if c then t else e. A tree in a String-typed slot needs no quoting here —
     * the drake surface carries the expression itself (Action.drake's unquoted
-    * arrow), quoting is the ScalaSource projection's concern. */
+    * arrow), quoting is the ScalaTarget projection's concern. */
   def drakeExpression (value: Json) : String = {
     if (value == null || value.isNull) ""
     else value.asString.getOrElse {
@@ -614,8 +614,12 @@ object Generator extends App {
   private def typeNameLiteralForLoad (name: String, tn: TypeName) : String =
     typeNameLiteralOf(name, tn, omitTypeParameters = true)
 
+  /** Type loading is a `draco.TypeLoader` capability, not a Generator concern:
+    * `TypeLoader.loadType` resolves through the emitted `import draco._` in every
+    * package (including `draco.generator`, where a bare `Generator` would bind to
+    * the domain object rather than the tool). */
   private def typeDefinitionLoad (td: TypeDefinition) : String = {
-    s"""Generator.loadType(${typeNameLiteralForLoad(td.typeName.name, td.typeName)})"""
+    s"""TypeLoader.loadType(${typeNameLiteralForLoad(td.typeName.name, td.typeName)})"""
   }
 
 
@@ -1419,7 +1423,7 @@ object Generator extends App {
   // --- Rule companion generation ---
 
   private def ruleGlobal (td: TypeDefinition) : String = {
-    val name = td.typeName.name + "Rule"
+    val name = td.typeName.name
     val parents = Seq(
       if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
       if (chainHits(td, "DracoType")) Some("DracoType") else None
@@ -1444,7 +1448,7 @@ object Generator extends App {
        |    .forEach (
        |${factVariables(td.ruleAspect.pattern.variables)}
        |    )
-       |${whereConditions(td.ruleAspect.pattern.conditions, td.typeName.namePath + "Rule")}
+       |${whereConditions(td.ruleAspect.pattern.conditions, td.typeName.namePath)}
        |    .execute (action)
        |    .build()
        |  }
@@ -1495,8 +1499,8 @@ object Generator extends App {
   /** Build the actor's private Knowledge from its DOMAIN's rule set — all the
     * rules in the domain the actor belongs to (or is) — accepting each rule's
     * pattern. The domain aspect is authoritative: an is-a-domain actor uses its own
-    * dictionary, a member actor loads the domain it names. Rule object names carry
-    * the Generator's `Rule` suffix. */
+    * dictionary, a member actor loads the domain it names. Rule objects are named
+    * for the bare concept — rule-ness is aspect presence, not a name suffix. */
   private def actorKnowledge (td: TypeDefinition) : String = {
     val tag = td.typeName.name
     val domainTd =
@@ -1512,7 +1516,7 @@ object Generator extends App {
     if (rules.isEmpty)
       s"""  private lazy val knowledge: Knowledge = Rule.knowledgeService.newKnowledge("$tag")"""
     else {
-      val accepts = rules.map(r => s"    ${r}Rule.ruleType.pattern.accept(k)").mkString("\n")
+      val accepts = rules.map(r => s"    ${r}.ruleType.pattern.accept(k)").mkString("\n")
       s"""  private lazy val knowledge: Knowledge = {
          |    val k = Rule.knowledgeService.newKnowledge("$tag")
          |$accepts
@@ -1786,9 +1790,9 @@ object Generator extends App {
   }
 
   def generate (td: TypeDefinition) : String = {
-    if (isRule(td)) {
+    val source = if (isRule(td)) {
       val imports = ruleImports(td.typeName.namePackage)
-      val ruleName = td.typeName.name + "Rule"
+      val ruleName = td.typeName.name
       s"""
          |package ${td.typeName.namePackage.mkString(".")}
          |
@@ -1847,6 +1851,10 @@ object Generator extends App {
       // a predicate has drifted and Generator.generate has lost a case.
       throw new IllegalStateException(s"Generator.generate: no branch matched ${td.typeName.name}")
     }
+    // Every branch opens its interpolator with a line break that stripMargin does
+    // not remove; drop it so emitted source begins at `package`, matching the
+    // on-disk sources (DracoGenTest normalizes, so this drift went unnoticed).
+    source.stripPrefix("\n")
   }
 
   def generate (typeDefinitions: Seq[TypeDefinition]) : String = {
@@ -1871,7 +1879,7 @@ object Generator extends App {
     val typeBlocks = ordered.map { td =>
       s"${traitDeclaration(td)}\n\n${typeGlobal(td, typeDefinitions)}"
     }
-    s"\npackage $pkg\n$imports\n${typeBlocks.mkString("\n\n")}\n"
+    s"package $pkg\n$imports\n${typeBlocks.mkString("\n\n")}\n"
   }
 
   private def ruleImports (namePackage: Seq[String]) : String = {

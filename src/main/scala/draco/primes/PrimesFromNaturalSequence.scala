@@ -1,15 +1,14 @@
-
 package draco.primes
 
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
-trait PrimesFromNaturalSequenceRule
+trait PrimesFromNaturalSequence
 
-object PrimesFromNaturalSequenceRule extends App {
-  lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("PrimesFromNaturalSequence", _namePackage = Seq ("draco", "primes")))
-  lazy val dracoType: Type[PrimesFromNaturalSequenceRule] = Type[PrimesFromNaturalSequenceRule] (typeDefinition)
+object PrimesFromNaturalSequence extends App {
+  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("PrimesFromNaturalSequence", _namePackage = Seq ("draco", "primes")))
+  lazy val dracoType: Type[PrimesFromNaturalSequence] = Type[PrimesFromNaturalSequence] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
   def w0(i1: Integer, i2: Integer, i3: Integer): Boolean = i1 * i2 == i3
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
@@ -34,12 +33,12 @@ object PrimesFromNaturalSequenceRule extends App {
       "$i2", classOf[Integer],
       "$i3", classOf[Integer]
     )
-    .where("draco.primes.PrimesFromNaturalSequenceRule.w0($i1, $i2, $i3)")
+    .where("draco.primes.PrimesFromNaturalSequence.w0($i1, $i2, $i3)")
     .execute (action)
     .build()
   }
 
-  lazy val ruleType: RuleType = Rule[PrimesFromNaturalSequenceRule] (
+  lazy val ruleType: RuleType = Rule[PrimesFromNaturalSequence] (
     _pattern = pattern,
     _action = action
   )

@@ -11,6 +11,7 @@ domain draco Draco
     BodyElement
     CLI
     CodecAspect
+    Completeness
     Condition
     ContentSink
     Dictionary
@@ -31,16 +32,19 @@ domain draco Draco
     Parameter
     Pattern
     Primal
+    Problem
     REPL
     Rule
     RuleAspect
     RuleType
+    Source
     SourceContent
     Test
     Type
     TypeDefinition
     TypeDictionary
     TypeElement
+    TypeLoader
     TypeName
     TypeTransform
     Variable

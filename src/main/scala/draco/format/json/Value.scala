@@ -8,7 +8,7 @@ import io.circe.Json
 trait Value extends draco.format.Value[JSON]
 
 object Value extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Value", _namePackage = Seq ("draco", "format", "json")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Value", _namePackage = Seq ("draco", "format", "json")))
   lazy val dracoType: Type[Value] = Type[Value] (typeDefinition)
   lazy val domainType: Domain[JSON] = Domain[JSON] (typeDefinition)
 

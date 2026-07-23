@@ -88,7 +88,25 @@
         "body": [
           {
             "kind": "Monadic",
-            "value": "println(scalasource.ScalaSource.generator(load(path)))"
+            "value": "println(scalatarget.ScalaTarget.generator(load(path)))"
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "drake",
+        "valueType": "Unit",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "path",
+            "valueType": "String"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Monadic",
+            "value": "println(draco.drake.Drake.generator(load(path)))"
           }
         ]
       },
@@ -96,7 +114,7 @@
         "kind": "Fixed",
         "name": "commands",
         "valueType": "Map[String, Seq[String] => Unit]",
-        "value": "Map(\"version\" -> (_ => version), \"inspect\" -> (as => inspect(as.head)), \"generate\" -> (as => generate(as.head)))"
+        "value": "Map(\"version\" -> (_ => version), \"inspect\" -> (as => inspect(as.head)), \"generate\" -> (as => generate(as.head)), \"drake\" -> (as => drake(as.head)))"
       },
       {
         "kind": "Dynamic",

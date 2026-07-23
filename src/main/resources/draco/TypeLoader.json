@@ -1,0 +1,67 @@
+{
+  "typeName": {
+    "name": "TypeLoader",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoType",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "globalElements": [
+      {
+        "kind": "Dynamic",
+        "name": "loadFromResource",
+        "valueType": "Option[TypeDefinition]",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "resourcePath",
+            "valueType": "String"
+          }
+        ],
+        "value": "Option(getClass.getResourceAsStream(resourcePath)).flatMap { stream => val source = scala.io.Source.fromInputStream(stream); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "tryLoad",
+        "valueType": "Option[TypeDefinition]",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "TypeName"
+          }
+        ],
+        "value": "loadFromResource(typeName.resourcePath)"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "loadType",
+        "valueType": "TypeDefinition",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "TypeName"
+          }
+        ],
+        "value": "tryLoad(typeName).getOrElse(TypeDefinition(typeName))"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

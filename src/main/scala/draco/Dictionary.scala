@@ -9,7 +9,7 @@ trait Dictionary[K, V] extends Map[K, V] with DracoType {
 }
 
 object Dictionary extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Dictionary", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Dictionary", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Dictionary[_, _]] = Type[Dictionary[_, _]] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 }

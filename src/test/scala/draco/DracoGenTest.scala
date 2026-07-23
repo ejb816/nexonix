@@ -32,14 +32,10 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
   private case class Ty(resourcePath: String, scalaPath: String)
 
   /** Map a resource path to its corresponding hand-written .scala path. Rule-ness is
-   *  aspect presence, not a name suffix: a type carrying a ruleAspect emits a
-   *  `Rule`-suffixed object (`draco/X.json` with a ruleAspect -> `draco/XRule.scala`);
-   *  everything else (plain types, actors) keeps its bare name (`draco/X.scala`). */
-  private def deriveScalaPath(resourcePath: String): String = {
-    val base = resourcePath.stripSuffix(".json")
-    if (!RuleAspect.isEmpty(loadTypeDefinition(resourcePath).ruleAspect)) base + "Rule.scala"
-    else                                                                  base + ".scala"
-  }
+   *  aspect presence, not a name suffix: every type — plain, rule, or actor — emits an
+   *  object named for the bare concept (`draco/X.json` -> `draco/X.scala`). */
+  private def deriveScalaPath(resourcePath: String): String =
+    resourcePath.stripSuffix(".json") + ".scala"
 
   /** Walk `src/main/resources/draco/` and collect every regular `.json` file as
    *  a logical resource path (relative to the resource root). */

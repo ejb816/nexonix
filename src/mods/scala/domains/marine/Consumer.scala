@@ -10,15 +10,15 @@ import org.evrete.api.Knowledge
 trait Consumer extends Actor[draco.format.json.JSON]
 
 object Consumer extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Consumer", _namePackage = Seq ("domains", "marine")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Consumer", _namePackage = Seq ("domains", "marine")))
   lazy val dracoType: Type[Consumer] = Type[Consumer] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ()
 
   private lazy val knowledge: Knowledge = {
     val k = Rule.knowledgeService.newKnowledge("Consumer")
-    ConsumeReportRule.ruleType.pattern.accept(k)
-    OriginateReportRule.ruleType.pattern.accept(k)
+    ConsumeReport.ruleType.pattern.accept(k)
+    OriginateReport.ruleType.pattern.accept(k)
     k
   }
 

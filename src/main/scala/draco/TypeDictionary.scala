@@ -5,7 +5,7 @@ trait TypeDictionary extends Dictionary[TypeName, TypeDefinition] {
 }
 
 object TypeDictionary extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("TypeDictionary", _namePackage = Seq ("draco")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("TypeDictionary", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[TypeDictionary] = Type[TypeDictionary] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 

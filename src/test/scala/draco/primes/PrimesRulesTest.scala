@@ -44,7 +44,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/PrimesFromNaturalSequenceRule.scala")
+    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/PrimesFromNaturalSequence.scala")
     contentSink.write(ruleSource)
     log.info(ruleSource)
   }
@@ -57,7 +57,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/AddNaturalSequenceRule.scala")
+    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/AddNaturalSequence.scala")
     contentSink.write(ruleSource)
     log.info(ruleSource)
   }
@@ -70,7 +70,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
     val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/RemoveCompositeNumbersRule.scala")
+    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/RemoveCompositeNumbers.scala")
     contentSink.write(ruleSource)
     log.info(ruleSource)
   }
@@ -112,7 +112,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
   test("PrimesFromNaturalSequence.rule") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge = service.newKnowledge("PrimesFromNaturalSequence.rule")
-    PrimesFromNaturalSequenceRule.ruleType.pattern.accept(knowledge)
+    PrimesFromNaturalSequence.ruleType.pattern.accept(knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),
@@ -124,8 +124,8 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
   test("AddAndRemoveRulesTest") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge: Knowledge = service.newKnowledge("AddAndRemoveRulesTest")
-    AddNaturalSequenceRule.ruleType.pattern.accept(knowledge)
-    RemoveCompositeNumbersRule.ruleType.pattern.accept(knowledge)
+    AddNaturalSequence.ruleType.pattern.accept(knowledge)
+    RemoveCompositeNumbers.ruleType.pattern.accept(knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),

@@ -8,7 +8,7 @@ import org.apache.pekko.actor.typed.scaladsl.Behaviors
 trait Output extends Actor[domains.world.World]
 
 object Output extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Output", _namePackage = Seq ("domains", "terrestrial")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Output", _namePackage = Seq ("domains", "terrestrial")))
   lazy val dracoType: Type[Output] = Type[Output] (typeDefinition)
 
   def actorType(consumer: ActorRef[draco.format.json.JSON]): ActorType = new Actor[domains.world.World] {

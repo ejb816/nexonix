@@ -38,7 +38,7 @@ class AerialActorTest extends AnyFunSuite {
 
   test("ConsumeReport rule appends an inserted report to the session's consumed buffer") {
     val knowledge = Rule.knowledgeService.newKnowledge("AerialConsumeRuleTest")
-    ConsumeReportRule.ruleType.pattern.accept(knowledge)
+    ConsumeReport.ruleType.pattern.accept(knowledge)
     val session = knowledge.newStatefulSession()
     val consumed = new java.util.ArrayList[String]()
     session.set("consumed", consumed)

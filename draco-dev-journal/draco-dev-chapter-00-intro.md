@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across sixty-five chapters of development sessions from March 22, 2026 onward (the latest chapter tracks a session still in progress). An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions are transcribed as dialogues between Dev (the framework's creator) and the model (Claude, serving as pair-programming partner), capturing not just the code changes but the reasoning, missteps, and discoveries along the way.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across sixty-six chapters of development sessions between March 22 and July 22, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions are transcribed as dialogues between Dev (the framework's creator) and the model (Claude, serving as pair-programming partner), capturing not just the code changes but the reasoning, missteps, and discoveries along the way.
 
 ## Journal Conventions
 
@@ -80,7 +80,7 @@ Selected moments that shifted the framework's trajectory:
 
 The recurring theme across all sixty sessions is that self-description creates complexity: a type system closed over itself means every change to a foundational type can create circular dependencies, initialization-order bugs, and shadowing issues. The `lazy val` discipline, deferred factory defaults, classpath loading, the Haskell test, and finally DRAKE-as-recognizer are all engineering responses to the same mathematical property. The framework is learning to describe itself without tripping over its own reflection.
 
-**Status at Chapter 65 (session ongoing):** full suite 278/278; the JSON → `.drake` emitter covers plain types, rules, and actors, with the drake application surface (no `new`, chain-unfolding) landing in stages; issues #39/#40/#45 closed, #46 open, parser #44 still queued — no true round-trip yet.
+**Status at Chapter 66:** full suite 299/299; the Generator-as-domain pivot is underway — `draco.generator.Generator[L]`, `Drake`, `TypeLoader`, `Source`/`ScalaTarget`, and the first Draco self-validation types (`Problem`, `Completeness`); parser #44 deferred — drake stays emitter-only for now; next pickup is the Completeness proof in a bare Evrete session.
 
 ---
 
@@ -342,6 +342,10 @@ Value-expression syntax settled: operator-ness is a property of the symbol, not 
 
 The emitter grew rule-aspect and actor-aspect coverage (first 3 mods `.drake` files ever), Phase-2b's field rename closed its DIVERGENCES row, and Dev's model corrections landed: the domain aspect is mandatory, and an actor's rule set is all of its domain's rules — reverting a "bare `types`" hack. The two-month GitHub-issues lapse was reversed: #39–#45 filed, the convention codified in DRACO.md. Suite 267 → 271, all green; closed with commit `1295a82` and its git-record.
 
-### [Chapter 65 — The Sweep, the Drake Application Surface (ongoing)](draco-dev-chapter-65.md)
+### [Chapter 65 — The Sweep, the Drake Application Surface](draco-dev-chapter-65.md)
 
-The #39 pickup: terrestrial/marine/ethereal actors swept to the domain-derived rule model (277/277), then #45's accessor drift and #40's `.rule` suffix removal. Dev hand-authored Input.drake and Output.drake as the syntax oracle, driving the drake application surface — no `new` operator (factories referenced by name), `_`-prepend, chain-unfolding across lines, inline single-arg calls — built in gated stages to 278/278, with a hidden TupleFact regression caught and fixed. Session still in progress at Stage 2c; chapter to be extended.
+The #39 pickup: terrestrial/marine/ethereal actors swept to the domain-derived rule model (277/277), then #45's accessor drift and #40's `.rule` suffix removal. Dev hand-authored Input.drake and Output.drake as the syntax oracle, driving the drake application surface — no `new` operator (factories referenced by name), `_`-prepend, chain-unfolding across lines, inline single-arg calls — built in gated stages to 278/278, with a hidden TupleFact regression caught and fixed. Stage 2c part 1 landed; the session closed with a journal-only commit.
+
+### [Chapter 66 — Generator as Domain, the CO in DRACO](draco-dev-chapter-66.md)
+
+The parser discussion inverted into a bigger pivot: keep drake emitter-only and convert the Generator from a tool into a domain — `draco.generator.Generator[L]` with `Drake`, `TypeLoader`, and `multiGenerate`. The `<language>Source → <language>Target` rename landed (with Dev's mid-course correction preserving `draco.Source`), and the "CO in DRACO" dialogue — converting procedural to declarative while preserving semantics — produced the first Draco self-validation types (`Problem`, `Completeness`) and the Draco-domain-as-actor question. #40 finished at the class-name level. Suite 278 → 299.

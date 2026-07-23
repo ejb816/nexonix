@@ -15,8 +15,12 @@ type CLI(L)
     dyn generate Unit
       parameters
         par path String
-      mon println(scalasource.ScalaSource.generator(load(path)))
-    fix commands Map(String, [String] => Unit) Map("version" -> (_ => version), "inspect" -> (as => inspect(as.head)), "generate" -> (as => generate(as.head)))
+      mon println(scalatarget.ScalaTarget.generator(load(path)))
+    dyn drake Unit
+      parameters
+        par path String
+      mon println(draco.drake.Drake.generator(load(path)))
+    fix commands Map(String, [String] => Unit) Map("version" -> (_ => version), "inspect" -> (as => inspect(as.head)), "generate" -> (as => generate(as.head)), "drake" -> (as => drake(as.head)))
     dyn main Unit
       parameters
         par args Array(String)

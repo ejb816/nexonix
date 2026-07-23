@@ -31,14 +31,11 @@ class ExampleDomainsGenTest extends AnyFunSuite with PersistentTestLog {
   private val resourceRoot = Paths.get("src", "mods", "resources")
   private val scalaRoot    = Paths.get("src", "mods", "scala")
 
-  /** "domains/x/T.json" -> "domains/x/T.scala"; a type carrying a ruleAspect emits a
-    * `Rule`-suffixed object ("...Rule.scala"). Rule-ness is aspect presence, not a
-    * name suffix; actors keep their bare name (mirrors DracoGenTest). */
-  private def deriveScalaPath(rp: String): String = {
-    val base = rp.stripSuffix(".json")
-    if (!RuleAspect.isEmpty(loadTd(rp).ruleAspect)) base + "Rule.scala"
-    else                                            base + ".scala"
-  }
+  /** "domains/x/T.json" -> "domains/x/T.scala". Rule-ness is aspect presence, not a
+    * name suffix: every type — plain, rule, or actor — emits a bare-named object
+    * (mirrors DracoGenTest). */
+  private def deriveScalaPath(rp: String): String =
+    rp.stripSuffix(".json") + ".scala"
 
   /** Every `.json` under `src/mods/resources/domains`, as logical paths. */
   private def discover(): Seq[String] = {

@@ -1,0 +1,12 @@
+type Problem
+  elements
+    fix subject TypeName
+    fix message String
+  factory
+    parameters
+      par subject TypeName
+      par message String
+    body
+      fix subject TypeName _subject
+      fix message String _message
+domain draco Draco

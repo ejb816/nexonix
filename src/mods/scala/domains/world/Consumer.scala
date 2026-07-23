@@ -7,7 +7,7 @@ import org.apache.pekko.actor.typed.scaladsl.Behaviors
 trait Consumer extends Actor[World]
 
 object Consumer extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Consumer", _namePackage = Seq ("domains", "world")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Consumer", _namePackage = Seq ("domains", "world")))
   lazy val dracoType: Type[Consumer] = Type[Consumer] (typeDefinition)
 
   def actorType(provider: ActorRef[World]): ActorType = new Actor[World] {

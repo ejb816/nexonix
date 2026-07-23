@@ -7,7 +7,7 @@ trait Coordinate[T <: Product] extends Holon[T] {
 }
 
 object Coordinate extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = Generator.loadType(TypeName ("Coordinate", _namePackage = Seq ("draco", "base")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Coordinate", _namePackage = Seq ("draco", "base")))
   lazy val dracoType: Type[Coordinate[_]] = Type[Coordinate[_]] (typeDefinition)
   lazy val domainType: Domain[Base] = Domain[Base] (typeDefinition)
 }
