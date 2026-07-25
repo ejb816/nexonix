@@ -5,9 +5,9 @@ rule
     variables
       var td TypeDefinition
     conditions
-      con draco.DracoAspect.isEmpty(td.dracoAspect)
-      con draco.DomainAspect.isEmpty(td.domainAspect)
-      con draco.RuleAspect.isEmpty(td.ruleAspect)
-      con draco.ActorAspect.isEmpty(td.actorAspect)
+      con draco.DracoAspect.isEmpty parameters par td.dracoAspect
+      con draco.DomainAspect.isEmpty parameters par td.domainAspect
+      con draco.RuleAspect.isEmpty parameters par td.ruleAspect
+      con draco.ActorAspect.isEmpty parameters par td.actorAspect
   action
     mon ctx.insert(Problem(td.typeName, s"member ${td.typeName.name} is declared but unauthored (no JSON on disk)"))

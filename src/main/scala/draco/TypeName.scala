@@ -41,7 +41,7 @@ object TypeName extends App {
     override lazy val namePackage: Seq[String] = _namePackage
     override lazy val typeParameters: Seq[String] = _typeParameters
     override lazy val namePath: String = if (namePackage.isEmpty) name else s"${namePackage.mkString(".")}.${name}"
-    override lazy val resourcePath: String = s"/${namePackage.mkString("/")}/$name.json"
+    override lazy val resourcePath: String = if (namePackage.isEmpty) s"/$name.json" else s"/${namePackage.mkString("/")}/$name.json"
   }
 
   lazy val Null: TypeName = apply(
@@ -49,5 +49,6 @@ object TypeName extends App {
     _namePackage = Seq(),
     _typeParameters = Seq()
   )
+
 
 }

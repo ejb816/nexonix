@@ -19,7 +19,12 @@
         {
           "kind": "Condition",
           "valueType": "Boolean",
-          "value": "draco.DracoAspect.isEmpty(td.dracoAspect)",
+          "value": {
+            "()": [
+              { ".": [ "draco", "DracoAspect", "isEmpty" ] },
+              { ".": [ "td", "dracoAspect" ] }
+            ]
+          },
           "parameters": [
             {
               "kind": "Parameter",
@@ -31,7 +36,12 @@
         {
           "kind": "Condition",
           "valueType": "Boolean",
-          "value": "draco.DomainAspect.isEmpty(td.domainAspect)",
+          "value": {
+            "()": [
+              { ".": [ "draco", "DomainAspect", "isEmpty" ] },
+              { ".": [ "td", "domainAspect" ] }
+            ]
+          },
           "parameters": [
             {
               "kind": "Parameter",
@@ -43,7 +53,12 @@
         {
           "kind": "Condition",
           "valueType": "Boolean",
-          "value": "draco.RuleAspect.isEmpty(td.ruleAspect)",
+          "value": {
+            "()": [
+              { ".": [ "draco", "RuleAspect", "isEmpty" ] },
+              { ".": [ "td", "ruleAspect" ] }
+            ]
+          },
           "parameters": [
             {
               "kind": "Parameter",
@@ -55,7 +70,12 @@
         {
           "kind": "Condition",
           "valueType": "Boolean",
-          "value": "draco.ActorAspect.isEmpty(td.actorAspect)",
+          "value": {
+            "()": [
+              { ".": [ "draco", "ActorAspect", "isEmpty" ] },
+              { ".": [ "td", "actorAspect" ] }
+            ]
+          },
           "parameters": [
             {
               "kind": "Parameter",

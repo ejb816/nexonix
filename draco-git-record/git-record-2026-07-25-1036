@@ -1,0 +1,57 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+# Exclude WIP / previously-deferred no-name-domain dotfiles from this commit
+git reset -- src/main/resources/.drake src/main/resources/.json
+git commit -F - <<'EOF'
+draco foundation self-validation: SelfDeclaration + DerivationResolvable rules, FoundationValidationTest, condition-trees, identity/total-generation
+
+Full suite 316/316. Continues the draco self-validation track: the three foundation
+validation rules now fire together over the loaded DracoDomainDictionary and
+self-validate it — the inferential mirror of the procedural DomainBuilder.validate.
+
+Validation rules (authored JSON-source + hand .drake + generated .scala):
+- draco.SelfDeclaration — binds DomainType (the domain-role fact); fires when a
+  domain's domainAspect.typeName does not self-loop to its own typeName. The fact
+  taxonomy (domains=DomainType, members=TypeDefinition) dissolves the false-positive
+  the naive TypeDefinition-bound draft had (members legitimately carry
+  domainAspect -> their domain).
+- draco.DerivationResolvable — binds TypeDefinition; a load-in-condition (host-opaque
+  string: TypeLoader.loadType(anc) + isStub over draco-internal derivation ancestors).
+  Transcribes DomainBuilder.validate check 3.
+- Proven firing: CompletenessRulesTest, SelfDeclarationRulesTest,
+  DerivationResolvableRulesTest, FoundationValidationTest (all three together over
+  Draco/Base/Primes loaded from JSON: zero on the real foundation, one-per-rule on
+  injected breakage).
+
+Evrete runtime facts (recorded in memory):
+- A validation battery (independent rules over one fixed fact set) MUST use
+  ActivationMode.CONTINUOUS; DEFAULT fires only the first memory-writing rule per
+  generation (doAgendaDefault early-returns on buffer.hasData). Traced in bytecode.
+- A produced finding type (Problem) needs a consuming rule (CollectProblems) to
+  allocate its working-memory node; fire(Class,Consumer) does not pre-allocate it.
+  Stateless session for one-shot validation; stateful-per-message for the actor.
+
+Condition expression-trees:
+- Completeness/SelfDeclaration conditions normalized from host-opaque strings to
+  {op:[operands]} expression trees (corpus-normative form; generated .scala
+  byte-identical). Generator gained the || operator (expression + drakeExpression).
+- Completeness.drake shifted to the application surface (con ... parameters par ...).
+
+Foundation identity / total generation (tier-1):
+- TypeName resourcePath fix: empty package -> /Bar.json (was //Bar.json), making the
+  no-name domain reachable at the resource root. loadType(TypeName.Null) = the
+  identity, a run-time constant, never a file (namelessness = un-emittable).
+- Generation is total: a declared-but-unauthored member generates a compilable
+  minimal named type (bare trait + base object). MinimalTypeTest locks resourcePath +
+  identity + minimal-compiles.
+
+Draco domain: SelfDeclaration + DerivationResolvable added to elementTypeNames
+(Draco.json/.drake regenerated).
+
+Excluded from this commit (WIP, previously deferred): the no-name domain dotfiles
+src/main/resources/.drake (type/domain/types[]) and .json (empty) — held until
+present-empty presence-model support + built-in recognition exist.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+EOF
+git push

@@ -106,7 +106,7 @@ object Generator extends App {
             case "if"       => s"if (${args(0)}) ${args(1)} else ${args(2)}"
             case "="        => s"${args(0)} = ${args(1)}"
             case "(,)"      => args.mkString("(", ", ", ")")
-            case "*" | "==" | "!=" => args.mkString(s" $op ")
+            case "*" | "==" | "!=" | "||" => args.mkString(s" $op ")
             case _          => sys.error(s"Generator.expression: unknown operator '$op' in ${value.noSpaces}")
           }
         case _ => sys.error(s"Generator.expression: unrenderable value ${value.noSpaces}")
@@ -195,7 +195,7 @@ object Generator extends App {
             case "\\"       => s"\\${args.init.mkString(" ")} -> ${args.last}"
             case "if"       => s"if ${args(0)} then ${args(1)} else ${args(2)}"
             case "(,)"      => args.mkString("(", ", ", ")")
-            case "*" | "==" | "!=" => args.mkString(s" $op ")
+            case "*" | "==" | "!=" | "||" => args.mkString(s" $op ")
             case _          => sys.error(s"Generator.drakeExpression: unknown operator '$op' in ${value.noSpaces}")
           }
         case _ => sys.error(s"Generator.drakeExpression: unrenderable value ${value.noSpaces}")

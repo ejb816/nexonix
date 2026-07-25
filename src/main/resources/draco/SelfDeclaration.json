@@ -1,0 +1,68 @@
+{
+  "typeName": {
+    "name": "SelfDeclaration",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "d",
+          "valueType": "DomainType"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "valueType": "Boolean",
+          "value": {
+            "||": [
+              {
+                "!=": [
+                  { ".": [ "d", "typeDefinition", "domainAspect", "typeName", "name" ] },
+                  { ".": [ "d", "typeDefinition", "typeName", "name" ] }
+                ]
+              },
+              {
+                "!=": [
+                  { ".": [ "d", "typeDefinition", "domainAspect", "typeName", "namePackage" ] },
+                  { ".": [ "d", "typeDefinition", "typeName", "namePackage" ] }
+                ]
+              }
+            ]
+          },
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "d",
+              "valueType": "DomainType"
+            }
+          ]
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "ctx.insert(Problem(d.typeDefinition.typeName, s\"domain ${d.typeDefinition.typeName.name} does not self-declare: domainAspect.typeName is ${d.typeDefinition.domainAspect.typeName.name}\"))"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

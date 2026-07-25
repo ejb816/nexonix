@@ -84,7 +84,7 @@
           "kind": "Fixed",
           "name": "resourcePath",
           "valueType": "String",
-          "value": "s\"/${namePackage.mkString(\"/\")}/$name.json\""
+          "value": "if (namePackage.isEmpty) s\"/$name.json\" else s\"/${namePackage.mkString(\"/\")}/$name.json\""
         }
       ]
     }
