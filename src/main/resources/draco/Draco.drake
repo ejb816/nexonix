@@ -1,4 +1,7 @@
-type Draco
+type Draco from Actor(DracoType)
+  factory
+    parameters
+      par problems java.util.List(Problem)
 domain draco Draco
   types [
     Action
@@ -11,6 +14,7 @@ domain draco Draco
     BodyElement
     CLI
     CodecAspect
+    CollectProblems
     Completeness
     Condition
     ContentSink
@@ -51,3 +55,12 @@ domain draco Draco
     TypeTransform
     Variable
   ]
+actor
+  start
+    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+    mon session.set("problems", problems)
+  message
+    mon session.insert(Seq(msg): _*)
+    mon session.fire()
+  signal
+    mon session.close()

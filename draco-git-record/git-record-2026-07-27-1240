@@ -1,0 +1,60 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+# Exclude WIP / previously-deferred no-name-domain dotfiles from this commit
+git reset -- src/main/resources/.drake src/main/resources/.json
+git commit -F - <<'EOF'
+draco-as-actor + aspect composer runtime (#48) + uniform root meaning (#38 by inversion)
+
+Full suite 321/321. Three increments, each landed green:
+
+1. Aspect composer, additive fold (#48 first half):
+- Generator.generate routes multi-role types (roleAspectCount >= 2: domain-role/
+  rule/actor-behavior; membership pointers don't count) to composedGlobal +
+  composedImports — base contribution (typeDefinition + dracoType) plus each
+  present aspect's block, parents/imports unioned. No per-combination branch.
+- Blocks extracted as SHARED helpers (domainBlock/ruleBody/actorBlock) so single-
+  and multi-aspect emission are the same bytes; single-aspect emitters untouched.
+- Draco = domain (+) actor: Draco.json gains derivation Actor(DracoType) + thin-
+  membrane actorAspect (start: CONTINUOUS session; message: insert + fire; signal:
+  PostStop close). Draco.drake was ALREADY additive on the surface — only the
+  Scala projection collapsed.
+
+2. Draco-as-actor runtime (#48 closed):
+- CollectProblems promoted from test scaffold to a real JSON+drake-defined Draco
+  member (condition-less bind-all on Problem; env-seam action). The membership
+  edit alone rewires the actor: actorKnowledge derives the rule set from the
+  domain's member list — four rules accepted, nothing declared twice.
+- Draco.actorType(problems) — findings collection as a construction parameter
+  (actor-minting factory, valueType ActorType — the Creator convention, now NAMED
+  in the Generator: isActorMintingFactory, gated in domainBlock AND typeGlobal;
+  the aspect-blind generate(Seq) family path exposed the need).
+- DracoActorTest: the generated actor validates the loaded foundation CLEAN via
+  messages (domains + members as DracoType facts, one collapse per message) and
+  names an injected stub member. The actor-shaped mirror of FoundationValidationTest.
+
+3. Uniform root meaning (#38 closed by inversion; follow-ups #50):
+- An absent derivation on a LOADED definition MEANS derives-DracoType.
+  TypeLoader.rooted (defined once, definition-backed in TypeLoader.json) applied
+  at the load boundary and the Generator's loadType + generate entries.
+- Exempt by construction: the root itself (true absence), stubs (no file ->
+  unrooted, Completeness presence-detection intact), the nameless identity
+  (composition zero). Codec untouched (symmetric; elaboration = boundary transform).
+- Driver: drake is uniformly implicit w.r.t. the root — bare `type Foo` is one
+  surface form and now denotes one meaning; generation previously read meaning
+  into declared-vs-absent. No .drake file changed (elision already uniform).
+- Ripple: 11 types regenerated — TypeName, 4 draco validation rules, Primes + its
+  3 rules, then transitively Accumulator/Numbers (they derive trait Primes, which
+  gained the root parent; factoryBody's chainHits check appended their instance
+  typeDefinition overrides). The compiler enumerated the ripple layer by layer.
+- The 27 explicit sole-[DracoType] JSON entries are now redundant-harmless;
+  optional hygiene strip + rule-trait emission alignment filed as #50.
+
+Also swept: draco-dev-journal chapter 68 + intro sync (Cowork).
+
+Excluded from this commit (WIP, previously deferred): the no-name domain dotfiles
+src/main/resources/.drake and .json — held until present-empty presence-model
+support + built-in recognition exist.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+EOF
+git push

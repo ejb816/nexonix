@@ -6,8 +6,8 @@ import java.util.function.Consumer
 
 trait AddNaturalSequence
 
-object AddNaturalSequence extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("AddNaturalSequence", _namePackage = Seq ("draco", "primes")))
+object AddNaturalSequence extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("AddNaturalSequence", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[AddNaturalSequence] = Type[AddNaturalSequence] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 

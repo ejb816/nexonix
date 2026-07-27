@@ -8,9 +8,13 @@ type TypeLoader
       parameters
         par typeName TypeName
       = loadFromResource(typeName.resourcePath)
+    dyn rooted TypeDefinition
+      parameters
+        par td TypeDefinition
+      = if (td.dracoAspect.derivation.nonEmpty || (td.typeName.name == "DracoType" && td.typeName.namePackage == Seq("draco"))) td else TypeDefinition(_typeName = td.typeName, _dracoAspect = DracoAspect(_superDomain = td.dracoAspect.superDomain, _modules = td.dracoAspect.modules, _extensible = td.dracoAspect.extensible, _derivation = Seq(TypeName("DracoType", _namePackage = Seq("draco"))), _elements = td.dracoAspect.elements, _factory = td.dracoAspect.factory, _globalElements = td.dracoAspect.globalElements, _source = td.dracoAspect.source, _target = td.dracoAspect.target), _domainAspect = td.domainAspect, _ruleAspect = td.ruleAspect, _actorAspect = td.actorAspect, _codecAspect = td.codecAspect)
     dyn loadType TypeDefinition
       parameters
         par typeName TypeName
-      = tryLoad(typeName).getOrElse(TypeDefinition(typeName))
+      = tryLoad(typeName).map(rooted).getOrElse(TypeDefinition(typeName))
   ]
 domain draco Draco

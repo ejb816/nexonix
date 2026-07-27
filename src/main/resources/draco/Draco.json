@@ -5,6 +5,76 @@
       "draco"
     ]
   },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Actor",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "DracoType"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ActorType",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "problems",
+          "valueType": "java.util.List[Problem]"
+        }
+      ]
+    }
+  },
+  "actorAspect": {
+    "start": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "session",
+          "valueType": "org.evrete.api.StatefulSession",
+          "value": "knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "session.set(\"problems\", problems)"
+        }
+      ]
+    },
+    "message": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "session.insert(Seq(msg): _*)"
+        },
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "session.fire()"
+        }
+      ]
+    },
+    "signal": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "session.close()"
+        }
+      ]
+    }
+  },
   "domainAspect": {
     "typeName": {
       "name": "Draco",
@@ -23,6 +93,7 @@
       "BodyElement",
       "CLI",
       "CodecAspect",
+      "CollectProblems",
       "Completeness",
       "Condition",
       "ContentSink",

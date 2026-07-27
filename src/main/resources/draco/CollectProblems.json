@@ -1,0 +1,39 @@
+{
+  "typeName": {
+    "name": "CollectProblems",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "p",
+          "valueType": "Problem"
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "valueType": "Unit",
+      "body": [
+        {
+          "kind": "Monadic",
+          "valueType": "Unit",
+          "value": "ctx.getRuntime().get[java.util.List[Problem]](\"problems\").add(p)"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

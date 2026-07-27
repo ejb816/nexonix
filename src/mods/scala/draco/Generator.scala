@@ -51,7 +51,7 @@ object Generator extends App {
     loadFromResource(resourcePath(typeName))
 
   def loadType (typeName: TypeName) : TypeDefinition =
-    tryLoad(typeName).getOrElse(TypeDefinition(typeName))
+    tryLoad(typeName).map(TypeLoader.rooted).getOrElse(TypeDefinition(typeName))
 
   /** True iff `td` itself, or any transitive ancestor via `draco.derivation`, has a
     * typeName matching `targetName`. Used to decide whether emitted factory bodies
@@ -1282,9 +1282,15 @@ object Generator extends App {
 
   // --- Companion object generation ---
 
+  /** An ActorType-valued factory is the ACTOR-minting spec (the Creator
+    * convention — its parameters thread into `def actorType(...)` via
+    * actorBehavior), never a type/domain constructor: no `apply`, no `Null`. */
+  private def isActorMintingFactory (factory: Factory) : Boolean =
+    factory.valueType == "ActorType"
+
   private def typeGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty, nameSuffix: String = "") : String = {
     val factory = td.dracoAspect.factory
-    val hasFactory = factory.valueType.nonEmpty
+    val hasFactory = factory.valueType.nonEmpty && !isActorMintingFactory(factory)
     val hasGlobalElements = td.dracoAspect.globalElements.nonEmpty
     val objName = td.typeName.name + nameSuffix
     val wName = wildcardTypeName(td.typeName) + nameSuffix
@@ -1379,28 +1385,24 @@ object Generator extends App {
     s"  lazy val elementTypeNames: Seq[String] = Seq ($items)"
   }
 
-  private def domainGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty) : String = {
-    val objName = td.typeName.name
+  /** The domain aspect's object-body contribution: elementTypeNames + codec +
+    * domainType + factory + globals. Shared by `domainGlobal` (single-aspect
+    * emission) and `composedGlobal` (additive multi-aspect composition), so
+    * both emit the identical block. */
+  private def domainBlock (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty) : String = {
     val hasGlobalElements = td.dracoAspect.globalElements.nonEmpty
-    val parents = Seq(
-      if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
-      if (chainHits(td, "DracoType")) Some("DracoType") else None
-    ).flatten
-    val header = if (parents.isEmpty) s"object $objName" else s"object $objName extends ${parents.mkString(" with ")}"
-    val tdOverride = if (chainHits(td, "DracoType")) "override " else ""
-    val tdLiteral = s"  ${tdOverride}lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
     val etnLiteral = elementTypeNamesLiteral(td)
     val codec = codecDeclaration(td, familyContext)
     val codecBlock = if (codec.nonEmpty) s"\n$codec\n" else ""
     val wName = wildcardTypeName(td.typeName)
     val dtLiteral = domainTypeLiteral(wName)
-    val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
     val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.dracoAspect.globalElements)}" else ""
     // A domain type may also be constructible (aspect co-presence): emit its
-    // factory apply + Null exactly as typeGlobal would (draco.format.json.JSON).
+    // factory apply + Null exactly as typeGlobal would (draco.format.json.JSON) —
+    // unless the factory is the actor-minting spec (isActorMintingFactory).
     val factory = td.dracoAspect.factory
     val factoryBlock =
-      if (factory.valueType.isEmpty) ""
+      if (factory.valueType.isEmpty || isActorMintingFactory(factory)) ""
       else {
         val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
         s"""
@@ -1409,34 +1411,40 @@ object Generator extends App {
            |  ${nullInstance(td.typeName, td.dracoAspect.elements, factory)}
            |""".stripMargin
       }
+    s"""$etnLiteral
+       |$codecBlock
+       |$dtLiteral$factoryBlock$globals""".stripMargin
+  }
+
+  private def domainGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty) : String = {
+    val objName = td.typeName.name
+    val parents = Seq(
+      if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
+      if (chainHits(td, "DracoType")) Some("DracoType") else None
+    ).flatten
+    val header = if (parents.isEmpty) s"object $objName" else s"object $objName extends ${parents.mkString(" with ")}"
+    val tdOverride = if (chainHits(td, "DracoType")) "override " else ""
+    val tdLiteral = s"  ${tdOverride}lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
+    val wName = wildcardTypeName(td.typeName)
+    val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
 
     s"""$header {
        |$tdLiteral
        |$tiLiteral
        |
-       |$etnLiteral
-       |$codecBlock
-       |$dtLiteral$factoryBlock$globals
+       |${domainBlock(td, familyContext)}
        |}""".stripMargin
   }
 
   // --- Rule companion generation ---
 
-  private def ruleGlobal (td: TypeDefinition) : String = {
+  /** The rule aspect's object-body contribution: condition functions + action +
+    * pattern + ruleType. Shared by `ruleGlobal` (single-aspect emission) and
+    * `composedGlobal` (additive multi-aspect composition), so both emit the
+    * identical block. */
+  private def ruleBody (td: TypeDefinition) : String = {
     val name = td.typeName.name
-    val parents = Seq(
-      if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
-      if (chainHits(td, "DracoType")) Some("DracoType") else None
-    ).flatten
-    val header = if (parents.isEmpty) s"object $name" else s"object $name extends ${parents.mkString(" with ")}"
-    val tdOverride = if (chainHits(td, "DracoType")) "override " else ""
-    val tiLiteral = s"  lazy val dracoType: Type[$name] = Type[$name] (typeDefinition)"
-    val container = containerName(td)
-    val dtBlock = if (container.nonEmpty) s"\n${domainTypeLiteral(container)}" else ""
-    s"""$header {
-       |  ${tdOverride}lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}
-       |$tiLiteral$dtBlock
-       |${conditionFunctions(td.ruleAspect.pattern.conditions)}
+    s"""${conditionFunctions(td.ruleAspect.pattern.conditions)}
        |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
        |${actionBody(td.ruleAspect.action, td.ruleAspect.pattern.variables)}
        |  }
@@ -1456,7 +1464,24 @@ object Generator extends App {
        |  lazy val ruleType: RuleType = Rule[$name] (
        |    _pattern = pattern,
        |    _action = action
-       |  )
+       |  )""".stripMargin
+  }
+
+  private def ruleGlobal (td: TypeDefinition) : String = {
+    val name = td.typeName.name
+    val parents = Seq(
+      if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
+      if (chainHits(td, "DracoType")) Some("DracoType") else None
+    ).flatten
+    val header = if (parents.isEmpty) s"object $name" else s"object $name extends ${parents.mkString(" with ")}"
+    val tdOverride = if (chainHits(td, "DracoType")) "override " else ""
+    val tiLiteral = s"  lazy val dracoType: Type[$name] = Type[$name] (typeDefinition)"
+    val container = containerName(td)
+    val dtBlock = if (container.nonEmpty) s"\n${domainTypeLiteral(container)}" else ""
+    s"""$header {
+       |  ${tdOverride}lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}
+       |$tiLiteral$dtBlock
+       |${ruleBody(td)}
        |}""".stripMargin
   }
 
@@ -1582,25 +1607,77 @@ object Generator extends App {
        |  }""".stripMargin
   }
 
+  /** The actor aspect's object-body contribution: the domain-derived Knowledge +
+    * the minted actorType behavior. Shared by `actorGlobal` (single-aspect
+    * emission) and `composedGlobal` (additive multi-aspect composition), so both
+    * emit the identical block. */
+  private def actorBlock (td: TypeDefinition) : String =
+    s"""${actorKnowledge(td)}
+       |
+       |${actorBehavior(td, actorMessageType(td))}""".stripMargin
+
   private def actorGlobal (td: TypeDefinition) : String = {
     val objName = td.typeName.name
-    val msgType = actorMessageType(td)
     val wName = wildcardTypeName(td.typeName)
     val tdLiteral = s"  override lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
     val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
     val etn = elementTypeNamesLiteral(td)
-    val knowledge = actorKnowledge(td)
-    val behavior = actorBehavior(td, msgType)
     s"""object $objName extends App with DracoType {
        |$tdLiteral
        |$tiLiteral
        |
        |$etn
        |
-       |$knowledge
-       |
-       |$behavior
+       |${actorBlock(td)}
        |}""".stripMargin
+  }
+
+  // --- Aspect composition (multi-aspect types) ---
+
+  /** Additive aspect composition: the object body is the BASE contribution
+    * (typeDefinition + dracoType — the loadType(Null) identity, always present)
+    * plus the block each PRESENT role-aspect contributes, in aspect order
+    * (domain, rule, actor), with `extends` parents unioned. General over the
+    * aspect set — a type carrying any subset of aspects folds through the same
+    * path with no per-combination branch. `generate` routes here only when MORE
+    * THAN ONE role-aspect is present, so every single-aspect type keeps its
+    * proven emitter untouched. First client: Draco (domain + actor). */
+  private def composedGlobal (td: TypeDefinition) : String = {
+    val objName = td.typeName.name
+    // Parents: base contributes App (unless an explicit main global); DracoType
+    // joins when the derivation chain reaches it OR the actor aspect is present
+    // (actor companions are DracoType — actorGlobal hard-wires the same parent).
+    val withDracoType = chainHits(td, "DracoType") || hasActorBehavior(td)
+    val parents = Seq(
+      if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
+      if (withDracoType) Some("DracoType") else None
+    ).flatten
+    val header = if (parents.isEmpty) s"object $objName" else s"object $objName extends ${parents.mkString(" with ")}"
+    val tdOverride = if (withDracoType) "override " else ""
+    val wName = wildcardTypeName(td.typeName)
+    val blocks = Seq(
+      if (isDomain(td)) Some(domainBlock(td)) else None,
+      if (isRule(td)) Some(ruleBody(td)) else None,
+      if (hasActorBehavior(td)) Some(actorBlock(td)) else None
+    ).flatten
+    s"""$header {
+       |  ${tdOverride}lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}
+       |  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)
+       |
+       |${blocks.mkString("\n\n")}
+       |}""".stripMargin
+  }
+
+  /** Import union across the present role-aspects' import sets — line-level
+    * distinct, first-contribution order (domain, rule, actor). */
+  private def composedImports (td: TypeDefinition) : String = {
+    val contributions = Seq(
+      if (isDomain(td)) Some(typeImports(td, hasCodec(td), "domain")) else None,
+      if (isRule(td)) Some(ruleImports(td.typeName.namePackage)) else None,
+      if (hasActorBehavior(td)) Some(actorImports(td)) else None
+    ).flatten
+    val lines = contributions.flatMap(_.split("\n")).filter(_.nonEmpty).distinct
+    if (lines.isEmpty) "" else s"\n${lines.mkString("\n")}\n"
   }
 
   // --- Module ordering (topological sort) ---
@@ -1654,6 +1731,14 @@ object Generator extends App {
     * `nameSuffix` and `instanceType`), so the dispatcher pairs `isLeaf || isActor`. */
   private def isLeaf (td: TypeDefinition) : Boolean =
     !isDomain(td) && !isRule(td) && !isActor(td) && !isObjectOnly(td)
+
+  /** Count of PRESENT role-aspects: domain role (self-loop), rule, actor
+    * behavior. More than one routes `generate` to the additive composer; one or
+    * none keeps the proven single-aspect emitters. A membership domainAspect (a
+    * pointer at the OWNING domain, no self-loop) is not a role — a member actor
+    * like domains.aerial.Consumer counts one role and stays on actor emission. */
+  private def roleAspectCount (td: TypeDefinition) : Int =
+    Seq(isDomain(td), isRule(td), hasActorBehavior(td)).count(identity)
 
   // --- Main generate methods ---
 
@@ -1789,8 +1874,24 @@ object Generator extends App {
     if (allImports.isEmpty) "" else s"\n${allImports.mkString("\n")}\n"
   }
 
-  def generate (td: TypeDefinition) : String = {
-    val source = if (isRule(td)) {
+  def generate (_td: TypeDefinition) : String = {
+    // Uniform root meaning: an absent derivation on a loaded definition MEANS
+    // derives-the-root (TypeLoader.rooted; the root itself and true stubs are
+    // exempt at the load boundary). Rooting at the generate entry makes emission
+    // uniform regardless of which loader produced the TypeDefinition.
+    val td = TypeLoader.rooted(_td)
+    val source = if (roleAspectCount(td) >= 2) {
+      // Multi-aspect type: additive composition — no single winner, every
+      // present aspect contributes its block (imports and parents unioned).
+      val imports = composedImports(td)
+      s"""
+         |package ${td.typeName.namePackage.mkString(".")}
+         |$imports
+         |${traitDeclaration(td)}
+         |
+         |${composedGlobal(td)}
+         |""".stripMargin
+    } else if (isRule(td)) {
       val imports = ruleImports(td.typeName.namePackage)
       val ruleName = td.typeName.name
       s"""
@@ -1857,7 +1958,8 @@ object Generator extends App {
     source.stripPrefix("\n")
   }
 
-  def generate (typeDefinitions: Seq[TypeDefinition]) : String = {
+  def generate (_typeDefinitions: Seq[TypeDefinition]) : String = {
+    val typeDefinitions = _typeDefinitions.map(TypeLoader.rooted)
     if (typeDefinitions.isEmpty) return ""
     if (typeDefinitions.size == 1) return generate(typeDefinitions.head)
     val ordered = moduleOrder(typeDefinitions)

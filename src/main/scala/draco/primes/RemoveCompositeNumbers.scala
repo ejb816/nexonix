@@ -6,8 +6,8 @@ import java.util.function.Consumer
 
 trait RemoveCompositeNumbers
 
-object RemoveCompositeNumbers extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("RemoveCompositeNumbers", _namePackage = Seq ("draco", "primes")))
+object RemoveCompositeNumbers extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("RemoveCompositeNumbers", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[RemoveCompositeNumbers] = Type[RemoveCompositeNumbers] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
   def w0(i1: Int, i2: Int, i3: Int): Boolean = i1 * i2 == i3

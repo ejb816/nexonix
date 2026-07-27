@@ -1,0 +1,8 @@
+type CollectProblems
+domain draco Draco
+rule
+  pattern
+    variables
+      var p Problem
+  action
+    mon ctx.getRuntime().get[java.util.List[Problem]]("problems").add(p)

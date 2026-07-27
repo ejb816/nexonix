@@ -7,8 +7,8 @@ import java.util.function.Consumer
 
 trait ConsumeReport
 
-object ConsumeReport extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ConsumeReport", _namePackage = Seq ("domains", "aerial")))
+object ConsumeReport extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ConsumeReport", _namePackage = Seq ("domains", "aerial")))
   lazy val dracoType: Type[ConsumeReport] = Type[ConsumeReport] (typeDefinition)
   lazy val domainType: Domain[Aerial] = Domain[Aerial] (typeDefinition)
 

@@ -2,12 +2,12 @@ package draco.primes
 
 import draco._
 
-trait Primes {
+trait Primes extends DracoType {
   lazy val knowledge: org.evrete.api.Knowledge = Rule.knowledgeService.newKnowledge("Primes")
 }
 
-object Primes extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Primes", _namePackage = Seq ("draco", "primes")))
+object Primes extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Primes", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[Primes] = Type[Primes] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ("Accumulator", "Numbers", "AddNaturalSequence", "PrimesFromNaturalSequence", "RemoveCompositeNumbers")

@@ -43,6 +43,19 @@
       },
       {
         "kind": "Dynamic",
+        "name": "rooted",
+        "valueType": "TypeDefinition",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "td",
+            "valueType": "TypeDefinition"
+          }
+        ],
+        "value": "if (td.dracoAspect.derivation.nonEmpty || (td.typeName.name == \"DracoType\" && td.typeName.namePackage == Seq(\"draco\"))) td else TypeDefinition(_typeName = td.typeName, _dracoAspect = DracoAspect(_superDomain = td.dracoAspect.superDomain, _modules = td.dracoAspect.modules, _extensible = td.dracoAspect.extensible, _derivation = Seq(TypeName(\"DracoType\", _namePackage = Seq(\"draco\"))), _elements = td.dracoAspect.elements, _factory = td.dracoAspect.factory, _globalElements = td.dracoAspect.globalElements, _source = td.dracoAspect.source, _target = td.dracoAspect.target), _domainAspect = td.domainAspect, _ruleAspect = td.ruleAspect, _actorAspect = td.actorAspect, _codecAspect = td.codecAspect)"
+      },
+      {
+        "kind": "Dynamic",
         "name": "loadType",
         "valueType": "TypeDefinition",
         "parameters": [
@@ -52,7 +65,7 @@
             "valueType": "TypeName"
           }
         ],
-        "value": "tryLoad(typeName).getOrElse(TypeDefinition(typeName))"
+        "value": "tryLoad(typeName).map(rooted).getOrElse(TypeDefinition(typeName))"
       }
     ]
   },

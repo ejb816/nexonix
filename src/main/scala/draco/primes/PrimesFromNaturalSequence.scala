@@ -6,8 +6,8 @@ import java.util.function.Consumer
 
 trait PrimesFromNaturalSequence
 
-object PrimesFromNaturalSequence extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("PrimesFromNaturalSequence", _namePackage = Seq ("draco", "primes")))
+object PrimesFromNaturalSequence extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("PrimesFromNaturalSequence", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[PrimesFromNaturalSequence] = Type[PrimesFromNaturalSequence] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
   def w0(i1: Integer, i2: Integer, i3: Integer): Boolean = i1 * i2 == i3

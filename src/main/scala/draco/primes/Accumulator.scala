@@ -10,8 +10,8 @@ trait Accumulator extends Primes {
   val intervalTextSet: mutable.Set[(Long, String)]
 }
 
-object Accumulator extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Accumulator", _namePackage = Seq ("draco", "primes")))
+object Accumulator extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Accumulator", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[Accumulator] = Type[Accumulator] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 
@@ -20,8 +20,10 @@ object Accumulator extends App {
     override lazy val compositeSet: mutable.Set[Int] = mutable.Set[Int] ()
     override lazy val naturalSet: mutable.Set[Int] = mutable.Set[Int] ()
     override lazy val intervalTextSet: mutable.Set[(Long, String)] = mutable.Set[(Long, String)] ()
+    override lazy val typeDefinition: TypeDefinition = Accumulator.typeDefinition
   }
 
   lazy val Null: Accumulator = apply()
+
 
 }

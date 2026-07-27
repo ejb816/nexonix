@@ -8,8 +8,8 @@ trait Numbers extends Primes {
   val compositeSequence: Seq[Int]
 }
 
-object Numbers extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Numbers", _namePackage = Seq ("draco", "primes")))
+object Numbers extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Numbers", _namePackage = Seq ("draco", "primes")))
   lazy val dracoType: Type[Numbers] = Type[Numbers] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 
@@ -19,8 +19,10 @@ object Numbers extends App {
     override lazy val primeSequence: Seq[Int] = Primes.nPrimes(_n)
     override lazy val naturalSequence: Seq[Int] = Primes.naturals(2).take(primeSequence.last - 1)
     override lazy val compositeSequence: Seq[Int] = Primes.composites(primeSequence)
+    override lazy val typeDefinition: TypeDefinition = Numbers.typeDefinition
   }
 
   lazy val Null: Numbers = apply()
+
 
 }

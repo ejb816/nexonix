@@ -3,7 +3,7 @@ package draco
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
-trait TypeName {
+trait TypeName extends DracoType {
   val name: String
   val namePackage: Seq[String]
   val typeParameters: Seq[String]
@@ -11,8 +11,8 @@ trait TypeName {
   val resourcePath: String
 }
 
-object TypeName extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("TypeName", _namePackage = Seq ("draco")))
+object TypeName extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("TypeName", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[TypeName] = Type[TypeName] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
@@ -42,6 +42,7 @@ object TypeName extends App {
     override lazy val typeParameters: Seq[String] = _typeParameters
     override lazy val namePath: String = if (namePackage.isEmpty) name else s"${namePackage.mkString(".")}.${name}"
     override lazy val resourcePath: String = if (namePackage.isEmpty) s"/$name.json" else s"/${namePackage.mkString("/")}/$name.json"
+    override lazy val typeDefinition: TypeDefinition = TypeName.typeDefinition
   }
 
   lazy val Null: TypeName = apply(

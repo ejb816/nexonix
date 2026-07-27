@@ -12,5 +12,6 @@ object TypeLoader extends App with DracoType {
 
   def loadFromResource(resourcePath: String): Option[TypeDefinition] = Option(getClass.getResourceAsStream(resourcePath)).flatMap { stream => val source = scala.io.Source.fromInputStream(stream); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }
   def tryLoad(typeName: TypeName): Option[TypeDefinition] = loadFromResource(typeName.resourcePath)
-  def loadType(typeName: TypeName): TypeDefinition = tryLoad(typeName).getOrElse(TypeDefinition(typeName))
+  def rooted(td: TypeDefinition): TypeDefinition = if (td.dracoAspect.derivation.nonEmpty || (td.typeName.name == "DracoType" && td.typeName.namePackage == Seq("draco"))) td else TypeDefinition(_typeName = td.typeName, _dracoAspect = DracoAspect(_superDomain = td.dracoAspect.superDomain, _modules = td.dracoAspect.modules, _extensible = td.dracoAspect.extensible, _derivation = Seq(TypeName("DracoType", _namePackage = Seq("draco"))), _elements = td.dracoAspect.elements, _factory = td.dracoAspect.factory, _globalElements = td.dracoAspect.globalElements, _source = td.dracoAspect.source, _target = td.dracoAspect.target), _domainAspect = td.domainAspect, _ruleAspect = td.ruleAspect, _actorAspect = td.actorAspect, _codecAspect = td.codecAspect)
+  def loadType(typeName: TypeName): TypeDefinition = tryLoad(typeName).map(rooted).getOrElse(TypeDefinition(typeName))
 }

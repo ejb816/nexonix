@@ -5,8 +5,8 @@ import java.util.function.Consumer
 
 trait Completeness
 
-object Completeness extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Completeness", _namePackage = Seq ("draco")))
+object Completeness extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Completeness", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Completeness] = Type[Completeness] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
   def w0(td: TypeDefinition): Boolean = draco.DracoAspect.isEmpty(td.dracoAspect)
