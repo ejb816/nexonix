@@ -9,14 +9,6 @@
     ]
   },
   "dracoAspect": {
-    "derivation": [
-      {
-        "name": "DracoType",
-        "namePackage": [
-          "draco"
-        ]
-      }
-    ],
     "factory": {
       "kind": "Factory",
       "valueType": "Type[T]",

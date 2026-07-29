@@ -8,16 +8,6 @@
       "T <: Product"
     ]
   },
-  "dracoAspect": {
-    "derivation": [
-      {
-        "name": "DracoType",
-        "namePackage": [
-          "draco"
-        ]
-      }
-    ]
-  },
   "domainAspect": {
     "typeName": {
       "name": "Draco",
