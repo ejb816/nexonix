@@ -6,19 +6,16 @@
     ]
   },
   "dracoAspect": {
-    "derivation": [
-      {
-        "name": "DracoType",
-        "namePackage": [
-          "draco"
-        ]
-      }
-    ],
     "elements": [
       {
         "kind": "Fixed",
         "name": "message",
         "valueType": "Action"
+      },
+      {
+        "kind": "Fixed",
+        "name": "messageType",
+        "valueType": "TypeName"
       },
       {
         "kind": "Fixed",
@@ -40,6 +37,12 @@
           "name": "message",
           "valueType": "Action",
           "value": "Action.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "messageType",
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
         },
         {
           "kind": "Parameter",

@@ -1,11 +1,13 @@
 type ActorAspect
   elements [
+    fix messageType TypeName
     fix start Action
     fix message Action
     fix signal Action
   ]
   factory ActorAspect
     parameters [
+      par messageType TypeName TypeName.Null
       par start Action Action.Null
       par message Action Action.Null
       par signal Action Action.Null

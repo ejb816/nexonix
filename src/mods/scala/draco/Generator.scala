@@ -1497,13 +1497,24 @@ object Generator extends App {
   private def hasActorBehavior (td: TypeDefinition) : Boolean =
     !ActorAspect.isEmpty(td.actorAspect)
 
-  /** The actor's message type — the type argument of its `Actor[T]` derivation
-    * (e.g. `draco.format.json.Json`). Falls back to `Any` if unspecified. */
-  private def actorMessageType (td: TypeDefinition) : String =
-    td.dracoAspect.derivation
+  /** The actor's message type — the `T` substituted into the generated
+    * `ExtensibleBehavior[T]` / `Behavior[T]` and the `receive`/`receiveSignal`
+    * signatures (e.g. `draco.format.json.JSON`).
+    *
+    * The actor ASPECT is the source of truth: actor-ness is carried by aspect
+    * presence (`hasActorBehavior`), so the message type belongs there too rather
+    * than being read out of the type hierarchy. The `Actor[T]` derivation is a
+    * transitional fallback for definitions not yet migrated — with it, an actor
+    * privileges its actor role in the derivation while a co-present domain role
+    * contributes only body members, which the additive composer contradicts.
+    * Falls back to `Any` if neither says. */
+  private def actorMessageType (td: TypeDefinition) : String = {
+    val fromAspect = Some(td.actorAspect.messageType).map(_.namePath).filter(_.nonEmpty)
+    def fromDerivation = td.dracoAspect.derivation
       .find(_.name == "Actor")
       .flatMap(_.typeParameters.headOption)
-      .getOrElse("Any")
+    fromAspect.orElse(fromDerivation).getOrElse("Any")
+  }
 
   private def actorImports (td: TypeDefinition) : String = {
     val pkg = packageHierarchyImports(td.typeName.namePackage)

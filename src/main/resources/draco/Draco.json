@@ -30,6 +30,9 @@
     }
   },
   "actorAspect": {
+    "messageType": {
+      "name": "DracoType"
+    },
     "start": {
       "kind": "Action",
       "valueType": "Unit",

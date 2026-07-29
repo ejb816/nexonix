@@ -1,0 +1,38 @@
+cd /Users/edwardburke/IdeaProjects/nexonix
+git add -A
+git commit -F - <<'EOF'
+JSON corpus made uniformly implicit: strip 27 redundant sole-[DracoType] derivations (#50 item 1)
+
+Full suite green. 228 deletions, 0 insertions; no .drake or .scala file touched.
+
+Absence of `derivation` is now the ONLY spelling of derives-the-root in the JSON
+corpus, completing the inversion landed by #38 (uniform root meaning). Two shapes:
+
+- 21 files where `derivation` sat alongside other dracoAspect keys -> entry removed.
+- 6 files where it was dracoAspect's only key -> whole aspect dropped. Safe: 7
+  definitions already omit dracoAspect entirely (the 4 draco rules + CollectProblems).
+
+Byte-identical emission by construction. The naive reading says the DracoGenTest
+gate should break; it does not, because rooting is a property of the GENERATE ENTRY
+rather than of any loader — Generator.generate applies TypeLoader.rooted to its input
+(src/mods/scala/draco/Generator.scala:1882, Seq overload :1962). So elaboration holds
+even though DracoGenTest.loadTypeDefinition decodes the JSON without rooting.
+
+The load-bearing justification was not redundancy. The drake emitter has always
+elided a sole DracoType as inferable (Generator.scala:171), so Holon.drake carried no
+derivation line while Holon.json spelled it out — the two projections contradicted
+each other about whether the root is written. They now agree.
+
+Cost accepted knowingly: a JSON file no longer states its own parent, so the corpus
+means what it says only once TypeLoader.rooted exists in a target language's loader.
+That is a real charge against self-description and a thing the Haskell port carries.
+
+Filed originally as a "hygiene strip" — a model-coined term that classified redundancy
+as dirt and skipped the actual question. Framing corrected on #50; #50 stays open for
+item 2 (rule trait emission: the rule branch hard-codes a bare marker trait while the
+companion takes the root parent).
+
+Not folded in, deliberately: DracoGenTest.loadTypeDefinition and CLI.scala:16 decode
+without elaborating. Inert today, but it means the test's TypeDefinition is not what
+production loads. Undecided.
+EOF
