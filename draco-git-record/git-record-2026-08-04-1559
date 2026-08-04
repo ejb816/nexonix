@@ -1,0 +1,136 @@
+# Three commits, in order. 2 depends on 1 (references draco.rete types); 3 is independent.
+# Gate before all three: sbt "testOnly draco.DracoGenTest draco.DrakeGenTest" -> 224/224 passed.
+
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+# ---------------------------------------------------------------- commit 1 of 3
+git add draco-git-record/git-record-2026-08-04-1559 \
+        src/main/resources/draco/rete src/main/scala/draco/rete
+git commit -F - <<'EOF'
+draco.rete capability domain, first pass: wrap types for the Evrete types draco names (#51, #49)
+
+Additive only — nothing referenced these at the time they were added, so emission
+elsewhere was unchanged.
+
+draco.rete.Rete, a one-type-per-file domain mirroring draco.base.Base, with the
+three Evrete types that draco definitions actually name: Knowledge, RhsContext,
+StatefulSession. Twelve files (JSON + drake + Scala each); hand-emitted from the
+Source/Nominal/Base templates and confirmed byte-identical by DracoGenTest and
+DrakeGenTest on the first run.
+
+Shape is deliberate: opaque markers (trait X extends DracoType, no elements, no
+factory). These are REFERENCES to foreign types, not reimplementations of the
+Evrete API — which keeps this on the right side of the line the rolled-back #49
+attempt crossed (type names in src/main; no engine configuration or session
+construction anywhere near it).
+
+Known incomplete, recorded rather than hidden:
+
+- Nothing declares the binding. draco.rete.Knowledge has no relationship to
+  org.evrete.api.Knowledge anywhere in the tree — main has a name, mods has the
+  library, no edge connects them. Dev's drake notation supplies that edge
+  (type WorkingMemory from [ org evrete api ] StatefulSession), not yet applied.
+- Names mirror Evrete's rather than carrying draco vocabulary. Dev's example
+  renames StatefulSession -> WorkingMemory, confining the foreign name to the
+  derivation. Mirroring imports foreign vocabulary into the draco namespace and
+  creates a draco.rete.Knowledge / org.evrete.api.Knowledge collision.
+- Generator.derivationRef emits derivation parents BARE and externalImports does
+  not scan derivations, so an external parent would emit `extends StatefulSession`
+  with no import. Applying the binding needs that fixed first.
+- The markers are language-neutral only because they are contentless (zero
+  valueTypes). draco.format.Value, by contrast, carries Seq[String]/String — a
+  dependency domain built without draco wrap types underneath inherits the host
+  language through its own element types.
+EOF
+
+# ---------------------------------------------------------------- commit 2 of 3
+git add src/main/resources/draco/Action.drake src/main/resources/draco/Action.json \
+        src/main/resources/draco/Pattern.drake src/main/resources/draco/Pattern.json \
+        src/main/scala/draco/TypeElement.scala src/test/scala/draco/DrakeGenTest.scala
+git commit -F - <<'EOF'
+Action outlier fix, repoint onto draco.rete, and Action leaves DrakeGenTest.authoredAhead (#51)
+
+1. Action's `name` was "ctx" where every sibling has "". Dev identified Action as a
+   flawed outlier; the census confirms the family convention — Pattern, Condition and
+   Monadic all set name "" and give valueType the element's type. Action alone put a
+   PARAMETER BINDER into the element's own name slot. The Generator hardcodes
+   `(ctx: RhsContext) =>` at Generator.scala:1448, so nothing consumed that name; it
+   was inaccurate self-description. Now "".
+
+   Two things tried and rejected en route, both caught by the DracoGenTest gate:
+   - `par ctx` in the factory body: factoryBody treats every body element as an
+     override, so a Parameter (no value) emitted a dangling
+     `override lazy val ctx: org.evrete.api.RhsContext =`. There is no slot for an
+     element's parameter list today; Pattern shows the family answer is not to model
+     the binder at all.
+   - valueType -> "Unit": wrong. Generalized from the 21 Dynamics, which carry a
+     parameter list so their arrow is reconstructable. Pattern — Action's actual
+     sibling — has no parameter list and writes the full arrow Knowledge => Unit.
+     Action's arrow is correct and stays.
+
+2. Action and Pattern now name draco.rete.RhsContext / draco.rete.Knowledge instead
+   of org.evrete.api paths. Both sites are DESCRIPTIVE — nothing consumes either
+   valueType — so this changes emitted string literals and exercises no binding. It
+   is the first use of the wrap types and makes the definitions say the neutral
+   thing; it is not evidence the wrapper mechanism works. The load-bearing sites are
+   untouched and are the real test: Draco.json:43 (StatefulSession, drives the actor
+   start body) and primes/Primes.json:14 (Knowledge).
+
+3. draco/Action.json removed from DrakeGenTest.authoredAhead, with Action.drake
+   re-authored in emitter form. The stated exclusion reason was the present-empty
+   rule/actor heads, which are gone; the ACTUAL remaining blocker was block style.
+
+   Correction to an earlier claim in this work: the emitter's style is NOT
+   "unbracketed". TypeLoader.drake and Dictionary.drake are bracketed and pass. The
+   rule is DELIMITING — a section brackets when its leaves carry their own nested
+   sub-blocks (a `dyn` with `parameters`), because otherwise the section's extent is
+   ambiguous; sections of plain fix/par leaves need no delimiter. Action's leaves are
+   all simple, so it takes Pattern's exact shape, and `factory Action` becomes bare
+   `factory` since the valueType is inferable.
+
+   BodyElement.json and ActorAspect.json remain excluded.
+EOF
+
+# ---------------------------------------------------------------- commit 3 of 3
+git add src/main/resources/draco/Draco.drake src/main/resources/draco/Draco.json \
+        src/main/scala/draco/Draco.scala src/mods/scala/draco/Generator.scala
+git commit -F - <<'EOF'
+Draco actor-ness rests on the aspect alone: drop Actor[DracoType], emit messageType in drake (#48)
+
+Dev's objection: Draco is as much a domain as an actor, so carrying Actor[DracoType]
+in the derivation privileges the actor role in the type hierarchy while the domain
+role contributes only body members — which contradicts the additive composer's own
+premise that every present aspect contributes its block.
+
+The derivation was never what made Draco an actor. isActor (Generator.scala:1721)
+matches derivation names ActorType/ExtensibleBehavior, so it was already FALSE for
+Draco; actor-ness came from hasActorBehavior — aspect presence — all along. The
+derivation was doing one legitimate job (carrying the message type) and one
+illegitimate one (the hierarchy). ActorAspect.messageType took over the first (that
+element and the aspect-first actorMessageType lookup are in the tree already, but see
+the record correction below), so the derivation now goes.
+
+  Draco.json   dracoAspect.derivation dropped -> TypeLoader.rooted supplies DracoType
+  Draco.scala  trait Draco extends Actor[DracoType] -> extends DracoType
+  Draco.drake  head `type Draco from Actor(DracoType)` -> `type Draco`
+
+PREREQUISITE, done here first: Generator.drake did not emit actorAspect.messageType
+(the actor block emitted start/message/signal only), so the message type reached the
+drake surface ONLY through the derivation on line 1. Dropping the derivation without
+this would have silently made the drake projection lossy — and green, since Draco.json
+is not excluded. The actor block now emits `messageType <T>` ahead of the three action
+blocks, matching the field order in ActorAspect.drake and Draco.json.
+
+The 12 mods actor definitions still carry Actor[T] derivations and no messageType;
+actorMessageType prefers the aspect and falls back to the derivation, so they are
+unaffected and migrate later.
+
+RECORD CORRECTION (applies to history, not to this commit): commit b93e3a1 carries the
+message "JSON corpus made uniformly implicit: strip 27 redundant sole-[DracoType]
+derivations (#50 item 1)" but its content is that strip PLUS the actor messageType
+increment — ActorAspect.scala (+7) and Generator.scala (+21). The strip was committed
+twice (eafc649 alone, b93e3a1 again with the actor work) and 9941de0 merged them. The
+tree is correct. But ActorAspect.messageType, Draco.json's actorAspect.messageType and
+the aspect-first actorMessageType lookup are recorded under a message describing none
+of them. Noted here rather than rewriting merged history.
+EOF

@@ -1,0 +1,23 @@
+{
+  "typeName": {
+    "name": "Rete",
+    "namePackage": [
+      "draco",
+      "rete"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Rete",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
+    },
+    "elementTypeNames": [
+      "Knowledge",
+      "RhsContext",
+      "StatefulSession"
+    ]
+  }
+}

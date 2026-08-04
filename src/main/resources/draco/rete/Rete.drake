@@ -1,0 +1,7 @@
+type Rete
+domain draco rete Rete
+  types [
+    Knowledge
+    RhsContext
+    StatefulSession
+  ]
