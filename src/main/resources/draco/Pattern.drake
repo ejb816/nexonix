@@ -10,5 +10,5 @@ type Pattern from BodyElement
       fix variables [Variable] _variables
       fix conditions [Condition] _conditions
       fix name String ""
-      fix valueType String "org.evrete.api.Knowledge => Unit"
+      fix valueType String "draco.rete.Knowledge => Unit"
 domain draco Draco

@@ -27,7 +27,6 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
   /** Excluded from comparison — hand-authored surface deliberately AHEAD of the
    *  JSON (target-state syntax discovery the emitter cannot yet reconstruct). */
   private val authoredAhead: Map[String, String] = Map(
-    "draco/Action.json"      -> "present-empty rule/actor heads (presence model not yet in JSON)",
     "draco/BodyElement.json" -> "present-empty rule/actor heads (presence model not yet in JSON)",
     "draco/ActorAspect.json" -> "present-empty heads + start/message/signal rename (Phase 2b)"
   )

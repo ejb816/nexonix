@@ -55,7 +55,7 @@
           "kind": "Fixed",
           "name": "name",
           "valueType": "String",
-          "value": "\"ctx\""
+          "value": "\"\""
         },
         {
           "kind": "Fixed",
@@ -64,7 +64,7 @@
           "value": {
             "->": [
               {
-                ".": ["org", "evrete", "api", "RhsContext"]
+                ".": ["draco", "rete", "RhsContext"]
               },
               "Unit"
             ]

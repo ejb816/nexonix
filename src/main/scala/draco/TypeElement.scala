@@ -315,7 +315,7 @@ object Pattern extends App with DracoType {
     override lazy val variables: Seq[Variable] = _variables
     override lazy val conditions: Seq[Condition] = _conditions
     override lazy val name: String = ""
-    override lazy val valueType: String = "org.evrete.api.Knowledge => Unit"
+    override lazy val valueType: String = "draco.rete.Knowledge => Unit"
     override lazy val typeDefinition: TypeDefinition = Pattern.typeDefinition
   }
 
@@ -342,8 +342,8 @@ object Action extends App with DracoType {
   ) : Action = new Action {
     override lazy val variables: Seq[Variable] = _variables
     override lazy val body: Seq[BodyElement] = _body
-    override lazy val name: String = "ctx"
-    override lazy val valueType: String = "org.evrete.api.RhsContext => Unit"
+    override lazy val name: String = ""
+    override lazy val valueType: String = "draco.rete.RhsContext => Unit"
     override lazy val typeDefinition: TypeDefinition = Action.typeDefinition
   }
 
