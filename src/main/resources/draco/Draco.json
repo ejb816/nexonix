@@ -6,17 +6,6 @@
     ]
   },
   "dracoAspect": {
-    "derivation": [
-      {
-        "name": "Actor",
-        "namePackage": [
-          "draco"
-        ],
-        "typeParameters": [
-          "DracoType"
-        ]
-      }
-    ],
     "factory": {
       "kind": "Factory",
       "valueType": "ActorType",

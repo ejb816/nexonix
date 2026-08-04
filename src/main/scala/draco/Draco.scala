@@ -4,7 +4,7 @@ import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.Knowledge
 
-trait Draco extends Actor[DracoType]
+trait Draco extends DracoType
 
 object Draco extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Draco", _namePackage = Seq ("draco")))

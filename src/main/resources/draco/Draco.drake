@@ -1,4 +1,4 @@
-type Draco from Actor(DracoType)
+type Draco
   factory
     parameters
       par problems java.util.List(Problem)
@@ -56,6 +56,7 @@ domain draco Draco
     Variable
   ]
 actor
+  messageType DracoType
   start
     fix session org.evrete.api.StatefulSession knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
     mon session.set("problems", problems)

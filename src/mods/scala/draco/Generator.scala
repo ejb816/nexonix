@@ -564,7 +564,13 @@ object Generator extends App {
         def block(keyword: String, action: Action): Seq[String] =
           if (action.body.isEmpty) Seq.empty
           else s"  $keyword" +: action.body.flatMap(drakeElement(_, 2))
-        "actor" +: (block("start", aa.start) ++ block("message", aa.message) ++ block("signal", aa.signal))
+        // The message type is the actor's `T`, carried by the ASPECT rather than by
+        // an Actor[T] derivation. It must reach the drake surface or the projection
+        // loses it entirely once the transitional derivation is dropped.
+        val messageType =
+          if (aa.messageType.name.isEmpty) Seq.empty
+          else Seq(s"  messageType ${drakeTypeRef(aa.messageType)}")
+        "actor" +: (messageType ++ block("start", aa.start) ++ block("message", aa.message) ++ block("signal", aa.signal))
       }
 
     ((header +: (modules ++ extensible ++ elements ++ factory ++ globals)) ++ domain ++ rule ++ actor).mkString("", "\n", "\n")
