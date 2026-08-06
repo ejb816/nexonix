@@ -1,0 +1,133 @@
+# ONE commit. Three landings that would have been three commits if they had been
+# committed as they landed — but the third MOVED the code the first two changed, so
+# no intermediate state is reconstructable without re-deriving trees that were never
+# tested. Recorded as one, with the three landings separated in the message.
+#
+# GATE — sbt test, 478/478 green (2026-08-06 06:46). The relocation in landing 3 was
+# uncompiled when this record was first written; the run found one fatal shadow the
+# rename had introduced (val statements = statements(c), a recursive value) plus two
+# legal-but-confusing siblings, all three cleared before the green run.
+# DrakeParseTest contributes 144 (72 plain types x 2 gates + 2 reports).
+
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+git add -A
+git commit -F - <<'EOF'
+drake parser increment 1, brackets on the opener, and the Drake/Expression/DrakeCLI split (#44, #52)
+
+Three landings, in the order they happened.
+
+1. PARSER INCREMENT 1 (#44) — the plain-type template, green over all 72 plain types.
+
+   Generator.parseDrake (now Drake.parse): recursive descent over a token stream
+   bounded by drake's reserved keywords rather than by line ends. DrakeParseTest
+   gates it twice — the SURFACE round-trip emit(parse(text)) == text, exact; and the
+   JSON round-trip parse(emit(td)) == td over everything the surface carries. Rule
+   and actor aspects are rejected loudly, the convention emit() already used for the
+   codec aspect. Eight definitions are held back and named by a report test.
+
+   Three lexical rules, each earned by a corpus case rather than designed up front:
+   - a bracketed group GLUES onto the preceding word, so Map(K, V) and
+     classOf[Main].getResource("/") are ONE token; quoted literals skip whole
+   - a lone `[` (followed by whitespace) is a block bracket; `[T]` is a value type.
+     Only `[` — `{` and `(` are never block brackets (.flatMap { stream => … })
+   - a value slot captures the RAW SOURCE SPAN, not re-joined tokens, so internal
+     spacing survives verbatim
+
+   Qualified references (domain / super / extensible) are bounded by CASE, not by the
+   reserved set: a package word can BE a keyword —
+   `extensible org apache pekko actor typed ExtensibleBehavior(T)` is the live case.
+
+   WHAT THE ROUND-TRIP CAUGHT THAT THE ONE-DIRECTIONAL EMITTER TEST STRUCTURALLY
+   COULD NOT: the `domain` line emitted namePackage :+ name, dropping type
+   parameters. format/Value.json's domain reference is Format(F), and the Scala
+   projection emits Domain[Format[_]] from exactly those — so the drake projection
+   could not reconstruct a definition generating the same Scala. Fixed by spelling
+   the reference with drakeTypeRef, as from/modules/extensible already do; `super`
+   got the same treatment (no corpus case today, identical latent loss).
+
+   CORRECTION, recorded because the mistake is instructive: that field was first read
+   as stray data and DELETED. It is load-bearing. Check what a projection consumes
+   before calling a field an error.
+
+   CORRECTION 2: the three keyword sets were authored as plain vals inside the
+   `extends App` companion, so DelayedInit left them null until main() — 123 test
+   failures, one cause. The project rule is every val in an App companion is lazy.
+   (They are plain vals again now that they live in the bare object Drake.)
+
+   Three surface losses remain, measured by a report test rather than described:
+   reference packages on from/modules (65 fields, #54), expression form string-vs-tree
+   (4), legacy Seq() spelling (3, #55). All normalized away in gate 2, each a language
+   finding rather than a parser gap.
+
+2. BRACKETS ON THE OPENER (#52) — closes the grammar; drake is now
+   whitespace-insignificant in fact rather than in aim.
+
+   drake.dlt bracketed the CONTAINER, which marks where the container ends. But the
+   overlap needing resolution is between an opener's last sub-block and the
+   container's NEXT member, so a fully container-bracketed corpus can still be
+   ambiguous. Exactly one site bit: CLI's Unit `dyn drake` followed by `fix commands`
+   (a `=` result terminates a dyn, so only Unit dyns were ever exposed, and `dyn` is
+   not a statement keyword so sibling dyns were never ambiguous).
+
+   Three rules now, each LOCAL — no look-ahead, no layout:
+     NAME list      modules / types, members carry no keyword     -> [ ] ALWAYS
+     KEYWORD block  bounded by the member keywords it ADMITS      -> NO brackets
+     OPENER         a dyn-with-body brackets ITS BODY             -> [ ] ALWAYS
+
+   The parser's indentation tie-break is deleted and with it all layout tracking:
+   Token records no column, the lexer no longer tracks lines. `parameters` admits
+   only `par`, so a `loc` after it is the enclosing dyn's first statement.
+
+   8 corpus files swept: 11 container pairs out, 22 opener pairs in, indentation
+   untouched so the result is exactly what the revised emitter produces. No mods
+   .drake has a dyn-with-body. drake.dlt BRACKETS rewritten with the CLI case as the
+   worked example; the DIVERGENCES row is now an implemented row; NOTATION no longer
+   claims indentation is structural.
+
+   The sweep was applied as an ad-hoc script for want of a re-emission tool. That is
+   what DrakeCLI exists to stop repeating — see landing 3.
+
+3. THE SPLIT — Generator.scala 2438 -> 1663 lines.
+
+     Drake.scala       777  the drake projection: emit, parse, and their machinery
+     Expression.scala   34  isApplication / operands / namedArgument
+     DrakeCLI.scala    146  emit / parse / check over a resource tree
+
+   Measured before moving: the drake sections referenced NOTHING in the rest of
+   Generator (the expression() mentions in that range are all doc comments), and the
+   rest of Generator referenced exactly THREE drake-section helpers — from inside the
+   Scala expression renderer. Those three are expression-TREE accessors belonging to
+   neither projection; they were filed under drake only because drake was written
+   second. Hence Expression, which holds shape questions while each projection keeps
+   its own spelling (alongside the ExpressionRenderer/SourceTemplates prototype in
+   SourceContract.scala, which factors rendering).
+
+   With its own namespace the `drake` prefix was noise: Generator.drake -> Drake.emit,
+   Generator.parseDrake -> Drake.parse, drakeExpression -> Drake.expression,
+   drakeSection -> sectionLines, and so on. Two renames went past mechanical —
+   drakeValueType -> typeExpression and drakeValueTypeSlot -> typeExpressionSlot,
+   because `valueType` was already the name of the FIELD they operate on.
+
+   draco.drake.Drake.generator now delegates to draco.Drake.emit, FULLY QUALIFIED —
+   inside `package draco.drake` the local Drake shadows the package-root one. That
+   went through the JSON first (Drake.json -> Drake.drake -> generated Drake.scala),
+   so DracoGenTest gates the regeneration.
+
+   DrakeCLI's `emit --write` is the point: the corpus is emitter-canonical, so a
+   surface change is never a text transformation over .drake files — it is a change
+   to Drake.emit followed by re-emission. `check` treats an aspect Drake does not yet
+   cover as a SKIP, not a failure, so it stays useful through increment 2.
+
+   Debt named rather than hidden: DrakeCLI is the third hand-written CLI with no
+   definition, following GeneratorCLI's precedent. draco.CLI is the definition-backed
+   one and covers a smaller, read-only command set.
+
+Issues: #44 increment 1 done (umbrella stays open), #52 closed. Filed en route —
+#53 parser increment 2 (now priority-next; carries the blocker that Drake.emit drops
+Condition.parameters, so the `con` line cannot express the pattern's bindings), #54
+reference packages, #55 legacy Seq(), #56 the from sequence, #57 Source as the
+projection bound, #58 match cases in the actor aspect, #59 Pattern cases in a dyn body.
+EOF
+
+git push

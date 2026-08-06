@@ -1,9 +1,9 @@
 type Value(F)
-  elements [
+  elements
     fix name String
     fix pathElements [String]
-    dyn value(T: Decoder) T
+    dyn value(T: Decoder) T [
       parameters
         par _source F
-  ]
-domain draco format Format
+    ]
+domain draco format Format(F)

@@ -1,4 +1,4 @@
 type Drake
   globals
-    fix generator (TypeDefinition => String) Generator.drake
+    fix generator (TypeDefinition => String) draco.Drake.emit
 domain draco drake Drake

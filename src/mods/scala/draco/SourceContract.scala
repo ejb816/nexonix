@@ -4,7 +4,7 @@ import io.circe.Json
 
 /** PROTOTYPE (hand-written, staging toward a `draco.Source` definition) — the
   * expression-rendering contract, factored out of the twin renderers
-  * `Generator.expression` (Scala) and `Generator.drakeExpression` (drake).
+  * `Generator.expression` (Scala) and `Drake.expression` (drake).
   *
   * The thesis (Dev's north star): a `Source` (the neutral source-projection supertype)
   * carries the generation *engine* (the language-invariant traversal); a specific
@@ -35,7 +35,7 @@ trait SourceTemplates {
 /** The language-invariant traversal. Recurses operands, dispatches on the operator;
   * the shared operators render identically for every projection, the three variable
   * ones defer to the `SourceTemplates` slots. Mirrors `Generator.expression` /
-  * `Generator.drakeExpression` exactly (minus their sys.error message text). */
+  * `Drake.expression` exactly (minus their sys.error message text). */
 object ExpressionRenderer {
   def render (value: Json, t: SourceTemplates) : String = {
     if (value == null || value.isNull) ""
@@ -71,7 +71,7 @@ object ScalaTemplates extends SourceTemplates {
   }
 }
 
-/** Drake token set — reproduces `Generator.drakeExpression`. */
+/** Drake token set — reproduces `Drake.expression`. */
 object DrakeTemplates extends SourceTemplates {
   val arrow: String = " -> "
   def conditional (cond: String, thenBranch: String, elseBranch: String) : String =

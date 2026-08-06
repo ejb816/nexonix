@@ -12,7 +12,7 @@
         "kind": "Fixed",
         "name": "generator",
         "valueType": "TypeDefinition => String",
-        "value": "Generator.drake"
+        "value": "draco.Drake.emit"
       }
     ]
   },

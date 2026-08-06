@@ -14,7 +14,7 @@ NOTATION
   *<fill-in>       an optional operand
   a|b|c            choose one
   ...              the preceding line repeats
-  indentation      structural nesting
+  indentation      shows nesting to the READER only — never to the parser (see BRACKETS)
   [ ] { } ( )      literal drake Seq / Set / tuple-or-type-application
   ->               "emits"; a trailing [] on the right = a JSON array (one entry per line)
   { a, b }         a JSON object with those fields; kind=X sets the kind discriminator
@@ -113,8 +113,8 @@ CONVENTIONS
 DYN-WITH-BODY  (a Dynamic element/global carrying parameters, statements, and a result — i.e. a method)
   A leaf dyn stays one line: `dyn <name> <value-type> *<value>` — the trailing value, when present, IS the
   method's result expression (a no-param one-liner: `dyn iterator Iterator((K, V)) kvMap.iterator`).
-  Adding parameters/statements makes it a block method:
-  dyn <name> <value-type>                  -> { kind=Dynamic , name , valueType , parameters[] , body[] , value }
+  Adding parameters/statements makes it a block method, and a block method BRACKETS ITS OWN BODY (see BRACKETS):
+  dyn <name> <value-type> [                -> { kind=Dynamic , name , valueType , parameters[] , body[] , value }
     ~parameters                            -> parameters[]   ( same block shape as factory.parameters )
       par _<name> <value-type> *<default>  -> { kind=Parameter , ... }
     ( statements sit DIRECTLY under the dyn — no `body` head; each line one statement )
@@ -122,24 +122,36 @@ DYN-WITH-BODY  (a Dynamic element/global carrying parameters, statements, and a 
     *~mon <unit-value>                     -> body[] { kind=Monadic , value }
     *= <expr>                              -> value    ( the RESULT expression, on its own `=`-opening line;
                                                          absent for Unit methods — their body is all effects )
+  ]                                        ( the `[` is what tells a leaf dyn from a block one )
   RESULT-vs-STATEMENT: a Dynamic's `body` never carries its result. The result is the Dynamic's own `value`
   field (empty = Unit). A `mon` in a body is a genuine Unit effect — a non-Unit expression in last position
   was the old (retired) convention and is the Monadic-axiom abuse to lint for.
   A method type-parameter rides the name via the ( ) convention: `dyn updated(V1 >: V) ...` -> name "updated[V1 >: V]".
   Valid wherever an element list is: elements, factory body, globalElements.
 
-BRACKETS  (list-block [ ] — optional except at nesting; whitespace is otherwise insignificant)
+BRACKETS  (a construct delimits ITSELF; whitespace is insignificant throughout)
   A list-block (elements, parameters, body, globalElements, variables, conditions, modules, types) is
   written head-then-members. Whitespace — spaces, newlines, indentation — is INSIGNIFICANT, purely for
   readability: member values parse as expressions, and the reserved section/member keywords bound each member.
-    LEAF block     every member is a leaf (fix/mut/mon/par/var/con — opens no sub-block)   -> NO brackets
-    NESTING block  holds a member that opens its own sub-block (a dyn-with-body, ...)       -> [ ] REQUIRED
-  The [ ] mark where a nesting block ends, so a following member cannot mis-attach across the overlap between
-  the inner and outer blocks. Omitting them is a DETECTABLE error, local to the token: a block-opening member
-  found inside a bracket-less block is rejected there ("nesting requires [ ]"). Conservative — brackets are
-  required whenever an opener is present, whether or not the overlap would actually bite. Note the container of
-  the opener is what brackets (e.g. `elements` around a dyn-with-body), not the opener's own leaf sub-blocks.
+  Three rules, each LOCAL — nothing needs look-ahead, and nothing consults layout:
+    NAME list      modules / types: members carry no keyword, so nothing else can bound them  -> [ ] ALWAYS
+    KEYWORD block  every other list-block: bounded by the member keywords it ADMITS            -> NO brackets
+    OPENER         a member that opens its own sub-block (a dyn-with-body) brackets ITS BODY   -> [ ] ALWAYS
+  ADMITS is what ends a keyword block: `parameters` takes only `par`, so a `loc` after it is the enclosing
+  dyn's first statement, not a parameter; `elements` / `body` / `globals` take fix|mut|dyn|loc.
+  THE OPENER BRACKETS, NOT THE CONTAINER.  Bracketing the container marks where the CONTAINER ends, but the
+  overlap that needs resolving is between an opener's last sub-block and the container's NEXT member — so a
+  fully container-bracketed corpus can still be ambiguous. drake's one such case was
+      dyn drake Unit         ( a Unit dyn: no `=` result to terminate it )
+        parameters
+          par path String
+        mon println(...)
+      fix commands ...       <- this dyn's statement, or globals' next member?
+  with the [ ] sitting uselessly on the enclosing `globals`. A self-delimiting opener closes it. A `=` result
+  line also terminates a dyn, so only Unit dyns ever had the exposure.
   Value-type brackets [T] {T} (A, B) are unaffected — they are inline type expressions, not blocks.
+  LEXICAL RULE distinguishing the two: a `[` followed by whitespace opens a block; a `[` glued to what precedes
+  or follows it is part of a type or value expression ([T], classOf[Main], the empty-Seq default []).
 
 PRESENCE  (absent vs present-empty vs present-full — the elision principle)
   Every facet and field is in one of three states; preserve the distinction wherever it carries meaning:
@@ -276,7 +288,9 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           RESOLUTION: name the capability, not the host language — scalatarget.ScalaTarget,
                                           haskellsource.HaskellSource. A definition-time lint rejecting host-reserved
                                           domain names (per target) is the enforcement; queued with the Monadic lint.
-  BRACKETS optional-except-nesting  <->   TARGET (no parser yet). The existing concrete corpus uniformly brackets EVERY
-    (target — Phase-2a sweep)              list-block, leaf ones included. Dictionary + ContentSink are the first files in
-                                          the new model (leaf blocks unbracketed; brackets only at a dyn-with-body). The
-                                          Phase-2a sweep strips brackets from every leaf block across the rest of the corpus.
+  BRACKETS on the opener            <->   IMPLEMENTED (2026-08-05, GitHub #52). Both directions agree: Generator.drake
+                                          emits it and Generator.parseDrake reads it, gated by DrakeParseTest's surface
+                                          round-trip. The earlier rule bracketed the CONTAINER, which left one genuine
+                                          ambiguity in the corpus (CLI's Unit `dyn drake` before `fix commands`) and forced
+                                          the parser onto an indentation tie-break; moving the brackets to the opener
+                                          removed it, and drake is now whitespace-insignificant in fact, not just in aim.

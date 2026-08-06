@@ -6,7 +6,7 @@ import org.scalatest.funsuite.AnyFunSuite
 /** Falsifies the expression-rendering contract prototype ([[SourceContract]]) against
   * the two production renderers it generalizes: `ExpressionRenderer.render` with
   * `ScalaTemplates` must equal `Generator.expression`, and with `DrakeTemplates` must
-  * equal `Generator.drakeExpression`, over a corpus exercising every operator. If the
+  * equal `Drake.expression`, over a corpus exercising every operator. If the
   * engine+slots reproduce both, the slot boundary is proven — the two hand-written
   * renderers collapse to one engine plus three language slots. */
 class SourceContractTest extends AnyFunSuite {
@@ -38,9 +38,9 @@ class SourceContractTest extends AnyFunSuite {
     }
   }
 
-  test("DrakeTemplates reproduces Generator.drakeExpression over every operator") {
+  test("DrakeTemplates reproduces Drake.expression over every operator") {
     sharedTrees.foreach { t =>
-      assert(ExpressionRenderer.render(t, DrakeTemplates) == Generator.drakeExpression(t), s"mismatch on ${t.noSpaces}")
+      assert(ExpressionRenderer.render(t, DrakeTemplates) == Drake.expression(t), s"mismatch on ${t.noSpaces}")
     }
   }
 

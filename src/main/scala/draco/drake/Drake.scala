@@ -12,5 +12,5 @@ object Drake extends App with DracoType {
   lazy val elementTypeNames: Seq[String] = Seq ()
 
   lazy val domainType: Domain[Drake] = Domain[Drake] (typeDefinition)
-  lazy val generator: TypeDefinition => String = Generator.drake
+  lazy val generator: TypeDefinition => String = draco.Drake.emit
 }

@@ -1,20 +1,23 @@
 type TypeLoader
-  globals [
-    dyn loadFromResource Option(TypeDefinition)
+  globals
+    dyn loadFromResource Option(TypeDefinition) [
       parameters
         par resourcePath String
       = Option(getClass.getResourceAsStream(resourcePath)).flatMap { stream => val source = scala.io.Source.fromInputStream(stream); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }
-    dyn tryLoad Option(TypeDefinition)
+    ]
+    dyn tryLoad Option(TypeDefinition) [
       parameters
         par typeName TypeName
       = loadFromResource(typeName.resourcePath)
-    dyn rooted TypeDefinition
+    ]
+    dyn rooted TypeDefinition [
       parameters
         par td TypeDefinition
       = if (td.dracoAspect.derivation.nonEmpty || (td.typeName.name == "DracoType" && td.typeName.namePackage == Seq("draco"))) td else TypeDefinition(_typeName = td.typeName, _dracoAspect = DracoAspect(_superDomain = td.dracoAspect.superDomain, _modules = td.dracoAspect.modules, _extensible = td.dracoAspect.extensible, _derivation = Seq(TypeName("DracoType", _namePackage = Seq("draco"))), _elements = td.dracoAspect.elements, _factory = td.dracoAspect.factory, _globalElements = td.dracoAspect.globalElements, _source = td.dracoAspect.source, _target = td.dracoAspect.target), _domainAspect = td.domainAspect, _ruleAspect = td.ruleAspect, _actorAspect = td.actorAspect, _codecAspect = td.codecAspect)
-    dyn loadType TypeDefinition
+    ]
+    dyn loadType TypeDefinition [
       parameters
         par typeName TypeName
       = tryLoad(typeName).map(rooted).getOrElse(TypeDefinition(typeName))
-  ]
+    ]
 domain draco Draco

@@ -8,7 +8,7 @@ import scala.jdk.CollectionConverters._
 import scala.util.Using
 
 /** Emits .drake surface from each plain-type TypeDefinition JSON
- *  (`Generator.drake`) and verifies it against the hand-authored corpus in
+ *  (`Drake.emit`) and verifies it against the hand-authored corpus in
  *  `src/main/resources/draco/` — the drake projection's drift guard, mirroring
  *  DracoGenTest for the Scala projection.
  *
@@ -20,7 +20,7 @@ import scala.util.Using
  *  Plain types and rules are covered; every type maps to its base-name `.drake`
  *  (AddNaturalSequence.json -> AddNaturalSequence.drake). Rule-/actor-ness is
  *  carried by the aspect, not a name suffix. A file that grows a codec aspect will
- *  fail its test loudly (Generator.drake rejects it) — the signal to build that
+ *  fail its test loudly (Drake.emit rejects it) — the signal to build that
  *  increment. */
 class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
 
@@ -82,15 +82,15 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
     "\n        hand-authored" + " " * 47 + "| emitted\n" + rows.mkString("\n")
   }
 
-  // --- Per-type: Generator.drake output matches the authored .drake ---
+  // --- Per-type: Drake.emit output matches the authored .drake ---
 
   discoverResourcePaths().filterNot(authoredAhead.contains).foreach { rp =>
     val drakePath = deriveDrakePath(rp)
-    test(s"$rp: Generator.drake matches $drakePath (whitespace-normalized)") {
+    test(s"$rp: Drake.emit matches $drakePath (whitespace-normalized)") {
       val td = loadTypeDefinition(rp)
       assert(td != TypeDefinition.Null, s"failed to parse $rp")
       val authored = readDrake(drakePath).getOrElse(fail(s"missing $drakePath"))
-      val genNorm  = normalize(Generator.drake(td))
+      val genNorm  = normalize(Drake.emit(td))
       val handNorm = normalize(authored)
       if (genNorm != handNorm) {
         log.info(s"\n--- $rp: emitted (normalized) ---\n$genNorm")
@@ -100,7 +100,7 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
     }
   }
 
-  // --- Mods actors: Generator.drake emits the actor aspect ---
+  // --- Mods actors: Drake.emit emits the actor aspect ---
   //
   // The actor corpus lives under src/mods/resources/domains (outside the draco
   // walk above). This increment covers actor-aspect emission, so only the actor
@@ -135,11 +135,11 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
   modsActorPaths.foreach { rp =>
     val drakePath = deriveDrakePath(rp)
     if (Files.isRegularFile(modsResourceRoot.resolve(drakePath))) {
-      test(s"mods $rp: Generator.drake matches $drakePath (whitespace-normalized)") {
+      test(s"mods $rp: Drake.emit matches $drakePath (whitespace-normalized)") {
         val td = loadModsTypeDefinition(rp)
         assert(td != TypeDefinition.Null, s"failed to parse mods $rp")
         val authored = new String(Files.readAllBytes(modsResourceRoot.resolve(drakePath)))
-        val genNorm  = normalize(Generator.drake(td))
+        val genNorm  = normalize(Drake.emit(td))
         val handNorm = normalize(authored)
         if (genNorm != handNorm) {
           log.info(s"\n--- mods $rp: emitted (normalized) ---\n$genNorm")
