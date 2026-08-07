@@ -40,24 +40,7 @@
               { "*": ["i1", "i2"] },
               "i3"
             ]
-          },
-          "parameters": [
-            {
-              "kind": "Parameter",
-              "name": "i1",
-              "valueType": "Integer"
-            },
-            {
-              "kind": "Parameter",
-              "name": "i2",
-              "valueType": "Integer"
-            },
-            {
-              "kind": "Parameter",
-              "name": "i3",
-              "valueType": "Integer"
-            }
-          ]
+          }
         }
       ]
     },

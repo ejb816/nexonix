@@ -39,7 +39,14 @@ VALUE-TYPES  (drake type-expression -> JSON valueType string)
   mut {<T>}        mutable.Set[<T>]
   <F>(<A> ...)     <F>[<A> ...]        type application
   (<A>, <B>)       (<A>, <B>)          tuple, unchanged
+  <A> -> <B>       <A> => <B>          function arrow — the SAME token drake uses for a "->" VALUE node
+                                       (see EXPRESSIONS). One arrow in the language, not one per position.
   <Name>           <Name>              plain type, unchanged
+  NOTE these are SURFACE SUBSTITUTIONS, not neutral terms: the JSON still holds a Scala type string
+  (Seq, mutable.Set, =>), and drake merely spells it its own way. Giving the TERM to draco — so that a
+  drake type name resolves through draco's own dictionary even when it happens to coincide with the host's
+  spelling — is the wrap-type direction, one tier below draco.rete's wrapping of host library types.
+  Coincidence of spelling is not identity of term.
 
 EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   A <value> emits to JSON in one of two forms; the value's own JSON structure IS the
@@ -95,8 +102,43 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   Json; a string value passes through expression() verbatim, so the whole legacy corpus is
   unchanged. isString = host-opaque tail (measured, not hidden); isObject = drake-native.
 
+APPLICATION SURFACE  (how a "()" tree is written in a value position — multi-line, author-designed)
+  <fn> parameters                    -> { "()": [ <fn> , <arg> ... ] }
+    par <value>                      a POSITIONAL argument
+    par = <name> <value>             a NAMED argument -> { "=": [ <name> , <value> ] }
+    ...
+  A single leaf argument stays on the head line: `<fn> parameters par <value>`.
+  The head is ELIDED when the function IS the declared value-type of the slot (anonymous construction
+  of a factory-less type): `fix report LocationReport parameters` — the value type says it once.
+  MARKER BEFORE THE NAME. `par = <name>` reads oddly next to Scala's `f(name = value)`, and the marker
+  sits there for a reason: `=` also opens a dyn-with-body's result line, so `… parameters par a`
+  followed by `= r` would parse equally well as the named argument `a = r` with the dyn's result gone.
+  Nothing distinguishes them and no look-ahead settles it. `par` immediately followed by `=` occurs
+  nowhere else — an argument list that has run out of `par`s has already stopped — so putting the
+  marker first removes the overlap outright. Same principle as BRACKETS: close the grammar, don't
+  tie-break it.
+  CHAINS. Two or more calls composed (a.f(x).g(y)) unfold: the base receiver ends the opening line,
+  then one `.<member> parameters …` line per call. A token opening with `.` is lexically a chain
+  member and nothing else — a path inside one expression (a.b.c) is a single glued token — so the
+  continuation bounds itself, and a chain call always writes its `parameters`, empty list included.
+      cursor
+        .get[Double] parameters par "latitude"
+        .getOrElse parameters par 0.0
+  A `.member` arriving after an argument is claimed by the PENDING CHAIN, not by the argument it just
+  passed — above, .getOrElse continues cursor's chain rather than starting one on "latitude". Both are
+  legal on the surface and they differ only by indentation, which drake does not read; the chain wins
+  because it is the nearer open construct. The cost: an argument OF A CHAIN CALL cannot itself be a chain.
+  OPEN — NESTED ARGUMENT LISTS. An argument list is bounded by its `par`s, but an argument that is
+  ITSELF an application opens a `par` list of its own, and the enclosing list's next `par` is the only
+  thing that could close it. Both readings are legal; the corpus case is domains/aerial/Input. Under
+  BRACKETS this is an opener that does not yet bracket. Unresolved — GitHub #60.
+
 CONVENTIONS
-  factory          takes no name: it constructs the enclosing type <name> *(<T>, ...) (that is its valueType)
+  factory          takes no name when it constructs the enclosing type <name> *(<T>, ...) — that is the default
+                   valueType and is inferable, so it is elided. `factory <value-type>` when it constructs
+                   something ELSE, which is not reconstructable: the live case is `factory ActorType`, the
+                   actor-minting factory, whose value-type is what tells the target to mint an actor rather
+                   than an instance of the type.
   [] | {}          in the VALUE position of a name-valueType-value line: the empty-collection default —
                    [] = Seq.empty, {} = Set.empty. Surface form only; the JSON value carries the host
                    expression (the {".": ["Seq","empty"]} tree, or a legacy "Seq()" string).
@@ -121,7 +163,10 @@ DYN-WITH-BODY  (a Dynamic element/global carrying parameters, statements, and a 
     *~loc|fix|mut <name> <value-type> <value>    -> body[] BodyElement   ( STATEMENTS ONLY — bindings/effects, never the result )
     *~mon <unit-value>                     -> body[] { kind=Monadic , value }
     *= <expr>                              -> value    ( the RESULT expression, on its own `=`-opening line;
-                                                         absent for Unit methods — their body is all effects )
+                                                         absent for Unit methods — their body is all effects.
+                                                         The `=` is TRANSITIONAL — the intent is a body sequence
+                                                         simply ENDING in a value expression, no marker; see
+                                                         DIVERGENCES for why it cannot go yet )
   ]                                        ( the `[` is what tells a leaf dyn from a block one )
   RESULT-vs-STATEMENT: a Dynamic's `body` never carries its result. The result is the Dynamic's own `value`
   field (empty = Unit). A `mon` in a body is a genuine Unit effect — a non-Unit expression in last position
@@ -190,6 +235,14 @@ INFERENCE  (authored vs derived — which aspect json must be explicit)
     domain aspect        INFERABLE from TypeName — its namePackage / name already fix membership
                          (e.g. draco.base.Meters -> the Base domain), so the json domain aspect is derived
                          rather than independently authored.
+    condition params     INFERABLE from the guard and the enclosing pattern: a guard is an EXPRESSION, and the
+                         names in it are the pattern's variables — which is what the `variables` block is for.
+                         So they are DERIVED AT EMISSION (the mentioned subset, in declaration order, with the
+                         types declared there) and stored in neither drake nor json. Not a style choice: the two
+                         emissions leave no freedom for them to differ from the variables — `.where` compiles to a
+                         Java string whose `$name` resolves only against the `.forEach` fact variables, and w<n>
+                         receives exactly what ctx.get[<valueType>] yields, so a disagreement fails Evrete's
+                         runtime compile or scalac. A stored copy could only ever agree or be wrong.
   This settles the codec question: codec is DECLARED, never inferred. A type serializes iff it declares a
   codec aspect; the structural "infer a codec for any eligible record" gate (ch.57) is retired.
 
@@ -201,7 +254,7 @@ type <name> *(<T>, ...) *from <type>            -> TypeDefinition ; typeName.nam
   *~elements                               -> dracoAspect.elements[]
     fix|mut|dyn <name> <value-type> *<value>   -> { kind=Fixed|Mutable|Dynamic , name , valueType , value }
     ...
-  *~factory                                -> dracoAspect.factory   { kind=Factory , valueType = enclosing type }
+  *~factory *<value-type>                  -> dracoAspect.factory   { kind=Factory , valueType }   ( value-type elided = the enclosing type; named only when it differs, e.g. `factory ActorType` )
     ~parameters                            -> factory.parameters[]
       par _<name> <value-type> *<default-value>  -> { kind=Parameter , name , valueType , value }
       ...
@@ -221,13 +274,20 @@ domain <pkg-seq> <name>                    -> domainAspect.typeName { namePackag
       ...
     *~conditions                           -> pattern.conditions[]
       con <bool-value>                     -> { kind=Condition , value }
-      ...
+      ...                                    ( A guard and nothing else — a condition has no other content. WHICH
+                                               variables it constrains is not stored anywhere: it is the subset of the
+                                               enclosing `variables` the guard MENTIONS, in declaration order, and the
+                                               target derives it at emission. ScalaTarget emits
+                                               def w<n>(<those>): Boolean and the matching .where("…w<n>($…)") from
+                                               that derivation. A name reached through a dot is a selection, not a
+                                               reference: td.dracoAspect mentions td. )
   *~action                                 -> ruleAspect.action   { kind=Action }     ( default when omitted; content overrides )
     fix <name> <value-type> <value>        -> action.body[] { kind=Fixed }
     ...
     mon <unit-value>                       -> action.body[] { kind=Monadic , value }
     ...
 *actor                                     -> actorAspect                   (presence-significant, FACET-CREATING: present = is an actor, every action defaults & is overridable; absent = not an actor)
+  *~messageType <name> *(<T>, ...)         -> actorAspect.messageType       ( the actor's T, carried by the ASPECT rather than by an Actor(T) derivation )
   *~start                                  -> actorAspect.start             ( default behaviour generated regardless of presence; content overrides )
   *~message                                -> actorAspect.message           ( default behaviour generated regardless of presence; content overrides )
   *~signal                                 -> actorAspect.signal            ( default behaviour generated regardless of presence; content overrides )
@@ -288,6 +348,17 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           RESOLUTION: name the capability, not the host language — scalatarget.ScalaTarget,
                                           haskellsource.HaskellSource. A definition-time lint rejecting host-reserved
                                           domain names (per target) is the enforcement; queued with the Monadic lint.
+  dyn result: `= <expr>` line       <->   TRANSITIONAL. The intent is that a dyn's [ ] simply CONTAINS its body — a
+    (target — no `=` at all)              sequence of elements ending in a value expression — with no marker at all,
+                                          and certainly not one that reads as assigning the parameter block. `=` is
+                                          there only because drake has no expression grammar yet: a statement's value
+                                          runs until the next reserved word, so without a marker the last statement's
+                                          value and the result expression run together (`loc a A x` + `y` is one span,
+                                          not two). Under the two-layer grammar in EXPRESSIONS that stops being a
+                                          question — juxtaposition is application, so a value IS one complete
+                                          expression and the next element begins where it ends. The `=` retires with
+                                          the same increment that makes a con's guard a parsed expression rather than
+                                          an opaque span — GitHub #61.
   BRACKETS on the opener            <->   IMPLEMENTED (2026-08-05, GitHub #52). Both directions agree: Generator.drake
                                           emits it and Generator.parseDrake reads it, gated by DrakeParseTest's surface
                                           round-trip. The earlier rule bracketed the CONTAINER, which left one genuine

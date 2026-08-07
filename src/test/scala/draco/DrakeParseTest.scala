@@ -7,7 +7,7 @@ import java.nio.file.{Files, Paths}
 import scala.jdk.CollectionConverters._
 import scala.util.Using
 
-/** Closes the JSON -> drake -> JSON loop for the plain-type corpus: where
+/** Closes the JSON -> drake -> JSON loop for the draco corpus: where
  *  DrakeGenTest gates the emitter (JSON -> drake), this gates its inverse,
  *  `Drake.parse` (drake -> JSON).
  *
@@ -36,9 +36,9 @@ import scala.util.Using
  *         `extensible` do carry theirs, and are compared unnormalized.)
  *     The third test measures all three, so the tail is a number rather than a note.
  *
- *  Increment 1 covers the plain-type template. Types carrying a rule or actor
- *  aspect are held back — `Drake.parse` rejects them loudly — and are listed by the
- *  pending test so the next increment's worklist stays visible. */
+ *  Covered: the plain-type template plus the rule and actor aspects. Only the codec
+ *  aspect is held back — `Drake.parse` rejects it loudly — and the held-back types
+ *  are listed by the report test so the next increment's worklist stays visible. */
 class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
 
   private def deriveDrakePath(resourcePath: String): String =
@@ -89,16 +89,16 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     f"\n        $leftLabel%-60s | $rightLabel\n" + rows.mkString("\n")
   }
 
-  // --- The plain-type subset: increment 1's scope ---
+  // --- Scope: everything but the codec aspect ---
 
-  private def carriesRoleAspect(td: TypeDefinition): Boolean =
-    !RuleAspect.isEmpty(td.ruleAspect) || !ActorAspect.isEmpty(td.actorAspect) || !CodecAspect.isEmpty(td.codecAspect)
+  private def carriesCodecAspect(td: TypeDefinition): Boolean =
+    !CodecAspect.isEmpty(td.codecAspect)
 
   private val allPaths: Seq[String] = discoverResourcePaths()
 
-  /** A path is in scope when its JSON is a plain type and it has a .drake. */
-  private val plainPaths: Seq[String] =
-    allPaths.filterNot(rp => carriesRoleAspect(loadTypeDefinition(rp)))
+  /** A path is in scope when its JSON carries no codec aspect and it has a .drake. */
+  private val parsedPaths: Seq[String] =
+    allPaths.filterNot(rp => carriesCodecAspect(loadTypeDefinition(rp)))
       .filter(rp => readDrake(deriveDrakePath(rp)).isDefined)
 
   /** DrakeGenTest's own exclusions: hand-authored surface deliberately AHEAD of the
@@ -109,7 +109,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
 
   // --- Gate 1: the surface round-trip ---
 
-  plainPaths.filterNot(authoredAhead).foreach { rp =>
+  parsedPaths.filterNot(authoredAhead).foreach { rp =>
     val drakePath = deriveDrakePath(rp)
     test(s"$drakePath: emit(parse(source)) reproduces the source") {
       val authored = readDrake(drakePath).getOrElse(fail(s"missing $drakePath"))
@@ -139,7 +139,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         case (key, v) => key -> surfaceCarried(v)
       })))
 
-  plainPaths.foreach { rp =>
+  parsedPaths.foreach { rp =>
     test(s"$rp: parse(emit(td)) reproduces the definition") {
       val td       = loadTypeDefinition(rp)
       val parsed   = Drake.parse(Drake.emit(td))
@@ -149,6 +149,36 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         fail(s"$rp: round-tripped definition differs from the source JSON." +
           diffReport(expected, actual, "source json", "round-tripped"))
     }
+  }
+
+  // --- Named arguments and call chains ---
+  //
+  // The draco corpus carries neither: both live in the mods actors, and those are
+  // outside this walk. The mods corpus cannot be gated here yet — a NESTED argument
+  // list has no terminator, since the `par` that ends it is also the `par` that opens
+  // the enclosing list's next argument (aerial/Input is the live case). That is a
+  // bracketing decision about the surface, not a parser gap. So the two forms are
+  // gated on the smallest surface that exhibits them and nothing else: one named
+  // argument whose value is a two-call chain.
+
+  test("named argument and call chain round-trip on the surface") {
+    val authored =
+      """type Probe
+        |  elements
+        |    fix position domains.aerial.Position Position parameters
+        |      par = latitude cursor
+        |        .get[Double] parameters par "latitude"
+        |        .getOrElse parameters par 0.0
+        |domain draco Draco
+        |""".stripMargin
+    val parsed = Drake.parse(authored)
+    val value  = parsed.dracoAspect.elements.head.value
+    assert(Expression.namedArgument(Expression.operands(value)(1)).map(_._1).contains("latitude"),
+      s"argument did not come back named: ${value.noSpaces}")
+    val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
+    if (handNorm != roundNorm)
+      fail("named-argument / chain surface did not round-trip." +
+        diffReport(handNorm, roundNorm, "authored", "round-tripped"))
   }
 
   // --- The measured tail: where the surface is not yet information-complete ---
@@ -165,7 +195,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         array => array.zipWithIndex.flatMap { case (v, i) => leafPaths(v, s"$path[$i]") }.toSeq,
         obj => obj.toIterable.flatMap { case (k, v) => leafPaths(v, s"$path.$k") }.toSeq)
 
-    val losses = plainPaths.flatMap { rp =>
+    val losses = parsedPaths.flatMap { rp =>
       val source     = leafPaths(TypeDefinition.encoder(loadTypeDefinition(rp)), "").toMap
       val roundTrip  = leafPaths(TypeDefinition.encoder(Drake.parse(Drake.emit(loadTypeDefinition(rp)))), "").toMap
       (source.keySet ++ roundTrip.keySet).toSeq.sorted.collect {
@@ -180,22 +210,22 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       else if (key.contains(".derivation") || key.contains(".modules")) "reference package"
       else "OTHER — unaccounted"
     }
-    log.info(s"drake surface losses over ${plainPaths.size} plain types: ${losses.size} fields")
+    log.info(s"drake surface losses over ${parsedPaths.size} types: ${losses.size} fields")
     byKind.toSeq.sortBy(-_._2.size).foreach { case (kind, entries) =>
       log.info(s"  $kind: ${entries.size}")
       entries.foreach { case (rp, key, was, now) => log.info(s"    $rp $key: $was -> $now") }
     }
-    console.info(s"drake surface losses: ${losses.size} fields across ${plainPaths.size} plain types " +
+    console.info(s"drake surface losses: ${losses.size} fields across ${parsedPaths.size} types " +
       byKind.map { case (kind, entries) => s"[$kind: ${entries.size}]" }.mkString(" "))
     succeed
   }
 
-  test("types held back from increment 1 (report only)") {
-    val roleAspect = allPaths.filter(rp => carriesRoleAspect(loadTypeDefinition(rp)))
-    val noDrake    = allPaths.filter(rp => readDrake(deriveDrakePath(rp)).isEmpty)
-    log.info(s"carrying a rule/actor/codec aspect (${roleAspect.size}): ${roleAspect.mkString(", ")}")
+  test("types held back from Drake.parse (report only)") {
+    val codecAspect = allPaths.filter(rp => carriesCodecAspect(loadTypeDefinition(rp)))
+    val noDrake     = allPaths.filter(rp => readDrake(deriveDrakePath(rp)).isEmpty)
+    log.info(s"carrying a codec aspect (${codecAspect.size}): ${codecAspect.mkString(", ")}")
     log.info(s"lacking a .drake (${noDrake.size}): ${noDrake.mkString(", ")}")
-    console.info(s"Drake.parse scope: ${plainPaths.size} plain types in, ${roleAspect.size} role-aspect + ${noDrake.size} drake-less held back")
+    console.info(s"Drake.parse scope: ${parsedPaths.size} types in, ${codecAspect.size} codec-aspect + ${noDrake.size} drake-less held back")
     succeed
   }
 }

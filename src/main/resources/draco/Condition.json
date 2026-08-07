@@ -20,23 +20,11 @@
       "parameters": [
         {
           "kind": "Parameter",
-          "name": "parameters",
-          "valueType": "Seq[Parameter]",
-          "value": { ".": ["Seq", "empty"] }
-        },
-        {
-          "kind": "Parameter",
           "name": "value",
           "valueType": "Json"
         }
       ],
       "body": [
-        {
-          "kind": "Fixed",
-          "name": "parameters",
-          "valueType": "Seq[Parameter]",
-          "value": "_parameters"
-        },
         {
           "kind": "Fixed",
           "name": "value",

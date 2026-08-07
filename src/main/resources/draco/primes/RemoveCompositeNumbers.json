@@ -18,17 +18,17 @@
         {
           "kind": "Variable",
           "name": "i1",
-          "valueType": "Int"
+          "valueType": "Integer"
         },
         {
           "kind": "Variable",
           "name": "i2",
-          "valueType": "Int"
+          "valueType": "Integer"
         },
         {
           "kind": "Variable",
           "name": "i3",
-          "valueType": "Int"
+          "valueType": "Integer"
         }
       ],
       "conditions": [
@@ -40,24 +40,7 @@
               { "*": ["i1", "i2"] },
               "i3"
             ]
-          },
-          "parameters": [
-            {
-              "kind": "Parameter",
-              "name": "i1",
-              "valueType": "Int"
-            },
-            {
-              "kind": "Parameter",
-              "name": "i2",
-              "valueType": "Int"
-            },
-            {
-              "kind": "Parameter",
-              "name": "i3",
-              "valueType": "Int"
-            }
-          ]
+          }
         }
       ]
     },

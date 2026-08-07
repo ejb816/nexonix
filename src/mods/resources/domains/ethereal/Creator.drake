@@ -1,5 +1,5 @@
 type Creator from Actor(draco.format.json.JSON)
-  factory
+  factory ActorType
     parameters
       par consumer ActorRef(draco.format.json.JSON)
 domain domains ethereal Ethereal

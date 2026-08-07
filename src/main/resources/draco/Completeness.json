@@ -24,14 +24,7 @@
               { ".": [ "draco", "DracoAspect", "isEmpty" ] },
               { ".": [ "td", "dracoAspect" ] }
             ]
-          },
-          "parameters": [
-            {
-              "kind": "Parameter",
-              "name": "td",
-              "valueType": "TypeDefinition"
-            }
-          ]
+          }
         },
         {
           "kind": "Condition",
@@ -41,14 +34,7 @@
               { ".": [ "draco", "DomainAspect", "isEmpty" ] },
               { ".": [ "td", "domainAspect" ] }
             ]
-          },
-          "parameters": [
-            {
-              "kind": "Parameter",
-              "name": "td",
-              "valueType": "TypeDefinition"
-            }
-          ]
+          }
         },
         {
           "kind": "Condition",
@@ -58,14 +44,7 @@
               { ".": [ "draco", "RuleAspect", "isEmpty" ] },
               { ".": [ "td", "ruleAspect" ] }
             ]
-          },
-          "parameters": [
-            {
-              "kind": "Parameter",
-              "name": "td",
-              "valueType": "TypeDefinition"
-            }
-          ]
+          }
         },
         {
           "kind": "Condition",
@@ -75,14 +54,7 @@
               { ".": [ "draco", "ActorAspect", "isEmpty" ] },
               { ".": [ "td", "actorAspect" ] }
             ]
-          },
-          "parameters": [
-            {
-              "kind": "Parameter",
-              "name": "td",
-              "valueType": "TypeDefinition"
-            }
-          ]
+          }
         }
       ]
     },

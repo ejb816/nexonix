@@ -5,5 +5,5 @@ type CodecAspect
     parameters
       par discriminator String ""
   globals
-    fix isEmpty (CodecAspect => Boolean) ca => ca.discriminator.isEmpty
+    fix isEmpty (CodecAspect -> Boolean) ca => ca.discriminator.isEmpty
 domain draco Draco

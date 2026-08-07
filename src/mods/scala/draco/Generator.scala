@@ -227,24 +227,43 @@ object Generator extends App {
       s"""      "$$${v.name}", classOf[${v.valueType}]"""
     }.mkString(",\n")
   }
+  /** A condition's parameters: the pattern VARIABLES its guard mentions, in
+    * declaration order. Derived rather than read off the Condition, because the two
+    * emissions below leave no freedom for them to be anything else — `.where` compiles
+    * to a Java string in which `$name` resolves only against the fact variables
+    * declared by `.forEach`, and `w<n>` receives exactly what `ctx.get[<valueType>]`
+    * yields. A declared parameter that disagreed with its variable would fail either
+    * Evrete's runtime compile or scalac; there is no third possibility for it to be.
+    * So it is not authored data, and carrying it in the JSON only created a second
+    * place for the same fact to be written and no way to notice a disagreement. */
+  private def conditionParameters (
+    condition: Condition,
+    variables: Seq[Variable]
+  ) : Seq[Variable] = {
+    val mentioned = Expression.rootNames(condition.value)
+    variables.filter(v => mentioned(v.name))
+  }
+
   private def conditionFunctions (
-    _conditions: Seq[Condition]
+    _conditions: Seq[Condition],
+    _variables: Seq[Variable]
   ) : String = {
     if (_conditions.isEmpty) ""
     else _conditions.zipWithIndex.map { case (c, idx) =>
-      val params = c.parameters.map(p => s"${p.name}: ${p.valueType}").mkString(", ")
+      val params = conditionParameters(c, _variables).map(p => s"${p.name}: ${p.valueType}").mkString(", ")
       s"  def w$idx($params): Boolean = ${expression(c.value)}"
     }.mkString("\n")
   }
 
   private def whereConditions (
     conditions: Seq[Condition],
+    variables: Seq[Variable],
     qualifiedObjectName: String
   ) : String = {
     if (conditions.isEmpty) ""
     else conditions.zipWithIndex.map { case (c, idx) =>
       // Reference the condition function with fully qualified class name and $-prefixed parameters
-      val params = c.parameters.map(p => s"$$${p.name}").mkString(", ")
+      val params = conditionParameters(c, variables).map(p => s"$$${p.name}").mkString(", ")
       s"""    .where("$qualifiedObjectName.w$idx($params)")"""
     }.mkString("\n")
   }
@@ -1038,7 +1057,7 @@ object Generator extends App {
     * identical block. */
   private def ruleBody (td: TypeDefinition) : String = {
     val name = td.typeName.name
-    s"""${conditionFunctions(td.ruleAspect.pattern.conditions)}
+    s"""${conditionFunctions(td.ruleAspect.pattern.conditions, td.ruleAspect.pattern.variables)}
        |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
        |${actionBody(td.ruleAspect.action, td.ruleAspect.pattern.variables)}
        |  }
@@ -1050,7 +1069,7 @@ object Generator extends App {
        |    .forEach (
        |${factVariables(td.ruleAspect.pattern.variables)}
        |    )
-       |${whereConditions(td.ruleAspect.pattern.conditions, td.typeName.namePath)}
+       |${whereConditions(td.ruleAspect.pattern.conditions, td.ruleAspect.pattern.variables, td.typeName.namePath)}
        |    .execute (action)
        |    .build()
        |  }

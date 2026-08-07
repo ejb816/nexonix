@@ -126,11 +126,27 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
     val knowledge: Knowledge = service.newKnowledge("AddAndRemoveRulesTest")
     AddNaturalSequence.ruleType.pattern.accept(knowledge)
     RemoveCompositeNumbers.ruleType.pattern.accept(knowledge)
+    // The accumulator is hoisted out of the call so the test can READ it afterwards.
+    // Building a rule and firing a session is not evidence that either rule matched:
+    // a pattern variable whose declared type does not match what working memory holds
+    // (the primitive `Int` against Evrete's boxed Integers) compiles, builds, fires,
+    // and matches nothing — silently. The accumulator is the only witness, and these
+    // are the same items printResult renders, so the log and the assertions agree.
+    val accumulator = Accumulator ()
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
-      accumulator = Accumulator (),
+      accumulator = accumulator,
       numbers = Numbers(10)
     )
     service.shutdown()
+
+    val added   = accumulator.naturalSet.size      // AddNaturalSequence writes only here
+    val removed = accumulator.compositeSet.size    // RemoveCompositeNumbers writes only here
+    val firings = accumulator.intervalTextSet.size // every firing of either rule records one
+    assert(added > 0,
+      s"AddNaturalSequence never fired: naturalSet is empty ($firings firings recorded)")
+    assert(removed > 0,
+      s"RemoveCompositeNumbers never fired: compositeSet is empty after $added naturals " +
+        s"($firings firings recorded, all of them AddNaturalSequence's)")
   }
 }

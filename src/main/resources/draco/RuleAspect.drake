@@ -7,5 +7,5 @@ type RuleAspect
       par pattern Pattern Pattern.Null
       par action Action Action.Null
   globals
-    fix isEmpty (RuleAspect => Boolean) ra => ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty && ra.action.body.isEmpty
+    fix isEmpty (RuleAspect -> Boolean) ra => ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty && ra.action.body.isEmpty
 domain draco Draco

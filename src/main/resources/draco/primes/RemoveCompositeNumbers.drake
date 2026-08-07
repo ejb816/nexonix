@@ -4,9 +4,9 @@ rule
   pattern
     variables
       var accumulator Accumulator
-      var i1 Int
-      var i2 Int
-      var i3 Int
+      var i1 Integer
+      var i2 Integer
+      var i3 Integer
     conditions
       con i1 * i2 == i3
   action

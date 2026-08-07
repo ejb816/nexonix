@@ -21,5 +21,5 @@ type DracoAspect
       par source TypeName TypeName.Null
       par target TypeName TypeName.Null
   globals
-    fix isEmpty (DracoAspect => Boolean) da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty
+    fix isEmpty (DracoAspect -> Boolean) da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty
 domain draco Draco

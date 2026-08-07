@@ -100,9 +100,8 @@ object TypeElement extends App with DracoType {
 
       case "Condition" =>
         for {
-          _parameters <- cursor.downField("parameters").as[Option[Seq[Parameter]]].map(_.getOrElse(Seq.empty))
           _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
-        } yield Condition (_parameters, _value)
+        } yield Condition (_value)
 
       case "Variable" =>
         for {
@@ -363,10 +362,8 @@ object Condition extends App with DracoType {
   implicit def decoder: Decoder[Condition] = codec.decoder
 
   def apply (
-    _parameters: Seq[Parameter] = Seq.empty,
     _value: Json
   ) : Condition = new Condition {
-    override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val value: Json = _value
     override lazy val name: String = ""
     override lazy val valueType: String = "Boolean"
@@ -374,7 +371,6 @@ object Condition extends App with DracoType {
   }
 
   lazy val Null: Condition = apply(
-    _parameters = Seq.empty,
     _value = Json.Null
   )
 

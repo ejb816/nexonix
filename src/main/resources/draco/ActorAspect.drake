@@ -11,7 +11,7 @@ type ActorAspect
       par message Action Action.Null
       par signal Action Action.Null
   globals
-    fix isEmpty (ActorAspect => Boolean) aa =>
+    fix isEmpty (ActorAspect -> Boolean) aa =>
       aa.start.body.isEmpty &&
       aa.message.body.isEmpty &&
       aa.signal.body.isEmpty

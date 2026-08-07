@@ -1,0 +1,163 @@
+# ONE commit, reversing my own advice of an hour ago. I proposed four — one per
+# landing — before checking whether the files separate. They do not: Drake.scala
+# carries landings 1, 2 and 3; drake.dlt carries all three; RemoveCompositeNumbers.json
+# carries 2 and 4. Splitting would mean hunk-staging three files to manufacture a
+# history that was never independently tested — the four were verified together, in
+# one run. Recorded as one, with the four landings separated in the message.
+#
+# GATE — sbt test, 495/495 green (2026-08-07 11:54). Three runs were needed and the
+# first two failures were both real: a JSON/drake disagreement I caused (see landing
+# 4's correction), then the one-run lag of the "Generate <rule>" tests, which write
+# .scala that only compiles on the FOLLOWING run.
+#
+# DrakeParseTest now covers 80 types, up from 72 — only the codec aspect is held back.
+
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+git add -A
+git commit -F - <<'EOF'
+drake parser increment 2, condition bindings derived, and the drake arrow (#53)
+
+Four landings, in the order they happened.
+
+1. PARSER INCREMENT 2 (#53) — rule and actor aspects, named arguments, call chains.
+
+   Drake.parse now reads `rule` / `pattern` / `variables` / `conditions` / `action`
+   and `actor` / `messageType` / `start` / `message` / `signal`. The two heads are
+   read as FLAGS rather than as recursive sections: every sub-section carries a
+   reserved head of its own, so the existing flat loop bounds them exactly as it
+   already bounds domain / super / types. What the head contributes is presence — a
+   rule with a wholly default pattern and action is still a rule.
+
+   NAMED ARGUMENTS spell the marker BEFORE the name: `par = latitude cursor`.
+   `par <name> = <value>` reads better and is ambiguous — `=` also opens a
+   dyn-with-body's result line, so `… parameters par a` followed by `= r` parses
+   equally well as the named argument `a = r` with the dyn's result missing, and no
+   look-ahead settles it. `par` immediately followed by `=` occurs nowhere else,
+   because an argument list that has run out of `par`s has already stopped. Same
+   principle as the brackets on the opener: close the grammar rather than tie-break
+   it. Transitional — the marker can move behind the name once the dyn `=` retires.
+
+   CALL CHAINS fold back: a token opening with `.` is lexically a chain member and
+   nothing else, since a path inside one expression (a.b.c, session.insert(…)) is
+   glued into a single token by the lexer. A `.member` arriving after an argument is
+   claimed by the PENDING CHAIN, not by the argument it just passed — both readings
+   are legal and they differ only by indentation, which drake does not read. The cost
+   is that an argument OF A CHAIN CALL cannot itself be a chain. Found by the focused
+   round-trip test added for exactly these two forms, which the draco corpus does not
+   exercise (both live in the mods actors).
+
+   WHAT THE WIDENED GATE CAUGHT: the drake surface dropped factory.valueType
+   entirely. Nine definitions carry `ActorType` rather than the enclosing type — the
+   actor-minting convention, and what tells the Scala projection to mint an actor
+   instead of an instance of the type. The `factory` keyword elides its value-type
+   because it normally IS the enclosing type; when it is not, it is not
+   reconstructable and has to be spelled. Draco.json had simply never reached a
+   round-trip gate before, carrying an actor aspect.
+
+   OPEN, and it keeps #44 from closing: a NESTED argument list has no terminator.
+   An argument that is itself an application opens a `par` list of its own, and the
+   enclosing list's next `par` is the only thing that could close it. Both readings
+   are legal; domains/aerial/Input is the live case. Under BRACKETS this is an opener
+   that does not yet bracket. Filed as #60; it is why the mods actors stay outside
+   the parse gate.
+
+2. CONDITION BINDINGS ARE DERIVED, NOT DECLARED.
+
+   Dev's correction, and it dissolved most of what was built for it. The first
+   attempt gave `con` a bracketed body — parameters block plus an `=` guard —
+   borrowing the dyn-with-body shape. Wrong on three counts he named: the `=` read as
+   an assignment of the parameter block; the parameters declared what the pattern
+   already binds; and it conflated Condition with dyn-with-body, which are unrelated
+   constructs. Reverted entirely. A `con` writes its guard and nothing else, as it
+   always did.
+
+   The invariant is ENFORCED, not conventional. `whereConditions` emits a Java string
+   Evrete compiles at runtime, in which `$name` resolves only against the fact
+   variables declared by `.forEach`; `conditionFunctions` emits `def w<n>` receiving
+   exactly what `ctx.get[<valueType>]` yields. A declared parameter disagreeing with
+   its variable fails either Evrete's runtime compile or scalac. There is no third
+   possibility for it to be — so a stored copy could only ever agree, or be wrong.
+
+   Expression.rootNames walks the tree for the identifiers that BEGIN a path (a `.`
+   node contributes only its first operand's roots; `td.dracoAspect` mentions td, not
+   dracoAspect). A string leaf is host-opaque, so there it falls back to a lexical
+   scan — as far as anything can see into a value drake does not yet parse.
+   Generator.conditionParameters filters the pattern's variables by it.
+
+   Condition.parameters is gone: from the model (Condition.json's factory parameter
+   and body element, and the generated apply / Null / decoder case), from
+   Condition.drake, and from 7 conditions across 5 rule definitions. The generated
+   Scala is byte-identical, which is the check that the derivation reproduces what
+   was authored. Drake got SMALLER — with nothing to reconstruct, parse builds the
+   Pattern directly.
+
+   NAMED, NOT DONE: Condition.valueType ("Boolean"), Monadic's ("Unit") and Pattern's
+   ("draco.rete.Knowledge => Unit") are the same shape one level over — a Scala type
+   name pinned in the neutral model and read by nothing. Removing them is blocked on
+   `name` and `valueType` being ABSTRACT on TypeElement while parameters, body and
+   value all have defaults; the fix is to make the odd two match, family-wide.
+
+3. THE DRAKE ARROW — `->` in type position too.
+
+   Drake.typeExpression hardcoded " => " while Drake.expression rendered " -> ", so
+   drake spelled the arrow one way in a type and another in a value — contradicting
+   drake.dlt, which names `->` the "function/type arrow" for both. Emitter and parser
+   were symmetrically wrong, so the round-trip never noticed; only the corpus showed
+   it, in 9 places.
+
+   scalaArrow and drakeArrow are now named per side and splitTopArrow takes which one
+   to split on. The 9 corpus lines are all type position, each replacement anchored on
+   the surrounding type syntax so a lambda arrow on the same line could not be caught
+   — ActorAspect.drake is the case that mattered, now reading
+   `fix isEmpty (ActorAspect -> Boolean) aa => …`, drake's arrow in the type slot and
+   Scala's still in the host-opaque lambda after it. Checked the destructive
+   direction before landing: no JSON valueType in either resource tree already
+   contains `->`, so nothing is misread by the parser's new split.
+
+   drake.dlt's VALUE-TYPES table gains the arrow row and a note that the whole table
+   is SURFACE SUBSTITUTION rather than neutral terms — the JSON still holds a Scala
+   type string and drake merely respells it. Dev's framing of where that goes: giving
+   the TERM to draco, so a drake type name resolves through draco's own dictionary
+   even when it coincides with the host's spelling, is the wrap-type direction — the
+   same move draco.rete makes for host library types, one tier down. Coincidence of
+   spelling is not identity of term. What gates it is derivationRef emitting parents
+   bare, so a wrap-type reference resolves through imports to the host type; the same
+   wall draco.rete already hit.
+
+4. THE FALSE SUCCESS IN AddAndRemoveRulesTest.
+
+   The test built two rules, fired a session, and asserted nothing.
+   RemoveCompositeNumbers declared its pattern variables `Int` where the otherwise
+   identical PrimesFromNaturalSequence declared `Integer`; Evrete's working memory is
+   boxed, so classOf[Int] matched nothing and the rule fired ZERO times while the
+   Integer rule fired 249. Green throughout.
+
+   The accumulator is now hoisted out of the call and read. naturalSet and
+   compositeSet are each written by exactly one of the two rules, so the failure
+   message separates "the second rule never fired" from "nothing fired at all".
+   intervalTextSet's size is reported but deliberately not asserted: it is a
+   Set[(Long, String)], so two firings sharing a nanoTime collapse into one entry.
+   Dev changed Int -> Integer in the drake and the json; the rule now fires over the
+   18 composites in 2..29, and the assertion has been seen both red and green.
+
+   CORRECTION, recorded because the mistake is instructive: I ran `git checkout --`
+   across five rule JSONs to undo my OWN formatting churn, and it discarded Dev's
+   uncommitted Int -> Integer edit along with it. `git checkout --` reverts to HEAD,
+   not to "before my change", and in a tree where Dev edits main directly every
+   uncommitted file may hold his work as well as mine. Diff before reverting; undo my
+   own change surgically. Both gates caught the disagreement a run later — nothing
+   warned at the time.
+
+   Also observed: the "Generate <rule>" tests write .scala that only compiles on the
+   FOLLOWING run, so a green rule test can be one run stale. Worth remembering when a
+   rule test flips without an apparent cause.
+
+Issues: #53 done (this commit). Filed en route — #60 nested argument lists have no
+terminator, which keeps the mods actors out of the parse gate and #44 from closing;
+#61 a drake expression grammar, which is what both the `=` result marker and the
+host-opaque guard tail are waiting on. Measured for #44: 79 loss fields remain, 65 of
+them reference packages (#54), 11 expression form (#61), 3 legacy Seq() (#55).
+EOF
+
+git push

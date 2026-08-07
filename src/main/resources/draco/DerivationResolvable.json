@@ -19,14 +19,7 @@
         {
           "kind": "Condition",
           "valueType": "Boolean",
-          "value": "m.dracoAspect.derivation.exists(anc => anc.namePackage.headOption.contains(\"draco\") && { val a = draco.TypeLoader.loadType(anc); draco.DracoAspect.isEmpty(a.dracoAspect) && draco.DomainAspect.isEmpty(a.domainAspect) && draco.RuleAspect.isEmpty(a.ruleAspect) && draco.ActorAspect.isEmpty(a.actorAspect) })",
-          "parameters": [
-            {
-              "kind": "Parameter",
-              "name": "m",
-              "valueType": "TypeDefinition"
-            }
-          ]
+          "value": "m.dracoAspect.derivation.exists(anc => anc.namePackage.headOption.contains(\"draco\") && { val a = draco.TypeLoader.loadType(anc); draco.DracoAspect.isEmpty(a.dracoAspect) && draco.DomainAspect.isEmpty(a.domainAspect) && draco.RuleAspect.isEmpty(a.ruleAspect) && draco.ActorAspect.isEmpty(a.actorAspect) })"
         }
       ]
     },

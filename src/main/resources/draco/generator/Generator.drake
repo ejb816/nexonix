@@ -1,4 +1,4 @@
 type Generator(L)
   elements
-    fix generator (TypeDefinition => String)
+    fix generator (TypeDefinition -> String)
 domain draco generator Generator

@@ -93,8 +93,33 @@ object Drake {
         .map(inlineValue).mkString("(", ", ", ")")
     else if (Expression.isApplication(value)) {
       val ops = Expression.operands(value)
-      s"${expression(ops.head)} parameters ${ops.tail.map(a => s"par ${inlineValue(a)}").mkString(" ")}"
+      s"${expression(ops.head)} parameters ${ops.tail.map(inlineArgument).mkString(" ")}"
     } else expression(value)
+
+  /** One argument on an inline `parameters` run. Named arguments carry the `=`
+    * marker (see namedPrefix). */
+  private def inlineArgument (arg: Json) : String = Expression.namedArgument(arg) match {
+    case Some((name, v)) => s"par = $name ${inlineValue(v)}"
+    case None            => s"par ${inlineValue(arg)}"
+  }
+
+  /** The opening of an argument line. A NAMED argument (`{"=": [name, value]}`)
+    * spells its marker BEFORE the name — `par = latitude …` — not after it.
+    *
+    * `par <name> = <value>` would read better, but it is ambiguous: `=` also opens a
+    * dyn-with-body's result line, so `… parameters par a` followed by `= result`
+    * parses equally well as a named argument `a = result` with the dyn's result
+    * missing. Nothing distinguishes the two, and no amount of look-ahead settles it.
+    * Moving the marker in front of the name removes the overlap outright — `par`
+    * immediately followed by `=` occurs nowhere else, because an argument list that
+    * has run out of `par`s has already stopped. Same principle as the brackets on
+    * the opener (#52): close the grammar rather than tie-break it.
+    *
+    * The overlap is with a construct that is itself transitional (drake.dlt
+    * DIVERGENCES: the dyn result marker goes once expressions parse), so this
+    * position is worth revisiting when it does — `par <name> = <value>` costs nothing
+    * once no other `=` exists. */
+  private def namedPrefix (name: String) : String = s"par = $name"
 
   /** Render a value expression whose first token follows `prefix` on the same line;
     * any continuation lines indent under `contIndent`. Shapes: a tuple or leaf/flat
@@ -125,12 +150,12 @@ object Drake {
     !Expression.isApplication(Expression.namedArgument(arg).map(_._2).getOrElse(arg))
 
   private def inlinePar (arg: Json) : String = Expression.namedArgument(arg) match {
-    case Some((name, v)) => s"par $name ${expression(v)}"
+    case Some((name, v)) => s"${namedPrefix(name)} ${expression(v)}"
     case None            => s"par ${expression(arg)}"
   }
 
   private def parLines (indent: String, arg: Json) : Seq[String] = Expression.namedArgument(arg) match {
-    case Some((name, v)) => valueLines(s"${indent}par $name", indent, v)
+    case Some((name, v)) => valueLines(s"$indent${namedPrefix(name)}", indent, v)
     case None            => valueLines(s"${indent}par", indent, arg)
   }
 
@@ -151,17 +176,29 @@ object Drake {
     args.result()
   }
 
-  /** Split a type expression on top-level " => " function arrows (arrows nested
-    * in [ ], ( ), { } belong to an inner type). One segment = no arrow. */
-  private def splitTopArrow (s: String) : Seq[String] = {
+  /** The function arrow, on each side of the projection. The JSON valueType is a
+    * SCALA type string, so that is the spelling to split it on; drake's own arrow is
+    * `->` — the same token `Drake.expression` already renders for a `->` VALUE node,
+    * and the one drake.dlt names as the "function/type arrow" in Haskell form.
+    *
+    * These were the same token until now: `typeExpression` converted `Seq[T]` to `[T]`
+    * but passed the arrow through, so the drake surface spelled types with Scala's
+    * arrow and values with drake's. Emitter and parser were symmetrically wrong, so the
+    * round-trip never noticed — the corpus is the only place it showed. */
+  private val scalaArrow = " => "
+  private val drakeArrow = " -> "
+
+  /** Split a type expression on top-level `arrow` occurrences (arrows nested in
+    * [ ], ( ), { } belong to an inner type). One segment = no arrow. */
+  private def splitTopArrow (s: String, arrow: String) : Seq[String] = {
     val parts = Seq.newBuilder[String]
     var depth, start, i = 0
     while (i < s.length) {
       s(i) match {
         case '[' | '(' | '{' => depth += 1
         case ']' | ')' | '}' => depth -= 1
-        case ' ' if depth == 0 && s.startsWith(" => ", i) =>
-          parts += s.substring(start, i); start = i + 4; i += 3
+        case ' ' if depth == 0 && s.startsWith(arrow, i) =>
+          parts += s.substring(start, i); start = i + arrow.length; i += arrow.length - 1
         case _ =>
       }
       i += 1
@@ -172,13 +209,13 @@ object Drake {
 
   /** JSON valueType string -> drake type expression (drake.dlt VALUE-TYPES, inverted):
     * Seq[T] -> [T], Set[T] -> {T}, mutable.Set[T] -> mut {T}, F[A, B] -> F(A, B),
-    * (A, B) tuple unchanged (components recursed), A => B arrows recursed on each
-    * side, plain names verbatim. */
+    * (A, B) tuple unchanged (components recursed), A => B arrows recursed on each side
+    * and respelled A -> B, plain names verbatim. */
   private def typeExpression (valueType: String) : String = {
     val s = valueType.trim
     if (s.isEmpty) s
-    else if (splitTopArrow(s).size > 1)
-      splitTopArrow(s).map(typeExpression).mkString(" => ")
+    else if (splitTopArrow(s, scalaArrow).size > 1)
+      splitTopArrow(s, scalaArrow).map(typeExpression).mkString(drakeArrow)
     else if (s.startsWith("(") && s.endsWith(")"))
       splitTypeArguments(s.substring(1, s.length - 1)).map(typeExpression).mkString("(", ", ", ")")
     else {
@@ -203,7 +240,7 @@ object Drake {
     * an arrow nested inside a type application needs none (Map(String, [String] => Unit)). */
   private def typeExpressionSlot (valueType: String) : String = {
     val converted = typeExpression(valueType)
-    if (splitTopArrow(valueType.trim).size > 1) s"($converted)" else converted
+    if (splitTopArrow(valueType.trim, scalaArrow).size > 1) s"($converted)" else converted
   }
 
   /** Element name to drake surface: a method type-parameter rides the name via
@@ -350,7 +387,15 @@ object Drake {
         val body =
           if (da.factory.body.isEmpty) Seq.empty
           else sectionLines("body", da.factory.body, 2)
-        "  factory" +: (parameters ++ body)
+        // A factory normally constructs the enclosing type, and that is what makes its
+        // value-type elidable (drake.dlt CONVENTIONS: `factory` takes no name). When it
+        // constructs something else it is NOT reconstructable and has to be spelled —
+        // the live case is the actor-minting factory, whose ActorType value-type is what
+        // tells the Scala projection to mint an actor rather than an instance of the type.
+        val head =
+          if (da.factory.valueType == factoryValueType(td.typeName.name, td.typeName.typeParameters)) "  factory"
+          else s"  factory ${typeExpressionSlot(da.factory.valueType)}"
+        head +: (parameters ++ body)
       }
     val globals =
       if (da.globalElements.isEmpty) Seq.empty
@@ -426,10 +471,12 @@ object Drake {
   // JSON round-trip parse(emit(td)) == td asserted over everything the
   // surface actually carries.
   //
-  // Increment 1 covers the plain-type template (header / modules / extensible /
-  // elements / factory / globals / domain). The rule and actor aspects, and
-  // value-position applications, are rejected loudly rather than silently dropped —
-  // the same convention emit() uses for the codec aspect.
+  // Covered: the plain-type template (header / modules / extensible / elements /
+  // factory / globals / domain), the rule aspect (pattern / variables / conditions /
+  // action) and the actor aspect (messageType / start / message / signal), plus
+  // value-position applications with positional or named arguments and unfolded call
+  // chains. The codec aspect is the remaining increment and is rejected loudly rather
+  // than silently dropped — the same convention emit() uses for it.
 
   // Plain vals: unlike the App companions in the model, `Drake` is a bare object, so
   // there is no DelayedInit to defer them past first use.
@@ -506,6 +553,14 @@ object Drake {
     def peek: Option[String]        = tokens.lift (index).map (_.text)
     def at (text: String): Boolean  = peek.contains (text)
     def atReserved: Boolean         = peek.exists (reserved.contains)
+
+    /** A CHAIN MEMBER: a token opening with `.`, which valueLines writes at the head
+      * of each `.member parameters …` continuation line of an unfolded call chain.
+      * Nothing else can start with a dot — a path inside one expression (`a.b.c`,
+      * `session.insert(…)`) is glued into a single token by the lexer — so this is a
+      * purely lexical boundary, and like every other boundary in drake it consults no
+      * layout. A value slot stops here the same way it stops at a reserved word. */
+    def atChainMember: Boolean      = peek.exists (t => t.length > 1 && t.startsWith ("."))
     def take (): Token         = { val t = tokens (index); index += 1; t }
     def takeText (): String         = take ().text
     def expect (text: String): Unit =
@@ -513,14 +568,14 @@ object Drake {
       else sys.error (s"Drake.parse: expected '$text' but found '${peek.getOrElse ("<end>")}'")
   }
 
-  /** The value slot: every token up to the next reserved keyword, returned as the
-    * raw source span so internal spacing survives verbatim. */
+  /** The value slot: every token up to the next reserved keyword or chain member,
+    * returned as the raw source span so internal spacing survives verbatim. */
   private def span (c: Cursor) : String =
-    if (c.exhausted || c.atReserved) ""
+    if (c.exhausted || c.atReserved || c.atChainMember) ""
     else {
       val first = c.take ()
       var end   = first.end
-      while (!c.exhausted && !c.atReserved) end = c.take ().end
+      while (!c.exhausted && !c.atReserved && !c.atChainMember) end = c.take ().end
       c.source.substring (first.start, end)
     }
 
@@ -546,25 +601,80 @@ object Drake {
   /** The value slot. A `parameters` keyword following the head turns the value into
     * an application tree — applyLines's inverse, `<fn> parameters par <arg> …`. When
     * no head precedes it the function IS the declared value type (leafLines's
-    * anonymous-construction form), which `anonymousHead` supplies.
-    *
-    * Arguments are read as positional. The NAMED form `{"=": [name, value]}` renders
-    * as `par <name> <value>`, which is not distinguishable on the surface from a
-    * positional argument whose expression happens to be two words — so it waits for
-    * the increment where it occurs (rule and actor bodies). Nothing is guessed here:
-    * a named argument reaching this path fails the round-trip loudly. */
-  private def parseValue (c: Cursor, anonymousHead: String) : Json = {
-    val head = span (c)
+    * anonymous-construction form), which `anonymousHead` supplies. Whatever the head
+    * resolved to, any `.member parameters …` continuations that follow fold onto it
+    * as a call chain. */
+  private def parseValue (c: Cursor, anonymousHead: String) : Json =
+    chainCalls (c, applied (c, span (c), anonymousHead))
+
+  /** `head` applied to a `parameters` list, or the bare leaf when no list follows. */
+  private def applied (c: Cursor, head: String, anonymousHead: String) : Json =
     if (!c.at ("parameters")) leafValue (head)
     else {
       c.take ()
       val function = if (head.nonEmpty) head else anonymousHead
       if (function.isEmpty)
         sys.error ("Drake.parse: `parameters` with no function and no declared value type to supply one")
-      val arguments = Seq.newBuilder[Json]
-      while (c.at ("par")) { c.take (); arguments += parseValue (c, "") }
-      Json.obj ("()" -> Json.fromValues (Json.fromString (function) +: arguments.result ()))
+      Json.obj ("()" -> Json.fromValues (Json.fromString (function) +: arguments (c, chained = false)))
     }
+
+  /** The arguments of a `parameters` list: `par <value>` positionally, `par = <name>
+    * <value>` named (see namedPrefix for why the marker precedes the name). The list
+    * ends where the `par`s do — an argument value stops at the next reserved word, so
+    * nothing here consults layout either.
+    *
+    * `chained` says this list belongs to a CHAIN CALL, and it decides who claims a
+    * `.member` arriving after the last argument. Both readings are legal on the
+    * surface — `.g` may continue the chain, or start a chain on the argument — and
+    * they differ only by indentation, which drake does not read. The chain wins: a
+    * pending chain is nearer than the argument it just passed, which is what
+    * `cursor .get[Double] parameters par "latitude" .getOrElse parameters par 0.0`
+    * means. The cost is that an argument OF A CHAIN CALL cannot itself be a chain. */
+  private def arguments (c: Cursor, chained: Boolean) : Seq[Json] = {
+    val collected = Seq.newBuilder[Json]
+    def argument () : Json = if (chained) applied (c, span (c), "") else parseValue (c)
+    while (c.at ("par")) {
+      c.take ()
+      collected +=
+        (if (!c.at ("=")) argument ()
+         else {
+           c.take ()
+           Json.obj ("=" -> Json.arr (Json.fromString (c.takeText ()), argument ()))
+         })
+    }
+    collected.result ()
+  }
+
+  /** Fold the `.member parameters …` continuations onto a receiver — unfoldChain's
+    * inverse. Each call re-nests: the receiver so far becomes the head of the member's
+    * `.` path, and that path is applied to the call's arguments, so `a` + `.f(x)` +
+    * `.g(y)` rebuilds a.f(x).g(y) exactly as the tree spelled it. A chain call always
+    * writes its `parameters`, empty argument list included, so its absence is an error
+    * rather than a shorter form. */
+  private def chainCalls (c: Cursor, receiver: Json) : Json = {
+    var value = receiver
+    while (c.atChainMember) {
+      val member = splitPath (c.takeText ().substring (1))
+      val path   = Json.obj ("." -> Json.fromValues (value +: member.map (Json.fromString)))
+      c.expect ("parameters")
+      value = Json.obj ("()" -> Json.fromValues (path +: arguments (c, chained = true)))
+    }
+    value
+  }
+
+  /** Split a chain member on its top-level dots — `get[scala.Int]` is one path
+    * element, `a.b` is two. */
+  private def splitPath (member: String) : Seq[String] = {
+    val elements = Seq.newBuilder[String]
+    val current  = new StringBuilder
+    var depth    = 0
+    member.foreach {
+      case c @ ('[' | '(' | '{') => depth += 1; current.append (c)
+      case c @ (']' | ')' | '}') => depth -= 1; current.append (c)
+      case '.' if depth == 0     => elements += current.result (); current.clear ()
+      case c                     => current.append (c)
+    }
+    (elements += current.result ()).result ().filter (_.nonEmpty)
   }
 
   /** Split an applied surface name into its head and its ( ) arguments:
@@ -584,13 +694,13 @@ object Drake {
   }
 
   /** Invert typeExpression (drake.dlt VALUE-TYPES): [T] -> Seq[T], {T} -> Set[T],
-    * mut {T} -> mutable.Set[T], F(A, B) -> F[A, B], tuples and arrows recursed,
-    * plain names verbatim. A sole parenthesized member is the arrow slot
+    * mut {T} -> mutable.Set[T], F(A, B) -> F[A, B], A -> B back to A => B, tuples
+    * recursed, plain names verbatim. A sole parenthesized member is the arrow slot
     * typeExpressionSlot wraps, not a one-tuple, so it unwraps. */
   private def parseTypeExpression (expr: String) : String = {
     val s = expr.trim
     if (s.isEmpty) s
-    else if (splitTopArrow (s).size > 1) splitTopArrow (s).map (parseTypeExpression).mkString (" => ")
+    else if (splitTopArrow (s, drakeArrow).size > 1) splitTopArrow (s, drakeArrow).map (parseTypeExpression).mkString (scalaArrow)
     else if (s.startsWith ("mut {") && s.endsWith ("}")) s"mutable.Set[${parseTypeExpression (s.substring (5, s.length - 1))}]"
     else if (s.startsWith ("[") && s.endsWith ("]"))     s"Seq[${parseTypeExpression (s.substring (1, s.length - 1))}]"
     else if (s.startsWith ("{") && s.endsWith ("}"))     s"Set[${parseTypeExpression (s.substring (1, s.length - 1))}]"
@@ -679,12 +789,16 @@ object Drake {
     * globals): every BodyElement form, `dyn` included. */
   private val declarationKeywords: Set[String] = Set ("fix", "mut", "dyn", "loc")
 
+  /** What an ACTION body admits (a rule's `action`, an actor's start / message /
+    * signal): the declaration forms plus `mon`, since an action is mostly effects. */
+  private val actionKeywords: Set[String] = declarationKeywords + "mon"
+
   /** One member of a list-block. `dyn` may open its own sub-block (parameters,
     * statements, `=` result); every other keyword is a single leaf. */
   private def parseMember (c: Cursor) : TypeElement = {
     c.takeText () match {
       case "mon" => Monadic (parseValue (c))
-      case "con" => Condition (Seq.empty, parseValue (c))
+      case "con" => Condition (parseValue (c))
       case "var" =>
         val name = parseElementName (c.takeText ())
         Variable (name, takeValueType (c))
@@ -721,7 +835,8 @@ object Drake {
     if (typeParameters.isEmpty) name else s"$name[${typeParameters.mkString (", ")}]"
 
   /** Parse a .drake source into its TypeDefinition — the inverse of emit().
-    * Increment 1: the plain-type template. */
+    * The plain-type template plus the rule and actor aspects; codec is the remaining
+    * increment and is rejected loudly rather than silently dropped. */
   def parse (source: String) : TypeDefinition = {
     val c = new Cursor (source, lex (source))
     c.expect ("type")
@@ -740,24 +855,57 @@ object Drake {
     var superDomain      = TypeName.Null
     var domainName       = TypeName.Null
     var elementTypeNames = Seq.empty[String]
+    // The role aspects. `rule` / `actor` are read as FLAGS rather than as recursive
+    // sections: each of their sub-sections carries a reserved head of its own
+    // (pattern / variables / conditions / action; messageType / start / message /
+    // signal), so the flat loop below bounds them exactly as it bounds domain / super
+    // / types. What the head keyword contributes is presence — a rule with a wholly
+    // default pattern and action is still a rule.
+    var isRule           = false
+    var isActor          = false
+    var variables        = Seq.empty[Variable]
+    var conditions       = Seq.empty[Condition]
+    var action           = Action.Null
+    var messageType      = TypeName.Null
+    var start            = Action.Null
+    var message          = Action.Null
+    var signal           = Action.Null
+
+    def actionBody () : Action = Action (Seq.empty, parseBlock (c, actionKeywords).map (_.asInstanceOf[BodyElement]))
 
     while (!c.exhausted) {
       c.takeText () match {
-        case "modules"    => modules = parseNameList (c).map (parseRef)
-        case "extensible" => extensible = takeQualifiedRef (c)
-        case "elements"   => elements = parseBlock (c, declarationKeywords)
-        case "globals"    => globalElements = parseBlock (c, declarationKeywords).map (_.asInstanceOf[BodyElement])
-        case "factory"    =>
+        case "modules"     => modules = parseNameList (c).map (parseRef)
+        case "extensible"  => extensible = takeQualifiedRef (c)
+        case "elements"    => elements = parseBlock (c, declarationKeywords)
+        case "globals"     => globalElements = parseBlock (c, declarationKeywords).map (_.asInstanceOf[BodyElement])
+        case "factory"     =>
+          // A named value-type follows `factory` only when it is not the enclosing type.
+          val valueType =
+            if (c.exhausted || c.atReserved) factoryValueType (name, typeParameters)
+            else takeValueType (c)
           factory = Factory (
-            factoryValueType (name, typeParameters),
+            valueType,
             parseSection (c, "parameters", Set ("par")).map (_.asInstanceOf[Parameter]),
             parseSection (c, "body", declarationKeywords).map (_.asInstanceOf[BodyElement]))
-        case "domain"     => domainName = takeQualifiedRef (c)
-        case "super"      => superDomain = takeQualifiedRef (c)
-        case "types"      => elementTypeNames = parseNameList (c)
-        case aspect @ ("rule" | "actor" | "codec") =>
-          sys.error (s"Drake.parse: '$aspect' aspect not yet parsed (next increment): $name")
-        case other => sys.error (s"Drake.parse: unexpected section '$other' in $name")
+        case "domain"      => domainName = takeQualifiedRef (c)
+        case "super"       => superDomain = takeQualifiedRef (c)
+        case "types"       => elementTypeNames = parseNameList (c)
+
+        case "rule"        => isRule = true
+        case "pattern"     => ()   // its variables / conditions head themselves
+        case "variables"   => variables = parseBlock (c, Set ("var")).map (_.asInstanceOf[Variable])
+        case "conditions"  => conditions = parseBlock (c, Set ("con")).map (_.asInstanceOf[Condition])
+        case "action"      => action = actionBody ()
+
+        case "actor"       => isActor = true
+        case "messageType" => messageType = parseRef (c.takeText ())
+        case "start"       => start = actionBody ()
+        case "message"     => message = actionBody ()
+        case "signal"      => signal = actionBody ()
+
+        case "codec"       => sys.error (s"Drake.parse: 'codec' aspect not yet parsed (next increment): $name")
+        case other         => sys.error (s"Drake.parse: unexpected section '$other' in $name")
       }
     }
 
@@ -772,6 +920,8 @@ object Drake {
         _elements       = elements,
         _factory        = factory,
         _globalElements = globalElements),
-      _domainAspect = DomainAspect (domainName, elementTypeNames))
+      _domainAspect = DomainAspect (domainName, elementTypeNames),
+      _ruleAspect   = if (!isRule) RuleAspect.Null else RuleAspect (Pattern (variables, conditions), action),
+      _actorAspect  = if (!isActor) ActorAspect.Null else ActorAspect (message, messageType, signal, start))
   }
 }

@@ -7,5 +7,5 @@ type DomainAspect
       par typeName TypeName TypeName.Null
       par elementTypeNames [String] []
   globals
-    fix isEmpty (DomainAspect => Boolean) da => da.typeName.name.isEmpty && da.elementTypeNames.isEmpty
+    fix isEmpty (DomainAspect -> Boolean) da => da.typeName.name.isEmpty && da.elementTypeNames.isEmpty
 domain draco Draco
