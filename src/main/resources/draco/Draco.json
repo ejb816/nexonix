@@ -24,7 +24,6 @@
     },
     "start": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Fixed",
@@ -34,34 +33,28 @@
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.set(\"problems\", problems)"
         }
       ]
     },
     "message": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.insert(Seq(msg): _*)"
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.fire()"
         }
       ]
     },
     "signal": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.close()"
         }
       ]

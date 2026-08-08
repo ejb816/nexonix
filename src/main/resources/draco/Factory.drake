@@ -8,5 +8,4 @@ type Factory from BodyElement
       fix valueType String _valueType
       fix parameters [Parameter] _parameters
       fix body [BodyElement] _body
-      fix name String ""
 domain draco Draco

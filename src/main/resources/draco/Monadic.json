@@ -27,18 +27,6 @@
       "body": [
         {
           "kind": "Fixed",
-          "name": "name",
-          "valueType": "String",
-          "value": "\"\""
-        },
-        {
-          "kind": "Fixed",
-          "name": "valueType",
-          "valueType": "String",
-          "value": "\"Unit\""
-        },
-        {
-          "kind": "Fixed",
           "name": "value",
           "valueType": "Json",
           "value": "_value"

@@ -55,18 +55,6 @@
           "name": "conditions",
           "valueType": "Seq[Condition]",
           "value": "_conditions"
-        },
-        {
-          "kind": "Fixed",
-          "name": "name",
-          "valueType": "String",
-          "value": "\"\""
-        },
-        {
-          "kind": "Fixed",
-          "name": "valueType",
-          "valueType": "String",
-          "value": "\"draco.rete.Knowledge => Unit\""
         }
       ]
     }

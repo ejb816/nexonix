@@ -19,11 +19,9 @@
     },
     "action": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "domains.ethereal.EtherealSink.record(report.json.noSpaces)"
         }
       ]

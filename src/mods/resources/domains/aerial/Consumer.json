@@ -22,7 +22,6 @@
   "actorAspect": {
     "start": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Fixed",
@@ -38,39 +37,32 @@
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.set(\"consumed\", consumed)"
         }
       ]
     },
     "message": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.insert(Seq(msg): _*)"
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.fire()"
         }
       ]
     },
     "signal": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "consumed.forEach((e: String) => domains.aerial.AerialSink.record(e))"
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.close()"
         }
       ]

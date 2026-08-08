@@ -3,7 +3,5 @@ type Monadic from BodyElement
     parameters
       par value Json
     body
-      fix name String ""
-      fix valueType String "Unit"
       fix value Json _value
 domain draco Draco

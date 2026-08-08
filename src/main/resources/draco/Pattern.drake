@@ -9,6 +9,4 @@ type Pattern from BodyElement
     body
       fix variables [Variable] _variables
       fix conditions [Condition] _conditions
-      fix name String ""
-      fix valueType String "draco.rete.Knowledge => Unit"
 domain draco Draco

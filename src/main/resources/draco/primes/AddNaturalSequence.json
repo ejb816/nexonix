@@ -24,16 +24,13 @@
     },
     "action": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "accumulator.primeSet.addOne(i)"
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "accumulator.naturalSet.addOne(i)"
         },
         {
@@ -44,7 +41,6 @@
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "accumulator.intervalTextSet.addOne((System.nanoTime(), text))"
         }
       ]

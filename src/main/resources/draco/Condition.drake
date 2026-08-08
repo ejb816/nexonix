@@ -4,6 +4,4 @@ type Condition from BodyElement
       par value Json
     body
       fix value Json _value
-      fix name String ""
-      fix valueType String "Boolean"
 domain draco Draco

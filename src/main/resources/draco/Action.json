@@ -50,25 +50,6 @@
           "name": "body",
           "valueType": "Seq[BodyElement]",
           "value": "_body"
-        },
-        {
-          "kind": "Fixed",
-          "name": "name",
-          "valueType": "String",
-          "value": "\"\""
-        },
-        {
-          "kind": "Fixed",
-          "name": "valueType",
-          "valueType": "String",
-          "value": {
-            "->": [
-              {
-                ".": ["draco", "rete", "RhsContext"]
-              },
-              "Unit"
-            ]
-          }
         }
       ]
     }

@@ -19,11 +19,9 @@
     },
     "action": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "domains.marine.MarineSink.record(report.json.noSpaces)"
         }
       ]

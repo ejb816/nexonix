@@ -1,0 +1,70 @@
+# One change, one commit. GATE — sbt test, 495/495 green first run (2026-08-08 00:12).
+#
+# Visible in the measured tail: DrakeParseTest's loss report moved 79 -> 78 fields,
+# expression form 11 -> 10. Action's `->` tree was one of the eleven, so taking it out
+# of the model shrank the round-trip gap as a side effect rather than by aiming at it.
+
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+git add -A
+git commit -F - <<'EOF'
+TypeElement.name and valueType default to "" — five kinds stop pinning target type names
+
+Dev's framing: it is in the essential nature of a Condition to be Boolean, so that
+belongs in the target-language-neutral logic of the Generator, not pinned per instance
+in the model — and there are other instances of the same thing.
+
+WHY THEY WERE PINNED: because they had to be. `name` and `valueType` were the only two
+ABSTRACT members on TypeElement; `parameters`, `body` and `value` already carried
+defaults. Any kind whose type is fixed by the kind itself had to supply a constant to
+satisfy the trait, and the constant it supplied was a SCALA TYPE NAME sitting in the
+neutral model. Giving the odd two defaults makes them consistent with the other three
+and removes the reason:
+
+  Condition   name = ""   valueType = "Boolean"
+  Monadic     name = ""   valueType = "Unit"
+  Pattern     name = ""   valueType = "draco.rete.Knowledge => Unit"
+  Action      name = ""   valueType = {"->": [draco.rete.RhsContext, "Unit"]}
+  Factory     name = ""
+
+All gone. Factory KEEPS its valueType — that one comes from _valueType and is
+load-bearing (`ActorType` is what tells the projection to mint an actor rather than an
+instance); only its name pin went.
+
+CHECKED BEFORE EMPTYING, since a field that something reads would fail silently rather
+than loudly: every Monadic emission path in Generator uses `mo.value` alone —
+methodBody, typeBody, factoryBody, globalElementsDeclaration — and never valueType.
+Condition's, Pattern's and Action's are read nowhere; conditionFunctions hardcodes
+`: Boolean` in the signature itself. The generic `te.valueType` fallbacks only walk
+dracoAspect.elements, where none of these kinds ever appears.
+
+CORPUS: 97 instances across 26 files lose a valueType the decoder has always ignored
+and the encoder will no longer emit — 59 Monadic "Unit", 30 Action "Unit", 8 Condition
+"Boolean". That also settles an inconsistency the corpus already had: rule JSONs carried
+an ignored `"valueType": "Unit"` on their actions but nothing on their patterns, because
+one was authored and the other was not.
+
+Pattern.drake needed removing by hand rather than by the same sweep as the others: its
+pin was "draco.rete.Knowledge => Unit" with a Scala arrow INSIDE A STRING LITERAL, which
+is why yesterday's arrow conversion correctly left it alone — quoted text is data, not
+drake syntax.
+
+NAMED, NOT DONE — the rest of what the survey found. A group of Generator helpers is
+already language-neutral and already written, but lives inside the Scala engine, so a
+second target would duplicate it or depend on Scala for it: isDomain / isRule / isActor
+/ isObjectOnly / isLeaf and the role-aspect count (classifying a definition),
+conditionParameters, isActorMintingFactory, inheritedElementNames /
+findDiscriminatedParent / collectLeafModules / moduleOrder (derivation-graph walks and
+the topological sort), the codec-derivation gate. Separate from those is the genuine
+slot boundary — neutral idea, Scala spelling — where nullValueFor ("the zero of a type"
+vs ""/Seq.empty/0/false) and elisionCheck ("omit an empty field" vs
+`if (x.nonEmpty) Some(…) else None`) sit. Extraction is a placement question staged
+toward Source (#57), left for Dev to call.
+
+Also left: `Boolean` and `Unit` themselves are still target spellings wherever a target
+supplies them. The neutral form of those is the primitive set, which is #51's, frozen —
+and Dev's direction for it is wrap types, one tier below draco.rete's wrapping of host
+library types, gated on derivationRef emitting parents bare.
+EOF
+
+git push

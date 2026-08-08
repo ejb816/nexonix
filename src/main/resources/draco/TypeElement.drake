@@ -3,8 +3,8 @@ type TypeElement from Primal(Json)
     BodyElement
   ]
   elements
-    fix name String
-    fix valueType String
+    fix name String ""
+    fix valueType String ""
     fix parameters [Parameter] []
     fix body [BodyElement] []
     fix value Json Json.Null

@@ -34,7 +34,6 @@
       "conditions": [
         {
           "kind": "Condition",
-          "valueType": "Boolean",
           "value": {
             "==": [
               { "*": ["i1", "i2"] },
@@ -46,7 +45,6 @@
     },
     "action": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Fixed",
@@ -56,22 +54,18 @@
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "ctx.delete(i3)"
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "accumulator.primeSet.remove(i3)"
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "accumulator.compositeSet.addOne(i3)"
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "accumulator.intervalTextSet.addOne((System.nanoTime(), newText))"
         }
       ]

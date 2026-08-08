@@ -19,11 +19,9 @@
     },
     "action": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "ctx.getRuntime().get[java.util.List[String]](\"consumed\").add(report.json.noSpaces)"
         }
       ]

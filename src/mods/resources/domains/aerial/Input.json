@@ -33,7 +33,6 @@
   "actorAspect": {
     "message": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Fixed",
@@ -56,7 +55,6 @@
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "worldConsumer ! position"
         }
       ]

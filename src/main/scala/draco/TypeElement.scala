@@ -4,8 +4,8 @@ import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
 sealed trait TypeElement extends Primal[Json] {
-  val name: String
-  val valueType: String
+  lazy val name: String = ""
+  lazy val valueType: String = ""
   lazy val parameters: Seq[Parameter] = Seq.empty
   lazy val body: Seq[BodyElement] = Seq.empty
   lazy val value: Json = Json.Null
@@ -281,8 +281,6 @@ object Monadic extends App with DracoType {
   def apply (
     _value: Json
   ) : Monadic = new Monadic {
-    override lazy val name: String = ""
-    override lazy val valueType: String = "Unit"
     override lazy val value: Json = _value
     override lazy val typeDefinition: TypeDefinition = Monadic.typeDefinition
   }
@@ -313,8 +311,6 @@ object Pattern extends App with DracoType {
   ) : Pattern = new Pattern {
     override lazy val variables: Seq[Variable] = _variables
     override lazy val conditions: Seq[Condition] = _conditions
-    override lazy val name: String = ""
-    override lazy val valueType: String = "draco.rete.Knowledge => Unit"
     override lazy val typeDefinition: TypeDefinition = Pattern.typeDefinition
   }
 
@@ -341,8 +337,6 @@ object Action extends App with DracoType {
   ) : Action = new Action {
     override lazy val variables: Seq[Variable] = _variables
     override lazy val body: Seq[BodyElement] = _body
-    override lazy val name: String = ""
-    override lazy val valueType: String = "draco.rete.RhsContext => Unit"
     override lazy val typeDefinition: TypeDefinition = Action.typeDefinition
   }
 
@@ -365,8 +359,6 @@ object Condition extends App with DracoType {
     _value: Json
   ) : Condition = new Condition {
     override lazy val value: Json = _value
-    override lazy val name: String = ""
-    override lazy val valueType: String = "Boolean"
     override lazy val typeDefinition: TypeDefinition = Condition.typeDefinition
   }
 
@@ -422,7 +414,6 @@ object Factory extends App with DracoType {
     override lazy val valueType: String = _valueType
     override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val body: Seq[BodyElement] = _body
-    override lazy val name: String = ""
     override lazy val typeDefinition: TypeDefinition = Factory.typeDefinition
   }
 

@@ -30,18 +30,6 @@
           "name": "value",
           "valueType": "Json",
           "value": "_value"
-        },
-        {
-          "kind": "Fixed",
-          "name": "name",
-          "valueType": "String",
-          "value": "\"\""
-        },
-        {
-          "kind": "Fixed",
-          "name": "valueType",
-          "valueType": "String",
-          "value": "\"Boolean\""
         }
       ]
     }

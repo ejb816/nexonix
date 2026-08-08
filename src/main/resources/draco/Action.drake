@@ -8,6 +8,4 @@ type Action from BodyElement
     body
       fix variables [Variable] _variables
       fix body [BodyElement] _body
-      fix name String ""
-      fix valueType String draco.rete.RhsContext -> Unit
 domain draco Draco

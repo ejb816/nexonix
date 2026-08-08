@@ -18,7 +18,6 @@
       "conditions": [
         {
           "kind": "Condition",
-          "valueType": "Boolean",
           "value": {
             "()": [
               { ".": [ "draco", "DracoAspect", "isEmpty" ] },
@@ -28,7 +27,6 @@
         },
         {
           "kind": "Condition",
-          "valueType": "Boolean",
           "value": {
             "()": [
               { ".": [ "draco", "DomainAspect", "isEmpty" ] },
@@ -38,7 +36,6 @@
         },
         {
           "kind": "Condition",
-          "valueType": "Boolean",
           "value": {
             "()": [
               { ".": [ "draco", "RuleAspect", "isEmpty" ] },
@@ -48,7 +45,6 @@
         },
         {
           "kind": "Condition",
-          "valueType": "Boolean",
           "value": {
             "()": [
               { ".": [ "draco", "ActorAspect", "isEmpty" ] },
@@ -60,11 +56,9 @@
     },
     "action": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "ctx.insert(Problem(td.typeName, s\"member ${td.typeName.name} is declared but unauthored (no JSON on disk)\"))"
         }
       ]

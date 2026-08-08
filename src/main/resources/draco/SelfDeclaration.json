@@ -18,7 +18,6 @@
       "conditions": [
         {
           "kind": "Condition",
-          "valueType": "Boolean",
           "value": {
             "||": [
               {
@@ -40,11 +39,9 @@
     },
     "action": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "ctx.insert(Problem(d.typeDefinition.typeName, s\"domain ${d.typeDefinition.typeName.name} does not self-declare: domainAspect.typeName is ${d.typeDefinition.domainAspect.typeName.name}\"))"
         }
       ]

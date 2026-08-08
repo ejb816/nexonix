@@ -22,7 +22,6 @@
   "actorAspect": {
     "message": {
       "kind": "Action",
-      "valueType": "Unit",
       "body": [
         {
           "kind": "Fixed",
@@ -32,17 +31,14 @@
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.insert(Seq(msg): _*)"
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.fire()"
         },
         {
           "kind": "Monadic",
-          "valueType": "Unit",
           "value": "session.close()"
         }
       ]

@@ -29,12 +29,14 @@
       {
         "kind": "Fixed",
         "name": "name",
-        "valueType": "String"
+        "valueType": "String",
+        "value": "\"\""
       },
       {
         "kind": "Fixed",
         "name": "valueType",
-        "valueType": "String"
+        "valueType": "String",
+        "value": "\"\""
       },
       {
         "kind": "Fixed",
