@@ -31,9 +31,14 @@ import scala.util.Using
  *         which spelling it came from and canonicalizes to the tree. The comparison
  *         runs both sides through `Drake.defaultValue`; the loss goes to zero once the
  *         three remaining legacy spellings in the corpus become trees.
- *       - REFERENCE PACKAGES. `Drake.typeRef` spells a `from`/`modules` reference
- *         bare, so its namePackage cannot come back. (`domain`, `super` and
- *         `extensible` do carry theirs, and are compared unnormalized.)
+ *       - REFERENCE PACKAGES. Nearly closed: a `from`/`modules` reference is now bare
+ *         only when it lives in the referring type's OWN package, and qualified
+ *         otherwise, so its namePackage comes back for all but one case in the corpus
+ *         — a reference with no package at all (`Map`, a host type outside every draco
+ *         domain) is indistinguishable from a bare same-package one and returns owning
+ *         the referring package. The normalization stays only for that residual; drop
+ *         it, and this gate verifies packages outright, once `Map` is settled.
+ *         (`domain`, `super` and `extensible` always carried theirs.)
  *     The third test measures all three, so the tail is a number rather than a note.
  *
  *  Covered: the plain-type template plus the rule and actor aspects. Only the codec

@@ -1,0 +1,76 @@
+# One change. GATE — sbt test, 495/495 green first run (2026-08-08 23:45).
+#
+# THE NUMBER: DrakeParseTest's loss report went 78 -> 14 fields. Reference packages
+# 65 -> 1. What remains is 10 expression-form (string vs tree, #61), 3 legacy Seq()
+# (#55), and the single host reference described below.
+#
+# Closes #54 and #56 — see the closing comments, and note that #54's residual is a
+# DIFFERENT problem from the one its title tracks.
+
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+git add -A
+git commit -F - <<'EOF'
+drake references: bare means own package, qualified means elsewhere (#54, #56)
+
+A `from` / `modules` reference is spelled BARE when it lives in the referring type's own
+package and QUALIFIED (lower-case package words, then the name) everywhere else.
+
+WHY NOT JUST QUALIFY EVERYTHING, which is what #54 proposed and what I was about to
+build. Measured first, over all 112 references:
+
+    67  same package as the referring type      draco.Action -> draco.BodyElement
+    27  draco, the root domain                  draco.base.Cardinal -> draco.Primal
+    17  genuinely elsewhere                     domains.marine.FixReport -> draco.format.json.JSON
+     1  no package at all                       draco.Dictionary -> Map
+
+84% are reconstructable, so blanket qualification would have added package words to the
+majority of references purely to restate the package we are already in — exactly what
+drake.dlt INFERENCE forbids, and the same principle that justified dropping
+Condition.parameters and the pinned valueTypes in the two commits before this. The
+stronger rule (own package, then fall back to draco) would leave 94 bare and qualify
+only 17, but "is there such a type in my package?" is a dictionary question and
+Drake.parse has no dictionary. Bare-means-own-package needs no lookup: the parser
+already knows the owning package from the `domain` line.
+
+Result: 67 references unchanged, 44 gained package words across 19 files.
+
+THE SEQUENCE NEEDS NO SEPARATOR, which was #56's open worry — that package-qualifying a
+`from` reference would make the lower-case package words indistinguishable from the
+sequence's own structure. It does not: case bounds each member and therefore the run.
+Lower-case words are package, the first upper-case token ends the reference, the next
+lower-case word begins the following one. `from Unit draco Primal(T)` is a bare
+reference followed by a qualified one; `from draco Dictionary(K, V) draco DracoType` is
+two qualified ones. Verified against all 22 multi-element derivations and all 39
+parameterized references. It is the same rule that already bounded
+`extensible org apache pekko actor typed ExtensibleBehavior(T)` — #56's other item was
+that this convention was unstated, and drake.dlt now has a REFERENCES section stating it.
+
+`domain` / `super` / `extensible` are untouched and stay unconditionally qualified: each
+names something OUTSIDE the type being declared, so there is no own-package to infer
+against.
+
+Resolution happens when the TypeDefinition is assembled, not at the reference, because
+`from` precedes `domain` on the surface and the owning package is not known until the
+whole source has been read.
+
+THE RESIDUAL, and it is a different problem from the one #54's title tracks. A reference
+with NO package at all — a host type outside every draco domain, `Map` in Dictionary
+being the corpus's only one — is spelled bare and so returns owning the referring
+package. #54 was "the surface loses the package"; this is "the surface cannot express
+the ABSENCE of a package". Recorded in drake.dlt REFERENCES and measured by the loss
+report rather than hidden.
+
+That is also why DrakeParseTest's surfaceCarried still normalizes derivation/modules
+packages away. Drop that normalization and gate 2 verifies packages outright — it would
+pass for every definition except Dictionary. Settling `Map` (giving it a real package
+touches the host-reserved-name question, since Scala's is scala.collection.immutable.Map)
+is a decision about corpus data, left to Dev.
+
+Corpus rewritten by regenerating the two affected line kinds from the definitions.
+BodyElement.drake was left alone: its modules block closes with a glued `Local ]` rather
+than a lone bracket, it is hand-authored ahead of the JSON so no gate compares it, and
+its modules are all same-package so the rule would not have changed a character.
+EOF
+
+git push

@@ -1,4 +1,4 @@
-type Output from Actor(domains.world.World)
+type Output from draco Actor(domains.world.World)
   factory ActorType
     parameters
       par consumer ActorRef(draco.format.json.JSON)

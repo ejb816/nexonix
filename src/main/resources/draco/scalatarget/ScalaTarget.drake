@@ -1,4 +1,4 @@
-type ScalaTarget from Source
+type ScalaTarget from draco Source
   globals
     fix generator (TypeDefinition -> String) Generator.generate
 domain draco scalatarget ScalaTarget

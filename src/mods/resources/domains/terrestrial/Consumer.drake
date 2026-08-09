@@ -1,4 +1,4 @@
-type Consumer from Actor(draco.format.json.JSON)
+type Consumer from draco Actor(draco.format.json.JSON)
 domain domains terrestrial Terrestrial
 actor
   message

@@ -360,10 +360,25 @@ object Drake {
     val typeParameters =
       if (td.typeName.typeParameters.isEmpty) ""
       else s"(${td.typeName.typeParameters.mkString(", ")})"
+
+    /** A `from` / `modules` reference: BARE when it lives in the referring type's own
+      * package, QUALIFIED otherwise. The package of a same-package reference is not
+      * information — it is the package we are already in — and drake.dlt INFERENCE says
+      * explicit iff not reconstructable. Measured over the corpus: 67 of 112 references
+      * are same-package, so spelling every one of them would add words to the majority
+      * of references purely to restate where they already are.
+      *
+      * `domain` / `super` / `extensible` stay unconditionally qualified: each names
+      * something OUTSIDE the type being declared (its domain, that domain's parent, the
+      * host base it extends), so there is no "own package" for them to be inferred from. */
+    def reference (tn: TypeName) : String =
+      if (tn.namePackage == td.typeName.namePackage) typeRef(tn)
+      else (tn.namePackage :+ typeRef(tn)).mkString(" ")
+
     val fromClause = da.derivation.map(typeRef) match {
       case Seq()           => ""
       case Seq("DracoType") => ""  // the universal root alone is inferable
-      case refs            => s" from ${refs.mkString(" ")}"
+      case _               => s" from ${da.derivation.map(reference).mkString(" ")}"
     }
     // The drake surface names the bare concept (AddNaturalSequence); rule-/actor-ness
     // is carried by the ruleAspect/actorAspect, never by the type name.
@@ -371,7 +386,7 @@ object Drake {
 
     val modules =
       if (da.modules.isEmpty) Seq.empty
-      else nameListLines("modules", da.modules.map(typeRef))
+      else nameListLines("modules", da.modules.map(reference))
     val extensible =
       if (da.extensible.name.isEmpty) Seq.empty
       else Seq(s"  extensible ${(da.extensible.namePackage :+ typeRef(da.extensible)).mkString(" ")}")
@@ -749,8 +764,19 @@ object Drake {
     TypeName (ref.name, namePackage, ref.typeParameters)
   }
 
-  /** A bracketed name list — `modules [ … ]` / `types [ … ]`. nameListLines always
-    * brackets these (their members carry no bounding keyword). */
+  /** A bracketed list of REFERENCES — `modules [ … ]`. Each member may carry package
+    * words, so it is read with takeQualifiedRef rather than as one token; a bare member
+    * comes back with no package and is resolved against the referring type. */
+  private def parseRefList (c: Cursor) : Seq[TypeName] = {
+    c.expect ("[")
+    val refs = Seq.newBuilder[TypeName]
+    while (!c.exhausted && !c.at ("]")) refs += takeQualifiedRef (c)
+    c.expect ("]")
+    refs.result ()
+  }
+
+  /** A bracketed name list — `types [ … ]`. Its members are bare names WITHIN the
+    * domain being declared, never references elsewhere, so they stay one token each. */
   private def parseNameList (c: Cursor) : Seq[String] = {
     c.expect ("[")
     val names = Seq.newBuilder[String]
@@ -844,7 +870,11 @@ object Drake {
     val derivation = Seq.newBuilder[TypeName]
     if (c.at ("from")) {
       c.take ()
-      while (!c.exhausted && !c.atReserved) derivation += parseRef (c.takeText ())
+      // Each reference may carry package words. The case rule bounds the SEQUENCE as
+      // well as each member: lower-case words are package, the first upper-case token
+      // ends the reference, and the next lower-case word starts the following one —
+      // so `from draco Dictionary(K, V) draco DracoType` needs no separator.
+      while (!c.exhausted && !c.atReserved) derivation += takeQualifiedRef (c)
     }
 
     var modules          = Seq.empty[TypeName]
@@ -875,7 +905,7 @@ object Drake {
 
     while (!c.exhausted) {
       c.takeText () match {
-        case "modules"     => modules = parseNameList (c).map (parseRef)
+        case "modules"     => modules = parseRefList (c)
         case "extensible"  => extensible = takeQualifiedRef (c)
         case "elements"    => elements = parseBlock (c, declarationKeywords)
         case "globals"     => globalElements = parseBlock (c, declarationKeywords).map (_.asInstanceOf[BodyElement])
@@ -909,14 +939,22 @@ object Drake {
       }
     }
 
-    // drake.dlt: the domain line's package also sets the type's own namePackage.
+    // drake.dlt: the domain line's package also sets the type's own namePackage —
+    // which is also what a BARE `from` / `modules` reference resolves against. The
+    // resolution happens here rather than at the reference, because `from` precedes
+    // `domain` on the surface and the owning package is not known until the whole
+    // source has been read.
+    def resolved (tn: TypeName) : TypeName =
+      if (tn.namePackage.nonEmpty) tn
+      else TypeName (tn.name, domainName.namePackage, tn.typeParameters)
+
     TypeDefinition (
       _typeName = TypeName (name, domainName.namePackage, typeParameters),
       _dracoAspect = DracoAspect (
         _superDomain    = superDomain,
-        _modules        = modules,
+        _modules        = modules.map (resolved),
         _extensible     = extensible,
-        _derivation     = derivation.result (),
+        _derivation     = derivation.result ().map (resolved),
         _elements       = elements,
         _factory        = factory,
         _globalElements = globalElements),

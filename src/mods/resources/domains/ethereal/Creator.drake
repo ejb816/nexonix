@@ -1,4 +1,4 @@
-type Creator from Actor(draco.format.json.JSON)
+type Creator from draco Actor(draco.format.json.JSON)
   factory ActorType
     parameters
       par consumer ActorRef(draco.format.json.JSON)

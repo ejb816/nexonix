@@ -1,4 +1,4 @@
-type JSON from Format(JSON)
+type JSON from draco format Format(JSON)
   elements
     fix json Json
     fix value JSON this

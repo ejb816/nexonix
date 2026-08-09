@@ -1,2 +1,2 @@
-type Cardinal(T) from Unit Primal(T)
+type Cardinal(T) from Unit draco Primal(T)
 domain draco base Base

@@ -133,6 +133,23 @@ APPLICATION SURFACE  (how a "()" tree is written in a value position — multi-l
   thing that could close it. Both readings are legal; the corpus case is domains/aerial/Input. Under
   BRACKETS this is an opener that does not yet bracket. Unresolved — GitHub #60.
 
+REFERENCES  (how `from` and `modules` name another type)
+  <Name> *(<A> ...)                  BARE — resolves in the REFERRING TYPE'S OWN package
+  <pkg-seq> <Name> *(<A> ...)        QUALIFIED — lower-case package words, then the name
+  A same-package reference's package is not information: it is the package we are already in, so it
+  is inferred rather than spelled (see INFERENCE). Measured over the corpus when the rule landed:
+  67 of 112 references are same-package, 27 point at draco, 17 elsewhere.
+  THE SEQUENCE NEEDS NO SEPARATOR. Case bounds each member and therefore the whole run: lower-case
+  words are package, the first upper-case token ends the reference, and the next lower-case word
+  begins the following one — `from draco Dictionary(K, V) draco DracoType` is two references, and
+  `from Unit draco Primal(T)` is a bare one followed by a qualified one. Same rule that already
+  bounds `extensible org apache pekko actor typed ExtensibleBehavior(T)`.
+  `domain` / `super` / `extensible` are ALWAYS qualified — each names something outside the type
+  being declared, so there is no own-package for them to be inferred against.
+  RESIDUAL: a reference with NO package at all (a host type outside every draco domain — `Map` in
+  Dictionary is the corpus's only one) is spelled bare and so comes back owning the referring type's
+  package. One field; measured by DrakeParseTest's loss report rather than hidden.
+
 CONVENTIONS
   factory          takes no name when it constructs the enclosing type <name> *(<T>, ...) — that is the default
                    valueType and is inferable, so it is elided. `factory <value-type>` when it constructs
@@ -235,6 +252,10 @@ INFERENCE  (authored vs derived — which aspect json must be explicit)
     domain aspect        INFERABLE from TypeName — its namePackage / name already fix membership
                          (e.g. draco.base.Meters -> the Base domain), so the json domain aspect is derived
                          rather than independently authored.
+    reference package    INFERABLE when it is the REFERRING TYPE'S OWN package — a `from` / `modules`
+                         reference is spelled bare there and qualified everywhere else (see
+                         REFERENCES). Spelling every reference would restate the current package on
+                         the 60% of them that are local.
     condition params     INFERABLE from the guard and the enclosing pattern: a guard is an EXPRESSION, and the
                          names in it are the pattern's variables — which is what the `variables` block is for.
                          So they are DERIVED AT EMISSION (the mentioned subset, in declaration order, with the
@@ -248,8 +269,9 @@ INFERENCE  (authored vs derived — which aspect json must be explicit)
 
 TEMPLATE
 
-type <name> *(<T>, ...) *from <type>            -> TypeDefinition ; typeName.name , typeName.typeParameters[] ; dracoAspect.derivation[]
-  *~modules [ <module> ... ]               -> dracoAspect.modules[]
+type <name> *(<T>, ...) *from <ref> ...         -> TypeDefinition ; typeName.name , typeName.typeParameters[] ; dracoAspect.derivation[]
+                                           ( a SEQUENCE of references, space-separated; see REFERENCES )
+  *~modules [ <ref> ... ]                  -> dracoAspect.modules[]
   *~extensible <pkg-seq> <ExtType> *(<T>, ...)  -> dracoAspect.extensible
   *~elements                               -> dracoAspect.elements[]
     fix|mut|dyn <name> <value-type> *<value>   -> { kind=Fixed|Mutable|Dynamic , name , valueType , value }

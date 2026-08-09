@@ -1,2 +1,2 @@
-type Nominal from Unit Primal(String)
+type Nominal from Unit draco Primal(String)
 domain draco base Base

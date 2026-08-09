@@ -1,4 +1,4 @@
-type Input from Actor(draco.format.json.JSON)
+type Input from draco Actor(draco.format.json.JSON)
   factory ActorType
     parameters
       par worldConsumer ActorRef(domains.world.World)

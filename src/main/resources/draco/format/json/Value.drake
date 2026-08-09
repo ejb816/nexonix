@@ -1,4 +1,4 @@
-type Value from Value(JSON)
+type Value from draco format Value(JSON)
   factory
     parameters
       par name String
