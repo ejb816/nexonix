@@ -105,7 +105,7 @@
       {
         "kind": "Fixed",
         "name": "commands",
-        "valueType": "Map[String, Seq[String] => Unit]",
+        "valueType": "{String, Seq[String] => Unit}",
         "value": "Map(\"version\" -> (_ => version), \"inspect\" -> (as => inspect(as.head)), \"generate\" -> (as => generate(as.head)), \"drake\" -> (as => drake(as.head)))"
       },
       {

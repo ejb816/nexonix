@@ -7,13 +7,16 @@ actor
   message
     fix cursor io.circe.HCursor msg.json.hcursor
     fix position domains.aerial.Position Position parameters
-      par = latitude cursor
+      par = latitude [ cursor
         .get[Double] parameters par "latitude"
         .getOrElse parameters par 0.0
-      par = longitude cursor
+      ]
+      par = longitude [ cursor
         .get[Double] parameters par "longitude"
         .getOrElse parameters par 0.0
-      par = altitudeFeet cursor
+      ]
+      par = altitudeFeet [ cursor
         .get[Int] parameters par "altitudeFeet"
         .getOrElse parameters par 0
+      ]
     mon worldConsumer ! position

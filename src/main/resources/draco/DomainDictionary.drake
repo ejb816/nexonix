@@ -3,5 +3,5 @@ type DomainDictionary from Dictionary(DomainType, TypeDictionary)
     parameters
       par domains [DomainType] []
     body
-      fix kvMap Map(DomainType, TypeDictionary) _domains.map(domain => (domain, domain.typeDictionary)).toMap
+      fix kvMap {DomainType, TypeDictionary} _domains.map(domain => (domain, domain.typeDictionary)).toMap
 domain draco Draco

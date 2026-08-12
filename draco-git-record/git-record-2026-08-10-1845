@@ -1,0 +1,117 @@
+# Two changes, one commit. GATE — sbt test, 514/514 green (2026-08-10 18:45), and
+# green at each of the three intermediate points as well.
+#
+# Two changes rather than one because the second grew out of the first's residual.
+# They share hunks in Drake.scala and drake.dlt, so splitting them needs per-hunk
+# staging (IntelliJ can; `git add -i` is not available here). The boundary, if you
+# want it split: part 1 is Input.drake + DrakeParseTest.scala + the argument-opener
+# and `=` hunks; part 2 is the four .json/.drake pairs + Generator.scala + the brace
+# hunks.
+#
+# THE NUMBER: the loss report now covers 90 types (80 draco + 10 mods) at 16 fields
+# — 12 expression form (#61), 3 legacy Seq() (#55), 1 reference package. That last
+# one is Map in Dictionary, and it is now the ONLY thing #51 has to close.
+#
+# Closes #44 and #60.
+#
+# PASTE NOTE. The `git commit -F - <<'EOF'` form below broke on paste — zsh ended the
+# heredoc early and ran the remaining message lines as commands. The message text is
+# retained here as the record; the commit itself was made by extracting it to a file
+# and using `git commit -F <file>`. Prefer that form for a message this long: it has
+# no shell-quoting or paste surface at all.
+#
+#   sed -n "/^git commit -F - <<.EOF.$/,/^EOF$/p" <this file> | sed '1d;$d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+
+cd /Users/edwardburke/IdeaProjects/nexonix
+
+git add -A
+git commit -F - <<'EOF'
+drake: the argument as an opener, and Map as a type expression (#44, #60)
+
+PART 1 — THE ARGUMENT IS AN OPENER (#60), which brings the mods actors into the gate.
+
+A `par` whose value is itself an application opens a `parameters` list of its own, and
+the enclosing list's next `par` was the only thing that could close it. Both readings
+are legal and no look-ahead settles it, so the argument BRACKETS ITSELF, exactly as a
+dyn-with-body brackets its body:
+
+    par = <name> [ <fn> parameters
+      par <value>
+      ... ]
+
+That is the second opener under the one BRACKETS rule rather than a new rule, and as
+with the dyn the `[` is also what tells a leaf argument from a block one — `par x`
+opens nothing and so brackets nothing. It lifts the restriction that an argument OF a
+chain call could not itself be a chain: the `]` ends it before the enclosing chain can
+claim the next `.member`.
+
+DrakeParseTest now walks a second corpus, the mods actors, under both gates — 10 types,
+of which aerial/Input (three named arguments, each a two-call chain) is the case that
+was blocked. Named arguments and call chains had until now been gated only in miniature
+because the draco corpus carries neither.
+
+terrestrial/Output is held out of gate 2 only. A TUPLE argument carrying an application
+renders INLINE, and an inline `( … )` group is one token to the lexer, so the
+application inside comes back as host-opaque text. The surface still round-trips
+exactly. Unlike the nested argument list this is not an ambiguity — nothing inside the
+group is visible to the parser at all — so brackets do not address it; a multi-line
+tuple form would, and that is a surface question of its own.
+
+Drake.expression gained the `=` case it had always been missing. It only ever appears
+inside a `()` operand list, so nothing reached it until a corpus with named arguments
+came under the gate. The multi-line surface spells that node `par = <name> <value>` and
+the flat renderer spells it `<name> = <value>`; same tree, two spellings.
+
+PART 2 — MAP IS A TYPE EXPRESSION, NOT A REFERENCE.
+
+`Map[K, V]` in a valueType is now `{K, V}` in BOTH drake and json, and the Scala
+spelling is produced by the target alone. Six valueTypes across Dictionary,
+TypeDictionary, DomainDictionary and CLI.
+
+This inverts the direction the pipeline ran. The JSON carried Scala's own type syntax
+and the drake emitter converted AWAY from it (Seq[T] -> [T]), which put the host's
+spelling in the normative corpus and made every other target pay to undo it. Now
+Generator.scalaTypeExpression is the one place in the pipeline that knows a brace pair
+is a map; nothing upstream of emission names it and nothing downstream sees a brace.
+It is applied by targetTypes at the generate entry, beside TypeLoader.rooted — one
+normalization point rather than the 48 sites that emit a valueType, so the next
+constructor to cross is a change in one function and no site can be missed.
+
+The brace family is one bracket at two arities: {T} a set, {K, V} a map, a map being a
+set of pairs. drake already spelled the set that way, so this completes a notation
+rather than inventing one. parseTypeExpression's brace case is now arity-split, which
+is transitional and says so: the map is already neutral in the JSON and is carried
+through, the set is still Set[T] there and is converted back. When the set follows,
+both arities are carried through and the case leaves both converters. Until now a
+two-member brace came back as `Set[K, V]` — a standing wrong answer nothing had
+exercised.
+
+WHY NOT GIVE Map A PACKAGE, which was the alternative and the one I was asked about.
+It is the corpus's only package-less reference, and because derivationRef only
+qualifies on a name collision, adding one would have changed no generated Scala at all
+— purely normative corpus data. But drake.dlt already resolves this: name the
+capability, not the host language. Writing `scala collection immutable Map` into the
+normative corpus contradicts that and pins the JVM inside the thing #21 wants to
+project to Haskell and Lean. Making Map a type expression dissolves the question
+instead: there is no reference left to package.
+
+WHAT THIS DOES NOT CLOSE. Dictionary's DERIVATION on Map is untouched, because
+`derivation` holds TypeNames and not type expressions. So Dictionary reads
+`from Map(K, V)` on line 1 while its own elements read `{K, V}` — one concept spelled
+two ways in one file. That reference is also the corpus's only package-less one, and
+the reason Dictionary is the ONLY type in either corpus that spells DracoType beside
+another parent: every other multi-parent type reaches the root through its named
+parent, and Map, being foreign, does not root. Three findings, one fix — derivation
+admitting a type expression, GitHub #51.
+
+The Map derivation cannot simply be deleted. `removed` / `updated` / `get` / `iterator`
+are exactly Scala's four abstract Map members and exist BECAUSE of it; without it they
+implement nothing and Dictionary stops being a map. It is constitutive, not incidental.
+EOF
+
+git push
+
+gh issue close 60 --comment "Implemented: an argument whose value is an application is an opener and brackets itself, the second opener under the one BRACKETS rule. aerial/Input is gated as authored, and the mods actors are now inside DrakeParseTest under both gates."
+
+gh issue close 44 --comment "Round-trip closed. DrakeParseTest gates 80 draco + 10 mods types in both directions; the loss report stands at 16 fields with every one owned — 12 expression form (#61), 3 legacy Seq() (#55), 1 reference package (Dictionary's Map derivation, #51)."

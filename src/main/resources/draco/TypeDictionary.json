@@ -45,7 +45,7 @@
         {
           "kind": "Fixed",
           "name": "kvMap",
-          "valueType": "Map[TypeName, TypeDefinition]",
+          "valueType": "{TypeName, TypeDefinition}",
           "value": "elementTypes.map(td => (td.typeName, td)).toMap"
         }
       ]

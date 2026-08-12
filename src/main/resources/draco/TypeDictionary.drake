@@ -6,5 +6,5 @@ type TypeDictionary from Dictionary(TypeName, TypeDefinition)
       par domainDefinition TypeDefinition
     body
       fix elementTypes [TypeDefinition] _domainDefinition.domainAspect.elementTypeNames.map(name => TypeDefinition(TypeName(name, _namePackage = _domainDefinition.typeName.namePackage)))
-      fix kvMap Map(TypeName, TypeDefinition) elementTypes.map(td => (td.typeName, td)).toMap
+      fix kvMap {TypeName, TypeDefinition} elementTypes.map(td => (td.typeName, td)).toMap
 domain draco Draco

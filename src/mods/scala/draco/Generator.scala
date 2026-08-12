@@ -1498,12 +1498,158 @@ object Generator extends App {
     if (allImports.isEmpty) "" else s"\n${allImports.mkString("\n")}\n"
   }
 
+  // --- Target type expressions ---
+  //
+  // The corpus states a type in draco's OWN notation; the Scala spelling is produced
+  // here and nowhere else. This is the half of VALUE-TYPES that belongs to the target:
+  // nothing upstream of `generate` knows that a brace pair means a map, and nothing
+  // downstream of it sees a brace.
+  //
+  // It is the inverse of the direction the pipeline used to run. The JSON carried
+  // Scala's own type syntax and the drake emitter converted AWAY from it
+  // (Drake.typeExpression: Seq[T] -> [T]), which put the host's spelling in the
+  // normative corpus and made every other target pay to undo it. The corpus is
+  // converting the other way one constructor at a time — the brace family first —
+  // so for now a valueType is a MIXTURE: brace forms are neutral and everything
+  // else (Seq[T], A => B, plain names) is still Scala-shaped and passes through.
+
+  /** Split a type expression on top-level commas ([ ], ( ), { } nest). */
+  private def splitTypeArguments (s: String) : Seq[String] = {
+    val args    = Seq.newBuilder[String]
+    val current = new StringBuilder
+    var depth   = 0
+    s.foreach {
+      case c @ ('[' | '(' | '{') => depth += 1; current.append(c)
+      case c @ (']' | ')' | '}') => depth -= 1; current.append(c)
+      case ',' if depth == 0     => args += current.result().trim; current.clear()
+      case c                     => current.append(c)
+    }
+    val last = current.result().trim
+    if (last.nonEmpty) args += last
+    args.result()
+  }
+
+  /** Neutral type expression -> Scala type expression.
+    *
+    * THE BRACE FAMILY, which drake spells the same way (drake.dlt VALUE-TYPES):
+    * `{T}` a set, `{K, V}` a map — a map being a set of pairs is why the two share
+    * a bracket rather than each getting their own — and `mut {T}` the mutable set.
+    * So Scala's `scala.collection.immutable.Map` is named in exactly one place in
+    * the pipeline, which is the point of the exercise.
+    *
+    * Braces are rewritten IN PLACE rather than by splitting the whole expression
+    * apart and reassembling it: a brace can sit anywhere a type can (under an arrow,
+    * inside a tuple, as a type argument), and rebuilding the parts around it would
+    * renormalize their spacing for no reason. Everything outside a brace group is
+    * copied character for character, so a brace-free expression — every valueType in
+    * the corpus at the time this landed — comes back identical. */
+  private def scalaTypeExpression (valueType: String) : String = {
+    if (!valueType.contains('{')) return valueType
+    val out = new StringBuilder
+    var i   = 0
+    while (i < valueType.length) {
+      if (valueType(i) != '{') { out.append(valueType(i)); i += 1 }
+      else {
+        var depth = 0
+        var j     = i
+        var end   = -1
+        while (end < 0 && j < valueType.length) {
+          valueType(j) match {
+            case '[' | '(' | '{' => depth += 1
+            case ']' | ')' | '}' => depth -= 1; if (depth == 0) end = j
+            case _               =>
+          }
+          j += 1
+        }
+        // Unbalanced braces are not a type expression at all — leave the text alone
+        // rather than guess at a repair.
+        if (end < 0) { out.append(valueType(i)); i += 1 }
+        else {
+          val members = splitTypeArguments(valueType.substring(i + 1, end)).map(scalaTypeExpression)
+          val isMut   = i >= 4 && valueType.startsWith("mut ", i - 4)
+          if (isMut) out.delete(out.length - 4, out.length)
+          val head    = if (isMut) "mutable.Set" else if (members.size == 1) "Set" else "Map"
+          out.append(s"$head[${members.mkString(", ")}]")
+          i = end + 1
+        }
+      }
+    }
+    out.result()
+  }
+
+  private def targetParameter (p: Parameter) : Parameter =
+    Parameter(p.name, scalaTypeExpression(p.valueType), p.value)
+
+  private def targetVariable (v: Variable) : Variable =
+    Variable(v.name, scalaTypeExpression(v.valueType))
+
+  /** Rewrite every valueType a body element carries, at any depth. Each kind is
+    * rebuilt with ALL of its fields — Pattern and Action carry `variables` outside
+    * the shared `body`/`parameters`, so a rewrite that only walked the shared ones
+    * would drop them silently. Monadic and Condition have no valueType and no
+    * nesting, so they pass through as themselves. */
+  private def targetBody (b: BodyElement) : BodyElement = b match {
+    case x: Fixed     => Fixed(x.name, scalaTypeExpression(x.valueType), x.value)
+    case x: Mutable   => Mutable(x.name, scalaTypeExpression(x.valueType), x.value)
+    case x: Local     => Local(x.name, scalaTypeExpression(x.valueType), x.value)
+    case x: Parameter => targetParameter(x)
+    case x: Variable  => targetVariable(x)
+    case x: Dynamic   => Dynamic(x.name, scalaTypeExpression(x.valueType),
+                                 x.parameters.map(targetParameter), x.body.map(targetBody), x.value)
+    case x: Factory   => Factory(scalaTypeExpression(x.valueType),
+                                 x.parameters.map(targetParameter), x.body.map(targetBody))
+    case x: Pattern   => Pattern(x.variables.map(targetVariable), x.conditions)
+    case x: Action    => Action(x.variables.map(targetVariable), x.body.map(targetBody))
+    case x: Monadic   => x
+    case x: Condition => x
+  }
+
+  private def targetElement (e: TypeElement) : TypeElement = e match {
+    case b: BodyElement => targetBody(b)
+  }
+
+  /** Project a definition's type expressions into the target language. An EMPTY
+    * rule or actor aspect is passed through untouched rather than rebuilt, so a
+    * definition that carries neither is returned structurally as it came. */
+  private def targetTypes (td: TypeDefinition) : TypeDefinition = {
+    val da = td.dracoAspect
+    TypeDefinition(
+      _typeName    = td.typeName,
+      _dracoAspect = DracoAspect(
+        _superDomain    = da.superDomain,
+        _modules        = da.modules,
+        _extensible     = da.extensible,
+        _derivation     = da.derivation,
+        _elements       = da.elements.map(targetElement),
+        _factory        = targetBody(da.factory).asInstanceOf[Factory],
+        _globalElements = da.globalElements.map(targetBody),
+        _source         = da.source,
+        _target         = da.target
+      ),
+      _domainAspect = td.domainAspect,
+      _ruleAspect   =
+        if (RuleAspect.isEmpty(td.ruleAspect)) td.ruleAspect
+        else RuleAspect(targetBody(td.ruleAspect.pattern).asInstanceOf[Pattern],
+                        targetBody(td.ruleAspect.action).asInstanceOf[Action]),
+      _actorAspect  =
+        if (ActorAspect.isEmpty(td.actorAspect)) td.actorAspect
+        else ActorAspect(targetBody(td.actorAspect.message).asInstanceOf[Action],
+                         td.actorAspect.messageType,
+                         targetBody(td.actorAspect.signal).asInstanceOf[Action],
+                         targetBody(td.actorAspect.start).asInstanceOf[Action]),
+      _codecAspect  = td.codecAspect
+    )
+  }
+
   def generate (_td: TypeDefinition) : String = {
     // Uniform root meaning: an absent derivation on a loaded definition MEANS
     // derives-the-root (TypeLoader.rooted; the root itself and true stubs are
     // exempt at the load boundary). Rooting at the generate entry makes emission
     // uniform regardless of which loader produced the TypeDefinition.
-    val td = TypeLoader.rooted(_td)
+    // `targetTypes` is the other entry-boundary normalization: rooting is neutral,
+    // this one is the target's, and both belong here so every downstream helper
+    // reads an already-normalized definition.
+    val td = targetTypes(TypeLoader.rooted(_td))
     val source = if (roleAspectCount(td) >= 2) {
       // Multi-aspect type: additive composition — no single winner, every
       // present aspect contributes its block (imports and parents unioned).
@@ -1583,7 +1729,11 @@ object Generator extends App {
   }
 
   def generate (_typeDefinitions: Seq[TypeDefinition]) : String = {
-    val typeDefinitions = _typeDefinitions.map(TypeLoader.rooted)
+    // Same two entry-boundary normalizations as the single-type overload. Applying
+    // `targetTypes` here as well as there double-applies it on the size-1 path below,
+    // which is harmless: a translated expression carries no brace, so the second pass
+    // is the identity.
+    val typeDefinitions = _typeDefinitions.map(TypeLoader.rooted).map(targetTypes)
     if (typeDefinitions.isEmpty) return ""
     if (typeDefinitions.size == 1) return generate(typeDefinitions.head)
     val ordered = moduleOrder(typeDefinitions)

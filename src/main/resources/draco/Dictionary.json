@@ -29,12 +29,12 @@
       {
         "kind": "Fixed",
         "name": "kvMap",
-        "valueType": "Map[K, V]"
+        "valueType": "{K, V}"
       },
       {
         "kind": "Dynamic",
         "name": "removed",
-        "valueType": "Map[K, V]",
+        "valueType": "{K, V}",
         "parameters": [
           {
             "kind": "Parameter",
@@ -47,7 +47,7 @@
       {
         "kind": "Dynamic",
         "name": "updated[V1 >: V]",
-        "valueType": "Map[K, V1]",
+        "valueType": "{K, V1}",
         "parameters": [
           {
             "kind": "Parameter",

@@ -1,12 +1,12 @@
 type Dictionary(K, V) from Map(K, V) DracoType
   elements
-    fix kvMap Map(K, V)
-    dyn removed Map(K, V) [
+    fix kvMap {K, V}
+    dyn removed {K, V} [
       parameters
         par key K
       = kvMap.removed(key)
     ]
-    dyn updated(V1 >: V) Map(K, V1) [
+    dyn updated(V1 >: V) {K, V1} [
       parameters
         par key K
         par value V1

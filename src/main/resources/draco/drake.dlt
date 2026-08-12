@@ -36,17 +36,26 @@ FILL-INS
 VALUE-TYPES  (drake type-expression -> JSON valueType string)
   [<T>]            Seq[<T>]
   {<T>}            Set[<T>]
+  {<K>, <V>}       {<K>, <V>}          MAP — neutral in the JSON too, carried through unchanged
   mut {<T>}        mutable.Set[<T>]
   <F>(<A> ...)     <F>[<A> ...]        type application
   (<A>, <B>)       (<A>, <B>)          tuple, unchanged
   <A> -> <B>       <A> => <B>          function arrow — the SAME token drake uses for a "->" VALUE node
                                        (see EXPRESSIONS). One arrow in the language, not one per position.
   <Name>           <Name>              plain type, unchanged
-  NOTE these are SURFACE SUBSTITUTIONS, not neutral terms: the JSON still holds a Scala type string
+  THE BRACE FAMILY is ONE bracket at two arities: {<T>} a set, {<K>, <V>} a map — a map being a set of
+  pairs is why the two share a bracket rather than each taking its own.
+  MOST ROWS ARE SURFACE SUBSTITUTIONS, not neutral terms: the JSON still holds a Scala type string
   (Seq, mutable.Set, =>), and drake merely spells it its own way. Giving the TERM to draco — so that a
   drake type name resolves through draco's own dictionary even when it happens to coincide with the host's
   spelling — is the wrap-type direction, one tier below draco.rete's wrapping of host library types.
   Coincidence of spelling is not identity of term.
+  THE MAP ROW IS THE FIRST ONE ACROSS. Its JSON *is* the drake form, and `Map[K, V]` is produced by the
+  Scala target alone — nothing upstream of emission names it, and nothing downstream of that one function
+  ever sees a brace. It inverts the direction the other rows still run: those put the HOST's spelling in
+  the normative corpus and make every other target pay to undo it. The rest follow one constructor at a
+  time, and when the set crosses, BOTH brace arities are carried through and the case disappears from the
+  two converters entirely — which is the state the whole table is headed for.
 
 EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   A <value> emits to JSON in one of two forms; the value's own JSON structure IS the
@@ -127,11 +136,20 @@ APPLICATION SURFACE  (how a "()" tree is written in a value position — multi-l
   A `.member` arriving after an argument is claimed by the PENDING CHAIN, not by the argument it just
   passed — above, .getOrElse continues cursor's chain rather than starting one on "latitude". Both are
   legal on the surface and they differ only by indentation, which drake does not read; the chain wins
-  because it is the nearer open construct. The cost: an argument OF A CHAIN CALL cannot itself be a chain.
-  OPEN — NESTED ARGUMENT LISTS. An argument list is bounded by its `par`s, but an argument that is
-  ITSELF an application opens a `par` list of its own, and the enclosing list's next `par` is the only
-  thing that could close it. Both readings are legal; the corpus case is domains/aerial/Input. Under
-  BRACKETS this is an opener that does not yet bracket. Unresolved — GitHub #60.
+  because it is the nearer open construct. An argument of a chain call reaches its own chain by
+  BRACKETING (below), which is what tells the two apart without appeal to layout.
+  NESTED ARGUMENT LISTS — THE ARGUMENT IS AN OPENER. A `par` whose value is itself an application opens
+  a `par` list of its own, and the enclosing list's next `par` is the only thing that could close it:
+  both readings are legal and no look-ahead settles it. So the argument BRACKETS ITSELF, exactly as a
+  dyn-with-body brackets its body (see BRACKETS) —
+      par = <name> [ <fn> parameters              -> { "=": [ <name> , { "()": [ <fn> , <arg> … ] } ] }
+        par <value>
+        ... ]
+  and, as with the dyn, the `[` is what tells a LEAF argument from a block one: `par x` needs no
+  bracket, because a leaf cannot open anything. The bracket sits on the `par` (the member), not on
+  the nested `parameters` (the container) — the same reason as everywhere else in BRACKETS. It also
+  lifts the chain restriction above: inside its own brackets an argument may be a chain, since the `]`
+  ends it before the enclosing chain can claim the next `.member`. Corpus case: domains/aerial/Input.
 
 REFERENCES  (how `from` and `modules` name another type)
   <Name> *(<A> ...)                  BARE — resolves in the REFERRING TYPE'S OWN package
@@ -198,9 +216,14 @@ BRACKETS  (a construct delimits ITSELF; whitespace is insignificant throughout)
   Three rules, each LOCAL — nothing needs look-ahead, and nothing consults layout:
     NAME list      modules / types: members carry no keyword, so nothing else can bound them  -> [ ] ALWAYS
     KEYWORD block  every other list-block: bounded by the member keywords it ADMITS            -> NO brackets
-    OPENER         a member that opens its own sub-block (a dyn-with-body) brackets ITS BODY   -> [ ] ALWAYS
+    OPENER         a member that opens its own sub-block brackets ITSELF                       -> [ ] ALWAYS
+  TWO OPENERS, one rule: a dyn-with-body (which opens parameters / statements / a result) and an ARGUMENT
+  whose value is an application (which opens a nested `parameters` list — see APPLICATION SURFACE). In
+  both the `[` also tells the leaf form from the block one: a leaf dyn and a leaf `par` open nothing and
+  so bracket nothing.
   ADMITS is what ends a keyword block: `parameters` takes only `par`, so a `loc` after it is the enclosing
-  dyn's first statement, not a parameter; `elements` / `body` / `globals` take fix|mut|dyn|loc.
+  dyn's first statement, not a parameter; `elements` / `body` / `globals` take fix|mut|dyn|loc. ADMITS is
+  what a nested argument list defeats — inner and outer admit the same `par` — hence the brackets.
   THE OPENER BRACKETS, NOT THE CONTAINER.  Bracketing the container marks where the CONTAINER ends, but the
   overlap that needs resolving is between an opener's last sub-block and the container's NEXT member — so a
   fully container-bracketed corpus can still be ambiguous. drake's one such case was
@@ -387,3 +410,19 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           ambiguity in the corpus (CLI's Unit `dyn drake` before `fix commands`) and forced
                                           the parser onto an indentation tie-break; moving the brackets to the opener
                                           removed it, and drake is now whitespace-insignificant in fact, not just in aim.
+  Map as a TYPE EXPRESSION          <->   IMPLEMENTED (2026-08-10). `Map[K, V]` in a valueType became `{K, V}` in BOTH
+                                          drake and json, and the Scala spelling moved to the target alone
+                                          (Generator.scalaTypeExpression, applied by targetTypes at the generate
+                                          entry beside TypeLoader.rooted). Six valueTypes, across Dictionary /
+                                          TypeDictionary / DomainDictionary / CLI.
+                                          NOT the derivation. `derivation` holds TypeNames, not type expressions, so
+                                          Dictionary still reads `from Map(K, V)` while its own elements read
+                                          `{K, V}` — the same concept spelled two ways in one file, because a
+                                          REFERENCE and an EXPRESSION are still different kinds of thing here. That
+                                          reference is also the corpus's only package-less one (REFERENCES RESIDUAL,
+                                          the one field DrakeParseTest still measures). Both reconcile when
+                                          derivation admits type expressions — GitHub #51.
+  the ARGUMENT as an opener         <->   IMPLEMENTED (2026-08-10, GitHub #60). The second opener under the one rule: a
+                                          `par` whose value is an application brackets itself, which closes the last
+                                          ambiguity on the surface (inner and outer argument list admit the same `par`)
+                                          and lets DrakeParseTest gate the mods actors, not just the draco corpus.

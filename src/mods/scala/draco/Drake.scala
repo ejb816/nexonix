@@ -30,6 +30,14 @@ object Drake {
     * verbatim; {op: [operands]} applies the operator. Haskell-form spellings:
     * "->" renders " -> ", "\" renders \p1 p2 -> body, "if" renders
     * if c then t else e. A tree in a String-typed slot needs no quoting here —
+    *
+    * TOTAL over the tree language, which includes the two ARGUMENT-POSITION nodes:
+    * a tuple "(,)" and a named argument "=". drake's multi-line surface spells the
+    * latter `par = <name> <value>` (see namedPrefix) and this flat one spells it
+    * `<name> = <value>`; same tree, two spellings, exactly as the projections differ
+    * from each other. `=` only ever appears inside a "()" operand list, so nothing
+    * reached it until the mods corpus — the first to carry named arguments — came
+    * under DrakeParseTest.
     * the drake surface carries the expression itself (Action.drake's unquoted
     * arrow), quoting is the ScalaTarget projection's concern. */
   def expression (value: Json) : String = {
@@ -45,6 +53,7 @@ object Drake {
             case "\\"       => s"\\${args.init.mkString(" ")} -> ${args.last}"
             case "if"       => s"if ${args(0)} then ${args(1)} else ${args(2)}"
             case "(,)"      => args.mkString("(", ", ", ")")
+            case "="        => args.mkString(" = ")
             case "*" | "==" | "!=" | "||" => args.mkString(s" $op ")
             case _          => sys.error(s"Drake.expression: unknown operator '$op' in ${value.noSpaces}")
           }
@@ -154,9 +163,28 @@ object Drake {
     case None            => s"par ${expression(arg)}"
   }
 
-  private def parLines (indent: String, arg: Json) : Seq[String] = Expression.namedArgument(arg) match {
-    case Some((name, v)) => valueLines(s"$indent${namedPrefix(name)}", indent, v)
-    case None            => valueLines(s"${indent}par", indent, arg)
+  /** One argument on its own line — and, when its value is itself an application,
+    * BRACKETED (drake.dlt BRACKETS, GitHub #60).
+    *
+    * A nested argument list is the one place where a keyword block cannot bound
+    * itself: `parameters` admits `par`, so the inner list and the enclosing one admit
+    * the same word and the `par` that ends the inner is the `par` that opens the
+    * outer's next argument. Both readings are legal, and nothing but indentation —
+    * which drake does not read — tells them apart. So the argument is an OPENER and
+    * brackets itself, exactly as a dyn-with-body brackets its body; as there, the `[`
+    * is also what tells a leaf argument from a block one, which is why a leaf `par`
+    * carries none. It falls out that an argument of a CHAIN call may now be a chain
+    * itself: the `]` ends it before the enclosing chain can claim the next `.member`. */
+  private def parLines (indent: String, arg: Json) : Seq[String] = {
+    val (prefix, value) = Expression.namedArgument(arg) match {
+      case Some((name, v)) => (s"$indent${namedPrefix(name)}", v)
+      case None            => (s"${indent}par", arg)
+    }
+    if (!Expression.isApplication(value)) valueLines(prefix, indent, value)
+    else valueLines(s"$prefix [", indent, value) match {
+      case Seq(single) => Seq(s"$single ]")
+      case lines       => lines :+ s"$indent]"
+    }
   }
 
   /** Split a type-expression argument list on top-level commas only
@@ -216,6 +244,11 @@ object Drake {
     if (s.isEmpty) s
     else if (splitTopArrow(s, scalaArrow).size > 1)
       splitTopArrow(s, scalaArrow).map(typeExpression).mkString(drakeArrow)
+    else if (s.startsWith("{") && s.endsWith("}"))
+      // ALREADY NEUTRAL: the corpus states this one in drake's own notation, so there
+      // is nothing to convert but the members. See parseTypeExpression for why the
+      // brace forms are currently split by arity.
+      splitTypeArguments(s.substring(1, s.length - 1)).map(typeExpression).mkString("{", ", ", "}")
     else if (s.startsWith("(") && s.endsWith(")"))
       splitTypeArguments(s.substring(1, s.length - 1)).map(typeExpression).mkString("(", ", ", ")")
     else {
@@ -638,16 +671,25 @@ object Drake {
     * ends where the `par`s do — an argument value stops at the next reserved word, so
     * nothing here consults layout either.
     *
+    * A BRACKETED argument — parLines's inverse — is one whose value opens a
+    * `parameters` list of its own. Inner and outer list admit the same `par`, so the
+    * inner one cannot bound itself; the brackets close it, and inside them the value
+    * is read whole (chains included). The `[` is purely local: `par [` is a block
+    * argument, `par x` a leaf one, and no look-ahead separates them.
+    *
     * `chained` says this list belongs to a CHAIN CALL, and it decides who claims a
-    * `.member` arriving after the last argument. Both readings are legal on the
+    * `.member` arriving after an UNBRACKETED argument. Both readings are legal on the
     * surface — `.g` may continue the chain, or start a chain on the argument — and
     * they differ only by indentation, which drake does not read. The chain wins: a
     * pending chain is nearer than the argument it just passed, which is what
     * `cursor .get[Double] parameters par "latitude" .getOrElse parameters par 0.0`
-    * means. The cost is that an argument OF A CHAIN CALL cannot itself be a chain. */
+    * means. An argument that wants its own chain says so with its brackets. */
   private def arguments (c: Cursor, chained: Boolean) : Seq[Json] = {
     val collected = Seq.newBuilder[Json]
-    def argument () : Json = if (chained) applied (c, span (c), "") else parseValue (c)
+    def argument () : Json =
+      if (c.at ("[")) { c.take (); val value = parseValue (c); c.expect ("]"); value }
+      else if (chained) applied (c, span (c), "")
+      else parseValue (c)
     while (c.at ("par")) {
       c.take ()
       collected +=
@@ -718,7 +760,19 @@ object Drake {
     else if (splitTopArrow (s, drakeArrow).size > 1) splitTopArrow (s, drakeArrow).map (parseTypeExpression).mkString (scalaArrow)
     else if (s.startsWith ("mut {") && s.endsWith ("}")) s"mutable.Set[${parseTypeExpression (s.substring (5, s.length - 1))}]"
     else if (s.startsWith ("[") && s.endsWith ("]"))     s"Seq[${parseTypeExpression (s.substring (1, s.length - 1))}]"
-    else if (s.startsWith ("{") && s.endsWith ("}"))     s"Set[${parseTypeExpression (s.substring (1, s.length - 1))}]"
+    // THE BRACE FAMILY, SPLIT BY ARITY — and the split is transitional, not a rule of
+    // the notation. drake spells a set {T} and a map {K, V}; what differs is how far
+    // each has moved out of the host's syntax. A map is already NEUTRAL in the JSON,
+    // so it is carried through as it stands; a set is still `Set[T]` there, so it is
+    // converted back. When the set follows the map, both arities become verbatim and
+    // this case — with its opposite number in typeExpression — disappears from both
+    // converters, which is what "the corpus states the type in drake's own notation"
+    // will finally mean. Until then, a two-member brace that came back as Set[K, V]
+    // was the standing wrong answer this replaces.
+    else if (s.startsWith ("{") && s.endsWith ("}")) {
+      val members = splitTypeArguments (s.substring (1, s.length - 1)).map (parseTypeExpression)
+      if (members.size == 1) s"Set[${members.head}]" else members.mkString ("{", ", ", "}")
+    }
     else if (s.startsWith ("(") && s.endsWith (")")) {
       val members = splitTypeArguments (s.substring (1, s.length - 1))
       if (members.size == 1) parseTypeExpression (members.head)
