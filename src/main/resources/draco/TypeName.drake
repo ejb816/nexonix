@@ -16,4 +16,10 @@ type TypeName
       fix typeParameters [String] _typeParameters
       fix namePath String if (namePackage.isEmpty) name else s"${namePackage.mkString(".")}.${name}"
       fix resourcePath String if (namePackage.isEmpty) s"/$name.json" else s"/${namePackage.mkString("/")}/$name.json"
+      dyn equals Boolean [
+        parameters
+          par other Any
+        = other match { case tn: TypeName => name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters; case _ => false }
+      ]
+      dyn hashCode Int (name, namePackage, typeParameters).hashCode
 domain draco Draco

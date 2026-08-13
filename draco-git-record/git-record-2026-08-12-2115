@@ -1,0 +1,45 @@
+# Change 2 of 2. GATE — sbt test, green (run after change 1 was staged; both together).
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" <this file> | sed '1d' > /tmp/msg-b
+#   git add draco-git-record/git-record-2026-08-12-2115 \
+#           src/main/resources/draco/TypeLoader.json src/main/resources/draco/TypeLoader.drake \
+#           src/main/scala/draco/TypeLoader.scala src/mods/scala/draco/Generator.scala
+#   git commit -F /tmp/msg-b
+#   git push
+
+--- MESSAGE ---
+One resolution, and it is draco's rather than the JVM's
+
+A type name resolved to a definition by `getResourceAsStream`, which hands back
+whichever copy the classloader reached first. That is the JVM's answer to a question
+draco has to answer for itself: a definition path must mean the same thing projected
+into Scala, Haskell or TypeScript, and those three shadow by different rules. Keeping
+first-wins would guarantee the divergence.
+
+So resolution enumerates instead of searching. `definitionSources` returns EVERY root
+carrying the path (getResources, plural) and `loadFromResource` requires exactly one:
+none is still a stub — DomainBuilder.isStub depends on that and a named-but-unauthored
+member must keep loading empty — one reads, and two or more is an error naming the
+sources. Order carries no meaning, because order is precisely what cannot be preserved
+across hosts. Another target enumerates its own roots and applies the same rule, so the
+targets agree by construction rather than by coincidence.
+
+GENERATOR'S DUPLICATE LOADER IS GONE, and this is what made the change worth anything:
+half the system was still resolving first-wins through Generator's own copy — its own
+resource read, its own path construction, its own tryLoad. The two had already drifted.
+Generator built `/$np/$name.json` unconditionally, so a type with no package resolved
+to `//Name.json` where TypeName.resourcePath gives `/Name.json`. Nothing caught it
+because nothing in the corpus has an empty package — a divergence waiting for the first
+type that did. Two loaders cannot both be the definition path.
+
+Prerequisite was #37, and not in principle: unique-or-error compares TypeNames that
+came from separate parses at separate roots, so nothing makes them the same object.
+Under reference equality the collision check would have reported "no collision", always.
+
+The suite passed unchanged, which also says no TypeName currently resolves to two
+resources on the classpath. That was the failure worth having, and it did not fire.
+
+NEXT, and not yet done: the roots are still implicit — whatever the host classloader
+happens to expose. Making them an explicit set is what turns this into a DefinitionPath
+proper, and it is the step where "read definitions embedded in runtime libraries" stops
+being a JVM property and becomes a draco one.

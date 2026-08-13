@@ -85,6 +85,25 @@
           "name": "resourcePath",
           "valueType": "String",
           "value": "if (namePackage.isEmpty) s\"/$name.json\" else s\"/${namePackage.mkString(\"/\")}/$name.json\""
+        },
+        {
+          "kind": "Dynamic",
+          "name": "equals",
+          "valueType": "Boolean",
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "other",
+              "valueType": "Any"
+            }
+          ],
+          "value": "other match { case tn: TypeName => name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters; case _ => false }"
+        },
+        {
+          "kind": "Dynamic",
+          "name": "hashCode",
+          "valueType": "Int",
+          "value": "(name, namePackage, typeParameters).hashCode"
         }
       ]
     }

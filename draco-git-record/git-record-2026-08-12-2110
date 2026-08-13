@@ -1,0 +1,58 @@
+# Change 1 of 2. GATE — sbt test, 520/520 green.
+#
+# Paste with -F from a file, never a heredoc (see the 2026-08-10 record: a message
+# this long breaks on paste and the tail runs as shell commands).
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" <this file> | sed '1d' > /tmp/msg-a
+#   git add draco-git-record/git-record-2026-08-12-2110 \
+#           src/main/resources/draco/TypeName.json src/main/resources/draco/TypeName.drake \
+#           src/main/scala/draco/TypeName.scala src/test/scala/draco/TypeNameTest.scala
+#   git commit -F /tmp/msg-a
+#
+# Closes #37.
+
+--- MESSAGE ---
+TypeName identity is structural (#37)
+
+Two TypeNames with identical name / namePackage / typeParameters compared unequal,
+because TypeName is a trait whose instances come from an anonymous class with no
+equals. Every downstream comparison that noticed was written `.namePath == .namePath`
+instead; where nobody noticed, the comparison answered "different" and the caller took
+the wrong branch. That is how `domainAspect.typeName == typeName` — the check that
+decides whether a definition IS a domain — came to answer false for every domain.
+
+Authored the canonical way: two Dynamic entries in TypeName.json's factory.body, so
+the generated Scala carries them and DracoGenTest keeps comparing. The logic sits in
+`value` rather than in a Monadic `body`, which keeps each on ONE line — the corpus has
+no multi-line values anywhere and drake's surface is line-based, so a multi-line body
+would have broken the round-trip.
+
+TYPE PARAMETERS ARE PART OF THE IDENTITY, and that is a decision, not an accident. A
+type parameter position holds either a variable or a concrete type; a type is abstract
+iff any position contains a variable at any depth, and only a fully concrete name can
+be the derivation for an atomic term. So `Dictionary(K, V)` and
+`Dictionary(TypeName, TypeDefinition)` are not two spellings of one thing — one is
+abstract, one concrete — and they must compare unequal.
+
+Surveyed before deciding. Across 40 parameterized references in both corpora: 9
+abstract, 31 concrete, and a reference carries a free variable IFF its owner declares
+formals — no exceptions, and no reference anywhere under-applies a parameterized type.
+Constraints appear in 6 declarations and 0 references, so the corpus already treats
+`<:` as belonging to the declaration site, which is right: a constraint restricts what
+may be substituted for a variable and never makes the position concrete.
+
+WHAT THIS DOES NOT YET DO. Equality compares parameters as raw STRINGS, so
+`Holon((S, T))` and `Holon((S,T))` differ on whitespace, and a declaration's
+`T <: Product` never equals a reference's `T` even though both name the same variable.
+Deciding abstract-vs-concrete needed a regex over those strings to survey at all —
+`typeParameters: Seq[String]` cannot answer a free-variable question. That promotes
+#51's `[String] -> [TypeParameter]` from tidiness to a semantic requirement, and it is
+where the constraint-is-not-identity question gets settled.
+
+The five `.namePath == .namePath` workarounds are left in place. They are correct, one
+of them is in generated code (GeneratorCLI) so reverting means editing its JSON, and
+nothing depends on the change. #37's "done when" lists them; the substance — structural
+equality, tested, with the domain self-check asserted — is delivered.
+
+Also worth recording: the whole suite passed unchanged. Nothing anywhere relied on
+TypeName comparing by reference.
