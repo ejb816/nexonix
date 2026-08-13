@@ -1,6 +1,6 @@
 package draco
 
-import io.circe.{Json, parser}
+import io.circe.Json
 import io.circe.syntax.EncoderOps
 import scala.tools.nsc.{Global, Settings}
 import scala.tools.nsc.reporters.StoreReporter
@@ -30,28 +30,19 @@ object Generator extends App {
 
   // --- Type loading ---
 
-  /** Parse a JSON resource as a TypeDefinition. JSON is the normative source form
-    * for type definitions at load time. */
-  private def loadFromResource (resourcePath: String) : Option[TypeDefinition] = {
-    val stream = getClass.getResourceAsStream(resourcePath)
-    if (stream == null) return None
-    val source = scala.io.Source.fromInputStream(stream)
-    try {
-      val text = source.mkString
-      parser.parse(text).flatMap(_.as[TypeDefinition]).toOption
-    } finally source.close()
-  }
-
-  private def resourcePath (typeName: TypeName) : String = {
-    val np = typeName.namePackage.mkString("/")
-    s"/$np/${typeName.name}.json"
-  }
-
-  private def tryLoad (typeName: TypeName) : Option[TypeDefinition] =
-    loadFromResource(resourcePath(typeName))
-
-  def loadType (typeName: TypeName) : TypeDefinition =
-    tryLoad(typeName).map(TypeLoader.rooted).getOrElse(TypeDefinition(typeName))
+  /** Delegated. `TypeLoader` is the ONE place a type name resolves to a definition.
+    *
+    * Generator carried a full copy of this — its own resource read, its own path
+    * construction, its own tryLoad — and the two had already drifted: this one built
+    * `/$np/$name.json` unconditionally, so a type with no package resolved to
+    * `//Name.json` where `TypeName.resourcePath` gives `/Name.json`. Nothing caught
+    * it because nothing in the corpus has an empty package.
+    *
+    * Two loaders cannot both be the definition path. "Which definition does this name
+    * mean?" is a semantic question and must have one answer, or the answer depends on
+    * which caller happened to ask — which is the same reason resolution no longer
+    * takes whichever copy the classloader finds first. */
+  def loadType (typeName: TypeName) : TypeDefinition = TypeLoader.loadType(typeName)
 
   /** True iff `td` itself, or any transitive ancestor via `draco.derivation`, has a
     * typeName matching `targetName`. Used to decide whether emitted factory bodies

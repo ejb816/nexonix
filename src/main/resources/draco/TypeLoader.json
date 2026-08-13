@@ -9,6 +9,32 @@
     "globalElements": [
       {
         "kind": "Dynamic",
+        "name": "definitionSources",
+        "valueType": "Seq[URL]",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "resourcePath",
+            "valueType": "String"
+          }
+        ],
+        "value": "scala.jdk.CollectionConverters.EnumerationHasAsScala(getClass.getClassLoader.getResources(resourcePath.stripPrefix(\"/\"))).asScala.toSeq"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "readDefinition",
+        "valueType": "Option[TypeDefinition]",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "url",
+            "valueType": "URL"
+          }
+        ],
+        "value": "Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }"
+      },
+      {
+        "kind": "Dynamic",
         "name": "loadFromResource",
         "valueType": "Option[TypeDefinition]",
         "parameters": [
@@ -18,7 +44,7 @@
             "valueType": "String"
           }
         ],
-        "value": "Option(getClass.getResourceAsStream(resourcePath)).flatMap { stream => val source = scala.io.Source.fromInputStream(stream); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }"
+        "value": "definitionSources(resourcePath) match { case Seq() => None case Seq(url) => readDefinition(url) case many => sys.error(s\"draco: $resourcePath is defined at ${many.size} sources, and a type name must resolve to exactly one definition: \" + many.mkString(\", \")) }"
       },
       {
         "kind": "Dynamic",

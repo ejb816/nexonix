@@ -1,9 +1,19 @@
 type TypeLoader
   globals
+    dyn definitionSources [URL] [
+      parameters
+        par resourcePath String
+      = scala.jdk.CollectionConverters.EnumerationHasAsScala(getClass.getClassLoader.getResources(resourcePath.stripPrefix("/"))).asScala.toSeq
+    ]
+    dyn readDefinition Option(TypeDefinition) [
+      parameters
+        par url URL
+      = Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }
+    ]
     dyn loadFromResource Option(TypeDefinition) [
       parameters
         par resourcePath String
-      = Option(getClass.getResourceAsStream(resourcePath)).flatMap { stream => val source = scala.io.Source.fromInputStream(stream); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }
+      = definitionSources(resourcePath) match { case Seq() => None case Seq(url) => readDefinition(url) case many => sys.error(s"draco: $resourcePath is defined at ${many.size} sources, and a type name must resolve to exactly one definition: " + many.mkString(", ")) }
     ]
     dyn tryLoad Option(TypeDefinition) [
       parameters
