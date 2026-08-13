@@ -1,10 +1,5 @@
 type TypeLoader
   globals
-    dyn definitionSources [URL] [
-      parameters
-        par resourcePath String
-      = scala.jdk.CollectionConverters.EnumerationHasAsScala(getClass.getClassLoader.getResources(resourcePath.stripPrefix("/"))).asScala.toSeq
-    ]
     dyn readDefinition Option(TypeDefinition) [
       parameters
         par url URL
@@ -13,7 +8,7 @@ type TypeLoader
     dyn loadFromResource Option(TypeDefinition) [
       parameters
         par resourcePath String
-      = definitionSources(resourcePath) match { case Seq() => None case Seq(url) => readDefinition(url) case many => sys.error(s"draco: $resourcePath is defined at ${many.size} sources, and a type name must resolve to exactly one definition: " + many.mkString(", ")) }
+      = DefinitionPath.default.source(resourcePath).flatMap(readDefinition)
     ]
     dyn tryLoad Option(TypeDefinition) [
       parameters

@@ -492,6 +492,24 @@ object Generator extends App {
   }
 
   /** True if the value type denotes a function-like value (no circe codec). */
+  /** A parameter type the Scala codec cannot derive an instance for.
+    *
+    * The codec gate already refused a FUNCTION-like parameter, on the stated grounds
+    * that "those have no circe codec". That was the right reason attached to too
+    * narrow a rule: what disqualifies a parameter is not being a function, it is
+    * having no instance. A `java.net.URI` is not a function and has no instance
+    * either — circe 0.14 carries none and never mentions the type — so a definition
+    * with a URI parameter emitted a codec that could not compile. Nothing in the
+    * corpus had one until DefinitionPath, which is why it went unnoticed.
+    *
+    * The host types are read off `externalTypeImports`, which is already the
+    * generator's list of types it does not own. `Json` is the one exception: it is
+    * circe's own, so it encodes itself. */
+  private lazy val uncodecableTypes: Set[String] = externalTypeImports.keySet - "Json" - "Decoder"
+
+  private def isUncodecable (valueType: String) : Boolean =
+    isFunctionLikeType(valueType) || extractTypeNames(valueType).exists(uncodecableTypes.contains)
+
   private def isFunctionLikeType (valueType: String) : Boolean = {
     val t = valueType.trim
     t.contains("=>") ||
@@ -838,8 +856,8 @@ object Generator extends App {
           val ownElementNames = td.dracoAspect.elements.map(_.name).toSet
           val elementNames = ownElementNames ++ inheritedElementNames(td, familyMap)
           val paramNames = td.dracoAspect.factory.parameters.map(_.name).toSet
-          val anyFunctionLike = td.dracoAspect.factory.parameters.exists(p => isFunctionLikeType(p.valueType))
-          if (ownElementNames.nonEmpty && paramNames.subsetOf(elementNames) && !anyFunctionLike) simpleCodecDeclaration(td)
+          val anyUncodecable = td.dracoAspect.factory.parameters.exists(p => isUncodecable(p.valueType))
+          if (ownElementNames.nonEmpty && paramNames.subsetOf(elementNames) && !anyUncodecable) simpleCodecDeclaration(td)
           else ""
         } else {
           // No codec (abstract type)

@@ -1,0 +1,82 @@
+{
+  "typeName": {
+    "name": "DefinitionPath",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "roots",
+        "valueType": "Seq[URI]"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "sources",
+        "valueType": "Seq[URL]",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "resourcePath",
+            "valueType": "String"
+          }
+        ],
+        "value": "roots.map(root => new URL(root.toString + resourcePath.stripPrefix(\"/\"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "source",
+        "valueType": "Option[URL]",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "resourcePath",
+            "valueType": "String"
+          }
+        ],
+        "value": "sources(resourcePath) match { case Seq() => None case Seq(url) => Some(url) case many => sys.error(s\"draco: $resourcePath is defined at ${many.size} roots, and a type name must resolve to exactly one definition: \" + many.mkString(\", \")) }"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DefinitionPath",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "roots",
+          "valueType": "Seq[URI]",
+          "value": {
+            ".": [
+              "Seq",
+              "empty"
+            ]
+          }
+        }
+      ]
+    },
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "hostRoots",
+        "valueType": "Seq[URI]",
+        "value": "System.getProperty(\"java.class.path\", \"\").split(java.io.File.pathSeparatorChar).filter(_.nonEmpty).map(entry => new java.io.File(entry)).map(file => if (file.getName.endsWith(\".jar\")) URI.create(\"jar:\" + file.toURI.toString + \"!/\") else URI.create(if (file.toURI.toString.endsWith(\"/\")) file.toURI.toString else file.toURI.toString + \"/\")).toSeq"
+      },
+      {
+        "kind": "Fixed",
+        "name": "default",
+        "valueType": "DefinitionPath",
+        "value": "DefinitionPath(hostRoots)"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

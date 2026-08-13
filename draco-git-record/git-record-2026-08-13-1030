@@ -1,0 +1,59 @@
+# One change. GATE — sbt test, 525/525 green.
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-13-1030 | sed '1d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+#
+# Everything uncommitted belongs to this change, so `git add -A` is right here. When a
+# commit IS meant to be scoped, put the pathspec on the COMMIT (git commit -F msg --
+# <paths>): the IDE auto-adds new files, so a scoped `git add` does not scope the
+# commit and the index carries in whatever else was staged. That is how the second
+# record file landed in the first commit on 2026-08-12.
+
+--- MESSAGE ---
+DefinitionPath: the roots are held, not searched
+
+A definition path must mean the same thing projected into Scala, Haskell or
+TypeScript. Resolution already did (the previous commit made it unique-or-error rather
+than whichever copy the classloader reached first), but the ROOTS were still whatever
+the host happened to expose — and a target without a classloader has nothing to
+inherit. So the roots become data.
+
+`DefinitionPath` holds `roots: Seq[URI]` and owns resolution: `sources` finds every
+root carrying a path, `source` applies the unique-or-error rule. `TypeLoader` is one
+line of delegation to `DefinitionPath.default`, so all 117 generated companions are
+untouched — the path is a property of the RUNTIME, not a parameter threaded through
+every lookup.
+
+The shape is what matters: a path can now be CONSTRUCTED, not only discovered.
+`DefinitionPath(someRoots)` needs no classloader. `hostRoots` — reading java.class.path
+and lifting each entry to a `file:` or `jar:…!/` root — is merely how the default is
+populated, one realization rather than the definition. That is the part a second target
+can actually implement.
+
+A SET rather than a sequence, and unique-or-error rather than first-wins, for the same
+reason: order is precisely what cannot survive projection. Two roots defining one name
+is an ambiguity to report, not something to settle by search order that differs per
+host.
+
+A GENERATOR DEFECT CAME OUT WITH IT. The codec gate refused a function-like factory
+parameter on the stated grounds that "those have no circe codec" — the right reason
+attached to too narrow a rule. What disqualifies a parameter is not being a function,
+it is having no instance. circe 0.14.1 carries no java.net.URI codec and does not
+mention the type anywhere in the jar, so ANY definition with a URI / URL / File
+parameter emitted a codec that could not compile. Nothing in the corpus had one until
+DefinitionPath, and DracoGenTest compares text rather than compiling generated output,
+so nothing would have caught it there either.
+
+The disqualifying types are now read off `externalTypeImports`, which is already the
+generator's list of types it does not own, with `Json` excepted as circe's own.
+Blast radius checked before the change: the only other codec-bearing type with such a
+parameter is Rule (Consumer[Knowledge], Consumer[RhsContext]), and both were already
+excluded as function-like. Exactly one type's emission changes.
+
+Also: the factory default is the canonical `Seq.empty` tree, not the legacy string
+"Seq()". The first draft used the legacy spelling and DrakeParseTest's loss report went
+[empty-collection spelling: 3 -> 4] — new corpus data quietly adding to #55's pile, and
+that report was the only thing that said so.
+
+NOT IN THIS CHANGE. DomainBuilder stays in src/mods. Assembling a domain dictionary is
+a different concept from resolving a definition, and it earns its own step.

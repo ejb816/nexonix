@@ -10,7 +10,7 @@ object Draco extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Draco", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Draco] = Type[Draco] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ("Action", "Actor", "ActorAspect", "ActorType", "Aspects", "Assembly", "Binding", "BodyElement", "CLI", "CodecAspect", "CollectProblems", "Completeness", "Condition", "ContentSink", "DerivationResolvable", "Dictionary", "Domain", "DomainAspect", "DomainDictionary", "DomainTransform", "DomainType", "DracoAspect", "DracoType", "Dynamic", "Factory", "Fixed", "Holon", "Main", "Monadic", "Mutable", "Parameter", "Pattern", "Primal", "Problem", "REPL", "Rule", "RuleAspect", "RuleType", "SelfDeclaration", "Source", "SourceContent", "Test", "Type", "TypeDefinition", "TypeDictionary", "TypeElement", "TypeLoader", "TypeName", "TypeTransform", "Variable")
+  lazy val elementTypeNames: Seq[String] = Seq ("Action", "Actor", "ActorAspect", "ActorType", "Aspects", "Assembly", "Binding", "BodyElement", "CLI", "CodecAspect", "CollectProblems", "Completeness", "Condition", "ContentSink", "DefinitionPath", "DerivationResolvable", "Dictionary", "Domain", "DomainAspect", "DomainDictionary", "DomainTransform", "DomainType", "DracoAspect", "DracoType", "Dynamic", "Factory", "Fixed", "Holon", "Main", "Monadic", "Mutable", "Parameter", "Pattern", "Primal", "Problem", "REPL", "Rule", "RuleAspect", "RuleType", "SelfDeclaration", "Source", "SourceContent", "Test", "Type", "TypeDefinition", "TypeDictionary", "TypeElement", "TypeLoader", "TypeName", "TypeTransform", "Variable")
 
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 

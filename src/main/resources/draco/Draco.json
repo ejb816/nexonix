@@ -82,6 +82,7 @@
       "Completeness",
       "Condition",
       "ContentSink",
+      "DefinitionPath",
       "DerivationResolvable",
       "Dictionary",
       "Domain",

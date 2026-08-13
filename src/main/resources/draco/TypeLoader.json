@@ -9,19 +9,6 @@
     "globalElements": [
       {
         "kind": "Dynamic",
-        "name": "definitionSources",
-        "valueType": "Seq[URL]",
-        "parameters": [
-          {
-            "kind": "Parameter",
-            "name": "resourcePath",
-            "valueType": "String"
-          }
-        ],
-        "value": "scala.jdk.CollectionConverters.EnumerationHasAsScala(getClass.getClassLoader.getResources(resourcePath.stripPrefix(\"/\"))).asScala.toSeq"
-      },
-      {
-        "kind": "Dynamic",
         "name": "readDefinition",
         "valueType": "Option[TypeDefinition]",
         "parameters": [
@@ -44,7 +31,7 @@
             "valueType": "String"
           }
         ],
-        "value": "definitionSources(resourcePath) match { case Seq() => None case Seq(url) => readDefinition(url) case many => sys.error(s\"draco: $resourcePath is defined at ${many.size} sources, and a type name must resolve to exactly one definition: \" + many.mkString(\", \")) }"
+        "value": "DefinitionPath.default.source(resourcePath).flatMap(readDefinition)"
       },
       {
         "kind": "Dynamic",

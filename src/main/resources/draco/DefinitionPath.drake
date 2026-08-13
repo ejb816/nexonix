@@ -1,0 +1,20 @@
+type DefinitionPath
+  elements
+    fix roots [URI]
+    dyn sources [URL] [
+      parameters
+        par resourcePath String
+      = roots.map(root => new URL(root.toString + resourcePath.stripPrefix("/"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)
+    ]
+    dyn source Option(URL) [
+      parameters
+        par resourcePath String
+      = sources(resourcePath) match { case Seq() => None case Seq(url) => Some(url) case many => sys.error(s"draco: $resourcePath is defined at ${many.size} roots, and a type name must resolve to exactly one definition: " + many.mkString(", ")) }
+    ]
+  factory
+    parameters
+      par roots [URI] []
+  globals
+    fix hostRoots [URI] System.getProperty("java.class.path", "").split(java.io.File.pathSeparatorChar).filter(_.nonEmpty).map(entry => new java.io.File(entry)).map(file => if (file.getName.endsWith(".jar")) URI.create("jar:" + file.toURI.toString + "!/") else URI.create(if (file.toURI.toString.endsWith("/")) file.toURI.toString else file.toURI.toString + "/")).toSeq
+    fix default DefinitionPath DefinitionPath(hostRoots)
+domain draco Draco

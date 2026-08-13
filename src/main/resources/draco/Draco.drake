@@ -18,6 +18,7 @@ domain draco Draco
     Completeness
     Condition
     ContentSink
+    DefinitionPath
     DerivationResolvable
     Dictionary
     Domain
