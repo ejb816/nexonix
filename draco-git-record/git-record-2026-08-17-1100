@@ -1,0 +1,53 @@
+# One change, docs only. GATE — none needed; no code touched.
+#
+# NOTE the rename: GETTING_STARTED.md -> GETTING_STARTED_TARGET_SCALA.md was done with a
+# plain `mv`, so `git add -A` records it. Git should detect the rename despite the rewrite;
+# if it reports add+delete instead, that is cosmetic and the content is correct.
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-17-1100 | sed '1d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+Getting started, one guide per target
+
+GETTING_STARTED.md described setup for the only target that exists, as though it were
+setup for the framework. Renamed to GETTING_STARTED_TARGET_SCALA.md, with stubs beside it
+for Haskell and TypeScript, and one structure across all three.
+
+WHAT THE STRUCTURE ASSERTS. Nine sections, identical in every file — verified, the only
+heading that differs is the target name in section 4. Section 0 states the loop (author a
+definition, emit its surface, project it, register it, verify) and says plainly that
+nothing in it belongs to a target. Only four things do: the toolchain, the projection
+command, how you run the result, and the command set. That claim is the point of the
+split; the parallel files are what make it checkable rather than asserted.
+
+README's own getting-started section became a duplicate under that split, so it now
+carries the neutral loop, a pointer to the three guides, and the example definition — which
+is genuinely target-independent text — while the commands live in the per-target guide.
+
+THE STUBS ARE NOT PLACEHOLDERS. Each carries the open questions its target must answer,
+because those are what experience will fill in and they are worth writing down while the
+reasons are fresh. Haskell's hardest is derivation: Scala's extends/with is subtyping and
+Haskell has none, so a derivation becomes a constraint, an embedded record, or a sum — and
+that choice determines what `globals` and `typeDefinition` mean there. TypeScript's is
+identity: draco's TypeName identity is nominal, TypeScript's type system is structural, so
+`Meters` and `Radians` would be interchangeable by default. Whatever that target does about
+branding IS its semantic-preservation story, and it should be decided rather than fallen
+into.
+
+Each file also names what its target tests about the framework. Haskell stresses whether
+the STRUCTURE is neutral, being the target least like Scala. TypeScript stresses whether
+IDENTITY is. Both are expected to find residues, and those belong in README's
+Language-specific residues table when they do.
+
+Also recorded on the favourable side: the surface language already uses Haskell-form
+spellings — one `->` for both function types and function values, `\p -> body`, if/then/
+else — chosen for neutrality, and they should project directly.
+
+TWO CORRECTIONS FOUND WHILE WRITING. `bin/draco-gen` has no `from-yaml`/`to-yaml` (removed
+with YAML) and no `drake` subcommand; the surface CLI is a separate `draco.DrakeCLI` with
+`emit | parse | check` and no bin wrapper. The old guide listed the YAML pair, and README —
+written two days ago — invoked a `draco-gen drake` that does not exist. Both fixed, and the
+Scala guide now carries a verified command table for all three CLIs.
+
+DRACO.md's document-status section updated for both passes.

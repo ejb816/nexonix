@@ -1,0 +1,53 @@
+# One change, docs only. GATE — none needed; no code touched. `sbt test` unaffected.
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-15-1500 | sed '1d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+DRACO.md: rewrite against the tree, and say which docs are not
+
+DRACO.md is the file Claude Code auto-loads through the CLAUDE.md symlink, so it is the
+input to every session. It described an architecture that had not existed for months:
+the *Instance triad, `typeInstance` vals, `TypeElement extends Primal[String]`, Generator
+owning type loading, "no elementTypeNames in JSON", a Key Files table listing files that
+are gone and omitting TypeLoader, DefinitionPath, Holon, Assembly, Problem and the four
+validation rules. Nothing about the .drake surface — 91 files, an emitter, a parser and
+two gates — appeared anywhere in it.
+
+Measured rather than asserted: `TypeInstance`/`DomainInstance`/`RuleInstance`/
+`typeInstance` occurred 26 times in the file and in ZERO Scala sources.
+
+The clearest evidence that this was worth doing first is internal. Two artifacts in this
+repo describe the same fact. MEMORY.md says "dracoType/domainType/ruleType/actorType
+kind-vals; *Instance traits deleted" — correct. DRACO.md said the opposite, for months.
+Same author, same sessions. Memory is updated as part of doing the work; DRACO.md was
+updated when someone remembered. Diligence is not the differentiator, triggering is.
+
+WHAT THE FILE IS NOW. Operating rules first, because those are what do not change with
+the architecture: no sbt/git, definitions move as a trio (JSON + .drake + .scala), the
+lazy-val discipline, what each of the three gates pins and therefore what a failure
+means, the four-artifact split (memory / issues / git-record / journal), the commit
+message and pathspec mechanics learned the hard way this week, and the rule that
+model-authored prose is not Dev's intent.
+
+Then a compact ORIENTATION section, every claim checked against the tree on 2026-08-15.
+It is deliberately short: architecture detail belongs in README once README is corrected.
+But README is itself stale, so pointing at it and stopping would have made the next
+session worse, not better. Hence §5, which states plainly which neighbouring documents
+are unreliable — README, AGENTS.md, GETTING_STARTED, CHANGELOG — and which are not
+(drake.dlt is current and authoritative).
+
+TWO RULES RECONCILED. The old file instructed "file an issue for deferred work"; memory
+carries Dev's restraint rule. Those contradicted each other and I was subject to both.
+Dev's call, now written down: a new issue requires explicit approval every time,
+deferred work is surfaced in conversation, comments on an existing issue are ungated.
+
+A RETIRED-NAMES LIST, which is the part meant to outlive this commit. Every major drift
+the review found was the same failure: a type was removed and the prose kept the name.
+That is a checkable property with no false positives — unlike a general "every symbol
+must resolve" lint, which I tested and measured at 115 non-resolving tokens out of 165,
+almost all ordinary English or host types. The list is the seed of that gate.
+
+NOT DONE, deliberately. README, GETTING_STARTED and CHANGELOG each need their own pass.
+AGENTS.md should become a symlink to this file, but it is a diverged older copy and
+replacing it deletes tracked content, so it waits for Dev.

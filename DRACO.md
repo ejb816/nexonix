@@ -1,256 +1,240 @@
 # DRACO.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-A symlink `CLAUDE.md → DRACO.md` ensures Claude Code auto-loads this file.
+Operating rules for Claude Code (claude.ai/code) in this repository. `CLAUDE.md` is a
+symlink to this file, so it is auto-loaded every session.
 
-## Related Documentation
+**Every factual claim below was verified against the tree on 2026-08-15.** The previous
+version of this file described an architecture that had not existed for months — the
+`*Instance` triad, `typeInstance` vals, `TypeElement extends Primal[String]`, Generator
+owning type loading. It steered sessions wrong for as long as it stood. If you find a
+statement here contradicted by the code, **the code is right and this file is a bug** —
+fix it in the same commit as the work that exposed it.
 
-- **README.md** — Comprehensive overview of the framework, its architecture, semantic preservation goals, and current feature status
-- **CHANGELOG.md** — History of changes made with Claude Code assistance
-- **Auto-memory** — Persistent project memory at `~/.claude/projects/.../memory/MEMORY.md` with architectural decisions, lazy val rules, Generator naming conventions, and imminent task list
-- **GitHub Issues** — `github.com/ejb816/nexonix/issues` is the durable, shared backlog and forward work-tracker (see below)
+---
 
-## Issue Tracking & Session Workflow
+## 1. Operating rules
 
-GitHub Issues is the canonical, cross-session **backlog and decision log** — the shared, provider-agnostic complement to auto-memory (which holds *durable knowledge*: how the system works, conventions, user feedback). Roughly: **issues track work to do; memory records what is known.** Neither replaces `draco-git-record/` (audit trail) or the dev journal (historical narrative).
+These are the rules that do not change with the architecture. Read them first.
 
-- **At session start**, check the backlog for the pickup point: `gh issue list --label priority-next` (the `priority-next` label = "pick this up next session"). Fall back to `gh issue list` for the wider backlog.
-- **File an issue for deferred work.** When work is scoped out, a decision is deferred, or a bug is noticed in passing, open an issue (`gh issue create`) with a self-contained body — file paths and enough context to act without the originating conversation — rather than leaving it only in prose. Label it (`generator`, `cleanup`, `tooling`, `bug`, `next-feature`, `docs`, `roadmap`) and add `priority-next` if it's the natural next pickup.
-- **Close on completion**, and cross-link related issues instead of duplicating. Memory notes may cite issue numbers and vice versa.
+**Do not run sbt, git commit, or git push.** Dev compiles, commits, and pushes from the
+IDE. Hand over a command block instead. `git status`, `git log`, `git show` and other
+read-only git are fine.
 
-## Build and Test Commands
+**A new GitHub issue requires Dev's explicit approval, every time.** When work is scoped
+out, a decision is deferred, or a bug is noticed in passing, *surface it in conversation*
+— batched and prioritised — and file only if Dev says so. Commenting on an existing issue
+does not need approval. The backlog grows faster than it drains, and an unprompted issue
+buries the few that matter.
 
-This is a Scala 2.13 project using sbt.
+**Definitions move as a trio.** A type is three artifacts that must agree:
+`src/main/resources/<pkg>/X.json` (normative), `src/main/resources/<pkg>/X.drake`
+(surface), `src/main/scala/<pkg>/X.scala` (generated). Change one, change all three, or a
+gate fails. There is no partial edit.
 
-```bash
-# Compile the project
-sbt compile
+**Every val in an `extends App` companion must be `lazy val`.** Scala 2 `App` uses
+`DelayedInit`, so eager `val` initializers are deferred to `main()` and read as null
+across objects. This includes `typeDefinition`, the kind-vals, `Null`, encoders/decoders,
+and any private val a lazy val references. The one axiom exempt from it is
+`DracoType.typeDefinition`, which does not extend `App`.
 
-# Run all tests
-sbt test
+**Read the report-only numbers, not just pass/fail.** Several tests measure rather than
+assert (drake surface losses, the example-domain generate map, PON discrepancies). Two
+real defects in one August session were caught only by reading a headline that moved —
+new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
+suite does not mean nothing regressed.
 
-# Run a specific test class
-sbt "testOnly draco.primes.PrimesRulesTest"
+**Where things are recorded** — four artifacts, four jobs, do not conflate them:
 
-# Run a specific test within a class
-sbt "testOnly draco.primes.PrimesRulesTest -- -z \"PrimesFromNaturalSequence\""
+| artifact | holds | who writes it |
+|---|---|---|
+| auto-memory (`MEMORY.md` + notes) | durable knowledge: conventions, feedback, how the system works | this session, as work happens |
+| GitHub Issues | work to do; decisions deferred | only with Dev's approval |
+| `draco-git-record/` | audit trail — one file per commit, containing the commit message | this session, before the commit |
+| `CHANGELOG.md` | the *fact* of each change, for a reader outside the tree | this session, **in the same commit as the record** |
+| `draco-dev-journal/` | historical narrative | **Cowork, not this session** — do not write or suggest chapters |
 
-# Continuous compilation (recompile on file changes)
-sbt ~compile
+**The CHANGELOG entry is written with the git-record, not at release time.** Both go in
+the commit they describe. The record carries the reasoning; the CHANGELOG carries one or
+two sentences of observable fact under `[Unreleased]`. Attaching it to a step that already
+happens is the point — this file fell two and a half months behind when it depended on
+remembering.
 
-# Interactive sbt shell
-sbt
-```
+**Commit messages go through a file, never a heredoc.** A long `git commit -F - <<'EOF'`
+breaks on paste and the remainder runs as shell commands. Write the message to a file and
+use `git commit -F <file>`. When a commit is meant to be path-scoped, put the pathspec on
+the *commit* (`git commit -F msg -- <paths>`) — the IDE auto-adds new files, so a scoped
+`git add` does not scope the commit.
 
-**Important:** The user handles all compiles, commits, and pushes via their IDE. Do not run sbt, git commit, or git push.
+**Model-authored prose is not Dev's intent.** Issues, memory notes, and review documents
+in this repo are largely model-authored and Dev-tolerated. Cite them as prior reasoning to
+re-examine, never as Dev's authority or specification.
 
-## Architecture Overview
+---
 
-### Draco: Self-Describing Domain-Driven Rule Engine
+## 2. The gates, and what a failure means
 
-Draco is a domain-driven rule engine built on Evrete (RETE algorithm), with Apache Pekko for actor-based concurrency. The core principle is **self-description**: every type carries a `TypeDefinition` that describes its own structure, making the type system closed over itself.
+Three suites pin the corpus. Knowing which one failed tells you what is actually wrong.
 
-### Type Hierarchy
+| gate | pins | a failure means |
+|---|---|---|
+| `DracoGenTest` | `Generator.generate(X.json)` ≡ hand-written `X.scala`, whitespace-normalized, for every definition | the JSON, the Generator, or the Scala moved without the others |
+| `DrakeGenTest` | `Drake.emit(X.json)` ≡ hand-written `X.drake` | the emitter or the surface moved |
+| `DrakeParseTest` | `emit(parse(source))` ≡ source, and `parse(emit(td))` ≡ td | the parser and emitter disagree, or a value form is not carried |
 
-```
-DracoType                              -- universal root; carries typeDefinition
-  +-- Primal[T]                        -- wraps a single value: T
-  +-- TypeInstance                     -- companion objects that register themselves
-  |     +-- DomainInstance             -- companions owning a domain
-  |     +-- RuleInstance               -- companions owning a rule
-  |     +-- ActorInstance              -- companions owning an actor
-  +-- DomainType                       -- named domain with type dictionary
-  |     +-- Domain[T]                  -- generic domain container
-  +-- RuleType                         -- rule with pattern + action
-  |     +-- Rule[T]                    -- generic rule container
-  +-- ActorType                        -- actor with actor definition
-        +-- Actor[T]                   -- generic actor container (extends Pekko ExtensibleBehavior[T])
-```
+`DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
+effect, transitively: generated output is pinned to the hand-written files, and sbt
+compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
+gap is `ExampleDomainsGenTest`, which reports 28 match / 20 differ over the example domains
+and compiles none of it.
 
-### The Instance Triad
+`comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
+`src/main/scala/draco/`. Keep it that way. If generated output is wrong, fix the JSON or
+the Generator, not the Scala.
 
-Three parallel traits extend `TypeInstance`:
+---
 
-| Trait | Owns |
-|-------|------|
-| `DomainInstance` | `domainInstance: DomainType` |
-| `RuleInstance` | `ruleInstance: RuleType` |
-| `ActorInstance` | `actorInstance: ActorType` |
+## 3. Orientation — what is actually true
 
-All three use `TypeDefinition` as their definition type — `DomainType.domainDefinition`, `RuleType.ruleDefinition`, and `ActorType.actorDefinition` are all `TypeDefinition`. The separate `DomainDefinition`, `RuleDefinition`, and `ActorDefinition` types have been dissolved into `TypeDefinition`.
+Compact by intent. Architecture detail belongs in `README.md` once that file is corrected
+(§5); this section exists so a session is not misled in the meantime.
 
-These are deliberately kept structurally symmetric — none is parameterized. When Pekko requires `Behavior[T]`, use `actorInstance.asInstanceOf[Actor[T]]` at the integration boundary.
+**Type system.** `DracoType` is a one-member trait (`val typeDefinition`).
+`TypeDefinition extends Aspects { val typeName }`, and `Aspects` is **five** slots:
 
-### Key Files and Their Roles
+- `dracoAspect` — superDomain, modules, extensible, derivation, elements, factory, globalElements, source, target
+- `domainAspect` — typeName (self-loop for a domain, container pointer otherwise), elementTypeNames
+- `ruleAspect` — pattern, action
+- `actorAspect` — messageType, start, message, signal
+- `codecAspect` — discriminator
 
-| File | Role |
-|------|------|
-| `DracoType.scala` | Universal root trait. The one axiom: `DracoType.typeInstance` is a plain `val` |
-| `Primal.scala` | `Primal[T]` — value-carrying base trait |
-| `Type.scala` | `Type[T]` — generic type wrapper created via `Type[X](typeDefinition)` |
-| `TypeInstance.scala` | Trait for self-registering companion objects |
-| `TypeName.scala` | Qualified name with package path and type parameters |
-| `TypeDefinition.scala` | Unified schema descriptor: typeName, modules, derivation, elements, factory, globalElements, plus domain fields (elementTypeNames, source, target), rule fields (pattern — which carries variables, conditions — plus values, action), and actor fields (start, message, signal) |
-| `TypeElement.scala` | Sealed element hierarchy (Fixed, Mutable, Dynamic, Parameter, Monadic, Pattern, Action, Condition, Variable, Factory) |
-| `Codec.scala` | `Codec[T]` encoder/decoder pair; `Codec.sub` for subtype codec derivation |
-| `Domain.scala` | `Domain[T]` — generic domain container created from `TypeDefinition` |
-| `DomainType.scala` | Trait: domainDefinition (TypeDefinition) + typeDictionary |
-| `DomainInstance.scala` | Trait for domain-owning companions |
-| `TypeDictionary.scala` | Map of TypeName to TypeDefinition within a domain |
-| `DomainDictionary.scala` | Cross-domain registry (Map of DomainType to TypeDictionary) |
-| `Dictionary.scala` | Generic Map[K,V] base abstraction |
-| `Rule.scala` | `Rule[T]` container; owns the singleton `KnowledgeService` |
-| `RuleType.scala` | Trait: ruleDefinition (TypeDefinition) + pattern (Consumer[Knowledge]) + action (Consumer[RhsContext]) |
-| `RuleInstance.scala` | Trait for rule-owning companions |
-| `Actor.scala` | `Actor[T]` — generic actor container extending `ExtensibleBehavior[T] with ActorType` |
-| `ActorType.scala` | Trait: actorDefinition (TypeDefinition) |
-| `ActorInstance.scala` | Trait for actor-owning companions |
-| `Generator.scala` | Code generation from TypeDefinition JSON; detects domain/rule/actor from aspect content; owns all type loading (`loadType`) |
-| `SourceContent.scala` | Reads source files from a URI root |
-| `ContentSink.scala` | Writes generated content to output paths |
-| `Main.scala` | Default source root (resources) and sink root (scala) URIs |
-| `format/Value.scala` | `Value[F]` — path extractor over a format payload: name + pathElements + abstract `value[T: Decoder](_source: F)`; the json sub-domain's `Value` (extends `Value[JSON]`) carries the circe implementation |
-| `Draco.scala` | Root domain registering all framework types |
+**Role is presence, not name.** A type is a rule because it carries a `ruleAspect`, an
+actor because it carries an `actorAspect`. Generated objects take the bare authored name —
+no `Rule` or `Actor` suffix, and no `.rule`/`.actor` filename suffix.
 
-### TypeName
+**`TypeElement`** is a sealed family of **eleven** kinds — Fixed, Mutable, Dynamic, Local,
+Parameter, Monadic, Condition, Action, Pattern, Variable, Factory — all extending
+`Primal[Json]`. So `value` is a JSON node: either a host-opaque source string or a
+single-key `{op: [operands]}` expression tree. JSON uses a `"kind"` discriminator;
+`Codec.sub` narrows the parent codec.
 
-`TypeName` identifies a type with three fields:
+**`TypeName`** is `name` + `namePackage` + `typeParameters`, with derived `namePath` and
+`resourcePath`. It compares **structurally** (GitHub #37). Type parameters are part of the
+identity: a position holds either a variable or a concrete type, a type is abstract iff any
+position contains a variable at any depth, and only a fully concrete name can be the
+derivation for an atomic term. So `Dictionary(K, V)` ≠ `Dictionary(TypeName, TypeDefinition)`.
 
-| Field | Type | Purpose |
-|-------|------|---------|
-| `name` | `String` | Simple type name (e.g., `"Natural"`) |
-| `namePackage` | `Seq[String]` | Package path (e.g., `Seq("domains", "natural")`) |
-| `typeParameters` | `Seq[String]` | Type parameters (e.g., `Seq("T")` for `Primal[T]`); formals on declaring type, actuals on references |
-
-Derived fields:
-- `namePath` — `"domains.natural.Natural"` (fully qualified)
-- `resourcePath` — `"/domains/natural/Natural.json"` (JSON file path)
-
-Domain-ness is structural (name matches last package element). Rule/actor roles are expressed through derivation in TypeDefinition, not through TypeName.
-
-### TypeElement Sealed Hierarchy
-
-All defined in `TypeElement.scala`:
-
-```
-TypeElement (sealed)  extends Primal[String]
-  -- name, valueType, parameters: Seq[Parameter], body: Seq[BodyElement]
-  +-- BodyElement (sealed)
-        +-- Fixed          -- val name: Type = value
-        +-- Mutable        -- var name: Type = value
-        +-- Dynamic        -- def name(params): Type = body
-        +-- Parameter      -- constructor/method parameter
-        +-- Monadic        -- side-effecting statement (no name, Unit)
-        +-- Condition      -- Boolean predicate: parameters + value expression
-        +-- Action         -- rule RHS: variables + values + body
-        +-- Pattern        -- rule LHS: variables + conditions
-        +-- Variable       -- Evrete fact variable: name + valueType
-        +-- Factory        -- apply() spec: valueType + parameters + body
-```
-
-JSON serialization uses `"kind"` discriminator. `Codec.sub` creates subtype codecs from the parent `TypeElement` encoder/decoder.
-
-### Companion Object Pattern
-
-Every companion object follows the same pattern:
+**Companion convention.** Every generated companion is:
 
 ```text
-object MyType extends App with TypeInstance {           // or DomainInstance, RuleInstance, ActorInstance
-  lazy val typeDefinition: TypeDefinition = ...         // structural description
-  lazy val typeInstance: Type[MyType] = Type[MyType](typeDefinition)
-  // optional: def apply(...), lazy val Null, lazy val Default, domainInstance, ruleInstance, actorInstance
+object X extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName("X", _namePackage = Seq(...)))
+  lazy val dracoType: Type[X] = Type[X](typeDefinition)
+  lazy val domainType: Domain[Container] = Domain[Container](typeDefinition)
+  // plus derived codec, apply, Null; ruleType / actorType where the aspect is present
 }
 ```
 
-### DelayedInit / lazy val Rules
+The kind-val is named for the kind — `dracoType`, `domainType`, `ruleType`, `actorType`.
+There is no `typeInstance` and no `*Instance` trait.
 
-`App` uses `DelayedInit` in Scala 2 — ALL `val` initializers are delayed until `main()`. This causes null when accessed cross-object. The rule: **every val in an `extends App` companion must be `lazy val`** unless it is purely local to a non-lazy context.
+**Loading.** `TypeLoader` owns it, not `Generator`:
 
-- `typeDefinition`, `typeInstance` → `lazy val`
-- `domainInstance`, `ruleInstance`, `actorInstance`, `knowledgeService` → `lazy val`
-- `Null` → `lazy val`
-- Encoders/decoders → `implicit lazy val`
-- Private vals referenced by lazy vals (action, pattern, ruleDefinition) → `private lazy val`
-- globalElements Fixed vals → `lazy val` (Generator emits this)
-- Factory body `typeInstance`/`typeDefinition` overrides → `override lazy val` (prevents bootstrap recursion)
-- Null instance `typeInstance`/`typeDefinition` overrides → `override lazy val` (prevents mutual Null recursion)
-- Exception: `DracoType.typeInstance` is `val` (axiom, doesn't extend App)
+```text
+TypeLoader.loadType → tryLoad → DefinitionPath.default.source(resourcePath) → readDefinition
+```
 
-### Generator
+`DefinitionPath` holds `roots: Seq[URI]` explicitly and resolves unique-or-error — more
+than one root carrying a name is a hard error, because order cannot survive projection to
+another target language. `hostRoots` derives the default from `java.class.path`; it is one
+realization, not the definition, and a path can be constructed without a classloader. A
+missing definition yields a typeName-only stub, which is legitimate.
 
-`Generator.scala` has two `generate` overloads:
+**Generator dispatch** (`src/mods/scala/draco/Generator.scala`) normalizes at the entry
+with `TypeLoader.rooted` (absent derivation means derives-`DracoType`) and `targetTypes`
+(the neutral `{K,V}` → Scala `Map[K,V]` rewrite — the *only* place the Scala spelling of a
+map is produced). It then dispatches six ways: two-or-more role aspects → composed;
+rule; actor; domain; object-only; plain type.
 
-1. `generate(td: TypeDefinition)` — detects type role and dispatches:
-   - **Rule** (`td.variables.nonEmpty`) → rule imports + `ruleGlobal` (RuleInstance companion)
-   - **Domain** (`td.elementTypeNames.nonEmpty`) → domain imports + `domainGlobal` (DomainInstance companion)
-   - **Actor** (derivation contains ActorType/ActorInstance/ExtensibleBehavior) → Pekko imports + `typeGlobal`
-   - **Otherwise** → plain `typeGlobal` (TypeInstance companion)
-2. `generate(tds: Seq[TypeDefinition])` — multi-type in one file, topologically sorted
+**DRAKE** is draco's own definition surface — `X.drake` beside every `X.json`.
+`Drake.emit` and `Drake.parse` are mutual inverses in `src/mods/scala/draco/Drake.scala`;
+`DrakeCLI` offers `emit | parse | check`. Whitespace is insignificant. Three bracket rules:
+name lists always bracketed, keyword blocks never, openers bracket themselves. References
+are bare in the referring type's own package and qualified elsewhere. Value types are
+`[T]` Seq, `{T}` Set, `{K,V}` Map, `mut {T}`, `F(A,B)`, `A -> B`, tuples. The full spec is
+`src/main/resources/draco/drake.dlt`, which is current and authoritative.
 
-Key internal methods:
-- `isDomain(td)` / `isRule(td)` / `isActor(td)` — detection helpers inspecting TypeDefinition content and derivation
-- `loadType(typeName)` — classpath-based runtime type loading from `<name>.json` (every type, rule, and actor loads via this single path; rule-/actor-ness is carried by the aspect, not a name suffix)
-- `typeDefinitionLoad(td)` — emits `draco.Generator.loadType(TypeName(...))` in generated code (for every type, rules included)
-- `parameterizedName(tn)` / `wildcardTypeName(tn)` — TypeName-aware helpers using `typeParameters` field
-- `factoryBody(factory)` — uses `Factory.body` when non-empty, parameter-derived overrides when empty; appends `override lazy val typeInstance/typeDefinition`
-- `nullInstance(typeName, elements, factory)` — uses `wildcardTypeName` for parameterized types (e.g., `Null: Actor[_]`); `apply[Nothing]()` for type params; `apply()` for simple factories; direct element overrides for computed factories
-- `nullValueFor(valueType, defaultValue)` — type-appropriate defaults ("" for String, Seq.empty, 0, false, etc.)
-- `typeExtends(derivation)` — empty derivation → `extends Extensible`; derivation[0] == "Extensible" with typeParams → substitute typeParam; otherwise → `extends Extensible with derivation[0] with ...`
-- `externalTypeImports` — lookup table mapping external type names (URI, BufferedSource, KnowledgeService, Consumer, etc.) to import statements
-- `externalImports(td)` — scans valueTypes across elements/factory/globalElements and returns matching external imports
-- `packageHierarchyImports(namePackage)` — shared: `draco._` + parent package chain
-- `typeImports(td, hasCodec, instanceType)` — combines package hierarchy + circe + Pekko + external imports
-- `ruleImports(namePackage)` — package hierarchy + Evrete framework imports
-- `domainGlobal(td)` / `domainInstanceLiteral(objName, td)` — DomainInstance companion generation from TypeDefinition
-- `ruleGlobal(td)` — RuleInstance companion generation from TypeDefinition's rule fields
-- `conditionFunctions` / `whereConditions` — Evrete condition compilation (fully qualified class names required)
-- Codec generation: `simpleCodecDeclaration` (only when factory params ⊆ element names), `discriminatedCodecDeclaration`, `subtypeCodecDeclaration`
+**Caveat, and it matters if you author drake:** `Drake.parse` builds expression trees only
+for the application surface. Every other value — lambdas, `if/then/else`, `->`, operators
+— returns as a host-opaque string in *drake* form, which `Generator.expression` would pass
+verbatim into Scala. Parse is a measurement tool, not yet an authoring path (GitHub #61).
 
-**Rule names are bare (no suffix):** A rule generates a Scala object named for its bare concept — `"AddNaturalSequence"` in JSON → `object AddNaturalSequence` — exactly like actors and plain types. A type is a rule by carrying a `ruleAspect` (detected via `isRule`), never by a name suffix; `ruleGlobal` uses `td.typeName.name` directly. Actors likewise keep their bare name (no "Actor" suffix) — actor-ness is the `actorAspect`, object named as authored (e.g., `Consumer`). (The Generator historically appended "Rule" to rule objects — the last remnant of the `.rule`/`.actor` name-suffix holdover #40 retired; removed 2026-07-22 so generated class names obey the same "presence, not name" principle as the JSON filenames and rule/actor detection.)
+**Tiers.** `src/main/scala` is definition-backed. `src/mods/scala` compiles into the same
+package tree and holds the hand-written engine: `Generator`, `GeneratorCLI`, `Drake`,
+`DrakeCLI`, `Expression`, `DomainBuilder`, `Assembly*`, `SourceContract`. mods → main is
+allowed; main → mods is not. Whether mods is now *the* engine tier rather than a
+speculative layer is an open question for Dev.
 
-**Important:** PrimesRulesTest "Generate" tests overwrite rule source files with Generator output. Generated code must include imports and use `private lazy val` for action/pattern/ruleDefinition.
+**Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `json`,
+`xml`), `draco.rete`, `draco.drake`, `draco.generator`, `draco.scalatarget`. Domains are
+peers in the `DomainDictionary`, not hierarchical. Example domains live in
+`src/mods/scala/domains/` (the World / media chain).
 
-### JSON as Single Source of Truth
+**Retired — do not reintroduce, and treat any doc mentioning these as stale:**
+`TypeInstance`, `DomainInstance`, `RuleInstance`, `ActorInstance`, `typeInstance`,
+`Extensible`, `DomainDefinition`/`RuleDefinition`/`ActorDefinition`, `TypeDefinition.load`,
+`loadRuleType`/`loadActorType`, the `.rule`/`.actor` filename suffixes, YAML and the
+`from-yaml`/`to-yaml` CLI subcommands, the `draco.language` domain, the reference-frame
+`*centric` domains, `Alpha`/`Bravo`/`Charlie`/`Delta`, `PrimeOrdinal`, named
+`Cartesian`/`Polar`/`Spherical` coordinates.
 
-JSON definition files are the canonical representation for types, domains, rules, and actors:
+---
 
-1. **JSON file is the source of truth** — every definition lives in a bare `<TypeName>.json` file (e.g. `AddNaturalSequence.json`, `Consumer.json`). Rule-/actor-ness is carried by the `ruleAspect`/`actorAspect`, never by a name suffix. All files live in the domain's resource directory (no `rules/` or `actor/` subdirectories).
-2. **Domain discovery** — a domain's JSON contains only its type identity (typeName + derivation). The Generator discovers the domain's contents by scanning the resource directory for valid TypeDefinition JSON files. No `elementTypeNames` in JSON.
-3. **Generator owns all type loading** — `Generator.loadType(typeName)` loads a definition from the classpath using `getResourceAsStream` (`<name>.json`), for every type regardless of aspect. `TypeDefinition.load` has been removed.
-4. **Generator emits load calls** — `draco.Generator.loadType(TypeName(...))` for every generated type, rules included (fully qualified for portability across packages)
-5. **Dreams edits JSON** — to create or modify a type, Dreams writes the `.json` file and invokes the Generator to regenerate Scala source. Dreams will use `SourceContent`/`ContentSink` for file I/O (not classpath loading).
+## 4. Build and test
 
-### Domains
+```bash
+sbt test                                            # full suite — the gate before any push
+sbt "testOnly draco.DrakeParseTest"                 # one class
+sbt "testOnly draco.DracoGenTest -- -z \"TypeName\""  # one test
+```
 
-Domains are peers (Draco, Base, Primes) in the `DomainDictionary`, not hierarchical.
+Recommend the **full suite** before a push, not a scoped run — scoped-green is not
+suite-green. Report the gate scope with every count.
 
-**Base domain** (`draco.base`): Cardinal[T], Distance[T], Meters, Rotation[T], Radians, Ordinal, Nominal, Coordinate[T <: Product]. Cardinal is unconstrained (no Numeric bound on T). Coordinate is compositionally self-describing (no named Cartesian/Polar/Spherical types).
+`bin/draco-gen` (generate/compile/inspect/discover/verify) and `bin/draco-sc` are built by
+`sbt assembly` and can be stale relative to the tree.
 
-**Primes domain** (`draco.primes`): Working example of the rule engine. Accumulator (mutable state), Numbers (input sequences), PrimeOrdinal (recursive ordinal type), three rules defined in JSON (`AddNaturalSequence.json`, etc.) and generated as bare Scala objects (`AddNaturalSequence`, `PrimesFromNaturalSequence`, `RemoveCompositeNumbers`). Evrete working memory uses boxed `java.lang.Integer` — rule variables must use `classOf[Integer]`, not `classOf[Int]`.
+---
 
-**Transform domains** (in test): Examples: Alpha, Bravo, Charlie, Delta extend DataModel.
+## 5. Documentation status
 
-### Actors
+Only this file has been verified. As of 2026-08-15 the others are stale and should not be
+trusted without checking the code:
 
-`Actor[T]` extends `ExtensibleBehavior[T] with ActorType`. The companion `Actor.apply[T]` creates a default no-op actor from a `TypeDefinition`. Custom actors override `receive` and `receiveSignal` in the `actorInstance` definition.
+- **`README.md`** — **rewritten and verified 2026-08-15.** The canonical architecture doc,
+  written in draco's own vocabulary rather than any target's, with a
+  *Language-specific residues* table recording every place a host term still leaks.
+- **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
+  `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
+  questions). One shared skeleton; only the toolchain, projection command, running, and
+  command set are target-specific.
+- **`AGENTS.md`** — a *diverged older copy* of this file, not a symlink. Should be one.
+- **`CHANGELOG.md`** — stops at alpha.5 (2026-06-03); ~25 git-records since.
+- **`drake.dlt`** — current and authoritative for the surface.
+- **`HOLARCHY.md` / `ORION.md`** — aspirational; vocabulary largely absent from code.
 
-To pass an `actorInstance` to Pekko's `ActorSystem[T]`, cast: `actorInstance.asInstanceOf[Actor[T]]`. This adapter pattern preserves the triadic symmetry of `DomainInstance`/`RuleInstance`/`ActorInstance` — none is parameterized.
+---
 
-### JSON Serialization
+## 6. Gotchas worth carrying
 
-All domain types use Circe with field elision (empty fields omitted on encode, defaulted on decode). The `"kind"` discriminator field in TypeElement enables polymorphic dispatch. Sub-type codecs use `Codec.sub` to narrow the parent encoder/decoder.
-
-### Logging Configuration
-
-- `src/main/resources/logback.xml` — Runtime logging config for Dreams; Pekko set to WARN
-- `src/test/resources/logback-test.xml` — Test logging config; same Pekko suppression
-- `build.sbt` — `fork := true` with `-Dslf4j.provider=ch.qos.logback.classic.spi.LogbackServiceProvider` to eliminate SLF4J initialization replay warnings
-- Only `logback-classic` as SLF4J provider (no `slf4j-jdk14`)
-
-## Key Dependencies
-
-- **Evrete** (`org.evrete`) — RETE-based rule engine; condition functions require fully qualified class names for runtime Java compilation
-- **Apache Pekko** — Typed actor system
-- **Circe** — JSON parsing and encoding
-- **Logback** — SLF4J logging implementation
-- **ScalaTest** — Testing framework
+- **Evrete** compiles conditions as Java at runtime: fully qualified class names required.
+  Working memory is boxed — rule variables use `classOf[Integer]`, not `classOf[Int]`.
+  A single-fact insert needs `Seq(fact): _*`. Tuple facts need a `forEach` declaration.
+- **Actors** are thin membranes: `session.insert(msg); session.fire(); Behaviors.same`.
+  `Rule.knowledgeService` is a singleton; Knowledge is per domain, Session per actor.
+- **circe 0.14.1 has no `java.net.URI` codec** — the codec gate excludes parameters whose
+  type has no derivable instance, sourced from `externalTypeImports`.
+- **Values must be single-line.** No value in the corpus contains a newline, and drake's
+  surface is line-based; a multi-line value breaks the round-trip.
+- **macOS filesystem is case-insensitive** — same-package names differing only in case
+  collide, and resources clobber silently.
+- Use ` ```text ` not ` ```scala ` for pseudo-Scala; IntelliJ injects a parser into the latter.

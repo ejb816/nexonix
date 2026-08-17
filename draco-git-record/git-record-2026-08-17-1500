@@ -1,0 +1,54 @@
+# One change, docs only. GATE — none needed; no code touched.
+#
+# FIRST COMMIT UNDER THE NEW RULE: from here on, the CHANGELOG entry is written with this
+# record file, in the same commit. See CHANGELOG.md "How this file is maintained".
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-17-1500 | sed '1d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+CHANGELOG: two and a half months of history, and a trigger that will keep it
+
+The CHANGELOG stopped at alpha.5 on 2026-06-03. Thirty-seven git-records and
+dev-journal chapters 41 through 73 accumulated behind it — which is to say the single
+largest and most consequential stretch of the project's history was invisible to anyone
+who was not reading commits.
+
+THE BLOCK. `[Unreleased]` now covers that span, organized for a reader outside the tree
+rather than as thirty-seven bullet points. The through-line: DRAKE arrived complete —
+specification, emitter, parser, CLI, and two round-trip gates over 91 definitions in two
+corpora; element values became normative expression trees, which is what lets a target
+other than Scala read a rule condition at all; loading left the Generator for TypeLoader
+and an explicit DefinitionPath that resolves unique-or-error over held roots; the
+framework began validating its own foundation through the rule engine it ships, driven by
+its own domain acting as an actor; and YAML was retired as a definition language.
+
+Also recorded: CodecAspect as a fifth aspect, Local as an eleventh element kind, the
+format domain with its JSON and XML sub-domains, aspect composition, Assembly as actor
+groups in data, the capability domains, the media example chain and its first
+meaning-preserving cross-domain transform, structural TypeName identity, and Map as the
+first type constructor to leave the host's vocabulary for `{K, V}`.
+
+On the Changed side the four that alter how definitions are written: uniform root meaning
+(absent derivation MEANS derives-DracoType, and 27 explicit ones were stripped with
+byte-identical output), role is presence rather than name (the .rule/.actor suffixes gone
+from filenames and from projected names), RuleAspect restructured so variables and
+conditions live inside the pattern and a condition's parameters are derived rather than
+stored, and actor-ness resting on the aspect alone.
+
+THE TRIGGER, which is the part meant to outlast the block. A CHANGELOG entry is now
+written at the same moment as the commit's git-record, in the same commit. That is stated
+in CHANGELOG.md itself and in DRACO.md's operating rules, and the division is explicit:
+the record carries the reasoning, the CHANGELOG carries one or two sentences of
+observable fact.
+
+The choice of trigger is not arbitrary and it is the same argument that produced the
+DRACO.md rewrite two days ago. A record file already has to be written before every
+commit, and that step has held all week without anyone thinking about it. Release time
+does not work — it is exactly what was being relied on, and this file went 75 days and 37
+commits without one. Attaching the entry to a step that reliably happens costs nothing;
+attaching it to a boundary that may never arrive costs everything, and did.
+
+Two artifacts in this repo already demonstrate both outcomes. Auto-memory is updated as
+part of doing the work and is accurate. This file waited for a release and fell a quarter
+of a year behind.

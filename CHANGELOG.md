@@ -2,15 +2,138 @@
 
 All notable changes to the Nexonix/Draco project will be documented in this file.
 
+## How this file is maintained
+
+**A CHANGELOG entry is written at the same moment as the commit's `draco-git-record/`
+file, in the same commit.** The record already has to be written before every commit, so
+this extends a step that reliably happens rather than adding a discipline that has to be
+remembered — which is why this file fell two and a half months behind between alpha.5 and
+the block below.
+
+- The **record** holds the reasoning: why, what was measured, what was rejected.
+- The **CHANGELOG** holds the fact, in one or two sentences, at the level someone outside
+  the tree would care about — a type, field, command, behaviour, or gate that changed.
+- A purely internal refactor may warrant one line or none. Anything observable warrants one.
+- At release, `[Unreleased]` becomes a version block and a new empty one opens.
+
 ## [Unreleased]
 
+Since alpha.5 (2026-06-03). **DRAKE** — draco's own definition language — arrived complete
+with a specification, an emitter, a parser and round-trip gates; element values became
+normative expression trees; type loading moved off the Generator onto `TypeLoader` and an
+explicit `DefinitionPath`; the framework began validating its own foundation through its
+own rule engine; and YAML was retired as a definition language. Covers dev-journal
+chapters 41–73 and 37 git-records.
+
+### Added
+
+- **DRAKE, the definition surface** — a whitespace-insignificant notation carried in an
+  `X.drake` file beside every `X.json`, specified in `src/main/resources/draco/drake.dlt`.
+  `Drake.emit` and `Drake.parse` are mutual inverses; `draco.DrakeCLI` offers
+  `emit | parse | check`. Three local bracket rules (name lists always, keyword blocks
+  never, openers bracket themselves), references bare in their own package and qualified
+  elsewhere, and one arrow token for both function types and function values. Gated by
+  `DrakeGenTest` (emission) and `DrakeParseTest` (both directions, 91 definitions across
+  two corpora). Residual round-trip loss is measured rather than assumed: 16 fields, each
+  with an owning issue.
+
+- **Expression trees** — `TypeElement.value` changed from a string to a JSON node, so a
+  value is either host-opaque source text or a normative `{op: [operands]}` tree (`.`,
+  `()`, `->`, `\`, `if`, `(,)`, `=`). Rule conditions and action bodies are trees, which
+  is what lets a target other than Scala read them.
+
+- **`CodecAspect`** — a fifth aspect carrying the discriminator a closed family encodes
+  its variant under. `TypeDefinition`'s own codec now derives rather than being
+  hand-authored.
+
+- **`Local`** — an eleventh `TypeElement` kind, for a binding local to a body.
+
+- **`draco.format` domain** with `json` and `xml` sub-domains. `Value` moved out of the
+  core into `format`, parameterized by payload format (`Value[F]`), with the JSON
+  realization carrying the circe fold.
+
+- **`TypeLoader` and `DefinitionPath`** — loading left the Generator. `TypeLoader` owns
+  the single path from a `TypeName` to a definition; `DefinitionPath` holds its roots
+  **explicitly** and resolves **unique-or-error** — a name found at more than one root is
+  an error, not a search-order accident. The default derives roots from the host
+  environment, but a path can be constructed from given roots with no host mechanism,
+  which is what makes the concept meaningful in a target that has none.
+
+- **Foundation self-validation** — `SelfDeclaration`, `DerivationResolvable` and
+  `Completeness` rules with a `CollectProblems` sink, fired by the `Draco` domain acting
+  as a definition-backed actor over its own dictionary. The framework validates itself
+  through the rule engine it ships.
+
+- **Aspect composition** — a type carrying two or more role aspects emits every present
+  aspect's block rather than picking a winner. `Draco` itself is domain ⊕ actor.
+
+- **`Assembly` and `Binding`** — an actor group expressed as pure data (members, bindings,
+  entry point, all by `TypeName`), with a validator and one generic spawner.
+
+- **Capability domains** — `draco.rete`, `draco.drake`, `draco.generator`,
+  `draco.scalatarget`, naming the vocabularies the framework had previously borrowed
+  directly from host libraries.
+
+- **Media example domains** — `World` with `Aerial` / `Terrestrial` / `Marine` /
+  `Ethereal` / `Sentient`, demonstrating the first meaning-preserving cross-domain
+  transform, with a message crossing domains and its meaning checked at the sink.
+
+- **Structural `TypeName` identity** (#37) — two names with the same content are the same
+  name. Type parameters are part of that identity, which is what distinguishes an abstract
+  name from a concrete one.
+
+- **`Map` as a neutral type expression** — `{K, V}` in both the definition and the
+  surface, with the Scala spelling `Map[K, V]` produced by the target alone. The first
+  type constructor moved out of the host's vocabulary; the pattern the rest will follow.
+
 ### Changed
+
+- **Uniform root meaning** (#38, closed by inversion) — an absent derivation on a loaded
+  definition *means* derives-`DracoType`. 27 redundant explicit sole-`[DracoType]`
+  derivations were stripped from the corpus with byte-identical output.
+
+- **Role is presence, not name** — rule-ness and actor-ness come from the corresponding
+  aspect being populated. The `.rule` / `.actor` filename suffixes and the `Rule` /
+  `Actor` class-name suffixes are gone (#40); every definition is a bare `<TypeName>.json`
+  and projects to a bare name.
+
+- **`RuleAspect` restructured** — the rule's variables and conditions live inside
+  `pattern`; the never-wired `values` field was retired. A condition's parameters are now
+  **derived** at emission from the expression it mentions, rather than stored.
+
+- **Actor lifecycle** — the aspect carries `messageType` plus `start` / `message` /
+  `signal`; actor-ness rests on the aspect alone rather than on a derivation.
 
 - **`Egocentric` → `Sentient`, reparented to `World`** — the perspective frame was renamed and pulled out of the (now-deleted) reference-frame family to become a `World` subdomain (`trait Sentient extends World`), a media peer of Aerial/Terrestrial/Marine/Ethereal. Relocated from `src/test/.../domains/egocentric/` to `src/mods/.../domains/sentient/`; its six Egocentric↔{Geo,Helio,Galacto} transforms were deleted (it now crosses through the `Observable` world-fact rather than the `DomainTransform` matrix). `WorldHierarchyTest` asserts `Sentient <:< World`. Covers dev-journal chapter 47.
 
 ### Removed
 
 - **Reference-frame example domains** — `Cosmocentric` and the `Geocentric` / `Heliocentric` / `Galactocentric` peer frames, their leaves, the surviving transform matrix, and `domains.DomainsGenTest` were deleted: a significant maintenance surface with minimal return. Closed issues #2/#3/#4/#7 (now moot); #5/#19/#25 stay open, retargeted at the surviving `Sentient` types. World's `geocentric`/`heliocentric` are coordinate-frame field names on `Observable`/`Cartesian` and are unaffected.
+
+- **YAML as a definition language** — the `draco.language` domain, the `.yaml` companion
+  files, the `circe-yaml` dependency, and the `bin/draco-gen from-yaml` / `to-yaml`
+  subcommands. DRAKE replaced it as the authoring surface; JSON remains the sole normative
+  form and the only path the runtime loads. `draco.format.yaml.Yaml` survives as a
+  *message* format, which is a different concern.
+
+- **The Definition-alias triad** — `DomainDefinition`, `RuleDefinition` and
+  `ActorDefinition` dissolved into `TypeDefinition`.
+
+### Documentation
+
+- **`DRACO.md` rewritten and verified against the tree** — it had described an
+  architecture that no longer existed (an `*Instance` trait family appearing 26 times in
+  the file and zero times in source). It is now agent operating rules plus a compact
+  verified orientation, and it states which neighbouring documents are unreliable.
+
+- **`README.md` rewritten in draco's own vocabulary** rather than the Scala target's, with
+  a *Language-specific residues* table naming the eight places a host term still leaks and
+  what neutral would look like in each.
+
+- **`GETTING_STARTED.md` split per target** — `GETTING_STARTED_TARGET_SCALA.md` (realized)
+  beside `_HASKELL` and `_TYPESCRIPT` stubs, sharing one structure. Only the toolchain,
+  the projection command, running the result, and the command set are target-specific;
+  the authoring loop is not.
 
 ---
 
