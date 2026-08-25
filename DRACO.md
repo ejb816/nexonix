@@ -143,6 +143,10 @@ There is no `typeInstance` and no `*Instance` trait.
 TypeLoader.loadType → tryLoad → DefinitionPath.default.source(resourcePath) → readDefinition
 ```
 
+`rooted` appends the universal root to any definition carrying no draco-domain parent — an
+absent derivation is the common case, a solely foreign one (`Dictionary`) the other — so no
+definition in the corpus spells `DracoType`.
+
 `DefinitionPath` holds `roots: Seq[URI]` explicitly and resolves unique-or-error — more
 than one root carrying a name is a hard error, because order cannot survive projection to
 another target language. `hostRoots` derives the default from `java.class.path`; it is one
@@ -159,7 +163,9 @@ rule; actor; domain; object-only; plain type.
 `Drake.emit` and `Drake.parse` are mutual inverses in `src/mods/scala/draco/Drake.scala`;
 `DrakeCLI` offers `emit | parse | check`. Whitespace is insignificant. Three bracket rules:
 name lists always bracketed, keyword blocks never, openers bracket themselves. References
-are bare in the referring type's own package and qualified elsewhere. Value types are
+are bare in the referring type's own package, qualified elsewhere, and written as a type
+expression when the referent is outside every draco domain (`Dictionary` derives `{K, V}`).
+Value types are
 `[T]` Seq, `{T}` Set, `{K,V}` Map, `mut {T}`, `F(A,B)`, `A -> B`, tuples. The full spec is
 `src/main/resources/draco/drake.dlt`, which is current and authoritative.
 

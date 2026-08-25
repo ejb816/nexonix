@@ -1,4 +1,4 @@
-type Dictionary(K, V) from Map(K, V) DracoType
+type Dictionary(K, V) from {K, V}
   elements
     fix kvMap {K, V}
     dyn removed {K, V} [

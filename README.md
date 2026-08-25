@@ -197,7 +197,8 @@ DRAKE is draco's own definition language. Its full specification is
 type declares itself and its derivation, then keyword sections (`elements`, `factory`,
 `globals`, `modules`), then `domain`, then optionally `rule` and `actor`. References are
 written bare when they resolve in the referring type's own package and qualified
-otherwise. Value types are `[T]` sequence, `{T}` set, `{K, V}` map, `mut {T}` mutable set,
+otherwise; a reference to a type outside every draco domain carries no package at all and
+is written as a type expression (`Dictionary` derives `{K, V}`). Value types are `[T]` sequence, `{T}` set, `{K, V}` map, `mut {T}` mutable set,
 `F(A, B)` application, `(A, B)` tuple, `A -> B` arrow.
 
 Emission (`Drake.emit`) and parsing (`Drake.parse`) are mutual inverses, gated in both
@@ -337,8 +338,10 @@ dispatches on what the definition *contains*:
 5. globals but no type body → an object-only projection
 6. otherwise → a plain type
 
-Before dispatch, two normalizations run at the entry: an absent derivation means *derives
-the root*, and neutral type expressions are rewritten into the target's spelling. A
+Before dispatch, two normalizations run at the entry: a definition with no draco-domain
+parent has the root appended — so an absent derivation means *derives the root*, and a
+foreign parent alone still does — and neutral type expressions are rewritten into the
+target's spelling. A
 multi-definition overload emits a family into one file, ordered by dependency.
 
 **The corpus is projection-canonical.** Every checked-in source file under the framework

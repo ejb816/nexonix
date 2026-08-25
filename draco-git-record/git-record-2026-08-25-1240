@@ -1,0 +1,81 @@
+# The derivation edge of GitHub #51. GATE — full `sbt test` before the push.
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-25-1240 | sed '1d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+#
+# Expected in the report-only output after this lands:
+#   DrakeParseTest — "drake surface losses" no longer carries a [reference package: n]
+#   bucket at all; the two remaining buckets (expression form, empty-collection spelling)
+#   are unchanged. Everything else in the suite should be count-for-count identical.
+
+--- MESSAGE ---
+A foreign derivation is spelled by its operator, and the root is appended (#51)
+
+`Dictionary` opened `from Map(K, V) DracoType` while its own first element read
+`fix kvMap {K, V}` — one concept spelled two ways in one file, three lines apart. This
+makes the surface say it once: `from {K, V}`.
+
+Three symptoms, one seam. The corpus census is what tied them together: across both
+corpora, 130 definitions carrying 98 derivation references, exactly ONE reference carries
+no package — `Dictionary`'s map parent. It is the same one reference behind all three.
+
+  1. It was the last round-trip loss DrakeParseTest measured. A bare name in reference
+     position means "the referring type's own package", so a package-less reference went
+     out bare and came back owning `draco`.
+  2. It is why the file spelled the map twice: the valueTypes went neutral in 0acf2da and
+     the derivation could not follow, because a reference is nominal and an expression is
+     not.
+  3. It is why `Dictionary` was the only type in either corpus that spelled `DracoType`
+     beside another parent. `TypeLoader.rooted` gated on `derivation.nonEmpty`, which
+     cannot tell a parent that roots the type from one that does not, so the root had to
+     be written by hand to compensate for a parent outside draco's graph.
+
+WHAT CHANGED, and deliberately what did NOT.
+
+The issue's own notes proposed making `derivation` hold type expressions — a shape change
+on the most load-bearing type in the system. Rejected, and not on cost: 97 of the 98
+references are package-qualified and structural, and `TypeName.namePackage` already models
+exactly what a flattened expression string would give up. The issue text says as much
+about `org.evrete.api.StatefulSession` in a valueType, one level down. A change that
+regresses 97 references to fix 1 is not the progressive direction.
+
+So the SPELLING changed, not the shape:
+
+  - An empty `namePackage` now MEANS something rather than being an omission. Every draco
+    type is declared inside a domain, so a reference with no package names a type outside
+    draco's graph entirely — it is FOREIGN, a third case beside bare and qualified.
+  - A foreign referent is spelled as a type expression: `{K, V}`. The operator carries
+    what the name used to. Nothing is left to resolve, so the round trip is exact by
+    construction rather than by normalization — which is the actual reason the loss closed.
+  - `Drake.operatorCarried` states this off the emitter's own spelling instead of a second
+    list of primitive names, so the two directions cannot drift apart.
+  - `TypeLoader.rooted` APPENDS the root to a definition with no draco-domain parent,
+    where it previously replaced the derivation of an empty one. For every type in the
+    corpus but `Dictionary` that is the same operation it already performed.
+  - Emission follows the same rule: the root is spelled only where loading would NOT put
+    it back, so it stays off the surface alone and beside a foreign parent, and stays on
+    beside a draco parent. That case is now unreachable from the corpus, which is the
+    point — with `Dictionary` fixed, no definition names `DracoType`, in either notation.
+  - One straggler went with it: `domains/world/Cartesian.json` still carried a sole
+    `[DracoType]` derivation, which the 2026-07-29 strip (#50 item 1) did not reach because
+    it covered the draco corpus only. Same argument as that commit — generation roots at
+    the entry, so the output is unchanged — and it is what makes "no definition names the
+    root" true of both corpora rather than one.
+
+The normalization DrakeParseTest used to apply to `derivation`/`modules` packages is gone
+(and the matching one in `DrakeCLI check`), so gate 2 verifies reference packages outright.
+A gate that measures a loss and a gate that forbids it are different gates; this is the
+second one now.
+
+MEASURED BEFORE COMPILING. Both directions were simulated over the whole corpus first —
+emit reproduces all 91 authored `.drake` headers with the new rule, and parse reconstructs
+each of their JSON derivations including its package. That is the same method the two 2026-07-29
+increments used, and the reason to trust the change before the suite confirms it.
+
+WHAT REMAINS, honestly. A foreign type with no operator to spell it — a bare name outside
+every draco domain — would still read as a same-package reference and come back wrong. The
+corpus has none, and the loss report would name one if it arrived. Recorded in drake.dlt
+under REFERENCES as the residual, in place of the one this closes.
+
+This is the derivation edge of #51 only. Type expressions in `valueType` and the
+`TypeParameter` atom are untouched and stay open on the issue.

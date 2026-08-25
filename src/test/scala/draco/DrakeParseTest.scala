@@ -18,7 +18,7 @@ import scala.util.Using
  *     everything the emitter spells.
  *
  *  2. JSON round-trip — `parse(emit(td)) == td`, over everything the surface
- *     carries. Three things it does not carry are normalized away before comparing,
+ *     carries. Two things it does not carry are normalized away before comparing,
  *     and each is a language finding rather than a parser bug:
  *       - EXPRESSION FORM. A value is either host-opaque source text (a JSON string)
  *         or an expression tree, and both render to the same words:
@@ -31,15 +31,16 @@ import scala.util.Using
  *         which spelling it came from and canonicalizes to the tree. The comparison
  *         runs both sides through `Drake.defaultValue`; the loss goes to zero once the
  *         three remaining legacy spellings in the corpus become trees.
- *       - REFERENCE PACKAGES. Nearly closed: a `from`/`modules` reference is now bare
- *         only when it lives in the referring type's OWN package, and qualified
- *         otherwise, so its namePackage comes back for all but one case in the corpus
- *         — a reference with no package at all (`Map`, a host type outside every draco
- *         domain) is indistinguishable from a bare same-package one and returns owning
- *         the referring package. The normalization stays only for that residual; drop
- *         it, and this gate verifies packages outright, once `Map` is settled.
- *         (`domain`, `super` and `extensible` always carried theirs.)
- *     The third test measures all three, so the tail is a number rather than a note.
+ *     Reference packages USED to be the third, and are now verified outright rather
+ *     than normalized (GitHub #51): a reference is bare only in the referring type's
+ *     own package, qualified elsewhere, and a FOREIGN referent — one in no draco
+ *     domain, which in this corpus is Dictionary's map parent — is spelled as a type
+ *     expression, so it carries no package to lose and no name to mis-resolve. What
+ *     remains unrepresentable is a foreign referent with no operator to spell it:
+ *     that would still read as a bare same-package name. The corpus has none, and
+ *     the report test below would name it if one arrived.
+ *     The report test measures both remaining kinds, so the tail is a number rather
+ *     than a note.
  *
  *  Covered: the plain-type template plus the rule and actor aspects, over TWO corpora
  *  — the draco types and the mods actors. Only the codec aspect is held back —
@@ -133,15 +134,14 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
   // --- Gate 2: the JSON round-trip, over what the surface carries ---
 
   /** Normalize away the two things the drake surface does not carry — see the class
-   *  comment. Everything else is compared verbatim. */
+   *  comment. Reference packages are NOT among them any more, so `derivation` and
+   *  `modules` are compared verbatim like everything else. */
   private def surfaceCarried(json: Json): Json =
     json.arrayOrObject(
       json,
       array => Json.fromValues(array.map(surfaceCarried)),
       obj => Json.fromJsonObject(JsonObject.fromIterable(obj.toIterable.map {
         case ("value", v) => "value" -> Json.fromString(Drake.defaultValue(Drake.expression(v)))
-        case (key, v) if key == "derivation" || key == "modules" =>
-          key -> Json.fromValues(v.asArray.getOrElse(Vector.empty).map(_.mapObject(_.remove("namePackage"))))
         case (key, v) => key -> surfaceCarried(v)
       })))
 

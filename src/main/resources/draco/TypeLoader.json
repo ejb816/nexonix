@@ -57,7 +57,7 @@
             "valueType": "TypeDefinition"
           }
         ],
-        "value": "if (td.dracoAspect.derivation.nonEmpty || (td.typeName.name == \"DracoType\" && td.typeName.namePackage == Seq(\"draco\"))) td else TypeDefinition(_typeName = td.typeName, _dracoAspect = DracoAspect(_superDomain = td.dracoAspect.superDomain, _modules = td.dracoAspect.modules, _extensible = td.dracoAspect.extensible, _derivation = Seq(TypeName(\"DracoType\", _namePackage = Seq(\"draco\"))), _elements = td.dracoAspect.elements, _factory = td.dracoAspect.factory, _globalElements = td.dracoAspect.globalElements, _source = td.dracoAspect.source, _target = td.dracoAspect.target), _domainAspect = td.domainAspect, _ruleAspect = td.ruleAspect, _actorAspect = td.actorAspect, _codecAspect = td.codecAspect)"
+        "value": "if (td.dracoAspect.derivation.exists(_.namePackage.nonEmpty) || (td.typeName.name == \"DracoType\" && td.typeName.namePackage == Seq(\"draco\"))) td else TypeDefinition(_typeName = td.typeName, _dracoAspect = DracoAspect(_superDomain = td.dracoAspect.superDomain, _modules = td.dracoAspect.modules, _extensible = td.dracoAspect.extensible, _derivation = td.dracoAspect.derivation :+ TypeName(\"DracoType\", _namePackage = Seq(\"draco\")), _elements = td.dracoAspect.elements, _factory = td.dracoAspect.factory, _globalElements = td.dracoAspect.globalElements, _source = td.dracoAspect.source, _target = td.dracoAspect.target), _domainAspect = td.domainAspect, _ruleAspect = td.ruleAspect, _actorAspect = td.actorAspect, _codecAspect = td.codecAspect)"
       },
       {
         "kind": "Dynamic",

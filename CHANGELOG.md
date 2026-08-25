@@ -18,6 +18,23 @@ the block below.
 
 ## [Unreleased]
 
+### Changed
+
+- **A derivation on a type outside draco is written as a type expression** — `Dictionary`
+  now reads `from {K, V}` on its DRAKE surface instead of `from Map(K, V) DracoType`, the
+  same notation its own `kvMap` element already used. A reference with no package names a
+  type outside every draco domain, and is spelled by its operator rather than by its host
+  name; a bare name still means the referring type's own package. This closed the last
+  round-trip loss on the surface, so `DrakeParseTest` now verifies reference packages
+  outright rather than normalizing them away before comparing.
+
+- **The universal root is appended, not substituted** — `TypeLoader.rooted` gives
+  `DracoType` to any definition carrying no draco-domain parent, where it previously did so
+  only when the derivation was empty. `Dictionary` was the sole type in either corpus that
+  had to spell `DracoType` by hand, to compensate for its map parent lying outside draco's
+  graph; it no longer does. With one straggler in the example domains stripped alongside it
+  (`domains/world/Cartesian`), no definition in either corpus names the root.
+
 ### Build
 
 - **The release workflow checks itself before it publishes** — a tag push now verifies

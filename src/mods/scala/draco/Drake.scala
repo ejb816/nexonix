@@ -290,6 +290,37 @@ object Drake {
     if (tn.typeParameters.isEmpty) tn.name
     else s"${tn.name}(${tn.typeParameters.mkString(", ")})"
 
+  /** The universal root, as TypeLoader.rooted spells it. */
+  private def isRoot (tn: TypeName) : Boolean =
+    tn.name == "DracoType" && tn.namePackage == Seq ("draco")
+
+  /** A FOREIGN reference: a parent that lives in no draco domain. Every draco type
+    * is declared inside one, so an EMPTY namePackage says the referent is outside
+    * draco's graph entirely — Dictionary's map parent is the corpus's only one.
+    *
+    * It is spelled as a TYPE EXPRESSION rather than as a name, so Dictionary reads
+    * `from {K, V}` — the same notation its own `kvMap` element already uses, one
+    * concept spelled one way in one file. The operator carries what the name used
+    * to, which is also what closes the round trip: a bare NAME in reference position
+    * means "my own package" and so cannot come back package-less, while an operator
+    * has no package to lose and nothing to resolve.
+    *
+    * This is typeExpression's counterpart in reference position, and it differs on
+    * exactly one case: a map arrives here NAMED, because a reference is nominal,
+    * where a valueType arrives already neutral ({K, V} in the JSON since 0acf2da).
+    * `mut {T}` has no spelling here — `mut` is a member keyword, so it bounds the
+    * clause rather than opening a reference — and no derivation asks for one. */
+  private def foreignReference (tn: TypeName) : String = {
+    val arguments = tn.typeParameters.map (typeExpression)
+    (tn.name, arguments.size) match {
+      case ("Map", 2)          => arguments.mkString ("{", ", ", "}")
+      case ("Set", 1)          => s"{${arguments.head}}"
+      case ("Seq", 1)          => s"[${arguments.head}]"
+      case (name, 0)           => name
+      case (name, _)           => s"$name(${arguments.mkString (", ")})"
+    }
+  }
+
   /** A dyn-with-body opens its own sub-block; its container needs [ ]. */
   private def opensBlock (element: TypeElement) : Boolean = element match {
     case d: Dynamic => d.parameters.nonEmpty || d.body.nonEmpty
@@ -403,16 +434,24 @@ object Drake {
       *
       * `domain` / `super` / `extensible` stay unconditionally qualified: each names
       * something OUTSIDE the type being declared (its domain, that domain's parent, the
-      * host base it extends), so there is no "own package" for them to be inferred from. */
+      * host base it extends), so there is no "own package" for them to be inferred from.
+      *
+      * A reference with NO package is FOREIGN — outside every draco domain — and is
+      * spelled as a type expression instead (foreignReference). */
     def reference (tn: TypeName) : String =
-      if (tn.namePackage == td.typeName.namePackage) typeRef(tn)
+      if (tn.namePackage.isEmpty) foreignReference(tn)
+      else if (tn.namePackage == td.typeName.namePackage) typeRef(tn)
       else (tn.namePackage :+ typeRef(tn)).mkString(" ")
 
-    val fromClause = da.derivation.map(typeRef) match {
-      case Seq()           => ""
-      case Seq("DracoType") => ""  // the universal root alone is inferable
-      case _               => s" from ${da.derivation.map(reference).mkString(" ")}"
-    }
+    // The universal root is spelled only where it is NOT reconstructable, which is
+    // drake.dlt INFERENCE applied to the one reference that is never authored:
+    // TypeLoader.rooted appends DracoType to any definition carrying no draco-domain
+    // parent, so the root alone — and the root beside a FOREIGN parent, which is
+    // Dictionary — comes back on its own. Beside a draco parent it would not, so
+    // there it stays on the surface.
+    val rootRestored = !da.derivation.exists(tn => !isRoot(tn) && tn.namePackage.nonEmpty)
+    val spelled      = if (rootRestored) da.derivation.filterNot(isRoot) else da.derivation
+    val fromClause   = if (spelled.isEmpty) "" else s" from ${spelled.map(reference).mkString(" ")}"
     // The drake surface names the bare concept (AddNaturalSequence); rule-/actor-ness
     // is carried by the ruleAspect/actorAspect, never by the type name.
     val header = s"type ${td.typeName.name}$typeParameters$fromClause"
@@ -795,11 +834,38 @@ object Drake {
   }
 
   /** A type reference as typeRef spells it: name plus ( ) type parameters. The
-    * surface carries NO package for these (typeRef emits the bare name), so
-    * namePackage comes back empty — see DrakeParseTest, which measures that loss. */
+    * surface carries no package here — a bare reference means the referring type's
+    * own package, and `resolved` supplies it once the domain line has been read. */
   private def parseRef (token: String) : TypeName = {
     val (name, typeParameters) = splitApplied (token)
     TypeName (name, _typeParameters = typeParameters)
+  }
+
+  /** A reference the surface spells with an OPERATOR carries no package, so it must
+    * not be resolved against the referring type: it is foreign by construction. The
+    * test is the emitter's own spelling rather than a second list of primitive names,
+    * so the two sides cannot drift apart. */
+  private def operatorCarried (tn: TypeName) : Boolean =
+    opensTypeExpression (foreignReference (tn))
+
+  /** True of a token that opens a TYPE EXPRESSION rather than a name — the two
+    * bracket operators foreignReference spells. `[` is only ever a Seq here: a lone
+    * `[` (one followed by whitespace) lexes as a block bracket and is reserved, so
+    * it bounds the clause instead of reaching this. A foreign type with no operator
+    * still spells its bare name and takes the name path, which is the one reference
+    * this notation cannot tell from a same-package one; the corpus has none. */
+  private def opensTypeExpression (token: String) : Boolean =
+    token.length > 1 && (token.head == '{' || token.head == '[')
+
+  /** Invert foreignReference: an operator-carried reference names a type OUTSIDE
+    * every draco domain, so it comes back with no package — which is what it went
+    * out as, and why nothing has to be resolved against the referring type. The
+    * arguments are ordinary type expressions and convert as such. */
+  private def foreignRef (token: String) : TypeName = {
+    val s         = token.trim
+    val arguments = splitTypeArguments (s.substring (1, s.length - 1)).map (parseTypeExpression)
+    if (s.startsWith ("[")) TypeName ("Seq", _typeParameters = arguments)
+    else TypeName (if (arguments.size == 1) "Set" else "Map", _typeParameters = arguments)
   }
 
   /** A package-qualified reference (`domain draco Draco`, `super …`, `extensible …`):
@@ -808,15 +874,20 @@ object Drake {
     * The reserved set cannot bound this scan — a package word may BE a keyword, and
     * `extensible org apache pekko actor typed ExtensibleBehavior(T)` is the live
     * case (`actor`). Case bounds it instead: package words are lower-case, the
-    * reference is upper-case, so the first upper-case word ends the path. */
-  private def takeQualifiedRef (c: Cursor) : TypeName = {
-    val words = Seq.newBuilder[String]
-    while (!c.exhausted && c.peek.exists (_.headOption.exists (_.isLower))) words += c.takeText ()
-    val namePackage = words.result ()
-    if (c.exhausted) sys.error (s"Drake.parse: qualified reference '${namePackage.mkString (" ")}' has no type name")
-    val ref = parseRef (c.takeText ())
-    TypeName (ref.name, namePackage, ref.typeParameters)
-  }
+    * reference is upper-case, so the first upper-case word ends the path.
+    *
+    * A reference that opens a TYPE EXPRESSION has no package words to scan — the
+    * operator carries the name, and the referent is foreign. */
+  private def takeQualifiedRef (c: Cursor) : TypeName =
+    if (c.peek.exists (opensTypeExpression)) foreignRef (c.takeText ())
+    else {
+      val words = Seq.newBuilder[String]
+      while (!c.exhausted && c.peek.exists (_.headOption.exists (_.isLower))) words += c.takeText ()
+      val namePackage = words.result ()
+      if (c.exhausted) sys.error (s"Drake.parse: qualified reference '${namePackage.mkString (" ")}' has no type name")
+      val ref = parseRef (c.takeText ())
+      TypeName (ref.name, namePackage, ref.typeParameters)
+    }
 
   /** A bracketed list of REFERENCES — `modules [ … ]`. Each member may carry package
     * words, so it is read with takeQualifiedRef rather than as one token; a bare member
@@ -999,7 +1070,7 @@ object Drake {
     // `domain` on the surface and the owning package is not known until the whole
     // source has been read.
     def resolved (tn: TypeName) : TypeName =
-      if (tn.namePackage.nonEmpty) tn
+      if (tn.namePackage.nonEmpty || operatorCarried (tn)) tn
       else TypeName (tn.name, domainName.namePackage, tn.typeParameters)
 
     TypeDefinition (

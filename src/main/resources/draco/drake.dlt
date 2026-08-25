@@ -164,9 +164,14 @@ REFERENCES  (how `from` and `modules` name another type)
   bounds `extensible org apache pekko actor typed ExtensibleBehavior(T)`.
   `domain` / `super` / `extensible` are ALWAYS qualified — each names something outside the type
   being declared, so there is no own-package for them to be inferred against.
-  RESIDUAL: a reference with NO package at all (a host type outside every draco domain — `Map` in
-  Dictionary is the corpus's only one) is spelled bare and so comes back owning the referring type's
-  package. One field; measured by DrakeParseTest's loss report rather than hidden.
+  FOREIGN — a reference with NO package at all names a type outside every draco domain (every draco
+  type is declared inside one, so an absent package says the referent is not draco's). It is spelled
+  as a TYPE EXPRESSION, not as a name: Dictionary's map parent reads `from {K, V}`, the same notation
+  its own `kvMap` element uses. The operator carries what the name used to, so there is no package to
+  lose and no bare name to resolve — which is what closed the last round-trip loss (GitHub #51).
+  RESIDUAL: a foreign type with no operator to spell it would still read as a bare name, and so still
+  come back owning the referring package. The corpus has none; DrakeParseTest's loss report would name
+  one if it arrived.
 
 CONVENTIONS
   factory          takes no name when it constructs the enclosing type <name> *(<T>, ...) — that is the default
@@ -278,7 +283,12 @@ INFERENCE  (authored vs derived — which aspect json must be explicit)
     reference package    INFERABLE when it is the REFERRING TYPE'S OWN package — a `from` / `modules`
                          reference is spelled bare there and qualified everywhere else (see
                          REFERENCES). Spelling every reference would restate the current package on
-                         the 60% of them that are local.
+                         the 60% of them that are local. A FOREIGN referent has no package to infer
+                         and is spelled by its operator instead.
+    the universal root   INFERABLE wherever loading would put it back: DracoType is appended to any
+                         definition carrying no draco-domain parent, so it is spelled on neither
+                         surface — not alone, and not beside a foreign parent (Dictionary). Beside a
+                         draco parent it would NOT be restored, and there it is explicit.
     condition params     INFERABLE from the guard and the enclosing pattern: a guard is an EXPRESSION, and the
                          names in it are the pattern's variables — which is what the `variables` block is for.
                          So they are DERIVED AT EMISSION (the mentioned subset, in declaration order, with the
@@ -415,13 +425,18 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           (Generator.scalaTypeExpression, applied by targetTypes at the generate
                                           entry beside TypeLoader.rooted). Six valueTypes, across Dictionary /
                                           TypeDictionary / DomainDictionary / CLI.
-                                          NOT the derivation. `derivation` holds TypeNames, not type expressions, so
-                                          Dictionary still reads `from Map(K, V)` while its own elements read
-                                          `{K, V}` — the same concept spelled two ways in one file, because a
-                                          REFERENCE and an EXPRESSION are still different kinds of thing here. That
-                                          reference is also the corpus's only package-less one (REFERENCES RESIDUAL,
-                                          the one field DrakeParseTest still measures). Both reconcile when
-                                          derivation admits type expressions — GitHub #51.
+                                          THE DERIVATION FOLLOWED (2026-08-25, GitHub #51). Dictionary now reads
+                                          `from {K, V}`, one concept spelled one way in one file. `derivation`
+                                          still holds TypeNames — a reference is nominal, and flattening 76
+                                          qualified parents to text would lose what namePackage already models —
+                                          so what changed is the SPELLING: a package-less reference is FOREIGN
+                                          (REFERENCES), and a foreign referent is spelled by its operator. With no
+                                          package to lose the last round-trip loss closed, and DrakeParseTest now
+                                          verifies reference packages outright instead of normalizing them away.
+                                          Rooting followed the same seam: TypeLoader.rooted APPENDS the universal
+                                          root to a definition with no draco parent rather than gating on an empty
+                                          derivation, so Dictionary stopped spelling DracoType by hand and the JSON
+                                          corpus is now uniformly implicit with no exception left.
   the ARGUMENT as an opener         <->   IMPLEMENTED (2026-08-10, GitHub #60). The second opener under the one rule: a
                                           `par` whose value is an application brackets itself, which closes the last
                                           ambiguity on the surface (inner and outer argument list admit the same `par`)
