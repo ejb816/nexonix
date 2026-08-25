@@ -1,0 +1,42 @@
+# One change, CI only. GATE — none runnable; see the note below, which is the point.
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-17-1830 | sed '1d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+CI: off the deprecated Node 20 action runtime
+
+The alpha.6 release succeeded, and correctly — prerelease flagged, the jar attached as
+draco-2.0.0-alpha.6.jar with the right version in its name, and the written notes as the
+release body rather than a commit list. But the run carried two deprecation annotations
+that the local reading had missed:
+
+  Node.js 20 is deprecated. actions/checkout@v4, actions/setup-java@v4 and
+  softprops/action-gh-release@v2 target Node 20 and are being forced onto Node 24.
+
+  setup-java v4 is deprecated and will no longer receive updates.
+
+All three were left at the versions the workflow already had, on the judgement that they
+were current. They were not, and not by a little: checkout is at v7, setup-java at v6, and
+action-gh-release at v3. Bumped to those majors. `sbt/setup-sbt@v1` is current (v1.5.8
+under the v1 tag) and is unchanged.
+
+The inputs each action uses are stable across these majors — `distribution`,
+`java-version`, `cache` on setup-java; `files`, `body_path`, `generate_release_notes`,
+`prerelease`, `fail_on_unmatched_files` on the release action — so no configuration
+changed with them.
+
+THE HONEST CAVEAT, and it is the more interesting half. This change cannot be verified
+until the next tag, because the release workflow is the only workflow and it only runs on
+a tag. A repair to release infrastructure that is unexercised until the next release is
+the same shape of problem as a CHANGELOG that waits for a release: the feedback arrives
+at exactly the moment it is least welcome.
+
+A push/PR workflow would fix that as a side effect. It would exercise checkout,
+setup-java, setup-sbt and the suite on every push — three of these four bumps validated
+immediately, and the fourth (the release step) is the only one that would genuinely have
+to wait. That has been on the beta list already, for a separate reason: nothing currently
+checks a commit until it is being released.
+
+Not added here. It changes what happens on every push, which is Dev's call rather than a
+side effect of a deprecation fix.
