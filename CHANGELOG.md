@@ -18,6 +18,13 @@ the block below.
 
 ## [Unreleased]
 
+Nothing yet. Entries land here with each commit's `draco-git-record/` file — see *How this
+file is maintained*, above.
+
+---
+
+## [2.0.0-alpha.6] - 2026-08-17
+
 Since alpha.5 (2026-06-03). **DRAKE** — draco's own definition language — arrived complete
 with a specification, an emitter, a parser and round-trip gates; element values became
 normative expression trees; type loading moved off the Generator onto `TypeLoader` and an

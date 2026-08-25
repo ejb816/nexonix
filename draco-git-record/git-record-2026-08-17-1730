@@ -1,0 +1,61 @@
+# Release prep for v2.0.0-alpha.6. GATE — run `sbt test` before tagging; CI runs it again.
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-17-1730 | sed '1d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+#
+# THEN, only after the push succeeds:
+#   git tag -a v2.0.0-alpha.6 -m "v2.0.0-alpha.6"
+#   git push origin v2.0.0-alpha.6
+#
+# The tag push starts .github/workflows/release.yml, which now checks the tag against
+# build.sbt and the notes file before building, runs the suite, assembles the jar, and
+# publishes with the written notes as the release body. No `gh release edit` step is
+# needed any more. Watch it:
+#   gh run watch $(gh run list --workflow=release.yml --limit 1 --json databaseId -q '.[0].databaseId')
+
+--- MESSAGE ---
+Release v2.0.0-alpha.6
+
+Cuts the [Unreleased] block to a version block dated today, opens a fresh empty one, and
+bumps the build to 2.0.0-alpha.6. Release notes in
+draco-git-record/release-notes-v2.0.0-alpha.6.md, following the alpha.5 convention.
+
+Two and a half months and 37 commits since alpha.5, which is far too long a gap and is the
+reason this release exists at all: nothing between 2026-06-03 and today is visible to
+anyone outside the tree, including the entire DRAKE language. The CHANGELOG trigger landed
+in the previous commit so that the next gap is a commit wide rather than a quarter.
+
+The notes lead with what changed rather than with a feature list: a definition surface of
+draco's own, values as normative trees rather than target source text, loading as an
+explicit language-neutral path, self-validation through the shipped rule engine, role as
+aspect-presence, and the first type constructor to leave the host's vocabulary.
+
+They also carry a Known limitations section, which an alpha should. Scala is the only
+realized target; `Drake.parse` is a measurement tool rather than an authoring path (#61);
+the surface CLI has no shell wrapper; and the metamodel is NOT frozen — `TypeName` and
+`derivation` are expected to change shape under #51 before beta. Saying that plainly is
+what makes the alpha honest and what makes the eventual beta mean something.
+
+THE RELEASE WORKFLOW, repaired in the same commit because it had not run since alpha.5 and
+would probably have failed.
+
+It installed sbt by adding the scala-sbt debian repo and calling `apt-key add`, which is
+deprecated and removed on current runner images, after a keyserver lookup at build time —
+two external dependencies and one dead command, on a `runs-on: ubuntu-latest` that has
+moved underneath it in the intervening two and a half months. Replaced with the official
+`sbt/setup-sbt` action.
+
+Then two integrity checks, which are the part worth keeping. A release is three artifacts
+that must agree — the tag, the version the build stamps into the jar, and the written
+notes — and nothing checked that they did. A tag pushed against a stale build.sbt would
+have published a jar named for the previous version, and that is not hypothetical: bumping
+build.sbt is a separate manual step from tagging, and it is exactly the step a person
+forgets. Both checks now run before anything expensive, and fail in seconds. Verified
+locally against this commit using the same commands the workflow runs.
+
+The written notes are now the release body via `body_path`, with GitHub's generated commit
+list appended beneath, so the manual `gh release edit --notes-file` step that alpha.5
+needed is gone. `fail_on_unmatched_files` means a missing jar fails the run rather than
+publishing an empty release.
+
+The same definitions-move-as-a-trio discipline the corpus has, applied to a release.

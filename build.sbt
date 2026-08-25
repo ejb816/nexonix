@@ -1,5 +1,5 @@
 ThisBuild / organization := "org.nexonix"
-ThisBuild / version := "2.0.0-alpha.5"
+ThisBuild / version := "2.0.0-alpha.6"
 ThisBuild / scalaVersion := "2.13.16"
 publishMavenStyle := true
 
