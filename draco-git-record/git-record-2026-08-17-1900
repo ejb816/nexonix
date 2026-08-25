@@ -1,0 +1,29 @@
+# One change, docs only. GATE — none needed.
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-17-1900 | sed '1d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+CHANGELOG: the entries the last two commits should have carried
+
+The rule landed three commits ago: an entry is written with each commit's git-record, in
+the same commit. The next two commits did not carry one. This adds them.
+
+Worth recording plainly rather than quietly backfilling, because the failure is
+informative about the rule itself. Both misses had a plausible-looking excuse at the
+moment they happened. The release commit cut `[Unreleased]` into a version block, so
+there was no obvious place to put an entry and the work it contained — the workflow's new
+integrity checks — silently ended up recorded nowhere. The deprecation commit looked like
+pure infrastructure, the kind the rule explicitly says may warrant no line.
+
+Both readings were wrong on the same point: "a release will now refuse to publish a jar
+whose version does not match its tag" is an observable fact about how this project ships,
+which is exactly what the CHANGELOG is for. Infrastructure that changes what the project
+guarantees is not internal.
+
+The lesson is not that the trigger is wrong. Attaching the entry to the git-record is
+still the right event — it is the step that reliably happens. The lesson is that a
+trigger only fires if it is actually consulted, so the question at record-writing time has
+to be asked out loud: what did this change, for someone who does not read commits? Two
+commits after writing the rule was the cheapest possible place to learn that, and better
+than the alternative, which was three months.

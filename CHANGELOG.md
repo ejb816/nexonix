@@ -18,8 +18,21 @@ the block below.
 
 ## [Unreleased]
 
-Nothing yet. Entries land here with each commit's `draco-git-record/` file — see *How this
-file is maintained*, above.
+### Build
+
+- **The release workflow checks itself before it publishes** — a tag push now verifies
+  that the tag matches `build.sbt`'s version and that
+  `draco-git-record/release-notes-<tag>.md` exists, both before anything expensive runs,
+  and fails rather than publishing a release with no artifact attached. The written notes
+  become the release body directly, with GitHub's commit list appended, so no manual
+  `gh release edit` step is needed. Previously nothing checked that the tag, the version
+  stamped into the jar, and the notes agreed — a tag pushed against a stale `build.sbt`
+  would have published a jar named for the previous version.
+
+- **CI off deprecated runtimes** — sbt is installed by the official `sbt/setup-sbt` action
+  rather than a hand-rolled apt repository add using `apt-key`, which is deprecated and
+  removed on current runner images; `checkout`, `setup-java` and `action-gh-release` moved
+  to majors that are off the deprecated Node 20 action runtime.
 
 ---
 
