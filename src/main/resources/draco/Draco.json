@@ -20,7 +20,10 @@
   },
   "actorAspect": {
     "messageType": {
-      "name": "DracoType"
+      "name": "DracoType",
+      "namePackage": [
+        "draco"
+      ]
     },
     "start": {
       "kind": "Action",

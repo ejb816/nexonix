@@ -1,6 +1,7 @@
-type Consumer from draco Actor(draco.format.json.JSON)
+type Consumer
 domain domains terrestrial Terrestrial
 actor
+  messageType draco format json JSON
   message
     fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
     mon session.insert(Seq(msg): _*)

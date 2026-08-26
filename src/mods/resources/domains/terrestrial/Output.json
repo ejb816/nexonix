@@ -7,17 +7,6 @@
     ]
   },
   "dracoAspect": {
-    "derivation": [
-      {
-        "name": "Actor",
-        "namePackage": [
-          "draco"
-        ],
-        "typeParameters": [
-          "domains.world.World"
-        ]
-      }
-    ],
     "factory": {
       "kind": "Factory",
       "valueType": "ActorType",
@@ -31,6 +20,13 @@
     }
   },
   "actorAspect": {
+    "messageType": {
+      "name": "World",
+      "namePackage": [
+        "domains",
+        "world"
+      ]
+    },
     "message": {
       "kind": "Action",
       "body": [
@@ -40,11 +36,101 @@
           "valueType": "io.circe.Json",
           "value": {
             "()": [
-              {".": ["io", "circe", "Json", "obj"]},
-              {"(,)": ["\"type\"", {"()": [{".": ["io", "circe", "Json", "fromString"]}, "\"LOCATION\""]}]},
-              {"(,)": ["\"latitude\"", {"()": [{".": ["io", "circe", "Json", "fromDoubleOrNull"]}, {".": ["location", "latitude"]}]}]},
-              {"(,)": ["\"longitude\"", {"()": [{".": ["io", "circe", "Json", "fromDoubleOrNull"]}, {".": ["location", "longitude"]}]}]},
-              {"(,)": ["\"elevationMetres\"", {"()": [{".": ["io", "circe", "Json", "fromInt"]}, {".": ["location", "elevationMetres"]}]}]}
+              {
+                ".": [
+                  "io",
+                  "circe",
+                  "Json",
+                  "obj"
+                ]
+              },
+              {
+                "(,)": [
+                  "\"type\"",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          "io",
+                          "circe",
+                          "Json",
+                          "fromString"
+                        ]
+                      },
+                      "\"LOCATION\""
+                    ]
+                  }
+                ]
+              },
+              {
+                "(,)": [
+                  "\"latitude\"",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          "io",
+                          "circe",
+                          "Json",
+                          "fromDoubleOrNull"
+                        ]
+                      },
+                      {
+                        ".": [
+                          "location",
+                          "latitude"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "(,)": [
+                  "\"longitude\"",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          "io",
+                          "circe",
+                          "Json",
+                          "fromDoubleOrNull"
+                        ]
+                      },
+                      {
+                        ".": [
+                          "location",
+                          "longitude"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "(,)": [
+                  "\"elevationMetres\"",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          "io",
+                          "circe",
+                          "Json",
+                          "fromInt"
+                        ]
+                      },
+                      {
+                        ".": [
+                          "location",
+                          "elevationMetres"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
             ]
           }
         },
@@ -54,9 +140,30 @@
           "valueType": "domains.terrestrial.LocationReport",
           "value": {
             "()": [
-              {".": ["domains", "terrestrial", "LocationReport"]},
-              {"=": ["typeDefinition", {".": ["LocationReport", "typeDefinition"]}]},
-              {"=": ["json", "payload"]}
+              {
+                ".": [
+                  "domains",
+                  "terrestrial",
+                  "LocationReport"
+                ]
+              },
+              {
+                "=": [
+                  "typeDefinition",
+                  {
+                    ".": [
+                      "LocationReport",
+                      "typeDefinition"
+                    ]
+                  }
+                ]
+              },
+              {
+                "=": [
+                  "json",
+                  "payload"
+                ]
+              }
             ]
           }
         },

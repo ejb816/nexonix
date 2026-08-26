@@ -1,6 +1,7 @@
-type Consumer from draco Actor(draco.format.json.JSON)
+type Consumer
 domain domains aerial Aerial
 actor
+  messageType draco format json JSON
   start
     fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
     fix consumed java.util.ArrayList(String) new java.util.ArrayList[String]()

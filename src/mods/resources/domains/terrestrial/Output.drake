@@ -1,9 +1,10 @@
-type Output from draco Actor(domains.world.World)
+type Output
   factory ActorType
     parameters
       par consumer ActorRef(draco.format.json.JSON)
 domain domains terrestrial Terrestrial
 actor
+  messageType domains world World
   message
     fix payload io.circe.Json io.circe.Json.obj parameters
       par ("type", io.circe.Json.fromString parameters par "LOCATION")

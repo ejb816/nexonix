@@ -186,7 +186,9 @@ peers in the `DomainDictionary`, not hierarchical. Example domains live in
 `src/mods/scala/domains/` (the World / media chain).
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
-`TypeInstance`, `DomainInstance`, `RuleInstance`, `ActorInstance`, `typeInstance`,
+the `Actor(T)` derivation on an actor (a ROLE's parameter has no business being an edge in the
+data inheritance tree — actor-ness is aspect presence, and the message type lives in
+`actorAspect.messageType`), `TypeInstance`, `DomainInstance`, `RuleInstance`, `ActorInstance`, `typeInstance`,
 `Extensible`, `DomainDefinition`/`RuleDefinition`/`ActorDefinition`, `TypeDefinition.load`,
 `loadRuleType`/`loadActorType`, the `.rule`/`.actor` filename suffixes, YAML and the
 `from-yaml`/`to-yaml` CLI subcommands, the `draco.language` domain, the reference-frame

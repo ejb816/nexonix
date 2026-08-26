@@ -1,9 +1,10 @@
-type Input from draco Actor(draco.format.json.JSON)
+type Input
   factory ActorType
     parameters
       par worldConsumer ActorRef(domains.world.World)
 domain domains aerial Aerial
 actor
+  messageType draco format json JSON
   message
     fix cursor io.circe.HCursor msg.json.hcursor
     fix position domains.aerial.Position Position parameters

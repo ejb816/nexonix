@@ -1,0 +1,68 @@
+# The actor message type leaves the derivation. GATE — full `sbt test` before the push.
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-26-1009 | sed '1d' > /tmp/msg
+#   git add -A && git commit -F /tmp/msg && git push
+#
+# Expected: every count identical, including ExampleDomainsGenTest's 28 match / 20 differ —
+# the ten .scala trait lines were updated in step with what the Generator now emits, so the
+# report-only map should not move. If it drops below 28, one of those ten changed in a way
+# beyond the trait line, and the log names it.
+
+--- MESSAGE ---
+An actor's message type is carried by its aspect, not by a derivation (#51)
+
+`derivation` answers one question — is this type substitutable for that one. Ten example actors
+were putting something else in it: `Actor(draco.format.json.JSON)`, a ROLE's parameter written as
+an inheritance edge. An actor is never message data for another actor, so that edge asserts a
+relation that does not exist, in the graph a subtype check walks.
+
+The corpus already agreed everywhere else. All ten rule-aspect types carry an empty derivation, no
+type carries a codec aspect, and `Draco` shed its `Actor[DracoType]` in `4c6e67c`. These ten were
+the last exception, and after this commit **`derivation` contains data-inheritance edges only**,
+with no exception left in either corpus. That property is what lets a substitutability check be a
+plain derivation walk with no aspect filtering — which is what the dispatch work will need.
+
+WHAT MOVED
+
+  - Ten definitions drop `dracoAspect.derivation` and gain `actorAspect.messageType`. Where the
+    derivation was the aspect's only content, the aspect goes with it.
+  - `messageType` became a package-carrying REFERENCE. It could not previously hold one: the
+    emitter wrote `typeRef` (name only) and the parser read a single token, so a message type in
+    another package would have lost its package on the way to the surface and come back wrong. It
+    now follows the same rule `from` and `modules` follow — bare in the actor's own package,
+    qualified elsewhere — and is resolved against the owning package on the way back.
+  - `Generator.actorMessageType` renders it PACKAGE-RELATIVE, the rule `derivationRef` already
+    used. The definition carries the package; whether to write it is the target's decision. This
+    is what keeps every generated file identical: `draco.format.json.JSON` from `domains.aerial`
+    stays qualified, `domains.world.World` from `domains.world` stays bare.
+  - `Draco.json`'s message type gained its own package. It read `DracoType` with none, which since
+    yesterday's increment MEANS foreign — outside every draco domain — and DracoType is the root
+    of every one of them. Package-relative rendering keeps `Draco.scala` byte-identical.
+  - `AssemblyValidator` reads the aspect first, derivation as fallback — the same choice
+    `Generator.actorMessageType` makes, for the same reason. It was the one consumer still reading
+    the message type out of the type hierarchy.
+  - The ten generated trait lines follow: `trait Consumer extends Actor[…]` becomes
+    `trait Consumer extends DracoType`, which is the shape `Draco` has had since it migrated. The
+    actor is still an actor — `actorType()` mints a live `Actor[M]` — it just is not one by
+    inheritance. Nothing uses those traits as types; the tests spawn `actorType()`.
+
+TWO OF THE TWELVE DID NOT MOVE, and they are the point
+
+`domains/world/Consumer` and `domains/world/Provider` carry an `Actor(World)` derivation and NO
+actor aspect at all. Their behaviour is hand-written Scala, and what it contains is this:
+
+    msg match {
+      case position: domains.aerial.Position => … transform … ; provider ! location
+      case _ => // no transform rule for this source type yet
+    }
+
+An actor typed high in the tree, dispatching on a subtype, transforming, forwarding. That is
+precisely the construct drake cannot yet express, which is why these two are hand-written and why
+giving them an actor aspect would switch on a generated `receive` and discard the dispatch. They
+are not debt to be tidied — they are the worked example the dispatch grammar has to reproduce, and
+they stay exactly as they are until it can.
+
+MEASURED BEFORE COMPILING, as with the derivation edge: all eleven message types (the ten plus
+Draco) were checked to spell identically to the `new Actor[…]` already in their generated Scala,
+and the surface round-trip was simulated over all 91 definitions carrying a .drake. Zero
+differences either way.

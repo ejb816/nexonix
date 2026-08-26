@@ -7,7 +7,7 @@ import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorConte
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.Knowledge
 
-trait Creator extends Actor[draco.format.json.JSON]
+trait Creator extends DracoType
 
 object Creator extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Creator", _namePackage = Seq ("domains", "marine")))

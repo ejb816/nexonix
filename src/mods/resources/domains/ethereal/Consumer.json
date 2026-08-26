@@ -6,20 +6,15 @@
       "ethereal"
     ]
   },
-  "dracoAspect": {
-    "derivation": [
-      {
-        "name": "Actor",
-        "namePackage": [
-          "draco"
-        ],
-        "typeParameters": [
-          "draco.format.json.JSON"
-        ]
-      }
-    ]
-  },
   "actorAspect": {
+    "messageType": {
+      "name": "JSON",
+      "namePackage": [
+        "draco",
+        "format",
+        "json"
+      ]
+    },
     "message": {
       "kind": "Action",
       "body": [

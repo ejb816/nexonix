@@ -20,6 +20,15 @@ the block below.
 
 ### Changed
 
+- **An actor's message type is carried by its aspect, not by an `Actor(T)` derivation** — ten example
+  actors moved off the transitional derivation onto `actorAspect.messageType`, leaving `derivation`
+  to mean data inheritance and nothing else. A role's parameter was previously an edge in the same
+  graph that answers "is this type substitutable for that one", and every rule- and codec-aspect type
+  in the corpus already avoided that; actors were the last exception. `messageType` also became an
+  ordinary package-carrying reference — bare in the actor's own package, qualified elsewhere
+  (`messageType draco format json JSON`) — where the surface previously dropped the package
+  entirely, and the Scala target now spells it package-relative rather than always fully qualified.
+
 - **A derivation on a type outside draco is written as a type expression** — `Dictionary`
   now reads `from {K, V}` on its DRAKE surface instead of `from Map(K, V) DracoType`, the
   same notation its own `kvMap` element already used. A reference with no package names a

@@ -543,7 +543,7 @@ object Drake {
         // loses it entirely once the transitional derivation is dropped.
         val messageType =
           if (aa.messageType.name.isEmpty) Seq.empty
-          else Seq(s"  messageType ${typeRef(aa.messageType)}")
+          else Seq(s"  messageType ${reference(aa.messageType)}")
         "actor" +: (messageType ++ block("start", aa.start) ++ block("message", aa.message) ++ block("signal", aa.signal))
       }
 
@@ -1054,7 +1054,7 @@ object Drake {
         case "action"      => action = actionBody ()
 
         case "actor"       => isActor = true
-        case "messageType" => messageType = parseRef (c.takeText ())
+        case "messageType" => messageType = takeQualifiedRef (c)
         case "start"       => start = actionBody ()
         case "message"     => message = actionBody ()
         case "signal"      => signal = actionBody ()
@@ -1070,7 +1070,7 @@ object Drake {
     // `domain` on the surface and the owning package is not known until the whole
     // source has been read.
     def resolved (tn: TypeName) : TypeName =
-      if (tn.namePackage.nonEmpty || operatorCarried (tn)) tn
+      if (tn.name.isEmpty || tn.namePackage.nonEmpty || operatorCarried (tn)) tn
       else TypeName (tn.name, domainName.namePackage, tn.typeParameters)
 
     TypeDefinition (
@@ -1085,6 +1085,6 @@ object Drake {
         _globalElements = globalElements),
       _domainAspect = DomainAspect (domainName, elementTypeNames),
       _ruleAspect   = if (!isRule) RuleAspect.Null else RuleAspect (Pattern (variables, conditions), action),
-      _actorAspect  = if (!isActor) ActorAspect.Null else ActorAspect (message, messageType, signal, start))
+      _actorAspect  = if (!isActor) ActorAspect.Null else ActorAspect (message, resolved (messageType), signal, start))
   }
 }

@@ -5,7 +5,7 @@ import io.circe.Json
 import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
-trait Output extends Actor[domains.world.World]
+trait Output extends DracoType
 
 object Output extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Output", _namePackage = Seq ("domains", "terrestrial")))

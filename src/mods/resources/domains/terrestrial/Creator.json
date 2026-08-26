@@ -7,17 +7,6 @@
     ]
   },
   "dracoAspect": {
-    "derivation": [
-      {
-        "name": "Actor",
-        "namePackage": [
-          "draco"
-        ],
-        "typeParameters": [
-          "draco.format.json.JSON"
-        ]
-      }
-    ],
     "factory": {
       "kind": "Factory",
       "valueType": "ActorType",
@@ -31,6 +20,14 @@
     }
   },
   "actorAspect": {
+    "messageType": {
+      "name": "JSON",
+      "namePackage": [
+        "draco",
+        "format",
+        "json"
+      ]
+    },
     "message": {
       "kind": "Action",
       "body": [

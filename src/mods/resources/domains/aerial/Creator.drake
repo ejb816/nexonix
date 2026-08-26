@@ -1,9 +1,10 @@
-type Creator from draco Actor(draco.format.json.JSON)
+type Creator
   factory ActorType
     parameters
       par consumer ActorRef(draco.format.json.JSON)
 domain domains aerial Aerial
 actor
+  messageType draco format json JSON
   message
     fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
     mon session.set("consumer", consumer)

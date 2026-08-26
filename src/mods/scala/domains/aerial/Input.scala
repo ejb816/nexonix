@@ -4,7 +4,7 @@ import draco._
 import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
-trait Input extends Actor[draco.format.json.JSON]
+trait Input extends DracoType
 
 object Input extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Input", _namePackage = Seq ("domains", "aerial")))

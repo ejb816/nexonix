@@ -26,11 +26,19 @@ object AssemblyValidator {
     else None
   }
 
-  /** Message type a member receives — the actual of its `Actor[M]` derivation. */
+  /** Message type a member receives. The actor ASPECT is the source of truth —
+    * actor-ness is aspect presence, so an `Actor[M]` derivation would put a role's
+    * parameter into the data inheritance tree. The derivation is read only as a
+    * fallback, for definitions not yet migrated (Generator.actorMessageType makes
+    * the same choice, and for the same reason). */
   private def messageType(td: TypeDefinition): Option[String] =
-    td.dracoAspect.derivation
-      .find(_.name == "Actor")
-      .flatMap(_.typeParameters.headOption)
+    Some(td.actorAspect.messageType)
+      .filter(_.name.nonEmpty)
+      .map(_.namePath)
+      .orElse(
+        td.dracoAspect.derivation
+          .find(_.name == "Actor")
+          .flatMap(_.typeParameters.headOption))
       .map(_.trim)
 
   def validate(assembly: Assembly): Seq[String] = {

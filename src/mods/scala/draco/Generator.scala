@@ -1131,7 +1131,14 @@ object Generator extends App {
     * contributes only body members, which the additive composer contradicts.
     * Falls back to `Any` if neither says. */
   private def actorMessageType (td: TypeDefinition) : String = {
-    val fromAspect = Some(td.actorAspect.messageType).map(_.namePath).filter(_.nonEmpty)
+    // Rendered PACKAGE-RELATIVE, the same rule derivationRef uses: a message type in
+    // the actor's own package is spelled bare, one elsewhere is qualified. The aspect
+    // holds a structural reference, so the package is present either way and the
+    // decision of whether to spell it belongs to the target, not to the definition.
+    def spelled (tn: TypeName) : String =
+      if (tn.namePackage.isEmpty || tn.namePackage == td.typeName.namePackage) parameterizedName(tn)
+      else s"${tn.namePackage.mkString(".")}.${parameterizedName(tn)}"
+    val fromAspect = Some(td.actorAspect.messageType).filter(_.name.nonEmpty).map(spelled)
     def fromDerivation = td.dracoAspect.derivation
       .find(_.name == "Actor")
       .flatMap(_.typeParameters.headOption)

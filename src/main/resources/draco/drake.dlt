@@ -163,7 +163,9 @@ REFERENCES  (how `from` and `modules` name another type)
   `from Unit draco Primal(T)` is a bare one followed by a qualified one. Same rule that already
   bounds `extensible org apache pekko actor typed ExtensibleBehavior(T)`.
   `domain` / `super` / `extensible` are ALWAYS qualified — each names something outside the type
-  being declared, so there is no own-package for them to be inferred against.
+  being declared, so there is no own-package for them to be inferred against. `messageType` is NOT
+  one of these: an actor's message type is an ordinary type reference and follows the bare/qualified
+  rule above.
   FOREIGN — a reference with NO package at all names a type outside every draco domain (every draco
   type is declared inside one, so an absent package says the referent is not draco's). It is spelled
   as a TYPE EXPRESSION, not as a name: Dictionary's map parent reads `from {K, V}`, the same notation
@@ -342,7 +344,11 @@ domain <pkg-seq> <name>                    -> domainAspect.typeName { namePackag
     mon <unit-value>                       -> action.body[] { kind=Monadic , value }
     ...
 *actor                                     -> actorAspect                   (presence-significant, FACET-CREATING: present = is an actor, every action defaults & is overridable; absent = not an actor)
-  *~messageType <name> *(<T>, ...)         -> actorAspect.messageType       ( the actor's T, carried by the ASPECT rather than by an Actor(T) derivation )
+  *~messageType *<pkg-seq> <name> *(<T>, ...) -> actorAspect.messageType    ( the actor's T, carried by the ASPECT rather than by an Actor(T) derivation.
+                                                                             A REFERENCE like from/modules: bare in the actor's own package, qualified
+                                                                             elsewhere — `messageType draco format json JSON`. The target spells it
+                                                                             package-relative again, so the definition carries the package and the
+                                                                             projection decides whether to write it. )
   *~start                                  -> actorAspect.start             ( default behaviour generated regardless of presence; content overrides )
   *~message                                -> actorAspect.message           ( default behaviour generated regardless of presence; content overrides )
   *~signal                                 -> actorAspect.signal            ( default behaviour generated regardless of presence; content overrides )

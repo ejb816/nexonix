@@ -7,17 +7,6 @@
     ]
   },
   "dracoAspect": {
-    "derivation": [
-      {
-        "name": "Actor",
-        "namePackage": [
-          "draco"
-        ],
-        "typeParameters": [
-          "draco.format.json.JSON"
-        ]
-      }
-    ],
     "factory": {
       "kind": "Factory",
       "valueType": "ActorType",
@@ -31,6 +20,14 @@
     }
   },
   "actorAspect": {
+    "messageType": {
+      "name": "JSON",
+      "namePackage": [
+        "draco",
+        "format",
+        "json"
+      ]
+    },
     "message": {
       "kind": "Action",
       "body": [
@@ -47,9 +44,84 @@
           "value": {
             "()": [
               "Position",
-              {"=": ["latitude", {"()": [{".": [{"()": [{".": ["cursor", "get[Double]"]}, "\"latitude\""]}, "getOrElse"]}, "0.0"]}]},
-              {"=": ["longitude", {"()": [{".": [{"()": [{".": ["cursor", "get[Double]"]}, "\"longitude\""]}, "getOrElse"]}, "0.0"]}]},
-              {"=": ["altitudeFeet", {"()": [{".": [{"()": [{".": ["cursor", "get[Int]"]}, "\"altitudeFeet\""]}, "getOrElse"]}, "0"]}]}
+              {
+                "=": [
+                  "latitude",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              {
+                                ".": [
+                                  "cursor",
+                                  "get[Double]"
+                                ]
+                              },
+                              "\"latitude\""
+                            ]
+                          },
+                          "getOrElse"
+                        ]
+                      },
+                      "0.0"
+                    ]
+                  }
+                ]
+              },
+              {
+                "=": [
+                  "longitude",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              {
+                                ".": [
+                                  "cursor",
+                                  "get[Double]"
+                                ]
+                              },
+                              "\"longitude\""
+                            ]
+                          },
+                          "getOrElse"
+                        ]
+                      },
+                      "0.0"
+                    ]
+                  }
+                ]
+              },
+              {
+                "=": [
+                  "altitudeFeet",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              {
+                                ".": [
+                                  "cursor",
+                                  "get[Int]"
+                                ]
+                              },
+                              "\"altitudeFeet\""
+                            ]
+                          },
+                          "getOrElse"
+                        ]
+                      },
+                      "0"
+                    ]
+                  }
+                ]
+              }
             ]
           }
         },
