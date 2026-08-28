@@ -1,0 +1,4 @@
+type AlarmSignal from BirchSap
+  elements
+    fix infochemical BirchJasmonate
+domain scenario birch Birch

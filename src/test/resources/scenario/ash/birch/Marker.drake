@@ -1,0 +1,7 @@
+type Marker from scenario birch Compound
+  factory
+    parameters
+      par compound scenario.ash.Compound
+    body
+      fix value String _compound.value
+domain scenario ash birch Ash_Birch

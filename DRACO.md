@@ -237,6 +237,14 @@ trusted without checking the code:
 - **Evrete** compiles conditions as Java at runtime: fully qualified class names required.
   Working memory is boxed — rule variables use `classOf[Integer]`, not `classOf[Int]`.
   A single-fact insert needs `Seq(fact): _*`. Tuple facts need a `forEach` declaration.
+- **Two rules in one knowledge must not declare fact types related by inheritance.** Evrete
+  resolves a fact's type by walking its supertypes; when more than one declared type fits, it
+  resolves NEITHER and **skips the insert** — the fact never reaches working memory, both rules
+  stay quiet, and the only trace is a `java.util.logging` warning ("due to ambiguity" / "insert
+  operation skipped"). Nothing throws. A single rule declared anywhere up the chain works fine —
+  `SubtypeFactVisibilityTest` measures both halves. The corpus is safe only by shape: each medium's
+  session declares SIBLINGS (`PositionReport` + `FlightIntent`), and draco's validation session a
+  disjoint taxonomy (`Problem` / `TypeDefinition` / `DomainType`). GitHub #63.
 - **Actors** are thin membranes: `session.insert(msg); session.fire(); Behaviors.same`.
   `Rule.knowledgeService` is a singleton; Knowledge is per domain, Session per actor.
 - **circe 0.14.1 has no `java.net.URI` codec** — the codec gate excludes parameters whose

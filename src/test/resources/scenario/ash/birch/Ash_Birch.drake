@@ -1,0 +1,7 @@
+type Ash_Birch
+domain scenario ash birch Ash_Birch
+  super scenario forest Forest
+  types [
+    Potency
+    Marker
+  ]

@@ -1,0 +1,9 @@
+type AshJasmonate from Infochemical
+  elements
+    fix potency Micromolar
+    fix compound Compound
+  factory
+    parameters
+      par potency Micromolar
+      par compound Compound
+domain scenario ash Ash

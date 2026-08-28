@@ -18,6 +18,22 @@ the block below.
 
 ## [Unreleased]
 
+### Added
+
+- **A rules/facts/inheritance scenario, authored in DRAKE** — `src/test/resources/scenario/` holds 22
+  definitions: a `Forest` root super-domain, two tree species as message domains, and the mycorrhizal
+  hand-off between them as a transform domain. `ScenarioDrakeTest` reports what parses and what
+  round-trips; all 22 do, so message domains and transform domains — neither of which draco defines
+  de jure — are constructible de facto out of what drake already has. `dracoAspect.superDomain` gets
+  its first use anywhere, and the one thing the scenario cannot say is the actor's typed dispatch,
+  which is carried as host-opaque text rather than expressed (GitHub #63).
+
+- **A probe for how the rule engine resolves fact types across an inheritance chain** —
+  `SubtypeFactVisibilityTest`, report-only. A rule declared at an ancestor type does see a
+  descendant fact; but declare two types from one hierarchy in a single knowledge and the engine
+  resolves neither and **skips the insert**, with only a `java.util.logging` warning to show for it.
+  Recorded in DRACO.md's gotchas, since nothing throws and no test fails when it happens.
+
 ### Changed
 
 - **An actor's message type is carried by its aspect, not by an `Actor(T)` derivation** — ten example

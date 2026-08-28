@@ -1,0 +1,14 @@
+type Ash
+domain scenario ash Ash
+  super scenario forest Forest
+  types [
+    AshSap
+    AlarmSignal
+    DroughtCue
+    Infochemical
+    AshJasmonate
+    AshAbscisate
+    Micromolar
+    Compound
+    RootInterface
+  ]

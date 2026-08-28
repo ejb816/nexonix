@@ -1,0 +1,11 @@
+type Birch
+domain scenario birch Birch
+  super scenario forest Forest
+  types [
+    BirchSap
+    AlarmSignal
+    Infochemical
+    BirchJasmonate
+    Micromolar
+    Compound
+  ]

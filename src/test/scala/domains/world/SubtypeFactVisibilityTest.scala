@@ -9,37 +9,34 @@ import scala.collection.mutable.ListBuffer
 
 /** PROBE — disposable. Does the rete layer honour draco's inheritance?
  *
- *  `WorldHierarchyTest` establishes the type level: `FixReport <: Marine <: World`,
- *  and `FixReport <: JSON` besides. This asks the question one level down, which the
- *  corpus has never had to answer: when ONE fact is inserted, which declared types
- *  can see it?
+ *  `WorldHierarchyTest` establishes the type level: `FixReport <: Marine <: World`, and
+ *  `FixReport <: JSON` besides. This asks the question one level down: when ONE fact is
+ *  inserted, which declared types can see it?
  *
- *  Every rule in both corpora declares its fact at exactly one level — a rule for
- *  `PositionReport` receives `PositionReport` — so a fact has never needed to be
- *  visible at two. The design that motivates this asks for exactly that: an actor
- *  receives a message typed anywhere in the tree, and a rule matches it at whatever
- *  level the transform is written for. That only works if a fact is visible at every
- *  type it IS, not at one type chosen for it.
+ *  Every rule in both corpora declares its fact at exactly one level, so the corpus has
+ *  never had to answer. The design that motivates the question needs a message to be
+ *  matchable at whatever level a transform is written for.
  *
- *  Four declared levels over a single inserted `FixReport`:
+ *  TWO MEASUREMENTS, because the first run of this probe returned something none of the
+ *  anticipated outcomes covered — with four rules declared at four levels of one
+ *  hierarchy, NOTHING fired, not even the rule at the fact's own type. That is either
+ *  ambiguity (several declared types fit one fact, so the resolver picks none) or a
+ *  defect in the probe, and the two are told apart by running each level ALONE:
  *
- *    World      the domain root       — two levels up, via Marine
- *    Marine     its own domain        — one level up
- *    FixReport  its own type          — exact (via an anonymous implementing class)
- *    JSON       a second parent       — the format shell, not the domain chain
+ *    SOLO      one knowledge, one rule, one insert — per level.
+ *              Establishes the baseline: can a rule at this level EVER see this fact?
+ *    COMBINED  one knowledge, all four rules, one insert.
+ *              The design question proper.
  *
- *  Read the headline, not a pass/fail — this measures rather than asserts, because
- *  the answer is not known in advance and each outcome means something different:
- *
- *    ALL FOUR   inheritance is honoured, including multiple parents. The design
- *               works as stated and nothing further is needed at this layer.
- *    EXACT ONLY facts are resolved to their runtime class alone. Every rule must
- *               then declare the concrete type, and "as high or low as required"
- *               needs a type resolver or an explicit insert per level.
- *    ONE OF     the resolver picks a single type per fact. Then WHICH one it picks
- *               is the whole design — first declared, most specific, or arbitrary —
- *               and a rule at another level silently never fires, which is the
- *               failure mode worth knowing about before building on it.
+ *  Reading the matrix:
+ *    solo all four + combined all four  inheritance honoured; declare rules anywhere.
+ *    solo all four + combined none      CO-DECLARATION is the poison, not the hierarchy.
+ *                                       Each level works alone; declaring two levels of
+ *                                       one hierarchy in one knowledge silently drops the
+ *                                       fact. Worst case for implicit matching, and the
+ *                                       strongest argument for dispatching in the actor.
+ *    solo FixReport only                no inheritance at all; the exact type is required.
+ *    solo none                          the probe is wrong, not the engine — start there.
  */
 class SubtypeFactVisibilityTest extends AnyFunSuite with draco.PersistentTestLog {
 
@@ -57,12 +54,14 @@ class SubtypeFactVisibilityTest extends AnyFunSuite with draco.PersistentTestLog
     "JSON"      -> classOf[draco.format.json.JSON]
   )
 
-  test("which declared types see one inserted fact (report only)") {
+  /** Insert one FixReport into a session whose knowledge declares exactly `declared`,
+   *  and return the labels that fired. */
+  private def run(declared: Seq[(String, Class[_])]): Seq[String] = {
     val service = new KnowledgeService()
     val fired   = ListBuffer.empty[String]
     try {
-      val knowledge: Knowledge = service.newKnowledge("SubtypeVisibility")
-      levels.foreach { case (label, cls) =>
+      val knowledge: Knowledge = service.newKnowledge("Probe")
+      declared.foreach { case (label, cls) =>
         knowledge
           .builder()
           .newRule(s"probe.$label")
@@ -76,17 +75,36 @@ class SubtypeFactVisibilityTest extends AnyFunSuite with draco.PersistentTestLog
         session.fire()
       } finally session.close()
     } finally service.shutdown()
+    fired.toList
+  }
 
-    val saw     = fired.toList
-    val missing = levels.map(_._1).filterNot(saw.contains)
+  test("which declared types see one inserted fact (report only)") {
+    val solo = levels.map { case (label, cls) =>
+      val fired = try run(Seq(label -> cls)) catch { case e: Throwable => Seq(s"<error: ${e.getClass.getSimpleName}>") }
+      label -> fired
+    }
+    val combined = try run(levels) catch { case e: Throwable => Seq(s"<error: ${e.getMessage}>") }
+
+    log.info("inserted: one anonymous domains.marine.FixReport (FixReport <: Marine <: World, and <: JSON)")
+    log.info("SOLO — one knowledge, one rule:")
+    solo.foreach { case (label, fired) =>
+      log.info(f"    declared at $label%-10s -> ${if (fired.contains(label)) "FIRED" else s"silent ($fired)"}")
+    }
+    log.info(s"COMBINED — all four declared together -> ${if (combined.isEmpty) "<none fired>" else combined.mkString(", ")}")
+
+    val soloSeen = solo.collect { case (l, f) if f.contains(l) => l }
     val verdict =
-      if (missing.isEmpty)            "ALL FOUR — inheritance honoured, multiple parents included"
-      else if (saw == List("FixReport")) "EXACT ONLY — a fact is visible at its own type alone"
-      else                            s"PARTIAL — saw ${saw.mkString(", ")}; blind at ${missing.mkString(", ")}"
+      if (soloSeen.size == levels.size && combined.size == levels.size)
+        "inheritance honoured — a fact is visible at every type it is"
+      else if (soloSeen.size == levels.size && combined.isEmpty)
+        "CO-DECLARATION DROPS THE FACT — each level works alone, together they see nothing"
+      else if (soloSeen == List("FixReport"))
+        "no inheritance — only the fact's own type sees it"
+      else if (soloSeen.isEmpty)
+        "nothing fires even solo — suspect the probe before the engine"
+      else
+        s"mixed — solo: ${soloSeen.mkString(",")}; combined: ${combined.mkString(",")}"
 
-    log.info(s"inserted: one anonymous domains.marine.FixReport (FixReport <: Marine <: World, and <: JSON)")
-    log.info(s"rules declared at: ${levels.map(_._1).mkString(", ")}")
-    log.info(s"rules that fired : ${if (saw.isEmpty) "<none>" else saw.mkString(", ")}")
     log.info(s"verdict: $verdict")
     console.info(s"rete subtype visibility: $verdict")
     succeed

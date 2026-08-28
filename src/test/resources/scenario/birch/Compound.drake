@@ -1,0 +1,5 @@
+type Compound from draco Primal(String)
+  factory
+    parameters
+      par value String
+domain scenario birch Birch

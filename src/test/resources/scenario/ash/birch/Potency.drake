@@ -1,0 +1,7 @@
+type Potency from scenario birch Micromolar
+  factory
+    parameters
+      par potency scenario.ash.Micromolar
+    body
+      fix value Double _potency.value * 0.62
+domain scenario ash birch Ash_Birch

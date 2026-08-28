@@ -1,0 +1,94 @@
+# Test corpus and docs only — no src/main, no src/mods. GATE — full `sbt test`; the block below
+# runs it and stops if it fails, so nothing is committed against a red suite.
+#
+#   sbt test && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-27-2251 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+#
+# Expected: 527 tests (526 plus ScenarioDrakeTest), and two report-only headlines —
+#   rete subtype visibility: CO-DECLARATION DROPS THE FACT — each level works alone, together they see nothing
+#   scenario in today's drake: 22 files, 0 rejected, 0 parsed-but-drifted, 22 clean
+#
+# SEQUENCE — Cowork FIRST, then this block, once:
+#   1. Extract the journal source and let Cowork update draco-dev-journal/. Cowork writes files
+#      only; it does not commit and does not push.
+#   2. Paste the block above. `git add -A` sweeps the session's work AND the journal chapter into
+#      this one commit.
+# The separation that matters is of AUTHORSHIP, not of commits: Claude Code does the session work,
+# Cowork writes the journal, and neither does the other's job. No amend, so no rewriting of pushed
+# history, and the git-record keeps its contract — one file per commit, containing that commit's
+# message.
+
+--- MESSAGE ---
+A forest in drake, and the fact-resolution finding it rests on
+
+Two things, and the second is why the first is shaped as it is.
+
+THE FINDING: co-declaration drops the fact
+
+`SubtypeFactVisibilityTest` inserts one `FixReport` (`FixReport <: Marine <: World`, and `<: JSON`)
+and asks which declared types see it:
+
+    SOLO — one knowledge, one rule
+        World      FIRED        Marine     FIRED
+        FixReport  FIRED        JSON       FIRED
+    COMBINED — all four declared together
+        <none fired>
+
+Inheritance IS honoured: a rule declared two levels up sees the fact. But declare two types from one
+hierarchy in a single knowledge and the resolver picks neither —
+
+    DefaultTypeResolver   Unable to resolve type '…$$anon$1' due to ambiguity.
+    AbstractRuleSessionOps  Can not map type for '…', insert operation skipped.
+
+— and the insert is SKIPPED. The fact never reaches working memory, every rule goes quiet, nothing
+throws, and the only trace is a `java.util.logging` warning. Recorded in DRACO.md's gotchas because
+no test would fail when it happens.
+
+The corpus is safe today by shape rather than by design: each medium's session declares SIBLINGS
+(`PositionReport` + `FlightIntent`), and draco's validation session a deliberately disjoint taxonomy
+(`Problem` / `TypeDefinition` / `DomainType`). Nothing declares an ancestor beside a descendant.
+
+This also corrects what GitHub #63 says the actor dispatch is FOR. Not routing — the engine routes
+siblings correctly on its own. **The dispatch converts hierarchy into siblings**: a message arrives
+at whatever height its type sits, and the dispatch emits a fact at a fixed flat level, so the one
+thing the engine cannot do safely is never asked of it.
+
+THE SCENARIO: can a message domain be said in today's drake?
+
+draco has no `message domain` and no `transform domain` construct. The question is whether they can
+be built DE FACTO from what drake already has, and the answer is yes — 22 definitions,
+0 rejected, 0 drifted, and every parsed shape correct:
+
+    forest/     Forest (root super-domain), AshBirchAlarm (the transform rule)
+    ash/        Ash, AshSap, AlarmSignal, DroughtCue, Infochemical,
+                AshJasmonate, AshAbscisate, Micromolar, Compound, RootInterface
+    birch/      Birch, BirchSap, AlarmSignal, Infochemical,
+                BirchJasmonate, Micromolar, Compound
+    ash/birch/  Ash_Birch, Potency, Marker
+
+Four constructs with no precedent in either corpus all held: `super` (carried by ZERO definitions
+before this — `scenario.forest.Forest` on all three domains), a transform domain whose package
+deliberately breaks the package/type-name coupling (`domain scenario ash birch Ash_Birch`), a
+cross-package derivation into a target domain (`Potency from scenario birch Micromolar`), and an
+underscore in a type name.
+
+The subject matter is load-bearing, not decoration. Species-specific metabolic fingerprints are why
+`Ash.Micromolar` is not `Birch.Micromolar`, and the fungal network's standardizing of diverse tree
+inputs IS the leaf conversion — `Ash_Birch.Potency` derives Birch's primal and takes Ash's as its
+factory argument, attenuating on the crossing. The transform domain declares one type per leaf
+conversion and nothing else; every composite is a factory application, which drake's application
+surface already writes. `Infochemical` is simultaneously the dispatch tag and the protection
+boundary, which in the biology is one membrane: what may cross the root interface into the fungus,
+while the rest of the sap stays inside the tree.
+
+WHAT IT DOES NOT PROVE, stated plainly
+
+Parsing is the weaker half. The scenario has never been generated or compiled, and the same four
+unprecedented constructs have not been through the Generator. `RootInterface`'s dispatch parsed
+exactly as predicted — a Scala `match` carried as host-opaque text, single-line because a value must
+be. That it parses proves nothing: drake can store the text, cannot read it, and cannot project it
+to any other target. That is the gap #63 exists to close, now with a corpus to close it against.
+
+No `src/main` or `src/mods` changed. The suite runs as a formality rather than a gate.
+
+Cowork's journal chapter for this session rides in this commit. The division is of authorship, not
+of commits: Claude Code does the session work, Cowork writes the journal.

@@ -1,0 +1,4 @@
+type AlarmSignal from AshSap
+  elements
+    fix infochemical AshJasmonate
+domain scenario ash Ash
