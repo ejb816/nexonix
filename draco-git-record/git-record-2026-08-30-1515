@@ -1,0 +1,124 @@
+# GATE — full `sbt test`; the block below runs it and stops if it fails, so nothing is committed
+# against a red suite.
+#
+#   sbt test && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-30-1515 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+#
+# Expected: 528 tests / 45 suites (527 plus ScenarioGenTest), and these report-only headlines —
+#   scenario in today's drake: 22 files, 0 rejected, 0 parsed-but-drifted, 22 clean
+#   forest through the Generator: 22 definitions, 0 failed to emit, all of it compiled,
+#                                 1 super-domain rule(s) an actor cannot reach
+#   EXAMPLE-DOMAIN GEN MAP: 28 match, 20 differ, 0 error, 0 missing (of 48)   [unchanged]
+#
+# The "1 super-domain rule an actor cannot reach" is the one finding left standing, deliberately.
+# It is in the console headline because nothing else would report it.
+#
+# SEQUENCE — Cowork FIRST, then this block, once:
+#   1. Extract the journal source and let Cowork update draco-dev-journal/. Cowork writes files
+#      only; it does not commit and does not push.
+#   2. Paste the block above. `git add -A` sweeps the session's work AND the journal chapter into
+#      this one commit.
+
+--- MESSAGE ---
+The forest projects, and a transform domain says so in drake
+
+`ScenarioDrakeTest` established that the scenario can be SAID in today's drake. This is the other
+half: does it MEAN anything? Hand each parsed `TypeDefinition` to `Generator.generate`, compile what
+comes out, and then — because compiling is a weaker gate than it looks — ask whether what compiled
+does the thing it claims.
+
+    GATE 1  generate      22 of 22, nothing thrown
+    GATE 2  compile       22 sources as ONE unit — cross-package references are the subject
+    GATE 3  means it      an actor's REACHABLE rules, beside the ones its super-domain owns
+
+Gate 1 passed on the first run. None of the four unprecedented constructs made the emitter throw:
+`Ash_Birch` — a domain whose package tail deliberately disagrees with its name, carrying the
+corpus's first underscore in a type name — emits valid Scala with no special handling at all.
+
+Gate 2 opened at 12 errors and closed at 0, through two Generator fixes.
+
+A BARE REFERENCE MUST REACH WHAT IT NAMES
+
+    trait Potency extends Micromolar
+    reference to Micromolar is ambiguous; it is imported twice in the same scope
+    by import scenario.birch._ and import scenario.ash._
+
+`derivationRef` qualified a parent only when it shared the DECLARING type's simple name. The
+collision here is between two IMPORTED packages: the own-package chain and the derivation's. That is
+not incidental to this corpus — it is what a transform domain IS, sitting under one species while
+deriving from the other. `derivationRef` now asks whether the bare name would REACH the parent, and
+"does package P hold a type named N" is a load probe, because a definition is a resource. The pinned
+corpus does not move: 137/137 before and after. Two `type mismatch` errors went with it — they were
+cascades, which the fix confirms rather than assumes.
+
+A UNIT TYPE IS NOT A WRAPPER
+
+Eight errors were one shape: `Encoder[scenario.ash.Micromolar]` not found. `Micromolar` derives
+`Primal(Double)` and declares no elements of its own, so `codecDeclaration`'s `ownElementNames.nonEmpty`
+guard withheld its codec — and `AshJasmonate`, which holds one, then had nothing to call.
+
+The guard cannot be narrowed. `draco.base.Meters` is structurally identical to
+`scenario.ash.Micromolar`; no predicate gives one a codec and withholds it from the other. Dev named
+what the guard had wrong about them: **the purpose of a derived unit type is to identify a unit
+conversion formula, not to structurally morph a type.** These are not wrappers that happen to sit on
+a parent; the derivation exists so a conversion has two ends to name, and it adds no structure and
+takes none away. So a unit type's projection is its parent's projection — which the corpus had
+already settled, since every subtype of `TypeElement extends Primal[Json]` encodes `value` as a named
+field. Guard dropped; `Type`, `Meters`, `Radians` and `format.json.Value` regenerated.
+
+A DIRECTION IS AN ASPECT, NOT A DERIVATION
+
+The scenario's transform domain had been saying transform-ness with a derivation — an experiment in
+`from Transform(Ash, Birch)`. Three things argued against it. It is the move `05b14bd` had just
+undone for actors, where a role's parameters were taken out of the data-inheritance tree. It asserts
+something false: a transform domain holds no `Ash` value and no `Birch` value, only the conversions,
+so the pair is metadata about the domain rather than its structure — which is why Scala cannot
+project it (`Tuple2` is final) and why Haskell would have nothing to put in the fields. And drake had
+no legal spelling for it anyway: `{K, V}` carries `Map` behind the operator, while `(S, T)` parsed to
+a NAMELESS TypeName and emitted `extends [S, T]` — round-tripping by accident.
+
+So `source` and `target` moved from `dracoAspect` to `domainAspect`, where a direction belongs, and
+drake gained the two keywords:
+
+    type Ash_Birch
+    domain scenario ash birch Ash_Birch
+      super scenario forest Forest
+      source scenario ash Ash
+      target scenario birch Birch
+      types [ Potency Marker ]
+
+Role is presence, applied to domains exactly as it is applied to rules and actors: a domain with a
+direction IS a transform domain, and nothing appears in the extends clause, because nothing is
+inherited. Both ends are required — one alone names no conversion. The slots had existed on
+`DracoAspect` since before this session, populated by nothing and reachable from no surface;
+`Generator.isDomain` already carried a `(source && target)` clause calling itself a transitional
+fallback for transform-domain JSONs. It is not a fallback now.
+
+The MEMBER conversions need no keyword and got none. `Potency from scenario birch Micromolar` with
+`par potency scenario.ash.Micromolar` and the factor in the factory body already identifies its
+conversion by its two ends — the same shape as `Meters from Distance(Double)`. That is the unit-type
+formulation, and gate 2 now proves it projects.
+
+WHAT GATE 3 IS FOR
+
+Gate 2 closing at zero is exactly the condition under which the last finding would have disappeared.
+`super` has NO projection: the only trace of it in `Ash.scala` is an unused import, and downstream
+`RootInterface` builds a `Knowledge` that accepts nothing, because `actorKnowledge` reads the actor's
+own domain and `Forest` is what owns the transform rules. It compiles, it runs, it matches nothing,
+and no error anywhere reports it.
+
+    ash/RootInterface.drake   own domain scenario.ash.Ash        reachable=0   []
+                              super      scenario.forest.Forest  UNREACHABLE=1 [AshBirchAlarm]
+
+That count is in the console headline, so it moves when the projection does. Left open deliberately:
+whether a super-domain confers rule visibility is a decision about what `super` MEANS, not a defect
+to be quietly patched.
+
+A NOTE ON THE TEST
+
+The Generator reads the definition GRAPH, not the definition — it follows the derivation chain to
+decide whether a companion is a `DracoType`, reads a domain's member list to build an actor's
+knowledge, and resolves inherited elements to emit a codec, all through `TypeLoader`. The scenario is
+drake-only. So the test materializes the trio's normative member: each parsed `TypeDefinition` is
+written as JSON to the classpath root it was loaded from, at the resource path its own `TypeName`
+names, and removed again in a `finally`. Nothing under `src/` is touched. Without it every lookup
+stubs out and the measurement is worthless.

@@ -41,16 +41,6 @@
         "kind": "Fixed",
         "name": "globalElements",
         "valueType": "Seq[BodyElement]"
-      },
-      {
-        "kind": "Fixed",
-        "name": "source",
-        "valueType": "TypeName"
-      },
-      {
-        "kind": "Fixed",
-        "name": "target",
-        "valueType": "TypeName"
       }
     ],
     "factory": {
@@ -98,18 +88,6 @@
           "name": "globalElements",
           "valueType": "Seq[BodyElement]",
           "value": { ".": ["Seq", "empty"] }
-        },
-        {
-          "kind": "Parameter",
-          "name": "source",
-          "valueType": "TypeName",
-          "value": "TypeName.Null"
-        },
-        {
-          "kind": "Parameter",
-          "name": "target",
-          "valueType": "TypeName",
-          "value": "TypeName.Null"
         }
       ]
     },
@@ -118,7 +96,7 @@
         "kind": "Fixed",
         "name": "isEmpty",
         "valueType": "DracoAspect => Boolean",
-        "value": "da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty"
+        "value": "da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty"
       }
     ]
   },

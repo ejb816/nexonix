@@ -324,6 +324,17 @@ type <name> *(<T>, ...) *from <ref> ...         -> TypeDefinition ; typeName.nam
 domain <pkg-seq> <name>                    -> domainAspect.typeName { namePackage[] , name }   (namePackage also sets each type's namePackage)
   *~types [ <name> ... ]                   -> domainAspect.elementTypeNames[]   (rule/actor members keep their aspect suffix, e.g. AddNaturalSequence.rule)
   *~super <pkg-seq> <name>                 -> dracoAspect.superDomain   (NOTE: dracoAspect, not domainAspect)
+  *~source <pkg-seq> <name>                -> domainAspect.source
+  *~target <pkg-seq> <name>                -> domainAspect.target   ( A DIRECTION. Presence of BOTH ends makes the domain a
+                                               TRANSFORM domain — role is presence, as everywhere else, so nothing further
+                                               marks it and no derivation carries it. One end alone names no conversion and
+                                               is not a transform domain. Both are NOMINAL references to DOMAINS, and
+                                               neither is inherited: a transform domain holds no value of either side, only
+                                               the conversions between them, so the pair is metadata about the domain rather
+                                               than its structure. Each MEMBER conversion identifies itself the same way and
+                                               needs no keyword: it derives a type in `target` and takes a parameter typed
+                                               in `source`, which is the unit-conversion pattern — `Meters from Distance(Double)`
+                                               is the same shape with the formula in the factory body. )
 *rule                                      -> ruleAspect                    (presence-significant, FACET-CREATING: present = is a rule, every field defaults & is overridable; absent = not a rule)
   *~pattern                                -> ruleAspect.pattern   { kind=Pattern }    ( default when omitted; content overrides )
     *~variables                            -> pattern.variables[]

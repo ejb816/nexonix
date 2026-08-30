@@ -7,8 +7,6 @@ type DracoAspect
     fix elements [TypeElement]
     fix factory Factory
     fix globalElements [BodyElement]
-    fix source TypeName
-    fix target TypeName
   factory
     parameters
       par superDomain TypeName TypeName.Null
@@ -18,8 +16,6 @@ type DracoAspect
       par elements [TypeElement] []
       par factory Factory Factory.Null
       par globalElements [BodyElement] []
-      par source TypeName TypeName.Null
-      par target TypeName TypeName.Null
   globals
-    fix isEmpty (DracoAspect -> Boolean) da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty
+    fix isEmpty (DracoAspect -> Boolean) da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty
 domain draco Draco

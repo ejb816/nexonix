@@ -16,6 +16,16 @@
         "kind": "Fixed",
         "name": "elementTypeNames",
         "valueType": "Seq[String]"
+      },
+      {
+        "kind": "Fixed",
+        "name": "source",
+        "valueType": "TypeName"
+      },
+      {
+        "kind": "Fixed",
+        "name": "target",
+        "valueType": "TypeName"
       }
     ],
     "factory": {
@@ -33,6 +43,18 @@
           "name": "elementTypeNames",
           "valueType": "Seq[String]",
           "value": { ".": ["Seq", "empty"] }
+        },
+        {
+          "kind": "Parameter",
+          "name": "source",
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "target",
+          "valueType": "TypeName",
+          "value": "TypeName.Null"
         }
       ]
     },
@@ -41,7 +63,7 @@
         "kind": "Fixed",
         "name": "isEmpty",
         "valueType": "DomainAspect => Boolean",
-        "value": "da => da.typeName.name.isEmpty && da.elementTypeNames.isEmpty"
+        "value": "da => da.typeName.name.isEmpty && da.elementTypeNames.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty"
       }
     ]
   },

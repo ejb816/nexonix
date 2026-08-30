@@ -1,6 +1,8 @@
 type Ash_Birch
 domain scenario ash birch Ash_Birch
   super scenario forest Forest
+  source scenario ash Ash
+  target scenario birch Birch
   types [
     Potency
     Marker

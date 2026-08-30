@@ -498,10 +498,18 @@ object Drake {
         val superDomain =
           if (da.superDomain.name.isEmpty) Seq.empty
           else Seq(s"  super ${(da.superDomain.namePackage :+ typeRef(da.superDomain)).mkString(" ")}")
+        // A DIRECTION makes the domain a TRANSFORM domain (drake.dlt: `source` /
+        // `target`). Role is presence, so nothing else marks it — and both ends are
+        // written even though one is enough to detect, because one alone names no
+        // conversion.
+        val direction =
+          Seq(("source", td.domainAspect.source), ("target", td.domainAspect.target))
+            .collect { case (kw, tn) if tn.name.nonEmpty =>
+              s"  $kw ${(tn.namePackage :+ typeRef(tn)).mkString(" ")}" }
         val types =
           if (td.domainAspect.elementTypeNames.isEmpty) Seq.empty
           else nameListLines("types", td.domainAspect.elementTypeNames)
-        head +: (superDomain ++ types)
+        head +: (superDomain ++ direction ++ types)
       } else Seq.empty
 
     // rule aspect (drake.dlt: `rule` head, then `pattern` { variables, conditions }
@@ -578,7 +586,7 @@ object Drake {
     * the next reserved keyword, never until end-of-line. */
   private val reserved: Set[String] =
     memberKeywords ++ Set (
-      "type", "from", "domain", "super", "types", "rule", "actor", "codec",
+      "type", "from", "domain", "super", "source", "target", "types", "rule", "actor", "codec",
       "modules", "extensible", "elements", "factory", "parameters", "body", "globals",
       "pattern", "action", "variables", "conditions",
       "start", "message", "signal", "messageType",
@@ -1010,6 +1018,8 @@ object Drake {
     var superDomain      = TypeName.Null
     var domainName       = TypeName.Null
     var elementTypeNames = Seq.empty[String]
+    var domainSource     = TypeName.Null
+    var domainTarget     = TypeName.Null
     // The role aspects. `rule` / `actor` are read as FLAGS rather than as recursive
     // sections: each of their sub-sections carries a reserved head of its own
     // (pattern / variables / conditions / action; messageType / start / message /
@@ -1045,6 +1055,8 @@ object Drake {
             parseSection (c, "body", declarationKeywords).map (_.asInstanceOf[BodyElement]))
         case "domain"      => domainName = takeQualifiedRef (c)
         case "super"       => superDomain = takeQualifiedRef (c)
+        case "source"      => domainSource = takeQualifiedRef (c)
+        case "target"      => domainTarget = takeQualifiedRef (c)
         case "types"       => elementTypeNames = parseNameList (c)
 
         case "rule"        => isRule = true
@@ -1083,7 +1095,7 @@ object Drake {
         _elements       = elements,
         _factory        = factory,
         _globalElements = globalElements),
-      _domainAspect = DomainAspect (domainName, elementTypeNames),
+      _domainAspect = DomainAspect (domainName, elementTypeNames, resolved (domainSource), resolved (domainTarget)),
       _ruleAspect   = if (!isRule) RuleAspect.Null else RuleAspect (Pattern (variables, conditions), action),
       _actorAspect  = if (!isActor) ActorAspect.Null else ActorAspect (message, resolved (messageType), signal, start))
   }

@@ -101,8 +101,9 @@ Compact by intent. Architecture detail belongs in `README.md` once that file is 
 **Type system.** `DracoType` is a one-member trait (`val typeDefinition`).
 `TypeDefinition extends Aspects { val typeName }`, and `Aspects` is **five** slots:
 
-- `dracoAspect` — superDomain, modules, extensible, derivation, elements, factory, globalElements, source, target
-- `domainAspect` — typeName (self-loop for a domain, container pointer otherwise), elementTypeNames
+- `dracoAspect` — superDomain, modules, extensible, derivation, elements, factory, globalElements
+- `domainAspect` — typeName (self-loop for a domain, container pointer otherwise), elementTypeNames,
+  source, target (both present = a **transform domain**; role is presence, as everywhere else)
 - `ruleAspect` — pattern, action
 - `actorAspect` — messageType, start, message, signal
 - `codecAspect` — discriminator

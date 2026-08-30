@@ -297,15 +297,45 @@ object Generator extends App {
     if (modules.isEmpty) "" else "sealed "
   }
 
-  /** A derivation reference on the extends clause. Package-qualified when the
-    * parent shares the type's own simple name (draco.format.json.Value extends
-    * draco.format.Value[JSON]) — an unqualified reference would resolve to the
-    * type being declared. */
+  /** The packages whose members the emitted file can name unqualified: its own, by the
+    * package clause, plus every package the import block wildcards
+    * (packageHierarchyImports + referencedPackageImports). */
+  private def unqualifiedScope (td: TypeDefinition) : Seq[Seq[String]] =
+    (Seq(td.typeName.namePackage)
+      ++ td.typeName.namePackage.inits.toSeq.tail.init
+      ++ Seq(Seq("draco"))
+      ++ referencedPackages(td)).distinct
+
+  /** True when a bare reference to `tn` would not reach it: some OTHER package in the
+    * file's unqualified scope holds a definition of the same simple name, so the two
+    * wildcard imports make the reference ambiguous rather than merely wrong.
+    *
+    * A definition IS a resource, so "does package P hold a type named N" is a load
+    * probe. A failed probe counts as "no" — a name that will not resolve cannot be the
+    * thing shadowing this one.
+    *
+    * The shape that needs this is a transform domain: scenario.ash.birch.Potency
+    * derives scenario.birch.Micromolar while scenario.ash.Micromolar is in scope from
+    * its own package chain, and the bare name reaches neither. */
+  private def isAmbiguousBare (td: TypeDefinition, tn: TypeName) : Boolean =
+    tn.namePackage.nonEmpty && {
+      val simple = baseName(tn.name)
+      unqualifiedScope(td).exists(p =>
+        p != tn.namePackage &&
+        scala.util.Try(TypeLoader.tryLoad(TypeName(simple, _namePackage = p)).isDefined).getOrElse(false))
+    }
+
+  /** A derivation reference on the extends clause. Package-qualified when a bare
+    * reference would not reach the parent: either the parent shares the declaring
+    * type's own simple name (draco.format.json.Value extends draco.format.Value[JSON],
+    * where bare Value resolves to the type being declared), or another package in
+    * scope holds that name too (isAmbiguousBare). */
   private def derivationRef (td: TypeDefinition, tn: TypeName) : String = {
     val base = parameterizedName(tn)
-    if (tn.name == td.typeName.name &&
-        tn.namePackage.nonEmpty && tn.namePackage != td.typeName.namePackage)
-      s"${tn.namePackage.mkString(".")}.$base"
+    val shadowedBySelf =
+      tn.name == td.typeName.name &&
+      tn.namePackage.nonEmpty && tn.namePackage != td.typeName.namePackage
+    if (shadowedBySelf || isAmbiguousBare(td, tn)) s"${tn.namePackage.mkString(".")}.$base"
     else base
   }
 
@@ -845,19 +875,27 @@ object Generator extends App {
           // Pattern 2: discriminated union (top-level sealed trait)
           discriminatedCodecDeclaration(td, familyMap)
         } else if (td.dracoAspect.factory.valueType.nonEmpty && td.dracoAspect.factory.parameters.nonEmpty) {
-          // Pattern 1: simple field-based — only when the type declares at least one
-          // element of its own AND every factory param is accessible as a trait element
-          // (own or inherited via derivation) AND no param has a function-like type
-          // (those have no circe codec). The own-element requirement keeps a pure
-          // inheritance wrapper (every param delegated to a parent's field — e.g.
-          // Meters/Radians on Distance/Rotation, Type on DracoType) codec-less, while a
-          // record that composes inherited fields onto its own (TypeDefinition: typeName
-          // + the Aspects) derives its codec.
+          // Pattern 1: simple field-based — when every factory param is accessible as a
+          // trait element (own or inherited via derivation) and no param has a
+          // function-like type (those have no circe codec).
+          //
+          // Own elements are NOT required. A type whose params all delegate to a
+          // parent's fields — a UNIT type: Meters on Distance, Radians on Rotation,
+          // Micromolar on Primal(Double) — has its parent's structure exactly. Its
+          // derivation exists to give a conversion formula two ends to name, not to
+          // morph the type, so the faithful projection of a unit type is the projection
+          // of the thing it measures. The corpus already agrees: every subtype of
+          // `TypeElement extends Primal[Json]` encodes `value` as a named field.
+          //
+          // This was formerly gated on `ownElementNames.nonEmpty`, which kept unit types
+          // codec-less on the reading that they were mere wrappers. They are not, and the
+          // gap showed as soon as a domain named its primitives: a message type holding a
+          // `Micromolar` could not derive a codec, because `Micromolar` had none to call.
           val ownElementNames = td.dracoAspect.elements.map(_.name).toSet
           val elementNames = ownElementNames ++ inheritedElementNames(td, familyMap)
           val paramNames = td.dracoAspect.factory.parameters.map(_.name).toSet
           val anyUncodecable = td.dracoAspect.factory.parameters.exists(p => isUncodecable(p.valueType))
-          if (ownElementNames.nonEmpty && paramNames.subsetOf(elementNames) && !anyUncodecable) simpleCodecDeclaration(td)
+          if (paramNames.subsetOf(elementNames) && !anyUncodecable) simpleCodecDeclaration(td)
           else ""
         } else {
           // No codec (abstract type)
@@ -1344,15 +1382,21 @@ object Generator extends App {
     * (i.e., declares itself as the domain). Compared on name + package only, not
     * full `TypeName` equality: a parameterized self-domain (e.g. `Format[T]`) need
     * not restate its type parameters in the self-reference. The
-    * `elementTypeNames.nonEmpty` and `(source && target)` clauses are transitional
-    * fallbacks for hand-constructed fixtures or transform-domain JSONs that haven't
-    * yet had `domainAspect.typeName = self` populated. */
+    * `elementTypeNames.nonEmpty` clause is a transitional fallback for
+    * hand-constructed fixtures that haven't yet had `domainAspect.typeName = self`
+    * populated; the `(source && target)` clause is not a fallback — a domain that
+    * declares a direction is a TRANSFORM domain, and role is presence. */
   private def isDomain (td: TypeDefinition) : Boolean =
     (td.domainAspect.typeName.name.nonEmpty &&
      td.domainAspect.typeName.name == td.typeName.name &&
      td.domainAspect.typeName.namePackage == td.typeName.namePackage) ||
     td.domainAspect.elementTypeNames.nonEmpty ||
-    (td.dracoAspect.source.name.nonEmpty && td.dracoAspect.target.name.nonEmpty)
+    isTransformDomain(td)
+
+  /** A transform domain: a domain carrying a DIRECTION. Both ends are required —
+    * one alone names no conversion. */
+  private def isTransformDomain (td: TypeDefinition) : Boolean =
+    td.domainAspect.source.name.nonEmpty && td.domainAspect.target.name.nonEmpty
 
   private def isRule (td: TypeDefinition) : Boolean =
     !RuleAspect.isEmpty(td.ruleAspect)
@@ -1472,21 +1516,24 @@ object Generator extends App {
     Seq("scala", "io")
   )
 
-  private def referencedPackageImports (td: TypeDefinition) : Seq[String] = {
+  private def referencedPackages (td: TypeDefinition) : Seq[Seq[String]] = {
     val ownInits: Set[Seq[String]] = td.typeName.namePackage.inits.toSet
     val covered: Set[Seq[String]] = ownInits + Seq("draco") ++ wellKnownExternalPackages
     val referenced: Seq[TypeName] =
       (td.dracoAspect.derivation
         ++ td.dracoAspect.modules
-        ++ Seq(td.dracoAspect.extensible, td.dracoAspect.superDomain, td.dracoAspect.source, td.dracoAspect.target, td.domainAspect.typeName))
+        ++ Seq(td.dracoAspect.extensible, td.dracoAspect.superDomain,
+               td.domainAspect.source, td.domainAspect.target, td.domainAspect.typeName))
         .filter(tn => tn != null && tn.name.nonEmpty)
     referenced
       .map(_.namePackage)
       .filter(_.nonEmpty)
       .filterNot(covered.contains)
       .distinct
-      .map(p => s"import ${p.mkString(".")}._")
   }
+
+  private def referencedPackageImports (td: TypeDefinition) : Seq[String] =
+    referencedPackages(td).map(p => s"import ${p.mkString(".")}._")
 
   /** True if any globalElement body references circe types (Encoder/Decoder/Json/.asJson).
     * Drives circeImports emission for types that hand-roll codecs as Monadic globals
@@ -1638,9 +1685,7 @@ object Generator extends App {
         _derivation     = da.derivation,
         _elements       = da.elements.map(targetElement),
         _factory        = targetBody(da.factory).asInstanceOf[Factory],
-        _globalElements = da.globalElements.map(targetBody),
-        _source         = da.source,
-        _target         = da.target
+        _globalElements = da.globalElements.map(targetBody)
       ),
       _domainAspect = td.domainAspect,
       _ruleAspect   =

@@ -20,6 +20,22 @@ the block below.
 
 ### Added
 
+- **`source` and `target` on the domain aspect — a transform domain is now de jure in drake.** Two new
+  keywords inside the `domain` block, both nominal references to domains; presence of BOTH makes the
+  domain a transform domain, exactly as a `ruleAspect` makes a type a rule. Nothing appears in the
+  projected type hierarchy, because nothing is inherited: a transform domain holds no value of either
+  side, only the conversions between them. The slots moved from `dracoAspect`, where they had sat
+  unpopulated and unreachable from any surface. Member conversions need no keyword — deriving a type
+  in `target` while taking a parameter typed in `source` already identifies one, which is the same
+  shape as `Meters from Distance(Double)`.
+
+- **The scenario's second and third gates** — `ScenarioGenTest`, report-only. Each of the 22 parsed
+  definitions goes through `Generator.generate`, all 22 compile together as one unit, and a third gate
+  counts the rules each actor can actually reach. All 22 now emit and compile. The third gate exists
+  because the second going green is what would otherwise hide the one construct with no projection at
+  all: `super`, whose absence leaves an actor with a `Knowledge` that accepts nothing and reports
+  nothing.
+
 - **A rules/facts/inheritance scenario, authored in DRAKE** — `src/test/resources/scenario/` holds 22
   definitions: a `Forest` root super-domain, two tree species as message domains, and the mycorrhizal
   hand-off between them as a transform domain. `ScenarioDrakeTest` reports what parses and what
@@ -35,6 +51,18 @@ the block below.
   Recorded in DRACO.md's gotchas, since nothing throws and no test fails when it happens.
 
 ### Changed
+
+- **A derivation reference is qualified when a bare one would not reach it** — `Generator.derivationRef`
+  formerly qualified a parent only when it shared the declaring type's own simple name. Two wildcard
+  imports holding the same simple name make the reference ambiguous instead, which is the ordinary case
+  for a transform domain deriving across packages. The pinned corpus is unchanged.
+
+- **A unit type derives a codec** — `codecDeclaration` no longer requires a type to declare elements of
+  its own. A type whose factory parameters all delegate to a parent's fields — `Meters` on `Distance`,
+  `Micromolar` on `Primal(Double)` — has its parent's structure exactly, so it has its parent's
+  projection; the derivation identifies a conversion formula rather than morphing the type. Without
+  this, no message type holding a named primitive could derive a codec. `Type`, `Meters`, `Radians` and
+  `format/json/Value` gain one.
 
 - **An actor's message type is carried by its aspect, not by an `Actor(T)` derivation** — ten example
   actors moved off the transitional derivation onto `actorAspect.messageType`, leaving `derivation`
