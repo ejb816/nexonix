@@ -43,6 +43,38 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
+**The baselines, as of `87a2bb9` (2026-08-31, 531 tests / 41 suites).** These are the
+headlines those tests print. They go to the console logger, not to the per-suite files, so
+they have to be caught off stdout — every row below except the last `DrakeGenTest` one,
+which prints only to its per-suite file:
+
+```bash
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|^\[info\] Tests:"
+```
+
+| test | headline | baseline |
+|---|---|---|
+| `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
+| `DrakeParseTest` | drake surface losses | 15 fields across 91 types — expression form 12, empty-collection spelling 3 |
+| `DrakeParseTest` | Drake.parse scope | 81 draco + 10 mods in, 0 held back |
+| `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
+| `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
+| `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
+| `ScenarioDrakeTest` | scenario in today's drake | 23 files, 0 rejected, 0 drifted, 23 clean |
+| `SubtypeFactVisibilityTest` | rete subtype visibility | CO-DECLARATION DROPS THE FACT (categorical, not a count) |
+
+A number here disagreeing with a run means one of two things, and both are worth stopping
+for: the run regressed, or this table went stale. **The commit that legitimately moves a
+number updates this table in the same commit** — the same discipline the CHANGELOG entry
+and the git-record already follow, and for the same reason: a figure nobody is obliged to
+maintain is one nobody can trust. The alpha.6 notes still quote 16 surface-loss fields;
+that was true when written and became 15 at `324556c`, which is exactly the drift this
+table exists to make visible.
+
+Two of these have since become ASSERTIONS and are deliberately not listed: the scenario
+now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports.
+Moving a measurement into an assertion is the goal; the table should shrink over time.
+
 **Where things are recorded** — four artifacts, four jobs, do not conflate them:
 
 | artifact | holds | who writes it |
