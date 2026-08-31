@@ -20,6 +20,15 @@ the block below.
 
 ### Added
 
+- **The scenario's `.json` is gated against the `.drake` it came from.** `ScenarioGenTest` gained a
+  gate ahead of the projection gate: for each of the 23 `.drake` under `src/test/resources/scenario`,
+  `Drake.parse` of the surface must equal the `.json` committed beside it. The corpus previously had
+  the two tied in *neither* direction — the projection gate walks `.json` only, `ScenarioDrakeTest`
+  walks `.drake` only and asks about the surface — so a normative artifact hand-edited away from its
+  surface left the whole suite green. `src/main` has the emit direction pinned by `DrakeGenTest`; this
+  is the parse direction, which is the one the scenario's JSON was actually made by. Compared as JSON
+  values rather than as text, so the printer stays a formatting choice.
+
 - **The forest scenario is a corpus, and it executes.** `src/test/resources/scenario` was 23 `.drake`
   and nothing else; it is now a full trio — `X.drake` beside `X.json`, with the projection committed
   under `src/test/scala/scenario` and every path taken from the type's own `TypeName`. Because the

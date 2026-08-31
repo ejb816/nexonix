@@ -1,11 +1,12 @@
 package scenario
 
 import draco._
+import io.circe.Printer
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.file.{Files, Path, Paths}
 import scala.jdk.CollectionConverters._
-import scala.util.Using
+import scala.util.{Failure, Success, Try, Using}
 
 /** The forest scenario as a CORPUS, gated the way `src/main` is gated.
  *
@@ -24,18 +25,24 @@ import scala.util.Using
  *  are on the classpath like any others, the execution gate below calls them
  *  directly: no reflection, no child classloader, no private `KnowledgeService`.
  *
- *  Four gates:
+ *  Five gates, in the order the trio is actually made — drake, then JSON, then Scala,
+ *  then the thing running:
  *
- *  1. PROJECTS — `Generator.generate` from each `.json` reproduces the committed
+ *  1. IS EMITTED — the `.json` beside each `.drake` is what `Drake.parse` produces from
+ *     it. `src/main` has the two tied in the emit direction by `DrakeGenTest`; the
+ *     scenario had them tied in NEITHER direction, because gate 2 below walks `.json`
+ *     only and `ScenarioDrakeTest` walks `.drake` only. A `.json` hand-edited without
+ *     its `.drake` left every gate below this one green.
+ *  2. PROJECTS — `Generator.generate` from each `.json` reproduces the committed
  *     `.scala`. This is `DracoGenTest`'s gate, and like it, it asserts.
- *  2. MEANS IT — the rules an actor's domain chain OWNS against the ones its projected
+ *  3. MEANS IT — the rules an actor's domain chain OWNS against the ones its projected
  *     source actually ACCEPTS. An actor whose `Knowledge` accepts nothing compiles,
  *     runs, and matches nothing, with no error anywhere to show for it, so this is the
- *     failure gate 1 cannot see.
- *  3. IS CONSISTENT — every member of a transform domain is one leaf conversion:
+ *     failure gate 2 cannot see.
+ *  4. IS CONSISTENT — every member of a transform domain is one leaf conversion:
  *     deriving a type in `target`, taking a factory parameter typed in `source`. With
  *     the direction declared on the domain aspect, that convention is checkable.
- *  4. RUNS — fire the rules for real. A projection that type-checks and does nothing
+ *  5. RUNS — fire the rules for real. A projection that type-checks and does nothing
  *     is the failure mode every gate above this one misses. */
 class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
 
@@ -52,6 +59,18 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
         .flatMap(p => io.circe.parser.parse(new String(Files.readAllBytes(p))).flatMap(_.as[TypeDefinition]).toOption)
     }
 
+  private def drakeFiles: Seq[Path] =
+    if (!Files.isDirectory(scenarioRoot)) Seq.empty
+    else Using.resource(Files.walk(scenarioRoot)) { s =>
+      s.iterator.asScala
+        .filter(p => Files.isRegularFile(p) && p.toString.endsWith(".drake"))
+        .toList.sorted
+    }
+
+  /** The corpus printer — `"key": value`, two spaces — so a logged expectation can be
+    * pasted straight into the file it is about. */
+  private val canonicalJson: Printer = Printer.spaces2.copy(colonLeft = "")
+
   /** The projected source for a type, at the path its own TypeName names. */
   private def scalaPath(tn: TypeName): Path =
     sourceRoot.resolve(tn.namePackage.mkString("/")).resolve(tn.name + ".scala")
@@ -60,6 +79,39 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
     source.replace("\r\n", "\n").split('\n').map(_.replaceAll("\\s+$", "")).filter(_.nonEmpty).mkString("\n")
 
   // ---- Gate 1 ----
+
+  /** Compared as JSON VALUES rather than as text. The committed files are canonical-
+    * printer output today, but the printer is a formatting choice; pinning it would
+    * make a changed separator read as twenty-three regressions. What is being pinned
+    * is that the normative artifact says what the surface says. */
+  test("every scenario .json is what parsing its .drake produces") {
+    val drakes = drakeFiles
+    assume(drakes.nonEmpty, s"no scenario drake under $scenarioRoot")
+
+    val drift = drakes.flatMap { p =>
+      val rel      = scenarioRoot.relativize(p).toString
+      val jsonPath = p.resolveSibling(p.getFileName.toString.stripSuffix(".drake") + ".json")
+      if (!Files.isRegularFile(jsonPath)) Some(s"$rel: no .json committed beside it")
+      else Try(TypeDefinition.encoder(Drake.parse(new String(Files.readAllBytes(p))))) match {
+        case Failure(e) =>
+          Some(s"$rel: does not parse — ${Option(e.getMessage).getOrElse(e.getClass.getSimpleName)}")
+        case Success(fromDrake) =>
+          io.circe.parser.parse(new String(Files.readAllBytes(jsonPath))) match {
+            case Left(why) =>
+              Some(s"$rel: the .json committed beside it is not JSON — ${why.message}")
+            case Right(onDisk) if onDisk == fromDrake => None
+            case Right(onDisk) =>
+              log.info(s"\n--- $rel: committed .json ---\n${canonicalJson.print(onDisk)}")
+              log.info(s"\n--- $rel: parsed from .drake ---\n${canonicalJson.print(fromDrake)}")
+              Some(s"$rel: the committed .json is not what parsing the .drake produces")
+          }
+      }
+    }
+    log.info(s"parsed ${drakes.size} drake files, ${drift.size} differ from the .json committed beside them")
+    assert(drift.isEmpty, drift.mkString("\n  - "))
+  }
+
+  // ---- Gate 2 ----
 
   test("every scenario definition projects to the Scala committed beside it") {
     val defs = definitions
@@ -83,7 +135,7 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
     assert(drift.isEmpty, drift.mkString("\n  - "))
   }
 
-  // ---- Gate 2 ----
+  // ---- Gate 3 ----
 
   /** The domains an actor's rules may come from: its own, then up the super chain. A
     * super-domain OWNS rules its members' actors have to see — a transform rule belongs
@@ -125,7 +177,7 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
         shortfall.map { case (n, k) => s"$n misses $k" }.mkString(", "))
   }
 
-  // ---- Gate 3 ----
+  // ---- Gate 4 ----
 
   test("every member of a transform domain is one leaf conversion") {
     val transforms = definitions.filter(td =>
@@ -161,7 +213,7 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
     assert(offShape.isEmpty, offShape.mkString("\n  - "))
   }
 
-  // ---- Gate 4 ----
+  // ---- Gate 5 ----
 
   test("the forest runs: an ash alarm crosses to birch, attenuated") {
     import scenario.ash.{AshJasmonate, Compound, Micromolar}

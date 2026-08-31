@@ -1,0 +1,73 @@
+# One new test in an existing suite, plus DRACO.md and CHANGELOG. The gate itself is
+# UNVERIFIED — this session cannot run sbt, so the block below is the first run of it.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|^\[info\] Tests:"
+#
+# Expected: 532 tests / 41 suites, and every headline in DRACO.md's table unchanged. If
+# the run says 531 or 533, DRACO.md line 46 is what to correct.
+#
+# If the new gate is RED, paste the ScenarioGenTest failure and the two logged blocks for
+# the named file — do not paste the whole run. A red gate here is a finding, not a bug in
+# the gate: it means the committed .json and the .drake it was made from have already come
+# apart, which is the thing the gate exists to say. The failure message names the file and
+# the log prints both sides with the corpus printer, so the fix is a paste.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-31-1502 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+The scenario's JSON is gated against the drake it came from
+
+The forest corpus landed at 87a2bb9 with three artifacts per type and four gates over them, and a
+hole between the first two artifacts that none of the four could see.
+
+WHAT WAS UNGATED
+
+`ScenarioGenTest` walks `.json` only — it decodes each one and asserts that `Generator.generate`
+reproduces the `.scala` beside it. `ScenarioDrakeTest` walks `.drake` only and asks whether
+`emit(parse(x)) == x`, which is a question about the surface being self-consistent, not about the
+surface agreeing with anything. Nothing read a `.drake` and its `.json` together. Hand-edit a
+scenario `.json` away from its surface and all 531 tests stay green: the projection gate happily
+projects the edited definition, the drake gate happily round-trips the untouched surface, and the
+two never meet.
+
+`src/main` does not have this hole. `DrakeGenTest` pins `emit(X.json) == X.drake` per file, which
+ties the pair in the emit direction — correct there, because that corpus was JSON-first and the
+surface was derived from it. The scenario is the other way round: the commit message for 87a2bb9
+says the JSON was made by parsing each drake. So the direction that matches how the artifacts were
+actually produced is the parse direction, and that is what this gate asserts —
+
+    parse(X.drake) == X.json     for each of the 23 files
+
+— placed ahead of the projection gate rather than after it, so the suite now reads in the order the
+trio is made: drake, JSON, Scala, the thing running. The header's four gates became five and the
+numbering moved with them.
+
+VALUES, NOT TEXT
+
+The committed files are canonical-printer output (`Printer.spaces2` with `colonLeft = ""`, the same
+printer `DrakeCLI parse` prints with), so a text comparison would pass today and would have given a
+line diff for free. It is still the wrong gate. The printer is a formatting choice, and pinning it
+would make one changed separator read as twenty-three regressions — a gate that fails for reasons
+it does not care about teaches sessions to skim it. Circe's object equality is order-insensitive,
+so comparing `Json` values pins what is meant: the normative artifact says what the surface says.
+Both sides are logged through the canonical printer on failure, so the expectation can be pasted
+straight into the file it is about.
+
+The comparison is against the RAW file JSON rather than the decoded-and-re-encoded definition,
+which incidentally closes a second silent hole: `definitions` builds its list with `.toOption`, so
+a `.json` that no longer decodes to a `TypeDefinition` simply vanishes from the projection gate
+rather than failing it. Every scenario `.json` has a `.drake`, so every one of them now goes
+through a comparison that a decode failure cannot survive.
+
+NOT VERIFIED HERE
+
+This session cannot run sbt, so the gate has never been run. The arithmetic on the count is safe —
+one `test` added to an existing suite, 531 to 532 — but whether the 23 files agree is a question
+only the run answers. If they do not, the gate has done its job on its first firing and the log
+names which file and prints both sides.
+
+DRACO.md's baseline table is updated for the count in the same commit, per the rule the previous
+commit wrote down. None of the eight headline figures moves: the new gate asserts rather than
+reports, which is the direction that table is supposed to travel.
