@@ -1,0 +1,42 @@
+{
+  "typeName": {
+    "name": "Compound",
+    "namePackage": [
+      "scenario",
+      "ash"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "String"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Compound",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "value",
+          "valueType": "String"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ash",
+      "namePackage": [
+        "scenario",
+        "ash"
+      ]
+    }
+  }
+}

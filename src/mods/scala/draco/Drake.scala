@@ -77,6 +77,11 @@ object Drake {
   private def unfoldChain (value: Json) : (Json, Seq[(String, Vector[Json])]) = {
     val ops       = Expression.operands(value)
     val pathElems = ops.head.asObject.flatMap(_(".")).flatMap(_.asArray).getOrElse(Vector.empty)
+    // The applied function is not a `.`-path at all: a plain or NILADIC call, whose
+    // function is one glued token (`ctx.getRuntime()`). Nothing further unfolds — this
+    // application IS the chain's base receiver, and `valueLines` writes it as a call.
+    if (pathElems.isEmpty) (value, Seq.empty)
+    else {
     val recv      = pathElems.head
     val member    = pathElems.tail.map(expression).mkString(".")
     if (Expression.isApplication(recv)) {
@@ -86,6 +91,7 @@ object Drake {
       // recv is a plain path/leaf: base = path minus its last element, member = last.
       val base = if (pathElems.size <= 2) recv else Json.obj("." -> Json.fromValues(pathElems.init))
       (base, Seq(expression(pathElems.last) -> ops.tail))
+    }
     }
   }
 
@@ -140,7 +146,15 @@ object Drake {
     else if (isChain(value)) {
       val (base, calls) = unfoldChain(value)
       val callIndent    = contIndent + "  "
-      s"$prefix ${expression(base)}" +:
+      // The base receiver is usually a path or a leaf, but it can be a CALL:
+      // `ctx.getRuntime().get(…)` bases its chain on a niladic application. Such a base
+      // writes its own `parameters` — empty list included, exactly as a chain call does.
+      val baseLines =
+        if (Expression.isApplication(base))
+          applyLines(s"$prefix ${expression(Expression.operands(base).head)}", contIndent,
+                     Expression.operands(base).tail)
+        else Seq(s"$prefix ${expression(base)}")
+      baseLines ++
         calls.flatMap { case (member, args) => applyLines(s"$callIndent.$member", callIndent, args) }
     } else applyLines(s"$prefix ${expression(Expression.operands(value).head)}", contIndent, Expression.operands(value).tail)
   }

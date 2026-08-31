@@ -1,0 +1,22 @@
+{
+  "typeName": {
+    "name": "Forest",
+    "namePackage": [
+      "scenario",
+      "forest"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Forest",
+      "namePackage": [
+        "scenario",
+        "forest"
+      ]
+    },
+    "elementTypeNames": [
+      "AshBirchAlarm",
+      "BirchAlarmReceived"
+    ]
+  }
+}

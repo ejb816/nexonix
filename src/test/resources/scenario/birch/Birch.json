@@ -1,0 +1,35 @@
+{
+  "typeName": {
+    "name": "Birch",
+    "namePackage": [
+      "scenario",
+      "birch"
+    ]
+  },
+  "dracoAspect": {
+    "superDomain": {
+      "name": "Forest",
+      "namePackage": [
+        "scenario",
+        "forest"
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Birch",
+      "namePackage": [
+        "scenario",
+        "birch"
+      ]
+    },
+    "elementTypeNames": [
+      "BirchSap",
+      "AlarmSignal",
+      "Infochemical",
+      "BirchJasmonate",
+      "Micromolar",
+      "Compound"
+    ]
+  }
+}

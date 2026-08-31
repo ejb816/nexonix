@@ -1,0 +1,29 @@
+{
+  "typeName": {
+    "name": "AshSap",
+    "namePackage": [
+      "scenario",
+      "ash"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Ash",
+        "namePackage": [
+          "scenario",
+          "ash"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ash",
+      "namePackage": [
+        "scenario",
+        "ash"
+      ]
+    }
+  }
+}

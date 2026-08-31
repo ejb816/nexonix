@@ -1,0 +1,29 @@
+{
+  "typeName": {
+    "name": "BirchSap",
+    "namePackage": [
+      "scenario",
+      "birch"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Birch",
+        "namePackage": [
+          "scenario",
+          "birch"
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Birch",
+      "namePackage": [
+        "scenario",
+        "birch"
+      ]
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "typeName": {
+    "name": "Micromolar",
+    "namePackage": [
+      "scenario",
+      "birch"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Primal",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "Double"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Micromolar",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "value",
+          "valueType": "Double"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Birch",
+      "namePackage": [
+        "scenario",
+        "birch"
+      ]
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "typeName": {
+    "name": "AshBirchAlarm",
+    "namePackage": [
+      "scenario",
+      "forest"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Forest",
+      "namePackage": [
+        "scenario",
+        "forest"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "jasmonate",
+          "valueType": "scenario.ash.AshJasmonate"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "value": "jasmonate.potency.value > 0.5"
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "primed",
+          "valueType": "scenario.birch.BirchJasmonate",
+          "value": {
+            "()": [
+              "scenario.birch.BirchJasmonate",
+              {
+                "()": [
+                  "scenario.ash.birch.Potency",
+                  "jasmonate.potency"
+                ]
+              },
+              {
+                "()": [
+                  "scenario.ash.birch.Marker",
+                  "jasmonate.compound"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "ctx.insert",
+              "primed"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

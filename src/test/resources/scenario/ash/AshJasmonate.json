@@ -1,0 +1,57 @@
+{
+  "typeName": {
+    "name": "AshJasmonate",
+    "namePackage": [
+      "scenario",
+      "ash"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Infochemical",
+        "namePackage": [
+          "scenario",
+          "ash"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "potency",
+        "valueType": "Micromolar"
+      },
+      {
+        "kind": "Fixed",
+        "name": "compound",
+        "valueType": "Compound"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "AshJasmonate",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "potency",
+          "valueType": "Micromolar"
+        },
+        {
+          "kind": "Parameter",
+          "name": "compound",
+          "valueType": "Compound"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ash",
+      "namePackage": [
+        "scenario",
+        "ash"
+      ]
+    }
+  }
+}

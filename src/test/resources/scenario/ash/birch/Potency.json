@@ -1,0 +1,50 @@
+{
+  "typeName": {
+    "name": "Potency",
+    "namePackage": [
+      "scenario",
+      "ash",
+      "birch"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Micromolar",
+        "namePackage": [
+          "scenario",
+          "birch"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Potency",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "potency",
+          "valueType": "scenario.ash.Micromolar"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Double",
+          "value": "_potency.value * 0.62"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ash_Birch",
+      "namePackage": [
+        "scenario",
+        "ash",
+        "birch"
+      ]
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "typeName": {
+    "name": "Ash_Birch",
+    "namePackage": [
+      "scenario",
+      "ash",
+      "birch"
+    ]
+  },
+  "dracoAspect": {
+    "superDomain": {
+      "name": "Forest",
+      "namePackage": [
+        "scenario",
+        "forest"
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ash_Birch",
+      "namePackage": [
+        "scenario",
+        "ash",
+        "birch"
+      ]
+    },
+    "elementTypeNames": [
+      "Potency",
+      "Marker"
+    ],
+    "source": {
+      "name": "Ash",
+      "namePackage": [
+        "scenario",
+        "ash"
+      ]
+    },
+    "target": {
+      "name": "Birch",
+      "namePackage": [
+        "scenario",
+        "birch"
+      ]
+    }
+  }
+}

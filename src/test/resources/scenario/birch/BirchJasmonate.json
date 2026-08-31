@@ -1,0 +1,57 @@
+{
+  "typeName": {
+    "name": "BirchJasmonate",
+    "namePackage": [
+      "scenario",
+      "birch"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Infochemical",
+        "namePackage": [
+          "scenario",
+          "birch"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "potency",
+        "valueType": "Micromolar"
+      },
+      {
+        "kind": "Fixed",
+        "name": "compound",
+        "valueType": "Compound"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "BirchJasmonate",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "potency",
+          "valueType": "Micromolar"
+        },
+        {
+          "kind": "Parameter",
+          "name": "compound",
+          "valueType": "Compound"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Birch",
+      "namePackage": [
+        "scenario",
+        "birch"
+      ]
+    }
+  }
+}

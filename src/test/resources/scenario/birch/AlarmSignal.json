@@ -1,0 +1,36 @@
+{
+  "typeName": {
+    "name": "AlarmSignal",
+    "namePackage": [
+      "scenario",
+      "birch"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "BirchSap",
+        "namePackage": [
+          "scenario",
+          "birch"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "infochemical",
+        "valueType": "BirchJasmonate"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Birch",
+      "namePackage": [
+        "scenario",
+        "birch"
+      ]
+    }
+  }
+}

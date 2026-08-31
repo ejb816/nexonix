@@ -2,4 +2,5 @@ type Forest
 domain scenario forest Forest
   types [
     AshBirchAlarm
+    BirchAlarmReceived
   ]

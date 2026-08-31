@@ -1,0 +1,59 @@
+{
+  "typeName": {
+    "name": "RootInterface",
+    "namePackage": [
+      "scenario",
+      "ash"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ash",
+      "namePackage": [
+        "scenario",
+        "ash"
+      ]
+    }
+  },
+  "actorAspect": {
+    "message": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": "msg match { case a: AlarmSignal => session.insert(Seq(a.infochemical): _*); case d: DroughtCue => session.insert(Seq(d.infochemical): _*); case _ => () }"
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.fire"
+            ]
+          }
+        }
+      ]
+    },
+    "messageType": {
+      "name": "AshSap",
+      "namePackage": [
+        "scenario",
+        "ash"
+      ]
+    },
+    "start": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "session",
+          "valueType": "org.evrete.api.StatefulSession",
+          "value": {
+            "()": [
+              "knowledge.newStatefulSession"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

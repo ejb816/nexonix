@@ -279,6 +279,13 @@ object Generator extends App {
       case d: Dynamic =>
         if (d.name.nonEmpty) s"      def ${d.name}: ${d.valueType} = ${initializer(d.valueType, d.value)}"
         else s"      ${expression(d.value)}"
+      case l: Local =>
+        // A construction-local intermediate. Every other body renderer
+        // (factoryBody, actorActionBody) already had this case; without it here a
+        // `loc` in a RULE action fell through to the BodyElement catch-all and its
+        // binding was silently dropped — the initializer emitted as a bare statement
+        // and every later reference to the name left dangling.
+        s"      val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
       case v: Variable =>
         s"      val ${v.name}: ${v.valueType} = ctx.get[${v.valueType}](\"$$${v.name}\")"
       case te: BodyElement =>
@@ -1204,6 +1211,25 @@ object Generator extends App {
     * pattern. The domain aspect is authoritative: an is-a-domain actor uses its own
     * dictionary, a member actor loads the domain it names. Rule objects are named
     * for the bare concept — rule-ness is aspect presence, not a name suffix. */
+  /** The domains whose rules an actor's Knowledge draws on: its own, then each
+    * `superDomain` above it, outermost last. A super-domain OWNS rules its member
+    * domains' actors have to see — a transform rule belongs to the root that spans
+    * both sides, not to either side — so the chain is what makes those rules
+    * co-resident in ONE knowledge, which is also what the fact-resolution
+    * constraint requires (a rule set split across sessions cannot match across it).
+    *
+    * `seen` guards a cycle: nothing in the corpus has one, but a super-domain edge
+    * is authored and an authored edge can be wrong. */
+  private def domainChain (domainTd: TypeDefinition, seen: Set[String] = Set.empty) : Seq[TypeDefinition] = {
+    val self = domainTd.typeName.namePath
+    if (self.isEmpty || seen.contains(self)) Seq.empty
+    else {
+      val superTn = domainTd.dracoAspect.superDomain
+      domainTd +: (if (superTn.name.isEmpty) Seq.empty
+                   else domainChain(loadType(superTn), seen + self))
+    }
+  }
+
   private def actorKnowledge (td: TypeDefinition) : String = {
     val tag = td.typeName.name
     val domainTd =
@@ -1211,15 +1237,24 @@ object Generator extends App {
       else if (td.domainAspect.typeName.name.nonEmpty) loadType(td.domainAspect.typeName)
       else td
     // A member is a rule iff it carries a ruleAspect — load each dictionary entry
-    // (from the domain's package) and test for one. Rule-ness is aspect presence,
-    // not a name suffix.
-    val rules = domainTd.domainAspect.elementTypeNames.filter { n =>
-      !RuleAspect.isEmpty(loadType(TypeName(n, _namePackage = domainTd.typeName.namePackage)).ruleAspect)
-    }
+    // (from its OWN domain's package) and test for one. Rule-ness is aspect presence,
+    // not a name suffix. Spelled package-relative, the same rule references take
+    // everywhere: bare in the actor's own package, qualified elsewhere — a
+    // super-domain's rules are elsewhere by construction.
+    val rules = domainChain(domainTd).flatMap { d =>
+      d.domainAspect.elementTypeNames
+        .map(n => TypeName(n, _namePackage = d.typeName.namePackage))
+        .filter(tn => !RuleAspect.isEmpty(loadType(tn).ruleAspect))
+    }.distinct
     if (rules.isEmpty)
       s"""  private lazy val knowledge: Knowledge = Rule.knowledgeService.newKnowledge("$tag")"""
     else {
-      val accepts = rules.map(r => s"    ${r}.ruleType.pattern.accept(k)").mkString("\n")
+      val accepts = rules.map { tn =>
+        val spelled =
+          if (tn.namePackage.isEmpty || tn.namePackage == td.typeName.namePackage) tn.name
+          else s"${tn.namePackage.mkString(".")}.${tn.name}"
+        s"    $spelled.ruleType.pattern.accept(k)"
+      }.mkString("\n")
       s"""  private lazy val knowledge: Knowledge = {
          |    val k = Rule.knowledgeService.newKnowledge("$tag")
          |$accepts

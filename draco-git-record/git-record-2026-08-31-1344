@@ -1,0 +1,131 @@
+# GATE — full `sbt test`; the block below runs it and stops if it fails.
+#
+#   sbt test && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-31-1344 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+#
+# Expected: 531 tests / 45 suites. ScenarioGenTest went from one report-only test to four
+# that ASSERT, and 23 generated sources joined src/test/scala, so both counts move.
+#
+# Headlines:
+#   the forest runs: 1 of 2 ash alarms crossed to birch
+#   scenario in today's drake: 23 files, 0 rejected, 0 parsed-but-drifted, 23 clean
+#   EXAMPLE-DOMAIN GEN MAP: 28 match, 20 differ, 0 error, 0 missing (of 48)   [unchanged]
+#
+# NOTE: the earlier record git-record-2026-08-31-1055 was written and never committed;
+# the work moved past it, so it is deleted rather than left describing machinery that no
+# longer exists. This record covers everything since 83d87ac.
+#
+# SEQUENCE — Cowork FIRST, then this block, once.
+
+--- MESSAGE ---
+The scenario becomes a corpus, and the forest runs
+
+Dev, on the previous state of this work: "You are not generating any source code because you are not
+parsing the drake into json. Also, you are writing Scala value expressions instead of using drake
+expression syntax that should be parsed into json format expression tree." Both were true, and acting
+on the second is what found the two defects below.
+
+NOTHING WAS BEING GENERATED
+
+`src/test/resources/scenario` held 23 `.drake` and nothing else. The gate parsed drake in memory,
+wrote JSON to a scratch classpath root purely so `TypeLoader` could resolve names, compiled to a
+scratch directory, and deleted both. Nothing outlived the test, which means nothing was generated.
+A trio with two thirds manufactured in temp space is a fixture, not a corpus.
+
+The scenario is now a full trio — `X.drake` beside `X.json` under `src/test/resources/scenario`, and
+the projection committed under `src/test/scala/scenario`. Every artifact's path comes from the type's
+own `TypeName`, so the three agree by construction rather than by convention. Generation runs the real
+route: parse each drake to its normative JSON, then generate each `.scala` from the JSON as LOADED
+through `TypeLoader` — not from the in-memory parse — so what is projected is what the normative
+artifact says.
+
+The gate got SMALLER as a result, which is the argument for doing it. Because the projected Scala is a
+real source tree, sbt compiles it and compilation needs no gate of its own — the same transitive
+argument `DracoGenTest` rests on. Because the scenario types are on the classpath like any others, the
+execution gate calls them directly: the reflection, the child classloader and the private
+`KnowledgeService` all went away. Four gates now, and they ASSERT rather than report:
+
+    1  PROJECTS      generate(X.json) == the committed X.scala      (DracoGenTest's gate)
+    2  MEANS IT      rules an actor OWNS vs rules it ACCEPTS        1 of 1
+    3  IS CONSISTENT every transform member is one leaf conversion  2 of 2
+    4  RUNS          0.8 uM -> 0.496 uM across the boundary         1 of 2 alarms crossed
+
+Gate 1 was verified by breaking it (rename a `Null` in a projected source; it names the type and the
+path). Gate 3 likewise, by pointing `Potency` at the source side instead of the target.
+
+DRAKE EXPRESSIONS, AND THE TWO DEFECTS THEY EXPOSED
+
+The receiving rule had been authored as raw Scala. On drake's application surface it parses to a real
+tree —
+
+    loc received java.util.List(scenario.birch.BirchJasmonate) ctx.getRuntime parameters
+      .get parameters par "received"
+    mon received.add parameters par jasmonate
+
+    {"()":[{".":[{"()":["ctx.getRuntime"]},"get"]},"\"received\""]}
+
+— and doing that broke two things that writing Scala had been hiding:
+
+**`Drake.emit` crashed.** `unfoldChain` did `empty.head` on a chain whose base receiver is a NILADIC
+call (`ctx.getRuntime()`): it assumed the receiver-application's function is a `.`-path, and a plain
+glued token has no path elements. Such an application IS the chain's base, and `valueLines` now writes
+it with its own `parameters`, empty list included, exactly as a chain call does.
+
+**`Generator.actionBody` had no `Local` case.** A `loc` in a RULE action fell through to the
+BodyElement catch-all: the initializer emitted as a bare statement, the binding dropped, every later
+reference to the name left dangling. `factoryBody` and `actorActionBody` both carry the case; this
+site was missed when `Local` was added as the eleventh element kind.
+
+Neither was reachable while the corpus wrote Scala into its value slots. That is the argument for the
+rule, stated better than an argument could: host-opaque text is not a shortcut, it is where the bugs
+go to hide.
+
+A census then converted what drake can already say. Seven host-opaque values became four:
+`knowledge.newStatefulSession()`, `session.fire()` and `ctx.insert(primed)` are applications and now
+parse to trees. The four that remain cannot be said yet and are not stubbornness — `msg match {…}`
+wants #58, and `_compound.value`, `_potency.value * 0.62` and `jasmonate.potency.value > 0.5` are
+paths and infix operators, which is #61.
+
+`super` PROJECTS
+
+`actorKnowledge` read the actor's own domain and stopped, so a transform rule owned by the root that
+spans both species reached neither side's actor. It compiled, ran, and matched nothing, with no error
+anywhere to report it. It now walks the `superDomain` chain, cycle-guarded because a super edge is
+authored and an authored edge can be wrong, spelling each rule package-relative:
+
+    private lazy val knowledge: Knowledge = {
+      val k = Rule.knowledgeService.newKnowledge("RootInterface")
+      scenario.forest.AshBirchAlarm.ruleType.pattern.accept(k)
+      k
+    }
+
+That is also what the fact-resolution constraint needs: rules split across sessions cannot match
+across the split, and co-residency in ONE knowledge is what a root super-domain owning the transform
+rules buys.
+
+Gate 2 was rewritten in the same breath, and the reason matters more than the change. It had been
+counting what the DEFINITIONS own, so it described the gap rather than detecting it, and would have
+gone on reporting `UNREACHABLE=1` after the fix landed. It counts `.ruleType.pattern.accept` in the
+PROJECTED SOURCE now — the projection, not the definition.
+
+WHAT GATE 3 DELIBERATELY DOES NOT REQUIRE
+
+That a transform member derive the transform domain. `Potency` IS a birch `Micromolar` and LIVES IN
+`Ash_Birch`; containment is the domain pointer, not an inheritance edge. Everywhere else in every
+corpus the two coincide — every domain member derives its domain — and this is the first place they
+genuinely come apart. A property of transform domains worth stating, not a hole worth filling.
+
+IT RUNS
+
+`BirchAlarmReceived` joins `Forest`, and it is not decoration: Evrete gives an RHS-inserted fact no
+working-memory node unless some rule consumes it, so without a receiving end `ctx.insert(primed)` had
+nowhere to land. Biologically it is the half the scenario was missing — the birch side taking
+delivery.
+
+    crossed: potency=0.496 uM  compound=jasmonic-acid
+
+Two alarms in, one out: 0.8 uM crosses, 0.3 uM does not. The threshold is in `AshBirchAlarm`'s
+condition and the 0.62 factor lives nowhere but `Potency`'s factory body, so both numbers being right
+is the evidence that the guard and the formula survived projection.
+
+Not exercised, and stated plainly: the actor MEMBRANE. `RootInterface.receive` is still the Scala
+`match` in the list above; running it would prove nothing about any other target.

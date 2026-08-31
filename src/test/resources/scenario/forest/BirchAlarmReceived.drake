@@ -1,0 +1,10 @@
+type BirchAlarmReceived
+domain scenario forest Forest
+rule
+  pattern
+    variables
+      var jasmonate scenario.birch.BirchJasmonate
+  action
+    loc received java.util.List(scenario.birch.BirchJasmonate) ctx.getRuntime parameters
+      .get parameters par "received"
+    mon received.add parameters par jasmonate

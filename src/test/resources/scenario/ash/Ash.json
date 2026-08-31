@@ -1,0 +1,38 @@
+{
+  "typeName": {
+    "name": "Ash",
+    "namePackage": [
+      "scenario",
+      "ash"
+    ]
+  },
+  "dracoAspect": {
+    "superDomain": {
+      "name": "Forest",
+      "namePackage": [
+        "scenario",
+        "forest"
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ash",
+      "namePackage": [
+        "scenario",
+        "ash"
+      ]
+    },
+    "elementTypeNames": [
+      "AshSap",
+      "AlarmSignal",
+      "DroughtCue",
+      "Infochemical",
+      "AshJasmonate",
+      "AshAbscisate",
+      "Micromolar",
+      "Compound",
+      "RootInterface"
+    ]
+  }
+}

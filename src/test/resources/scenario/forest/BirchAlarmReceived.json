@@ -1,0 +1,64 @@
+{
+  "typeName": {
+    "name": "BirchAlarmReceived",
+    "namePackage": [
+      "scenario",
+      "forest"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Forest",
+      "namePackage": [
+        "scenario",
+        "forest"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "jasmonate",
+          "valueType": "scenario.birch.BirchJasmonate"
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Local",
+          "name": "received",
+          "valueType": "java.util.List[scenario.birch.BirchJasmonate]",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ctx.getRuntime"
+                    ]
+                  },
+                  "get"
+                ]
+              },
+              "\"received\""
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "received.add",
+              "jasmonate"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

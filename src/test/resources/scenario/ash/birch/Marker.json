@@ -1,0 +1,50 @@
+{
+  "typeName": {
+    "name": "Marker",
+    "namePackage": [
+      "scenario",
+      "ash",
+      "birch"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Compound",
+        "namePackage": [
+          "scenario",
+          "birch"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Marker",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "compound",
+          "valueType": "scenario.ash.Compound"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "String",
+          "value": "_compound.value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ash_Birch",
+      "namePackage": [
+        "scenario",
+        "ash",
+        "birch"
+      ]
+    }
+  }
+}

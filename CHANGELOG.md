@@ -20,6 +20,17 @@ the block below.
 
 ### Added
 
+- **The forest scenario is a corpus, and it executes.** `src/test/resources/scenario` was 23 `.drake`
+  and nothing else; it is now a full trio — `X.drake` beside `X.json`, with the projection committed
+  under `src/test/scala/scenario` and every path taken from the type's own `TypeName`. Because the
+  projected Scala is a real source tree the build compiles it, so `ScenarioGenTest` asserts what
+  `DracoGenTest` asserts (generate from the JSON, compare to the file) and needs no compile gate of
+  its own. Two further gates check that an actor accepts every rule its domain chain owns, and that
+  every member of a transform domain is one leaf conversion. A fourth fires the rules: an ash alarm at
+  0.8 uM crosses the mycorrhizal boundary and arrives at 0.496 uM, while one at 0.3 uM is filtered by
+  the condition. `BirchAlarmReceived` joins `Forest` as the receiving end, which Evrete requires before
+  an RHS-inserted fact has a working-memory node at all.
+
 - **`source` and `target` on the domain aspect — a transform domain is now de jure in drake.** Two new
   keywords inside the `domain` block, both nominal references to domains; presence of BOTH makes the
   domain a transform domain, exactly as a `ruleAspect` makes a type a rule. Nothing appears in the
@@ -29,17 +40,10 @@ the block below.
   in `target` while taking a parameter typed in `source` already identifies one, which is the same
   shape as `Meters from Distance(Double)`.
 
-- **The scenario's second and third gates** — `ScenarioGenTest`, report-only. Each of the 22 parsed
-  definitions goes through `Generator.generate`, all 22 compile together as one unit, and a third gate
-  counts the rules each actor can actually reach. All 22 now emit and compile. The third gate exists
-  because the second going green is what would otherwise hide the one construct with no projection at
-  all: `super`, whose absence leaves an actor with a `Knowledge` that accepts nothing and reports
-  nothing.
-
-- **A rules/facts/inheritance scenario, authored in DRAKE** — `src/test/resources/scenario/` holds 22
+- **A rules/facts/inheritance scenario, authored in DRAKE** — `src/test/resources/scenario/` holds 23
   definitions: a `Forest` root super-domain, two tree species as message domains, and the mycorrhizal
   hand-off between them as a transform domain. `ScenarioDrakeTest` reports what parses and what
-  round-trips; all 22 do, so message domains and transform domains — neither of which draco defines
+  round-trips; all 23 do, so message domains and transform domains — neither of which draco defines
   de jure — are constructible de facto out of what drake already has. `dracoAspect.superDomain` gets
   its first use anywhere, and the one thing the scenario cannot say is the actor's typed dispatch,
   which is carried as host-opaque text rather than expressed (GitHub #63).
@@ -51,6 +55,13 @@ the block below.
   Recorded in DRACO.md's gotchas, since nothing throws and no test fails when it happens.
 
 ### Changed
+
+- **`super` projects: an actor's Knowledge now draws on its super-domain's rules.** `actorKnowledge`
+  read only the actor's own domain, so a transform rule owned by the root spanning two message domains
+  reached neither side's actor — which compiled, ran, and matched nothing, with no error to show for
+  it. It now walks the `superDomain` chain (cycle-guarded) and spells each rule package-relative. This
+  is also what puts the transform rules in ONE knowledge, which is what the engine's fact resolution
+  requires.
 
 - **A derivation reference is qualified when a bare one would not reach it** — `Generator.derivationRef`
   formerly qualified a parent only when it shared the declaring type's own simple name. Two wildcard
@@ -87,6 +98,17 @@ the block below.
   had to spell `DracoType` by hand, to compensate for its map parent lying outside draco's
   graph; it no longer does. With one straggler in the example domains stripped alongside it
   (`domains/world/Cartesian`), no definition in either corpus names the root.
+
+### Fixed
+
+- **`Drake.emit` crashed on a chain based on a niladic call.** `unfoldChain` assumed the receiver
+  application's function is a `.`-path, so `ctx.getRuntime().get(…)` walked into `empty.head`. Such an
+  application is the chain's base receiver and now writes its own `parameters`, empty list included.
+
+- **A `loc` in a rule action lost its binding.** `Generator.actionBody` had no `Local` case, so the
+  initializer emitted as a bare statement and every later reference to the name dangled. `factoryBody`
+  and `actorActionBody` already handled it. Neither this nor the emitter crash was reachable while
+  values were carried as host-opaque Scala rather than written on drake's application surface.
 
 ### Build
 

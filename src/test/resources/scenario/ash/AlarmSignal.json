@@ -1,0 +1,36 @@
+{
+  "typeName": {
+    "name": "AlarmSignal",
+    "namePackage": [
+      "scenario",
+      "ash"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "AshSap",
+        "namePackage": [
+          "scenario",
+          "ash"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "infochemical",
+        "valueType": "AshJasmonate"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ash",
+      "namePackage": [
+        "scenario",
+        "ash"
+      ]
+    }
+  }
+}
