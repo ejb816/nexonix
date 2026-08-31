@@ -1,0 +1,47 @@
+# DRACO.md only — no src, no corpus. The suite is a formality here rather than a gate, but
+# the block runs it anyway so nothing is committed against a red tree.
+#
+#   sbt test && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-08-31-1358 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+#
+# Expected: 531 tests / 41 suites, unchanged from 87a2bb9 — which is the point, since this
+# commit writes those numbers down.
+#
+# No CHANGELOG entry, deliberately. This changes no type, field, command, behaviour or
+# gate; it is an operating rule for future sessions, which is what DRACO.md is for and
+# what the record carries.
+
+--- MESSAGE ---
+Write down what the report-only tests currently read
+
+DRACO.md has said since August that a green suite does not mean nothing regressed, and named the
+three tests that measure rather than assert. It did not say what they measure TO. So the rule was
+unfollowable in practice: seeing `drake surface losses: 15 fields` tells a session nothing unless it
+already knows whether 15 is the number.
+
+That happened this session. The figure looked like it had moved — the alpha.6 notes record 16 — and
+settling it took three greps back through the git-records to find that `324556c` had predicted the
+`[reference package]` bucket disappearing, 16 to 15, with the other two buckets unchanged. The answer
+was recorded; it was just recorded somewhere nobody would look. A table makes that a lookup.
+
+Eight headlines, with the capture line beside them, since they go to the console logger rather than
+to the per-suite files and are lost the moment the scrollback is:
+
+    ExampleDomainsGenTest   28 match, 20 differ, 0 error, 0 missing (of 48)
+    DrakeParseTest          15 surface-loss fields across 91 types — expression form 12, spelling 3
+    DrakeParseTest          81 draco + 10 mods types in, 0 held back
+    DrakeGenTest            0 mods actors pending .drake              (file-only)
+    PonCorpusTest           80 numbers, 550 expressions, 42 discrepancies
+    PonCorpusTest           80 numbers, 7 differ from generated canonical
+    ScenarioDrakeTest       23 files, 0 rejected, 0 drifted, 23 clean
+    SubtypeFactVisibility   CO-DECLARATION DROPS THE FACT             (categorical)
+
+Two things the table says about itself, because a figure nobody is obliged to maintain is one nobody
+can trust. First: a disagreement between the table and a run means either the run regressed or the
+table went stale, and both are worth stopping for — so the commit that legitimately moves a number
+updates the table in the same commit, exactly as the CHANGELOG entry and the record already ride
+along. Second: the alpha.6 notes' 16 is left standing, because it was true when written; that drift
+is the thing the table exists to make visible rather than something to paper over.
+
+The scenario's gates are deliberately absent from it. They used to be report-only and now assert —
+projects, wires, runs. Moving a measurement into an assertion is the goal, and the table should
+shrink as that happens. It is the cheap half of #62, not a substitute for it.
