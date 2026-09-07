@@ -50,7 +50,7 @@ logger, not to the per-suite files, so they have to be caught off stdout — eve
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|error|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |

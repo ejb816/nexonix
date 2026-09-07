@@ -20,6 +20,15 @@ the block below.
 
 ### Added
 
+- **`case`, a body element for dispatch on a sibling subtype — specified in `drake.dlt`, not yet built.**
+  `case *<name> <Type> [ … ]` inside an actor's `message`: ordered, first-match-wins, optional (an actor
+  whose message body is plain statements does not dispatch). It is a new BodyElement kind, deliberately
+  NOT a reuse of the rule `Pattern` — a rule pattern has no scrutinee and is unordered, a case has one and
+  is ordered. The binder is optional, the default branch is a branch with no type, and capitalization
+  alone separates the four forms, reusing the rule that already bounds a reference. A case brackets
+  itself. `DIVERGENCES` records that reserving the token first requires converting the two pinned
+  definitions that carry `case` inside host-opaque text.
+
 - **The scenario's `.json` is gated against the `.drake` it came from.** `ScenarioGenTest` gained a
   gate ahead of the projection gate: for each of the 23 `.drake` under `src/test/resources/scenario`,
   `Drake.parse` of the surface must equal the `.json` committed beside it. The corpus previously had

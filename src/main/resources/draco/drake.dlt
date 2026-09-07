@@ -216,6 +216,41 @@ DYN-WITH-BODY  (a Dynamic element/global carrying parameters, statements, and a 
   A method type-parameter rides the name via the ( ) convention: `dyn updated(V1 >: V) ...` -> name "updated[V1 >: V]".
   Valid wherever an element list is: elements, factory body, globalElements.
 
+CASE-BRANCH  (a Case element: an ordered branch on which SIBLING SUBTYPE of a scrutinee arrived)
+  First-match-wins. Admitted today only in an actor's `message`; the construct is general and the
+  admitting blocks grow with its users (the projection domains dispatch over TypeElement's kinds).
+  It is NOT the rule LHS and shares no type with it: a rule `pattern` has NO scrutinee (it quantifies
+  over working memory) and is unordered; a case has exactly one and is ordered. `Pattern` carries
+  `conditions`; a case carries none.
+  case *<name> <value-type> [            -> body[] { kind=Case , name , valueType , body[] , value }
+    ( statements sit DIRECTLY under the case — the same admits as a dyn-with-body )
+    *~loc|fix|mut <name> <value-type> <value>  -> body[] BodyElement   ( STATEMENTS ONLY )
+    *~mon <unit-value>                   -> body[] { kind=Monadic , value }
+    *= <expr>                            -> value   ( the RESULT expression, exactly as in a dyn-with-body )
+  ]
+  BINDER OPTIONAL — `case a AlarmSignal [ ... ]` binds the narrowed value, `case Fixed [ ... ]` does not
+  (name absent == ""). The UNBOUND form is the common one wherever a branch dispatches without reaching
+  into the value: Drake.keyword is 8-of-9 unbound. Both project — Scala `case a: T =>` / `case _: T =>`,
+  Haskell `T a ->` / `T _ ->`.
+  STATEMENTS-OR-RESULT, as in a dyn-with-body: an actor branch is all effects and carries no `value`; a
+  projection branch is one result expression and carries no statements. ONE kind, both shapes.
+  THE DEFAULT BRANCH is a branch with NO TYPE, and CASE alone tells the four forms apart — the same rule
+  that already bounds a reference (REFERENCES: lower-case is a package word, the first upper-case token
+  ends the run). Nothing else is consulted:
+    case a AlarmSignal [ ... ]   binder + type          case e [ ... ]   default, bound
+    case AlarmSignal [ ... ]     type, unbound          case [ ... ]     default, unbound
+  WHEN A DEFAULT IS NEEDED follows from STATEMENTS-OR-RESULT, and the two shapes differ:
+    effects  — none. A scrutinee matching no branch is a no-op and the target writes its own catch-all.
+    result   — required, unless the branches are exhaustive over the scrutinee's subtypes (which the
+               definition graph knows). Drake.keyword lists 8 of TypeElement's 11 kinds and ends in an
+               error default; without a default branch that shape has no spelling.
+  NOT AUTHORED, because reconstructable: the scrutinee NAME — it is the enclosing construct's subject
+  (an actor's message). A branch type is expected to derive the scrutinee's type; that is a lint, not a
+  syntax rule, and a default branch is exempt from it by construction.
+  OPTIONAL WHEREVER ADMITTED: a `message` whose body is plain statements is an actor that does not
+  dispatch — 13 of the corpus's 14 actors. A single whole-type branch (`case ashSap AshSap [ ... ]`) is
+  legal, and is how a message is given an authored name rather than the target's supplied one.
+
 BRACKETS  (a construct delimits ITSELF; whitespace is insignificant throughout)
   A list-block (elements, parameters, body, globalElements, variables, conditions, modules, types) is
   written head-then-members. Whitespace — spaces, newlines, indentation — is INSIGNIFICANT, purely for
@@ -224,10 +259,12 @@ BRACKETS  (a construct delimits ITSELF; whitespace is insignificant throughout)
     NAME list      modules / types: members carry no keyword, so nothing else can bound them  -> [ ] ALWAYS
     KEYWORD block  every other list-block: bounded by the member keywords it ADMITS            -> NO brackets
     OPENER         a member that opens its own sub-block brackets ITSELF                       -> [ ] ALWAYS
-  TWO OPENERS, one rule: a dyn-with-body (which opens parameters / statements / a result) and an ARGUMENT
-  whose value is an application (which opens a nested `parameters` list — see APPLICATION SURFACE). In
-  both the `[` also tells the leaf form from the block one: a leaf dyn and a leaf `par` open nothing and
-  so bracket nothing.
+  THREE OPENERS, one rule: a dyn-with-body (which opens parameters / statements / a result), an ARGUMENT
+  whose value is an application (which opens a nested `parameters` list — see APPLICATION SURFACE), and a
+  CASE-BRANCH (which opens its own statements / result). In the first two the `[` also tells the leaf form
+  from the block one: a leaf dyn and a leaf `par` open nothing and so bracket nothing. A case has NO leaf
+  form — it always opens a body and always brackets it, for the reason the rule exists: the statement after
+  the last branch belongs to the enclosing block, and whitespace cannot say so.
   ADMITS is what ends a keyword block: `parameters` takes only `par`, so a `loc` after it is the enclosing
   dyn's first statement, not a parameter; `elements` / `body` / `globals` take fix|mut|dyn|loc. ADMITS is
   what a nested argument list defeats — inner and outer admit the same `par` — hence the brackets.
@@ -362,6 +399,7 @@ domain <pkg-seq> <name>                    -> domainAspect.typeName { namePackag
                                                                              projection decides whether to write it. )
   *~start                                  -> actorAspect.start             ( default behaviour generated regardless of presence; content overrides )
   *~message                                -> actorAspect.message           ( default behaviour generated regardless of presence; content overrides )
+    *~case *<name> <value-type> [ ... ]     -> message.body[] { kind=Case }   ( OPTIONAL — absent = no dispatch; see CASE-BRANCH )
   *~signal                                 -> actorAspect.signal            ( default behaviour generated regardless of presence; content overrides )
 *~codec                                    -> codecAspect                   (absent = NO codec for this type. present = a codec is needed; its fields are SELECTORS, so a present codec must carry >=1 of encoder/decoder — never both absent. present-empty == absent)
   *~discriminator <value>                  -> codecAspect.discriminator     ( OPEN: carried from the earlier increment as a String field driving the union tag ("kind"). Field vs derived is unsettled — see NOTES )
@@ -398,6 +436,16 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
   The target rows below (PRESENCE, CODEC-declared) belong to the future typed Generator[L]; the procedural
   draco.Generator implements only the current behaviour noted on the right, and is not being changed for them.
   par _<name>                       <->   current JSON stores the name without _ (Generator prepends); target keeps _ in the name
+  CASE-BRANCH (this template)       <->   SPEC ONLY — `case` is not yet a reserved word, no Case kind exists, and
+                                          neither Drake.emit nor Drake.parse carries one. Reserving the token is the
+                                          gating step and it is NOT free: the reserved set is flat and global (Drake.scala),
+                                          which is what whitespace-insignificance rests on, so a value span stops at the
+                                          FIRST reserved token anywhere. Two pinned definitions carry `case` inside
+                                          host-opaque text and would break — TypeName.equals (`other match { case tn: ... }`)
+                                          and DefinitionPath.source (`sources(rp) match { case Seq() ... }`). NEITHER
+                                          becomes a case-branch: DefinitionPath's Seq()/Seq(url) is structural ARITY and
+                                          converts to the `if` operator; TypeName.equals takes `par other Any` and is the
+                                          host equality protocol, a residue to drop rather than to spell.
   PRESENCE model (this template)    <->   current Generator/JSON still ELIDE uniformly: TypeDefinition's encoder
                                           omits an aspect via X.isEmpty, and every field elides on empty. The template
                                           above is the target — preserve presence for *; elide for ~ — not yet built.

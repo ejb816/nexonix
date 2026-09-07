@@ -1,0 +1,74 @@
+# drake.dlt only — no src, no corpus, no test reads the file. The suite is a formality for
+# this commit, but it is the first run since the macOS update, so it doubles as the check
+# that the toolchain still stands.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 532 tests / 41 suites, every headline as DRACO.md's table has it. Paste only
+# the capture lines. If anything is off, it is the environment, not this commit.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-06-2215 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+drake: the case body element, specified and not yet built
+
+Three actors' worth of discussion settled a construct whose need had been visible since the forest
+scenario landed: `ash/RootInterface` dispatches on which subtype of its message arrived, and it does so
+as a single-line Scala `match` carried through as host-opaque text. That parses, and parsing it proves
+nothing, because the text projects to no target but Scala.
+
+WHAT WAS DECIDED, AND WHAT CHANGED THE DECIDING
+
+The case is a twelfth BodyElement kind, not a reuse of `Pattern`. GitHub #58 argued for reusing
+`Pattern` verbatim and for doing `signal` first; Dev overruled both. A rule pattern has NO scrutinee and
+is unordered; a case has exactly one and is ordered. They share no type and no spelling. Only `message`
+admits one, and it is optional there — an actor whose message body is plain statements does not
+dispatch, which is 13 of the corpus's 14 actors. `start` and `signal` are untouched, and the hardcoded
+one-case `signal match` in Generator.actorBehavior stays hardcoded.
+
+The binder is OPTIONAL, and the answer came from counting rather than from principle. With one use site
+there was nothing to calibrate against, so the reversible choice (required) looked right. Then Dev
+pointed at the projection domains: 44 sibling-subtype dispatch sites already sit in the hand-written
+engine, and the canonical one — Drake.keyword — binds in 1 of 9 branches. Requiring a binder would put
+a dead name in the other eight at the site draco most wants to project. `TypeElement.name` already
+defaults to "", so an unbound branch is absence, not a flag.
+
+The default branch is a branch with no type, and CASE ALONE tells the four forms apart — the same rule
+that already bounds a reference (lower-case is a package word; the first upper-case token ends the run):
+
+    case a AlarmSignal [ ... ]   binder + type        case e [ ... ]   default, bound
+    case AlarmSignal [ ... ]     type, unbound        case [ ... ]     default, unbound
+
+Whether a default is NEEDED falls out of the statements-or-result split that a dyn-with-body already
+has: effect branches never need one (a non-matching scrutinee is a no-op, the target writes its own
+catch-all); result branches always do unless exhaustive over the scrutinee's subtypes. That rule was
+found by testing the first draft against Drake.keyword, whose ninth branch is `case e => sys.error(…)`
+— a catch-all that produces a value, which the draft had declared unauthorable.
+
+A case brackets itself, and the reason is the one the bracket rule exists for: `mon session.fire` after
+the last branch belongs to the enclosing block, and whitespace cannot say so. BRACKETS' "two openers"
+became three.
+
+WHAT IT COSTS, RECORDED WHERE IT WILL BE LOOKED FOR
+
+`case` is not a free token. The reserved set in Drake.scala is flat and global — a value span stops at
+the first reserved word anywhere — and two pinned definitions carry `case` inside host-opaque text:
+TypeName.equals and DefinitionPath.source. Neither can stay as it is once the token is reserved, and
+neither is a loss: DefinitionPath's `Seq()`/`Seq(url)` is structural arity and converts to the `if`
+operator drake already declares; TypeName.equals converts to a case-branch with a default, which takes
+its value out of the host-opaque tail entirely. DIVERGENCES carries this so the next session does not
+rediscover it by breaking DrakeGenTest.
+
+That conversion puts a case in a DYN body, which the spec as written admits only in `message`. Widening
+it is the one open decision; the reasons to are that it is where the 44 engine sites live and it is the
+use Dev named for the drake/generator domains.
+
+SPEC ONLY
+
+No Case kind exists, `case` is not reserved, and neither Drake.emit nor Drake.parse carries one. The
+increments from here: free the token (two files, held by DrakeGenTest/DrakeParseTest); the Case trio,
+BodyElement.modules, the reserved word, emit and Generator; then parse, and RootInterface converts.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
