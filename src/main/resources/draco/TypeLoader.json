@@ -31,7 +31,7 @@
             "valueType": "String"
           }
         ],
-        "value": "DefinitionPath.default.source(resourcePath).flatMap(readDefinition)"
+        "value": "draco.generator.carrier.DefinitionPath.default.source(resourcePath).flatMap(readDefinition)"
       },
       {
         "kind": "Dynamic",

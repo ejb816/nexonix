@@ -1,9 +1,8 @@
-
 package draco.drake
 
 import draco._
 
-trait Drake extends DracoType
+trait Drake extends Source
 
 object Drake extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Drake", _namePackage = Seq ("draco", "drake")))

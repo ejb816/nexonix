@@ -43,9 +43,12 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **532 tests / 41
-suites** — one more than at `87a2bb9`, the scenario's drake→JSON gate, which moves none of
-the figures below. These are the headlines those tests print. They go to the console
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **542 tests / 41
+suites**: 532 at `94b35cc`, then five per-type tests each for `draco.Target` and
+`draco.generator.carrier.Carrier` (two `DracoGenTest`, one `DrakeGenTest`, two
+`DrakeParseTest` per definition), which also moves the two type COUNTS below — 83 draco
+types in scope, 93 measured — and none of the loss figures. These are the headlines those
+tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
 
@@ -56,8 +59,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 15 fields across 91 types — expression form 12, empty-collection spelling 3 |
-| `DrakeParseTest` | Drake.parse scope | 81 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 15 fields across 93 types — expression form 12, empty-collection spelling 3 |
+| `DrakeParseTest` | Drake.parse scope | 83 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -174,16 +177,17 @@ There is no `typeInstance` and no `*Instance` trait.
 **Loading.** `TypeLoader` owns it, not `Generator`:
 
 ```text
-TypeLoader.loadType → tryLoad → DefinitionPath.default.source(resourcePath) → readDefinition
+TypeLoader.loadType → tryLoad → draco.generator.carrier.DefinitionPath.default.source(resourcePath) → readDefinition
 ```
 
 `rooted` appends the universal root to any definition carrying no draco-domain parent — an
 absent derivation is the common case, a solely foreign one (`Dictionary`) the other — so no
 definition in the corpus spells `DracoType`.
 
-`DefinitionPath` holds `roots: Seq[URI]` explicitly and resolves unique-or-error — more
-than one root carrying a name is a hard error, because order cannot survive projection to
-another target language. `hostRoots` derives the default from `java.class.path`; it is one
+`DefinitionPath` — in `draco.generator.carrier`, the generator's source side, where host
+realization is the content rather than a leak — holds `roots: Seq[URI]` explicitly and
+resolves unique-or-error: more than one root carrying a name is a hard error, because order
+cannot survive projection to another target language. `hostRoots` derives the default from `java.class.path`; it is one
 realization, not the definition, and a path can be constructed without a classloader. A
 missing definition yields a typeName-only stub, which is legitimate.
 
@@ -215,7 +219,8 @@ allowed; main → mods is not. Whether mods is now *the* engine tier rather than
 speculative layer is an open question for Dev.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `json`,
-`xml`), `draco.rete`, `draco.drake`, `draco.generator`, `draco.scalatarget`. Domains are
+`xml`), `draco.rete`, `draco.drake`, `draco.generator` (+ `carrier`), `draco.scalatarget`.
+Domains are
 peers in the `DomainDictionary`, not hierarchical. Example domains live in
 `src/mods/scala/domains/` (the World / media chain).
 

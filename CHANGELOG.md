@@ -20,6 +20,30 @@ the block below.
 
 ### Added
 
+- **`draco.generator.carrier` — the generator's source side — and `DefinitionPath` moves into it.**
+  A carrier is the format a definition travels in between Drake and the loader; the sub-domain holds
+  what is about carriers rather than about definitions: where they are found (`DefinitionPath` now;
+  `SourceContent` and `TypeLoader` are the same question, deferred). Contained under `generator`, not
+  derived from `Generator(L)` — it is target-independent, and containment is not inheritance.
+  `DefinitionPath` leaves root `draco`, where its host vocabulary (`java.class.path`, URLs, streams)
+  was a leak against language neutrality of the definition language; on the carrier side it is the
+  content. `TypeLoader` names it by its new package.
+
+- **`DefinitionPath.source` no longer carries a Scala `match`, and its JSON is what parsing its drake
+  produces.** The one-of-many resolution was `sources(rp) match { case Seq() => … }` as opaque text.
+  It is now a `loc` binding the candidates, a `require` guarding the many-roots case, and
+  `found.headOption` as the result — every value on the application surface Drake already parses, so
+  the JSON was DERIVED by `Drake.parse` rather than hand-authored, and the surface-loss headline does
+  not move. This frees the `case` token at one of its two pinned sites; the projection calls `sources`
+  once, as before. `case` is now admitted in a dyn-with-body as well as an actor's `message`.
+
+- **Source and Target are roles in the corpus.** `draco.Target` joins `draco.Source` as an empty
+  marker type in the root domain; a domain takes a role by deriving one. `Drake from draco Source` —
+  it parses to the normative form, and a carrier format is legitimate as far as its round-trip with
+  Drake holds. `ScalaTarget from draco Target` — it had derived `Source`, which was the roles crossed.
+  `Generator(L)` is parameterized by a Target and universal over Sources, which is why it carries a
+  type parameter and no `source` keyword. README's domain table says so.
+
 - **`case`, a body element for dispatch on a sibling subtype — specified in `drake.dlt`, not yet built.**
   `case *<name> <Type> [ … ]` inside an actor's `message`: ordered, first-match-wins, optional (an actor
   whose message body is plain statements does not dispatch). It is a new BodyElement kind, deliberately

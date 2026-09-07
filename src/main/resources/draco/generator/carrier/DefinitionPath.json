@@ -2,7 +2,9 @@
   "typeName": {
     "name": "DefinitionPath",
     "namePackage": [
-      "draco"
+      "draco",
+      "generator",
+      "carrier"
     ]
   },
   "dracoAspect": {
@@ -36,7 +38,30 @@
             "valueType": "String"
           }
         ],
-        "value": "sources(resourcePath) match { case Seq() => None case Seq(url) => Some(url) case many => sys.error(s\"draco: $resourcePath is defined at ${many.size} roots, and a type name must resolve to exactly one definition: \" + many.mkString(\", \")) }"
+        "body": [
+          {
+            "kind": "Local",
+            "name": "found",
+            "valueType": "Seq[URL]",
+            "value": {
+              "()": [
+                "sources",
+                "resourcePath"
+              ]
+            }
+          },
+          {
+            "kind": "Monadic",
+            "value": {
+              "()": [
+                "require",
+                "found.size <= 1",
+                "s\"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: \" + found.mkString(\", \")"
+              ]
+            }
+          }
+        ],
+        "value": "found.headOption"
       }
     ],
     "factory": {
@@ -73,9 +98,11 @@
   },
   "domainAspect": {
     "typeName": {
-      "name": "Draco",
+      "name": "Carrier",
       "namePackage": [
-        "draco"
+        "draco",
+        "generator",
+        "carrier"
       ]
     }
   }

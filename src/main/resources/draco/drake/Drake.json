@@ -7,6 +7,14 @@
     ]
   },
   "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Source",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
     "globalElements": [
       {
         "kind": "Fixed",

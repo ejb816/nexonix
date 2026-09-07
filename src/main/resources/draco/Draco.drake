@@ -18,7 +18,6 @@ domain draco Draco
     Completeness
     Condition
     ContentSink
-    DefinitionPath
     DerivationResolvable
     Dictionary
     Domain
@@ -46,6 +45,7 @@ domain draco Draco
     SelfDeclaration
     Source
     SourceContent
+    Target
     Test
     Type
     TypeDefinition

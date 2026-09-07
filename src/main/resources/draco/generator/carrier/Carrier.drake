@@ -1,0 +1,5 @@
+type Carrier
+domain draco generator carrier Carrier
+  types [
+    DefinitionPath
+  ]

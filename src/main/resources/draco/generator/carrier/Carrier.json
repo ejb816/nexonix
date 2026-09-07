@@ -1,0 +1,23 @@
+{
+  "typeName": {
+    "name": "Carrier",
+    "namePackage": [
+      "draco",
+      "generator",
+      "carrier"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Carrier",
+      "namePackage": [
+        "draco",
+        "generator",
+        "carrier"
+      ]
+    },
+    "elementTypeNames": [
+      "DefinitionPath"
+    ]
+  }
+}

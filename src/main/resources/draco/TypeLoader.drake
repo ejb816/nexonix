@@ -8,7 +8,7 @@ type TypeLoader
     dyn loadFromResource Option(TypeDefinition) [
       parameters
         par resourcePath String
-      = DefinitionPath.default.source(resourcePath).flatMap(readDefinition)
+      = draco.generator.carrier.DefinitionPath.default.source(resourcePath).flatMap(readDefinition)
     ]
     dyn tryLoad Option(TypeDefinition) [
       parameters

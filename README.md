@@ -208,10 +208,11 @@ is currently a measurement tool rather than a complete authoring path.
 
 ### Loading
 
-`TypeLoader` resolves a `TypeName` to a definition through a `DefinitionPath`:
+`TypeLoader` resolves a `TypeName` to a definition through a `DefinitionPath`, which lives in
+`draco.generator.carrier` — the generator's source side, where host realization is the content:
 
 ```text
-TypeLoader.loadType -> DefinitionPath.default.source(resourcePath) -> readDefinition
+TypeLoader.loadType -> draco.generator.carrier.DefinitionPath.default.source(resourcePath) -> readDefinition
 ```
 
 A `DefinitionPath` holds its **roots** explicitly and resolves **unique-or-error**: a name
@@ -247,10 +248,21 @@ examples, the canonical material is what ships:
 | `draco.base` | value types and measurement families |
 | `draco.primes` | the rule engine and stateful working memory |
 | `draco.format` (+ `json`, `xml`) | payload formats and path extraction over them |
-| `draco.drake` | the definition surface as a domain |
-| `draco.generator` | projection as a domain, parameterized by target |
-| `draco.scalatarget` | the Scala target |
+| `draco.drake` | the definition surface as a domain — **a Source** |
+| `draco.generator` (+ `carrier`) | projection as a domain, parameterized by target; `carrier` is its source side — where definitions are found and read |
+| `draco.scalatarget` | the Scala target — **a Target** |
 | `draco.rete` | rule-evaluation capability, held as its own vocabulary |
+
+**Source and Target are roles**, held as two empty marker types in the root domain that a
+domain derives: `Drake from draco Source`, `ScalaTarget from draco Target`. A Source is
+where definitions come from — Drake parses to the normative form, and any carrier (JSON
+today; XML or another later) is legitimate exactly as far as its round-trip with Drake
+holds. A Target is what definitions project into. `Generator(L)` is parameterized by a
+Target and universal over Sources: any Source that yields a `TypeDefinition` feeds it,
+which is why it carries a type parameter and no `source` keyword, where a pairwise
+transform domain carries both. Its members are meant to be the morphisms, as rules, from a
+definition to that target's source text; today it holds one function element, and the
+six-way dispatch in the hand-written `Generator` is those rules, unwritten.
 
 **Base** — measurement types:
 
@@ -523,10 +535,10 @@ src/
         drake.dlt               -- the DRAKE specification
         base/ primes/           -- Base and Primes domains
         format/ rete/           -- format and rule-evaluation domains
-        drake/ generator/ scalatarget/
+        drake/ generator/ generator/carrier/ scalatarget/
     scala/
       draco/                    -- projection-canonical framework source
-        base/ primes/ format/ rete/ drake/ generator/ scalatarget/
+        base/ primes/ format/ rete/ drake/ generator/ generator/carrier/ scalatarget/
         dreams/                 -- Dreams scaffold (+ orion/)
   test/
     resources/ scala/           -- gates, rule tests, example-domain tests

@@ -9,7 +9,7 @@
   "dracoAspect": {
     "derivation": [
       {
-        "name": "Source",
+        "name": "Target",
         "namePackage": [
           "draco"
         ]

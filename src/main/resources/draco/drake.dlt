@@ -204,6 +204,7 @@ DYN-WITH-BODY  (a Dynamic element/global carrying parameters, statements, and a 
     ( statements sit DIRECTLY under the dyn — no `body` head; each line one statement )
     *~loc|fix|mut <name> <value-type> <value>    -> body[] BodyElement   ( STATEMENTS ONLY — bindings/effects, never the result )
     *~mon <unit-value>                     -> body[] { kind=Monadic , value }
+    *~case *<name> <value-type> [ ... ]    -> body[] { kind=Case }   ( see CASE-BRANCH )
     *= <expr>                              -> value    ( the RESULT expression, on its own `=`-opening line;
                                                          absent for Unit methods — their body is all effects.
                                                          The `=` is TRANSITIONAL — the intent is a body sequence
@@ -217,8 +218,8 @@ DYN-WITH-BODY  (a Dynamic element/global carrying parameters, statements, and a 
   Valid wherever an element list is: elements, factory body, globalElements.
 
 CASE-BRANCH  (a Case element: an ordered branch on which SIBLING SUBTYPE of a scrutinee arrived)
-  First-match-wins. Admitted today only in an actor's `message`; the construct is general and the
-  admitting blocks grow with its users (the projection domains dispatch over TypeElement's kinds).
+  First-match-wins. Admitted in an actor's `message` and in a dyn-with-body — the second is where
+  the projection domains dispatch over TypeElement's kinds, and where TypeName.equals lands.
   It is NOT the rule LHS and shares no type with it: a rule `pattern` has NO scrutinee (it quantifies
   over working memory) and is unordered; a case has exactly one and is ordered. `Pattern` carries
   `conditions`; a case carries none.
@@ -442,10 +443,11 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           which is what whitespace-insignificance rests on, so a value span stops at the
                                           FIRST reserved token anywhere. Two pinned definitions carry `case` inside
                                           host-opaque text and would break — TypeName.equals (`other match { case tn: ... }`)
-                                          and DefinitionPath.source (`sources(rp) match { case Seq() ... }`). NEITHER
-                                          becomes a case-branch: DefinitionPath's Seq()/Seq(url) is structural ARITY and
-                                          converts to the `if` operator; TypeName.equals takes `par other Any` and is the
-                                          host equality protocol, a residue to drop rather than to spell.
+                                          and DefinitionPath.source (`sources(rp) match { case Seq() ... }`).
+                                          DefinitionPath's Seq()/Seq(url) is structural ARITY, not subtype dispatch, and
+                                          converts to the `if` operator (DONE). TypeName.equals converts to a case-branch
+                                          with a default — `case tn TypeName [ = ... ]` / `case [ = false ]` — which
+                                          needs the Case kind to exist, so it lands with the kind, as its first use.
   PRESENCE model (this template)    <->   current Generator/JSON still ELIDE uniformly: TypeDefinition's encoder
                                           omits an aspect via X.isEmpty, and every field elides on empty. The template
                                           above is the target — preserve presence for *; elide for ~ — not yet built.

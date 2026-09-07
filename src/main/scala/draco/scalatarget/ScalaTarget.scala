@@ -2,7 +2,7 @@ package draco.scalatarget
 
 import draco._
 
-trait ScalaTarget extends Source
+trait ScalaTarget extends Target
 
 object ScalaTarget extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ScalaTarget", _namePackage = Seq ("draco", "scalatarget")))

@@ -1,0 +1,110 @@
+# Increments A and B of the case/Source/Target track, ONE commit: five src/main trios touched
+# (Target and Carrier new; DefinitionPath moved; ScalaTarget, Drake, Draco, TypeLoader edited),
+# drake.dlt, README, CHANGELOG, DRACO.md. Two earlier records (2026-09-06-2230, 2026-09-07-1030)
+# described these as separate commits and are superseded by this file — B edits Draco,
+# CHANGELOG and DRACO.md, which were in A's pathspec, so they cannot land apart without an
+# inconsistent tree in between.
+#
+# Every trio was made DRAKE-FIRST — .drake authored, .json = DrakeCLI parse of it, .scala =
+# GeneratorCLI generate of that — off the compiled classes with java -cp, no sbt. DrakeCLI
+# check over src/main: surface drift 2 (ActorAspect, BodyElement — the authoredAhead pair,
+# untouched and expected), json drift 0.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 542 / 41 (five per-type tests each for Target and Carrier). Two headline COUNTS
+# move and the table carries them: surface losses `15 fields across 93 types` (still 12 + 3),
+# parse scope `83 draco + 10 mods`. No loss figure moves. Paste the capture lines; if the
+# count is not 542, DRACO.md line 46 is what to correct.
+#
+# If green (plain add -A: nothing in the tree is meant to stay out):
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-07-1108 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+Source and Target are roles, and DefinitionPath moves to the generator's carrier side
+
+Dev's grounding, in substance: Drake is a Domain and is a Source — it parses to the normative form,
+and no particular carrier (JSON today; XML, YAML, protobuf later) needs to be normative to the
+framework, only faithful under the Drake <-> carrier round-trip. ScalaTarget is a Domain and is a
+Target, and is the type parameter of Generator. Generator(ScalaTarget) is a domain whose members are
+morphisms, as rules, from a definition to Scala source. And: seeing anything Scala- or Java-dependent
+in drake is regressive against the language neutrality of the definition language.
+
+None of this was grounded consistently in the corpus, and two things this commit does follow from it.
+
+THE ROLES WERE CROSSED
+
+`draco.Source` has existed since the first domain unification as an empty marker with exactly one
+deriver: `ScalaTarget from draco Source`. Under the grounding that is the wrong role. `Drake` derived
+no role. `draco.Target` did not exist. The one place the corpus said anything about Source and Target,
+it said the opposite.
+
+    draco.Target                   new — an empty role marker, the twin of Source, member of the root domain
+    ScalaTarget from draco Target  (was: from draco Source)
+    Drake       from draco Source  (was: no derivation)
+
+Roles are held as marker types a domain derives, the way Holon and Primal already are — draco's
+existing spelling of "is a", not a new mechanism. README's domain table carries the grounding, and
+the reconciliation it gives: Ash_Birch's `source`/`target` keywords are PAIRWISE; Generator(L) is
+target-parametric and SOURCE-UNIVERSAL — any Source yielding a TypeDefinition feeds it — which is why
+it carries a type parameter and no `source` keyword, and why DefinitionPath belongs on the generator's
+source side rather than inside Drake.
+
+THE GENERATOR'S SOURCE SIDE, NAMED
+
+`draco.generator.carrier`, domain type Carrier. A carrier is the format a definition travels in
+between Drake and the loader; the sub-domain holds what is ABOUT carriers rather than about
+definitions — where they are found (DefinitionPath, now), how their bytes are read and decoded
+(SourceContent, TypeLoader — the same question, deferred; TypeLoader is the hard one, since every
+generated companion calls it). It is CONTAINED under generator, not derived from Generator(L): it is
+target-independent, so there is no L to instantiate, and containment is not inheritance — Dev's own
+correction from the forest scenario. Carrier's domain aspect self-loops; its types list holds
+DefinitionPath; no derivation edge, no parameter.
+
+DefinitionPath leaves root draco, where `hostRoots` — literally the Java classpath — and its URLs and
+streams were a leak against neutrality. On the carrier side they are the content. TypeLoader, still in
+root, names it by its new package.
+
+DEFINITIONPATH.SOURCE, DRAKE-FIRST, AND THE MISTAKE THAT PRECEDED IT
+
+Increment 1 of the case body element was to free the `case` token by converting the two pinned
+definitions carrying it inside opaque text. Only this one can go now — TypeName.equals becomes a
+case-branch and needs the Case kind to exist first.
+
+The first version of this conversion was WRONG under the grounding. It rewrote the match as a `loc`
+plus an `if` tree, authored directly in JSON, which Drake cannot parse back (#61). The surface-loss
+headline rose 15 -> 16 and the draft record called the rise "the corpus improving." It was the
+opposite: authoring in a carrier what Drake cannot say makes the carrier MORE normative. The rule that
+falls out — never author in JSON what Drake cannot parse — has 15 standing violations; this would have
+been a sixteenth.
+
+Redone the other way round. The .drake was authored:
+
+    loc found [URL] sources parameters par resourcePath
+    mon require parameters
+      par found.size <= 1
+      par s"draco: $resourcePath is defined at ${found.size} roots, …" + found.mkString(", ")
+    = found.headOption
+
+Every value is on the application surface Drake parses today. The .json is `DrakeCLI parse` of that;
+the .scala is `GeneratorCLI generate` of the .json; `emit(parse(drake)) == drake` with zero drift. The
+projection calls `sources` — which probes every root by opening a stream — exactly once, as before;
+`require` guards the many-roots error; `headOption` covers empty and one. The loss count does not
+move. That order — surface first, carrier derived — is what "Drake is the Source" means operationally.
+
+SPEC, AND WHAT IS NOT DONE
+
+drake.dlt: CASE-BRANCH is admitted in a dyn-with-body as well as an actor's `message` (Dev) — where
+the projection domains' 44 dispatch sites live and where TypeName.equals will land. DYN-WITH-BODY's
+statement list gains `*~case`. DIVERGENCES corrects 94b35cc's text: TypeName.equals converts, with a
+default branch; it is not dropped.
+
+Generator(L) still holds one function element, not rules; the six-way dispatch in the hand-written
+Generator IS those rules, unwritten. Drake still carries `generator = Drake.emit`, a Target-shaped
+face on a Source — whether Drake is also a Target is open. DRACO.md still calls X.json "normative";
+under the grounding its honest name is the BOOTSTRAP CARRIER, the one the loader can read before
+anything parses, and the surface-loss baseline is the distance between Drake-as-Source in principle
+and in fact. That line changes when the loader can read Drake.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
