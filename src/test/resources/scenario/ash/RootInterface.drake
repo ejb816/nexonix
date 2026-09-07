@@ -5,5 +5,10 @@ actor
   start
     fix session org.evrete.api.StatefulSession knowledge.newStatefulSession parameters
   message
-    mon msg match { case a: AlarmSignal => session.insert(Seq(a.infochemical): _*); case d: DroughtCue => session.insert(Seq(d.infochemical): _*); case _ => () }
+    case a AlarmSignal [
+      mon session.insert parameters par Seq(a.infochemical): _*
+    ]
+    case d DroughtCue [
+      mon session.insert parameters par Seq(d.infochemical): _*
+    ]
     mon session.fire parameters

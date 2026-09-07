@@ -626,6 +626,9 @@ object Drake {
       "modules", "extensible", "elements", "factory", "parameters", "body", "globals",
       "pattern", "action", "variables", "conditions",
       "start", "message", "signal", "messageType",
+      // `case` (drake.dlt CASE-BRANCH) — reserved from 3b on, once the last definition
+      // carrying the word inside host-opaque text (TypeName.equals) had converted.
+      "case",
       "=", "[", "]")
 
   /** One drake token: its source text and its span.

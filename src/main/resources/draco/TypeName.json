@@ -97,7 +97,18 @@
               "valueType": "Any"
             }
           ],
-          "value": "other match { case tn: TypeName => name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters; case _ => false }"
+          "body": [
+            {
+              "kind": "Case",
+              "name": "tn",
+              "valueType": "TypeName",
+              "value": "name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters"
+            },
+            {
+              "kind": "Case",
+              "value": "false"
+            }
+          ]
         },
         {
           "kind": "Dynamic",

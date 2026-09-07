@@ -1769,6 +1769,10 @@ object Generator extends App {
                                  x.parameters.map(targetParameter), x.body.map(targetBody))
     case x: Pattern   => Pattern(x.variables.map(targetVariable), x.conditions)
     case x: Action    => Action(x.variables.map(targetVariable), x.body.map(targetBody))
+    // A case-branch carries a branch TYPE in valueType and nests a body. Missing here,
+    // it compiled (a sealed-match gap is a warning) and failed on the first definition
+    // that carried one — the class of gap 3a could not exercise, since nothing did.
+    case x: Case      => Case(x.name, scalaTypeExpression(x.valueType), x.body.map(targetBody), x.value)
     case x: Monadic   => x
     case x: Condition => x
   }

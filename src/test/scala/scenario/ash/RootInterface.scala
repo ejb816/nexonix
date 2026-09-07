@@ -27,7 +27,13 @@ object RootInterface extends App with DracoType {
     val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
 
     override def receive(ctx: TypedActorContext[AshSap], msg: AshSap): Behavior[AshSap] = {
-      msg match { case a: AlarmSignal => session.insert(Seq(a.infochemical): _*); case d: DroughtCue => session.insert(Seq(d.infochemical): _*); case _ => () }
+      msg match {
+        case a: AlarmSignal =>
+          session.insert(Seq(a.infochemical): _*)
+        case d: DroughtCue =>
+          session.insert(Seq(d.infochemical): _*)
+        case _ => ()
+      }
       session.fire()
       Behaviors.same[AshSap]
     }

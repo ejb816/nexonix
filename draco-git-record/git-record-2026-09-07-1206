@@ -1,0 +1,92 @@
+# Increment 3b: `case` reserved; TypeName.equals and scenario/ash/RootInterface converted — the
+# only two definitions in the tree carrying the token in opaque text (grep -w, all corpora).
+# Engine: Drake.scala (reserved), Generator.scala (targetBody's missing Case arm). Corpus:
+# TypeName trio, RootInterface trio. CHANGELOG. No baseline moves.
+#
+# HOW THIS ONE WAS MADE, AND WHAT IS PREDICTED RATHER THAN GENERATED. The fresh classes
+# (606c1a6) emit and project a Case but do not yet reserve the token, so the JSON could not
+# be derived by parsing this time: both .json were authored by hand to the spec, both .drake
+# are Drake.emit of them (byte-exact), and both .scala are HAND-SPLICED from the projection
+# rules in caseDispatch — because Generator.generate crashed in targetBody on the first
+# definition to carry a Case (the missing arm, fixed here) and that fix cannot be compiled
+# from the session. So two files are predictions:
+#
+#   src/main/scala/draco/TypeName.scala          checked by DracoGenTest per-type
+#   src/test/scala/scenario/ash/RootInterface.scala   checked by ScenarioGenTest gate 2 (PROJECTS)
+#
+# and the parser's case arm gets its first real exercise in DrakeParseTest (TypeName) and
+# ScenarioGenTest gate 1 (parse(RootInterface.drake) == its .json). Those four are the point
+# of the run.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 545 / 41, every headline as the table has it — surface losses 15 across 94
+# (12 + 3): equals was an opaque string before and its two branch values are strings now,
+# so nothing entered or left the loss. If DracoGenTest or a scenario gate names one of the
+# two predicted files, paste ITS failure block (the log prints generated vs on-disk) — the
+# fix is to install the generated text, not to touch the engine.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-07-1206 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+case is reserved, and TypeName.equals and RootInterface are the first two case-branches
+
+The construct was specified at 94b35cc, the kind and the engine's support for it landed at 606c1a6
+with nothing authoring it. This reserves the word and converts the only two definitions in any
+corpus that carried it inside host-opaque text — found by `grep -w case` over every .drake and
+.json, not by memory — so the tree never sits with the token reserved and still opaque somewhere.
+
+TYPENAME.EQUALS — THE FIRST MATCH THE ENGINE WRITES FROM A DEFINITION
+
+    dyn equals Boolean [
+      parameters
+        par other Any
+      case tn TypeName [
+        = name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters
+      ]
+      case [
+        = false
+      ]
+    ]
+
+A result-shaped run: each branch carries a value and the dyn carries none, so the dispatch IS the
+method's result. The default branch is authored because a result run owes one — exhaustiveness is
+the author's there — and the scrutinee is not, because a dyn with cases has exactly one parameter
+and that is it. The branch values stay strings: `==` and `&&` are not declared operators, and
+authoring them as trees would have put in the JSON what Drake cannot parse back (the rule from
+8239d08). The surface-loss count does not move.
+
+ROOTINTERFACE — THE SITE THAT MOTIVATED THE CONSTRUCT
+
+    message
+      case a AlarmSignal [
+        mon session.insert parameters par Seq(a.infochemical): _*
+      ]
+      case d DroughtCue [
+        mon session.insert parameters par Seq(d.infochemical): _*
+      ]
+      mon session.fire parameters
+
+An effect-shaped run, followed by a statement that belongs to the enclosing block — the exact case
+that made a case-branch bracket itself. No default is authored; the target writes `case _ => ()`,
+because a message matching no branch is a no-op and the projection owes the catch-all. `msg` is
+the projection's name for the scrutinee, not the definition's. The single-line Scala `match` that
+ScenarioDrakeTest's own header called "smuggled through as host-opaque text — it will parse, and
+that is precisely the problem" is gone.
+
+THE GAP 3a COULD NOT SEE
+
+`Generator.targetBody` — the entry normalization that rebuilds every element to rewrite its type
+expressions — matched over the kinds with no Case arm. A sealed-match gap is a warning, so 606c1a6
+compiled; the first definition carrying a Case crashed it. Added, with the note that this is the
+class of gap an increment that authors nothing cannot exercise, which is why 3b exists.
+
+WHAT IS PREDICTED
+
+The two .scala files were spliced by hand from caseDispatch's rules, because the crashed generator
+cannot be recompiled from the session. The drakes are not predicted — they are Drake.emit output.
+The gates that check the predictions are named in the record header.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

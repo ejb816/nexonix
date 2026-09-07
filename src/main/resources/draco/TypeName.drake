@@ -19,7 +19,12 @@ type TypeName
       dyn equals Boolean [
         parameters
           par other Any
-        = other match { case tn: TypeName => name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters; case _ => false }
+        case tn TypeName [
+          = name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters
+        ]
+        case [
+          = false
+        ]
       ]
       dyn hashCode Int (name, namePackage, typeParameters).hashCode
 domain draco Draco

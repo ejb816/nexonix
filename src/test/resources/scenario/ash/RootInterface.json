@@ -20,8 +20,36 @@
       "kind": "Action",
       "body": [
         {
-          "kind": "Monadic",
-          "value": "msg match { case a: AlarmSignal => session.insert(Seq(a.infochemical): _*); case d: DroughtCue => session.insert(Seq(d.infochemical): _*); case _ => () }"
+          "kind": "Case",
+          "name": "a",
+          "valueType": "AlarmSignal",
+          "body": [
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "session.insert",
+                  "Seq(a.infochemical): _*"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Case",
+          "name": "d",
+          "valueType": "DroughtCue",
+          "body": [
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "session.insert",
+                  "Seq(d.infochemical): _*"
+                ]
+              }
+            }
+          ]
         },
         {
           "kind": "Monadic",

@@ -20,6 +20,15 @@ the block below.
 
 ### Added
 
+- **`case` is a reserved word, and the first two case-branches are in the corpus.** `TypeName.equals`
+  — the last `src/main` definition carrying `case` inside host-opaque text — is now two branches,
+  `case tn TypeName [ = … ]` and a default `case [ = false ]`, in a dyn body; the projection is the
+  first `match` the engine has ever written from a definition. `scenario/ash/RootInterface`'s message
+  dispatch — the site that motivated the construct — is two effect branches on `AlarmSignal` and
+  `DroughtCue` followed by the fire, and the target supplies the catch-all. Both drakes are
+  `Drake.emit` output; neither definition carries opaque host dispatch any more. `Generator.targetBody`
+  gained the `Case` arm it was missing.
+
 - **`Case` — the twelfth `TypeElement` kind, and the engine carries it; nothing authors it yet.**
   `draco.Case from BodyElement` with `name` (the optional binder), `valueType` (the optional branch
   type), `body` and `value`; in `BodyElement.modules`, so the family's discriminated codec grew its
