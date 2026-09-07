@@ -29,6 +29,7 @@ object TypeElement extends App with DracoType {
       case _: Variable => "Variable"
       case _: Factory => "Factory"
       case _: Local => "Local"
+      case _: Case => "Case"
     }
     val fields = Seq(
       Some("kind" -> Json.fromString(kind)),
@@ -123,6 +124,14 @@ object TypeElement extends App with DracoType {
           _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
         } yield Local (_name, _valueType, _value)
 
+      case "Case" =>
+        for {
+          _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
+          _valueType <- cursor.downField("valueType").as[Option[String]].map(_.getOrElse(""))
+          _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
+          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
+        } yield Case (_name, _valueType, _body, _value)
+
       case other =>
         Left(io.circe.DecodingFailure(s"Unknown TypeElement kind: $other", cursor.history))
     }
@@ -169,6 +178,7 @@ object Fixed extends App with DracoType {
     _value = Json.Null
   )
 
+
 }
 
 trait Mutable extends BodyElement
@@ -198,6 +208,7 @@ object Mutable extends App with DracoType {
     _valueType = "",
     _value = Json.Null
   )
+
 
 }
 
@@ -235,6 +246,7 @@ object Dynamic extends App with DracoType {
     _value = Json.Null
   )
 
+
 }
 
 trait Parameter extends BodyElement
@@ -265,6 +277,7 @@ object Parameter extends App with DracoType {
     _value = Json.Null
   )
 
+
 }
 
 trait Monadic extends BodyElement
@@ -288,6 +301,7 @@ object Monadic extends App with DracoType {
   lazy val Null: Monadic = apply(
     _value = Json.Null
   )
+
 
 }
 
@@ -316,6 +330,7 @@ object Pattern extends App with DracoType {
 
   lazy val Null: Pattern = apply()
 
+
 }
 
 trait Action extends BodyElement {
@@ -342,6 +357,7 @@ object Action extends App with DracoType {
 
   lazy val Null: Action = apply()
 
+
 }
 
 trait Condition extends BodyElement
@@ -365,6 +381,7 @@ object Condition extends App with DracoType {
   lazy val Null: Condition = apply(
     _value = Json.Null
   )
+
 
 }
 
@@ -392,6 +409,7 @@ object Variable extends App with DracoType {
     _name = "",
     _valueType = ""
   )
+
 
 }
 
@@ -423,6 +441,7 @@ object Factory extends App with DracoType {
     _body = Seq.empty
   )
 
+
 }
 
 trait Local extends BodyElement
@@ -452,5 +471,35 @@ object Local extends App with DracoType {
     _valueType = "",
     _value = Json.Null
   )
+
+
+}
+
+trait Case extends BodyElement
+
+object Case extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Case", _namePackage = Seq ("draco")))
+  lazy val dracoType: Type[Case] = Type[Case] (typeDefinition)
+  lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
+
+  private lazy val codec = Codec.sub[TypeElement, Case](TypeElement.encoder, TypeElement.decoder)
+  implicit def encoder: Encoder[Case] = codec.encoder
+  implicit def decoder: Decoder[Case] = codec.decoder
+
+  def apply (
+    _name: String = "",
+    _valueType: String = "",
+    _body: Seq[BodyElement] = Seq.empty,
+    _value: Json = Json.Null
+  ) : Case = new Case {
+    override lazy val name: String = _name
+    override lazy val valueType: String = _valueType
+    override lazy val body: Seq[BodyElement] = _body
+    override lazy val value: Json = _value
+    override lazy val typeDefinition: TypeDefinition = Case.typeDefinition
+  }
+
+  lazy val Null: Case = apply()
+
 
 }

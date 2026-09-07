@@ -245,9 +245,14 @@ CASE-BRANCH  (a Case element: an ordered branch on which SIBLING SUBTYPE of a sc
     result   — required, unless the branches are exhaustive over the scrutinee's subtypes (which the
                definition graph knows). Drake.keyword lists 8 of TypeElement's 11 kinds and ends in an
                error default; without a default branch that shape has no spelling.
-  NOT AUTHORED, because reconstructable: the scrutinee NAME — it is the enclosing construct's subject
-  (an actor's message). A branch type is expected to derive the scrutinee's type; that is a lint, not a
-  syntax rule, and a default branch is exempt from it by construction.
+  NOT AUTHORED, because reconstructable: the scrutinee NAME — it is the enclosing construct's subject.
+  In an actor's `message` that is the message; in a dyn-with-body it is the dyn's SINGLE parameter, and
+  a dyn that carries cases and any other number of parameters is an error, not a guess. A branch type is
+  expected to derive the scrutinee's type; that is a lint, not a syntax rule, and a default branch is
+  exempt from it by construction.
+  CONSECUTIVE CASES ARE ONE DISPATCH. A run of case elements in a body projects as one match on the
+  scrutinee; a statement after the run belongs to the enclosing block (BRACKETS). Two runs separated by
+  a statement are two dispatches on the same scrutinee.
   OPTIONAL WHEREVER ADMITTED: a `message` whose body is plain statements is an actor that does not
   dispatch — 13 of the corpus's 14 actors. A single whole-type branch (`case ashSap AshSap [ ... ]`) is
   legal, and is how a message is given an authored name rather than the target's supplied one.

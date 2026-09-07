@@ -20,6 +20,16 @@ the block below.
 
 ### Added
 
+- **`Case` — the twelfth `TypeElement` kind, and the engine carries it; nothing authors it yet.**
+  `draco.Case from BodyElement` with `name` (the optional binder), `valueType` (the optional branch
+  type), `body` and `value`; in `BodyElement.modules`, so the family's discriminated codec grew its
+  arms by generation. `Drake.emit` writes a case-branch as its own bracketed opener; `Drake.parse`
+  reads one inside a dyn body and an actor's `message` — the only two places the spec admits it —
+  telling binder from type by capitalization alone. The Generator projects a run of consecutive
+  branches as one `match` on the scrutinee: a dyn's single parameter, or the actor's message. The
+  `case` token is NOT yet reserved, so no drake file can carry the construct until the next
+  increment, which reserves it and converts `TypeName.equals` as the first use.
+
 - **`draco.generator.carrier` — the generator's source side — and `DefinitionPath` moves into it.**
   A carrier is the format a definition travels in between Drake and the loader; the sub-domain holds
   what is about carriers rather than about definitions: where they are found (`DefinitionPath` now;

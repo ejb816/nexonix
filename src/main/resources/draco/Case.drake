@@ -1,0 +1,8 @@
+type Case from BodyElement
+  factory
+    parameters
+      par name String ""
+      par valueType String ""
+      par body [BodyElement] []
+      par value Json Json.Null
+domain draco Draco

@@ -1,0 +1,61 @@
+{
+  "typeName": {
+    "name": "Case",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "BodyElement",
+        "namePackage": [
+          "draco"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Case",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "name",
+          "valueType": "String",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "valueType",
+          "valueType": "String",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "body",
+          "valueType": "Seq[BodyElement]",
+          "value": {
+            ".": [
+              "Seq",
+              "empty"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "value",
+          "valueType": "Json",
+          "value": "Json.Null"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

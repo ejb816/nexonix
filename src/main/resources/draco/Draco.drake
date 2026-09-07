@@ -13,6 +13,7 @@ domain draco Draco
     Binding
     BodyElement
     CLI
+    Case
     CodecAspect
     CollectProblems
     Completeness

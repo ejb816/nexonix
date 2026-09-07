@@ -288,6 +288,8 @@ object Generator extends App {
         s"      val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
       case v: Variable =>
         s"      val ${v.name}: ${v.valueType} = ctx.get[${v.valueType}](\"$$${v.name}\")"
+      case _: Case =>
+        sys.error("draco: a case-branch is not admitted in a rule action (drake.dlt CASE-BRANCH: an actor's message, or a dyn-with-body)")
       case te: BodyElement =>
         s"      ${expression(te.value)}"
     }.mkString("\n")
@@ -382,14 +384,77 @@ object Generator extends App {
     * Unit methods. `methodIndent` is the column where the `def` itself
     * starts; body lines indent two further, and the closing brace aligns
     * with the `def`. */
+  /** The statements of a body with every maximal run of consecutive case-branches
+    * collapsed into ONE dispatch on `scrutinee` (drake.dlt CASE-BRANCH: consecutive
+    * cases are one dispatch; a statement after the run belongs to the enclosing
+    * block). `statement` renders one non-case element at the given pad. */
+  private def statementsWithCases (
+    body: Seq[BodyElement],
+    pad: String,
+    scrutinee: String,
+    statement: (BodyElement, String) => String
+  ) : Seq[String] = {
+    val out  = Seq.newBuilder[String]
+    var rest = body
+    while (rest.nonEmpty) rest.head match {
+      case _: Case =>
+        val run = rest.takeWhile(_.isInstanceOf[Case]).map(_.asInstanceOf[Case])
+        out += caseDispatch(run, pad, scrutinee, statement)
+        rest = rest.drop(run.size)
+      case e =>
+        out += statement(e, pad)
+        rest = rest.tail
+    }
+    out.result()
+  }
+
+  /** One dispatch: `<scrutinee> match { … }`. Branch heads take the four forms —
+    * binder and type, type only, binder only, neither. A run of EFFECT branches (no
+    * branch carries a value) gets the catch-all the target owes it when no default
+    * was authored; a run of RESULT branches gets none — exhaustiveness there is the
+    * author's, as the spec says. */
+  private def caseDispatch (
+    run: Seq[Case],
+    pad: String,
+    scrutinee: String,
+    statement: (BodyElement, String) => String
+  ) : String = {
+    if (scrutinee.isEmpty)
+      sys.error("draco: a case-branch here has no scrutinee — a dyn carrying cases takes exactly one parameter (drake.dlt CASE-BRANCH)")
+    val inner = pad + "  "
+    val branches = run.map { c =>
+      val head = (c.name.nonEmpty, c.valueType.nonEmpty) match {
+        case (true,  true)  => s"case ${c.name}: ${c.valueType} =>"
+        case (false, true)  => s"case _: ${c.valueType} =>"
+        case (true,  false) => s"case ${c.name} =>"
+        case (false, false) => "case _ =>"
+      }
+      val lines  = statementsWithCases(c.body, inner + "  ", scrutinee, statement)
+      val result = expression(c.value) match { case "" => Seq.empty; case r => Seq(s"$inner  $r") }
+      (s"$inner$head" +: (lines ++ result)).mkString("\n")
+    }
+    val isResult   = run.exists(c => expression(c.value).nonEmpty)
+    val hasDefault = run.exists(_.valueType.isEmpty)
+    val catchAll   = if (!isResult && !hasDefault) Seq(s"${inner}case _ => ()") else Seq.empty
+    ((s"$pad$scrutinee match {" +: (branches ++ catchAll)) :+ s"$pad}").mkString("\n")
+  }
+
+  /** The scrutinee of a case-branch inside a dyn-with-body: the dyn's SINGLE parameter
+    * (drake.dlt CASE-BRANCH). Empty for any other number — caseDispatch then refuses
+    * rather than guessing which parameter was meant. */
+  private def dynScrutinee (d: Dynamic) : String =
+    if (d.parameters.size == 1) d.parameters.head.name else ""
+
   private def methodBody (
     body: Seq[BodyElement],
     value: String,
-    methodIndent: Int = 2
+    methodIndent: Int = 2,
+    scrutinee: String = ""
   ) : String = {
+    val hasCases = body.exists(_.isInstanceOf[Case])
     if (body.isEmpty && value.isEmpty) "???"
     else if (body.isEmpty) value
-    else if (body.size == 1 && value.isEmpty) {
+    else if (body.size == 1 && value.isEmpty && !hasCases) {
       // Single statement - just its value (a Unit method's lone effect)
       val v = expression(body.head.value)
       if (v.isEmpty) "???" else v
@@ -400,17 +465,18 @@ object Generator extends App {
       // Monadic values (e.g. `if/else` blocks) align correctly inside the
       // method body — caller's value supplies relative indent, this adds
       // the absolute body-indent prefix.
-      def indentBlock(v: String): String =
+      def indentBlock(v: String, pad: String = bodyPad): String =
         v.linesIterator
-          .map(line => if (line.isEmpty) "" else s"$bodyPad$line")
+          .map(line => if (line.isEmpty) "" else s"$pad$line")
           .mkString("\n")
-      val statements = body.map {
-        case f: Fixed    => s"${bodyPad}val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
-        case m: Mutable  => s"${bodyPad}var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
-        case l: Local    => s"${bodyPad}val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
-        case mo: Monadic => indentBlock(expression(mo.value))
-        case be: BodyElement => s"${bodyPad}val ${be.name}: ${be.valueType} = ${initializer(be.valueType, be.value)}"
+      def statement(e: BodyElement, pad: String): String = e match {
+        case f: Fixed    => s"${pad}val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
+        case m: Mutable  => s"${pad}var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
+        case l: Local    => s"${pad}val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
+        case mo: Monadic => indentBlock(expression(mo.value), pad)
+        case be: BodyElement => s"${pad}val ${be.name}: ${be.valueType} = ${initializer(be.valueType, be.value)}"
       }
+      val statements = statementsWithCases(body, bodyPad, scrutinee, statement)
       val result = if (value.isEmpty) Seq.empty else Seq(indentBlock(value))
       s"{\n${(statements ++ result).mkString("\n")}\n$bracePad}"
     }
@@ -435,7 +501,7 @@ object Generator extends App {
           else s"  var ${m.name}: ${m.valueType}"
         case d: Dynamic =>
           val result = expression(d.value)
-          if (d.body.nonEmpty || result.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, result)}"
+          if (d.body.nonEmpty || result.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, result, scrutinee = dynScrutinee(d))}"
           else s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType}"
         case mo: Monadic =>
           // Verbatim Scala source — for declarations that exceed the
@@ -481,9 +547,10 @@ object Generator extends App {
       if (factory.body.nonEmpty) factory.body.map {
         case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
         case m: Mutable => s"    override var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
-        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, expression(d.value), methodIndent = 4)}"
+        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, expression(d.value), methodIndent = 4, scrutinee = dynScrutinee(d))}"
         case mo: Monadic => s"    ${expression(mo.value)}"
         case l: Local   => s"    val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
+        case _: Case    => sys.error("draco: a case-branch is not admitted in a factory body (drake.dlt CASE-BRANCH: an actor's message, or a dyn-with-body)")
         case be: BodyElement => s"    override lazy val ${be.name}: ${be.valueType} = ${initializer(be.valueType, be.value)}"
       }
       else factory.parameters.map { p =>
@@ -512,7 +579,7 @@ object Generator extends App {
           val init = if (rendered.isEmpty) s"null.asInstanceOf[${m.valueType}]" else rendered
           s"  var ${m.name}: ${m.valueType} = $init"
         case d: Dynamic =>
-          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, expression(d.value))}"
+          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, expression(d.value), scrutinee = dynScrutinee(d))}"
         case mo: Monadic =>
           // Indent every line so multi-line global blocks (encoder/decoder/etc.)
           // emit at the correct object-body indent level.
@@ -1268,12 +1335,16 @@ object Generator extends App {
     * emitted once at actor construction (4-space indent) so its bindings — the
     * session, any seeded refs — persist and are in scope for `receive`. No Evrete
     * ctx variable bindings: the body operates on `knowledge`, the message, and `ctx`. */
-  private def actorActionBody (action: Action, indent: String = "      ") : String =
-    action.body.map {
-      case f: Fixed if f.name.nonEmpty   => s"${indent}val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
-      case m: Mutable if m.name.nonEmpty => s"${indent}var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
-      case be: BodyElement               => s"$indent${expression(be.value)}"
-    }.mkString("\n")
+  private def actorActionBody (action: Action, indent: String = "      ") : String = {
+    def statement(e: BodyElement, pad: String): String = e match {
+      case f: Fixed if f.name.nonEmpty   => s"${pad}val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
+      case m: Mutable if m.name.nonEmpty => s"${pad}var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
+      case be: BodyElement               => s"$pad${expression(be.value)}"
+    }
+    // The scrutinee of a case-branch in `message` is the message itself, which this
+    // projection names `msg` (drake.dlt CASE-BRANCH: the scrutinee is never authored).
+    statementsWithCases(action.body, indent, "msg", statement).mkString("\n")
+  }
 
   /** `signal` runs ONCE at actor construction — session creation (stateful or
     * stateless), rule/data loading, downstream-ref seeding — so its `session` (and

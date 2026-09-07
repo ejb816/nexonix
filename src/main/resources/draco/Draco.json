@@ -80,6 +80,7 @@
       "Binding",
       "BodyElement",
       "CLI",
+      "Case",
       "CodecAspect",
       "CollectProblems",
       "Completeness",

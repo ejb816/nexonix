@@ -43,12 +43,12 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **542 tests / 41
-suites**: 532 at `94b35cc`, then five per-type tests each for `draco.Target` and
-`draco.generator.carrier.Carrier` (two `DracoGenTest`, one `DrakeGenTest`, two
-`DrakeParseTest` per definition), which also moves the two type COUNTS below — 83 draco
-types in scope, 93 measured — and none of the loss figures. These are the headlines those
-tests print. They go to the console
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **545 tests / 41
+suites**: 542 at `8239d08`, then three per-type tests for `draco.Case` (one `DrakeGenTest`,
+two `DrakeParseTest`; as a `TypeElement` family member it is validated by `DracoGenTest`'s
+group test, not per type), which also moves the two type COUNTS below — 84 draco types in
+scope, 94 measured — and none of the loss figures. These are the headlines those tests
+print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
 
@@ -59,8 +59,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 15 fields across 93 types — expression form 12, empty-collection spelling 3 |
-| `DrakeParseTest` | Drake.parse scope | 83 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 15 fields across 94 types — expression form 12, empty-collection spelling 3 |
+| `DrakeParseTest` | Drake.parse scope | 84 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -148,8 +148,8 @@ Compact by intent. Architecture detail belongs in `README.md` once that file is 
 actor because it carries an `actorAspect`. Generated objects take the bare authored name —
 no `Rule` or `Actor` suffix, and no `.rule`/`.actor` filename suffix.
 
-**`TypeElement`** is a sealed family of **eleven** kinds — Fixed, Mutable, Dynamic, Local,
-Parameter, Monadic, Condition, Action, Pattern, Variable, Factory — all extending
+**`TypeElement`** is a sealed family of **twelve** kinds — Fixed, Mutable, Dynamic, Local,
+Parameter, Monadic, Condition, Action, Pattern, Variable, Factory, Case — all extending
 `Primal[Json]`. So `value` is a JSON node: either a host-opaque source string or a
 single-key `{op: [operands]}` expression tree. JSON uses a `"kind"` discriminator;
 `Codec.sub` narrows the parent codec.
