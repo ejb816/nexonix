@@ -2,16 +2,17 @@
   "typeName": {
     "name": "Generator",
     "namePackage": [
-      "draco",
-      "generator"
+      "draco"
+    ],
+    "typeParameters": [
+      "T"
     ]
   },
   "domainAspect": {
     "typeName": {
-      "name": "Generator",
+      "name": "Draco",
       "namePackage": [
-        "draco",
-        "generator"
+        "draco"
       ]
     }
   }

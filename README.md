@@ -249,7 +249,9 @@ examples, the canonical material is what ships:
 | `draco.primes` | the rule engine and stateful working memory |
 | `draco.format` (+ `json`, `xml`) | payload formats and path extraction over them |
 | `draco.drake` | the definition surface as a domain — **a Source** |
-| `draco.generator` (+ `carrier`) | projection as a domain, parameterized by target; `carrier` is its source side — where definitions are found and read |
+| `draco.generator` (+ `carrier`) | the super-domain of every generator transform; `carrier` is the input seam — where definitions are found and read |
+| `draco.genscala`, `draco.gendrake` | the transforms `Draco → ScalaTarget` and `Draco → DrakeTarget`, each `from Generator(<target>)` |
+| `draco.scalatarget`, `draco.draketarget` | the Targets — the Scala language, and the emission side of the definition language |
 | `draco.scalatarget` | the Scala target — **a Target** |
 | `draco.rete` | rule-evaluation capability, held as its own vocabulary |
 
@@ -257,12 +259,15 @@ examples, the canonical material is what ships:
 domain derives: `Drake from draco Source`, `ScalaTarget from draco Target`. A Source is
 where definitions come from — Drake parses to the normative form, and any carrier (JSON
 today; XML or another later) is legitimate exactly as far as its round-trip with Drake
-holds. A Target is what definitions project into. `Generator(L)` is parameterized by a
-Target and universal over Sources: any Source that yields a `TypeDefinition` feeds it,
-which is why it carries a type parameter and no `source` keyword, where a pairwise
-transform domain carries both. Its members are meant to be the morphisms, as rules, from a
-definition to that target's source text; today it holds one function element, and the
-six-way dispatch in the hand-written `DracoGenerator` is those rules, unwritten.
+holds. A Target is what definitions project into. Source code generation is a cross-domain
+transform like any other: `draco.Generator(T)` is the transform from `Draco` to a target `T`,
+and each generator sub-domain derives it for one target — `GenScala from Generator(ScalaTarget)`,
+`GenDrake from Generator(DrakeTarget)` — as a peer package under `draco` whose `source` is
+always `Draco` and whose `super` is `draco.generator.Generator`. Their members are meant to be
+the morphisms, as rules, from a definition to that target's source text; today each holds one
+function element pointing at the hand-written engine, and the six-way dispatch in
+`DracoGenerator` is those rules, unwritten. `DrakeTarget` exists beside `Drake` so that what
+is learned targeting other languages can be turned on the definition language itself.
 
 **Base** — measurement types:
 
@@ -432,8 +437,9 @@ directions:
   conventional.
 - **Expression grammar** — parsing every value form into trees, closing the last gap
   between the surface and the definition.
-- **`Generator(L)`** — projection as a definition-backed domain parameterized by target,
-  with additional targets beyond Scala.
+- **`GenScala` as rules** — the generator transform domains exist as structure; their
+  members are still one function each, and the engine's dispatch has to become their rules.
+  Additional targets beyond Scala follow the same shape.
 - **Dreams** — an editor for creating and modifying types, domains, rules, and actors
   through their definitions.
 - **Orion** — cross-domain system-of-systems interaction patterns.

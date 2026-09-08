@@ -1,0 +1,59 @@
+{
+  "typeName": {
+    "name": "GenDrake",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "dracoAspect": {
+    "superDomain": {
+      "name": "Generator",
+      "namePackage": [
+        "draco",
+        "generator"
+      ]
+    },
+    "derivation": [
+      {
+        "name": "Generator",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "DrakeTarget"
+        ]
+      }
+    ],
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "generator",
+        "valueType": "TypeDefinition => String",
+        "value": "draco.Drake.emit"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    },
+    "source": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    "target": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}

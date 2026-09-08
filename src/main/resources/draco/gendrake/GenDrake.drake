@@ -1,0 +1,7 @@
+type GenDrake from draco Generator(DrakeTarget)
+  globals
+    fix generator (TypeDefinition -> String) draco.Drake.emit
+domain draco gendrake GenDrake
+  super draco generator Generator
+  source draco Draco
+  target draco draketarget DrakeTarget

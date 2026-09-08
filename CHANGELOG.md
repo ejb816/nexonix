@@ -20,6 +20,20 @@ the block below.
 
 ### Changed
 
+- **The generator domains exist as structure.** Source code generation is a cross-domain transform:
+  `draco.Generator(T)` is the transform from `Draco` to a target `T`, a definition-backed root type;
+  `draco.generator.Generator` — no longer parameterized, no longer carrying a function — is the
+  super-domain of every generator transform, with `carrier` still under it; `draco.genscala.GenScala
+  from Generator(ScalaTarget)` and `draco.gendrake.GenDrake from Generator(DrakeTarget)` are the two
+  transforms, peer packages under `draco` with `source draco Draco`, their `target`, and `super
+  draco generator Generator`; `draco.draketarget.DrakeTarget from Target` is the emission side of the
+  definition language, beside `draco.drake.Drake from Source`. The engine's two faces moved: `GenScala`
+  holds `generator = DracoGenerator.generate`, `GenDrake` holds `generator = Drake.emit`, and
+  `ScalaTarget` and `Drake` no longer carry them; `CLI` points at the new homes. Every member list is
+  empty — nothing executes through the structure yet. A transform domain's `source` / `target` /
+  `super` packages were already imported by the projection, which is what lets `Generator(ScalaTarget)`
+  resolve across packages without the surface naming a package inside the parentheses.
+
 - **The hand-written engine is `draco.DracoGenerator`, renamed from `draco.Generator`.** Same object,
   same behaviour, 32 files repointed; `GeneratorCLI` and `bin/draco-gen` keep their names. The rename
   frees `draco.Generator` for the definition-backed `type Generator(T)` — the transform from Draco to a

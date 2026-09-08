@@ -13,7 +13,7 @@ import io.circe.Json
   *
   * `draco.drake.Drake` is the definition-backed domain type this serves, and it
   * delegates its `generator` here. Same pairing as `draco.Generator` (this
-  * imperative engine) with `draco.generator.Generator[L]` (the typed peer). */
+  * imperative engine) with the generator transform domains (GenScala, GenDrake). */
 object Drake {
   // --- Emission (JSON TypeDefinition -> .drake surface) ---
   //

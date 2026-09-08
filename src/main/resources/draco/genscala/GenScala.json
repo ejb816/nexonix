@@ -1,0 +1,59 @@
+{
+  "typeName": {
+    "name": "GenScala",
+    "namePackage": [
+      "draco",
+      "genscala"
+    ]
+  },
+  "dracoAspect": {
+    "superDomain": {
+      "name": "Generator",
+      "namePackage": [
+        "draco",
+        "generator"
+      ]
+    },
+    "derivation": [
+      {
+        "name": "Generator",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "ScalaTarget"
+        ]
+      }
+    ],
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "generator",
+        "valueType": "TypeDefinition => String",
+        "value": "DracoGenerator.generate"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenScala",
+      "namePackage": [
+        "draco",
+        "genscala"
+      ]
+    },
+    "source": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    "target": {
+      "name": "ScalaTarget",
+      "namePackage": [
+        "draco",
+        "scalatarget"
+      ]
+    }
+  }
+}

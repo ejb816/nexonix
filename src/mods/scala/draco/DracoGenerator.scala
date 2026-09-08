@@ -7,26 +7,28 @@ import scala.tools.nsc.reporters.StoreReporter
 import java.io.{File, PrintWriter}
 import java.nio.file.Files
 
-trait Generator {
+/** The engine's own marker type — the hand-written projector, as distinct from the
+  * definition-backed `draco.Generator(T)`, the transform from Draco to a target. */
+trait DracoGenerator {
 
 }
 
 object DracoGenerator extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
-      _name = "Generator",
+      _name = "DracoGenerator",
       _namePackage = Seq ("draco")
     ),
     _dracoAspect = DracoAspect (
       _factory = Factory (
-        "Generator",
+        "DracoGenerator",
         _parameters = Seq (
           Parameter ("typeDictionary", "TypeDictionary", Json.Null)
         )
       )
     )
   )
-  lazy val dracoType: Type[Generator] = Type[Generator] (typeDefinition)
+  lazy val dracoType: Type[DracoGenerator] = Type[DracoGenerator] (typeDefinition)
 
   // --- Type loading ---
 
@@ -1934,8 +1936,8 @@ object DracoGenerator extends App {
     allImports.mkString("\n")
   }
 
-  def apply (typeDictionary: TypeDictionary) : Generator = {
-    new Generator {}
+  def apply (typeDictionary: TypeDictionary) : DracoGenerator = {
+    new DracoGenerator {}
   }
 
   // --- Runtime compilation (moved from RuntimeCompiler) ---

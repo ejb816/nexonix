@@ -1,9 +1,9 @@
 {
   "typeName": {
-    "name": "ScalaTarget",
+    "name": "DrakeTarget",
     "namePackage": [
       "draco",
-      "scalatarget"
+      "draketarget"
     ]
   },
   "dracoAspect": {
@@ -18,10 +18,10 @@
   },
   "domainAspect": {
     "typeName": {
-      "name": "ScalaTarget",
+      "name": "DrakeTarget",
       "namePackage": [
         "draco",
-        "scalatarget"
+        "draketarget"
       ]
     }
   }

@@ -1,0 +1,2 @@
+type Generator(T)
+domain draco Draco

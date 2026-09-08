@@ -14,14 +14,6 @@
           "draco"
         ]
       }
-    ],
-    "globalElements": [
-      {
-        "kind": "Fixed",
-        "name": "generator",
-        "valueType": "TypeDefinition => String",
-        "value": "draco.Drake.emit"
-      }
     ]
   },
   "domainAspect": {

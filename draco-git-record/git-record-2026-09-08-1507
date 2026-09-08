@@ -1,0 +1,96 @@
+# The generator domains as structure: four new trios (draco/Generator(T), genscala/GenScala,
+# gendrake/GenDrake, draketarget/DrakeTarget), four edited (generator/Generator, scalatarget/
+# ScalaTarget, drake/Drake, CLI), Draco (types), README, DRACO.md, drake.dlt, CHANGELOG. Every
+# trio drake-first off the fresh classes; DrakeCLI check over src/main: surface drift 2
+# (the authoredAhead pair), json drift 0. One engine edit, forced by the first build: see THE RENAME'S
+# LEFTOVER in the message.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 565 / 41 — five per-type tests for each of the four new definitions. Two
+# headline COUNTS move and the table carries them: `15 fields across 98 types` (still
+# 12 + 3), `88 draco + 10 mods`. No loss figure moves. Paste the capture lines.
+#
+# What only the build can check: that `draco.Generator[T]` and `draco.generator.Generator`
+# coexist in files importing both packages (Carrier, DefinitionPath — neither names
+# `Generator`, so no ambiguity is expected), and the self-validation actor over a
+# dictionary with four more peer domains. A compile error names the file; paste it.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-08-1507 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+Source code generation is a transform, and the generator domains exist as structure
+
+Dev's grounding, two days running: Drake is the one definition language; the definition data format
+is a configuration parameter of an executable instance, not a structural fact; and generating source
+from decoded definitions is cross-domain data transformation like any other, so it gets the domain
+and type structure transforms already have. This commit makes that structure exist — as data, with
+every member list empty, so the shape is in the tree before any rule is written into it.
+
+THE STRUCTURE
+
+    draco.Generator(T)               the transform from Draco to a target T — a root type
+    draco.generator.Generator        the super-domain of every generator transform (carrier under it)
+    draco.genscala.GenScala          from draco Generator(ScalaTarget); source Draco; target ScalaTarget
+    draco.gendrake.GenDrake          from draco Generator(DrakeTarget);  source Draco; target DrakeTarget
+    draco.scalatarget.ScalaTarget    a Target
+    draco.draketarget.DrakeTarget    a Target — the emission side of the definition language
+    draco.drake.Drake                a Source — the definition language; parse belongs here
+
+Naming settled against the forest scenario, not on it. The forest's Source_Target-under-source rule
+degenerates when the source is the root (everything is already under draco), would put two domain
+types in one package, and encodes a direction whose inverse can never exist. So each transform is a
+peer package named for what it does; the draco/Draco prefixes are dropped where the package already
+says it (Dev: GenScala, not DracoGenScala). The one collision that naming had — `draco.Generator` was
+the hand-written engine — was resolved at e3c96f8 by renaming the engine to DracoGenerator.
+
+WHAT MOVED, WHAT WENT
+
+`draco.generator.Generator` loses its type parameter and its `generator` function element: the
+parameter lives on the root type now, and the super-domain is not a transform. The engine's two faces
+move to the transforms that own them — GenScala.generator = DracoGenerator.generate, GenDrake.generator
+= Drake.emit — and ScalaTarget and Drake stop carrying them; CLI's `generate` and `drake` commands
+point at the new homes. Moved rather than retired, so nothing observable changes until rules replace
+them.
+
+WHAT THE STRUCTURE STILL LACKS, DELIBERATELY
+
+The forest showed what a transform needs to run, and none of it is here yet: target-side TYPES for
+the morphisms to produce (ScalaTarget and DrakeTarget have no members — the only value anywhere is
+String); a target-side RECEIVER, since a fact inserted by a rule gets no working-memory node without a
+consumer; an ACTOR per transform to build the knowledge and insert definitions; and PARSE as a member
+morphism of Drake, so both legs of the Drake <-> carrier round trip live in the framework. Each is an
+increment. GenDrake goes first when the rules come, because both its legs are already gated
+(DrakeGenTest, DrakeParseTest) and the rule-driven emitter can be checked byte-for-byte against the
+hand-written one it replaces.
+
+TWO PROVISIONAL CHOICES, KEPT
+
+`source` and `target` stay explicit beside `from Generator(X)` although the type argument already
+names the target. The presence rule that makes a transform domain a transform domain reads both off
+the aspect; changing it for a family of two is premature, and a lint that the argument agrees with
+`target` is the fix when there is a third. And it paid for itself immediately: the projection already
+imports a transform domain's source, target and super packages, which is what lets
+`Generator(ScalaTarget)` resolve across packages with no package spelled inside the parentheses —
+type parameters are flat text (#51), and the keyword carries what the parameter cannot. derivationRef
+qualified the parent (`extends draco.Generator[ScalaTarget]`) because draco.generator._ is imported
+too; that was its job, and it did it unasked.
+
+THE RENAME'S LEFTOVER
+
+The first build failed: \`Generator is already defined as trait Generator\`, in DracoGenerator.scala.
+e3c96f8 renamed \`object Generator\` and every \`Generator.\` call site, and its sweep looked for exactly
+those — so it missed the engine's own self-description in the same file: an empty \`trait Generator\`,
+the \`Type[Generator]\` built on it, an \`apply\` returning it, and a hand-rolled typeDefinition naming
+itself "Generator". None of it is referenced outside the file. All of it is DracoGenerator now, so the
+engine describes itself by its own name and the definition-backed \`draco.Generator(T)\` has the root to
+itself. A sweep that greps for what it expects to find misses what it did not expect; the compiler
+found it in three seconds.
+
+A latent hazard, named so it is not rediscovered: any file importing both draco._ and
+draco.generator._ (today: Carrier, DefinitionPath) would find a bare `Generator` ambiguous. Neither
+names it. A future member of the generator package that does must qualify.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
