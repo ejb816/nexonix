@@ -5,3 +5,6 @@ domain draco gendrake GenDrake
   super draco generator Generator
   source draco Draco
   target draco draketarget DrakeTarget
+  types [
+    Emission
+  ]

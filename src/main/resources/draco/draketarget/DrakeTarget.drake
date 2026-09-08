@@ -1,2 +1,5 @@
 type DrakeTarget from draco Target
 domain draco draketarget DrakeTarget
+  types [
+    Surface
+  ]

@@ -42,6 +42,9 @@
         "gendrake"
       ]
     },
+    "elementTypeNames": [
+      "Emission"
+    ],
     "source": {
       "name": "Draco",
       "namePackage": [

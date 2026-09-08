@@ -1,0 +1,51 @@
+# Target-side types, GenDrake first: two new trios (draketarget/Surface, gendrake/Emission), two
+# edited (draketarget/DrakeTarget and gendrake/GenDrake gain a member), DRACO.md, CHANGELOG. All
+# drake-first off the fresh classes; DrakeCLI check over src/main: surface drift 2 (the
+# authoredAhead pair), json drift 0. No engine change.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 575 / 41 — five per-type tests each for Surface and Emission. Two headline COUNTS
+# move and the table carries them: `15 fields across 100 types` (still 12 + 3), `90 draco +
+# 10 mods`. No loss figure moves. Paste the capture lines.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-08-1658 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+DrakeTarget has a Surface, and GenDrake has its first conversion
+
+The generator domains landed at 1cb3578 as structure with every member list empty, and the record
+named the first thing they lacked: a transform's morphisms need target-side TYPES to produce, and
+ScalaTarget and DrakeTarget had none — the only value anywhere was String. This gives DrakeTarget
+one and GenDrake the conversion that produces it, in the shape the forest already proved.
+
+    draco.draketarget.Surface   from draco Primal(String)          the drake surface of a definition
+    draco.gendrake.Emission     from draco draketarget Surface     factory: par definition TypeDefinition
+                                                                   body:    fix value String draco.Drake.emit(_definition)
+
+Surface is Compound's shape: a primal wrapper over the text, with the codec a unit type gets. Emission
+is Potency's: it derives a type in the transform's TARGET and takes a factory parameter typed in its
+SOURCE, and the conversion is in the body — here the hand-written emitter, as `_potency.value * 0.62`
+was the formula there. The scenario's gate 3 states that convention; GenDrake now satisfies it. The
+member does not derive the transform domain, deliberately: Emission IS a Surface and LIVES IN GenDrake,
+containment being the domain pointer.
+
+WHAT WAS FOUND, AND LEFT
+
+The body was first authored on the application surface — `draco.Drake.emit parameters par _definition`
+— and projected as a STRING LITERAL: `value: String = "draco.Drake.emit(_definition)"`.
+defaultInitializer quotes any expression tree whose slot is String-typed, a rule made for a type
+expression carried in a String field (a `->` arrow in a valueType), which cannot tell that from a
+computation whose RESULT is a string. No definition had put one there before. The body is now the
+opaque call, which is also what Drake.parse produces for that glued token, so the JSON is parse's own
+output and the loss count is unmoved. The rule is the limit: no computed string can be authored in
+tree form until the projection can tell a value tree from a type tree in a String slot — the same
+distinction #51 draws between type expressions and value expressions. Surfaced, not filed.
+
+GenDrake.generator, the function, stays beside Emission for now; the CLI still calls it. When a rule
+matches a TypeDefinition and inserts an Emission, and something on the DrakeTarget side receives it,
+the function retires. That is the receiver and the actor — the next two gaps.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

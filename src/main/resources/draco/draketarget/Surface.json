@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "DrakeTarget",
+    "name": "Surface",
     "namePackage": [
       "draco",
       "draketarget"
@@ -9,12 +9,26 @@
   "dracoAspect": {
     "derivation": [
       {
-        "name": "Target",
+        "name": "Primal",
         "namePackage": [
           "draco"
+        ],
+        "typeParameters": [
+          "String"
         ]
       }
-    ]
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Surface",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "value",
+          "valueType": "String"
+        }
+      ]
+    }
   },
   "domainAspect": {
     "typeName": {
@@ -23,9 +37,6 @@
         "draco",
         "draketarget"
       ]
-    },
-    "elementTypeNames": [
-      "Surface"
-    ]
+    }
   }
 }

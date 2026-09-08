@@ -1,0 +1,7 @@
+type Emission from draco draketarget Surface
+  factory
+    parameters
+      par definition TypeDefinition
+    body
+      fix value String draco.Drake.emit(_definition)
+domain draco gendrake GenDrake

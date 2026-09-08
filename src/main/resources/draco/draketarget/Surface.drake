@@ -1,0 +1,5 @@
+type Surface from draco Primal(String)
+  factory
+    parameters
+      par value String
+domain draco draketarget DrakeTarget

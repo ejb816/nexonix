@@ -20,6 +20,15 @@ the block below.
 
 ### Changed
 
+- **`DrakeTarget` has a value type, and `GenDrake` has its first leaf conversion.**
+  `draco.draketarget.Surface from Primal(String)` — the drake surface of a definition, the thing a
+  morphism into `DrakeTarget` produces; and `draco.gendrake.Emission from Surface`, a factory taking a
+  `TypeDefinition` whose body is `Drake.emit` of it — the transform's one member, in the shape the
+  forest's `Potency` has: derives a type in `target`, takes a parameter typed in `source`. Both
+  drake-first. Found on the way: the projection quotes ANY expression tree in a `String`-typed slot
+  (`defaultInitializer`), so a computed string cannot yet be authored in tree form; `Emission`'s body
+  is the opaque call, which is also what `Drake.parse` produces for it.
+
 - **The generator domains exist as structure.** Source code generation is a cross-domain transform:
   `draco.Generator(T)` is the transform from `Draco` to a target `T`, a definition-backed root type;
   `draco.generator.Generator` — no longer parameterized, no longer carrying a function — is the
