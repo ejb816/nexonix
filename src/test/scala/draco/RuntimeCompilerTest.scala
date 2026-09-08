@@ -14,11 +14,11 @@ class RuntimeCompilerTest extends AnyFunSuite with PersistentTestLog {
         |}
         |""".stripMargin
 
-    val result = Generator.compile(source, "SimpleTest.scala")
+    val result = DracoGenerator.compile(source, "SimpleTest.scala")
     assert(result.isRight, s"Compilation failed: ${result.left.getOrElse(Seq.empty).mkString("\n")}")
 
     val classDir = result.toOption.get
-    val clazz = Generator.loadClass(classDir, "draco.generated.test.SimpleTest")
+    val clazz = DracoGenerator.loadClass(classDir, "draco.generated.test.SimpleTest")
     val instance = clazz.getDeclaredConstructor().newInstance()
     val nameField = clazz.getMethod("name")
     assert(nameField.invoke(instance) == "SimpleTest")
@@ -40,11 +40,11 @@ class RuntimeCompilerTest extends AnyFunSuite with PersistentTestLog {
         |}
         |""".stripMargin
 
-    val result = Generator.compile(source, "GeneratedTrait.scala")
+    val result = DracoGenerator.compile(source, "GeneratedTrait.scala")
     assert(result.isRight, s"Compilation failed: ${result.left.getOrElse(Seq.empty).mkString("\n")}")
 
     val classDir = result.toOption.get
-    val clazz = Generator.loadClass(classDir, "draco.generated.test.GeneratedTrait$")
+    val clazz = DracoGenerator.loadClass(classDir, "draco.generated.test.GeneratedTrait$")
     val instance = clazz.getField("MODULE$").get(null)
     val typeDef = clazz.getMethod("typeDefinition").invoke(instance).asInstanceOf[TypeDefinition]
     assert(typeDef.typeName.name == "GeneratedTrait")
@@ -52,15 +52,15 @@ class RuntimeCompilerTest extends AnyFunSuite with PersistentTestLog {
   }
 
   test("Generate from JSON and compile") {
-    val sourceContent = SourceContent(Generator.main.sourceRoot, "draco/Holon.json")
+    val sourceContent = SourceContent(DracoGenerator.main.sourceRoot, "draco/Holon.json")
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
-    val generatedSource = Generator.generate(td)
+    val generatedSource = DracoGenerator.generate(td)
 
     log.info(s"Generated source for ${td.typeName.name}:")
     log.info(generatedSource)
 
-    val result = Generator.compile(generatedSource, "Holon.scala")
+    val result = DracoGenerator.compile(generatedSource, "Holon.scala")
     result match {
       case Right(classDir) =>
         log.info(s"Compilation successful: $classDir")
@@ -79,7 +79,7 @@ class RuntimeCompilerTest extends AnyFunSuite with PersistentTestLog {
         |}
         |""".stripMargin
 
-    val result = Generator.compile(badSource, "BadClass.scala")
+    val result = DracoGenerator.compile(badSource, "BadClass.scala")
     assert(result.isLeft, "Expected compilation to fail")
     val errors = result.left.getOrElse(Seq.empty)
     assert(errors.nonEmpty, "Expected at least one error")

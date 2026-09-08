@@ -17,7 +17,7 @@ import io.circe.Json
 object Drake {
   // --- Emission (JSON TypeDefinition -> .drake surface) ---
   //
-  // Where Generator.expression renders a value tree to Scala's spelling, the
+  // Where DracoGenerator.expression renders a value tree to Scala's spelling, the
   // expression() below renders the same tree to its drake surface (Haskell forms —
   // \ lambda, if-then-else, -> arrow). emit() writes the drake.dlt TEMPLATE: bare
   // `factory`, `globals` keyword, keyword blocks unbracketed with brackets on the
@@ -26,7 +26,7 @@ object Drake {
   // actor aspects; the codec aspect is a later increment and is rejected loudly.
 
   /** Render a TypeElement `value` to its drake surface form. Same tree contract
-    * as Generator.expression: a string is host-opaque source text passed through
+    * as DracoGenerator.expression: a string is host-opaque source text passed through
     * verbatim; {op: [operands]} applies the operator. Haskell-form spellings:
     * "->" renders " -> ", "\" renders \p1 p2 -> body, "if" renders
     * if c then t else e. A tree in a String-typed slot needs no quoting here —

@@ -1,7 +1,7 @@
 package org.nexonix.format.json
 import draco.PersistentTestLog
 
-import draco.{Generator, SourceContent, TypeDefinition, TypeName}
+import draco.{DracoGenerator, SourceContent, TypeDefinition, TypeName}
 import draco.format.json.{JSON, Value}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
@@ -44,11 +44,11 @@ class TestValue extends AnyFunSuite with PersistentTestLog {
       "draco/primes/RemoveCompositeNumbers.json"
     )
     val checkJson: String => Unit = fn => {
-      val sourceContent = SourceContent(Generator.main.sourceRoot, fn)
+      val sourceContent = SourceContent(DracoGenerator.main.sourceRoot, fn)
       val content = sourceContent.sourceLines.mkString("\n")
       val jsonContent: Json = parser.parse(content).getOrElse(Json.Null)
       val rule = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
-      val ruleSource: String = Generator.generate(rule)
+      val ruleSource: String = DracoGenerator.generate(rule)
       if (jsonContent.equals(rule.asJson)) {
         log.info(content)
       } else {

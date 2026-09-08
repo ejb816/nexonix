@@ -29,7 +29,7 @@ object AssemblyValidator {
   /** Message type a member receives. The actor ASPECT is the source of truth —
     * actor-ness is aspect presence, so an `Actor[M]` derivation would put a role's
     * parameter into the data inheritance tree. The derivation is read only as a
-    * fallback, for definitions not yet migrated (Generator.actorMessageType makes
+    * fallback, for definitions not yet migrated (DracoGenerator.actorMessageType makes
     * the same choice, and for the same reason). */
   private def messageType(td: TypeDefinition): Option[String] =
     Some(td.actorAspect.messageType)
@@ -56,8 +56,8 @@ object AssemblyValidator {
       requireMember(b.from, "binding source")
       requireMember(b.to, "binding target")
 
-      val fromTd = Generator.loadType(b.from)
-      val toTd   = Generator.loadType(b.to)
+      val fromTd = DracoGenerator.loadType(b.from)
+      val toTd   = DracoGenerator.loadType(b.to)
 
       fromTd.dracoAspect.factory.parameters.find(_.name == b.param) match {
         case None =>

@@ -18,6 +18,14 @@ the block below.
 
 ## [Unreleased]
 
+### Changed
+
+- **The hand-written engine is `draco.DracoGenerator`, renamed from `draco.Generator`.** Same object,
+  same behaviour, 32 files repointed; `GeneratorCLI` and `bin/draco-gen` keep their names. The rename
+  frees `draco.Generator` for the definition-backed `type Generator(T)` — the transform from Draco to a
+  target `T` that each generator sub-domain (`draco.genscala.GenScala from Generator(ScalaTarget)`)
+  will derive — which would otherwise have collided with the engine in the same package.
+
 ### Added
 
 - **`case` is a reserved word, and the first two case-branches are in the corpus.** `TypeName.equals`

@@ -262,7 +262,7 @@ Target and universal over Sources: any Source that yields a `TypeDefinition` fee
 which is why it carries a type parameter and no `source` keyword, where a pairwise
 transform domain carries both. Its members are meant to be the morphisms, as rules, from a
 definition to that target's source text; today it holds one function element, and the
-six-way dispatch in the hand-written `Generator` is those rules, unwritten.
+six-way dispatch in the hand-written `DracoGenerator` is those rules, unwritten.
 
 **Base** — measurement types:
 
@@ -340,7 +340,7 @@ all by `TypeName` — validated and spawned generically rather than by hand-writ
 
 ### Projection
 
-A **target** turns definitions into source. `Generator` reads a `TypeDefinition` and
+A **target** turns definitions into source. `DracoGenerator` reads a `TypeDefinition` and
 dispatches on what the definition *contains*:
 
 1. two or more role aspects → **composed** — every present aspect contributes its block
@@ -543,7 +543,7 @@ src/
   test/
     resources/ scala/           -- gates, rule tests, example-domain tests
   mods/                         -- engine tier and example domains
-    scala/draco/                -- Generator, Drake, CLIs, DomainBuilder, Assembly
+    scala/draco/                -- DracoGenerator, Drake, CLIs, DomainBuilder, Assembly
     scala/domains/              -- World media example chain
     scala/scripts/              -- bin/draco-sc scripts
     resources/domains/          -- example-domain definitions

@@ -1,6 +1,6 @@
 //> using scala 2.13
 
-// diff-type — compare Generator.generate(td) against the hand-written .scala.
+// diff-type — compare DracoGenerator.generate(td) against the hand-written .scala.
 //
 // Surfaces drift outside the test harness — same whitespace-normalized comparison
 // that DracoGenTest performs, but on demand for a single type. Useful when iterating
@@ -72,7 +72,7 @@ object DiffType {
       !RuleAspect.isEmpty(td.ruleAspect) ||
       !ActorAspect.isEmpty(td.actorAspect)
 
-    val td = Generator.loadType(TypeName(name, _namePackage = pkg))
+    val td = DracoGenerator.loadType(TypeName(name, _namePackage = pkg))
     if (!loaded(td)) {
       System.err.println(s"error: no TypeDefinition found for ${pkg.mkString(".")}.$name")
       sys.exit(2)
@@ -95,7 +95,7 @@ object DiffType {
       }
 
     val handText = new String(Files.readAllBytes(handPath))
-    val genText  = Generator.generate(td)
+    val genText  = DracoGenerator.generate(td)
 
     val handNorm = normalize(handText)
     val genNorm  = normalize(genText)

@@ -113,7 +113,7 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 
 | gate | pins | a failure means |
 |---|---|---|
-| `DracoGenTest` | `Generator.generate(X.json)` ≡ hand-written `X.scala`, whitespace-normalized, for every definition | the JSON, the Generator, or the Scala moved without the others |
+| `DracoGenTest` | `DracoGenerator.generate(X.json)` ≡ hand-written `X.scala`, whitespace-normalized, for every definition | the JSON, the Generator, or the Scala moved without the others |
 | `DrakeGenTest` | `Drake.emit(X.json)` ≡ hand-written `X.drake` | the emitter or the surface moved |
 | `DrakeParseTest` | `emit(parse(source))` ≡ source, and `parse(emit(td))` ≡ td | the parser and emitter disagree, or a value form is not carried |
 
@@ -125,7 +125,7 @@ and compiles none of it.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
 `src/main/scala/draco/`. Keep it that way. If generated output is wrong, fix the JSON or
-the Generator, not the Scala.
+`DracoGenerator`, not the Scala.
 
 ---
 
@@ -174,7 +174,7 @@ object X extends App with DracoType {
 The kind-val is named for the kind — `dracoType`, `domainType`, `ruleType`, `actorType`.
 There is no `typeInstance` and no `*Instance` trait.
 
-**Loading.** `TypeLoader` owns it, not `Generator`:
+**Loading.** `TypeLoader` owns it, not `DracoGenerator`:
 
 ```text
 TypeLoader.loadType → tryLoad → draco.generator.carrier.DefinitionPath.default.source(resourcePath) → readDefinition
@@ -191,7 +191,9 @@ cannot survive projection to another target language. `hostRoots` derives the de
 realization, not the definition, and a path can be constructed without a classloader. A
 missing definition yields a typeName-only stub, which is legitimate.
 
-**Generator dispatch** (`src/mods/scala/draco/Generator.scala`) normalizes at the entry
+**`DracoGenerator` dispatch** (`src/mods/scala/draco/DracoGenerator.scala`, the hand-written
+engine — renamed from `Generator` on 2026-09-08 so the definition-backed `draco.Generator(T)`
+can own the name) normalizes at the entry
 with `TypeLoader.rooted` (absent derivation means derives-`DracoType`) and `targetTypes`
 (the neutral `{K,V}` → Scala `Map[K,V]` rewrite — the *only* place the Scala spelling of a
 map is produced). It then dispatches six ways: two-or-more role aspects → composed;
@@ -209,11 +211,11 @@ Value types are
 
 **Caveat, and it matters if you author drake:** `Drake.parse` builds expression trees only
 for the application surface. Every other value — lambdas, `if/then/else`, `->`, operators
-— returns as a host-opaque string in *drake* form, which `Generator.expression` would pass
+— returns as a host-opaque string in *drake* form, which `DracoGenerator.expression` would pass
 verbatim into Scala. Parse is a measurement tool, not yet an authoring path (GitHub #61).
 
 **Tiers.** `src/main/scala` is definition-backed. `src/mods/scala` compiles into the same
-package tree and holds the hand-written engine: `Generator`, `GeneratorCLI`, `Drake`,
+package tree and holds the hand-written engine: `DracoGenerator`, `GeneratorCLI`, `Drake`,
 `DrakeCLI`, `Expression`, `DomainBuilder`, `Assembly*`, `SourceContract`. mods → main is
 allowed; main → mods is not. Whether mods is now *the* engine tier rather than a
 speculative layer is an open question for Dev.

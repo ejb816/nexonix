@@ -20,7 +20,7 @@
         "kind": "Fixed",
         "name": "generator",
         "valueType": "TypeDefinition => String",
-        "value": "Generator.generate"
+        "value": "DracoGenerator.generate"
       }
     ]
   },

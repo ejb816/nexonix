@@ -1,6 +1,6 @@
 package draco.primes
 
-import draco.{ContentSink, Generator, PersistentTestLog, SourceContent, TypeDefinition, TypeName}
+import draco.{ContentSink, DracoGenerator, PersistentTestLog, SourceContent, TypeDefinition, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService
 import org.evrete.api.{Knowledge, RhsContext, StatefulSession}
@@ -38,39 +38,39 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
   }
   test("Generate PrimesFromNaturalSequence") {
     val resourcePath = "draco/primes/PrimesFromNaturalSequence.json"
-    val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
+    val sourceContent = SourceContent(DracoGenerator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
-    val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/PrimesFromNaturalSequence.scala")
+    val ruleSource = DracoGenerator.generate (rule)
+    val contentSink: ContentSink = ContentSink(DracoGenerator.main.sinkRoot, "draco/primes/PrimesFromNaturalSequence.scala")
     contentSink.write(ruleSource)
     log.info(ruleSource)
   }
 
   test("Generate AddNaturalSequence") {
     val resourcePath = "draco/primes/AddNaturalSequence.json"
-    val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
+    val sourceContent = SourceContent(DracoGenerator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
-    val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/AddNaturalSequence.scala")
+    val ruleSource = DracoGenerator.generate (rule)
+    val contentSink: ContentSink = ContentSink(DracoGenerator.main.sinkRoot, "draco/primes/AddNaturalSequence.scala")
     contentSink.write(ruleSource)
     log.info(ruleSource)
   }
 
   test("Generate RemoveCompositeNumbers") {
     val resourcePath = "draco/primes/RemoveCompositeNumbers.json"
-    val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
+    val sourceContent = SourceContent(DracoGenerator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
-    val ruleSource = Generator.generate (rule)
-    val contentSink: ContentSink = ContentSink(Generator.main.sinkRoot, "draco/primes/RemoveCompositeNumbers.scala")
+    val ruleSource = DracoGenerator.generate (rule)
+    val contentSink: ContentSink = ContentSink(DracoGenerator.main.sinkRoot, "draco/primes/RemoveCompositeNumbers.scala")
     contentSink.write(ruleSource)
     log.info(ruleSource)
   }

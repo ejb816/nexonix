@@ -11,7 +11,7 @@ trait Generator {
 
 }
 
-object Generator extends App {
+object DracoGenerator extends App {
   lazy val typeDefinition: TypeDefinition = TypeDefinition (
     _typeName = TypeName (
       _name = "Generator",
@@ -98,9 +98,9 @@ object Generator extends App {
             case "="        => s"${args(0)} = ${args(1)}"
             case "(,)"      => args.mkString("(", ", ", ")")
             case "*" | "==" | "!=" | "||" => args.mkString(s" $op ")
-            case _          => sys.error(s"Generator.expression: unknown operator '$op' in ${value.noSpaces}")
+            case _          => sys.error(s"DracoGenerator.expression: unknown operator '$op' in ${value.noSpaces}")
           }
-        case _ => sys.error(s"Generator.expression: unrenderable value ${value.noSpaces}")
+        case _ => sys.error(s"DracoGenerator.expression: unrenderable value ${value.noSpaces}")
       }
     }
   }
@@ -193,7 +193,7 @@ object Generator extends App {
   private def typeNameLiteral (tn: TypeName) : String =
     typeNameLiteralOf(tn.name, tn)
 
-  /** TypeName literal for use in a `Generator.loadType(...)` call. Omits
+  /** TypeName literal for use in a `DracoGenerator.loadType(...)` call. Omits
     * typeParameters because resource resolution uses only name + namePackage,
     * and parametric types resolve their parameters from the loaded JSON. */
   private def typeNameLiteralForLoad (name: String, tn: TypeName) : String =
@@ -1890,8 +1890,8 @@ object Generator extends App {
     } else {
       // Unreachable: the four predicates above partition the type space.
       // This branch exists only to satisfy if-chain exhaustivity; if it fires,
-      // a predicate has drifted and Generator.generate has lost a case.
-      throw new IllegalStateException(s"Generator.generate: no branch matched ${td.typeName.name}")
+      // a predicate has drifted and DracoGenerator.generate has lost a case.
+      throw new IllegalStateException(s"DracoGenerator.generate: no branch matched ${td.typeName.name}")
     }
     // Every branch opens its interpolator with a line break that stripMargin does
     // not remove; drop it so emitted source begins at `package`, matching the

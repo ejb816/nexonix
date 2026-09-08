@@ -50,7 +50,7 @@ object WhoExtends {
       if (seen.contains(key)) return false
       seen += key
       if (key == target) return true
-      val td = Generator.loadType(tn)
+      val td = DracoGenerator.loadType(tn)
       if (!loaded(td)) return false
       td.dracoAspect.derivation.exists(parent => reaches(parent, target, seen))
     }
@@ -61,7 +61,7 @@ object WhoExtends {
     var domainsScanned = 0
 
     scanDomains.foreach { case (domName, domPkg) =>
-      val domTd = Generator.loadType(TypeName(domName, _namePackage = domPkg))
+      val domTd = DracoGenerator.loadType(TypeName(domName, _namePackage = domPkg))
       val isDomain =
         loaded(domTd) &&
         domTd.domainAspect.typeName.name.nonEmpty &&
@@ -72,7 +72,7 @@ object WhoExtends {
           scanned += 1
           val elementTn = TypeName(elementName, _namePackage = domPkg)
           if (elementTn.namePath != targetKey && reaches(elementTn, targetKey, mutable.Set.empty[String])) {
-            val elementTd = Generator.loadType(elementTn)
+            val elementTd = DracoGenerator.loadType(elementTn)
             val head =
               if (!loaded(elementTd) || elementTd.dracoAspect.derivation.isEmpty) "(no direct derivation)"
               else "extends " + elementTd.dracoAspect.derivation.map(_.name).mkString(" with ")

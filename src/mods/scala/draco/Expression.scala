@@ -12,7 +12,7 @@ import io.circe.Json
   * Scala half when it never was.
   *
   * Rendering is deliberately not here — each projection spells the same tree its
-  * own way (`Generator.expression`, `Drake.expression`, and the factored
+  * own way (`DracoGenerator.expression`, `Drake.expression`, and the factored
   * `ExpressionRenderer` + `SourceTemplates` prototype). Only the questions that
   * have one answer regardless of target live here. */
 object Expression {

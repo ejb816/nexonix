@@ -95,7 +95,7 @@ class ExampleDomainsGenTest extends AnyFunSuite with PersistentTestLog {
       Try {
         val td = loadTd(rp)
         if (td == TypeDefinition.Null) throw new RuntimeException("JSON did not decode to a TypeDefinition")
-        val gen = normalize(Generator.generate(td))
+        val gen = normalize(DracoGenerator.generate(td))
         readHandWritten(scalaPath) match {
           case None =>
             missing += 1

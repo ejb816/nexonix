@@ -3,7 +3,7 @@
 // inspect-type — load a TypeDefinition by TypeName and pretty-print its aspect-by-aspect shape.
 //
 // Differs from `bin/draco-gen inspect` (which takes a filesystem path and dumps raw JSON)
-// by exercising the production loading API (Generator.loadType) and grouping output by aspect.
+// by exercising the production loading API (DracoGenerator.loadType) and grouping output by aspect.
 //
 // Usage:   bin/draco-sc inspect-type <name> [namePackage...]
 // Example: bin/draco-sc inspect-type Primal draco
@@ -24,9 +24,9 @@ object InspectType {
     val name = args(0)
     val pkg  = args.drop(1).toSeq
 
-    val td = Generator.loadType(TypeName(name, _namePackage = pkg))
+    val td = DracoGenerator.loadType(TypeName(name, _namePackage = pkg))
 
-    // Generator.loadType returns a placeholder (input typeName, all aspects empty)
+    // DracoGenerator.loadType returns a placeholder (input typeName, all aspects empty)
     // when the resource is missing — not TypeDefinition.Null. Detect via aspect emptiness.
     val loaded =
       !DracoAspect.isEmpty(td.dracoAspect) ||
@@ -64,7 +64,7 @@ object InspectType {
         case _: Local     => "Local"
         case _            => "?"
       }
-      val v = Generator.expression(e.value)
+      val v = DracoGenerator.expression(e.value)
       println(s"    - $kind ${e.name}: ${e.valueType}${if (v.isEmpty) "" else s" = $v"}")
     }
     val f = td.dracoAspect.factory

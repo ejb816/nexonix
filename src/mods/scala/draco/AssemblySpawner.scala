@@ -40,7 +40,7 @@ object AssemblySpawner {
       )
 
       // Resolve this member's dependency refs in the order its factory declares them.
-      val paramOrder = Generator.loadType(member).dracoAspect.factory.parameters.map(_.name)
+      val paramOrder = DracoGenerator.loadType(member).dracoAspect.factory.parameters.map(_.name)
       val toByParam  = bindingsFrom.getOrElse(member.namePath, Seq.empty)
         .map(b => b.param -> b.to.namePath).toMap
       val refs: Seq[ActorRef[Any]] =

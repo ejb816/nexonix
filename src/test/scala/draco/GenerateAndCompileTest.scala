@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class GenerateAndCompileTest extends AnyFunSuite with PersistentTestLog {
 
-  private val resourceRoot = Generator.main.sourceRoot
+  private val resourceRoot = DracoGenerator.main.sourceRoot
 
   /** TypeElement hierarchy — sealed-trait family that must compile together */
   private val typeElementGroup: Seq[String] = Seq(
@@ -78,7 +78,7 @@ class GenerateAndCompileTest extends AnyFunSuite with PersistentTestLog {
 
   private def generateSourceMulti(tds: Seq[TypeDefinition]): Either[String, String] = {
     try {
-      val source = Generator.generate(tds)
+      val source = DracoGenerator.generate(tds)
       if (source == null || source.isEmpty) Left("Generator produced empty source")
       else Right(source)
     } catch {
@@ -116,7 +116,7 @@ class GenerateAndCompileTest extends AnyFunSuite with PersistentTestLog {
         TestRecord(groupName, s"[${tds.size} types]", jsonParsed = true,
           sourceGenerated = false, compiled = false, errors = Seq(err))
       case Right(source) =>
-        Generator.compile(source, s"$groupName.scala") match {
+        DracoGenerator.compile(source, s"$groupName.scala") match {
           case Right(_) =>
             TestRecord(groupName, s"[${tds.size} types]", jsonParsed = true,
               sourceGenerated = true, compiled = true, errors = Seq.empty)

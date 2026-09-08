@@ -53,14 +53,14 @@ object ListDomains {
 
     val rows: Seq[(String, Result)] = domains.map { case (name, pkg) =>
       val path = (pkg :+ name).mkString(".")
-      val td = Generator.loadType(TypeName(name, _namePackage = pkg))
+      val td = DracoGenerator.loadType(TypeName(name, _namePackage = pkg))
       if (!loaded(td)) (path, NotLoadable)
       else if (!(td.domainAspect.typeName.name.nonEmpty && td.domainAspect.typeName.namePath == td.typeName.namePath)) {
         val actual = if (td.domainAspect.typeName.name.isEmpty) "(none)" else td.domainAspect.typeName.namePath
         (path, NotDomain(actual))
       } else {
         val items       = td.domainAspect.elementTypeNames
-        val loadedItems = items.map(n => Generator.loadType(TypeName(n, _namePackage = pkg)))
+        val loadedItems = items.map(n => DracoGenerator.loadType(TypeName(n, _namePackage = pkg)))
         val rules   = loadedItems.count(t => !RuleAspect.isEmpty(t.ruleAspect))
         val actors  = loadedItems.count(t => !ActorAspect.isEmpty(t.actorAspect))
         val types   = items.size - rules - actors

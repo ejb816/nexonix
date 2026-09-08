@@ -26,7 +26,7 @@ object ListDomain {
     val name = args(0)
     val pkg  = args.drop(1).toSeq
 
-    // Generator.loadType returns a placeholder (input typeName, all aspects empty)
+    // DracoGenerator.loadType returns a placeholder (input typeName, all aspects empty)
     // when the resource is missing — not TypeDefinition.Null. Detect via aspect emptiness.
     def loaded(td: TypeDefinition): Boolean =
       !DracoAspect.isEmpty(td.dracoAspect) ||
@@ -34,7 +34,7 @@ object ListDomain {
       !RuleAspect.isEmpty(td.ruleAspect) ||
       !ActorAspect.isEmpty(td.actorAspect)
 
-    val td = Generator.loadType(TypeName(name, _namePackage = pkg))
+    val td = DracoGenerator.loadType(TypeName(name, _namePackage = pkg))
     if (!loaded(td)) {
       System.err.println(s"error: no TypeDefinition found for ${pkg.mkString(".")}.$name")
       sys.exit(1)
@@ -60,7 +60,7 @@ object ListDomain {
     case class Row(kind: String, name: String, detail: String, missing: Boolean)
 
     val rows: Seq[Row] = dom.elementTypeNames.map { elementName =>
-      val elementTd = Generator.loadType(TypeName(elementName, _namePackage = pkg))
+      val elementTd = DracoGenerator.loadType(TypeName(elementName, _namePackage = pkg))
       val kind =
         if (!RuleAspect.isEmpty(elementTd.ruleAspect))  "RULE"
         else if (!ActorAspect.isEmpty(elementTd.actorAspect)) "ACTOR"

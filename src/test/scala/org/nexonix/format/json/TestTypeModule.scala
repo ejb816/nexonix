@@ -1,7 +1,7 @@
 package org.nexonix.format.json
 import draco.PersistentTestLog
 
-import draco.{DomainAspect, DracoAspect, Factory, Fixed, Generator, Parameter, TypeDefinition, TypeElement, TypeName}
+import draco.{DomainAspect, DracoAspect, Factory, Fixed, DracoGenerator, Parameter, TypeDefinition, TypeElement, TypeName}
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
@@ -210,7 +210,7 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
     log.info(tdInstance.asJson.spaces2)
   }
   def testTypeDefinitionGenerate(td: TypeDefinition): Unit = {
-    log.info(Generator.generate(td))
+    log.info(DracoGenerator.generate(td))
   }
 
   test("Test Type Definition Encode") {

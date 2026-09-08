@@ -1,0 +1,49 @@
+# Mechanical rename, no behaviour change: `object draco.Generator` (the hand-written engine in
+# src/mods) becomes `draco.DracoGenerator`. 32 files; every call site, four brace imports, the
+# file itself, ScalaTarget's trio (its `generator` global names the engine — an opaque value,
+# so the three agree by construction; DrakeCLI check confirms), DRACO.md, README.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 545 / 41, every headline exactly as the table has it — nothing here can move a
+# number. The likely failure is a missed reference, which is a compile error; the grep
+# passes `[error]` through — paste it.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-08-0001 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+The engine is DracoGenerator, and draco.Generator is free for the definition
+
+Dev's naming for the generator domains, settled 2026-09-07/08:
+
+    draco.Generator(T)                the transform from Draco to a target T — a definition-backed
+                                      root type, parameterized by target
+    draco.generator.Generator         the super-domain of every generator sub-domain (carrier
+                                      stays under it: the input seam belongs to the super-domain)
+    draco.genscala.GenScala           from Generator(ScalaTarget)  — the Draco -> Scala transform
+    draco.gendrake.GenDrake           from Generator(DrakeTarget)  — the Draco -> drake emitter
+    draco.scalatarget.ScalaTarget     a Target
+    draco.draketarget.DrakeTarget     a Target — the emission side of the definition language
+    draco.drake.Drake                 a Source — the definition language; parse belongs here
+
+The forest scenario's Source_Target-under-source placement does not transfer: it degenerates when
+the source is the root, would put two domain types in one package, and encodes a direction whose
+inverse can never exist. So each transform is a peer package named for what it does, and the
+Draco/draco prefixes are dropped where the package already says it.
+
+The one inconsistency in that naming was a compile error: `draco.Generator` was taken, by the
+hand-written engine in src/mods, which compiles into the same package. The typed domain had been put
+at `draco.generator.Generator` precisely to coexist with it. The definition should own the name — the
+engine is what GenScala's rules exist to replace — so the engine moves: `DracoGenerator`, Dev's
+choice. GeneratorCLI and bin/draco-gen keep theirs; they are documented commands, not types.
+
+Nothing else changes. The rename lands first because the first drake that authors
+`draco.Generator(T)` triggers the collision; the six domains as data, with empty member lists, come
+next, and then the structure the forest showed to be necessary — target-side types for the
+morphisms to produce, a target-side receiver (a fact inserted by a rule gets no memory node without
+one), an actor per transform to fire the rules, and parse as a member morphism of Drake so both legs
+of the round trip live in the framework.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

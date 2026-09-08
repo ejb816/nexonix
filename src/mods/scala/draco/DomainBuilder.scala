@@ -13,7 +13,7 @@ package draco
   * The *concrete-instance* side is not. `TypeDictionary.apply(domainDefinition)`
   * builds its members as `elementTypeNames.map(n => TypeDefinition(TypeName(n)))`
   * — the empty `TypeDefinition` constructor (all aspects `Null`). It never calls
-  * `Generator.loadType`, so a concrete `TypeDictionary` holds member *names* but
+  * `DracoGenerator.loadType`, so a concrete `TypeDictionary` holds member *names* but
   * not member *content*, and you cannot generate code from it. DomainBuilder
   * supplies the populated counterpart by loading each member's full definition.
   *
@@ -35,7 +35,7 @@ object DomainBuilder {
     * at the correct JSON and a plain `loadType` resolves every aspect uniformly.
     * A member named but not yet authored comes back as an empty TD (a stub). */
   private def loadMember(name: String, namePackage: Seq[String]): TypeDefinition =
-    Generator.loadType(TypeName(name, _namePackage = namePackage))
+    DracoGenerator.loadType(TypeName(name, _namePackage = namePackage))
 
   /** True when a loaded TD came back empty — named in the dictionary but with no
     * JSON on disk. Such members still generate, as a skeleton. */
@@ -50,7 +50,7 @@ object DomainBuilder {
     * `Domain` whose `typeDictionary` is *populated* with the loaded definitions —
     * the non-hollow counterpart to `TypeDictionary.apply`. */
   def define(name: String, namePackage: Seq[String]): DomainType = {
-    val domainDef = Generator.loadType(TypeName(name, _namePackage = namePackage))
+    val domainDef = DracoGenerator.loadType(TypeName(name, _namePackage = namePackage))
     val members: Seq[TypeDefinition] =
       domainDef.domainAspect.elementTypeNames.map(m => loadMember(m, namePackage))
 
@@ -112,7 +112,7 @@ object DomainBuilder {
       m.dracoAspect.derivation
         .filter(_.namePackage.headOption.contains("draco"))
         .collect {
-          case anc if isStub(Generator.loadType(anc)) =>
+          case anc if isStub(DracoGenerator.loadType(anc)) =>
             s"member ${m.typeName.name} derives from ${anc.namePath}, " +
               s"which does not resolve to a definition"
         }
@@ -123,7 +123,7 @@ object DomainBuilder {
 
   /** Generate Scala for an entire domain — the domain object itself plus every
     * member of its dictionary — keyed by `TypeName`. Skeleton-tolerant: a member
-    * with no complete definition (a stub) still emits whatever `Generator.generate`
+    * with no complete definition (a stub) still emits whatever `DracoGenerator.generate`
     * produces for a thin TD; should generation of one member fail, a clearly
     * marked placeholder skeleton is emitted in its place so a single bad member
     * never sinks the whole batch. */
@@ -134,10 +134,10 @@ object DomainBuilder {
   }
 
   private def safeGenerate(td: TypeDefinition): String =
-    try Generator.generate(td)
+    try DracoGenerator.generate(td)
     catch { case t: Throwable => placeholderSkeleton(td, t) }
 
-  /** Last-resort skeleton when `Generator.generate` throws on an incomplete member.
+  /** Last-resort skeleton when `DracoGenerator.generate` throws on an incomplete member.
     * Strips any aspect suffix so the emitted identifier is a legal Scala name. */
   private def placeholderSkeleton(td: TypeDefinition, cause: Throwable): String = {
     val pkg = td.typeName.namePackage.mkString(".")

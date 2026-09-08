@@ -48,7 +48,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
           "TypeDefinition",
           Seq(Parameter("typeName", "TypeName", Json.Null)),
           Seq(
-            Fixed("sourceContent", "SourceContent", Json.fromString("SourceContent(Generator.main.sourceRoot, typeName.resourcePath)")),
+            Fixed("sourceContent", "SourceContent", Json.fromString("SourceContent(DracoGenerator.main.sourceRoot, typeName.resourcePath)")),
             Fixed("sourceJSON", "Json", Json.fromString("parser.parse(sourceContent.sourceString).getOrElse(TypeDefinition(typeName).asJson)")),
             Fixed("result", "TypeDefinition", Json.fromString("sourceJSON.as[TypeDefinition].getOrElse(Null)"))
           )
@@ -64,7 +64,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
 
   test("TypeDefinition generates Scala code") {
     log.info("Generated Scala code:")
-    log.info(Generator.generate(typeDefinitionTypeDefinition))
+    log.info(DracoGenerator.generate(typeDefinitionTypeDefinition))
   }
 
   test("Minimal TypeDefinition (no factory)") {
@@ -75,7 +75,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       )
     )
     log.info("Minimal TypeDefinition (no factory):")
-    log.info(Generator.generate(minimal))
+    log.info(DracoGenerator.generate(minimal))
   }
 
   test("TypeDefinition with globalElements only") {
@@ -92,7 +92,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       )
     )
     log.info("TypeDefinition with globalElements only:")
-    log.info(Generator.generate(withGlobals))
+    log.info(DracoGenerator.generate(withGlobals))
   }
 
   test("TypeElement hierarchy as JSON") {
@@ -129,7 +129,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       Variable.typeDefinition,
       Factory.typeDefinition
     )
-    val output = Generator.generate(types)
+    val output = DracoGenerator.generate(types)
     log.info("Multi-type generation (TypeElement hierarchy):")
     log.info(output)
 
@@ -162,7 +162,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       )
     )
     // Pass in reversed order to verify ordering
-    val output = Generator.generate(Seq(dogTd, animalTd))
+    val output = DracoGenerator.generate(Seq(dogTd, animalTd))
     log.info("Multi-type generation (Animal/Dog):")
     log.info(output)
 
@@ -196,7 +196,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
         ))
       )
     )
-    val output = Generator.generate(Seq(dogTd, animalTd))
+    val output = DracoGenerator.generate(Seq(dogTd, animalTd))
     log.info("Animal/Dog with authored discriminator:\n" + output)
 
     assert(output.contains("\"species\" -> Json.fromString"),

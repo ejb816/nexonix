@@ -16,7 +16,7 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite with PersistentTestLog
   /** Read actual source file from src/main/scala, returns None if not found */
   private def readActualSource(sourcePath: String): Option[Seq[String]] = {
     try {
-      val sc = SourceContent(Generator.main.sinkRoot, sourcePath)
+      val sc = SourceContent(DracoGenerator.main.sinkRoot, sourcePath)
       Some(sc.sourceLines)
     } catch {
       case _: Exception => None
@@ -69,35 +69,35 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite with PersistentTestLog
   }
 
   private def generateAndVerify(resourcePath: String, typeName: String): Unit = {
-    val sourceContent = SourceContent(Generator.main.sourceRoot, resourcePath)
+    val sourceContent = SourceContent(DracoGenerator.main.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     log.info(jsonContent.spaces2)
 
     val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
-    val generatedSource = Generator.generate(td)
+    val generatedSource = DracoGenerator.generate(td)
     val output = appendDiff(generatedSource, td)
     log.info(output)
 
     val outputPath = generatedOutputPath(typeName)
-    val contentSink: ContentSink = ContentSink(Generator.generated.sinkRoot, outputPath)
+    val contentSink: ContentSink = ContentSink(DracoGenerator.generated.sinkRoot, outputPath)
     contentSink.write(output)
   }
 
   private def generateMultiAndVerify(resourcePaths: Seq[String], typeName: String): Unit = {
     val typeDefinitions: Seq[TypeDefinition] = resourcePaths.map { rp =>
-      val sourceContent = SourceContent(Generator.main.sourceRoot, rp)
+      val sourceContent = SourceContent(DracoGenerator.main.sourceRoot, rp)
       val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
       jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
     }
     typeDefinitions.foreach(td => log.info(td.typeName.name))
 
-    val generatedSource = Generator.generate(typeDefinitions)
+    val generatedSource = DracoGenerator.generate(typeDefinitions)
     // Use first type for diff comparison (the root of the hierarchy)
     val output = appendDiff(generatedSource, typeDefinitions.head)
     log.info(output)
 
     val outputPath = generatedOutputPath(typeName)
-    val contentSink: ContentSink = ContentSink(Generator.generated.sinkRoot, outputPath)
+    val contentSink: ContentSink = ContentSink(DracoGenerator.generated.sinkRoot, outputPath)
     contentSink.write(output)
   }
 

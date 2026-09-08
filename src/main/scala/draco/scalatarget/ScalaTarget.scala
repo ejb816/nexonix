@@ -11,5 +11,5 @@ object ScalaTarget extends App with DracoType {
   lazy val elementTypeNames: Seq[String] = Seq ()
 
   lazy val domainType: Domain[ScalaTarget] = Domain[ScalaTarget] (typeDefinition)
-  lazy val generator: TypeDefinition => String = Generator.generate
+  lazy val generator: TypeDefinition => String = DracoGenerator.generate
 }

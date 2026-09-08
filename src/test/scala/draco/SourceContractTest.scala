@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 /** Falsifies the expression-rendering contract prototype ([[SourceContract]]) against
   * the two production renderers it generalizes: `ExpressionRenderer.render` with
-  * `ScalaTemplates` must equal `Generator.expression`, and with `DrakeTemplates` must
+  * `ScalaTemplates` must equal `DracoGenerator.expression`, and with `DrakeTemplates` must
   * equal `Drake.expression`, over a corpus exercising every operator. If the
   * engine+slots reproduce both, the slot boundary is proven — the two hand-written
   * renderers collapse to one engine plus three language slots. */
@@ -14,7 +14,7 @@ class SourceContractTest extends AnyFunSuite {
   private def op (name: String, args: Json*) : Json = Json.obj(name -> Json.arr(args: _*))
   private def s (v: String) : Json = Json.fromString(v)
 
-  /** Trees valid on BOTH surfaces (no `=`, which only `Generator.expression` renders). */
+  /** Trees valid on BOTH surfaces (no `=`, which only `DracoGenerator.expression` renders). */
   private val sharedTrees: Seq[Json] = Seq(
     op(".", s("a"), s("b"), s("c")),
     op("->", s("A"), s("B")),
@@ -32,9 +32,9 @@ class SourceContractTest extends AnyFunSuite {
     s("plain")                                                          // host-opaque leaf
   )
 
-  test("ScalaTemplates reproduces Generator.expression over every operator") {
+  test("ScalaTemplates reproduces DracoGenerator.expression over every operator") {
     sharedTrees.foreach { t =>
-      assert(ExpressionRenderer.render(t, ScalaTemplates) == Generator.expression(t), s"mismatch on ${t.noSpaces}")
+      assert(ExpressionRenderer.render(t, ScalaTemplates) == DracoGenerator.expression(t), s"mismatch on ${t.noSpaces}")
     }
   }
 
@@ -46,6 +46,6 @@ class SourceContractTest extends AnyFunSuite {
 
   test("the = (assignment) node is a Scala-only expression form") {
     val assign = op("=", s("name"), s("value"))
-    assert(ExpressionRenderer.render(assign, ScalaTemplates) == Generator.expression(assign))
+    assert(ExpressionRenderer.render(assign, ScalaTemplates) == DracoGenerator.expression(assign))
   }
 }

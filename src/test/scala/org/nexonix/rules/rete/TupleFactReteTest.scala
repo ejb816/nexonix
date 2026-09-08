@@ -1,7 +1,7 @@
 package org.nexonix.rules.rete
 import draco.PersistentTestLog
 
-import draco.{ContentSink, Generator, SourceContent, TypeDefinition, TypeName}
+import draco.{ContentSink, DracoGenerator, SourceContent, TypeDefinition, TypeName}
 import io.circe.{Json, parser}
 import org.evrete.KnowledgeService
 import org.nexonix.rules.rete.rules.TupleFact
@@ -11,13 +11,13 @@ class TupleFactReteTest extends AnyFunSuite with PersistentTestLog {
   val fact: (Int, Int, Int) = (1, 2, 3)
   test("TupleFactReteTest") {
     val resourcePath = "org/nexonix/rules/rete/TupleFact.json"
-    val sourceContent = SourceContent(Generator.test.sourceRoot, resourcePath)
+    val sourceContent = SourceContent(DracoGenerator.test.sourceRoot, resourcePath)
     val jsonContent: Json = parser.parse(sourceContent.sourceString).getOrElse(Json.Null)
     log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
-    val ruleSource: String = Generator.generate(rule)
-    val contentSink: ContentSink = ContentSink(Generator.test.sinkRoot, "org/nexonix/rules/rete/rules/TupleFact.scala")
+    val ruleSource: String = DracoGenerator.generate(rule)
+    val contentSink: ContentSink = ContentSink(DracoGenerator.test.sinkRoot, "org/nexonix/rules/rete/rules/TupleFact.scala")
     // Rule-ness is aspect presence, not a name suffix: TupleFact.json generates a bare object TupleFact
     contentSink.write(ruleSource)
     log.info(ruleSource)

@@ -33,7 +33,7 @@ import scala.util.{Failure, Success, Try, Using}
  *     scenario had them tied in NEITHER direction, because gate 2 below walks `.json`
  *     only and `ScenarioDrakeTest` walks `.drake` only. A `.json` hand-edited without
  *     its `.drake` left every gate below this one green.
- *  2. PROJECTS — `Generator.generate` from each `.json` reproduces the committed
+ *  2. PROJECTS — `DracoGenerator.generate` from each `.json` reproduces the committed
  *     `.scala`. This is `DracoGenTest`'s gate, and like it, it asserts.
  *  3. MEANS IT — the rules an actor's domain chain OWNS against the ones its projected
  *     source actually ACCEPTS. An actor whose `Knowledge` accepts nothing compiles,
@@ -121,7 +121,7 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
       val path = scalaPath(td.typeName)
       if (!Files.isRegularFile(path)) Some(s"${td.typeName.namePath}: no projected source at $path")
       else {
-        val generated = normalize(Generator.generate(td))
+        val generated = normalize(DracoGenerator.generate(td))
         val onDisk    = normalize(new String(Files.readAllBytes(path)))
         if (generated == onDisk) None
         else {

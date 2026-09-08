@@ -17,9 +17,9 @@ import scala.util.Using
  *    java -cp target/scala-2.13/draco-<version>.jar draco.GeneratorCLI <subcommand> <path>...
  *
  *  Subcommands:
- *    generate       <json-path>             print Scala source that Generator.generate emits
- *    compile        <json-path>             generate + Generator.compile a single source
- *    compile-multi  <json-path>...          generate each + Generator.compileMulti
+ *    generate       <json-path>             print Scala source that DracoGenerator.generate emits
+ *    compile        <json-path>             generate + DracoGenerator.compile a single source
+ *    compile-multi  <json-path>...          generate each + DracoGenerator.compileMulti
  *                                           (use when sources have inter-file dependencies,
  *                                            e.g. sub-domain extends super-domain)
  *    inspect        <json-path>             print parsed TypeDefinition as pretty JSON
@@ -51,10 +51,10 @@ object GeneratorCLI {
       """usage: draco-gen <subcommand> <path>...
         |
         |subcommands:
-        |  generate       <json>            print Scala emitted by Generator.generate(td)
+        |  generate       <json>            print Scala emitted by DracoGenerator.generate(td)
         |  generate-multi <json>...         print one Scala source for a sealed family via
-        |                                   Generator.generate(Seq[TypeDefinition])
-        |  compile        <json>            single-source compile via Generator.compile
+        |                                   DracoGenerator.generate(Seq[TypeDefinition])
+        |  compile        <json>            single-source compile via DracoGenerator.compile
         |  compile-multi  <json>...         multi-source compile (one unit) via compileMulti;
         |                                   use for sources with inter-file dependencies
         |  inspect        <json>            print parsed TypeDefinition as pretty JSON
@@ -89,27 +89,27 @@ object GeneratorCLI {
 
   private def runGenerate(path: String): Unit = {
     val td = loadTypeDefinition(path)
-    val source = Generator.generate(td)
+    val source = DracoGenerator.generate(td)
     print(source)
     if (!source.endsWith("\n")) println()
   }
 
   /** Multi-type generation: one Scala source for a sealed family, emitted by the
-    * `Generator.generate(Seq[TypeDefinition])` overload. Distinct from
+    * `DracoGenerator.generate(Seq[TypeDefinition])` overload. Distinct from
     * `compile-multi`, which generates each type separately and compiles them as
     * one unit. Order of paths is preserved; the Generator topologically sorts. */
   private def runGenerateMultiple(paths: Seq[String]): Unit = {
     val tds    = paths.map(loadTypeDefinition)
-    val source = Generator.generate(tds)
+    val source = DracoGenerator.generate(tds)
     print(source)
     if (!source.endsWith("\n")) println()
   }
 
   private def runCompile(path: String): Unit = {
     val td     = loadTypeDefinition(path)
-    val source = Generator.generate(td)
+    val source = DracoGenerator.generate(td)
     val name   = td.typeName.name.replaceAll("\\[.*", "")
-    Generator.compile(source, s"$name.scala") match {
+    DracoGenerator.compile(source, s"$name.scala") match {
       case Right(classDir) =>
         println(s"OK  $name  (classes in ${classDir.getAbsolutePath})")
       case Left(errors) =>
@@ -130,14 +130,14 @@ object GeneratorCLI {
   private def runCompileMulti(paths: Seq[String]): Unit = {
     val pairs: Seq[(String, String, String)] = paths.map { p =>
       val td     = loadTypeDefinition(p)
-      val source = Generator.generate(td)
+      val source = DracoGenerator.generate(td)
       val name   = td.typeName.name.replaceAll("\\[.*", "")
       (name, source, s"$name.scala")
     }
     val sourcesForCompiler = pairs.map { case (_, src, fn) => (src, fn) }
     val displayNames       = pairs.map(_._1).mkString(", ")
 
-    Generator.compileMulti(sourcesForCompiler) match {
+    DracoGenerator.compileMulti(sourcesForCompiler) match {
       case Right(classDir) =>
         println(s"OK  [$displayNames]  (classes in ${classDir.getAbsolutePath})")
       case Left(errors) =>

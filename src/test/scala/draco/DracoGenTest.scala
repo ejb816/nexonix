@@ -85,7 +85,7 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
   private val comparisonOnlyExcluded: Map[String, String] = Map.empty
 
   /** TypeElement sealed-trait family — generated as one Scala source file
-   *  (TypeElement.scala) by `Generator.generate(Seq[TypeDefinition])`.
+   *  (TypeElement.scala) by `DracoGenerator.generate(Seq[TypeDefinition])`.
    *  Order matters: parent first, then BodyElement, then leaves. */
   private val typeElementFamily: Seq[String] = Seq(
     "draco/TypeElement.json",
@@ -164,7 +164,7 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
   perTypeTypes.filterNot(ty => comparisonOnlyExcluded.contains(ty.resourcePath)).foreach { ty =>
     test(s"${ty.resourcePath}: Generator output matches ${ty.scalaPath} (whitespace-normalized)") {
       val td       = loadTypeDefinition(ty.resourcePath)
-      val genNorm  = normalize(Generator.generate(td))
+      val genNorm  = normalize(DracoGenerator.generate(td))
       val handNorm = normalize(readHandWritten(ty.scalaPath))
 
       if (genNorm != handNorm) {
@@ -185,7 +185,7 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
 
   test("TypeElement family: multi-type Generator output matches draco/TypeElement.scala (whitespace-normalized)") {
     val tds      = typeElementFamily.map(loadTypeDefinition)
-    val genNorm  = normalize(Generator.generate(tds))
+    val genNorm  = normalize(DracoGenerator.generate(tds))
     val handNorm = normalize(readHandWritten("draco/TypeElement.scala"))
 
     if (genNorm != handNorm) {

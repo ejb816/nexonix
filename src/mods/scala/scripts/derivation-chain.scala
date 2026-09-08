@@ -4,7 +4,7 @@
 // each ancestor in order. Useful for answering "does X extend DracoType?" or "what's
 // the full inheritance picture for this type?" without re-deriving it from source.
 //
-// Cycle-protected (mirrors Generator.chainHits' walk).
+// Cycle-protected (mirrors DracoGenerator.chainHits' walk).
 //
 // Usage:   bin/draco-sc derivation-chain <name> [namePackage...]
 // Example: bin/draco-sc derivation-chain Meters draco base
@@ -31,7 +31,7 @@ object DerivationChain {
       s"${tn.namePath}$params"
     }
 
-    // Generator.loadType returns a placeholder (input typeName, all aspects empty)
+    // DracoGenerator.loadType returns a placeholder (input typeName, all aspects empty)
     // when the resource is missing — not TypeDefinition.Null. Detect via aspect emptiness.
     def loaded(td: TypeDefinition): Boolean =
       !DracoAspect.isEmpty(td.dracoAspect) ||
@@ -47,7 +47,7 @@ object DerivationChain {
       }
       seen += key
 
-      val td = Generator.loadType(tn)
+      val td = DracoGenerator.loadType(tn)
       val marker = if (depth == 0) "■" else "└─"
       val suffix =
         if (!loaded(td)) "  [no TypeDefinition resource found]"

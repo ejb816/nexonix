@@ -37,11 +37,11 @@ class MinimalTypeTest extends AnyFunSuite with PersistentTestLog {
 
   test("a fileless named member generates source that compiles (generation is total)") {
     val minimal = TypeDefinition(TypeName("Foo", _namePackage = Seq("draco")))
-    val source = Generator.generate(minimal)
+    val source = DracoGenerator.generate(minimal)
     assert(source.contains("trait Foo"), s"expected a bare trait; got:\n$source")
     assert(source.contains("object Foo"), s"expected a base object; got:\n$source")
 
-    Generator.compile(source, "Foo.scala") match {
+    DracoGenerator.compile(source, "Foo.scala") match {
       case Right(_) => // the minimal named type compiles
       case Left(errs) =>
         log.info(source)
