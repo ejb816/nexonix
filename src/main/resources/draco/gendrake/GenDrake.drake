@@ -7,4 +7,6 @@ domain draco gendrake GenDrake
   target draco draketarget DrakeTarget
   types [
     Emission
+    Emit
+    Emitter
   ]

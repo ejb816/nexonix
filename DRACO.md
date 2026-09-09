@@ -43,24 +43,24 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **575 tests / 41
-suites**: 565 at `1cb3578`, then five per-type tests each for `draketarget.Surface` and
-`gendrake.Emission` — the first target-side value type and the first leaf conversion of a
-generator transform — which also moves the two type COUNTS below — 90 draco types in
-scope, 100 measured — and none of the loss figures. These are the headlines those tests
-print. They go to the console
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **592 tests / 42
+suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+`generator.SurfaceReceived` and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
+the first suite that fires a generator transform as rules — which also moves the two type
+COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures. These
+are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|CO-DECLARATION|error|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 15 fields across 100 types — expression form 12, empty-collection spelling 3 |
-| `DrakeParseTest` | Drake.parse scope | 90 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 15 fields across 103 types — expression form 12, empty-collection spelling 3 |
+| `DrakeParseTest` | Drake.parse scope | 93 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -76,7 +76,8 @@ that was true when written and became 15 at `324556c`, which is exactly the drif
 table exists to make visible.
 
 Two of these have since become ASSERTIONS and are deliberately not listed: the scenario
-now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports.
+now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports. So
+does `GenDrakeTest`'s `GenDrake runs` line — in the capture grep for visibility, not here.
 Moving a measurement into an assertion is the goal; the table should shrink over time.
 
 **Where things are recorded** — four artifacts, four jobs, do not conflate them:

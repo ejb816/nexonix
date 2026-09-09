@@ -1,0 +1,10 @@
+type SurfaceReceived
+domain draco generator Generator
+rule
+  pattern
+    variables
+      var surface draco.draketarget.Surface
+  action
+    loc received java.util.List(draco.draketarget.Surface) ctx.getRuntime parameters
+      .get parameters par "received"
+    mon received.add parameters par surface

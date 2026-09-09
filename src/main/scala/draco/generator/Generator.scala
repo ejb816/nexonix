@@ -8,7 +8,7 @@ object Generator extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Generator", _namePackage = Seq ("draco", "generator")))
   lazy val dracoType: Type[Generator] = Type[Generator] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ()
+  lazy val elementTypeNames: Seq[String] = Seq ("SurfaceReceived")
 
   lazy val domainType: Domain[Generator] = Domain[Generator] (typeDefinition)
 }

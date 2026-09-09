@@ -1,0 +1,17 @@
+type Emitter
+  factory ActorType
+    parameters
+      par received java.util.List(draco.draketarget.Surface)
+domain draco gendrake GenDrake
+actor
+  messageType draco TypeDefinition
+  start
+    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession parameters
+    mon session.set parameters
+      par "received"
+      par received
+  message
+    mon session.insert parameters par Seq(msg): _*
+    mon session.fire parameters
+  signal
+    mon session.close parameters

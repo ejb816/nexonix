@@ -20,6 +20,18 @@ the block below.
 
 ### Changed
 
+- **`GenDrake` runs.** The first generator transform fires as rules: `gendrake.Emit` matches a
+  `TypeDefinition` in working memory and inserts an `Emission`; `generator.SurfaceReceived` — in the
+  super-domain, so every target's product arrives at one place — gives the inserted `Surface` its
+  working-memory node and hands it to whoever set "received" on the session; `gendrake.Emitter` is
+  the actor, `messageType TypeDefinition`, whose Knowledge is assembled from its domain chain (its own
+  `Emit`, its super's `SurfaceReceived`). `GenDrakeTest` inserts every `src/main` definition, fires,
+  and asserts the received surfaces ARE the corpus's `.drake` files, whitespace-normalized — the
+  rule-driven path against the files the hand-written emitter is pinned to, with the two files
+  authored ahead of the emitter left out. `DracoGenerator` and `Drake.emit` are unchanged: the rules
+  wrap the conversion, which wraps the engine; what changed is that a definition now crosses a
+  transform domain through working memory and comes out the other side as its surface.
+
 - **`DrakeTarget` has a value type, and `GenDrake` has its first leaf conversion.**
   `draco.draketarget.Surface from Primal(String)` — the drake surface of a definition, the thing a
   morphism into `DrakeTarget` produces; and `draco.gendrake.Emission from Surface`, a factory taking a

@@ -1110,7 +1110,15 @@ object DracoGenerator extends App {
     * emission to permit partial migration). */
   private def containerName (td: TypeDefinition) : String = {
     val tn = td.domainAspect.typeName
-    if (tn != null && tn.name.nonEmpty) wildcardTypeName(tn) else ""
+    if (tn == null || tn.name.isEmpty) ""
+    // Package-qualified when a bare reference would not reach the container — the same
+    // probe derivationRef applies to a parent. The case that forced it: a leaf in
+    // draco.generator whose container is draco.generator.Generator, while `import
+    // draco._` brings draco.Generator[T] into scope; a wildcard import OUTRANKS a member
+    // of the file's own package defined in another file, so the bare name silently
+    // meant the root type. Not ambiguity — the wrong one, without a warning.
+    else if (isAmbiguousBare(td, tn)) s"${tn.namePackage.mkString(".")}.${wildcardTypeName(tn)}"
+    else wildcardTypeName(tn)
   }
 
   /** Emit a Scala-visible mirror of the domain's elementTypeNames list. JSON remains

@@ -13,6 +13,9 @@
         "draco",
         "generator"
       ]
-    }
+    },
+    "elementTypeNames": [
+      "SurfaceReceived"
+    ]
   }
 }

@@ -1,0 +1,64 @@
+{
+  "typeName": {
+    "name": "SurfaceReceived",
+    "namePackage": [
+      "draco",
+      "generator"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Generator",
+      "namePackage": [
+        "draco",
+        "generator"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "surface",
+          "valueType": "draco.draketarget.Surface"
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Local",
+          "name": "received",
+          "valueType": "java.util.List[draco.draketarget.Surface]",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ctx.getRuntime"
+                    ]
+                  },
+                  "get"
+                ]
+              },
+              "\"received\""
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "received.add",
+              "surface"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -43,7 +43,9 @@
       ]
     },
     "elementTypeNames": [
-      "Emission"
+      "Emission",
+      "Emit",
+      "Emitter"
     ],
     "source": {
       "name": "Draco",

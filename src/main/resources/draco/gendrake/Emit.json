@@ -1,0 +1,55 @@
+{
+  "typeName": {
+    "name": "Emit",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "emission",
+          "valueType": "Emission",
+          "value": {
+            "()": [
+              "Emission",
+              "definition"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "ctx.insert",
+              "emission"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

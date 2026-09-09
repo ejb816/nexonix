@@ -1,0 +1,9 @@
+type Emit
+domain draco gendrake GenDrake
+rule
+  pattern
+    variables
+      var definition TypeDefinition
+  action
+    fix emission Emission parameters par definition
+    mon ctx.insert parameters par emission

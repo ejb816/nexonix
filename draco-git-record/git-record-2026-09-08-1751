@@ -1,0 +1,94 @@
+# GenDrake runs: three new trios (gendrake/Emit, generator/SurfaceReceived, gendrake/Emitter), two
+# domain member lists (generator/Generator, gendrake/GenDrake), one new test suite
+# (draco.gendrake.GenDrakeTest), DRACO.md, CHANGELOG. All corpus files drake-first off the fresh
+# classes; DrakeCLI check over src/main: surface drift 2 (the authoredAhead pair), json drift 0.
+# One engine edit, forced by the first build: see THE HAZARD FIRED in the message.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 592 / 42 — five per-type tests for each of three definitions, plus GenDrakeTest's
+# two gates and its new headline, `GenDrake runs: 88 of 88 definitions emitted, 0 missing, 0
+# not in the corpus` (88 = the 90 draco definitions minus the two authored ahead of the
+# emitter). Two headline COUNTS move and the table carries them: `15 fields across 103 types`
+# (still 12 + 3), `93 draco + 10 mods`. No loss figure moves. Paste the capture lines.
+#
+# What only the run can check: that the chain fires — Emit's inserted Emission reaching
+# SurfaceReceived — in Evrete's DEFAULT activation mode with 88 TypeDefinition facts. If the
+# RUNS gate fails, paste its assertion and the first "expected, not received" block from
+# target/test-output/GenDrakeTest.log.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-08-1751 | sed '1d' > /tmp/msg && git add -A && git commit -F /tmp/msg && git push
+
+--- MESSAGE ---
+GenDrake runs: a definition crosses a transform domain and comes out as its surface
+
+Three commits ago the generator domains existed as structure with empty member lists, and the
+record listed what the forest had shown a transform needs to RUN: types on the target side, a
+receiver, an actor. 6f5a8bb gave DrakeTarget its Surface and GenDrake its conversion. This is the
+rest, and the gate that fires it.
+
+THE THREE MEMBERS
+
+    gendrake.Emit               rule    var definition TypeDefinition -> fix emission Emission(definition); insert
+    generator.SurfaceReceived   rule    var surface draketarget.Surface -> received.add(surface)
+    gendrake.Emitter            actor   messageType TypeDefinition; par received; Knowledge from its chain
+
+Emit is the morphism as the engine sees it: a definition in working memory becomes an Emission, which
+IS a Surface. It wraps the conversion Emission, which wraps Drake.emit; nothing in the engine changed.
+
+SurfaceReceived is in the SUPER-DOMAIN, by Dev's decision, for the forest's reason: Forest owns
+BirchAlarmReceived so that both species' actors see it, and here a Surface arriving is the same event
+whichever transform produced it. It is generator.Generator's first member and its reason to exist as
+a domain rather than a package. The rule is not decoration — a fact inserted by a rule's action gets
+no working-memory node unless something consumes it, and the forest was silent until that rule
+existed. Its body is BirchAlarmReceived's, tree-form: `ctx.getRuntime parameters .get parameters par
+"received"` then `received.add`.
+
+Emitter is Draco's own actor shape — `factory ActorType` with a construction parameter, start sets it
+on the session, message inserts and fires, signal closes — with the DEFAULT activation mode rather
+than Draco's CONTINUOUS, because this is a chain: Emit's output is what SurfaceReceived matches.
+actorKnowledge walked the chain unasked: its Knowledge accepts Emit and draco.generator.SurfaceReceived,
+which is what 87a2bb9 built `super` to do.
+
+THE GATE, AND WHAT ITS ORACLE IS
+
+GenDrakeTest fires the same two rules by hand — no actor system, as the forest's gate does — over
+every src/main definition, and asserts that the received surfaces ARE the corpus: the set of
+normalized `.drake` files equals the set of normalized Surface values. The oracle is the files, not
+Drake.emit. Comparing to Drake.emit would be circular (Emission calls it); the files are what
+DrakeGenTest pins Drake.emit TO, so a surface that matches the file is a surface the rule-driven path
+produced exactly as the hand-written emitter would have. The two files authored ahead of the emitter
+are left out of the insert, as DrakeGenTest leaves them out — so 88 of 90.
+
+Sets rather than a per-definition match, because a Surface has no identity: it is the text and
+nothing else. That is honest about what the target type is today, and it is the next thing the
+structure lacks — a product that knows which definition it is the surface OF is what a receiver
+needs before it can write anything anywhere. The receiver collects; it does not sink.
+
+THE HAZARD FIRED
+
+1cb3578's record named a latent hazard: a file importing both draco._ and draco.generator._ would find
+a bare \`Generator\` ambiguous. The first build of this commit showed it is worse than ambiguity.
+SurfaceReceived lives IN draco.generator, and its projection said \`Domain[Generator]\` — meaning its
+container, the super-domain. But \`import draco._\` is a wildcard import, and in Scala a wildcard import
+outranks a member of the file's own package defined in another file. So \`Generator\` silently meant
+\`draco.Generator[T]\`, the root transform type, and the compiler said "takes type parameters".
+generator/Generator.scala itself compiled only because its object is in the same file.
+
+derivationRef already solves this for a parent on the extends clause — isAmbiguousBare probes every
+package in the file's unqualified scope for the simple name and qualifies when another one holds it.
+The container reference did not go through it. Now it does: containerName applies the same probe, so
+a leaf whose container's name is shadowed says \`Domain[draco.generator.Generator]\`. A corpus scan
+found exactly one such leaf today (SurfaceReceived; the self-domain path stays bare, since inside its
+own file the name is its own). The .scala is spliced by hand to the predicted line, as the fix cannot
+be compiled from the session; DracoGenTest checks it.
+
+WHAT DID NOT CHANGE, AND WHAT IS NEXT
+
+GenDrake.generator, the function, still stands beside Emit, and CLI still calls it. It retires when
+the CLI goes through the actor — which needs the sink, which needs identity on the product. Then
+GenScala, whose rules are the 43 dispatch sites, on the shape this commit proved on the smaller case.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

@@ -1,0 +1,99 @@
+{
+  "typeName": {
+    "name": "Emitter",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "dracoAspect": {
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ActorType",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "received",
+          "valueType": "java.util.List[draco.draketarget.Surface]"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  },
+  "actorAspect": {
+    "message": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(msg): _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.fire"
+            ]
+          }
+        }
+      ]
+    },
+    "messageType": {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    "signal": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.close"
+            ]
+          }
+        }
+      ]
+    },
+    "start": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "session",
+          "valueType": "org.evrete.api.StatefulSession",
+          "value": {
+            "()": [
+              "knowledge.newStatefulSession"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.set",
+              "\"received\"",
+              "received"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
