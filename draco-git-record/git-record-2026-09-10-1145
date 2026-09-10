@@ -1,0 +1,70 @@
+# Emission moves up: generator/Emission (was gendrake/Emission, now from Primal(String), par value),
+# generator/EmissionReceived (was SurfaceReceived, matches Emission), gendrake/Emit (builds
+# Emission(GenDrake.generator(definition)) — a bracketed nested argument), gendrake/Emitter (received
+# list typed by Emission), the two member lists (generator/Generator, gendrake/GenDrake), GenDrakeTest
+# (names only), DRACO.md, CHANGELOG. No engine edit. Every trio member is CLI output off the fresh
+# classes with the fresh resources on the classpath; DrakeCLI check over src/main: surface drift 2
+# (the authoredAhead pair), json drift 0; DrakeCLI parse of Emit.drake carries the nested application
+# back as a tree. The renames were staged with `git mv`; `git add -A` picks up the rest.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 592 / 42, unchanged — two definitions moved or renamed, none added; `GenDrake runs: 91 of
+# 91 definitions emitted, 0 missing, 0 not in the corpus`; every table row as DRACO.md has it. The
+# loss figure should stay at 15 (12 + 3): the old Emission body was a host-opaque string, never a
+# tree, so dropping it removes no loss. If `surface losses` moves at all, stop — that is a signal,
+# not noise. Paste the capture lines.
+#
+# What only the run can check: (1) Emit compiles — `draco.generator.Emission(GenDrake.generator(definition))`
+# reaches a sibling App object's lazy global from inside a rule action; (2) the chain still fires —
+# Emit's inserted Emission reaching EmissionReceived, with `Emission` and `TypeDefinition` unrelated
+# fact types (#63's co-declaration hazard does not apply). If the RUNS gate fails, paste its
+# assertion and the first "expected, not received" block from target/test-output/GenDrakeTest.log.
+#
+# PATH-SCOPED: the tree also holds Cowork's one-word fix to the journal intro, which goes in its own
+# journal commit.
+#
+# If green:
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-10-1145 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-10-1145 && git push
+
+--- MESSAGE ---
+Emission is the super-domain's product, and the receiver matches it
+
+Last night's refinement of transforms — composition by concatenation and substitution, substitution
+strings as target-domain types, per-aspect forms, and RULES THAT ARE TARGET-LANGUAGE-NEUTRAL — put
+three freshly landed pieces out of alignment. This is the first of the three, and the smallest: the
+super-domain gets a product type that names no target, and the receiver matches that.
+
+WHAT MOVED
+
+    draco.generator.Emission          from Primal(String); par value String        (was gendrake, from Surface)
+    draco.generator.EmissionReceived  var emission Emission -> received.add        (was SurfaceReceived)
+    draco.gendrake.Emit               fix emission draco.generator.Emission parameters
+                                        par [ GenDrake.generator parameters par definition ]
+    draco.gendrake.Emitter            par received java.util.List(draco.generator.Emission)
+
+Emission was Potency's shape — derives the target's type, takes a parameter typed in the source, body
+calls Drake.emit. Every one of those three is a target reference, and the receiver in the super-domain
+could only match it by naming draketarget.Surface. Now it is Surface's shape — Compound's — one level
+up: the rendered text of a definition, whatever the target rendered it. It takes the text; it does not
+know how the text was made. The knowing moved to Emit, which is in gendrake and may know: it applies
+the domain's own `generator` global, which has been `draco.Drake.emit` since 1cb3578, and wraps the
+result. That is the first bracketed nested argument in src/main, and DrakeCLI parse carries it back as
+the tree it was authored as.
+
+Surface stays in draketarget as the target's own type. Nothing produces it today; when a GenDrake
+product needs to be drake-typed and not merely text, it is there to derive.
+
+WHAT DID NOT
+
+The gate. GenDrakeTest is the same two assertions with the names moved: the Emitter's Knowledge
+accepts Emit and EmissionReceived, and inserting every src/main definition and firing yields the set
+of committed .drake files — 91 of 91. The oracle is still the files. DracoGenerator is untouched; the
+domain member counts net to zero (one type left gendrake, one arrived in generator), so the parse
+scope stays 93 and the suite stays 592 / 42.
+
+Emit still lives in gendrake, and Generator(T) still has no `generate`. Those are the other two
+realignments, each its own commit.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

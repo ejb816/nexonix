@@ -1,5 +1,6 @@
 type Generator
 domain draco generator Generator
   types [
-    SurfaceReceived
+    Emission
+    EmissionReceived
   ]

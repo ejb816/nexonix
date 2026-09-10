@@ -1,0 +1,10 @@
+type EmissionReceived
+domain draco generator Generator
+rule
+  pattern
+    variables
+      var emission Emission
+  action
+    loc received java.util.List(Emission) ctx.getRuntime parameters
+      .get parameters par "received"
+    mon received.add parameters par emission

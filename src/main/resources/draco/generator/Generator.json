@@ -15,7 +15,8 @@
       ]
     },
     "elementTypeNames": [
-      "SurfaceReceived"
+      "Emission",
+      "EmissionReceived"
     ]
   }
 }

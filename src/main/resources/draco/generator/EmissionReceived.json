@@ -1,6 +1,6 @@
 {
   "typeName": {
-    "name": "SurfaceReceived",
+    "name": "EmissionReceived",
     "namePackage": [
       "draco",
       "generator"
@@ -21,8 +21,8 @@
       "variables": [
         {
           "kind": "Variable",
-          "name": "surface",
-          "valueType": "draco.draketarget.Surface"
+          "name": "emission",
+          "valueType": "Emission"
         }
       ]
     },
@@ -32,7 +32,7 @@
         {
           "kind": "Local",
           "name": "received",
-          "valueType": "java.util.List[draco.draketarget.Surface]",
+          "valueType": "java.util.List[Emission]",
           "value": {
             "()": [
               {
@@ -54,7 +54,7 @@
           "value": {
             "()": [
               "received.add",
-              "surface"
+              "emission"
             ]
           }
         }

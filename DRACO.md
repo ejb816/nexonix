@@ -45,7 +45,7 @@ suite does not mean nothing regressed.
 
 **The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **592 tests / 42
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
-`generator.SurfaceReceived` and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
+`generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures. These
 are the headlines those tests print. They go to the console

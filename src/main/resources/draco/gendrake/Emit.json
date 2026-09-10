@@ -32,11 +32,16 @@
         {
           "kind": "Fixed",
           "name": "emission",
-          "valueType": "Emission",
+          "valueType": "draco.generator.Emission",
           "value": {
             "()": [
-              "Emission",
-              "definition"
+              "draco.generator.Emission",
+              {
+                "()": [
+                  "GenDrake.generator",
+                  "definition"
+                ]
+              }
             ]
           }
         },

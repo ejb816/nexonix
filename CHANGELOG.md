@@ -129,6 +129,17 @@ for the definition that will replace it.
 
 ### Changed
 
+- **`Emission` is the super-domain's product, and the receiver matches it.**
+  `draco.generator.Emission from Primal(String)` — the rendered text of a definition, whatever the
+  target — replaces `gendrake.Emission from Surface`. It takes its value as a parameter and calls
+  nothing, so the neutral tier names no target type and no target conversion. `generator.SurfaceReceived`
+  is now `EmissionReceived` and matches `Emission`; `gendrake.Emit` builds the product from its domain's
+  `generator` global — `Emission(GenDrake.generator(definition))`, the first bracketed nested argument
+  authored in `src/main`, carried as a tree — and `Emitter`'s received list is typed by it.
+  `draketarget.Surface` stays as the target's own type, produced by nothing yet. `GenDrakeTest` is the
+  same gate with the names moved. First of the three realignments to the transform refinement of
+  2026-09-09; `Emit` moving to the super-domain and `generate` on `Generator(T)` follow.
+
 - **`GenDrake` runs.** The first generator transform fires as rules: `gendrake.Emit` matches a
   `TypeDefinition` in working memory and inserts an `Emission`; `generator.SurfaceReceived` — in the
   super-domain, so every target's product arrives at one place — gives the inserted `Surface` its

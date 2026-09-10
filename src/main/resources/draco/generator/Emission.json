@@ -3,16 +3,18 @@
     "name": "Emission",
     "namePackage": [
       "draco",
-      "gendrake"
+      "generator"
     ]
   },
   "dracoAspect": {
     "derivation": [
       {
-        "name": "Surface",
+        "name": "Primal",
         "namePackage": [
-          "draco",
-          "draketarget"
+          "draco"
+        ],
+        "typeParameters": [
+          "String"
         ]
       }
     ],
@@ -22,26 +24,18 @@
       "parameters": [
         {
           "kind": "Parameter",
-          "name": "definition",
-          "valueType": "TypeDefinition"
-        }
-      ],
-      "body": [
-        {
-          "kind": "Fixed",
           "name": "value",
-          "valueType": "String",
-          "value": "draco.Drake.emit(_definition)"
+          "valueType": "String"
         }
       ]
     }
   },
   "domainAspect": {
     "typeName": {
-      "name": "GenDrake",
+      "name": "Generator",
       "namePackage": [
         "draco",
-        "gendrake"
+        "generator"
       ]
     }
   }

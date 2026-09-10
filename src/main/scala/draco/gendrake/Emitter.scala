@@ -16,11 +16,11 @@ object Emitter extends App with DracoType {
   private lazy val knowledge: Knowledge = {
     val k = Rule.knowledgeService.newKnowledge("Emitter")
     Emit.ruleType.pattern.accept(k)
-    draco.generator.SurfaceReceived.ruleType.pattern.accept(k)
+    draco.generator.EmissionReceived.ruleType.pattern.accept(k)
     k
   }
 
-  def actorType(received: java.util.List[draco.draketarget.Surface]): ActorType = new Actor[draco.TypeDefinition] {
+  def actorType(received: java.util.List[draco.generator.Emission]): ActorType = new Actor[draco.TypeDefinition] {
     override lazy val typeDefinition: TypeDefinition = Emitter.typeDefinition
 
     val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
