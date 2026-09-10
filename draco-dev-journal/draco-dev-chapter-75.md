@@ -1,6 +1,6 @@
 # Draco Dev Journal — Chapter 75
 
-**Session date:** August 28–31, 2026 (session in progress)
+**Session date:** August 28–31, 2026
 **Topic:** The forest scenario made real, gate by gate: the generate-and-compile gate built in the session's first turn — and the session-transition ritual run prematurely with it, Dev's confusion surfaced honestly ("Why so early in this new session?") and the record rolled back by Dev's own hand — then the three findings worked through: the cross-package import ambiguity fixed as a pure win, the codec-guard fork put to Dev and answered by a design correction transcribed verbatim ("The purpose of derived unit types is to identify unit conversion formula expressions, not to structurally morph a type"), `super` left visible in a headline rather than patched → the transform-domain question ("is transform-ness a derivation or an aspect?") answered by the `05b14bd` precedent and Dev's directive "Move source and target to domainAspect and add the drake keywords" — the metamodel move landed with two new globally reserved words and `83d87ac` pushed → the beta-priorities question, the four-point proposal (freeze the metamodel #51, gate the example tier, make `Drake.parse` an authoring path #61, one falsifying second projection), and Dev's redirect making the scenario the priority ("We should stabilize that before we try to get closer to beta working on something else") → `super` projecting, Gate 4 verified by breaking it, Gate 5 executing the forest for real (0.8 µM crosses at ×0.62, 0.3 µM filtered), two bugs found in the gate's own classloader handling → Dev's double catch transcribed verbatim ("You are not generating any source code because you are not parsing the drake into json. Also, you are writing Scala value expressions instead of using drake expression syntax") — the drake-expression rewrite immediately flushing two defects the Scala-writing habit had hidden, the scenario becoming a full trio corpus in the test tree at `87a2bb9`, 531 tests → the report-only archaeology (15 vs the alpha.6 notes' 16), the baselines table written into DRACO.md at Dev's word, and the closing protocol exchanges on full-result pastes versus the nine-line capture, ending with a commitment written to memory rather than promised. Transcript.
 
 ---
@@ -579,7 +579,7 @@ I've written this into the `feedback_full_suite_before_push` memory note rather 
 
 ---
 
-*(Session in progress at time of transcription — chapter to be extended when the session closes.)*
+*(The session ends here — no further exchanges were recorded after the full-result-protocol discussion, and no in-session closing ritual appears in the data. Its work was already committed (`83d87ac`, `87a2bb9`, `9616748`); the next session opened thirty-three minutes later, picking up with source generation from the scenario JSON — chapter 76.)*
 
 ## Status
 

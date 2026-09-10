@@ -1,0 +1,17 @@
+# draco-dev-journal only: chapter 76 (new, 1106 lines — the session from August 31 through
+# September 9), chapter 75 marked closed, the intro's counts and status brought to 76. Written
+# by Cowork, not this session; this record exists because every commit carries one. No suite
+# run needed. PATH-SCOPED to the journal directory.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-09-2243 | sed '1d' > /tmp/msg && git commit -F /tmp/msg -- draco-dev-journal/ draco-git-record/git-record-2026-09-09-2243 && git push
+
+--- MESSAGE ---
+draco-dev-journal: chapter 76, and the intro brought to it
+
+Chapter 76 covers August 31 through September 9 — from "generate the source from the scenario JSON"
+(already done, the session found) through the case body element, the Source/Carrier/Target grounding,
+the generator domains as a transform structure, and GenDrake running over the whole corpus. Chapter
+75 closes; the intro's chapter count, the DRAKE-and-self-hosting span and the status paragraph move
+to 76.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
