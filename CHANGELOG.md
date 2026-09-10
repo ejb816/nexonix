@@ -18,48 +18,16 @@ the block below.
 
 ## [Unreleased]
 
-### Changed
-
-- **`GenDrake` runs.** The first generator transform fires as rules: `gendrake.Emit` matches a
-  `TypeDefinition` in working memory and inserts an `Emission`; `generator.SurfaceReceived` — in the
-  super-domain, so every target's product arrives at one place — gives the inserted `Surface` its
-  working-memory node and hands it to whoever set "received" on the session; `gendrake.Emitter` is
-  the actor, `messageType TypeDefinition`, whose Knowledge is assembled from its domain chain (its own
-  `Emit`, its super's `SurfaceReceived`). `GenDrakeTest` inserts every `src/main` definition, fires,
-  and asserts the received surfaces ARE the corpus's `.drake` files, whitespace-normalized — the
-  rule-driven path against the files the hand-written emitter is pinned to, with the two files
-  authored ahead of the emitter left out. `DracoGenerator` and `Drake.emit` are unchanged: the rules
-  wrap the conversion, which wraps the engine; what changed is that a definition now crosses a
-  transform domain through working memory and comes out the other side as its surface.
-
-- **`DrakeTarget` has a value type, and `GenDrake` has its first leaf conversion.**
-  `draco.draketarget.Surface from Primal(String)` — the drake surface of a definition, the thing a
-  morphism into `DrakeTarget` produces; and `draco.gendrake.Emission from Surface`, a factory taking a
-  `TypeDefinition` whose body is `Drake.emit` of it — the transform's one member, in the shape the
-  forest's `Potency` has: derives a type in `target`, takes a parameter typed in `source`. Both
-  drake-first. Found on the way: the projection quotes ANY expression tree in a `String`-typed slot
-  (`defaultInitializer`), so a computed string cannot yet be authored in tree form; `Emission`'s body
-  is the opaque call, which is also what `Drake.parse` produces for it.
-
-- **The generator domains exist as structure.** Source code generation is a cross-domain transform:
-  `draco.Generator(T)` is the transform from `Draco` to a target `T`, a definition-backed root type;
-  `draco.generator.Generator` — no longer parameterized, no longer carrying a function — is the
-  super-domain of every generator transform, with `carrier` still under it; `draco.genscala.GenScala
-  from Generator(ScalaTarget)` and `draco.gendrake.GenDrake from Generator(DrakeTarget)` are the two
-  transforms, peer packages under `draco` with `source draco Draco`, their `target`, and `super
-  draco generator Generator`; `draco.draketarget.DrakeTarget from Target` is the emission side of the
-  definition language, beside `draco.drake.Drake from Source`. The engine's two faces moved: `GenScala`
-  holds `generator = DracoGenerator.generate`, `GenDrake` holds `generator = Drake.emit`, and
-  `ScalaTarget` and `Drake` no longer carry them; `CLI` points at the new homes. Every member list is
-  empty — nothing executes through the structure yet. A transform domain's `source` / `target` /
-  `super` packages were already imported by the projection, which is what lets `Generator(ScalaTarget)`
-  resolve across packages without the surface naming a package inside the parentheses.
-
-- **The hand-written engine is `draco.DracoGenerator`, renamed from `draco.Generator`.** Same object,
-  same behaviour, 32 files repointed; `GeneratorCLI` and `bin/draco-gen` keep their names. The rename
-  frees `draco.Generator` for the definition-backed `type Generator(T)` — the transform from Draco to a
-  target `T` that each generator sub-domain (`draco.genscala.GenScala from Generator(ScalaTarget)`)
-  will derive — which would otherwise have collided with the engine in the same package.
+Since alpha.6 the work has run in one direction: the rule engine draco ships is becoming the engine
+draco generates *with*. The forest scenario became a full corpus and executes; drake gained a `case`
+body element and the engine wrote its first `match` from a definition; Source and Target became
+roles, the definition language was grounded as *the* Source with JSON demoted to a bootstrap
+carrier, and the rule "never author in a carrier what Drake cannot parse back" was written down;
+source-code generation was restructured as a cross-domain transform — `Generator(T)`, a super-domain,
+`GenScala` and `GenDrake` as peer transform domains, `DrakeTarget` beside `Drake` — and `GenDrake`
+runs: every definition in `src/main` crosses a transform domain through working memory and comes out
+as its own `.drake`, byte for byte. The hand-written engine was renamed `DracoGenerator` to make room
+for the definition that will replace it.
 
 ### Added
 
@@ -103,8 +71,9 @@ the block below.
   marker type in the root domain; a domain takes a role by deriving one. `Drake from draco Source` —
   it parses to the normative form, and a carrier format is legitimate as far as its round-trip with
   Drake holds. `ScalaTarget from draco Target` — it had derived `Source`, which was the roles crossed.
-  `Generator(L)` is parameterized by a Target and universal over Sources, which is why it carries a
-  type parameter and no `source` keyword. README's domain table says so.
+  README's domain table says so. *(A later entry in this release corrects one claim made here at the
+  time: `Generator` is not "universal over Sources" — every generator transform is pairwise, with
+  `source draco Draco`.)*
 
 - **`case`, a body element for dispatch on a sibling subtype — specified in `drake.dlt`, not yet built.**
   `case *<name> <Type> [ … ]` inside an actor's `message`: ordered, first-match-wins, optional (an actor
@@ -159,6 +128,47 @@ the block below.
   Recorded in DRACO.md's gotchas, since nothing throws and no test fails when it happens.
 
 ### Changed
+
+- **`GenDrake` runs.** The first generator transform fires as rules: `gendrake.Emit` matches a
+  `TypeDefinition` in working memory and inserts an `Emission`; `generator.SurfaceReceived` — in the
+  super-domain, so every target's product arrives at one place — gives the inserted `Surface` its
+  working-memory node and hands it to whoever set "received" on the session; `gendrake.Emitter` is
+  the actor, `messageType TypeDefinition`, whose Knowledge is assembled from its domain chain (its own
+  `Emit`, its super's `SurfaceReceived`). `GenDrakeTest` inserts every `src/main` definition, fires,
+  and asserts the received surfaces ARE the corpus's `.drake` files, whitespace-normalized — the
+  rule-driven path against the files the hand-written emitter is pinned to, with the two files
+  authored ahead of the emitter left out. `DracoGenerator` and `Drake.emit` are unchanged: the rules
+  wrap the conversion, which wraps the engine; what changed is that a definition now crosses a
+  transform domain through working memory and comes out the other side as its surface.
+
+- **`DrakeTarget` has a value type, and `GenDrake` has its first leaf conversion.**
+  `draco.draketarget.Surface from Primal(String)` — the drake surface of a definition, the thing a
+  morphism into `DrakeTarget` produces; and `draco.gendrake.Emission from Surface`, a factory taking a
+  `TypeDefinition` whose body is `Drake.emit` of it — the transform's one member, in the shape the
+  forest's `Potency` has: derives a type in `target`, takes a parameter typed in `source`. Both
+  drake-first. Found on the way: the projection quotes ANY expression tree in a `String`-typed slot
+  (`defaultInitializer`), so a computed string cannot yet be authored in tree form; `Emission`'s body
+  is the opaque call, which is also what `Drake.parse` produces for it.
+
+- **The generator domains exist as structure.** Source code generation is a cross-domain transform:
+  `draco.Generator(T)` is the transform from `Draco` to a target `T`, a definition-backed root type;
+  `draco.generator.Generator` — no longer parameterized, no longer carrying a function — is the
+  super-domain of every generator transform, with `carrier` still under it; `draco.genscala.GenScala
+  from Generator(ScalaTarget)` and `draco.gendrake.GenDrake from Generator(DrakeTarget)` are the two
+  transforms, peer packages under `draco` with `source draco Draco`, their `target`, and `super
+  draco generator Generator`; `draco.draketarget.DrakeTarget from Target` is the emission side of the
+  definition language, beside `draco.drake.Drake from Source`. The engine's two faces moved: `GenScala`
+  holds `generator = DracoGenerator.generate`, `GenDrake` holds `generator = Drake.emit`, and
+  `ScalaTarget` and `Drake` no longer carry them; `CLI` points at the new homes. Every member list is
+  empty — nothing executes through the structure yet. A transform domain's `source` / `target` /
+  `super` packages were already imported by the projection, which is what lets `Generator(ScalaTarget)`
+  resolve across packages without the surface naming a package inside the parentheses.
+
+- **The hand-written engine is `draco.DracoGenerator`, renamed from `draco.Generator`.** Same object,
+  same behaviour, 32 files repointed; `GeneratorCLI` and `bin/draco-gen` keep their names. The rename
+  frees `draco.Generator` for the definition-backed `type Generator(T)` — the transform from Draco to a
+  target `T` that each generator sub-domain (`draco.genscala.GenScala from Generator(ScalaTarget)`)
+  will derive — which would otherwise have collided with the engine in the same package.
 
 - **`super` projects: an actor's Knowledge now draws on its super-domain's rules.** `actorKnowledge`
   read only the actor's own domain, so a transform rule owned by the root spanning two message domains

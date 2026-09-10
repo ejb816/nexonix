@@ -268,7 +268,9 @@ trusted without checking the code:
   questions). One shared skeleton; only the toolchain, projection command, running, and
   command set are target-specific.
 - **`AGENTS.md`** — a *diverged older copy* of this file, not a symlink. Should be one.
-- **`CHANGELOG.md`** — stops at alpha.5 (2026-06-03); ~25 git-records since.
+- **`CHANGELOG.md`** — **current.** Release blocks through alpha.6 (2026-08-17); `[Unreleased]`
+  carries one entry per commit since, written with each commit's record, and was consolidated
+  into one section each (Added / Changed / Fixed / Build) with a lead paragraph on 2026-09-09.
 - **`drake.dlt`** — current and authoritative for the surface.
 - **`HOLARCHY.md` / `ORION.md`** — aspirational; vocabulary largely absent from code.
 

@@ -1,0 +1,28 @@
+# CHANGELOG.md and DRACO.md only — no code, no corpus. Nothing has changed since 4c977e5's
+# green run, so no suite run is needed for this commit; if you want the ritual anyway, the
+# capture line is unchanged and every number should read as the table has it.
+#
+# PATH-SCOPED: the tree also holds the dev-journal changes, which go in their own commit
+# (the next record). The IDE auto-adds new files, so the pathspec is on the commit.
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-09-2242 | sed '1d' > /tmp/msg && git commit -F /tmp/msg -- CHANGELOG.md DRACO.md draco-git-record/git-record-2026-09-09-2242 && git push
+
+--- MESSAGE ---
+CHANGELOG: the Unreleased block consolidated, and DRACO.md stops calling it stale
+
+Dev asked for a CHANGELOG covering what has been pushed since the previous one. An audit against the
+git log found it already did: twenty-five entries across the eighteen substantive commits since the
+alpha.6 release, each written with its commit's record as the operating rule requires. What it lacked
+was shape. The entries had accumulated newest-first under whichever heading each commit prepended,
+which left the block with two "Changed" sections and no way to read it as a whole.
+
+Now one section each — Added, Changed, Fixed, Build — with every entry preserved verbatim and a lead
+paragraph naming the arcs: the forest as a corpus, the case body element, Source and Target as roles
+with Drake as the Source, generation as a transform, and GenDrake running. One entry carried a claim
+the same release later overrode — that Generator is "universal over Sources" — and says so now in
+place, rather than being rewritten to look right in hindsight.
+
+DRACO.md §5 said the CHANGELOG "stops at alpha.5"; it has carried alpha.6 and a full Unreleased
+block since 8aef403. Corrected in the same commit, as that file's own rule requires.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
