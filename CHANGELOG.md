@@ -129,6 +129,14 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A transform domain is a domain of transform types, and its source is `TypeDefinition`.**
+  `GenDrake` and `GenScala` no longer carry a `generator` function global: a transform domain's
+  members are the types that transform, each deriving a type on the target side and taking a
+  `TypeDefinition`, and the domain owns no function of its own. Their `source` is `TypeDefinition`,
+  the type every member takes, rather than the `Draco` domain; `target` is unchanged. `gendrake.Emit`
+  calls `Drake.emit` directly, and the CLI's `generate` and `drake` commands call `DracoGenerator.generate`
+  and `Drake.emit` directly instead of through the globals. `GenDrakeTest` is unchanged, 91 of 91.
+
 - **`Emission` is the super-domain's product, and the receiver matches it.**
   `draco.generator.Emission from Primal(String)` — the rendered text of a definition, whatever the
   target — replaces `gendrake.Emission from Surface`. It takes its value as a parameter and calls

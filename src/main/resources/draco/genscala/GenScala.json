@@ -24,14 +24,6 @@
           "ScalaTarget"
         ]
       }
-    ],
-    "globalElements": [
-      {
-        "kind": "Fixed",
-        "name": "generator",
-        "valueType": "TypeDefinition => String",
-        "value": "DracoGenerator.generate"
-      }
     ]
   },
   "domainAspect": {
@@ -43,7 +35,7 @@
       ]
     },
     "source": {
-      "name": "Draco",
+      "name": "TypeDefinition",
       "namePackage": [
         "draco"
       ]

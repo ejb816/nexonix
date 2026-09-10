@@ -80,7 +80,7 @@
         "body": [
           {
             "kind": "Monadic",
-            "value": "println(genscala.GenScala.generator(load(path)))"
+            "value": "println(DracoGenerator.generate(load(path)))"
           }
         ]
       },
@@ -98,7 +98,7 @@
         "body": [
           {
             "kind": "Monadic",
-            "value": "println(draco.gendrake.GenDrake.generator(load(path)))"
+            "value": "println(Drake.emit(load(path)))"
           }
         ]
       },

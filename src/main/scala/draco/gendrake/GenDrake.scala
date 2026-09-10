@@ -13,5 +13,4 @@ object GenDrake extends App with DracoType {
   lazy val elementTypeNames: Seq[String] = Seq ("Emit", "Emitter")
 
   lazy val domainType: Domain[GenDrake] = Domain[GenDrake] (typeDefinition)
-  lazy val generator: TypeDefinition => String = draco.Drake.emit
 }

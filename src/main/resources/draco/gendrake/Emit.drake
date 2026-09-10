@@ -6,5 +6,5 @@ rule
       var definition TypeDefinition
   action
     fix emission draco.generator.Emission parameters
-      par [ GenDrake.generator parameters par definition ]
+      par [ draco.Drake.emit parameters par definition ]
     mon ctx.insert parameters par emission

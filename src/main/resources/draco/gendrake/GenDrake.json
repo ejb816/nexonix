@@ -24,14 +24,6 @@
           "DrakeTarget"
         ]
       }
-    ],
-    "globalElements": [
-      {
-        "kind": "Fixed",
-        "name": "generator",
-        "valueType": "TypeDefinition => String",
-        "value": "draco.Drake.emit"
-      }
     ]
   },
   "domainAspect": {
@@ -47,7 +39,7 @@
       "Emitter"
     ],
     "source": {
-      "name": "Draco",
+      "name": "TypeDefinition",
       "namePackage": [
         "draco"
       ]

@@ -1,0 +1,67 @@
+# Transform domains to Dev's shape: gendrake/GenDrake and genscala/GenScala lose their `generator`
+# global and their `source` becomes draco TypeDefinition (was draco Draco); gendrake/Emit calls
+# draco.Drake.emit directly; CLI's generate/drake commands call DracoGenerator.generate / Drake.emit
+# directly (they were the globals' only callers). README's transform-domain passage and outlook
+# bullet brought to it; CHANGELOG. No engine edit; no test edit. Every trio member is CLI output
+# off the fresh classes with fresh resources on the classpath; DrakeCLI check: json drift 0.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 592 / 42, every row as DRACO.md has it, `GenDrake runs: 91 of 91`, losses 15 (12 + 3).
+# The removed globals were plain path leaves, never trees, so no loss figure moves; if one does,
+# stop. Paste the capture lines.
+#
+# What only the run can check: CLI compiles with bare `DracoGenerator` and `Drake` — both are
+# package draco (mods compiles into root), same as CLI itself, so no import is needed.
+#
+# PATH-SCOPED: the tree still holds Cowork's one-word journal-intro fix; it stays out.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-10-1328 | sed '1d' > /tmp/msg && git add -A -- src README.md CHANGELOG.md draco-git-record && git commit -F /tmp/msg -- src README.md CHANGELOG.md draco-git-record/git-record-2026-09-10-1328 && git push
+
+--- MESSAGE ---
+A transform domain is a domain of transform types, and its source is TypeDefinition
+
+After c4c3341 moved Emission up, the next question was how a neutral rule in the super-domain would
+invoke the specific transform — and the proposal was a `generate` member on Generator(T), with the
+transform inserted as a fact. Dev's answer withdrew the question:
+
+    type GenDrake from Generator(DrakeTarget)
+    domain draco gendrake GenDrake
+      types [ <list of transform type names> ]
+
+The transform is not a value and not a fact. It is a DOMAIN, and its members are the types that do
+the transforming — each derives a type on the target side and takes a TypeDefinition. So the domain
+owns no function: the `generator` global that 1cb3578 put on each transform domain is gone from both.
+And the source is the type every member takes, not the domain the type lives in: `source draco
+TypeDefinition`, `target draco draketarget DrakeTarget` — parallel to GenScala with ScalaTarget.
+
+`super draco generator Generator` stays, and the source/target answer is the reason it does: the two
+transform domains share a source and differ only in target, and the super-domain is where what they
+share lives — Emission and its receiver. Source/target are the transform's endpoints; super is the
+domain chain. Independent, and both needed.
+
+WHAT MOVED
+
+    gendrake/GenDrake   globals gone; source draco TypeDefinition
+    genscala/GenScala   globals gone; source draco TypeDefinition
+    gendrake/Emit       par [ draco.Drake.emit parameters par definition ]     (was GenDrake.generator)
+    draco/CLI           generate -> DracoGenerator.generate(load(path)); drake -> Drake.emit(load(path))
+
+The CLI was the globals' other caller, so its two commands now say what they always did in fact:
+they call the engine. That is the honest statement of a host tool; when GenDrake's transform types
+exist, the CLI can run the domain instead.
+
+Both readers of source/target — the engine's import derivation and the scenario's gate 4 — treat
+them as data, so this is a corpus change with no engine edit. Gate 4's own criterion, "a member
+takes a parameter typed in the source", now reads literally for GenDrake: the source IS
+TypeDefinition.
+
+WHAT IS NEXT
+
+The member list. The first transform type in GenDrake is the first substitution string with a
+mapping factory — one aspect's syntactic form, on Emission's shape one level down — and how a
+substitution is written in drake is the design question that precedes it.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

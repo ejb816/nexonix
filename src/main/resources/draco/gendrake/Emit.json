@@ -38,7 +38,7 @@
               "draco.generator.Emission",
               {
                 "()": [
-                  "GenDrake.generator",
+                  "draco.Drake.emit",
                   "definition"
                 ]
               }

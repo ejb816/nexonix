@@ -1,7 +1,5 @@
 type GenScala from draco Generator(ScalaTarget)
-  globals
-    fix generator (TypeDefinition -> String) DracoGenerator.generate
 domain draco genscala GenScala
   super draco generator Generator
-  source draco Draco
+  source draco TypeDefinition
   target draco scalatarget ScalaTarget

@@ -18,12 +18,12 @@ type CLI(L)
     dyn generate Unit [
       parameters
         par path String
-      mon println(genscala.GenScala.generator(load(path)))
+      mon println(DracoGenerator.generate(load(path)))
     ]
     dyn drake Unit [
       parameters
         par path String
-      mon println(draco.gendrake.GenDrake.generator(load(path)))
+      mon println(Drake.emit(load(path)))
     ]
     fix commands {String, [String] -> Unit} Map("version" -> (_ => version), "inspect" -> (as => inspect(as.head)), "generate" -> (as => generate(as.head)), "drake" -> (as => drake(as.head)))
     dyn main Unit [

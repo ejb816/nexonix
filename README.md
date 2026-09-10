@@ -263,10 +263,14 @@ holds. A Target is what definitions project into. Source code generation is a cr
 transform like any other: `draco.Generator(T)` is the transform from `Draco` to a target `T`,
 and each generator sub-domain derives it for one target — `GenScala from Generator(ScalaTarget)`,
 `GenDrake from Generator(DrakeTarget)` — as a peer package under `draco` whose `source` is
-always `Draco` and whose `super` is `draco.generator.Generator`. Their members are meant to be
-the morphisms, as rules, from a definition to that target's source text; today each holds one
-function element pointing at the hand-written engine, and the six-way dispatch in
-`DracoGenerator` is those rules, unwritten. `DrakeTarget` exists beside `Drake` so that what
+`TypeDefinition`, whose `target` is that target's domain, and whose `super` is
+`draco.generator.Generator` — the super-domain holds what every target shares: `Emission`, the
+target-neutral product (the rendered text of a definition), and `EmissionReceived`, its receiver.
+A transform domain is a domain of TRANSFORM TYPES: each member derives a type on the target side
+and takes parameters typed `TypeDefinition`; the domain carries no function of its own. Today
+`GenDrake` holds the rule `Emit`, which wraps the hand-written emitter, and the actor `Emitter`
+that runs the chain; `GenScala` holds nothing yet, and the six-way dispatch in `DracoGenerator`
+is its transform types, unwritten. `DrakeTarget` exists beside `Drake` so that what
 is learned targeting other languages can be turned on the definition language itself.
 
 **Base** — measurement types:
@@ -437,9 +441,10 @@ directions:
   conventional.
 - **Expression grammar** — parsing every value form into trees, closing the last gap
   between the surface and the definition.
-- **`GenScala` as rules** — the generator transform domains exist as structure; their
-  members are still one function each, and the engine's dispatch has to become their rules.
-  Additional targets beyond Scala follow the same shape.
+- **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
+  runs, wrapping the hand-written emitter; the transform types that replace the engine's
+  dispatch, one per aspect's syntactic form, are unwritten for both targets. Additional targets
+  beyond Scala follow the same shape.
 - **Dreams** — an editor for creating and modifying types, domains, rules, and actors
   through their definitions.
 - **Orion** — cross-domain system-of-systems interaction patterns.
