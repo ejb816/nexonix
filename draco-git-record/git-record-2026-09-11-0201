@@ -1,0 +1,64 @@
+# The first member of the transform domain. New trio gendrake/DomainLineOf (authored drake-first:
+# .drake written, DrakeCLI parse produced the .json, emit reproduces the .drake exactly, GeneratorCLI
+# produced the .scala with NO splice — the compiled engine is current since a052883); gendrake/GenDrake's
+# member list (its .json edited by hand and confirmed identical to parse(.drake)); DomainLineTest's
+# corpus sweep now calls DomainLineOf(td) instead of mapping by hand; DRACO.md baselines; CHANGELOG.
+# No engine edit. Emitter's projection regenerated and unchanged (a non-rule member adds nothing to
+# the Knowledge).
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainLine over|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 605 / 43 (five per-type tests); type counts move and the table carries them — `15 fields
+# across 105 types` (still 12 + 3), `95 draco + 10 mods`; `GenDrake runs: 93 of 93`; `DomainLine
+# over the corpus: 94 of 94 domain lines reproduced, 1 parameterized skipped, 0 wrong` (one more
+# definition, DomainLineOf's own). No loss figure moves. Paste the capture lines.
+#
+# What only the run can check: the generated anonymous-class body — a plain `val line` computed from
+# the parameter, then `value` reading it — under the trait's lazy `value`. That shape is the old
+# Emission's (4c977e5), so it has compiled before.
+#
+# PATH-SCOPED: the tree still holds Cowork's journal-intro fix; it stays out.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-11-0201 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-11-0201 && git push
+
+--- MESSAGE ---
+DomainLineOf is the first member of the transform domain
+
+359e590 made GenDrake a domain of transform types with an empty list of them. a052883 put the
+first substitution string on the target side. This is the member that joins the two: a definition
+in, the target's line out.
+
+    type DomainLineOf from draco draketarget DomainLine
+      factory
+        parameters
+          par definition TypeDefinition
+        body
+          loc line DomainLine parameters
+            par _definition.domainAspect.typeName.namePackage
+            par _definition.domainAspect.typeName.name
+          fix value String line.value
+    domain draco gendrake GenDrake
+
+It has the shape the scenario's gate 4 states for a transform member and the shape the old
+gendrake.Emission had before it moved up: derives a type on the target side, takes a parameter typed
+in the source, computes the target's value. Now that the source IS TypeDefinition (359e590), the
+parameter's type and the domain's source line say the same word. Nothing in the body is Scala —
+two path selections on the definition, one construction on the application surface, one read of
+the target type's own value — so nothing needed declaring.
+
+The test that was written as this member's oracle becomes exactly that. DomainLineTest's corpus
+sweep built DomainLine from the pointer by hand; now it hands DomainLineOf the definition and
+compares. The by-hand mapping is gone from the test tree, and the sweep grows by one line: the
+member's own.
+
+Authored through the parser again — .drake first, parse to .json, emit back exact — and this time
+the engine needed no splice, since a052883's symbol table is in the compiled classes. GenDrake's
+.json was edited by hand for its member list and confirmed identical to what parse gives.
+
+WHAT IS NEXT. One line of a definition's surface is definition-backed end to end. The type header
+is the next form, and it is the first with a CONDITIONAL clause — `from` appears only when a
+derivation does — which is the first substitution string that needs more than `++` and `join`.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

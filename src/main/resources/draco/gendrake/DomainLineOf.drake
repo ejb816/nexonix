@@ -1,0 +1,10 @@
+type DomainLineOf from draco draketarget DomainLine
+  factory
+    parameters
+      par definition TypeDefinition
+    body
+      loc line DomainLine parameters
+        par _definition.domainAspect.typeName.namePackage
+        par _definition.domainAspect.typeName.name
+      fix value String line.value
+domain draco gendrake GenDrake

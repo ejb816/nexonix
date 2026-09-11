@@ -4,6 +4,7 @@ domain draco gendrake GenDrake
   source draco TypeDefinition
   target draco draketarget DrakeTarget
   types [
+    DomainLineOf
     Emit
     Emitter
   ]

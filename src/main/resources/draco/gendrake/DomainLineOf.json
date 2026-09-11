@@ -1,0 +1,60 @@
+{
+  "typeName": {
+    "name": "DomainLineOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DomainLine",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DomainLineOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "line",
+          "valueType": "DomainLine",
+          "value": {
+            "()": [
+              "DomainLine",
+              "_definition.domainAspect.typeName.namePackage",
+              "_definition.domainAspect.typeName.name"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "String",
+          "value": "line.value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

@@ -17,8 +17,9 @@ import scala.util.Using
  *  `domain` line, and `DomainLine` built from the definition's own domain pointer must
  *  reproduce it byte for byte. A domain line carrying type parameters (`Format(F)`) is
  *  outside `DomainLine`'s shape — its name is a String — and is counted, not compared.
- *  The mapping from a definition to the two arguments is done here by hand; making it
- *  a transform type in `GenDrake` is the next increment, and this test is its oracle. */
+ *  The mapping from a definition to the two arguments is `gendrake.DomainLineOf`, the
+ *  first member of the transform domain: this test hands it the definition and only
+ *  compares. */
 class DomainLineTest extends AnyFunSuite with PersistentTestLog {
 
   private val dracoRoot = Paths.get("src/main/resources/draco")
@@ -40,15 +41,14 @@ class DomainLineTest extends AnyFunSuite with PersistentTestLog {
     assert(DomainLine(Seq("draco", "draketarget"), "DrakeTarget").value == "domain draco draketarget DrakeTarget")
   }
 
-  test("DomainLine reproduces every committed domain line in the corpus") {
+  test("DomainLineOf reproduces every committed domain line in the corpus") {
     val pairs = jsonPaths.flatMap(p => if (Files.isRegularFile(drakeBeside(p))) definition(p).map(td => (p, td)) else None)
     assume(pairs.nonEmpty, s"no definitions under $dracoRoot")
 
     val (parameterized, plain) = pairs.partition { case (_, td) => td.domainAspect.typeName.typeParameters.nonEmpty }
     val wrong = plain.flatMap { case (p, td) =>
-      val pointer  = td.domainAspect.typeName
       val expected = domainLineOf(p)
-      val got      = DomainLine(pointer.namePackage, pointer.name).value
+      val got      = draco.gendrake.DomainLineOf(td).value
       if (expected.contains(got)) None
       else Some(s"${p.getFileName}: expected ${expected.getOrElse("<no domain line>")}, got $got")
     }

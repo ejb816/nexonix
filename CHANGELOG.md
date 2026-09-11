@@ -31,6 +31,14 @@ for the definition that will replace it.
 
 ### Added
 
+- **`DomainLineOf`, the first member of the transform domain.** `draco.gendrake.DomainLineOf from
+  draketarget.DomainLine` takes a `TypeDefinition` and constructs the target type from the definition's
+  own domain pointer — the mapping factory to `DomainLine`'s substitution string, in the shape a
+  transform member has (derives a target-side type, takes the source type). Nothing in it is Scala:
+  two path selections, one construction, one read of the target's value. `DomainLineTest`'s corpus
+  sweep now hands every `src/main` definition to `DomainLineOf` and only compares; the by-hand mapping
+  it carried is gone. Authored drake-first, through the parser.
+
 - **`DomainLine`, the first transform type, and `join`, the first declared symbol.**
   `draco.draketarget.DomainLine from Surface` is a substitution string with a mapping factory:
   `"domain " ++ join " " package ++ " " ++ name`, authored as a `++` tree, drake-first, and projected
