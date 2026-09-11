@@ -261,6 +261,45 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         diffReport(handNorm, roundNorm, "authored", "round-tripped"))
   }
 
+  // --- Concatenation, asserted structurally ---
+  //
+  // `++` is the first operator-layer symbol the parser trees (drake.dlt CONCATENATION):
+  // the neutral form of a substitution string — literals interleaved with names and
+  // applications. The smallest surface that exhibits every operand kind: two literals,
+  // one bracketed application, one name; the shape GenDrake's first transform type
+  // takes. Asserted as a tree, so a piece silently degrading to opaque text fails as a
+  // wrong tree; then round-tripped both ways; then rendered by the engine, which must
+  // NOT quote it the way it quotes a type tree in a String-typed slot.
+
+  test("concatenation: `++` round-trips as one flat tree and renders as an expression") {
+    val authored =
+      """type DomainLine from Surface
+        |  factory
+        |    parameters
+        |      par package [String]
+        |      par name String
+        |    body
+        |      fix value String "domain " ++ [ packagePart parameters par package ] ++ " " ++ name
+        |domain draco draketarget DrakeTarget
+        |""".stripMargin
+    val parsed   = Drake.parse(authored)
+    val value    = parsed.dracoAspect.factory.body.head.value
+    val expected = Json.obj("++" -> Json.arr(
+      Json.fromString("\"domain \""),
+      Json.obj("()" -> Json.arr(Json.fromString("packagePart"), Json.fromString("package"))),
+      Json.fromString("\" \""),
+      Json.fromString("name")))
+    assert(value == expected, s"++ did not come back as one flat tree: ${value.noSpaces}")
+    val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
+    if (handNorm != roundNorm)
+      fail("concatenation surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
+    val once  = TypeDefinition.encoder(parsed).spaces2
+    val twice = TypeDefinition.encoder(Drake.parse(Drake.emit(parsed))).spaces2
+    if (once != twice) fail("parse(emit(parse(text))) drifted from parse(text)." + diffReport(once, twice, "once", "twice"))
+    assert(DracoGenerator.expression(value) == "\"domain \" ++ packagePart(package) ++ \" \" ++ name",
+      s"engine rendering: ${DracoGenerator.expression(value)}")
+  }
+
   // --- The measured tail: where the surface is not yet information-complete ---
 
   test("drake surface losses, unnormalized (report only)") {

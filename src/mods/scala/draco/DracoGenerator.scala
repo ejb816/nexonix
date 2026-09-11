@@ -99,7 +99,9 @@ object DracoGenerator extends App {
             case "if"       => s"if (${args(0)}) ${args(1)} else ${args(2)}"
             case "="        => s"${args(0)} = ${args(1)}"
             case "(,)"      => args.mkString("(", ", ", ")")
-            case "*" | "==" | "!=" | "||" => args.mkString(s" $op ")
+            // "++" (drake.dlt CONCATENATION) keeps its spelling: Scala's `++` on a String
+            // demands a String operand, where `+` would coerce anything to text.
+            case "*" | "==" | "!=" | "||" | "++" => args.mkString(s" $op ")
             case _          => sys.error(s"DracoGenerator.expression: unknown operator '$op' in ${value.noSpaces}")
           }
         case _ => sys.error(s"DracoGenerator.expression: unrenderable value ${value.noSpaces}")
@@ -152,9 +154,13 @@ object DracoGenerator extends App {
   private def initializer (valueType: String, value: Json) : String =
     constructionInitializer(valueType, value).getOrElse(defaultInitializer(valueType, value))
 
+  /** A tree in a String-typed slot denotes its SURFACE TEXT and renders quoted (the
+    * exemplar is TypeElement's own valueType) — except a `++` concatenation, which is
+    * a COMPUTATION of the string and renders as the expression it is. */
   private def defaultInitializer (valueType: String, value: Json) : String = {
     val rendered = expression(value)
-    if (value != null && value.isObject && valueType == "String") "\"" + rendered + "\"" else rendered
+    if (value != null && value.isObject && valueType == "String" && !Expression.isConcat(value)) "\"" + rendered + "\""
+    else rendered
   }
 
   // --- Literal generation helpers ---

@@ -31,6 +31,16 @@ for the definition that will replace it.
 
 ### Added
 
+- **`++` is the first operator the drake parser trees.** A `++` run in a value position —
+  `"domain " ++ [ packagePart parameters par package ] ++ " " ++ name` — is now one flat
+  concatenation node in the normative form, drake's own spelling of a substitution string: literals
+  interleaved with names and applications, in Haskell's form, with no host interpolation syntax.
+  `Drake.emit` writes it, `Drake.parse` reads it back (an application operand brackets itself, as a
+  nested argument does), and the engine renders it as Scala `++` — and, for the first time, does NOT
+  quote a tree sitting in a `String`-typed slot, since a concatenation is a computation of the string
+  rather than its surface text. Declared in `drake.dlt` (EXPRESSIONS, CONCATENATION). One structural
+  test in `DrakeParseTest`; no definition in the corpus uses it yet — `draketarget.DomainLine` is next.
+
 - **`case` is a reserved word, and the first two case-branches are in the corpus.** `TypeName.equals`
   — the last `src/main` definition carrying `case` inside host-opaque text — is now two branches,
   `case tn TypeName [ = … ]` and a default `case [ = false ]`, in a dyn body; the projection is the

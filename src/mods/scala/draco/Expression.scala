@@ -26,6 +26,18 @@ object Expression {
   def operands (value: Json) : Vector[Json] =
     value.asObject.flatMap(_("()")).flatMap(_.asArray).getOrElse(Vector.empty)
 
+  /** The `{op: [operands]}` node a tree value is: (op, operands). None for a leaf
+    * (a string, null, or anything that is not a single-key object). */
+  def node (value: Json) : Option[(String, Vector[Json])] =
+    if (value == null) None
+    else value.asObject.filter(_.size == 1).flatMap(_.toList.headOption)
+      .map { case (op, operands) => (op, operands.asArray.getOrElse(Vector(operands))) }
+
+  /** True iff `value` is a `++` concatenation node (drake.dlt CONCATENATION) — the
+    * flat, associative run of pieces that is the neutral form of a substitution
+    * string. Its operands are `node(value).get._2`. */
+  def isConcat (value: Json) : Boolean = node(value).exists(_._1 == "++")
+
   /** A named argument `{"=": [name, value]}` -> (name, value); None when the
     * argument is positional. */
   def namedArgument (value: Json) : Option[(String, Json)] =

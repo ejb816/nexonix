@@ -43,11 +43,12 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **592 tests / 42
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **593 tests / 42
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
-COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures. These
+COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
+structural test in `DrakeParseTest` for the `++` operator (2026-09-10). These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -211,7 +212,8 @@ Value types are
 `src/main/resources/draco/drake.dlt`, which is current and authoritative.
 
 **Caveat, and it matters if you author drake:** `Drake.parse` builds expression trees only
-for the application surface. Every other value — lambdas, `if/then/else`, `->`, operators
+for the application surface and the `++` concatenation operator (the first operator-layer
+symbol it trees, 2026-09-10). Every other value — lambdas, `if/then/else`, `->`, other operators
 — returns as a host-opaque string in *drake* form, which `DracoGenerator.expression` would pass
 verbatim into Scala. Parse is a measurement tool, not yet an authoring path (GitHub #61).
 

@@ -1,0 +1,61 @@
+# ENGINE increment, no corpus change: `++` becomes the first operator-layer symbol Drake.parse trees.
+# Drake.scala (emit: `++` case, concatLines, valueLines/leafLines/inlineableArg dispatch; parse:
+# `++` reserved, parseValue = operand + concatenation, bracketed operands, arguments claim a
+# following `++`), Expression.scala (`node`, `isConcat`), DracoGenerator.scala (`++` renders as
+# `++`; defaultInitializer no longer quotes a `++` tree in a String slot), drake.dlt (operator
+# entry + CONCATENATION paragraph), DrakeParseTest (one structural test), DRACO.md (593; caveat),
+# CHANGELOG. NOT verified offline: the compiled classes predate these edits, so nothing here has
+# run — the suite is the first execution. The corpus carries no `++` token anywhere (grep over
+# main, mods and test resources), so reserving it changes no existing parse.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 593 / 42 (one new test), every row as DRACO.md has it — losses 15 (12 + 3), scope
+# 93 + 10, GenDrake 91 of 91. Nothing in the corpus reaches the new code except through
+# `reserved`, so any moved number here is a parser regression, not a legitimate move. Paste the
+# capture lines; if the new test fails, paste its assertion — it names which of the four checks
+# (tree shape, surface round-trip, JSON round-trip, engine rendering) broke.
+#
+# PATH-SCOPED: the tree still holds Cowork's journal-intro fix; it stays out.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-10-1721 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-10-1721 && git push
+
+--- MESSAGE ---
+++ is the first operator the drake parser trees, and a substitution string is its own form
+
+Dev's shape for the first transform type put the design question on the table: a substitution
+string is "string literals interleaved with function call literals", and the corpus's only spelling
+of that today is Scala's s"…" interpolation, carried opaque. Drake needs its own, applicable to every
+target. Juxtaposition — Dev's first draft — is already application in the grammar drake adopted, so
+`packagePart package " "` would read as a two-argument call; the literal cannot rescue it without
+deciding by token type, which the spec's own rule (close the grammar, don't tie-break it) forbids.
+Haskell has the operator for exactly this interleaving, and it keeps the shape intact:
+
+    fix value String "domain " ++ [ packagePart parameters par package ] ++ " " ++ name
+
+THE TREE. {"++": [pieces…]} — flat and associative like ".", one node holding every piece in order.
+A leaf piece is a literal or a name; an application piece is an ordinary "()" node.
+
+THE SURFACE. ` ++ ` between pieces. An application piece BRACKETS ITSELF, for the reason a nested
+argument does: its `par` list cannot bound itself, and the `]` is what ends it before the next `++`.
+It follows that a `++` arriving after an argument belongs to the argument, by the nearest-open-
+construct rule that gives a `.member` to the pending chain; to concatenate onto the call, bracket
+the call. `++` is a reserved token — that is the whole parser change in principle: a value slot
+stops at it as at any keyword, and the operand before it is closed with no layout consulted.
+
+THE ENGINE. ScalaTarget renders `++` as `++`, not `+`: Scala's `++` on a String demands a String
+operand, where `+` would coerce anything to text — the tighter one is the one that catches a slot
+fed the wrong type. And defaultInitializer, which quotes any tree in a String-typed slot (the limit
+6f5a8bb found, which kept Emission's body opaque), now exempts a concatenation: a `++` tree is a
+COMPUTATION of the string, not its surface text. That exemption is what lets the next commit author
+DomainLine's value as a tree at all.
+
+WHAT IS NOT HERE. A definition using it. The corpus carries no `++`, so the gates exercise the
+new code only through the reserved set; the one structural test in DrakeParseTest is the whole
+exercise — tree shape, surface round-trip, JSON round-trip, engine rendering, on exactly the
+DomainLine shape. The lesson from the case increment stands: an increment that authors nothing
+cannot exercise the engine, and the next commit authors.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

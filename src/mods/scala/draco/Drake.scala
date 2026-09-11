@@ -54,7 +54,7 @@ object Drake {
             case "if"       => s"if ${args(0)} then ${args(1)} else ${args(2)}"
             case "(,)"      => args.mkString("(", ", ", ")")
             case "="        => args.mkString(" = ")
-            case "*" | "==" | "!=" | "||" => args.mkString(s" $op ")
+            case "*" | "==" | "!=" | "||" | "++" => args.mkString(s" $op ")
             case _          => sys.error(s"Drake.expression: unknown operator '$op' in ${value.noSpaces}")
           }
         case _ => sys.error(s"Drake.expression: unrenderable value ${value.noSpaces}")
@@ -142,6 +142,7 @@ object Drake {
     * `.member parameters …` line per call; a lone call renders `<fn> parameters …`. */
   private def valueLines (prefix: String, contIndent: String, value: Json) : Seq[String] = {
     if (isTuple(value)) Seq(s"$prefix ${inlineValue(value)}")
+    else if (Expression.isConcat(value)) concatLines(prefix, contIndent, Expression.node(value).get._2)
     else if (!Expression.isApplication(value)) Seq(s"$prefix ${expression(value)}")
     else if (isChain(value)) {
       val (base, calls) = unfoldChain(value)
@@ -159,6 +160,28 @@ object Drake {
     } else applyLines(s"$prefix ${expression(Expression.operands(value).head)}", contIndent, Expression.operands(value).tail)
   }
 
+  /** A `++` concatenation (drake.dlt CONCATENATION): every operand on one flat run
+    * with ` ++ ` between them. A leaf operand (a literal or a name) is its own text;
+    * an APPLICATION operand brackets itself, exactly as a nested argument does and for
+    * the same reason — its `par` list cannot bound itself, so the `]` is what closes
+    * it before the next `++`. A bracketed operand that unfolds over several lines (a
+    * multi-argument call, a chain) carries the run on from its closing bracket. */
+  private def concatLines (prefix: String, indent: String, operands: Vector[Json]) : Seq[String] = {
+    val done = Seq.newBuilder[String]
+    var head = prefix
+    operands.zipWithIndex.foreach { case (operand, i) =>
+      val lines =
+        if (!Expression.isApplication(operand)) Seq(s"$head ${expression(operand)}")
+        else valueLines(s"$head [", indent, operand) match {
+          case Seq(single) => Seq(s"$single ]")
+          case several     => several :+ s"$indent]"
+        }
+      if (i < operands.size - 1) { done ++= lines.init; head = s"${lines.last} ++" }
+      else done ++= lines
+    }
+    done.result()
+  }
+
   /** Emit a `parameters` block: `<prefix> parameters` then its arguments. A single
     * leaf argument sits inline (`… parameters par x`); two or more (or a non-leaf
     * single arg) each get their own `par` line one level deeper. */
@@ -168,9 +191,14 @@ object Drake {
     else s"$prefix parameters" +: args.flatMap(a => parLines(indent + "  ", a))
   }
 
-  /** An argument inlines when its value is a leaf (not itself an application). */
-  private def inlineableArg (arg: Json) : Boolean =
-    !Expression.isApplication(Expression.namedArgument(arg).map(_._2).getOrElse(arg))
+  /** An argument inlines when its value is a leaf (not itself an application), or a
+    * concatenation of leaves — one carrying an application must go through
+    * concatLines so that operand can bracket itself. */
+  private def inlineableArg (arg: Json) : Boolean = {
+    val value = Expression.namedArgument(arg).map(_._2).getOrElse(arg)
+    !Expression.isApplication(value) &&
+      !(Expression.isConcat(value) && Expression.node(value).get._2.exists(Expression.isApplication))
+  }
 
   private def inlinePar (arg: Json) : String = Expression.namedArgument(arg) match {
     case Some((name, v)) => s"${namedPrefix(name)} ${expression(v)}"
@@ -369,7 +397,7 @@ object Drake {
           if (!isChain(e.value) && expression(Expression.operands(e.value).head) == vtSlot)
             applyLines(prefix, indent, Expression.operands(e.value).tail)
           else valueLines(prefix, indent, e.value)
-        } else if (isTuple(e.value)) valueLines(prefix, indent, e.value)
+        } else if (isTuple(e.value) || Expression.isConcat(e.value)) valueLines(prefix, indent, e.value)
         else {
           val value = defaultValue(expression(e.value))
           Seq(if (value.nonEmpty) s"$prefix $value" else prefix)
@@ -629,6 +657,10 @@ object Drake {
       // `case` (drake.dlt CASE-BRANCH) — reserved from 3b on, once the last definition
       // carrying the word inside host-opaque text (TypeName.equals) had converted.
       "case",
+      // `++` (drake.dlt CONCATENATION) — the first operator-layer symbol the parser
+      // trees. Reserving it is what closes the operand before it: a value slot stops
+      // at `++` as it stops at any keyword, so no layout is consulted.
+      "++",
       "=", "[", "]")
 
   /** One drake token: its source text and its span.
@@ -732,14 +764,34 @@ object Drake {
 
   private def parseValue (c: Cursor) : Json = parseValue (c, "")
 
-  /** The value slot. A `parameters` keyword following the head turns the value into
-    * an application tree — applyLines's inverse, `<fn> parameters par <arg> …`. When
-    * no head precedes it the function IS the declared value type (leafLines's
+  /** The value slot: one OPERAND, then any `++` run it opens (drake.dlt
+    * CONCATENATION). */
+  private def parseValue (c: Cursor, anonymousHead: String) : Json =
+    concatenation (c, operand (c, anonymousHead))
+
+  /** One operand. A `parameters` keyword following the head turns it into an
+    * application tree — applyLines's inverse, `<fn> parameters par <arg> …`. When no
+    * head precedes it the function IS the declared value type (leafLines's
     * anonymous-construction form), which `anonymousHead` supplies. Whatever the head
     * resolved to, any `.member parameters …` continuations that follow fold onto it
-    * as a call chain. */
-  private def parseValue (c: Cursor, anonymousHead: String) : Json =
-    chainCalls (c, applied (c, span (c), anonymousHead))
+    * as a call chain. A BRACKETED operand is read whole — that is how an application
+    * sits inside a concatenation, since its `par` list cannot bound itself before the
+    * `++` (concatLines's inverse). */
+  private def operand (c: Cursor, anonymousHead: String) : Json =
+    if (c.at ("[")) { c.take (); val value = parseValue (c); c.expect ("]"); value }
+    else chainCalls (c, applied (c, span (c), anonymousHead))
+
+  /** `first` followed by a `++` run, folded into one flat `++` node. `++` is
+    * reserved, so the operand before it has already closed; each later operand reads
+    * exactly as the first did, brackets included. */
+  private def concatenation (c: Cursor, first: Json) : Json =
+    if (!c.at ("++")) first
+    else {
+      val pieces = Vector.newBuilder[Json]
+      pieces += first
+      while (c.at ("++")) { c.take (); pieces += operand (c, "") }
+      Json.obj ("++" -> Json.fromValues (pieces.result ()))
+    }
 
   /** `head` applied to a `parameters` list, or the bare leaf when no list follows. */
   private def applied (c: Cursor, head: String, anonymousHead: String) : Json =
@@ -769,12 +821,16 @@ object Drake {
     * they differ only by indentation, which drake does not read. The chain wins: a
     * pending chain is nearer than the argument it just passed, which is what
     * `cursor .get[Double] parameters par "latitude" .getOrElse parameters par 0.0`
-    * means. An argument that wants its own chain says so with its brackets. */
+    * means. An argument that wants its own chain says so with its brackets.
+    *
+    * A `++` arriving after an argument — bracketed or not — belongs to that argument,
+    * by the same nearest-open-construct rule: `par [ f parameters par x ] ++ "b"` is
+    * the argument f(x) ++ "b". To concatenate onto the CALL, bracket the call. */
   private def arguments (c: Cursor, chained: Boolean) : Seq[Json] = {
     val collected = Seq.newBuilder[Json]
     def argument () : Json =
-      if (c.at ("[")) { c.take (); val value = parseValue (c); c.expect ("]"); value }
-      else if (chained) applied (c, span (c), "")
+      if (c.at ("[")) { c.take (); val value = parseValue (c); c.expect ("]"); concatenation (c, value) }
+      else if (chained) concatenation (c, applied (c, span (c), ""))
       else parseValue (c)
     while (c.at ("par")) {
       c.take ()

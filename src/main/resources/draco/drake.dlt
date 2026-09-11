@@ -83,6 +83,12 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
     "if"  conditional — HASKELL FORM: [cond, then, else]. drake surface if c then t else e ;
           ScalaTarget renders if (c) t else e.
     "!="  inequality — infix, operands joined with the operator
+    "++"  CONCATENATION — HASKELL FORM; FLAT VARIADIC (associative): one node holds every piece in
+          order, string literals interleaved with names and applications — the neutral form of a
+          SUBSTITUTION STRING ({"++": ["\"domain \"", {"()": ["packagePart","package"]}, "\" \"", "name"]}).
+          drake surface a ++ b ++ c ; ScalaTarget renders " ++ " (tighter than +, which coerces any
+          right operand to text). THE FIRST OPERATOR THE PARSER TREES (2026-09-10) — see CONCATENATION
+          under APPLICATION SURFACE for how its operands bound themselves.
     (further operators arrive with corpus conversion, each declared before use)
   HASKELL-FORM SURFACE — drake adopts Haskell's syntactic forms for value-expression
   constructs (\ lambda, if-then-else); the tree is form-neutral and each generator transform
@@ -150,6 +156,16 @@ APPLICATION SURFACE  (how a "()" tree is written in a value position — multi-l
   the nested `parameters` (the container) — the same reason as everywhere else in BRACKETS. It also
   lifts the chain restriction above: inside its own brackets an argument may be a chain, since the `]`
   ends it before the enclosing chain can claim the next `.member`. Corpus case: domains/aerial/Input.
+  CONCATENATION — a `++` sequence in a value position is one flat tree, and each operand is a LEAF
+  (a literal or a name) or an APPLICATION THAT BRACKETS ITSELF, exactly as a nested argument does:
+      fix value String "domain " ++ [ packagePart parameters par package ] ++ " " ++ name
+  `++` is a reserved token, so a value slot stops at it and the operand before it is closed. An
+  application operand needs the brackets for the same reason a nested argument does: its `par` list
+  cannot bound itself, and the `]` is what ends it before the `++`. It follows that a `++` arriving
+  after an argument — bracketed or not — belongs to that argument: `f parameters par x ++ "b"` is
+  f(x ++ "b"), by the same nearest-open-construct rule that gives a `.member` to the pending chain.
+  To concatenate onto the CALL, bracket the call: `[ f parameters par x ] ++ "b"`. A concatenation may
+  itself be an argument (`par "a" ++ [ g parameters par y ]`) and a chain-call argument alike.
 
 REFERENCES  (how `from` and `modules` name another type)
   <Name> *(<A> ...)                  BARE — resolves in the REFERRING TYPE'S OWN package
