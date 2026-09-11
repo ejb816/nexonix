@@ -1,0 +1,83 @@
+# The first transform type. New trio draketarget/DomainLine (authored DRAKE-FIRST: the .drake was
+# written, DrakeCLI parse produced the .json, DrakeCLI emit reproduces the .drake exactly, the
+# GeneratorCLI produced the .scala with ONE spliced line — `_package.mkString(" ")` — which the
+# compiled engine could not yet render); draketarget/DrakeTarget's member list; DracoGenerator
+# (`scalaSymbols`, one row, consulted by the "()" case); drake.dlt (DECLARED NAMES: join); new suite
+# draco.draketarget.DomainLineTest (2 tests); DRACO.md baselines; CHANGELOG. The generated value line
+# was compiled and run VERBATIM under Scala 2.13.16 with scala-cli outside the project and printed
+# `domain draco draketarget DrakeTarget` — so `++` on String and the spliced join are known good.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainLine over|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 600 / 43 (five per-type tests + the new suite's two); the two TYPE COUNTS move and the
+# table carries them — `15 fields across 104 types` (still 12 + 3), `94 draco + 10 mods`; `GenDrake
+# runs: 92 of 92`; the new headline `DomainLine over the corpus: 91 of 91 domain lines reproduced,
+# 1 parameterized skipped, 0 wrong` (92 definitions with a .drake, minus Format(F)'s one). No loss
+# figure moves. Note the capture grep above has one extra term, `DomainLine over`, so the new
+# headline shows; DRACO.md's capture line is unchanged — say if you want it added there. Paste the
+# capture lines; if the corpus test fails, paste the first "expected …, got …" line from
+# target/test-output/DomainLineTest.log.
+#
+# FIRST RUN FAILED — 589 / 11, every failure the same null: `scalaSymbols` was an eager `private val`
+# in an object that extends App (DRACO.md rule 1, which said "companion" and now says any App object).
+# Fixed to `lazy val`; DRACO.md widened in this commit, as its own rule requires. The GEN MAP's
+# "18 differ, 2 error" was the same null reaching the example tier and returns to 20 / 0.
+#
+# PATH-SCOPED: the tree still holds Cowork's journal-intro fix; it stays out.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-11-0119 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-11-0119 && git push
+
+--- MESSAGE ---
+DomainLine is the first transform type, and join is the first declared symbol
+
+Dev's shape for a transform type — a substitution string with a mapping factory, string literals
+interleaved with calls — has its first instance:
+
+    type DomainLine from Surface
+      factory
+        parameters
+          par package [String]
+          par name String
+        body
+          fix value String "domain " ++ [ join parameters
+            par " "
+            par _package
+          ] ++ " " ++ _name
+    domain draco draketarget DrakeTarget
+
+Two things moved from the sketch, both said before building. The two lambda helpers dropped out:
+the parser still carries a lambda as opaque text (#61), so authoring them would have put drake-form
+text into the Scala verbatim, and one was the identity anyway. And the join of the package words
+became a DECLARED NAME rather than a Scala atom: `mkString` in a target-side type would be the
+residue that stops a Haskell framework binary from ever rendering the same definition. Dev asked
+whether `join` or `splice` reads better, and whether an invented infix such as `+|+` would work.
+`join`: `splice` means insertion in JavaScript and Perl, and an invented operator carries no meaning
+in until learned and costs a reservation and a fixity entry, where a name uses the application
+surface that exists. Separator first, Haskell's and Java's order.
+
+THE SYMBOL SEAM. `join` is applied by name on the surface and spelled per target: DracoGenerator's
+"()" case now consults a one-row table before rendering an ordinary call. That table is the seam
+GenScala's transform types will own; today it is the smallest thing that lets a neutral name reach
+Scala.
+
+DRAKE-FIRST, LITERALLY. The .drake was written first; DrakeCLI parse produced the .json, and it is
+byte-identical in style to the hand-shaped corpus — the first time a definition entered the tree
+through the parser rather than through JSON. The emitter reproduces the authored text exactly. The
+.scala came from the GeneratorCLI with one line spliced, because the compiled engine predates the
+symbol table; that line was then compiled and run verbatim under 2.13.16 outside the project, and
+printed the domain line. `++` on String is known good before the suite runs.
+
+THE FIRST RUN. 589 / 11 — eleven failures with one cause: the symbol table was an eager val in an
+object that extends App, so it was null until main, and every application rendering in the suite
+fell over it. DRACO.md's first rule names companions; the engine object binds to it just the same,
+and the rule now says so.
+
+THE ORACLE. DomainLineTest builds a DomainLine from every src/main definition's own domain pointer
+and asserts it equals the committed .drake's `domain` line. The one parameterized domain line in
+the corpus, Format(F), is outside the shape — a name is a String — and is counted, not compared.
+The mapping from a definition to the two arguments is done by the test today; making it a
+transform type in GenDrake is the next increment, and this test is already its oracle.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

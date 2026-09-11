@@ -1,0 +1,66 @@
+{
+  "typeName": {
+    "name": "DomainLine",
+    "namePackage": [
+      "draco",
+      "draketarget"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DomainLine",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "package",
+          "valueType": "Seq[String]"
+        },
+        {
+          "kind": "Parameter",
+          "name": "name",
+          "valueType": "String"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "String",
+          "value": {
+            "++": [
+              "\"domain \"",
+              {
+                "()": [
+                  "join",
+                  "\" \"",
+                  "_package"
+                ]
+              },
+              "\" \"",
+              "_name"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}

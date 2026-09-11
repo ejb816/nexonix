@@ -92,7 +92,11 @@ object DracoGenerator extends App {
           op match {
             case "."        => args.mkString(".")
             case "->"       => args.mkString(" => ")
-            case "()"       => s"${args.head}(${args.tail.mkString(", ")})"
+            case "()"       =>
+              scalaSymbols.get(args.head) match {
+                case Some(spell) => spell(args.tail)
+                case None        => s"${args.head}(${args.tail.mkString(", ")})"
+              }
             case "\\"       =>
               val params = if (args.size == 2) args.head else args.init.mkString("(", ", ", ")")
               s"$params => ${args.last}"
@@ -153,6 +157,20 @@ object DracoGenerator extends App {
     * quoting and pass through expression() verbatim. */
   private def initializer (valueType: String, value: Json) : String =
     constructionInitializer(valueType, value).getOrElse(defaultInitializer(valueType, value))
+
+  /** The ScalaTarget spelling of the DECLARED NAMES a value may apply (drake.dlt
+    * SYMBOLS) — the primitives a substitution string needs beyond `++`, applied by
+    * name on the surface (`join parameters par " " par xs`) and rendered per target.
+    * `join sep xs` is Haskell's intercalate; Scala spells it as a method on the
+    * sequence. A head not in the table is an ordinary application. This is the
+    * seam GenScala's transform types will own; until then it is one row.
+    *
+    * LAZY, because this object extends App: an eager val here is null until main runs,
+    * and the first suite run after this table was added failed eleven tests on exactly
+    * that — DRACO.md's first rule, which names companions but binds the engine too. */
+  private lazy val scalaSymbols: Map[String, Vector[String] => String] = Map(
+    "join" -> { args => s"${args(1)}.mkString(${args(0)})" }
+  )
 
   /** A tree in a String-typed slot denotes its SURFACE TEXT and renders quoted (the
     * exemplar is TypeElement's own valueType) — except a `++` concatenation, which is

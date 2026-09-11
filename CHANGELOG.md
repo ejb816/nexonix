@@ -31,6 +31,18 @@ for the definition that will replace it.
 
 ### Added
 
+- **`DomainLine`, the first transform type, and `join`, the first declared symbol.**
+  `draco.draketarget.DomainLine from Surface` is a substitution string with a mapping factory:
+  `"domain " ++ join " " package ++ " " ++ name`, authored as a `++` tree, drake-first, and projected
+  to Scala — the first `++` to compile and run in generated code. `join sep xs` (Haskell's
+  `intercalate`, separator first) is declared in `drake.dlt` as the first DECLARED NAME: a symbol
+  applied on the application surface whose spelling is per target, which `DracoGenerator` renders
+  through a one-row symbol table (`xs.mkString(sep)`) that `GenScala`'s transform types will own.
+  `DomainLineTest` builds a `DomainLine` from every `src/main` definition's own domain pointer and
+  asserts it reproduces the committed `.drake`'s `domain` line byte for byte; the one parameterized
+  domain line in the corpus is counted, not compared. The mapping from a definition to the two
+  arguments is still done by the test; making it a `GenDrake` transform type is next.
+
 - **`++` is the first operator the drake parser trees.** A `++` run in a value position —
   `"domain " ++ [ packagePart parameters par package ] ++ " " ++ name` — is now one flat
   concatenation node in the normative form, drake's own spelling of a substitution string: literals

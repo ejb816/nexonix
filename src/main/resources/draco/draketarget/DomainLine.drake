@@ -1,0 +1,11 @@
+type DomainLine from Surface
+  factory
+    parameters
+      par package [String]
+      par name String
+    body
+      fix value String "domain " ++ [ join parameters
+        par " "
+        par _package
+      ] ++ " " ++ _name
+domain draco draketarget DrakeTarget

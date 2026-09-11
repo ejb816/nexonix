@@ -25,7 +25,8 @@
       ]
     },
     "elementTypeNames": [
-      "Surface"
+      "Surface",
+      "DomainLine"
     ]
   }
 }

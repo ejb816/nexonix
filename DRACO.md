@@ -31,11 +31,13 @@ buries the few that matter.
 (surface), `src/main/scala/<pkg>/X.scala` (generated). Change one, change all three, or a
 gate fails. There is no partial edit.
 
-**Every val in an `extends App` companion must be `lazy val`.** Scala 2 `App` uses
-`DelayedInit`, so eager `val` initializers are deferred to `main()` and read as null
-across objects. This includes `typeDefinition`, the kind-vals, `Null`, encoders/decoders,
-and any private val a lazy val references. The one axiom exempt from it is
-`DracoType.typeDefinition`, which does not extend `App`.
+**Every val in ANY object that extends `App` must be `lazy val` — the generated companions
+AND the hand-written engine.** Scala 2 `App` uses `DelayedInit`, so eager `val` initializers are
+deferred to `main()` and read as null across objects. This includes `typeDefinition`, the
+kind-vals, `Null`, encoders/decoders, and any private val a lazy val references. `DracoGenerator`
+itself extends `App`: a private lookup table added there as an eager `val` on 2026-09-11 failed
+eleven tests on its first run. The one axiom exempt from it is `DracoType.typeDefinition`, which
+does not extend `App`.
 
 **Read the report-only numbers, not just pass/fail.** Several tests measure rather than
 assert (drake surface losses, the example-domain generate map, PON discrepancies). Two
@@ -43,12 +45,14 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **593 tests / 42
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **600 tests / 43
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
-structural test in `DrakeParseTest` for the `++` operator (2026-09-10). These
+structural test in `DrakeParseTest` for the `++` operator (2026-09-10); then `draketarget.DomainLine`
+(five per-type tests) and its own two-test suite `DomainLineTest` (2026-09-11), which moves the
+type counts to 94 in scope, 104 measured. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -60,8 +64,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 15 fields across 103 types — expression form 12, empty-collection spelling 3 |
-| `DrakeParseTest` | Drake.parse scope | 93 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 15 fields across 104 types — expression form 12, empty-collection spelling 3 |
+| `DrakeParseTest` | Drake.parse scope | 94 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
