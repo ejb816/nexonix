@@ -4,16 +4,18 @@ type DefinitionPath
     dyn sources [URL] [
       parameters
         par resourcePath String
-      = roots.map(root => new URL(root.toString + resourcePath.stripPrefix("/"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)
+      body
+        fix value [URL] roots.map(root => new URL(root.toString + resourcePath.stripPrefix("/"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)
     ]
     dyn source Option(URL) [
       parameters
         par resourcePath String
-      loc found [URL] sources parameters par resourcePath
-      mon require parameters
-        par found.size <= 1
-        par s"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: " + found.mkString(", ")
-      = found.headOption
+      body
+        loc found [URL] sources parameters par resourcePath
+        mon require parameters
+          par found.size <= 1
+          par s"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: " + found.mkString(", ")
+        fix value Option(URL) found.headOption
     ]
   factory
     parameters

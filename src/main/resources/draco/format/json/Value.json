@@ -164,23 +164,34 @@
                   "orNull"
                 ]
               }
-            }
-          ],
-          "value": {
-            "if": [
-              {
-                "!=": [
-                  "pathValue",
-                  "null"
-                ]
-              },
-              {
-                "()": [
+            },
+            {
+              "kind": "Fixed",
+              "name": "value",
+              "valueType": "T",
+              "value": {
+                "if": [
                   {
-                    ".": [
+                    "!=": [
                       "pathValue",
-                      "as[T]",
-                      "getOrElse"
+                      "null"
+                    ]
+                  },
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          "pathValue",
+                          "as[T]",
+                          "getOrElse"
+                        ]
+                      },
+                      {
+                        ".": [
+                          "null",
+                          "asInstanceOf[T]"
+                        ]
+                      }
                     ]
                   },
                   {
@@ -190,15 +201,9 @@
                     ]
                   }
                 ]
-              },
-              {
-                ".": [
-                  "null",
-                  "asInstanceOf[T]"
-                ]
               }
-            ]
-          }
+            }
+          ]
         }
       ]
     }

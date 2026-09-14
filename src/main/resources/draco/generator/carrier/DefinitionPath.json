@@ -25,7 +25,14 @@
             "valueType": "String"
           }
         ],
-        "value": "roots.map(root => new URL(root.toString + resourcePath.stripPrefix(\"/\"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Seq[URL]",
+            "value": "roots.map(root => new URL(root.toString + resourcePath.stripPrefix(\"/\"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -59,9 +66,14 @@
                 "s\"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: \" + found.mkString(\", \")"
               ]
             }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Option[URL]",
+            "value": "found.headOption"
           }
-        ],
-        "value": "found.headOption"
+        ]
       }
     ],
     "factory": {

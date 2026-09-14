@@ -33,9 +33,14 @@
             "name": "text",
             "valueType": "String",
             "value": "try source.mkString finally source.close()"
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "TypeDefinition",
+            "value": "io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)"
           }
-        ],
-        "value": "io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)"
+        ]
       },
       {
         "kind": "Dynamic",
@@ -119,7 +124,14 @@
             "valueType": "Array[String]"
           }
         ],
-        "value": "commands.getOrElse(args.headOption.getOrElse(\"version\"), (_: Seq[String]) => version)(args.drop(1).toSeq)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Unit",
+            "value": "commands.getOrElse(args.headOption.getOrElse(\"version\"), (_: Seq[String]) => version)(args.drop(1).toSeq)"
+          }
+        ]
       }
     ]
   },

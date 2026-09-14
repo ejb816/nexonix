@@ -218,26 +218,31 @@ CONVENTIONS
                      (T <: Product)                    -> [ "T <: Product" ]
                      (S <: DracoType, T <: DracoType)  -> [ "S <: DracoType", "T <: DracoType" ]
 
-DYN-WITH-BODY  (a Dynamic element/global carrying parameters, statements, and a result — i.e. a method)
+DYN-WITH-BODY  (a Dynamic element/global carrying parameters and a body — i.e. a method)
   A leaf dyn stays one line: `dyn <name> <value-type> *<value>` — the trailing value, when present, IS the
   method's result expression (a no-param one-liner: `dyn iterator Iterator((K, V)) kvMap.iterator`).
-  Adding parameters/statements makes it a block method, and a block method BRACKETS ITS OWN BODY (see BRACKETS):
-  dyn <name> <value-type> [                -> { kind=Dynamic , name , valueType , parameters[] , body[] , value }
+  Adding parameters or a body makes it a block method, and a block method BRACKETS ITS OWN BODY (see BRACKETS):
+  dyn <name> <value-type> [                -> { kind=Dynamic , name , valueType , parameters[] , body[] }
+                                              ( `value` is carried by the LEAF form only )
     ~parameters                            -> parameters[]   ( same block shape as factory.parameters )
       par _<name> <value-type> *<default>  -> { kind=Parameter , ... }
-    ( statements sit DIRECTLY under the dyn — no `body` head; each line one statement )
-    *~loc|fix|mut <name> <value-type> <value>    -> body[] BodyElement   ( STATEMENTS ONLY — bindings/effects, never the result )
-    *~mon <unit-value>                     -> body[] { kind=Monadic , value }
-    *~case *<name> <value-type> [ ... ]    -> body[] { kind=Case }   ( see CASE-BRANCH )
-    *= <expr>                              -> value    ( the RESULT expression, on its own `=`-opening line;
-                                                         absent for Unit methods — their body is all effects.
-                                                         The `=` is TRANSITIONAL — the intent is a body sequence
-                                                         simply ENDING in a value expression, no marker; see
-                                                         DIVERGENCES for why it cannot go yet )
+    ~body                                  -> body[]   ( same block shape as factory.body; the `body` head follows
+                                                         `parameters`, as originally conceived )
+      *~loc|fix|mut <name> <value-type> <value>   -> body[] BodyElement
+      *~mon <unit-value>                   -> body[] { kind=Monadic , value }
+      *~case *<name> <value-type> [ ... ]  -> body[] { kind=Case }   ( see CASE-BRANCH )
+      *~fix value <value-type> <expr>      -> body[] { kind=Fixed , name="value" }   ( THE RESULT — see below )
   ]                                        ( the `[` is what tells a leaf dyn from a block one )
-  RESULT-vs-STATEMENT: a Dynamic's `body` never carries its result. The result is the Dynamic's own `value`
-  field (empty = Unit). A `mon` in a body is a genuine Unit effect — a non-Unit expression in last position
-  was the old (retired) convention and is the Monadic-axiom abuse to lint for.
+  THE RESULT IS THE BODY ELEMENT NAMED `value` (2026-09-13). Every TypeElement is a Primal(Json) and so
+  carries a `value`; a factory body already sets the instance's `value` with `fix value <type> <expr>`
+  (draketarget/DomainLine), and a dyn body does the same for the method's result. It is found BY NAME,
+  not by position — nothing has to be last — and its value-type must agree with the dyn's (a lint once
+  value types are structured). A body with no `value` element is a Unit method: its statements are all
+  effects. A block dyn carries NO value field of its own. The `= <expr>` result marker that once made
+  that field visible is RETIRED: it was a body-syntax exception for one kind, where `dyn` was only ever
+  meant to add polymorphism (an overridable member), never a different body syntax. The body syntax is
+  now the same for a factory and a dyn; that fix/mut may take parameters and a body on the same terms
+  is agreed and deferred.
   A method type-parameter rides the name via the ( ) convention: `dyn updated(V1 >: V) ...` -> name "updated[V1 >: V]".
   Valid wherever an element list is: elements, factory body, globalElements.
 
@@ -247,18 +252,18 @@ CASE-BRANCH  (a Case element: an ordered branch on which SIBLING SUBTYPE of a sc
   It is NOT the rule LHS and shares no type with it: a rule `pattern` has NO scrutinee (it quantifies
   over working memory) and is unordered; a case has exactly one and is ordered. `Pattern` carries
   `conditions`; a case carries none.
-  case *<name> <value-type> [            -> body[] { kind=Case , name , valueType , body[] , value }
+  case *<name> <value-type> [            -> body[] { kind=Case , name , valueType , body[] }
     ( statements sit DIRECTLY under the case — the same admits as a dyn-with-body )
     *~loc|fix|mut <name> <value-type> <value>  -> body[] BodyElement   ( STATEMENTS ONLY )
     *~mon <unit-value>                   -> body[] { kind=Monadic , value }
-    *= <expr>                            -> value   ( the RESULT expression, exactly as in a dyn-with-body )
+    *~fix value <value-type> <expr>      -> body[] { kind=Fixed , name="value" }   ( the RESULT, found by name — exactly as in a dyn-with-body )
   ]
   BINDER OPTIONAL — `case a AlarmSignal [ ... ]` binds the narrowed value, `case Fixed [ ... ]` does not
   (name absent == ""). The UNBOUND form is the common one wherever a branch dispatches without reaching
   into the value: Drake.keyword is 8-of-9 unbound. Both project — Scala `case a: T =>` / `case _: T =>`,
   Haskell `T a ->` / `T _ ->`.
-  STATEMENTS-OR-RESULT, as in a dyn-with-body: an actor branch is all effects and carries no `value`; a
-  projection branch is one result expression and carries no statements. ONE kind, both shapes.
+  STATEMENTS-OR-RESULT, as in a dyn-with-body: an actor branch is all effects and carries no `value` element;
+  a projection branch carries one and usually nothing else. ONE kind, both shapes.
   THE DEFAULT BRANCH is a branch with NO TYPE, and CASE alone tells the four forms apart — the same rule
   that already bounds a reference (REFERENCES: lower-case is a package word, the first upper-case token
   ends the run). Nothing else is consulted:
@@ -499,17 +504,14 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           RESOLUTION: name the capability, not the host language — scalatarget.ScalaTarget,
                                           haskellsource.HaskellSource. A definition-time lint rejecting host-reserved
                                           domain names (per target) is the enforcement; queued with the Monadic lint.
-  dyn result: `= <expr>` line       <->   TRANSITIONAL. The intent is that a dyn's [ ] simply CONTAINS its body — a
-    (target — no `=` at all)              sequence of elements ending in a value expression — with no marker at all,
-                                          and certainly not one that reads as assigning the parameter block. `=` is
-                                          there only because drake has no expression grammar yet: a statement's value
-                                          runs until the next reserved word, so without a marker the last statement's
-                                          value and the result expression run together (`loc a A x` + `y` is one span,
-                                          not two). Under the two-layer grammar in EXPRESSIONS that stops being a
-                                          question — juxtaposition is application, so a value IS one complete
-                                          expression and the next element begins where it ends. The `=` retires with
-                                          the same increment that makes a con's guard a parsed expression rather than
-                                          an opaque span — GitHub #61.
+  dyn result: `= <expr>` line       <->   IMPLEMENTED (2026-09-13) — and not as the trailing-expression form this entry
+    (target — no `=` at all)              once anticipated. A dyn's [ ] contains `parameters` and a `body` section, as a
+                                          factory's does, and the RESULT is the body element NAMED `value` (`fix value
+                                          <type> <expr>`), the convention factory bodies already used to set an instance's
+                                          value. Found by name, so nothing has to be last and no expression grammar is
+                                          needed to bound it; the `=` marker is gone from the surface and the parser. See
+                                          DYN-WITH-BODY. The named-argument marker `par = <name>` still uses `=` until the
+                                          call syntax lands (agreed 2026-09-13: `f(a, b)`, `name:value`).
   BRACKETS on the opener            <->   IMPLEMENTED (2026-08-05, GitHub #52). Both directions agree: Generator.drake
                                           emits it and Generator.parseDrake reads it, gated by DrakeParseTest's surface
                                           round-trip. The earlier rule bracketed the CONTAINER, which left one genuine

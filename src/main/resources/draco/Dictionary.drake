@@ -4,18 +4,21 @@ type Dictionary(K, V) from {K, V}
     dyn removed {K, V} [
       parameters
         par key K
-      = kvMap.removed(key)
+      body
+        fix value {K, V} kvMap.removed(key)
     ]
     dyn updated(V1 >: V) {K, V1} [
       parameters
         par key K
         par value V1
-      = kvMap.updated(key, value)
+      body
+        fix value {K, V1} kvMap.updated(key, value)
     ]
     dyn get Option(V) [
       parameters
         par key K
-      = kvMap.get(key)
+      body
+        fix value Option(V) kvMap.get(key)
     ]
     dyn iterator Iterator((K, V)) kvMap.iterator
 domain draco Draco

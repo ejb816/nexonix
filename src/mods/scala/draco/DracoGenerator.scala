@@ -455,11 +455,13 @@ object DracoGenerator extends App {
         case (true,  false) => s"case ${c.name} =>"
         case (false, false) => "case _ =>"
       }
-      val lines  = statementsWithCases(c.body, inner + "  ", scrutinee, statement)
-      val result = expression(c.value) match { case "" => Seq.empty; case r => Seq(s"$inner  $r") }
+      // A branch's result is its body element named `value`, as in a dyn-with-body.
+      val (statements, resultExpression) = resultOf(c.body)
+      val lines  = statementsWithCases(statements, inner + "  ", scrutinee, statement)
+      val result = resultExpression match { case "" => Seq.empty; case r => Seq(s"$inner  $r") }
       (s"$inner$head" +: (lines ++ result)).mkString("\n")
     }
-    val isResult   = run.exists(c => expression(c.value).nonEmpty)
+    val isResult   = run.exists(c => resultOf(c.body)._2.nonEmpty)
     val hasDefault = run.exists(_.valueType.isEmpty)
     val catchAll   = if (!isResult && !hasDefault) Seq(s"${inner}case _ => ()") else Seq.empty
     ((s"$pad$scrutinee match {" +: (branches ++ catchAll)) :+ s"$pad}").mkString("\n")
@@ -471,12 +473,25 @@ object DracoGenerator extends App {
   private def dynScrutinee (d: Dynamic) : String =
     if (d.parameters.size == 1) d.parameters.head.name else ""
 
+  /** The RESULT of a body is its element named `value` (drake.dlt DYN-WITH-BODY): the
+    * same convention a factory body uses to set the instance's `value`, found by name
+    * rather than position. Returns (statements, result-expression); the result is ""
+    * when the body carries none, which is a Unit body. */
+  private def resultOf (body: Seq[BodyElement]) : (Seq[BodyElement], String) = {
+    val (results, statements) = body.partition { case f: Fixed => f.name == "value"; case _ => false }
+    (statements, results.headOption.map(r => expression(r.value)).getOrElse(""))
+  }
+
   private def methodBody (
-    body: Seq[BodyElement],
-    value: String,
+    fullBody: Seq[BodyElement],
+    leafValue: String,
     methodIndent: Int = 2,
     scrutinee: String = ""
   ) : String = {
+    // A leaf dyn (`dyn x T expr`) carries its result in its own value field; a block
+    // dyn carries it in its body as the element named `value`. Never both.
+    val (body, bodyResult) = resultOf(fullBody)
+    val value = if (leafValue.nonEmpty) leafValue else bodyResult
     val hasCases = body.exists(_.isInstanceOf[Case])
     if (body.isEmpty && value.isEmpty) "???"
     else if (body.isEmpty) value

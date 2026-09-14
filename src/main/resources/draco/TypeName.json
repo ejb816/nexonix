@@ -102,11 +102,25 @@
               "kind": "Case",
               "name": "tn",
               "valueType": "TypeName",
-              "value": "name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters"
+              "body": [
+                {
+                  "kind": "Fixed",
+                  "name": "value",
+                  "valueType": "Boolean",
+                  "value": "name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters"
+                }
+              ]
             },
             {
               "kind": "Case",
-              "value": "false"
+              "body": [
+                {
+                  "kind": "Fixed",
+                  "name": "value",
+                  "valueType": "Boolean",
+                  "value": "false"
+                }
+              ]
             }
           ]
         },

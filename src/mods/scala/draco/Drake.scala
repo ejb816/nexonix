@@ -438,30 +438,32 @@ object Drake {
       val parameters =
         if (d.parameters.isEmpty) Seq.empty
         else sectionLines("parameters", d.parameters, level + 1)
-      val statementLines = d.body.flatMap(elementLines(_, level + 1))
-      val result = expression(d.value) match {
-        case ""       => Seq.empty
-        case rendered => Seq(s"$indent  = $rendered")
-      }
-      (header +: (parameters ++ statementLines ++ result)) :+ s"$indent]"
+      // The body is a `body` section like the factory's, and the RESULT is its element
+      // named `value` (drake.dlt DYN-WITH-BODY) — a block dyn never carries a value of
+      // its own; the retired `=` marker was that field made visible.
+      if (!d.value.isNull && expression(d.value).nonEmpty)
+        sys.error(s"Drake.emit: block dyn '${d.name}' carries a value outside its body — the result is the body element named `value`")
+      val body =
+        if (d.body.isEmpty) Seq.empty
+        else sectionLines("body", d.body, level + 1)
+      (header +: (parameters ++ body)) :+ s"$indent]"
       case e => sys.error(s"Drake.emit: '${e.name}' opens a block but has no block form (${e.getClass.getSimpleName})")
     }
   }
 
   /** A case-branch (drake.dlt CASE-BRANCH) brackets itself: `case`, an optional
-    * binder, an optional branch type, `[`, its statements, its `=` result, `]`. Case
-    * alone tells the four forms apart — a lower-case token is the binder, an upper-case
-    * one the type — so an absent binder or type leaves no marker on the surface. */
+    * binder, an optional branch type, `[`, its statements, `]`. Its result, when it
+    * has one, is its statement named `value`, as in a dyn-with-body. Case alone tells
+    * the four head forms apart — a lower-case token is the binder, an upper-case one
+    * the type — so an absent binder or type leaves no marker on the surface. */
   private def caseLines (c: Case, indent: String, level: Int) : Seq[String] = {
     val head = Seq(s"$indent${keyword(c)}") ++
       (if (c.name.nonEmpty) Seq(elementName(c.name)) else Seq.empty) ++
       (if (c.valueType.nonEmpty) Seq(typeExpressionSlot(c.valueType)) else Seq.empty)
+    if (!c.value.isNull && expression(c.value).nonEmpty)
+      sys.error(s"Drake.emit: case-branch carries a value outside its body — the result is the body element named `value`")
     val statementLines = c.body.flatMap(elementLines(_, level + 1))
-    val result = expression(c.value) match {
-      case ""       => Seq.empty
-      case rendered => Seq(s"$indent  = $rendered")
-    }
-    ((head :+ "[").mkString(" ") +: (statementLines ++ result)) :+ s"$indent]"
+    ((head :+ "[").mkString(" ") +: statementLines) :+ s"$indent]"
   }
 
   /** A list-block: head keyword, members one level deeper, never bracketed — each
@@ -1064,16 +1066,18 @@ object Drake {
         else {
           c.take ()
           val parameters = parseSection (c, "parameters", Set ("par")).map (_.asInstanceOf[Parameter])
-          val body       = statements (c)
-          val result     = if (!c.at ("=")) Json.Null else { c.take (); parseValue (c) }
+          // The `body` section, as in a factory. Its statement named `value` is the
+          // result (drake.dlt DYN-WITH-BODY); a block dyn has no value of its own.
+          val body       = if (!c.at ("body")) Seq.empty else { c.take (); statements (c) }
           c.expect ("]")
-          Dynamic (name, valueType, parameters, body, result)
+          Dynamic (name, valueType, parameters, body, Json.Null)
         }
       case "case" =>
         // A case-branch (drake.dlt CASE-BRANCH): up to two tokens before its `[` — a
         // lower-case binder, an upper-case branch type, either, both, or neither — told
         // apart by case alone, the rule that already bounds a reference. Then its own
-        // statements, `=` result, and `]`, exactly as a dyn-with-body.
+        // statements and `]`; its result, when it has one, is the statement named
+        // `value`, exactly as in a dyn-with-body.
         var name      = ""
         var valueType = ""
         while (!c.exhausted && !c.atReserved) {
@@ -1081,10 +1085,9 @@ object Drake {
           if (t.headOption.exists (_.isUpper)) valueType = parseTypeExpression (t) else name = parseElementName (t)
         }
         c.expect ("[")
-        val body   = statements (c)
-        val result = if (!c.at ("=")) Json.Null else { c.take (); parseValue (c) }
+        val body = statements (c)
         c.expect ("]")
-        Case (name, valueType, body, result)
+        Case (name, valueType, body, Json.Null)
       case keyword @ ("fix" | "mut" | "loc" | "par") =>
         val name      = parseElementName (c.takeText ())
         val valueType = takeValueType (c)

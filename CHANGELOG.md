@@ -159,6 +159,15 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A dyn's result is its body element named `value`, and the `=` marker is retired.** A block dyn now
+  reads `dyn name Type [ parameters … body … ]`, the `body` head following `parameters` exactly as a
+  factory's does, and its result is the statement `fix value Type expr` inside that body — the same
+  convention a factory body already uses to set an instance's `value`, found by name rather than by
+  position. Case branches carry their result the same way. The `= expr` result line, a body-syntax
+  exception for one kind, is gone from the surface and from the parser: twenty results in seven
+  definitions converted, and every generated Scala file is unchanged, since the projection writes the
+  same block with the `value` element as its final expression.
+
 - **A transform domain is a domain of transform types, and its source is `TypeDefinition`.**
   `GenDrake` and `GenScala` no longer carry a `generator` function global: a transform domain's
   members are the types that transform, each deriving a type on the target side and taking a

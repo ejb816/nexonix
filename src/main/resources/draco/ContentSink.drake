@@ -13,7 +13,8 @@ type ContentSink
       dyn write Unit [
         parameters
           par content String
-        mon java.nio.file.Files.createDirectories(sinkPath.getParent)
-        mon java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))
+        body
+          mon java.nio.file.Files.createDirectories(sinkPath.getParent)
+          mon java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))
       ]
 domain draco Draco

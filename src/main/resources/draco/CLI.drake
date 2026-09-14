@@ -3,32 +3,38 @@ type CLI(L)
     dyn load TypeDefinition [
       parameters
         par path String
-      loc source scala.io.BufferedSource scala.io.Source.fromFile(path)
-      loc text String try source.mkString finally source.close()
-      = io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
+      body
+        loc source scala.io.BufferedSource scala.io.Source.fromFile(path)
+        loc text String try source.mkString finally source.close()
+        fix value TypeDefinition io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
     ]
     dyn version Unit [
-      mon println("Draco 2.0.0-alpha.1")
+      body
+        mon println("Draco 2.0.0-alpha.1")
     ]
     dyn inspect Unit [
       parameters
         par path String
-      mon println(TypeDefinition.encoder(load(path)).spaces2)
+      body
+        mon println(TypeDefinition.encoder(load(path)).spaces2)
     ]
     dyn generate Unit [
       parameters
         par path String
-      mon println(DracoGenerator.generate(load(path)))
+      body
+        mon println(DracoGenerator.generate(load(path)))
     ]
     dyn drake Unit [
       parameters
         par path String
-      mon println(Drake.emit(load(path)))
+      body
+        mon println(Drake.emit(load(path)))
     ]
     fix commands {String, [String] -> Unit} Map("version" -> (_ => version), "inspect" -> (as => inspect(as.head)), "generate" -> (as => generate(as.head)), "drake" -> (as => drake(as.head)))
     dyn main Unit [
       parameters
         par args Array(String)
-      = commands.getOrElse(args.headOption.getOrElse("version"), (_: Seq[String]) => version)(args.drop(1).toSeq)
+      body
+        fix value Unit commands.getOrElse(args.headOption.getOrElse("version"), (_: Seq[String]) => version)(args.drop(1).toSeq)
     ]
 domain draco Draco

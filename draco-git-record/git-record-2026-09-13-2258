@@ -1,0 +1,69 @@
+# The result convention: a dyn's result is its body element named `value`; the `body` head follows
+# `parameters`; the `= <expr>` marker retires. ENGINE: DracoGenerator.methodBody/caseDispatch read the
+# result from the body by name (resultOf) — projected Scala is UNCHANGED by construction; Drake emit
+# writes a `body` section and no `=`, Drake.parse reads `body` and no `=` (a block dyn / case gets
+# Json.Null as its own value). CORPUS: 7 definitions, 20 results moved into bodies (jq over the
+# JSON; the .drake files are the CURRENT emitter's output plus the `body` head inserted by script, so
+# DrakeGenTest is the check that the new emitter agrees). drake.dlt DYN-WITH-BODY rewritten,
+# CASE-BRANCH result line, DIVERGENCES entry closed. CHANGELOG. No test edit; no count moves.
+#
+# NOT verified offline: the compiled engine predates the edits — the suite is the first run of the new
+# methodBody, emitter and parser. The Scala tree was not regenerated: the claim is that it is byte-
+# identical, and DracoGenTest (105 definitions) is what proves or refutes that.
+#
+#   sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainLine over|CO-DECLARATION|error|^\[info\] Tests:"
+#
+# Expected: 605 / 43, every row as DRACO.md has it — losses 15 across 105 (json/Value's result is
+# still a tree-vs-string loss, now under its `fix value` key rather than the dyn's), scope 95 + 10,
+# GenDrake 93 of 93, DomainLine 94 of 94. If DracoGenTest fails on one of the seven, paste the first
+# diff hunk: it says whether the result was rendered as a statement (`val value: T = …`) or dropped.
+#
+# FIRST RUN: 602 / 3 — DracoGenTest GREEN (the Scala claim held, all 105); the three failures were one
+# definition, ContentSink, whose factory-body `dyn write` has statements but no result, so it was not in
+# the `=`-line sweep and its `body` head was never inserted. Fixed; a per-BLOCK check over every .drake
+# now finds no dyn block whose statements lack the head. Eight definitions touched, not seven.
+#
+# PATH-SCOPED: the tree still holds Cowork's journal-intro fix; it stays out.
+#
+# If green:
+#
+#   sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-13-2258 | sed '1d' > /tmp/msg && git add -A -- src CHANGELOG.md draco-git-record && git commit -F /tmp/msg -- src CHANGELOG.md draco-git-record/git-record-2026-09-13-2258 && git push
+
+--- MESSAGE ---
+A dyn's result is its body element named value, and the = marker retires
+
+Dev, on the `=` line a block dyn ended with: the result was originally conceived as part of the body,
+which is [BodyElement] — but no body element kind is a result, so a value expression after the last
+statement is outside the body syntax, and `=` was the marker that exception needed. Dynamic was meant
+to add polymorphism, not a body syntax of its own. And a result has to have a type.
+
+The fix was already in the tree. TypeElement is Primal(Json), so every element carries a `value`, and
+a factory body sets an instance's value with `fix value <type> <expr>` — draketarget/DomainLine does
+exactly that. A dyn body does the same for the method's result. It is identified BY NAME, so nothing
+has to be last and no expression grammar is needed to bound it. That also answers the type: the
+`fix value` line carries one, and it must agree with the dyn's — which is the point at which
+`valueType` being a string of Scala stops being tolerable, and is why the next steps are the call
+syntax and value types as trees.
+
+    dyn load TypeDefinition [
+      parameters
+        par path String
+      body
+        loc source scala.io.BufferedSource scala.io.Source.fromFile(path)
+        loc text String try source.mkString finally source.close()
+        fix value TypeDefinition io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
+    ]
+
+The `body` head follows `parameters`, as it does in a factory and as Dev originally conceived it; the
+dyn had dropped the word and run its statements straight after the parameters. Case branches carry
+their result the same way. A block dyn and a case branch carry no value of their own any more; the
+leaf dyn `dyn x T expr` keeps its value field, being shorthand for a body with one `value` element.
+
+Twenty results in seven definitions moved into their bodies, and an eighth definition's effect-only
+block (ContentSink's factory `write`) gained the head — caught by the first run, which the `=`-line
+sweep had missed because that block had no result. The projected Scala does not change: the
+engine partitions the `value` element out of the statements and writes it where it wrote the `=`
+expression — the same block, the same final line — and DracoGenTest holds it to that. The `=` token
+stays reserved for the named-argument marker until the call syntax lands.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

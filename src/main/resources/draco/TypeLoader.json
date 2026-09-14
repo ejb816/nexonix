@@ -18,7 +18,14 @@
             "valueType": "URL"
           }
         ],
-        "value": "Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Option[TypeDefinition]",
+            "value": "Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -31,7 +38,14 @@
             "valueType": "String"
           }
         ],
-        "value": "draco.generator.carrier.DefinitionPath.default.source(resourcePath).flatMap(readDefinition)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Option[TypeDefinition]",
+            "value": "draco.generator.carrier.DefinitionPath.default.source(resourcePath).flatMap(readDefinition)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -44,7 +58,14 @@
             "valueType": "TypeName"
           }
         ],
-        "value": "loadFromResource(typeName.resourcePath)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Option[TypeDefinition]",
+            "value": "loadFromResource(typeName.resourcePath)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -57,7 +78,14 @@
             "valueType": "TypeDefinition"
           }
         ],
-        "value": "if (td.dracoAspect.derivation.exists(_.namePackage.nonEmpty) || (td.typeName.name == \"DracoType\" && td.typeName.namePackage == Seq(\"draco\"))) td else TypeDefinition(_typeName = td.typeName, _dracoAspect = DracoAspect(_superDomain = td.dracoAspect.superDomain, _modules = td.dracoAspect.modules, _extensible = td.dracoAspect.extensible, _derivation = td.dracoAspect.derivation :+ TypeName(\"DracoType\", _namePackage = Seq(\"draco\")), _elements = td.dracoAspect.elements, _factory = td.dracoAspect.factory, _globalElements = td.dracoAspect.globalElements), _domainAspect = td.domainAspect, _ruleAspect = td.ruleAspect, _actorAspect = td.actorAspect, _codecAspect = td.codecAspect)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "TypeDefinition",
+            "value": "if (td.dracoAspect.derivation.exists(_.namePackage.nonEmpty) || (td.typeName.name == \"DracoType\" && td.typeName.namePackage == Seq(\"draco\"))) td else TypeDefinition(_typeName = td.typeName, _dracoAspect = DracoAspect(_superDomain = td.dracoAspect.superDomain, _modules = td.dracoAspect.modules, _extensible = td.dracoAspect.extensible, _derivation = td.dracoAspect.derivation :+ TypeName(\"DracoType\", _namePackage = Seq(\"draco\")), _elements = td.dracoAspect.elements, _factory = td.dracoAspect.factory, _globalElements = td.dracoAspect.globalElements), _domainAspect = td.domainAspect, _ruleAspect = td.ruleAspect, _actorAspect = td.actorAspect, _codecAspect = td.codecAspect)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -70,7 +98,14 @@
             "valueType": "TypeName"
           }
         ],
-        "value": "tryLoad(typeName).map(rooted).getOrElse(TypeDefinition(typeName))"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "TypeDefinition",
+            "value": "tryLoad(typeName).map(rooted).getOrElse(TypeDefinition(typeName))"
+          }
+        ]
       }
     ]
   },

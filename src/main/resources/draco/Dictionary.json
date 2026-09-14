@@ -36,7 +36,14 @@
             "valueType": "K"
           }
         ],
-        "value": "kvMap.removed(key)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "{K, V}",
+            "value": "kvMap.removed(key)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -54,7 +61,14 @@
             "valueType": "V1"
           }
         ],
-        "value": "kvMap.updated(key, value)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "{K, V1}",
+            "value": "kvMap.updated(key, value)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -67,7 +81,14 @@
             "valueType": "K"
           }
         ],
-        "value": "kvMap.get(key)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Option[V]",
+            "value": "kvMap.get(key)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",

@@ -14,7 +14,13 @@
         "valueType": "org.evrete.api.Knowledge",
         "value": {
           "()": [
-            { ".": ["Rule", "knowledgeService", "newKnowledge"] },
+            {
+              ".": [
+                "Rule",
+                "knowledgeService",
+                "newKnowledge"
+              ]
+            },
             "\"Primes\""
           ]
         }
@@ -38,9 +44,14 @@
             "name": "p",
             "valueType": "Int",
             "value": "naturals.head"
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "LazyList[Int]",
+            "value": "p #:: filter(naturals.tail.filter(_ % p != 0))"
           }
-        ],
-        "value": "p #:: filter(naturals.tail.filter(_ % p != 0))"
+        ]
       },
       {
         "kind": "Dynamic",
@@ -60,7 +71,14 @@
             "value": "1"
           }
         ],
-        "value": "LazyList.from(start, step)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "LazyList[Int]",
+            "value": "LazyList.from(start, step)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -73,7 +91,14 @@
             "valueType": "Seq[Int]"
           }
         ],
-        "value": "naturals(2).filterNot(primes.contains(_)).take(primes.last - 1)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Seq[Int]",
+            "value": "naturals(2).filterNot(primes.contains(_)).take(primes.last - 1)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -86,7 +111,14 @@
             "valueType": "Seq[Int]"
           }
         ],
-        "value": "naturals(2).filterNot(composites.contains(_)).take(composites.last - composites.length)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Seq[Int]",
+            "value": "naturals(2).filterNot(composites.contains(_)).take(composites.last - composites.length)"
+          }
+        ]
       },
       {
         "kind": "Dynamic",
@@ -99,7 +131,14 @@
             "valueType": "Int"
           }
         ],
-        "value": "filter(naturals(2)).take(n)"
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Seq[Int]",
+            "value": "filter(naturals(2)).take(n)"
+          }
+        ]
       }
     ]
   },
