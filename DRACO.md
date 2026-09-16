@@ -66,7 +66,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 114 fields across 105 types — expression form 111, empty-collection spelling 3 (measured at the call-syntax commit, 2026-09-16; was 15 / 12 / 3 at `324556c`; falls back toward 3 once the JSON corpus is re-canonicalized from the drake) |
+| `DrakeParseTest` | drake surface losses | **expected 2** fields across 105 types — expression form 2 (format/json/Value's Haskell-form lambda and conditional, GitHub #61), empty-collection spelling 0 (JSON re-canonicalized from the drake, 2026-09-16; was 114 at `a8afcd8`, 15 at `324556c` — paste the run's line and this row loses "expected") |
 | `DrakeParseTest` | Drake.parse scope | 95 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |

@@ -5,6 +5,14 @@
       "draco"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -21,16 +29,32 @@
       "body": [
         {
           "kind": "Monadic",
-          "value": "ctx.getRuntime().get[java.util.List[Problem]](\"problems\").add(p)"
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "ctx.getRuntime"
+                            ]
+                          },
+                          "get[java.util.List[Problem]]"
+                        ]
+                      },
+                      "\"problems\""
+                    ]
+                  },
+                  "add"
+                ]
+              },
+              "p"
+            ]
+          }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Draco",
-      "namePackage": [
-        "draco"
       ]
     }
   }

@@ -42,7 +42,12 @@
           "kind": "Parameter",
           "name": "elementTypeNames",
           "valueType": "Seq[String]",
-          "value": { ".": ["Seq", "empty"] }
+          "value": {
+            ".": [
+              "Seq",
+              "empty"
+            ]
+          }
         },
         {
           "kind": "Parameter",

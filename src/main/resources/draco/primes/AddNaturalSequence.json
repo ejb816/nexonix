@@ -6,6 +6,15 @@
       "primes"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Primes",
+      "namePackage": [
+        "draco",
+        "primes"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -27,11 +36,21 @@
       "body": [
         {
           "kind": "Monadic",
-          "value": "accumulator.primeSet.addOne(i)"
+          "value": {
+            "()": [
+              "accumulator.primeSet.addOne",
+              "i"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "accumulator.naturalSet.addOne(i)"
+          "value": {
+            "()": [
+              "accumulator.naturalSet.addOne",
+              "i"
+            ]
+          }
         },
         {
           "kind": "Fixed",
@@ -41,17 +60,22 @@
         },
         {
           "kind": "Monadic",
-          "value": "accumulator.intervalTextSet.addOne((System.nanoTime(), text))"
+          "value": {
+            "()": [
+              "accumulator.intervalTextSet.addOne",
+              {
+                "(,)": [
+                  {
+                    "()": [
+                      "System.nanoTime"
+                    ]
+                  },
+                  "text"
+                ]
+              }
+            ]
+          }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Primes",
-      "namePackage": [
-        "draco",
-        "primes"
       ]
     }
   }

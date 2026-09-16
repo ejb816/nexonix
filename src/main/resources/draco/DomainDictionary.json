@@ -26,7 +26,12 @@
           "kind": "Parameter",
           "name": "domains",
           "valueType": "Seq[DomainType]",
-          "value": "Seq()"
+          "value": {
+            ".": [
+              "Seq",
+              "empty"
+            ]
+          }
         }
       ],
       "body": [
@@ -34,7 +39,17 @@
           "kind": "Fixed",
           "name": "kvMap",
           "valueType": "{DomainType, TypeDictionary}",
-          "value": "_domains.map(domain => (domain, domain.typeDictionary)).toMap"
+          "value": {
+            ".": [
+              {
+                "()": [
+                  "_domains.map",
+                  "domain => (domain, domain.typeDictionary)"
+                ]
+              },
+              "toMap"
+            ]
+          }
         }
       ]
     }

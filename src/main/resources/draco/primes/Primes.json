@@ -14,13 +14,7 @@
         "valueType": "org.evrete.api.Knowledge",
         "value": {
           "()": [
-            {
-              ".": [
-                "Rule",
-                "knowledgeService",
-                "newKnowledge"
-              ]
-            },
+            "Rule.knowledgeService.newKnowledge",
             "\"Primes\""
           ]
         }
@@ -76,7 +70,13 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "LazyList[Int]",
-            "value": "LazyList.from(start, step)"
+            "value": {
+              "()": [
+                "LazyList.from",
+                "start",
+                "step"
+              ]
+            }
           }
         ]
       },
@@ -96,7 +96,37 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "Seq[Int]",
-            "value": "naturals(2).filterNot(primes.contains(_)).take(primes.last - 1)"
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "naturals",
+                                "2"
+                              ]
+                            },
+                            "filterNot"
+                          ]
+                        },
+                        {
+                          "()": [
+                            "primes.contains",
+                            "_"
+                          ]
+                        }
+                      ]
+                    },
+                    "take"
+                  ]
+                },
+                "primes.last - 1"
+              ]
+            }
           }
         ]
       },
@@ -116,7 +146,37 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "Seq[Int]",
-            "value": "naturals(2).filterNot(composites.contains(_)).take(composites.last - composites.length)"
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "naturals",
+                                "2"
+                              ]
+                            },
+                            "filterNot"
+                          ]
+                        },
+                        {
+                          "()": [
+                            "composites.contains",
+                            "_"
+                          ]
+                        }
+                      ]
+                    },
+                    "take"
+                  ]
+                },
+                "composites.last - composites.length"
+              ]
+            }
           }
         ]
       },
@@ -136,7 +196,27 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "Seq[Int]",
-            "value": "filter(naturals(2)).take(n)"
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "filter",
+                        {
+                          "()": [
+                            "naturals",
+                            "2"
+                          ]
+                        }
+                      ]
+                    },
+                    "take"
+                  ]
+                },
+                "n"
+              ]
+            }
           }
         ]
       }

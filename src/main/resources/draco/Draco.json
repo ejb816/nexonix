@@ -18,51 +18,6 @@
       ]
     }
   },
-  "actorAspect": {
-    "messageType": {
-      "name": "DracoType",
-      "namePackage": [
-        "draco"
-      ]
-    },
-    "start": {
-      "kind": "Action",
-      "body": [
-        {
-          "kind": "Fixed",
-          "name": "session",
-          "valueType": "org.evrete.api.StatefulSession",
-          "value": "knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)"
-        },
-        {
-          "kind": "Monadic",
-          "value": "session.set(\"problems\", problems)"
-        }
-      ]
-    },
-    "message": {
-      "kind": "Action",
-      "body": [
-        {
-          "kind": "Monadic",
-          "value": "session.insert(Seq(msg): _*)"
-        },
-        {
-          "kind": "Monadic",
-          "value": "session.fire()"
-        }
-      ]
-    },
-    "signal": {
-      "kind": "Action",
-      "body": [
-        {
-          "kind": "Monadic",
-          "value": "session.close()"
-        }
-      ]
-    }
-  },
   "domainAspect": {
     "typeName": {
       "name": "Draco",
@@ -125,5 +80,74 @@
       "TypeTransform",
       "Variable"
     ]
+  },
+  "actorAspect": {
+    "message": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(msg): _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.fire"
+            ]
+          }
+        }
+      ]
+    },
+    "messageType": {
+      "name": "DracoType",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    "signal": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.close"
+            ]
+          }
+        }
+      ]
+    },
+    "start": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "session",
+          "valueType": "org.evrete.api.StatefulSession",
+          "value": {
+            "()": [
+              "knowledge.newStatefulSession",
+              "org.evrete.api.ActivationMode.CONTINUOUS"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.set",
+              "\"problems\"",
+              "problems"
+            ]
+          }
+        }
+      ]
+    }
   }
 }

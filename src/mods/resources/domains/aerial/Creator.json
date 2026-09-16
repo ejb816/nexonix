@@ -19,15 +19,16 @@
       ]
     }
   },
-  "actorAspect": {
-    "messageType": {
-      "name": "JSON",
+  "domainAspect": {
+    "typeName": {
+      "name": "Aerial",
       "namePackage": [
-        "draco",
-        "format",
-        "json"
+        "domains",
+        "aerial"
       ]
-    },
+    }
+  },
+  "actorAspect": {
     "message": {
       "kind": "Action",
       "body": [
@@ -35,33 +36,55 @@
           "kind": "Fixed",
           "name": "session",
           "valueType": "org.evrete.api.StatefulSession",
-          "value": "knowledge.newStatefulSession()"
+          "value": {
+            "()": [
+              "knowledge.newStatefulSession"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "session.set(\"consumer\", consumer)"
+          "value": {
+            "()": [
+              "session.set",
+              "\"consumer\"",
+              "consumer"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "session.insert(Seq(msg): _*)"
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(msg): _*"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "session.fire()"
+          "value": {
+            "()": [
+              "session.fire"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "session.close()"
+          "value": {
+            "()": [
+              "session.close"
+            ]
+          }
         }
       ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Aerial",
+    },
+    "messageType": {
+      "name": "JSON",
       "namePackage": [
-        "domains",
-        "aerial"
+        "draco",
+        "format",
+        "json"
       ]
     }
   }

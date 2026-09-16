@@ -43,13 +43,28 @@
           "kind": "Local",
           "name": "sourceURI",
           "valueType": "java.net.URI",
-          "value": "_sourceRoot.resolve(java.net.URI.create(_logicalPath))"
+          "value": {
+            "()": [
+              "_sourceRoot.resolve",
+              {
+                "()": [
+                  "java.net.URI.create",
+                  "_logicalPath"
+                ]
+              }
+            ]
+          }
         },
         {
           "kind": "Fixed",
           "name": "source",
           "valueType": "BufferedSource",
-          "value": "scala.io.Source.fromFile(sourceURI)"
+          "value": {
+            "()": [
+              "scala.io.Source.fromFile",
+              "sourceURI"
+            ]
+          }
         },
         {
           "kind": "Fixed",
@@ -61,7 +76,12 @@
           "kind": "Fixed",
           "name": "sourceString",
           "valueType": "String",
-          "value": "sourceLines.mkString(\"\\n\")"
+          "value": {
+            "()": [
+              "sourceLines.mkString",
+              "\"\\n\""
+            ]
+          }
         }
       ]
     }

@@ -38,7 +38,12 @@
           "kind": "Fixed",
           "name": "typeDictionary",
           "valueType": "TypeDictionary",
-          "value": "TypeDictionary(_domainDefinition)"
+          "value": {
+            "()": [
+              "TypeDictionary",
+              "_domainDefinition"
+            ]
+          }
         }
       ]
     }

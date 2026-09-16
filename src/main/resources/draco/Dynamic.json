@@ -32,13 +32,23 @@
           "kind": "Parameter",
           "name": "parameters",
           "valueType": "Seq[Parameter]",
-          "value": { ".": ["Seq", "empty"] }
+          "value": {
+            ".": [
+              "Seq",
+              "empty"
+            ]
+          }
         },
         {
           "kind": "Parameter",
           "name": "body",
           "valueType": "Seq[BodyElement]",
-          "value": { ".": ["Seq", "empty"] }
+          "value": {
+            ".": [
+              "Seq",
+              "empty"
+            ]
+          }
         },
         {
           "kind": "Parameter",

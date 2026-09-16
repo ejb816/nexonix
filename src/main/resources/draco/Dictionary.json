@@ -41,7 +41,12 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "{K, V}",
-            "value": "kvMap.removed(key)"
+            "value": {
+              "()": [
+                "kvMap.removed",
+                "key"
+              ]
+            }
           }
         ]
       },
@@ -66,7 +71,13 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "{K, V1}",
-            "value": "kvMap.updated(key, value)"
+            "value": {
+              "()": [
+                "kvMap.updated",
+                "key",
+                "value"
+              ]
+            }
           }
         ]
       },
@@ -86,7 +97,12 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "Option[V]",
-            "value": "kvMap.get(key)"
+            "value": {
+              "()": [
+                "kvMap.get",
+                "key"
+              ]
+            }
           }
         ]
       },
@@ -94,7 +110,6 @@
         "kind": "Dynamic",
         "name": "iterator",
         "valueType": "Iterator[(K, V)]",
-        "parameters": [],
         "value": "kvMap.iterator"
       }
     ]

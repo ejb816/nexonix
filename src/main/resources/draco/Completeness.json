@@ -5,6 +5,14 @@
       "draco"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -20,8 +28,8 @@
           "kind": "Condition",
           "value": {
             "()": [
-              { ".": [ "draco", "DracoAspect", "isEmpty" ] },
-              { ".": [ "td", "dracoAspect" ] }
+              "draco.DracoAspect.isEmpty",
+              "td.dracoAspect"
             ]
           }
         },
@@ -29,8 +37,8 @@
           "kind": "Condition",
           "value": {
             "()": [
-              { ".": [ "draco", "DomainAspect", "isEmpty" ] },
-              { ".": [ "td", "domainAspect" ] }
+              "draco.DomainAspect.isEmpty",
+              "td.domainAspect"
             ]
           }
         },
@@ -38,8 +46,8 @@
           "kind": "Condition",
           "value": {
             "()": [
-              { ".": [ "draco", "RuleAspect", "isEmpty" ] },
-              { ".": [ "td", "ruleAspect" ] }
+              "draco.RuleAspect.isEmpty",
+              "td.ruleAspect"
             ]
           }
         },
@@ -47,8 +55,8 @@
           "kind": "Condition",
           "value": {
             "()": [
-              { ".": [ "draco", "ActorAspect", "isEmpty" ] },
-              { ".": [ "td", "actorAspect" ] }
+              "draco.ActorAspect.isEmpty",
+              "td.actorAspect"
             ]
           }
         }
@@ -59,16 +67,19 @@
       "body": [
         {
           "kind": "Monadic",
-          "value": "ctx.insert(Problem(td.typeName, s\"member ${td.typeName.name} is declared but unauthored (no JSON on disk)\"))"
+          "value": {
+            "()": [
+              "ctx.insert",
+              {
+                "()": [
+                  "Problem",
+                  "td.typeName",
+                  "s\"member ${td.typeName.name} is declared but unauthored (no JSON on disk)\""
+                ]
+              }
+            ]
+          }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Draco",
-      "namePackage": [
-        "draco"
       ]
     }
   }

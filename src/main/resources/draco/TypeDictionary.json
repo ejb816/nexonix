@@ -40,13 +40,28 @@
           "kind": "Fixed",
           "name": "elementTypes",
           "valueType": "Seq[TypeDefinition]",
-          "value": "_domainDefinition.domainAspect.elementTypeNames.map(name => TypeDefinition(TypeName(name, _namePackage = _domainDefinition.typeName.namePackage)))"
+          "value": {
+            "()": [
+              "_domainDefinition.domainAspect.elementTypeNames.map",
+              "name => TypeDefinition(TypeName(name, _namePackage = _domainDefinition.typeName.namePackage))"
+            ]
+          }
         },
         {
           "kind": "Fixed",
           "name": "kvMap",
           "valueType": "{TypeName, TypeDefinition}",
-          "value": "elementTypes.map(td => (td.typeName, td)).toMap"
+          "value": {
+            ".": [
+              {
+                "()": [
+                  "elementTypes.map",
+                  "td => (td.typeName, td)"
+                ]
+              },
+              "toMap"
+            ]
+          }
         }
       ]
     }

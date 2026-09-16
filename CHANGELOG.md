@@ -159,6 +159,14 @@ for the definition that will replace it.
 
 ### Changed
 
+- **The JSON corpus is re-canonicalized from the drake.** Every definition with a `.drake` now carries
+  the JSON `Drake.parse` reads from it (40 files rewritten through `DrakeCLI parse`, 62 already
+  identical), so the host-opaque strings the carrier held for calls are trees. Three definitions stay
+  as they were, for stated reasons: BodyElement and ActorAspect (authored-ahead aspects) and
+  format/json/Value (Haskell-form lambdas and conditionals the parser does not yet tree, GitHub #61).
+  Two factory defaults move from `Seq()` to `Seq.empty` in the generated Scala, closing the
+  empty-collection spelling loss. (2026-09-16)
+
 - **A call is `f(a, b)`, positional then `name:value`; the `parameters`/`par` call form retires.**
   An application on the drake surface is one glued token, written as every reader expects and parsed by
   splitting it at depth-0 parentheses, commas and dots — a chain is the nested spine inside it, a

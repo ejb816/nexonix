@@ -43,7 +43,22 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "Option[TypeDefinition]",
-            "value": "draco.generator.carrier.DefinitionPath.default.source(resourcePath).flatMap(readDefinition)"
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "draco.generator.carrier.DefinitionPath.default.source",
+                        "resourcePath"
+                      ]
+                    },
+                    "flatMap"
+                  ]
+                },
+                "readDefinition"
+              ]
+            }
           }
         ]
       },
@@ -63,7 +78,12 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "Option[TypeDefinition]",
-            "value": "loadFromResource(typeName.resourcePath)"
+            "value": {
+              "()": [
+                "loadFromResource",
+                "typeName.resourcePath"
+              ]
+            }
           }
         ]
       },
@@ -103,7 +123,37 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": "TypeDefinition",
-            "value": "tryLoad(typeName).map(rooted).getOrElse(TypeDefinition(typeName))"
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "tryLoad",
+                                "typeName"
+                              ]
+                            },
+                            "map"
+                          ]
+                        },
+                        "rooted"
+                      ]
+                    },
+                    "getOrElse"
+                  ]
+                },
+                {
+                  "()": [
+                    "TypeDefinition",
+                    "typeName"
+                  ]
+                }
+              ]
+            }
           }
         ]
       }

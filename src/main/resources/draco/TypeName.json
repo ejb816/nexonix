@@ -46,13 +46,23 @@
           "kind": "Parameter",
           "name": "namePackage",
           "valueType": "Seq[String]",
-          "value": "Seq()"
+          "value": {
+            ".": [
+              "Seq",
+              "empty"
+            ]
+          }
         },
         {
           "kind": "Parameter",
           "name": "typeParameters",
           "valueType": "Seq[String]",
-          "value": "Seq()"
+          "value": {
+            ".": [
+              "Seq",
+              "empty"
+            ]
+          }
         }
       ],
       "body": [

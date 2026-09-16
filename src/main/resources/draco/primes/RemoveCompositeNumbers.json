@@ -6,6 +6,15 @@
       "primes"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Primes",
+      "namePackage": [
+        "draco",
+        "primes"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -34,12 +43,7 @@
       "conditions": [
         {
           "kind": "Condition",
-          "value": {
-            "==": [
-              { "*": ["i1", "i2"] },
-              "i3"
-            ]
-          }
+          "value": "i1 * i2 == i3"
         }
       ]
     },
@@ -54,29 +58,49 @@
         },
         {
           "kind": "Monadic",
-          "value": "ctx.delete(i3)"
+          "value": {
+            "()": [
+              "ctx.delete",
+              "i3"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "accumulator.primeSet.remove(i3)"
+          "value": {
+            "()": [
+              "accumulator.primeSet.remove",
+              "i3"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "accumulator.compositeSet.addOne(i3)"
+          "value": {
+            "()": [
+              "accumulator.compositeSet.addOne",
+              "i3"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "accumulator.intervalTextSet.addOne((System.nanoTime(), newText))"
+          "value": {
+            "()": [
+              "accumulator.intervalTextSet.addOne",
+              {
+                "(,)": [
+                  {
+                    "()": [
+                      "System.nanoTime"
+                    ]
+                  },
+                  "newText"
+                ]
+              }
+            ]
+          }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Primes",
-      "namePackage": [
-        "draco",
-        "primes"
       ]
     }
   }

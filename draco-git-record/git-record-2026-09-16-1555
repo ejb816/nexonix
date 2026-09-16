@@ -1,0 +1,63 @@
+# The JSON corpus re-canonicalized FROM THE DRAKE — the increment Dev accepted on 2026-09-16 after the
+# call syntax (a8afcd8): every definition's JSON becomes `DrakeCLI parse X.drake`, so the ~105 host-opaque
+# call strings the carrier still held become the trees the parser now reads from the surface. Drake is
+# the Source; the JSON is the bootstrap carrier and now says exactly what the drake says.
+#
+# HOW IT WAS DONE (no sbt from me): the compiled classes of Dev's 15:46 run, on the exported runtime
+# classpath (reference_cli_without_sbt), driving `draco.DrakeCLI parse` over every .drake under
+# src/main/resources and src/mods/resources/domains — 103 definitions with a .drake: 40 JSON rewritten,
+# 62 byte-identical, 0 failed. EXCLUDED, with reason:
+#   draco/BodyElement, draco/ActorAspect   authored-ahead drake carries present-empty rule/actor heads
+#                                          the JSON deliberately lacks (DrakeGenTest.authoredAhead);
+#                                          parse(drake) would add an aspect.
+#   draco/format/json/Value                its drake carries lambdas and if/then/else in HASKELL FORM,
+#                                          which the parser still returns as opaque drake-form text
+#                                          (GitHub #61); parse(drake) turned two trees into text that
+#                                          would have put `\e a -> …` into Scala. Restored to HEAD after
+#                                          the sweep; it is the one definition where the JSON still
+#                                          knows more than parse reads. Closes when #61 does.
+#   the 38 mods definitions with no .drake   nothing to canonicalize from; 8 opaque calls stay there
+#                                          (the ConsumeReport / OriginateReport rules).
+#
+# VERIFIED BEFORE HANDOVER, four ways: (1) every rewritten file differs from HEAD only in value form —
+# three also drop a non-canonical trailing key (Dictionary's explicit empty `parameters`, Main's and
+# Test's empty `value`), which the encoder never wrote and the decoder ignores; (2) `GeneratorCLI
+# generate` of each rewritten src/main JSON reproduces its committed .scala, whitespace-normalized as
+# DracoGenTest does — 25 of 25 after the two below; (3) `generate-multi` over the fourteen TypeElement
+# family members reproduces TypeElement.scala; (4) `DrakeCLI check` over both roots: json drift 0,
+# surface drift only the two authored-ahead files.
+#
+# THE ONE SCALA CHANGE, three lines: DomainDictionary's `_domains` and TypeName's `_namePackage` /
+# `_typeParameters` defaults go from `Seq()` to `Seq.empty`. The drake spells an empty default `[]`,
+# which parses to the Seq.empty tree, so the legacy `Seq()` strings could not survive canonicalization
+# — this is the "empty-collection spelling" loss (3 fields since 324556c) closing, and the Scala follows
+# the JSON as the trio rule says. Same value, one spelling.
+#
+# EXPECTED: 606 tests / 43 suites, all green (no test changes). Headlines: surface losses fall from
+# 114 to an expected 2 — Value's two form-carrying values, empty-collection 0 — the run decides and
+# DRACO.md's row says "expected" until it does; GEN MAP 28/20/0/0 unchanged (mods values render
+# identically); parse scope 95 + 10, 0 held back; scenario 23 clean; GenDrake 93 of 93; PON unchanged.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-16-1555 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-16-1555 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-16-1555 && git push
+
+--- MESSAGE ---
+The JSON corpus is re-canonicalized from the drake, and the host-opaque call strings become trees
+
+Every definition with a .drake now carries the JSON that Drake.parse reads from it: 40 files rewritten
+through DrakeCLI parse, 62 already identical. The ~105 host-opaque strings the carrier held for calls
+are the trees the call syntax reads from the surface, and the JSON says exactly what the drake says.
+
+Three definitions are left as they were, each for a stated reason: BodyElement and ActorAspect, whose
+authored-ahead drake carries aspects their JSON deliberately lacks; and format/json/Value, whose drake
+carries lambdas and if/then/else in Haskell form that the parser still returns as opaque text (GitHub
+#61) — the one place the JSON still knows more than parse reads. The 38 mods definitions with no .drake
+have nothing to canonicalize from.
+
+One Scala change, three lines: two factory defaults go from Seq() to Seq.empty, because the drake
+spells an empty default [] and that is the tree it parses to — the empty-collection spelling loss
+closing, with the Scala following the JSON. Verified before handover against the committed Scala,
+per type and for the TypeElement family, with the compiled engine; no test changes.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

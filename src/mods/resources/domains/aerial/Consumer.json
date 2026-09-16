@@ -6,13 +6,66 @@
       "aerial"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Aerial",
+      "namePackage": [
+        "domains",
+        "aerial"
+      ]
+    }
+  },
   "actorAspect": {
+    "message": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(msg): _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.fire"
+            ]
+          }
+        }
+      ]
+    },
     "messageType": {
       "name": "JSON",
       "namePackage": [
         "draco",
         "format",
         "json"
+      ]
+    },
+    "signal": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "consumed.forEach",
+              "(e: String) => domains.aerial.AerialSink.record(e)"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.close"
+            ]
+          }
+        }
       ]
     },
     "start": {
@@ -22,7 +75,11 @@
           "kind": "Fixed",
           "name": "session",
           "valueType": "org.evrete.api.StatefulSession",
-          "value": "knowledge.newStatefulSession()"
+          "value": {
+            "()": [
+              "knowledge.newStatefulSession"
+            ]
+          }
         },
         {
           "kind": "Fixed",
@@ -32,43 +89,14 @@
         },
         {
           "kind": "Monadic",
-          "value": "session.set(\"consumed\", consumed)"
+          "value": {
+            "()": [
+              "session.set",
+              "\"consumed\"",
+              "consumed"
+            ]
+          }
         }
-      ]
-    },
-    "message": {
-      "kind": "Action",
-      "body": [
-        {
-          "kind": "Monadic",
-          "value": "session.insert(Seq(msg): _*)"
-        },
-        {
-          "kind": "Monadic",
-          "value": "session.fire()"
-        }
-      ]
-    },
-    "signal": {
-      "kind": "Action",
-      "body": [
-        {
-          "kind": "Monadic",
-          "value": "consumed.forEach((e: String) => domains.aerial.AerialSink.record(e))"
-        },
-        {
-          "kind": "Monadic",
-          "value": "session.close()"
-        }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Aerial",
-      "namePackage": [
-        "domains",
-        "aerial"
       ]
     }
   }

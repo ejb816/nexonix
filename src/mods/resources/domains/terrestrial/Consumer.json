@@ -6,15 +6,16 @@
       "terrestrial"
     ]
   },
-  "actorAspect": {
-    "messageType": {
-      "name": "JSON",
+  "domainAspect": {
+    "typeName": {
+      "name": "Terrestrial",
       "namePackage": [
-        "draco",
-        "format",
-        "json"
+        "domains",
+        "terrestrial"
       ]
-    },
+    }
+  },
+  "actorAspect": {
     "message": {
       "kind": "Action",
       "body": [
@@ -22,29 +23,45 @@
           "kind": "Fixed",
           "name": "session",
           "valueType": "org.evrete.api.StatefulSession",
-          "value": "knowledge.newStatefulSession()"
+          "value": {
+            "()": [
+              "knowledge.newStatefulSession"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "session.insert(Seq(msg): _*)"
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(msg): _*"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "session.fire()"
+          "value": {
+            "()": [
+              "session.fire"
+            ]
+          }
         },
         {
           "kind": "Monadic",
-          "value": "session.close()"
+          "value": {
+            "()": [
+              "session.close"
+            ]
+          }
         }
       ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Terrestrial",
+    },
+    "messageType": {
+      "name": "JSON",
       "namePackage": [
-        "domains",
-        "terrestrial"
+        "draco",
+        "format",
+        "json"
       ]
     }
   }

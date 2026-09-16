@@ -40,7 +40,17 @@
           "kind": "Local",
           "name": "sinkPath",
           "valueType": "java.nio.file.Path",
-          "value": "java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))"
+          "value": {
+            "()": [
+              "java.nio.file.Paths.get",
+              {
+                "()": [
+                  "_sinkRoot.resolve",
+                  "_logicalPath"
+                ]
+              }
+            ]
+          }
         },
         {
           "kind": "Dynamic",
@@ -56,11 +66,27 @@
           "body": [
             {
               "kind": "Monadic",
-              "value": "java.nio.file.Files.createDirectories(sinkPath.getParent)"
+              "value": {
+                "()": [
+                  "java.nio.file.Files.createDirectories",
+                  "sinkPath.getParent"
+                ]
+              }
             },
             {
               "kind": "Monadic",
-              "value": "java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))"
+              "value": {
+                "()": [
+                  "java.nio.file.Files.write",
+                  "sinkPath",
+                  {
+                    "()": [
+                      "content.getBytes",
+                      "java.nio.charset.StandardCharsets.UTF_8"
+                    ]
+                  }
+                ]
+              }
             }
           ]
         }

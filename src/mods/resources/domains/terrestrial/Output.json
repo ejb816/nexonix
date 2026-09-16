@@ -19,14 +19,16 @@
       ]
     }
   },
-  "actorAspect": {
-    "messageType": {
-      "name": "World",
+  "domainAspect": {
+    "typeName": {
+      "name": "Terrestrial",
       "namePackage": [
         "domains",
-        "world"
+        "terrestrial"
       ]
-    },
+    }
+  },
+  "actorAspect": {
     "message": {
       "kind": "Action",
       "body": [
@@ -36,27 +38,13 @@
           "valueType": "io.circe.Json",
           "value": {
             "()": [
-              {
-                ".": [
-                  "io",
-                  "circe",
-                  "Json",
-                  "obj"
-                ]
-              },
+              "io.circe.Json.obj",
               {
                 "(,)": [
                   "\"type\"",
                   {
                     "()": [
-                      {
-                        ".": [
-                          "io",
-                          "circe",
-                          "Json",
-                          "fromString"
-                        ]
-                      },
+                      "io.circe.Json.fromString",
                       "\"LOCATION\""
                     ]
                   }
@@ -67,20 +55,8 @@
                   "\"latitude\"",
                   {
                     "()": [
-                      {
-                        ".": [
-                          "io",
-                          "circe",
-                          "Json",
-                          "fromDoubleOrNull"
-                        ]
-                      },
-                      {
-                        ".": [
-                          "location",
-                          "latitude"
-                        ]
-                      }
+                      "io.circe.Json.fromDoubleOrNull",
+                      "location.latitude"
                     ]
                   }
                 ]
@@ -90,20 +66,8 @@
                   "\"longitude\"",
                   {
                     "()": [
-                      {
-                        ".": [
-                          "io",
-                          "circe",
-                          "Json",
-                          "fromDoubleOrNull"
-                        ]
-                      },
-                      {
-                        ".": [
-                          "location",
-                          "longitude"
-                        ]
-                      }
+                      "io.circe.Json.fromDoubleOrNull",
+                      "location.longitude"
                     ]
                   }
                 ]
@@ -113,20 +77,8 @@
                   "\"elevationMetres\"",
                   {
                     "()": [
-                      {
-                        ".": [
-                          "io",
-                          "circe",
-                          "Json",
-                          "fromInt"
-                        ]
-                      },
-                      {
-                        ".": [
-                          "location",
-                          "elevationMetres"
-                        ]
-                      }
+                      "io.circe.Json.fromInt",
+                      "location.elevationMetres"
                     ]
                   }
                 ]
@@ -140,22 +92,11 @@
           "valueType": "domains.terrestrial.LocationReport",
           "value": {
             "()": [
-              {
-                ".": [
-                  "domains",
-                  "terrestrial",
-                  "LocationReport"
-                ]
-              },
+              "domains.terrestrial.LocationReport",
               {
                 "=": [
                   "typeDefinition",
-                  {
-                    ".": [
-                      "LocationReport",
-                      "typeDefinition"
-                    ]
-                  }
+                  "LocationReport.typeDefinition"
                 ]
               },
               {
@@ -172,14 +113,12 @@
           "value": "consumer ! report"
         }
       ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Terrestrial",
+    },
+    "messageType": {
+      "name": "World",
       "namePackage": [
         "domains",
-        "terrestrial"
+        "world"
       ]
     }
   }

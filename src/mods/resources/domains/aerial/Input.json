@@ -19,15 +19,16 @@
       ]
     }
   },
-  "actorAspect": {
-    "messageType": {
-      "name": "JSON",
+  "domainAspect": {
+    "typeName": {
+      "name": "Aerial",
       "namePackage": [
-        "draco",
-        "format",
-        "json"
+        "domains",
+        "aerial"
       ]
-    },
+    }
+  },
+  "actorAspect": {
     "message": {
       "kind": "Action",
       "body": [
@@ -53,12 +54,7 @@
                         ".": [
                           {
                             "()": [
-                              {
-                                ".": [
-                                  "cursor",
-                                  "get[Double]"
-                                ]
-                              },
+                              "cursor.get[Double]",
                               "\"latitude\""
                             ]
                           },
@@ -79,12 +75,7 @@
                         ".": [
                           {
                             "()": [
-                              {
-                                ".": [
-                                  "cursor",
-                                  "get[Double]"
-                                ]
-                              },
+                              "cursor.get[Double]",
                               "\"longitude\""
                             ]
                           },
@@ -105,12 +96,7 @@
                         ".": [
                           {
                             "()": [
-                              {
-                                ".": [
-                                  "cursor",
-                                  "get[Int]"
-                                ]
-                              },
+                              "cursor.get[Int]",
                               "\"altitudeFeet\""
                             ]
                           },
@@ -130,14 +116,13 @@
           "value": "worldConsumer ! position"
         }
       ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Aerial",
+    },
+    "messageType": {
+      "name": "JSON",
       "namePackage": [
-        "domains",
-        "aerial"
+        "draco",
+        "format",
+        "json"
       ]
     }
   }
