@@ -1,0 +1,42 @@
+# Cowork's data files since a5d2f5b — no code, no corpus, no suite run needed. Two things in one
+# commit, both model-authored prose per DRACO.md's rule:
+#   draco-dev-journal/  chapter 77 (new, 853 lines — the September 10–14 session, up to its declared
+#                       close), chapter 76 closed (session date fixed, its last exchange appended),
+#                       the intro brought to 77.
+#   draco-reviews/      NEW folder: two full reviews (2026-08-15 at db87dbd, 2026-08-28 at 0af56fd)
+#                       and the continuity files a review carries forward — ledger, errata, trends,
+#                       beta-criteria (unratified), decisions, authoritative-source, README — plus
+#                       checks/review_checks.py, a READ-ONLY measurement script (no sbt, no git
+#                       writes) whose Markdown block a review pastes. Python, in a review folder
+#                       outside the build; the "tooling stays in draco/Scala" rule is about the
+#                       framework's own tooling, and this is the reviewer's ruler — Dev's call if
+#                       that reading is wrong.
+# Three of the review files are staged AND further modified (AM); `git add -A` on the paths sweeps
+# the working-tree state. DRACO.md and README.md are NOT in this commit — the Cowork docs session
+# had not written them when this record was made, and the pathspec keeps them out if it writes
+# before this block is pasted; they get their own record when they land.
+# PATH-SCOPED, as every journal commit is.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-16-1232 | sed '1d' > /tmp/msg && git add -A -- draco-dev-journal draco-reviews draco-git-record/git-record-2026-09-16-1232 && git commit -F /tmp/msg -- draco-dev-journal draco-reviews draco-git-record/git-record-2026-09-16-1232 && git push
+
+--- MESSAGE ---
+draco-dev-journal: chapter 77, and draco-reviews arrives with its continuity files
+
+Chapter 77 covers September 10 through 14 — from "What's next?" answered from the tree, through
+Emission moving up, the transform domain as a domain of transform types, ++ and join and DomainLine
+and DomainLineOf, the eleven-test DelayedInit failure that widened the lazy-val rule to the engine,
+the aspect-named target types, the conditional concern raised and withdrawn, Presence, the
+call-syntax course correction ("Remember, Drake is a Definition Language"), the lazy-evaluation
+feedback and the four type forms discussed under it, to the result convention landing as the
+session's close. Chapter 76 closes, and the intro moves to 77.
+
+draco-reviews is new: the two full reviews of the framework taken so far (2026-08-15 and 2026-08-28)
+and the files that carry state between reviews — a ledger of findings with stable IDs, errata, a
+trends table, proposed beta criteria awaiting ratification, a decisions file that is the one place
+Dev's own decisions are recorded with their source in the tree, the authoritative-source landmarks,
+and a read-only measurement script. Everything in it is model-authored prose: prior reasoning to
+re-examine, never a specification.
+
+Written by Cowork, not this session; this record exists because every commit carries one.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
