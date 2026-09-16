@@ -5,6 +5,5 @@ rule
     variables
       var definition TypeDefinition
   action
-    fix emission draco.generator.Emission parameters
-      par [ draco.Drake.emit parameters par definition ]
-    mon ctx.insert parameters par emission
+    fix emission draco.generator.Emission draco.generator.Emission(draco.Drake.emit(definition))
+    mon ctx.insert(emission)

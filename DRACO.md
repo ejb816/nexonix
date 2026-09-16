@@ -45,7 +45,7 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **605 tests / 43
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **606 tests / 43
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -53,7 +53,8 @@ COUNTS below — 93 draco types in scope, 103 measured — and none of the loss 
 structural test in `DrakeParseTest` for the `++` operator (2026-09-10); then `draketarget.DomainLine`
 (five per-type tests) and its own two-test suite `DomainLineTest` (2026-09-11), which moves the
 type counts to 94 in scope, 104 measured; then `gendrake.DomainLineOf`, the first member of the
-transform domain (2026-09-11), to 95 and 105. These
+transform domain (2026-09-11), to 95 and 105; then one more `DrakeParseTest` test for the
+call syntax's at-most-once rule (2026-09-16), **606 tests / 43 suites**. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -65,7 +66,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 15 fields across 105 types — expression form 12, empty-collection spelling 3 |
+| `DrakeParseTest` | drake surface losses | 114 fields across 105 types — expression form 111, empty-collection spelling 3 (measured at the call-syntax commit, 2026-09-16; was 15 / 12 / 3 at `324556c`; falls back toward 3 once the JSON corpus is re-canonicalized from the drake) |
 | `DrakeParseTest` | Drake.parse scope | 95 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
@@ -217,10 +218,14 @@ Value types are
 `src/main/resources/draco/drake.dlt`, which is current and authoritative.
 
 **Caveat, and it matters if you author drake:** `Drake.parse` builds expression trees only
-for the application surface and the `++` concatenation operator (the first operator-layer
-symbol it trees, 2026-09-10). Every other value — lambdas, `if/then/else`, `->`, other operators
-— returns as a host-opaque string in *drake* form, which `DracoGenerator.expression` would pass
-verbatim into Scala. Parse is a measurement tool, not yet an authoring path (GitHub #61).
+for calls — `f(a, b)`, positional then `name:value`, one glued token split at depth-0
+parentheses, commas and dots (2026-09-16; the `parameters`/`par` call form, its `[ ]` argument
+brackets and `.member` chain lines are RETIRED) — tuples, and the `++` concatenation operator
+(2026-09-10). Every other value — lambdas, `if/then/else`, `->`, other operators — returns as a
+host-opaque string in *drake* form, which `DracoGenerator.expression` would pass verbatim into
+Scala. Because every parenthesised call now trees, the ~105 host-opaque call strings still in the
+JSON corpus come back as trees on parse; re-canonicalizing the JSON from the drake is the next
+increment. Parse is a measurement tool, not yet an authoring path (GitHub #61).
 
 **Tiers.** `src/main/scala` is definition-backed. `src/mods/scala` compiles into the same
 package tree and holds the hand-written engine: `DracoGenerator`, `GeneratorCLI`, `Drake`,

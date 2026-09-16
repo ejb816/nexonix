@@ -11,10 +11,8 @@ type DefinitionPath
       parameters
         par resourcePath String
       body
-        loc found [URL] sources parameters par resourcePath
-        mon require parameters
-          par found.size <= 1
-          par s"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: " + found.mkString(", ")
+        loc found [URL] sources(resourcePath)
+        mon require(found.size <= 1, s"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: " + found.mkString(", "))
         fix value Option(URL) found.headOption
     ]
   factory

@@ -4,8 +4,5 @@ type DomainLine from Surface
       par package [String]
       par name String
     body
-      fix value String "domain " ++ [ join parameters
-        par " "
-        par _package
-      ] ++ " " ++ _name
+      fix value String "domain " ++ join(" ", _package) ++ " " ++ _name
 domain draco draketarget DrakeTarget

@@ -3,12 +3,12 @@ domain scenario ash Ash
 actor
   messageType AshSap
   start
-    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession parameters
+    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
   message
     case a AlarmSignal [
-      mon session.insert parameters par Seq(a.infochemical): _*
+      mon session.insert(Seq(a.infochemical): _*)
     ]
     case d DroughtCue [
-      mon session.insert parameters par Seq(d.infochemical): _*
+      mon session.insert(Seq(d.infochemical): _*)
     ]
-    mon session.fire parameters
+    mon session.fire()

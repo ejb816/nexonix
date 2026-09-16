@@ -6,12 +6,6 @@ domain domains terrestrial Terrestrial
 actor
   messageType domains world World
   message
-    fix payload io.circe.Json io.circe.Json.obj parameters
-      par ("type", io.circe.Json.fromString parameters par "LOCATION")
-      par ("latitude", io.circe.Json.fromDoubleOrNull parameters par location.latitude)
-      par ("longitude", io.circe.Json.fromDoubleOrNull parameters par location.longitude)
-      par ("elevationMetres", io.circe.Json.fromInt parameters par location.elevationMetres)
-    fix report domains.terrestrial.LocationReport parameters
-      par = typeDefinition LocationReport.typeDefinition
-      par = json payload
+    fix payload io.circe.Json io.circe.Json.obj(("type", io.circe.Json.fromString("LOCATION")), ("latitude", io.circe.Json.fromDoubleOrNull(location.latitude)), ("longitude", io.circe.Json.fromDoubleOrNull(location.longitude)), ("elevationMetres", io.circe.Json.fromInt(location.elevationMetres)))
+    fix report domains.terrestrial.LocationReport domains.terrestrial.LocationReport(typeDefinition:LocationReport.typeDefinition, json:payload)
     mon consumer ! report

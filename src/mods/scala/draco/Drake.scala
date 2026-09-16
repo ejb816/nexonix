@@ -30,16 +30,15 @@ object Drake {
     * verbatim; {op: [operands]} applies the operator. Haskell-form spellings:
     * "->" renders " -> ", "\" renders \p1 p2 -> body, "if" renders
     * if c then t else e. A tree in a String-typed slot needs no quoting here —
-    *
-    * TOTAL over the tree language, which includes the two ARGUMENT-POSITION nodes:
-    * a tuple "(,)" and a named argument "=". drake's multi-line surface spells the
-    * latter `par = <name> <value>` (see namedPrefix) and this flat one spells it
-    * `<name> = <value>`; same tree, two spellings, exactly as the projections differ
-    * from each other. `=` only ever appears inside a "()" operand list, so nothing
-    * reached it until the mods corpus — the first to carry named arguments — came
-    * under DrakeParseTest.
     * the drake surface carries the expression itself (Action.drake's unquoted
-    * arrow), quoting is the ScalaTarget projection's concern. */
+    * arrow), quoting is the ScalaTarget projection's concern.
+    *
+    * TOTAL over the tree language, which includes the two ARGUMENT-POSITION nodes: a
+    * tuple "(,)" and a named argument "=". A call is `f(a, b)` — positional arguments
+    * first, then `name:value` (drake.dlt APPLICATION SURFACE) — and it is the ONLY
+    * spelling: since 2026-09-16 there is no multi-line `parameters` / `par` form to
+    * unfold into, so this flat rendering is what every value position gets. The tree
+    * keeps `=` as its named-argument key; the surface spells the colon. */
   def expression (value: Json) : String = {
     if (value == null || value.isNull) ""
     else value.asString.getOrElse {
@@ -53,7 +52,7 @@ object Drake {
             case "\\"       => s"\\${args.init.mkString(" ")} -> ${args.last}"
             case "if"       => s"if ${args(0)} then ${args(1)} else ${args(2)}"
             case "(,)"      => args.mkString("(", ", ", ")")
-            case "="        => args.mkString(" = ")
+            case "="        => s"${args(0)}:${args(1)}"
             case "*" | "==" | "!=" | "||" | "++" => args.mkString(s" $op ")
             case _          => sys.error(s"Drake.expression: unknown operator '$op' in ${value.noSpaces}")
           }
@@ -62,171 +61,14 @@ object Drake {
     }
   }
 
-  /** A chain is an application whose function is a `.`-path whose receiver (first
-    * path element) is itself an application — i.e. two or more calls composed
-    * (`a.f(x).g(y)`). A lone call (`Json.obj(...)`, `newKnowledge("Primes")`) is not
-    * a chain: its full function path stays on one line. */
-  private def isChain (value: Json) : Boolean =
-    Expression.isApplication(value) &&
-      Expression.operands(value).head.asObject.flatMap(_(".")).flatMap(_.asArray)
-        .exists(_.headOption.exists(Expression.isApplication))
-
-  /** Unfold a chain into (base receiver, ordered calls). Each call is
-    * (member, args): the `.member` applied to `args`. Recurses through the nested
-    * `()`/`.` spine down to the base variable/path. */
-  private def unfoldChain (value: Json) : (Json, Seq[(String, Vector[Json])]) = {
-    val ops       = Expression.operands(value)
-    val pathElems = ops.head.asObject.flatMap(_(".")).flatMap(_.asArray).getOrElse(Vector.empty)
-    // The applied function is not a `.`-path at all: a plain or NILADIC call, whose
-    // function is one glued token (`ctx.getRuntime()`). Nothing further unfolds — this
-    // application IS the chain's base receiver, and `valueLines` writes it as a call.
-    if (pathElems.isEmpty) (value, Seq.empty)
-    else {
-    val recv      = pathElems.head
-    val member    = pathElems.tail.map(expression).mkString(".")
-    if (Expression.isApplication(recv)) {
-      val (base, prior) = unfoldChain(recv)
-      (base, prior :+ (member, ops.tail))
-    } else {
-      // recv is a plain path/leaf: base = path minus its last element, member = last.
-      val base = if (pathElems.size <= 2) recv else Json.obj("." -> Json.fromValues(pathElems.init))
-      (base, Seq(expression(pathElems.last) -> ops.tail))
-    }
-    }
-  }
-
-  /** True iff `value` is a tuple node `{"(,)": [a, b, …]}`. */
-  private def isTuple (value: Json) : Boolean =
-    value.asObject.exists(o => o.size == 1 && o.contains("(,)"))
-
-  /** Render a value to a single inline line: a tuple as `(e1, e2)`; a lone call as
-    * `<fn> parameters par <arg> …`; anything else flat. Used inside a `par (…)`
-    * tuple, where every element sits on the one line. */
-  private def inlineValue (value: Json) : String =
-    if (isTuple(value))
-      value.asObject.flatMap(_("(,)")).flatMap(_.asArray).getOrElse(Vector.empty)
-        .map(inlineValue).mkString("(", ", ", ")")
-    else if (Expression.isApplication(value)) {
-      val ops = Expression.operands(value)
-      s"${expression(ops.head)} parameters ${ops.tail.map(inlineArgument).mkString(" ")}"
-    } else expression(value)
-
-  /** One argument on an inline `parameters` run. Named arguments carry the `=`
-    * marker (see namedPrefix). */
-  private def inlineArgument (arg: Json) : String = Expression.namedArgument(arg) match {
-    case Some((name, v)) => s"par = $name ${inlineValue(v)}"
-    case None            => s"par ${inlineValue(arg)}"
-  }
-
-  /** The opening of an argument line. A NAMED argument (`{"=": [name, value]}`)
-    * spells its marker BEFORE the name — `par = latitude …` — not after it.
-    *
-    * `par <name> = <value>` would read better, but it is ambiguous: `=` also opens a
-    * dyn-with-body's result line, so `… parameters par a` followed by `= result`
-    * parses equally well as a named argument `a = result` with the dyn's result
-    * missing. Nothing distinguishes the two, and no amount of look-ahead settles it.
-    * Moving the marker in front of the name removes the overlap outright — `par`
-    * immediately followed by `=` occurs nowhere else, because an argument list that
-    * has run out of `par`s has already stopped. Same principle as the brackets on
-    * the opener (#52): close the grammar rather than tie-break it.
-    *
-    * The overlap is with a construct that is itself transitional (drake.dlt
-    * DIVERGENCES: the dyn result marker goes once expressions parse), so this
-    * position is worth revisiting when it does — `par <name> = <value>` costs nothing
-    * once no other `=` exists. */
-  private def namedPrefix (name: String) : String = s"par = $name"
-
-  /** Render a value expression whose first token follows `prefix` on the same line;
-    * any continuation lines indent under `contIndent`. Shapes: a tuple or leaf/flat
-    * expression renders inline; a chain unfolds to the base receiver + one
-    * `.member parameters …` line per call; a lone call renders `<fn> parameters …`. */
-  private def valueLines (prefix: String, contIndent: String, value: Json) : Seq[String] = {
-    if (isTuple(value)) Seq(s"$prefix ${inlineValue(value)}")
-    else if (Expression.isConcat(value)) concatLines(prefix, contIndent, Expression.node(value).get._2)
-    else if (!Expression.isApplication(value)) Seq(s"$prefix ${expression(value)}")
-    else if (isChain(value)) {
-      val (base, calls) = unfoldChain(value)
-      val callIndent    = contIndent + "  "
-      // The base receiver is usually a path or a leaf, but it can be a CALL:
-      // `ctx.getRuntime().get(…)` bases its chain on a niladic application. Such a base
-      // writes its own `parameters` — empty list included, exactly as a chain call does.
-      val baseLines =
-        if (Expression.isApplication(base))
-          applyLines(s"$prefix ${expression(Expression.operands(base).head)}", contIndent,
-                     Expression.operands(base).tail)
-        else Seq(s"$prefix ${expression(base)}")
-      baseLines ++
-        calls.flatMap { case (member, args) => applyLines(s"$callIndent.$member", callIndent, args) }
-    } else applyLines(s"$prefix ${expression(Expression.operands(value).head)}", contIndent, Expression.operands(value).tail)
-  }
-
-  /** A `++` concatenation (drake.dlt CONCATENATION): every operand on one flat run
-    * with ` ++ ` between them. A leaf operand (a literal or a name) is its own text;
-    * an APPLICATION operand brackets itself, exactly as a nested argument does and for
-    * the same reason — its `par` list cannot bound itself, so the `]` is what closes
-    * it before the next `++`. A bracketed operand that unfolds over several lines (a
-    * multi-argument call, a chain) carries the run on from its closing bracket. */
-  private def concatLines (prefix: String, indent: String, operands: Vector[Json]) : Seq[String] = {
-    val done = Seq.newBuilder[String]
-    var head = prefix
-    operands.zipWithIndex.foreach { case (operand, i) =>
-      val lines =
-        if (!Expression.isApplication(operand)) Seq(s"$head ${expression(operand)}")
-        else valueLines(s"$head [", indent, operand) match {
-          case Seq(single) => Seq(s"$single ]")
-          case several     => several :+ s"$indent]"
-        }
-      if (i < operands.size - 1) { done ++= lines.init; head = s"${lines.last} ++" }
-      else done ++= lines
-    }
-    done.result()
-  }
-
-  /** Emit a `parameters` block: `<prefix> parameters` then its arguments. A single
-    * leaf argument sits inline (`… parameters par x`); two or more (or a non-leaf
-    * single arg) each get their own `par` line one level deeper. */
-  private def applyLines (prefix: String, indent: String, args: Vector[Json]) : Seq[String] = {
-    if (args.isEmpty) Seq(s"$prefix parameters")
-    else if (args.size == 1 && inlineableArg(args.head)) Seq(s"$prefix parameters ${inlinePar(args.head)}")
-    else s"$prefix parameters" +: args.flatMap(a => parLines(indent + "  ", a))
-  }
-
-  /** An argument inlines when its value is a leaf (not itself an application), or a
-    * concatenation of leaves — one carrying an application must go through
-    * concatLines so that operand can bracket itself. */
-  private def inlineableArg (arg: Json) : Boolean = {
-    val value = Expression.namedArgument(arg).map(_._2).getOrElse(arg)
-    !Expression.isApplication(value) &&
-      !(Expression.isConcat(value) && Expression.node(value).get._2.exists(Expression.isApplication))
-  }
-
-  private def inlinePar (arg: Json) : String = Expression.namedArgument(arg) match {
-    case Some((name, v)) => s"${namedPrefix(name)} ${expression(v)}"
-    case None            => s"par ${expression(arg)}"
-  }
-
-  /** One argument on its own line — and, when its value is itself an application,
-    * BRACKETED (drake.dlt BRACKETS, GitHub #60).
-    *
-    * A nested argument list is the one place where a keyword block cannot bound
-    * itself: `parameters` admits `par`, so the inner list and the enclosing one admit
-    * the same word and the `par` that ends the inner is the `par` that opens the
-    * outer's next argument. Both readings are legal, and nothing but indentation —
-    * which drake does not read — tells them apart. So the argument is an OPENER and
-    * brackets itself, exactly as a dyn-with-body brackets its body; as there, the `[`
-    * is also what tells a leaf argument from a block one, which is why a leaf `par`
-    * carries none. It falls out that an argument of a CHAIN call may now be a chain
-    * itself: the `]` ends it before the enclosing chain can claim the next `.member`. */
-  private def parLines (indent: String, arg: Json) : Seq[String] = {
-    val (prefix, value) = Expression.namedArgument(arg) match {
-      case Some((name, v)) => (s"$indent${namedPrefix(name)}", v)
-      case None            => (s"${indent}par", arg)
-    }
-    if (!Expression.isApplication(value)) valueLines(prefix, indent, value)
-    else valueLines(s"$prefix [", indent, value) match {
-      case Seq(single) => Seq(s"$single ]")
-      case lines       => lines :+ s"$indent]"
-    }
+  /** Render a value into the slot after `prefix`, on ONE line. Every value form — a
+    * leaf, a call, a tuple, a `++` run — is a single line now that a call is one
+    * token (drake.dlt APPLICATION SURFACE): its parentheses bound it, so nothing has
+    * to unfold onto chain lines, bracket itself inside a `++`, or spell a `par` list.
+    * The empty-collection defaults collapse to their surface forms (defaultValue). */
+  private def valueLine (prefix: String, value: Json) : String = {
+    val rendered = defaultValue(expression(value))
+    if (rendered.isEmpty) prefix else s"$prefix $rendered"
   }
 
   /** Split a type-expression argument list on top-level commas only
@@ -382,28 +224,15 @@ object Drake {
 
   /** One leaf element line: `kw name value-type value?`. A `mon` (Unit effect)
     * and a `con` (rule condition predicate) carry a value only — no name or
-    * value-type; a `con`'s value is its boolean expression tree. */
-  private def leafLines (indent: String, keyword: String, element: TypeElement) : Seq[String] = {
+    * value-type; a `con`'s value is its boolean expression tree. A construction of
+    * the declared value type spells its head like any other call (`fix report T T(…)`):
+    * the elision that once dropped the head before `parameters` went with that form,
+    * because `(…)` alone is a tuple. */
+  private def leafLines (indent: String, keyword: String, element: TypeElement) : Seq[String] =
     element match {
-      case _: Monadic | _: Condition =>
-        valueLines(s"$indent$keyword", indent, element.value)
-      case e =>
-        val vtSlot = typeExpressionSlot(e.valueType)
-        val prefix = s"$indent$keyword ${elementName(e.name)} $vtSlot"
-        if (Expression.isApplication(e.value)) {
-          // Anonymous construction of the declared value type (a factory-less type,
-          // e.g. `new LocationReport { … }`): the function IS the value type, so the
-          // head is redundant — emit just `<valueType> parameters` + the overrides.
-          if (!isChain(e.value) && expression(Expression.operands(e.value).head) == vtSlot)
-            applyLines(prefix, indent, Expression.operands(e.value).tail)
-          else valueLines(prefix, indent, e.value)
-        } else if (isTuple(e.value) || Expression.isConcat(e.value)) valueLines(prefix, indent, e.value)
-        else {
-          val value = defaultValue(expression(e.value))
-          Seq(if (value.nonEmpty) s"$prefix $value" else prefix)
-        }
+      case _: Monadic | _: Condition => Seq(valueLine(s"$indent$keyword", element.value))
+      case e => Seq(valueLine(s"$indent$keyword ${elementName(e.name)} ${typeExpressionSlot(e.valueType)}", e.value))
     }
-  }
 
   private def keyword (element: TypeElement) : String = element match {
     case _: Fixed     => "fix"
@@ -420,7 +249,7 @@ object Drake {
 
   /** Render one element at `level` (2 spaces per level). A leaf renders one line;
     * a dyn-with-body BRACKETS its own body (drake.dlt BRACKETS) — its parameters
-    * block, its statements, and its result on an `=` line (absent for Unit methods).
+    * block and its body, whose element named `value` is the result.
     *
     * The brackets sit on the OPENER, not on the container. Bracketing the container
     * marks where the container ends, but the overlap that actually needs resolving
@@ -633,9 +462,9 @@ object Drake {
   // Covered: the plain-type template (header / modules / extensible / elements /
   // factory / globals / domain), the rule aspect (pattern / variables / conditions /
   // action) and the actor aspect (messageType / start / message / signal), plus
-  // value-position applications with positional or named arguments and unfolded call
-  // chains. The codec aspect is the remaining increment and is rejected loudly rather
-  // than silently dropped — the same convention emit() uses for it.
+  // value-position calls `f(a, b)` with positional then named arguments, tuples, and
+  // `++` runs. The codec aspect is the remaining increment and is rejected loudly
+  // rather than silently dropped — the same convention emit() uses for it.
 
   // Plain vals: unlike the App companions in the model, `Drake` is a bare object, so
   // there is no DelayedInit to defer them past first use.
@@ -661,15 +490,19 @@ object Drake {
       "case",
       // `++` (drake.dlt CONCATENATION) — the first operator-layer symbol the parser
       // trees. Reserving it is what closes the operand before it: a value slot stops
-      // at `++` as it stops at any keyword, so no layout is consulted.
+      // at `++` as it stops at any keyword, so no layout is consulted. `=` is no
+      // longer here: the dyn result marker retired with a5d2f5b and the named-argument
+      // marker with the call syntax, so no bare `=` remains on the surface.
       "++",
-      "=", "[", "]")
+      "[", "]")
 
   /** One drake token: its source text and its span.
     *
     * A bracketed group GLUES onto the word before it when no space separates them
-    * (`Map(K, V)`, `classOf[Main].getResource("/")`), so a type expression or a
-    * host-opaque value reads as ONE token; a quoted literal is skipped whole, so
+    * (`Map(K, V)`, `classOf[Main].getResource("/")`), and whitespace INSIDE a group
+    * never ends the token, so a type expression, a host-opaque value and — since
+    * 2026-09-16 — a whole call `f(a, b)` each read as ONE token however many lines
+    * the author spreads the arguments over; a quoted literal is skipped whole, so
     * brackets and spaces inside it never affect nesting. A lone `[` (one followed
     * by whitespace) is a list-block bracket rather than a Seq type — the lexical
     * rule that keeps drake.dlt's `[ ]` blocks apart from its `[T]` value types.
@@ -721,14 +554,6 @@ object Drake {
     def peek: Option[String]        = tokens.lift (index).map (_.text)
     def at (text: String): Boolean  = peek.contains (text)
     def atReserved: Boolean         = peek.exists (reserved.contains)
-
-    /** A CHAIN MEMBER: a token opening with `.`, which valueLines writes at the head
-      * of each `.member parameters …` continuation line of an unfolded call chain.
-      * Nothing else can start with a dot — a path inside one expression (`a.b.c`,
-      * `session.insert(…)`) is glued into a single token by the lexer — so this is a
-      * purely lexical boundary, and like every other boundary in drake it consults no
-      * layout. A value slot stops here the same way it stops at a reserved word. */
-    def atChainMember: Boolean      = peek.exists (t => t.length > 1 && t.startsWith ("."))
     def take (): Token         = { val t = tokens (index); index += 1; t }
     def takeText (): String         = take ().text
     def expect (text: String): Unit =
@@ -736,14 +561,14 @@ object Drake {
       else sys.error (s"Drake.parse: expected '$text' but found '${peek.getOrElse ("<end>")}'")
   }
 
-  /** The value slot: every token up to the next reserved keyword or chain member,
-    * returned as the raw source span so internal spacing survives verbatim. */
+  /** The value slot: every token up to the next reserved keyword, returned as the
+    * raw source span so internal spacing survives verbatim. */
   private def span (c: Cursor) : String =
-    if (c.exhausted || c.atReserved || c.atChainMember) ""
+    if (c.exhausted || c.atReserved) ""
     else {
       val first = c.take ()
       var end   = first.end
-      while (!c.exhausted && !c.atReserved && !c.atChainMember) end = c.take ().end
+      while (!c.exhausted && !c.atReserved) end = c.take ().end
       c.source.substring (first.start, end)
     }
 
@@ -764,118 +589,154 @@ object Drake {
     case other => Json.fromString (other)
   }
 
-  private def parseValue (c: Cursor) : Json = parseValue (c, "")
-
   /** The value slot: one OPERAND, then any `++` run it opens (drake.dlt
     * CONCATENATION). */
-  private def parseValue (c: Cursor, anonymousHead: String) : Json =
-    concatenation (c, operand (c, anonymousHead))
+  private def parseValue (c: Cursor) : Json = concatenation (c, operand (c))
 
-  /** One operand. A `parameters` keyword following the head turns it into an
-    * application tree — applyLines's inverse, `<fn> parameters par <arg> …`. When no
-    * head precedes it the function IS the declared value type (leafLines's
-    * anonymous-construction form), which `anonymousHead` supplies. Whatever the head
-    * resolved to, any `.member parameters …` continuations that follow fold onto it
-    * as a call chain. A BRACKETED operand is read whole — that is how an application
-    * sits inside a concatenation, since its `par` list cannot bound itself before the
-    * `++` (concatLines's inverse). */
-  private def operand (c: Cursor, anonymousHead: String) : Json =
-    if (c.at ("[")) { c.take (); val value = parseValue (c); c.expect ("]"); value }
-    else chainCalls (c, applied (c, span (c), anonymousHead))
+  /** One operand of a top-level value slot: its raw span, bounded by the next reserved
+    * word, then read exactly as text inside a call is (see value). */
+  private def operand (c: Cursor) : Json = value (span (c))
 
   /** `first` followed by a `++` run, folded into one flat `++` node. `++` is
     * reserved, so the operand before it has already closed; each later operand reads
-    * exactly as the first did, brackets included. */
+    * exactly as the first did. */
   private def concatenation (c: Cursor, first: Json) : Json =
     if (!c.at ("++")) first
     else {
       val pieces = Vector.newBuilder[Json]
       pieces += first
-      while (c.at ("++")) { c.take (); pieces += operand (c, "") }
+      while (c.at ("++")) { c.take (); pieces += operand (c) }
       Json.obj ("++" -> Json.fromValues (pieces.result ()))
     }
 
-  /** `head` applied to a `parameters` list, or the bare leaf when no list follows. */
-  private def applied (c: Cursor, head: String, anonymousHead: String) : Json =
-    if (!c.at ("parameters")) leafValue (head)
+  /** Value text as it stands INSIDE a call's parentheses, a tuple, or a top-level
+    * span. The parentheses bound it, so the reserved words that bound a top-level slot
+    * are ordinary text here — `LazyList.from(start, step)` applies to a parameter
+    * named `start`, not to the actor block — and only `++` is read: the text is a run
+    * of operands, each a single token (treed) or a raw multi-token leaf whose internal
+    * spacing survives verbatim. A top-level span reaches here already bounded, with
+    * its own `++` run handled by the cursor, so it is always one operand. */
+  private def value (text: String) : Json = {
+    val tokens = lex (text)
+    val runs   = Vector.newBuilder[Vector[Token]]
+    var run    = Vector.newBuilder[Token]
+    tokens.foreach { t => if (t.text == "++") { runs += run.result (); run = Vector.newBuilder[Token] } else run += t }
+    runs += run.result ()
+    def operandOf (run: Vector[Token]) : Json = run.size match {
+      case 0 => Json.Null
+      case 1 => treed (run.head.text)
+      case _ => leafValue (text.substring (run.head.start, run.last.end))
+    }
+    runs.result () match {
+      case Vector (single) => operandOf (single)
+      case several         => Json.obj ("++" -> Json.fromValues (several.map (operandOf)))
+    }
+  }
+
+  /** Tree a single value token (drake.dlt APPLICATION SURFACE). A token ending in a
+    * `( )` group APPLIES what precedes the group to what it holds: `f(a, b)` is the
+    * head `f` applied to `a` and `b`, positional arguments first and then `name:value`
+    * ones, each name at most once. The whole call is one token because brackets glue
+    * to the word before them and whitespace inside them never ends a token, so a call
+    * bounds itself — nothing after it can be claimed by it, and nothing inside it
+    * needs a bracket. A group with NOTHING before it is a tuple when it holds a depth-0
+    * comma and a leaf otherwise (`(x)` is a parenthesized opaque expression, not a
+    * one-tuple). A token with no closing group is a path (a.f(x).g selects on a call)
+    * or a leaf. */
+  private def treed (token: String) : Json = {
+    val open = groupStart (token)
+    if (open > 0) {
+      val head   = token.substring (0, open)
+      val inside = token.substring (open + 1, token.length - 1).trim
+      val args   = if (inside.isEmpty) Seq.empty[Json] else splitDepthZero (inside, ',').map (a => argument (a.trim))
+      val names  = args.flatMap (Expression.namedArgument).map (_._1)
+      names.diff (names.distinct).headOption.foreach (n =>
+        sys.error (s"Drake.parse: argument '$n' is named more than once in $token"))
+      val firstNamed = args.indexWhere (a => Expression.namedArgument (a).isDefined)
+      if (firstNamed >= 0 && args.drop (firstNamed).exists (a => Expression.namedArgument (a).isEmpty))
+        sys.error (s"Drake.parse: a positional argument follows a named one in $token")
+      val function = if (groupStart (head) > 0) treed (head) else path (head).getOrElse (Json.fromString (head))
+      Json.obj ("()" -> Json.fromValues (function +: args))
+    } else if (open == 0) {
+      val members = splitDepthZero (token.substring (1, token.length - 1), ',')
+      if (members.size >= 2) Json.obj ("(,)" -> Json.fromValues (members.map (m => value (m.trim))))
+      else leafValue (token)
+    } else path (token).getOrElse (leafValue (token))
+  }
+
+  /** One argument of a call: `name:value` names it — `{"=": [name, value]}`, the tree's
+    * named-argument node, whose surface marker is now the colon — and anything else is
+    * positional. The name is an identifier immediately before the colon (whitespace
+    * around the colon is insignificant, as everywhere); a host-opaque ascription in
+    * argument position (`x: Int`) would read the same way, and the corpus has none. */
+  private def argument (text: String) : Json = text match {
+    case namedArgument (name, rest) => Json.obj ("=" -> Json.arr (Json.fromString (name), value (rest.trim)))
+    case _                          => value (text)
+  }
+
+  private val namedArgument = """(?s)^([A-Za-z_][A-Za-z0-9_]*)\s*:\s*(.+)$""".r
+
+  /** A `.`-path whose elements may themselves be calls: `a.f(x).g` selects `g` on the
+    * call `f(x)` on `a`. Split at depth-0 dots, the LAST element that is a call closes
+    * the receiver, which is treed on its own, and the elements after it are plain
+    * selections. None when no element is a call — a plain path is a leaf and stays
+    * the one string it was written as (`0.0` included). This is what a chain is now:
+    * the nested `()` / `.` spine that the retired `.member parameters …` lines used to
+    * spell one call per line. */
+  private def path (text: String) : Option[Json] = {
+    val elements = splitDepthZero (text, '.')
+    val last     = elements.lastIndexWhere (e => groupStart (e) > 0)
+    if (last < 0) None
+    else Some (Json.obj ("." -> Json.fromValues (
+      treed (elements.take (last + 1).mkString (".")) +: elements.drop (last + 1).map (Json.fromString))))
+  }
+
+  /** The index of the `(` that the token's final `)` closes; -1 when the token does
+    * not end in a group. Scanned from the end, so `f(a)(b)` applies the call `f(a)`,
+    * and 0 when the group is the whole token. String literals are skipped whole. */
+  private def groupStart (token: String) : Int =
+    if (!token.endsWith (")")) -1
     else {
-      c.take ()
-      val function = if (head.nonEmpty) head else anonymousHead
-      if (function.isEmpty)
-        sys.error ("Drake.parse: `parameters` with no function and no declared value type to supply one")
-      Json.obj ("()" -> Json.fromValues (Json.fromString (function) +: arguments (c, chained = false)))
+      var depth = 0
+      var i     = token.length - 1
+      var found = -1
+      while (found < 0 && i >= 0) {
+        token (i) match {
+          case '"' =>
+            i -= 1
+            while (i >= 0 && !(token (i) == '"' && (i == 0 || token (i - 1) != '\\'))) i -= 1
+          case ')' | ']' | '}' => depth += 1
+          case '(' | '[' | '{' => depth -= 1; if (depth == 0 && token (i) == '(') found = i
+          case _               =>
+        }
+        i -= 1
+      }
+      found
     }
 
-  /** The arguments of a `parameters` list: `par <value>` positionally, `par = <name>
-    * <value>` named (see namedPrefix for why the marker precedes the name). The list
-    * ends where the `par`s do — an argument value stops at the next reserved word, so
-    * nothing here consults layout either.
-    *
-    * A BRACKETED argument — parLines's inverse — is one whose value opens a
-    * `parameters` list of its own. Inner and outer list admit the same `par`, so the
-    * inner one cannot bound itself; the brackets close it, and inside them the value
-    * is read whole (chains included). The `[` is purely local: `par [` is a block
-    * argument, `par x` a leaf one, and no look-ahead separates them.
-    *
-    * `chained` says this list belongs to a CHAIN CALL, and it decides who claims a
-    * `.member` arriving after an UNBRACKETED argument. Both readings are legal on the
-    * surface — `.g` may continue the chain, or start a chain on the argument — and
-    * they differ only by indentation, which drake does not read. The chain wins: a
-    * pending chain is nearer than the argument it just passed, which is what
-    * `cursor .get[Double] parameters par "latitude" .getOrElse parameters par 0.0`
-    * means. An argument that wants its own chain says so with its brackets.
-    *
-    * A `++` arriving after an argument — bracketed or not — belongs to that argument,
-    * by the same nearest-open-construct rule: `par [ f parameters par x ] ++ "b"` is
-    * the argument f(x) ++ "b". To concatenate onto the CALL, bracket the call. */
-  private def arguments (c: Cursor, chained: Boolean) : Seq[Json] = {
-    val collected = Seq.newBuilder[Json]
-    def argument () : Json =
-      if (c.at ("[")) { c.take (); val value = parseValue (c); c.expect ("]"); concatenation (c, value) }
-      else if (chained) concatenation (c, applied (c, span (c), ""))
-      else parseValue (c)
-    while (c.at ("par")) {
-      c.take ()
-      collected +=
-        (if (!c.at ("=")) argument ()
-         else {
-           c.take ()
-           Json.obj ("=" -> Json.arr (Json.fromString (c.takeText ()), argument ()))
-         })
+  /** Split `text` at every depth-0 occurrence of `separator`, where depth counts the
+    * three bracket pairs and a string literal is skipped whole — the argument commas
+    * of a call, the dots of a path. Pieces are returned raw (untrimmed). */
+  private def splitDepthZero (text: String, separator: Char) : Seq[String] = {
+    val pieces  = Seq.newBuilder[String]
+    val current = new StringBuilder
+    var depth   = 0
+    var i       = 0
+    while (i < text.length) {
+      text (i) match {
+        case '"' =>
+          val start = i
+          i += 1
+          while (i < text.length && text (i) != '"') { if (text (i) == '\\') i += 1; i += 1 }
+          current.append (text.substring (start, math.min (i + 1, text.length)))
+        case c @ ('(' | '[' | '{') => depth += 1; current.append (c)
+        case c @ (')' | ']' | '}') => depth -= 1; current.append (c)
+        case c if c == separator && depth == 0 => pieces += current.result (); current.clear ()
+        case c => current.append (c)
+      }
+      i += 1
     }
-    collected.result ()
-  }
-
-  /** Fold the `.member parameters …` continuations onto a receiver — unfoldChain's
-    * inverse. Each call re-nests: the receiver so far becomes the head of the member's
-    * `.` path, and that path is applied to the call's arguments, so `a` + `.f(x)` +
-    * `.g(y)` rebuilds a.f(x).g(y) exactly as the tree spelled it. A chain call always
-    * writes its `parameters`, empty argument list included, so its absence is an error
-    * rather than a shorter form. */
-  private def chainCalls (c: Cursor, receiver: Json) : Json = {
-    var value = receiver
-    while (c.atChainMember) {
-      val member = splitPath (c.takeText ().substring (1))
-      val path   = Json.obj ("." -> Json.fromValues (value +: member.map (Json.fromString)))
-      c.expect ("parameters")
-      value = Json.obj ("()" -> Json.fromValues (path +: arguments (c, chained = true)))
-    }
-    value
-  }
-
-  /** Split a chain member on its top-level dots — `get[scala.Int]` is one path
-    * element, `a.b` is two. */
-  private def splitPath (member: String) : Seq[String] = {
-    val elements = Seq.newBuilder[String]
-    val current  = new StringBuilder
-    var depth    = 0
-    member.foreach {
-      case c @ ('[' | '(' | '{') => depth += 1; current.append (c)
-      case c @ (']' | ')' | '}') => depth -= 1; current.append (c)
-      case '.' if depth == 0     => elements += current.result (); current.clear ()
-      case c                     => current.append (c)
-    }
-    (elements += current.result ()).result ().filter (_.nonEmpty)
+    (pieces += current.result ()).result ()
   }
 
   /** Split an applied surface name into its head and its ( ) arguments:
@@ -1016,8 +877,8 @@ object Drake {
   }
 
   /** A dyn-with-body's statement list, inside the dyn's own brackets: statement
-    * keywords until the `=` result or the closing `]`. Neither is a member keyword,
-    * so the list bounds itself — no layout is consulted. */
+    * keywords until the closing `]`, which is not a member keyword, so the list
+    * bounds itself — no layout is consulted. */
   private def statements (c: Cursor) : Seq[BodyElement] = {
     val collected = Seq.newBuilder[BodyElement]
     while (c.peek.exists (statementKeywords.contains))
@@ -1049,8 +910,8 @@ object Drake {
     * signal): the declaration forms plus `mon`, since an action is mostly effects. */
   private val actionKeywords: Set[String] = declarationKeywords + "mon"
 
-  /** One member of a list-block. `dyn` may open its own sub-block (parameters,
-    * statements, `=` result); every other keyword is a single leaf. */
+  /** One member of a list-block. `dyn` may open its own sub-block (parameters and
+    * a body); every other keyword is a single leaf. */
   private def parseMember (c: Cursor) : TypeElement = {
     c.takeText () match {
       case "mon" => Monadic (parseValue (c))
@@ -1091,7 +952,7 @@ object Drake {
       case keyword @ ("fix" | "mut" | "loc" | "par") =>
         val name      = parseElementName (c.takeText ())
         val valueType = takeValueType (c)
-        val value     = parseValue (c, typeExpressionSlot (valueType))
+        val value     = parseValue (c)
         keyword match {
           case "fix" => Fixed (name, valueType, value)
           case "mut" => Mutable (name, valueType, value)

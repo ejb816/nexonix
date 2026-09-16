@@ -159,6 +159,16 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A call is `f(a, b)`, positional then `name:value`; the `parameters`/`par` call form retires.**
+  An application on the drake surface is one glued token, written as every reader expects and parsed by
+  splitting it at depth-0 parentheses, commas and dots — a chain is the nested spine inside it, a
+  head-less group with a comma is a tuple. Gone with it: `<fn> parameters` and its `par` lines,
+  `par = <name>`, `.member parameters` chain continuations, and the `[ ]` an application wore as an
+  argument or a `++` operand; `=` is no longer reserved. A parameter named twice is a parse error.
+  Thirteen corpus files converted, JSON and Scala unchanged; because every parenthesised call now
+  trees, the parse test's report-only loss count rises until the JSON corpus is re-canonicalized from
+  the drake (next). (2026-09-16)
+
 - **A dyn's result is its body element named `value`, and the `=` marker is retired.** A block dyn now
   reads `dyn name Type [ parameters … body … ]`, the `body` head following `parameters` exactly as a
   factory's does, and its result is the statement `fix value Type expr` inside that body — the same

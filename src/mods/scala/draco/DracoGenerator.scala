@@ -173,11 +173,14 @@ object DracoGenerator extends App {
   )
 
   /** A tree in a String-typed slot denotes its SURFACE TEXT and renders quoted (the
-    * exemplar is TypeElement's own valueType) — except a `++` concatenation, which is
-    * a COMPUTATION of the string and renders as the expression it is. */
+    * exemplar is TypeElement's own valueType) — except a `++` concatenation or a `()`
+    * call, each a COMPUTATION of the string that renders as the expression it is
+    * (`sourceLines.mkString("\n")` in a String slot is a call, not a type spelled as
+    * text). No corpus definition holds a tree of any other kind in a String slot. */
   private def defaultInitializer (valueType: String, value: Json) : String = {
     val rendered = expression(value)
-    if (value != null && value.isObject && valueType == "String" && !Expression.isConcat(value)) "\"" + rendered + "\""
+    val computes = Expression.isConcat(value) || Expression.isApplication(value)
+    if (value != null && value.isObject && valueType == "String" && !computes) "\"" + rendered + "\""
     else rendered
   }
 

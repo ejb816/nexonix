@@ -233,32 +233,50 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     }
   }
 
-  // --- Named arguments and call chains, asserted structurally ---
+  // --- Calls: named arguments and chains, asserted structurally ---
   //
   // aerial/Input gates these as authored; this gates the SHAPE, so a named argument
-  // silently degrading to a positional one fails here as a wrong tree rather than as
-  // a diff. The smallest surface that exhibits both: one named, bracketed argument
-  // whose value is a two-call chain.
+  // silently degrading to a positional one fails here as a wrong tree rather than as a
+  // diff. A call is one token — `f(a, b)`, positional first, then `name:value` — and a
+  // chain is the nested `()` / `.` spine inside it (drake.dlt APPLICATION SURFACE).
+  // The smallest surface that exhibits both: one positional argument, then one named
+  // argument whose value is a two-call chain.
 
-  test("named argument and call chain round-trip on the surface") {
+  test("call: positional then named arguments, the named one a chain, round-trip as one tree") {
     val authored =
       """type Probe
         |  elements
-        |    fix position domains.aerial.Position Position parameters
-        |      par = latitude [ cursor
-        |        .get[Double] parameters par "latitude"
-        |        .getOrElse parameters par 0.0
-        |      ]
+        |    fix position domains.aerial.Position Position(cursor, latitude:cursor.get[Double]("latitude").getOrElse(0.0))
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
     val value  = parsed.dracoAspect.elements.head.value
-    assert(Expression.namedArgument(Expression.operands(value)(1)).map(_._1).contains("latitude"),
-      s"argument did not come back named: ${value.noSpaces}")
+    val expected = Json.obj("()" -> Json.arr(
+      Json.fromString("Position"),
+      Json.fromString("cursor"),
+      Json.obj("=" -> Json.arr(Json.fromString("latitude"),
+        Json.obj("()" -> Json.arr(
+          Json.obj("." -> Json.arr(
+            Json.obj("()" -> Json.arr(Json.fromString("cursor.get[Double]"), Json.fromString("\"latitude\""))),
+            Json.fromString("getOrElse"))),
+          Json.fromString("0.0")))))))
+    assert(value == expected, s"call did not come back as the expected tree: ${value.noSpaces}")
     val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
     if (handNorm != roundNorm)
-      fail("named-argument / chain surface did not round-trip." +
-        diffReport(handNorm, roundNorm, "authored", "round-tripped"))
+      fail("call surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
+  }
+
+  // Each parameter at most once (agreed 2026-09-13): a name given twice is an error at
+  // parse, not a later target's problem.
+  test("call: a parameter named twice is rejected") {
+    val authored =
+      """type Probe
+        |  elements
+        |    fix position domains.aerial.Position Position(latitude:0.0, latitude:1.0)
+        |domain draco Draco
+        |""".stripMargin
+    val error = intercept[RuntimeException](Drake.parse(authored))
+    assert(error.getMessage.contains("named more than once"), error.getMessage)
   }
 
   // --- Concatenation, asserted structurally ---
@@ -266,8 +284,8 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
   // `++` is the first operator-layer symbol the parser trees (drake.dlt CONCATENATION):
   // the neutral form of a substitution string — literals interleaved with names and
   // applications. The smallest surface that exhibits every operand kind: two literals,
-  // one bracketed application, one name; the shape GenDrake's first transform type
-  // takes. Asserted as a tree, so a piece silently degrading to opaque text fails as a
+  // one call, one name; the shape GenDrake's first transform type takes. The call is
+  // one token, so it needs no brackets to bound it before the next `++`. Asserted as a tree, so a piece silently degrading to opaque text fails as a
   // wrong tree; then round-tripped both ways; then rendered by the engine, which must
   // NOT quote it the way it quotes a type tree in a String-typed slot.
 
@@ -279,7 +297,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |      par package [String]
         |      par name String
         |    body
-        |      fix value String "domain " ++ [ packagePart parameters par package ] ++ " " ++ name
+        |      fix value String "domain " ++ packagePart(package) ++ " " ++ name
         |domain draco draketarget DrakeTarget
         |""".stripMargin
     val parsed   = Drake.parse(authored)

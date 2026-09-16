@@ -76,7 +76,8 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
           ({"==": [{"*": ["i1","i2"]}, "i3"]} renders "i1 * i2 == i3")
     "()"  application — first operand applied to the rest; a literal argument keeps its
           embedded quotes ({"()": [{".": ["Rule","knowledgeService","newKnowledge"]}, "\"Primes\""]}
-          renders Rule.knowledgeService.newKnowledge("Primes"))
+          renders Rule.knowledgeService.newKnowledge("Primes")). drake surface f(a, b) — see
+          APPLICATION SURFACE; a named argument is the "=" node below it, spelled name:value.
     "\"   lambda — HASKELL FORM: leading operands are the parameters, last is the body.
           drake surface \e a -> body ; ScalaTarget renders (e, a) => body (bare param when single).
           The tree carries no arrow token — structure separates params from body.
@@ -92,7 +93,7 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   DECLARED NAMES (SYMBOLS) — a name applied on the application surface whose spelling is per target,
     the primitives a substitution string needs beyond `++`. Each is declared here before use, and
     each target renders it (DracoGenerator.scalaSymbols today; GenScala's transform types in time):
-    join  <sep> <xs>   Haskell's intercalate, separator FIRST — `join parameters par " " par _package`;
+    join  <sep> <xs>   Haskell's intercalate, separator FIRST — `join(" ", _package)`;
                        ScalaTarget renders xs.mkString(sep). Chosen over `intercalate` (obscure) and
                        `splice` (means insertion in JS/Perl) as the name every target's reader knows;
                        chosen over an invented infix (`+|+`) because a name carries its meaning in and
@@ -125,55 +126,48 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   Json; a string value passes through expression() verbatim, so the whole legacy corpus is
   unchanged. isString = host-opaque tail (measured, not hidden); isObject = drake-native.
 
-APPLICATION SURFACE  (how a "()" tree is written in a value position — multi-line, author-designed)
-  <fn> parameters                    -> { "()": [ <fn> , <arg> ... ] }
-    par <value>                      a POSITIONAL argument
-    par = <name> <value>             a NAMED argument -> { "=": [ <name> , <value> ] }
-    ...
-  A single leaf argument stays on the head line: `<fn> parameters par <value>`.
-  The head is ELIDED when the function IS the declared value-type of the slot (anonymous construction
-  of a factory-less type): `fix report LocationReport parameters` — the value type says it once.
-  MARKER BEFORE THE NAME. `par = <name>` reads oddly next to Scala's `f(name = value)`, and the marker
-  sits there for a reason: `=` also opens a dyn-with-body's result line, so `… parameters par a`
-  followed by `= r` would parse equally well as the named argument `a = r` with the dyn's result gone.
-  Nothing distinguishes them and no look-ahead settles it. `par` immediately followed by `=` occurs
-  nowhere else — an argument list that has run out of `par`s has already stopped — so putting the
-  marker first removes the overlap outright. Same principle as BRACKETS: close the grammar, don't
-  tie-break it.
-  CHAINS. Two or more calls composed (a.f(x).g(y)) unfold: the base receiver ends the opening line,
-  then one `.<member> parameters …` line per call. A token opening with `.` is lexically a chain
-  member and nothing else — a path inside one expression (a.b.c) is a single glued token — so the
-  continuation bounds itself, and a chain call always writes its `parameters`, empty list included.
-      cursor
-        .get[Double] parameters par "latitude"
-        .getOrElse parameters par 0.0
-  A `.member` arriving after an argument is claimed by the PENDING CHAIN, not by the argument it just
-  passed — above, .getOrElse continues cursor's chain rather than starting one on "latitude". Both are
-  legal on the surface and they differ only by indentation, which drake does not read; the chain wins
-  because it is the nearer open construct. An argument of a chain call reaches its own chain by
-  BRACKETING (below), which is what tells the two apart without appeal to layout.
-  NESTED ARGUMENT LISTS — THE ARGUMENT IS AN OPENER. A `par` whose value is itself an application opens
-  a `par` list of its own, and the enclosing list's next `par` is the only thing that could close it:
-  both readings are legal and no look-ahead settles it. So the argument BRACKETS ITSELF, exactly as a
-  dyn-with-body brackets its body (see BRACKETS) —
-      par = <name> [ <fn> parameters              -> { "=": [ <name> , { "()": [ <fn> , <arg> … ] } ] }
-        par <value>
-        ... ]
-  and, as with the dyn, the `[` is what tells a LEAF argument from a block one: `par x` needs no
-  bracket, because a leaf cannot open anything. The bracket sits on the `par` (the member), not on
-  the nested `parameters` (the container) — the same reason as everywhere else in BRACKETS. It also
-  lifts the chain restriction above: inside its own brackets an argument may be a chain, since the `]`
-  ends it before the enclosing chain can claim the next `.member`. Corpus case: domains/aerial/Input.
-  CONCATENATION — a `++` sequence in a value position is one flat tree, and each operand is a LEAF
-  (a literal or a name) or an APPLICATION THAT BRACKETS ITSELF, exactly as a nested argument does:
-      fix value String "domain " ++ [ packagePart parameters par package ] ++ " " ++ name
-  `++` is a reserved token, so a value slot stops at it and the operand before it is closed. An
-  application operand needs the brackets for the same reason a nested argument does: its `par` list
-  cannot bound itself, and the `]` is what ends it before the `++`. It follows that a `++` arriving
-  after an argument — bracketed or not — belongs to that argument: `f parameters par x ++ "b"` is
-  f(x ++ "b"), by the same nearest-open-construct rule that gives a `.member` to the pending chain.
-  To concatenate onto the CALL, bracket the call: `[ f parameters par x ] ++ "b"`. A concatenation may
-  itself be an argument (`par "a" ++ [ g parameters par y ]`) and a chain-call argument alike.
+APPLICATION SURFACE  (how a "()" tree is written in a value position — the CALL, one token)
+  <fn>(<arg>, <arg> ...)             -> { "()": [ <fn> , <arg> ... ] }
+    <value>                          a POSITIONAL argument
+    <name>:<value>                   a NAMED argument -> { "=": [ <name> , <value> ] }
+  Positional arguments come FIRST, then named ones; each parameter is named at most once (an error at
+  parse); a parameter not given takes the DEFAULT its declaration carries (`par step Int 1`). The tree
+  keeps "=" as the named-argument node — a symbol reference, not a surface marker — and the surface
+  spells the colon (agreed 2026-09-13; landed 2026-09-16).
+  ONE TOKEN. A bracketed group glues to the word before it and whitespace INSIDE a group never ends a
+  token (NOTATION), so a call is a single token however many lines its arguments are spread over, and it
+  BOUNDS ITSELF: nothing after the `)` can be claimed by it, and nothing inside it needs a bracket. That
+  is what retired the multi-line form this section used to describe — `<fn> parameters` with `par` lines,
+  `par = <name>` for a named argument, `.member parameters` chain continuations, and `[ ]` around an
+  argument or a `++` operand that was itself an application. Every one of those existed to bound a list
+  that could not bound itself; the parentheses do it. `parameters` / `par` remain the DECLARATION words
+  (a factory's or a dyn's parameter list) and never appear in a call.
+  INSIDE THE PARENTHESES the reserved words are ordinary text. A top-level value slot is bounded by the
+  next reserved keyword because nothing else can bound it; an argument is bounded by its commas and the
+  closing `)`, so `LazyList.from(start, step)` applies to a parameter named `start`, and a lambda binder
+  may be called `domain`. Only `++` is read inside (below).
+  HOW THE TOKEN IS TREED. From the end: a token ending in a `( )` group applies what precedes the group
+  to what the group holds, split at depth-0 commas (string literals skipped whole); each argument is
+  read as a value in its own right, so a nested call trees and a text no grammar covers (`primes.last -
+  1`, `Seq(msg): _*`, `_ => version`) stays a raw leaf with its spacing intact. What precedes the group
+  is a PATH split at depth-0 dots, and the last element that is itself a call closes the receiver:
+      cursor.get[Double]("latitude").getOrElse(0.0)
+        -> { "()": [ { ".": [ { "()": [ "cursor.get[Double]", "\"latitude\"" ] }, "getOrElse" ] }, "0.0" ] }
+  which is the same nested spine the retired chain lines spelled one call per line — a chain is not a
+  construct, it is a call whose function is a selection on a call. A path with no call in it stays the
+  one string it was written as (`0.0` included). A group with NOTHING before it is a TUPLE when it holds a
+  depth-0 comma — `("type", f("LOCATION"))` -> { "(,)": [ ... ] } — and an opaque parenthesized leaf
+  otherwise (`(x)` is not a one-tuple). The emitter writes the flat form back (`f(a, b)`, `, ` between
+  arguments, `name:value`), so a value is ONE LINE on the surface in every form.
+  NO HEAD ELISION. A construction of the declared value type spells the head like any other call —
+  `fix report LocationReport LocationReport(typeDefinition:td, json:payload)` — because `(…)` alone is a
+  tuple. The elision that dropped the head before `parameters` went with that form.
+  CONCATENATION — a `++` sequence in a value position is one flat tree, and each operand is a LEAF (a
+  literal or a name) or a CALL, which is one token and so needs nothing to bound it:
+      fix value String "domain " ++ join(" ", _package) ++ " " ++ _name
+  `++` is a reserved token, so a top-level value slot stops at it and the operand before it is closed;
+  inside a call's parentheses `++` is likewise read, so `f("a" ++ b)` is f applied to the concatenation,
+  and a concatenation may be an argument or a tuple member alike.
 
 REFERENCES  (how `from` and `modules` name another type)
   <Name> *(<A> ...)                  BARE — resolves in the REFERRING TYPE'S OWN package
@@ -294,15 +288,15 @@ BRACKETS  (a construct delimits ITSELF; whitespace is insignificant throughout)
     NAME list      modules / types: members carry no keyword, so nothing else can bound them  -> [ ] ALWAYS
     KEYWORD block  every other list-block: bounded by the member keywords it ADMITS            -> NO brackets
     OPENER         a member that opens its own sub-block brackets ITSELF                       -> [ ] ALWAYS
-  THREE OPENERS, one rule: a dyn-with-body (which opens parameters / statements / a result), an ARGUMENT
-  whose value is an application (which opens a nested `parameters` list — see APPLICATION SURFACE), and a
-  CASE-BRANCH (which opens its own statements / result). In the first two the `[` also tells the leaf form
-  from the block one: a leaf dyn and a leaf `par` open nothing and so bracket nothing. A case has NO leaf
-  form — it always opens a body and always brackets it, for the reason the rule exists: the statement after
-  the last branch belongs to the enclosing block, and whitespace cannot say so.
+  TWO OPENERS, one rule: a dyn-with-body (which opens parameters and a body) and a CASE-BRANCH (which
+  opens its own statements). In the first the `[` also tells the leaf form from the block one: a leaf dyn
+  opens nothing and so brackets nothing. A case has NO leaf form — it always opens a body and always
+  brackets it, for the reason the rule exists: the statement after the last branch belongs to the
+  enclosing block, and whitespace cannot say so. There WERE three: an argument whose value was an
+  application was the third (GitHub #60), until the call became one token (APPLICATION SURFACE) and its
+  parentheses bounded it — a construct that delimits itself needs no bracket added.
   ADMITS is what ends a keyword block: `parameters` takes only `par`, so a `loc` after it is the enclosing
-  dyn's first statement, not a parameter; `elements` / `body` / `globals` take fix|mut|dyn|loc. ADMITS is
-  what a nested argument list defeats — inner and outer admit the same `par` — hence the brackets.
+  dyn's first statement, not a parameter; `elements` / `body` / `globals` take fix|mut|dyn|loc.
   THE OPENER BRACKETS, NOT THE CONTAINER.  Bracketing the container marks where the CONTAINER ends, but the
   overlap that needs resolving is between an opener's last sub-block and the container's NEXT member — so a
   fully container-bracketed corpus can still be ambiguous. drake's one such case was
@@ -510,8 +504,8 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           <type> <expr>`), the convention factory bodies already used to set an instance's
                                           value. Found by name, so nothing has to be last and no expression grammar is
                                           needed to bound it; the `=` marker is gone from the surface and the parser. See
-                                          DYN-WITH-BODY. The named-argument marker `par = <name>` still uses `=` until the
-                                          call syntax lands (agreed 2026-09-13: `f(a, b)`, `name:value`).
+                                          DYN-WITH-BODY. The named-argument marker `par = <name>` used `=` until the call
+                                          syntax landed (2026-09-16, below); no bare `=` is left on the surface.
   BRACKETS on the opener            <->   IMPLEMENTED (2026-08-05, GitHub #52). Both directions agree: Generator.drake
                                           emits it and Generator.parseDrake reads it, gated by DrakeParseTest's surface
                                           round-trip. The earlier rule bracketed the CONTAINER, which left one genuine
@@ -535,7 +529,19 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           root to a definition with no draco parent rather than gating on an empty
                                           derivation, so Dictionary stopped spelling DracoType by hand and the JSON
                                           corpus is now uniformly implicit with no exception left.
-  the ARGUMENT as an opener         <->   IMPLEMENTED (2026-08-10, GitHub #60). The second opener under the one rule: a
-                                          `par` whose value is an application brackets itself, which closes the last
-                                          ambiguity on the surface (inner and outer argument list admit the same `par`)
-                                          and lets DrakeParseTest gate the mods actors, not just the draco corpus.
+  the ARGUMENT as an opener         <->   IMPLEMENTED (2026-08-10, GitHub #60), then RETIRED with the call syntax
+                                          (2026-09-16). The second opener under the one rule: a `par` whose value is an
+                                          application bracketed itself, which closed the last ambiguity on the surface
+                                          (inner and outer argument list admit the same `par`) and let DrakeParseTest
+                                          gate the mods actors. Once a call is one token its parentheses bound it, and
+                                          the bracket, the `par` list and the chain lines all went.
+  the CALL `f(a, b)`                <->   IMPLEMENTED (2026-09-16; agreed 2026-09-13). A call is written as every
+    (was `<fn> parameters` / `par`)       reader expects — positional arguments, then `name:value`, defaults from the
+                                          declaration — and parsed by splitting the one glued token at depth-0
+                                          parentheses, commas and dots (APPLICATION SURFACE). The multi-line form went
+                                          with its brackets and chain lines; 13 corpus files converted. CONSEQUENCE: the
+                                          parser now trees EVERY parenthesised call, including the ~105 host-opaque
+                                          strings the JSON corpus still carries for calls, so parse(emit(td)) returns
+                                          trees where the JSON has strings — DrakeParseTest's expression-form loss
+                                          rises until the JSON is re-canonicalized from the drake (next increment:
+                                          `DrakeCLI parse X.drake > X.json`, Scala pinned by DracoGenTest).

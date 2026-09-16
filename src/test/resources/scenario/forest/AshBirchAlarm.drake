@@ -7,7 +7,5 @@ rule
     conditions
       con jasmonate.potency.value > 0.5
   action
-    fix primed scenario.birch.BirchJasmonate parameters
-      par [ scenario.ash.birch.Potency parameters par jasmonate.potency ]
-      par [ scenario.ash.birch.Marker parameters par jasmonate.compound ]
-    mon ctx.insert parameters par primed
+    fix primed scenario.birch.BirchJasmonate scenario.birch.BirchJasmonate(scenario.ash.birch.Potency(jasmonate.potency), scenario.ash.birch.Marker(jasmonate.compound))
+    mon ctx.insert(primed)

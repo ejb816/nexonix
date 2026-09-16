@@ -203,8 +203,9 @@ is written as a type expression (`Dictionary` derives `{K, V}`). Value types are
 
 Emission (`Drake.emit`) and parsing (`Drake.parse`) are mutual inverses, gated in both
 directions across the corpus. One caveat for authors: **the parser builds expression trees
-only for the application surface.** Other value forms come back as opaque text, so parsing
-is currently a measurement tool rather than a complete authoring path.
+only for calls (`f(a, b)`, positional then `name:value`), tuples, and `++`.** Other value
+forms come back as opaque text, so parsing is currently a measurement tool rather than a
+complete authoring path.
 
 ### Loading
 
