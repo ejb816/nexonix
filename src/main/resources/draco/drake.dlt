@@ -221,8 +221,9 @@ CONVENTIONS
   par _<name>      the leading _ is part of the JSON parameter name; a universal guard against a
                    parameter colliding with a same-named body element during mapping
   (<T>, ...)       type parameters -> typeName.typeParameters[], one entry per param, verbatim with any bound
-                   — each entry a JSON NODE since 2026-09-17 on the value-type terms (VALUE-TYPES): a string is
-                   the authored text, a tree a type form once the parser trees the header (next):
+                   — each entry a JSON NODE since 2026-09-17 on the value-type terms (VALUE-TYPES), and THE PARSER
+                   BUILDS THE TREE for every header parameter and reference argument: `T` an Atomic string,
+                   `S <: DomainType` the bound leaf {"<:": ["S", "DomainType"]}, `(S, T)` an Objective:
                      (T <: Product)                    -> [ "T <: Product" ]
                      (S <: DracoType, T <: DracoType)  -> [ "S <: DracoType", "T <: DracoType" ]
 
@@ -582,5 +583,10 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           TypeName's structural identity compares the nodes, the engine spells each
                                           at its render sites through targetType (TypeName is identity, so
                                           targetTypes does not rewrite it in place), the surface spells a string
-                                          verbatim and a tree as any type form. NEXT: the parser trees the header's
-                                          parameters and the reference arguments, and the corpus re-canonicalizes.
+                                          verbatim and a tree as any type form. THE PARSER TREES THEM (2026-09-17,
+                                          same day): header parameters, `from` / `modules` / `domain` / `super` /
+                                          `source` / `target` / `messageType` / `extensible` arguments, and a
+                                          foreign reference's members, all through typeForm. Four src/main
+                                          definitions carry a compound or bounded parameter (DomainTransform,
+                                          TypeTransform, Holon, base/Coordinate); their JSON re-canonicalizes
+                                          with the compiled parser next, as the value types' did.

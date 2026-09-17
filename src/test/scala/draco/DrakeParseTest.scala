@@ -145,6 +145,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         // A valueType is a string or a type-form tree and the surface spells both one
         // way; the JSON round-trip compares that spelling until the corpus is trees.
         case ("valueType", v) => "valueType" -> Json.fromString(Drake.typeSurface(v))
+        case ("typeParameters", v) => "typeParameters" -> Json.fromValues(v.asArray.getOrElse(Vector.empty).map(p => Json.fromString(Drake.typeSurface(p))))
         case (key, v) => key -> surfaceCarried(v)
       })))
 
@@ -353,6 +354,30 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     assert(DracoGenerator.targetType(curried).asString.contains("Int => Int => Int"), DracoGenerator.targetType(curried).noSpaces)
   }
 
+  // --- Type parameters as type forms, asserted structurally ---
+  //
+  // The header's parameters and a reference's arguments are type forms too: a bare
+  // variable stays an Atomic string, a bound `S <: DomainType` is a leaf with the
+  // parameter first, a tuple argument an Objective. TypeName is identity, so the tree
+  // is what two references compare by.
+
+  test("type parameters: a bounded header and a tuple reference argument parse to type forms") {
+    val authored =
+      """type Probe(S <: DomainType, T) from Holon((S, T))
+        |domain draco Draco
+        |""".stripMargin
+    val parsed = Drake.parse(authored)
+    assert(parsed.typeName.typeParameters == Seq(
+      Json.obj("<:" -> Json.arr(Json.fromString("S"), Json.fromString("DomainType"))),
+      Json.fromString("T")), parsed.typeName.typeParameters.map(_.noSpaces).mkString(", "))
+    val holon = parsed.dracoAspect.derivation.find(_.name == "Holon").getOrElse(fail("Holon not derived"))
+    assert(holon.typeParameters == Seq(Json.obj("(,)" -> Json.arr(Json.fromString("S"), Json.fromString("T")))),
+      holon.typeParameters.map(_.noSpaces).mkString(", "))
+    val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
+    if (handNorm != roundNorm)
+      fail("type-parameter surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
+  }
+
   // --- The measured tail: where the surface is not yet information-complete ---
 
   test("drake surface losses, unnormalized (report only)") {
@@ -361,7 +386,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     // descending would scatter one difference across the tree's leaves — the `.value`
     // key absent on one side, its operands unaccounted for on the other.
     def leafPaths(json: Json, path: String): Seq[(String, String)] =
-      if (path.endsWith(".value") || path.endsWith(".valueType")) Seq(path -> json.noSpaces)
+      if (path.endsWith(".value") || path.endsWith(".valueType") || path.endsWith(".typeParameters")) Seq(path -> json.noSpaces)
       else json.arrayOrObject(
         Seq(path -> json.noSpaces),
         array => array.zipWithIndex.flatMap { case (v, i) => leafPaths(v, s"$path[$i]") }.toSeq,
@@ -385,7 +410,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     val byKind = losses.groupBy { case (_, key, was, now) =>
       if (key.endsWith(".value") && emptyCollection.contains(was) && emptyCollection.contains(now)) "empty-collection spelling"
       else if (key.endsWith(".value")) "expression form (string vs tree)"
-      else if (key.endsWith(".valueType")) "type form (string vs tree)"
+      else if (key.endsWith(".valueType") || key.endsWith(".typeParameters")) "type form (string vs tree)"
       else if (key.contains(".derivation") || key.contains(".modules")) "reference package"
       else "OTHER — unaccounted"
     }

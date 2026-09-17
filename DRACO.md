@@ -45,7 +45,7 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **607 tests / 43
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **608 tests / 43
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -55,7 +55,8 @@ structural test in `DrakeParseTest` for the `++` operator (2026-09-10); then `dr
 type counts to 94 in scope, 104 measured; then `gendrake.DomainLineOf`, the first member of the
 transform domain (2026-09-11), to 95 and 105; then one more `DrakeParseTest` test for the
 call syntax's at-most-once rule (2026-09-16); then one structural `DrakeParseTest` test for the
-four type forms (2026-09-17), **607 tests / 43 suites**. These
+four type forms (2026-09-17); then one for the header's type parameters (2026-09-17),
+**608 tests / 43 suites**. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -67,7 +68,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | **expected 5** fields across 105 types — type form 3 (ActorAspect and format/json/Value, the standing exclusions), expression form 2 (format/json/Value, GitHub #61), empty-collection 0 (Domain / Rule / Type re-canonicalized 2026-09-17; measured 8 at `f4113d2`) |
+| `DrakeParseTest` | drake surface losses | **expected 11** fields across 105 types — type form 9 (DomainTransform / TypeTransform / Holon / Coordinate's header and derivation parameters, 6, string until the next compiled sweep; ActorAspect and format/json/Value, 3), expression form 2 (format/json/Value, GitHub #61) (predicted at the header-parameters commit, 2026-09-17; measured 5 at `49fc734`) |
 | `DrakeParseTest` | Drake.parse scope | 95 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
@@ -169,8 +170,9 @@ is a type-form tree (the parser trees the four forms since 2026-09-17); every co
 
 **`TypeName`** is `name` + `namePackage` + `typeParameters`, with derived `namePath` and
 `resourcePath`. It compares **structurally** (GitHub #37). Each type parameter is a JSON node on the
-value-type terms since 2026-09-17 — a string is the authored text (`T`, `T <: Product`; all of the
-corpus today), a tree a type form once the parser trees the header — read as text through
+value-type terms since 2026-09-17 — a string is the authored text, a tree a type form, and the parser
+builds the tree for every header parameter and reference argument (`S <: DomainType` is a bound leaf,
+`(S, T)` an Objective) — read as text through
 `TypeForm.text` and spelled for Scala at each render site, because identity is not rewritten in place. Type parameters are part of the
 identity: a position holds either a variable or a concrete type, a type is abstract iff any
 position contains a variable at any depth, and only a fully concrete name can be the

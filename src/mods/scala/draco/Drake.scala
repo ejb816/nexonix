@@ -199,9 +199,10 @@ object Drake {
     else name.substring(0, idx) + "(" + name.substring(idx + 1, name.length - 1) + ")"
   }
 
-  /** A TYPE PARAMETER on the surface: a tree spells as any type form does, a string
-    * VERBATIM — a TypeName's parameters have always been written as authored (`T`,
-    * `T <: Product`), and the string era keeps that until the parser trees them. */
+  /** A TYPE PARAMETER on the surface: a tree spells as any type form does (the parser
+    * builds one for every header parameter and reference argument since 2026-09-17);
+    * a string — the JSON corpus until it re-canonicalizes — spells VERBATIM, as a
+    * TypeName's parameters have always been written. */
   private def typeParameterSurface (parameter: Json) : String =
     if (TypeForm.isTree(parameter)) drakeType(parameter) else parameter.text
 
@@ -883,7 +884,7 @@ object Drake {
     * own package, and `resolved` supplies it once the domain line has been read. */
   private def parseRef (token: String) : TypeName = {
     val (name, typeParameters) = splitApplied (token)
-    TypeName (name, _typeParameters = typeParameters.map (Json.fromString))
+    TypeName (name, _typeParameters = typeParameters.map (typeForm))
   }
 
   /** A reference the surface spells with an OPERATOR carries no package, so it must
@@ -908,9 +909,9 @@ object Drake {
     * arguments are ordinary type expressions and convert as such. */
   private def foreignRef (token: String) : TypeName = {
     val s         = token.trim
-    val arguments = splitTypeArguments (s.substring (1, s.length - 1)).map (parseTypeExpression)
-    if (s.startsWith ("[")) TypeName ("Seq", _typeParameters = arguments.map (Json.fromString))
-    else TypeName (if (arguments.size == 1) "Set" else "Map", _typeParameters = arguments.map (Json.fromString))
+    val arguments = splitTypeArguments (s.substring (1, s.length - 1)).map (typeForm)
+    if (s.startsWith ("[")) TypeName ("Seq", _typeParameters = arguments)
+    else TypeName (if (arguments.size == 1) "Set" else "Map", _typeParameters = arguments)
   }
 
   /** A package-qualified reference (`domain draco Draco`, `super …`, `extensible …`):
@@ -1054,8 +1055,10 @@ object Drake {
   def parse (source: String) : TypeDefinition = {
     val c = new Cursor (source, lex (source))
     c.expect ("type")
+    // The header's parameters are TYPE FORMS (drake.dlt CONVENTIONS): a bare variable is
+    // an Atomic string, `S <: DomainType` a bound leaf, exactly as a value-type slot reads.
     val (name, typeParameterTexts) = splitApplied (c.takeText ())
-    val typeParameters = typeParameterTexts.map (Json.fromString)
+    val typeParameters = typeParameterTexts.map (typeForm)
     val derivation = Seq.newBuilder[TypeName]
     if (c.at ("from")) {
       c.take ()

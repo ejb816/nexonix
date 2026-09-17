@@ -159,6 +159,11 @@ for the definition that will replace it.
 
 ### Changed
 
+- **The parser trees the header's type parameters and a reference's arguments.** `type
+  Transform(S <: DomainType, T) from Holon((S, T))` parses to type forms: the bound as a leaf with the
+  parameter first, the tuple argument as an Objective, a bare variable as an Atomic string. The four
+  src/main definitions carrying such parameters re-canonicalize from the drake next. (2026-09-17)
+
 - **A type parameter is a JSON node, on the value-type terms.** `TypeName.typeParameters` is now a
   sequence of JSON nodes: a string is the authored text (the whole corpus today, bounds included), a
   tree will be a type form once the parser trees the header. TypeName's structural identity compares

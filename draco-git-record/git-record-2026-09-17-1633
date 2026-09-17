@@ -1,0 +1,49 @@
+# The parser trees the header's type parameters — accepted by Dev on 2026-09-17 ("Accept, the parser
+# trees the header parameters next"), closing the type-form arc's parser side: value types (f4113d2),
+# then the TypeName field (49fc734), now the header and the references.
+#
+# ONE CONCEPT: every place a TypeName's parameters are READ from the surface builds a type-form tree
+# through Drake.typeForm — the header `type X(S <: DomainType, T)`, every reference argument (`from
+# Holon((S, T))`, modules, domain, super, source, target, messageType, extensible), and a foreign
+# reference's members (`{K, V}`). Three wrap points that said Json.fromString now say typeForm; nothing
+# else in the parser moved. The emitter already spelled a tree (typeParameterSurface, 49fc734); the
+# engine already rendered one (typeParameterScala). TypeName's identity compares the trees.
+#
+# WHAT THE CORPUS HOLDS: four src/main definitions carry a compound or bounded parameter —
+# DomainTransform and TypeTransform (`S <: …, T <: …` in the header, `(S, T)` on the Holon derivation),
+# Holon and base/Coordinate (`T <: Product`); every other parameter is a bare variable, an Atomic string
+# in both eras. The scenario has none, so ScenarioGenTest's json == parse(drake) assertion holds and the
+# two-step shape works again: parser here, the four JSON files re-canonicalized with the compiled parser
+# next. The six drake-less sentient definitions with host-text arguments (`(Double, Double)`,
+# `Seq[Waypoint]`) have no surface to canonicalize from and stay as they are.
+#
+# TESTS: gate 2 compares a TypeName's parameters by their surface spelling (Drake.typeSurface, per
+# parameter) so the string and tree eras agree; the loss report compares `.typeParameters` whole and
+# files it under "type form"; one structural test — bounded header, tuple argument, round trip. 608.
+#
+# NOT compiled here. Compile risk: the three wrap points (typeForm is Json-typed already) and the test's
+# Seq[Json] equalities.
+#
+# EXPECTED: 608 tests / 43 suites, all green. Headlines: surface losses 11 (type form 9 = the four
+# definitions' 6 parameter fields + the 3 standing exclusions, expression form 2; predicted — the run
+# decides and the table says "expected" until pasted); every other headline unchanged.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-17-1633 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1633 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1633 && git push
+
+--- MESSAGE ---
+The parser trees the header's type parameters and a reference's arguments
+
+Every place a TypeName's parameters are read from the surface now builds a type-form tree: the header
+`type Transform(S <: DomainType, T)`, every reference argument such as `from Holon((S, T))`, and a
+foreign reference's members. A bound is a leaf with the parameter first, a tuple argument an Objective,
+a bare variable an Atomic string. The emitter and the engine already spelled a tree; TypeName's
+structural identity now compares the trees.
+
+Four src/main definitions carry such a parameter — DomainTransform, TypeTransform, Holon and
+base/Coordinate — and their JSON re-canonicalizes from the drake next, with the compiled parser; the
+scenario has none, so its gate holds. The parse test compares a type parameter by its one surface
+spelling so the string and tree eras agree, and one structural test asserts the header and the argument.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
