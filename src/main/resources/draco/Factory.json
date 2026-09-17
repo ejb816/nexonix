@@ -21,7 +21,7 @@
         {
           "kind": "Parameter",
           "name": "valueType",
-          "valueType": "String"
+          "valueType": "Json"
         },
         {
           "kind": "Parameter",
@@ -50,7 +50,7 @@
         {
           "kind": "Fixed",
           "name": "valueType",
-          "valueType": "String",
+          "valueType": "Json",
           "value": "_valueType"
         },
         {

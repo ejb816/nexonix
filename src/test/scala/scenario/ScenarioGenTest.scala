@@ -1,6 +1,7 @@
 package scenario
 
 import draco._
+import draco.TypeForm.ValueTypeText
 import io.circe.Printer
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -198,9 +199,9 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
         // here they come apart, and that is the shape rather than a gap.
         val toTarget   = derives.exists(d => TypeLoader.loadType(d).domainAspect.typeName.namePath == tgt)
         val fromSource = params.exists(p =>
-          TypeLoader.loadType(TypeName(p.valueType.split('.').last,
-            _namePackage = p.valueType.split('.').init.toSeq)).domainAspect.typeName.namePath == src)
-        log.info(f"    $n%-24s derives=${derives.map(_.namePath).mkString(",")}%-32s params=${params.map(_.valueType).mkString(",")}%-30s " +
+          TypeLoader.loadType(TypeName(p.valueType.text.split('.').last,
+            _namePackage = p.valueType.text.split('.').init.toSeq)).domainAspect.typeName.namePath == src)
+        log.info(f"    $n%-24s derives=${derives.map(_.namePath).mkString(",")}%-32s params=${params.map(_.valueType.text).mkString(",")}%-30s " +
           (if (toTarget && fromSource) "OK" else "OFF SHAPE"))
         if (toTarget && fromSource) None
         else Some(s"${dom.typeName.namePath}.$n: " + ((toTarget, fromSource) match {

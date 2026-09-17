@@ -1,6 +1,7 @@
 package draco
 
 import io.circe.Json
+import draco.TypeForm.ValueTypeText
 import io.circe.syntax.EncoderOps
 import scala.tools.nsc.{Global, Settings}
 import scala.tools.nsc.reporters.StoreReporter
@@ -21,9 +22,9 @@ object DracoGenerator extends App {
     ),
     _dracoAspect = DracoAspect (
       _factory = Factory (
-        "DracoGenerator",
+        Json.fromString ("DracoGenerator"),
         _parameters = Seq (
-          Parameter ("typeDictionary", "TypeDictionary", Json.Null)
+          Parameter ("typeDictionary", Json.fromString ("TypeDictionary"), Json.Null)
         )
       )
     )
@@ -123,7 +124,7 @@ object DracoGenerator extends App {
       val parts = s.split('.').toVector
       val td = loadType(TypeName(parts.last, _namePackage = parts.init))
       val da = td.dracoAspect
-      if (da.factory.valueType.isEmpty && da.elements.isEmpty && da.derivation.isEmpty) None else Some(td)
+      if (da.factory.valueType.text.isEmpty && da.elements.isEmpty && da.derivation.isEmpty) None else Some(td)
     }
   }
 
@@ -140,7 +141,7 @@ object DracoGenerator extends App {
     else {
       val args = Expression.operands(value).tail
       if (!args.exists(a => Expression.namedArgument(a).isDefined)) None
-      else loadDracoType(valueType).filter(_.dracoAspect.factory.valueType.nonEmpty).map { _ =>
+      else loadDracoType(valueType).filter(_.dracoAspect.factory.valueType.text.nonEmpty).map { _ =>
         val rendered = args.map(a => Expression.namedArgument(a) match {
           case Some((name, v)) => s"_$name = ${expression(v)}"
           case None            => expression(a)
@@ -168,6 +169,13 @@ object DracoGenerator extends App {
     * LAZY, because this object extends App: an eager val here is null until main runs,
     * and the first suite run after this table was added failed eleven tests on exactly
     * that — DRACO.md's first rule, which names companions but binds the engine too. */
+  /** THE SEAM for a value type (2026-09-16): a `valueType` is a `Json` like a `value` —
+    * a string is the type's authored text, a tree (none yet) the type forms — and this
+    * is where it takes the target's spelling, once, at the generate entry. Everything
+    * downstream reads `.valueType.text` (TypeForm). */
+  private def targetType (valueType: Json) : Json =
+    if (valueType.text.isEmpty) Json.Null else Json.fromString(scalaTypeExpression(valueType.text))
+
   private lazy val scalaSymbols: Map[String, Vector[String] => String] = Map(
     "join" -> { args => s"${args(1)}.mkString(${args(0)})" }
   )
@@ -244,7 +252,7 @@ object DracoGenerator extends App {
   ) : String = {
     if (_variables.isEmpty) ""
     else _variables.map { v =>
-      s"""      "$$${v.name}", classOf[${v.valueType}]"""
+      s"""      "$$${v.name}", classOf[${v.valueType.text}]"""
     }.mkString(",\n")
   }
   /** A condition's parameters: the pattern VARIABLES its guard mentions, in
@@ -270,7 +278,7 @@ object DracoGenerator extends App {
   ) : String = {
     if (_conditions.isEmpty) ""
     else _conditions.zipWithIndex.map { case (c, idx) =>
-      val params = conditionParameters(c, _variables).map(p => s"${p.name}: ${p.valueType}").mkString(", ")
+      val params = conditionParameters(c, _variables).map(p => s"${p.name}: ${p.valueType.text}").mkString(", ")
       s"  def w$idx($params): Boolean = ${expression(c.value)}"
     }.mkString("\n")
   }
@@ -294,19 +302,19 @@ object DracoGenerator extends App {
   ) : String = {
     // Extract rule variables from context
     val varBindings = variables.map { v =>
-      s"""      val ${v.name}: ${v.valueType} = ctx.get[${v.valueType}]("$$${v.name}")"""
+      s"""      val ${v.name}: ${v.valueType.text} = ctx.get[${v.valueType.text}]("$$${v.name}")"""
     }.mkString("\n")
 
     // Generate body statements from Action.body
     val bodyStatements = action.body.map {
       case f: Fixed =>
-        if (f.name.nonEmpty) s"      val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
+        if (f.name.nonEmpty) s"      val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
         else s"      ${expression(f.value)}"
       case m: Mutable =>
-        if (m.name.nonEmpty) s"      var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
+        if (m.name.nonEmpty) s"      var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
         else s"      ${expression(m.value)}"
       case d: Dynamic =>
-        if (d.name.nonEmpty) s"      def ${d.name}: ${d.valueType} = ${initializer(d.valueType, d.value)}"
+        if (d.name.nonEmpty) s"      def ${d.name}: ${d.valueType.text} = ${initializer(d.valueType.text, d.value)}"
         else s"      ${expression(d.value)}"
       case l: Local =>
         // A construction-local intermediate. Every other body renderer
@@ -314,9 +322,9 @@ object DracoGenerator extends App {
         // `loc` in a RULE action fell through to the BodyElement catch-all and its
         // binding was silently dropped — the initializer emitted as a bare statement
         // and every later reference to the name left dangling.
-        s"      val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
+        s"      val ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
       case v: Variable =>
-        s"      val ${v.name}: ${v.valueType} = ctx.get[${v.valueType}](\"$$${v.name}\")"
+        s"      val ${v.name}: ${v.valueType.text} = ctx.get[${v.valueType.text}](\"$$${v.name}\")"
       case _: Case =>
         sys.error("draco: a case-branch is not admitted in a rule action (drake.dlt CASE-BRANCH: an actor's message, or a dyn-with-body)")
       case te: BodyElement =>
@@ -400,9 +408,9 @@ object DracoGenerator extends App {
     if (parameters.isEmpty) ""
     else {
       val params = parameters.map { p =>
-        val d = initializer(p.valueType, p.value)
+        val d = initializer(p.valueType.text, p.value)
         val default = if (d.isEmpty) "" else s" = $d"
-        s"${p.name}: ${p.valueType}$default"
+        s"${p.name}: ${p.valueType.text}$default"
       }
       s"(${params.mkString(", ")})"
     }
@@ -452,9 +460,9 @@ object DracoGenerator extends App {
       sys.error("draco: a case-branch here has no scrutinee — a dyn carrying cases takes exactly one parameter (drake.dlt CASE-BRANCH)")
     val inner = pad + "  "
     val branches = run.map { c =>
-      val head = (c.name.nonEmpty, c.valueType.nonEmpty) match {
-        case (true,  true)  => s"case ${c.name}: ${c.valueType} =>"
-        case (false, true)  => s"case _: ${c.valueType} =>"
+      val head = (c.name.nonEmpty, c.valueType.text.nonEmpty) match {
+        case (true,  true)  => s"case ${c.name}: ${c.valueType.text} =>"
+        case (false, true)  => s"case _: ${c.valueType.text} =>"
         case (true,  false) => s"case ${c.name} =>"
         case (false, false) => "case _ =>"
       }
@@ -465,7 +473,7 @@ object DracoGenerator extends App {
       (s"$inner$head" +: (lines ++ result)).mkString("\n")
     }
     val isResult   = run.exists(c => resultOf(c.body)._2.nonEmpty)
-    val hasDefault = run.exists(_.valueType.isEmpty)
+    val hasDefault = run.exists(_.valueType.text.isEmpty)
     val catchAll   = if (!isResult && !hasDefault) Seq(s"${inner}case _ => ()") else Seq.empty
     ((s"$pad$scrutinee match {" +: (branches ++ catchAll)) :+ s"$pad}").mkString("\n")
   }
@@ -514,11 +522,11 @@ object DracoGenerator extends App {
           .map(line => if (line.isEmpty) "" else s"$pad$line")
           .mkString("\n")
       def statement(e: BodyElement, pad: String): String = e match {
-        case f: Fixed    => s"${pad}val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
-        case m: Mutable  => s"${pad}var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
-        case l: Local    => s"${pad}val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
+        case f: Fixed    => s"${pad}val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
+        case m: Mutable  => s"${pad}var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
+        case l: Local    => s"${pad}val ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
         case mo: Monadic => indentBlock(expression(mo.value), pad)
-        case be: BodyElement => s"${pad}val ${be.name}: ${be.valueType} = ${initializer(be.valueType, be.value)}"
+        case be: BodyElement => s"${pad}val ${be.name}: ${be.valueType.text} = ${initializer(be.valueType.text, be.value)}"
       }
       val statements = statementsWithCases(body, bodyPad, scrutinee, statement)
       val result = if (value.isEmpty) Seq.empty else Seq(indentBlock(value))
@@ -536,25 +544,25 @@ object DracoGenerator extends App {
           // `lazy val` (not plain `val`) when a default is present so subtypes
           // can override with `lazy val` — concrete non-lazy vals cannot be
           // overridden by `lazy val`.
-          val init = initializer(f.valueType, f.value)
-          if (init.nonEmpty) s"  lazy val ${f.name}: ${f.valueType} = $init"
-          else s"  val ${f.name}: ${f.valueType}"
+          val init = initializer(f.valueType.text, f.value)
+          if (init.nonEmpty) s"  lazy val ${f.name}: ${f.valueType.text} = $init"
+          else s"  val ${f.name}: ${f.valueType.text}"
         case m: Mutable =>
-          val init = initializer(m.valueType, m.value)
-          if (init.nonEmpty) s"  var ${m.name}: ${m.valueType} = $init"
-          else s"  var ${m.name}: ${m.valueType}"
+          val init = initializer(m.valueType.text, m.value)
+          if (init.nonEmpty) s"  var ${m.name}: ${m.valueType.text} = $init"
+          else s"  var ${m.name}: ${m.valueType.text}"
         case d: Dynamic =>
           val result = expression(d.value)
-          if (d.body.nonEmpty || result.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, result, scrutinee = dynScrutinee(d))}"
-          else s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType}"
+          if (d.body.nonEmpty || result.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, result, scrutinee = dynScrutinee(d))}"
+          else s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text}"
         case mo: Monadic =>
           // Verbatim Scala source — for declarations that exceed the
           // Fixed/Mutable/Dynamic vocabulary (method type params, implicit
           // parameter lists, multi-line bodies, etc.). Each line indented
           // by the trait body's two spaces.
           expression(mo.value).linesIterator.map(l => s"  $l").mkString("\n")
-        case p: Parameter => s"  val ${p.name}: ${p.valueType}"
-        case te: TypeElement => s"  val ${te.name}: ${te.valueType}"
+        case p: Parameter => s"  val ${p.name}: ${p.valueType.text}"
+        case te: TypeElement => s"  val ${te.name}: ${te.valueType.text}"
       }
       s"{\n${members.mkString("\n")}\n}"
     }
@@ -566,9 +574,9 @@ object DracoGenerator extends App {
     if (parameters.isEmpty) ""
     else {
       val params = parameters.map { p =>
-        val d = initializer(p.valueType, p.value)
+        val d = initializer(p.valueType.text, p.value)
         val default = if (d.isEmpty) "" else s" = $d"
-        s"_${p.name}: ${p.valueType}$default"
+        s"_${p.name}: ${p.valueType.text}$default"
       }
       s"\n    ${params.mkString(",\n    ")}\n  "
     }
@@ -578,7 +586,7 @@ object DracoGenerator extends App {
     td: TypeDefinition
   ) : String = {
     val factory = td.dracoAspect.factory
-    val objName = baseName(factory.valueType)
+    val objName = baseName(factory.valueType.text)
     val hasTypeDefinitionOverride =
       if (factory.body.nonEmpty) factory.body.exists(_.name == "typeDefinition")
       else factory.parameters.exists(_.name == "typeDefinition")
@@ -589,16 +597,16 @@ object DracoGenerator extends App {
     ).flatten
     val overrides =
       if (factory.body.nonEmpty) factory.body.map {
-        case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
-        case m: Mutable => s"    override var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
-        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, expression(d.value), methodIndent = 4, scrutinee = dynScrutinee(d))}"
+        case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
+        case m: Mutable => s"    override var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
+        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), methodIndent = 4, scrutinee = dynScrutinee(d))}"
         case mo: Monadic => s"    ${expression(mo.value)}"
-        case l: Local   => s"    val ${l.name}: ${l.valueType} = ${initializer(l.valueType, l.value)}"
+        case l: Local   => s"    val ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
         case _: Case    => sys.error("draco: a case-branch is not admitted in a factory body (drake.dlt CASE-BRANCH: an actor's message, or a dyn-with-body)")
-        case be: BodyElement => s"    override lazy val ${be.name}: ${be.valueType} = ${initializer(be.valueType, be.value)}"
+        case be: BodyElement => s"    override lazy val ${be.name}: ${be.valueType.text} = ${initializer(be.valueType.text, be.value)}"
       }
       else factory.parameters.map { p =>
-        s"    override lazy val ${p.name}: ${p.valueType} = _${p.name}"
+        s"    override lazy val ${p.name}: ${p.valueType.text} = _${p.name}"
       }
     s"{\n${(overrides ++ instanceOverrides).mkString("\n")}\n  }"
   }
@@ -615,15 +623,15 @@ object DracoGenerator extends App {
     else {
       val globals = globalElements.map {
         case f: Fixed =>
-          val rendered = initializer(f.valueType, f.value)
-          val init = if (rendered.isEmpty) s"null.asInstanceOf[${f.valueType}]" else rendered
-          s"  lazy val ${f.name}: ${f.valueType} = $init"
+          val rendered = initializer(f.valueType.text, f.value)
+          val init = if (rendered.isEmpty) s"null.asInstanceOf[${f.valueType.text}]" else rendered
+          s"  lazy val ${f.name}: ${f.valueType.text} = $init"
         case m: Mutable =>
-          val rendered = initializer(m.valueType, m.value)
-          val init = if (rendered.isEmpty) s"null.asInstanceOf[${m.valueType}]" else rendered
-          s"  var ${m.name}: ${m.valueType} = $init"
+          val rendered = initializer(m.valueType.text, m.value)
+          val init = if (rendered.isEmpty) s"null.asInstanceOf[${m.valueType.text}]" else rendered
+          s"  var ${m.name}: ${m.valueType.text} = $init"
         case d: Dynamic =>
-          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType} = ${methodBody(d.body, expression(d.value), scrutinee = dynScrutinee(d))}"
+          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), scrutinee = dynScrutinee(d))}"
         case mo: Monadic =>
           // Indent every line so multi-line global blocks (encoder/decoder/etc.)
           // emit at the correct object-body indent level.
@@ -631,9 +639,9 @@ object DracoGenerator extends App {
             .map(line => if (line.isEmpty) "" else s"  $line")
             .mkString("\n")
         case be: BodyElement =>
-          val rendered = initializer(be.valueType, be.value)
-          val init = if (rendered.isEmpty) s"null.asInstanceOf[${be.valueType}]" else rendered
-          s"  val ${be.name}: ${be.valueType} = $init"
+          val rendered = initializer(be.valueType.text, be.value)
+          val init = if (rendered.isEmpty) s"null.asInstanceOf[${be.valueType.text}]" else rendered
+          s"  val ${be.name}: ${be.valueType.text} = $init"
       }
       globals.mkString("\n")
     }
@@ -687,12 +695,12 @@ object DracoGenerator extends App {
 
   private def elisionCheck (p: Parameter) : Option[String] = {
     if (expression(p.value).isEmpty) None  // required field — always encode
-    else p.valueType match {
+    else p.valueType.text match {
       case "String"                    => Some(s"x.${p.name}.nonEmpty")
       case s if s.startsWith("Seq[")   => Some(s"x.${p.name}.nonEmpty")
       case s if s.startsWith("Map[")   => Some(s"x.${p.name}.nonEmpty")
       case "Json"                      => Some(jsonNonEmpty(p.name))
-      case "Factory"                   => Some(s"x.${p.name}.valueType.nonEmpty")
+      case "Factory"                   => Some(s"!x.${p.name}.valueType.isNull")
       case "Action"                    => Some(s"x.${p.name}.body.nonEmpty")
       case "Pattern"                   => Some(s"x.${p.name}.variables.nonEmpty")
       case "TypeName"                  => Some(s"x.${p.name}.name.nonEmpty")
@@ -710,7 +718,7 @@ object DracoGenerator extends App {
   /** Default wire-elision test for a field with a natural emptiness, used in
     * discriminated unions when `elisionCheck` (default-bearing params) does
     * not apply. */
-  private def defaultElision (p: Parameter) : Option[String] = p.valueType match {
+  private def defaultElision (p: Parameter) : Option[String] = p.valueType.text match {
     case "String"                  => Some(s"x.${p.name}.nonEmpty")
     case s if s.startsWith("Seq[") => Some(s"x.${p.name}.nonEmpty")
     case s if s.startsWith("Map[") => Some(s"x.${p.name}.nonEmpty")
@@ -798,20 +806,20 @@ object DracoGenerator extends App {
     * elides them when empty), defaulting to the type's "zero". Non-elidable
     * types use the parameter's explicit default if present, else strict-require. */
   private def decoderForLine (p: Parameter, indent: String) : String = {
-    val typeZero: Option[String] = p.valueType match {
+    val typeZero: Option[String] = p.valueType.text match {
       case "String"                    => Some("\"\"")
       case s if s.startsWith("Seq[")   => Some("Seq.empty")
       case s if s.startsWith("Map[")   => Some("Map.empty")
       case "Json"                      => Some("Json.Null")
       case _                           => None
     }
-    val explicitDefault = initializer(p.valueType, p.value)
+    val explicitDefault = initializer(p.valueType.text, p.value)
     val defaultOpt: Option[String] = typeZero.orElse(if (explicitDefault.nonEmpty) Some(explicitDefault) else None)
     defaultOpt match {
       case Some(d) =>
-        s"""${indent}_${p.name} <- cursor.downField("${p.name}").as[Option[${p.valueType}]].map(_.getOrElse($d))"""
+        s"""${indent}_${p.name} <- cursor.downField("${p.name}").as[Option[${p.valueType.text}]].map(_.getOrElse($d))"""
       case None =>
-        s"""${indent}_${p.name} <- cursor.downField("${p.name}").as[${p.valueType}]"""
+        s"""${indent}_${p.name} <- cursor.downField("${p.name}").as[${p.valueType.text}]"""
     }
   }
 
@@ -992,7 +1000,7 @@ object DracoGenerator extends App {
         if (td.dracoAspect.modules.nonEmpty) {
           // Pattern 2: discriminated union (top-level sealed trait)
           discriminatedCodecDeclaration(td, familyMap)
-        } else if (td.dracoAspect.factory.valueType.nonEmpty && td.dracoAspect.factory.parameters.nonEmpty) {
+        } else if (td.dracoAspect.factory.valueType.text.nonEmpty && td.dracoAspect.factory.parameters.nonEmpty) {
           // Pattern 1: simple field-based — when every factory param is accessible as a
           // trait element (own or inherited via derivation) and no param has a
           // function-like type (those have no circe codec).
@@ -1012,7 +1020,7 @@ object DracoGenerator extends App {
           val ownElementNames = td.dracoAspect.elements.map(_.name).toSet
           val elementNames = ownElementNames ++ inheritedElementNames(td, familyMap)
           val paramNames = td.dracoAspect.factory.parameters.map(_.name).toSet
-          val anyUncodecable = td.dracoAspect.factory.parameters.exists(p => isUncodecable(p.valueType))
+          val anyUncodecable = td.dracoAspect.factory.parameters.exists(p => isUncodecable(p.valueType.text))
           if (paramNames.subsetOf(elementNames) && !anyUncodecable) simpleCodecDeclaration(td)
           else ""
         } else {
@@ -1031,7 +1039,7 @@ object DracoGenerator extends App {
     val name = typeName.name + nameSuffix
     val wName = wildcardTypeName(typeName) + nameSuffix
     val typeParams = if (typeName.typeParameters.isEmpty) "" else s"[${typeName.typeParameters.map(_ => "Nothing").mkString(", ")}]"
-    if (factory.valueType.nonEmpty) {
+    if (factory.valueType.text.nonEmpty) {
       val allHaveDefaults = factory.parameters.nonEmpty && factory.parameters.forall(p => expression(p.value).nonEmpty)
       if (allHaveDefaults) {
         // All parameters carry default values — emit a bare `apply()` and let
@@ -1039,7 +1047,7 @@ object DracoGenerator extends App {
         s"lazy val Null: $wName = apply$typeParams()"
       } else {
         val nullArgs = factory.parameters.map { p =>
-          s"    _${p.name} = ${nullValueFor(p.valueType, initializer(p.valueType, p.value))}"
+          s"    _${p.name} = ${nullValueFor(p.valueType.text, initializer(p.valueType.text, p.value))}"
         }
         if (nullArgs.isEmpty) s"lazy val Null: $wName = apply$typeParams()"
         else s"lazy val Null: $wName = apply$typeParams(\n${nullArgs.mkString(",\n")}\n  )"
@@ -1048,11 +1056,11 @@ object DracoGenerator extends App {
       s"lazy val Null: $wName = new $wName {}"
     } else {
       val nullMembers = elements.map {
-        case f: Fixed => s"    override val ${f.name}: ${f.valueType} = null.asInstanceOf[${f.valueType}]"
-        case m: Mutable => s"    override var ${m.name}: ${m.valueType} = null.asInstanceOf[${m.valueType}]"
-        case d: Dynamic => s"    override def ${d.name}: ${d.valueType} = null.asInstanceOf[${d.valueType}]"
-        case p: Parameter => s"    override val ${p.name}: ${p.valueType} = null.asInstanceOf[${p.valueType}]"
-        case te: TypeElement => s"    override val ${te.name}: ${te.valueType} = null.asInstanceOf[${te.valueType}]"
+        case f: Fixed => s"    override val ${f.name}: ${f.valueType.text} = null.asInstanceOf[${f.valueType.text}]"
+        case m: Mutable => s"    override var ${m.name}: ${m.valueType.text} = null.asInstanceOf[${m.valueType.text}]"
+        case d: Dynamic => s"    override def ${d.name}: ${d.valueType.text} = null.asInstanceOf[${d.valueType.text}]"
+        case p: Parameter => s"    override val ${p.name}: ${p.valueType.text} = null.asInstanceOf[${p.valueType.text}]"
+        case te: TypeElement => s"    override val ${te.name}: ${te.valueType.text} = null.asInstanceOf[${te.valueType.text}]"
       }
       s"lazy val Null: $wName = new $wName {\n${nullMembers.mkString("\n")}\n  }"
     }
@@ -1064,11 +1072,11 @@ object DracoGenerator extends App {
     * convention — its parameters thread into `def actorType(...)` via
     * actorBehavior), never a type/domain constructor: no `apply`, no `Null`. */
   private def isActorMintingFactory (factory: Factory) : Boolean =
-    factory.valueType == "ActorType"
+    factory.valueType.text == "ActorType"
 
   private def typeGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty, nameSuffix: String = "") : String = {
     val factory = td.dracoAspect.factory
-    val hasFactory = factory.valueType.nonEmpty && !isActorMintingFactory(factory)
+    val hasFactory = factory.valueType.text.nonEmpty && !isActorMintingFactory(factory)
     val hasGlobalElements = td.dracoAspect.globalElements.nonEmpty
     val objName = td.typeName.name + nameSuffix
     val wName = wildcardTypeName(td.typeName) + nameSuffix
@@ -1104,7 +1112,7 @@ object DracoGenerator extends App {
          |$tdLiteral
          |$tiLiteral$dtBlock
          |$codecBlock
-         |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType} = new ${factory.valueType} ${factoryBody(td)}
+         |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType.text} = new ${factory.valueType.text} ${factoryBody(td)}
          |
          |  ${nullInstance(td.typeName, td.dracoAspect.elements, td.dracoAspect.factory, nameSuffix)}
          |
@@ -1188,11 +1196,11 @@ object DracoGenerator extends App {
     // unless the factory is the actor-minting spec (isActorMintingFactory).
     val factory = td.dracoAspect.factory
     val factoryBlock =
-      if (factory.valueType.isEmpty || isActorMintingFactory(factory)) ""
+      if (factory.valueType.text.isEmpty || isActorMintingFactory(factory)) ""
       else {
         val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
         s"""
-           |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType} = new ${factory.valueType} ${factoryBody(td)}
+           |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType.text} = new ${factory.valueType.text} ${factoryBody(td)}
            |
            |  ${nullInstance(td.typeName, td.dracoAspect.elements, factory)}
            |""".stripMargin
@@ -1314,7 +1322,7 @@ object DracoGenerator extends App {
     val refs = referencedPackageImports(td)
     // Fold ActorRef into the typed brace import when a construction param references it,
     // matching the hand-written convention (one import line, not a trailing separate one).
-    val needsActorRef = td.dracoAspect.factory.parameters.exists(_.valueType.contains("ActorRef"))
+    val needsActorRef = td.dracoAspect.factory.parameters.exists(_.valueType.text.contains("ActorRef"))
     val typedImport =
       if (needsActorRef) "import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}"
       else               "import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}"
@@ -1389,8 +1397,8 @@ object DracoGenerator extends App {
     * ctx variable bindings: the body operates on `knowledge`, the message, and `ctx`. */
   private def actorActionBody (action: Action, indent: String = "      ") : String = {
     def statement(e: BodyElement, pad: String): String = e match {
-      case f: Fixed if f.name.nonEmpty   => s"${pad}val ${f.name}: ${f.valueType} = ${initializer(f.valueType, f.value)}"
-      case m: Mutable if m.name.nonEmpty => s"${pad}var ${m.name}: ${m.valueType} = ${initializer(m.valueType, m.value)}"
+      case f: Fixed if f.name.nonEmpty   => s"${pad}val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
+      case m: Mutable if m.name.nonEmpty => s"${pad}var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
       case be: BodyElement               => s"$pad${expression(be.value)}"
     }
     // The scrutinee of a case-branch in `message` is the message itself, which this
@@ -1429,7 +1437,7 @@ object DracoGenerator extends App {
     // (call once = single instance, call N = many, each with its own session).
     // Construction params (e.g. a downstream ref) pass through; nullary when none.
     val actorDecl =
-      s"def actorType(${params.map(p => s"${p.name}: ${p.valueType}").mkString(", ")}): ActorType"
+      s"def actorType(${params.map(p => s"${p.name}: ${p.valueType.text}").mkString(", ")}): ActorType"
     s"""  $actorDecl = new Actor[$msgType] {
        |    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition
        |
@@ -1565,7 +1573,7 @@ object DracoGenerator extends App {
   /** Object-only type: no trait, no factory, no derivation, but has globalElements.
     * Emits object extending DracoType with dracoType = this. */
   private def isObjectOnly (td: TypeDefinition) : Boolean =
-    td.dracoAspect.elements.isEmpty && td.dracoAspect.factory.valueType.isEmpty && td.dracoAspect.derivation.isEmpty && td.dracoAspect.globalElements.nonEmpty
+    td.dracoAspect.elements.isEmpty && td.dracoAspect.factory.valueType.text.isEmpty && td.dracoAspect.derivation.isEmpty && td.dracoAspect.globalElements.nonEmpty
 
   /** Leaf type: none of the structural categories above. Names the negative case
     * so `generate()` reads as a flat dispatch table rather than a fall-through.
@@ -1614,11 +1622,11 @@ object DracoGenerator extends App {
     // Method-shaped elements (dyn-with-body) nest parameters and statements; a
     // context-bounded name ("value[T: Decoder]") carries a type in its bound.
     val methodShaped = td.dracoAspect.elements ++ td.dracoAspect.factory.body ++ td.dracoAspect.globalElements
-    val nested = methodShaped.flatMap(e => e.parameters.map(_.valueType) ++ e.body.map(_.valueType))
-    val allValueTypes = td.dracoAspect.elements.map(_.valueType) ++
-      td.dracoAspect.factory.parameters.map(_.valueType) ++
-      td.dracoAspect.factory.body.map(_.valueType) ++
-      td.dracoAspect.globalElements.map(_.valueType) ++
+    val nested = methodShaped.flatMap(e => e.parameters.map(_.valueType.text) ++ e.body.map(_.valueType.text))
+    val allValueTypes = td.dracoAspect.elements.map(_.valueType.text) ++
+      td.dracoAspect.factory.parameters.map(_.valueType.text) ++
+      td.dracoAspect.factory.body.map(_.valueType.text) ++
+      td.dracoAspect.globalElements.map(_.valueType.text) ++
       nested ++
       methodShaped.map(_.name) ++
       td.dracoAspect.derivation.map(_.name) ++
@@ -1799,10 +1807,10 @@ object DracoGenerator extends App {
   }
 
   private def targetParameter (p: Parameter) : Parameter =
-    Parameter(p.name, scalaTypeExpression(p.valueType), p.value)
+    Parameter(p.name, targetType(p.valueType), p.value)
 
   private def targetVariable (v: Variable) : Variable =
-    Variable(v.name, scalaTypeExpression(v.valueType))
+    Variable(v.name, targetType(v.valueType))
 
   /** Rewrite every valueType a body element carries, at any depth. Each kind is
     * rebuilt with ALL of its fields — Pattern and Action carry `variables` outside
@@ -1810,21 +1818,21 @@ object DracoGenerator extends App {
     * would drop them silently. Monadic and Condition have no valueType and no
     * nesting, so they pass through as themselves. */
   private def targetBody (b: BodyElement) : BodyElement = b match {
-    case x: Fixed     => Fixed(x.name, scalaTypeExpression(x.valueType), x.value)
-    case x: Mutable   => Mutable(x.name, scalaTypeExpression(x.valueType), x.value)
-    case x: Local     => Local(x.name, scalaTypeExpression(x.valueType), x.value)
+    case x: Fixed     => Fixed(x.name, targetType(x.valueType), x.value)
+    case x: Mutable   => Mutable(x.name, targetType(x.valueType), x.value)
+    case x: Local     => Local(x.name, targetType(x.valueType), x.value)
     case x: Parameter => targetParameter(x)
     case x: Variable  => targetVariable(x)
-    case x: Dynamic   => Dynamic(x.name, scalaTypeExpression(x.valueType),
+    case x: Dynamic   => Dynamic(x.name, targetType(x.valueType),
                                  x.parameters.map(targetParameter), x.body.map(targetBody), x.value)
-    case x: Factory   => Factory(scalaTypeExpression(x.valueType),
+    case x: Factory   => Factory(targetType(x.valueType),
                                  x.parameters.map(targetParameter), x.body.map(targetBody))
     case x: Pattern   => Pattern(x.variables.map(targetVariable), x.conditions)
     case x: Action    => Action(x.variables.map(targetVariable), x.body.map(targetBody))
     // A case-branch carries a branch TYPE in valueType and nests a body. Missing here,
     // it compiled (a sealed-match gap is a warning) and failed on the first definition
     // that carried one — the class of gap 3a could not exercise, since nothing did.
-    case x: Case      => Case(x.name, scalaTypeExpression(x.valueType), x.body.map(targetBody), x.value)
+    case x: Case      => Case(x.name, targetType(x.valueType), x.body.map(targetBody), x.value)
     case x: Monadic   => x
     case x: Condition => x
   }
@@ -1930,7 +1938,7 @@ object DracoGenerator extends App {
       // pekko behaviour imports (Behavior/Signal/TypedActorContext/Behaviors) are only
       // used by factory-emitted receive/receiveSignal bodies; a factory-less actor
       // container (e.g. the base Actor[T] trait) needs none.
-      val instanceType = if (isActorType && td.dracoAspect.factory.valueType.nonEmpty) "actor" else ""
+      val instanceType = if (isActorType && td.dracoAspect.factory.valueType.text.nonEmpty) "actor" else ""
       val imports = typeImports(td, hasCodec(td), instanceType)
       s"""
          |package ${td.typeName.namePackage.mkString(".")}
@@ -1969,7 +1977,7 @@ object DracoGenerator extends App {
         _derivation = ordered.flatMap(_.dracoAspect.derivation) ++
           ordered.map(_.dracoAspect.extensible).filter(_.name.nonEmpty),
         _elements = ordered.flatMap(_.dracoAspect.elements),
-        _factory = Factory("", _parameters = ordered.flatMap(_.dracoAspect.factory.parameters)),
+        _factory = Factory(Json.Null, _parameters = ordered.flatMap(_.dracoAspect.factory.parameters)),
         _globalElements = ordered.flatMap(_.dracoAspect.globalElements)
       )
     )

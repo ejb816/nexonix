@@ -17,5 +17,5 @@ type DracoAspect
       par factory Factory Factory.Null
       par globalElements [BodyElement] []
   globals
-    fix isEmpty (DracoAspect -> Boolean) da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty
+    fix isEmpty (DracoAspect -> Boolean) da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty
 domain draco Draco

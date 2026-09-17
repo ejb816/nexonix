@@ -4,7 +4,7 @@ type TypeElement from Primal(Json)
   ]
   elements
     fix name String ""
-    fix valueType String ""
+    fix valueType Json Json.Null
     fix parameters [Parameter] []
     fix body [BodyElement] []
     fix value Json Json.Null

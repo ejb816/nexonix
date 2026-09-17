@@ -17,10 +17,10 @@ object Generated extends App {
         TypeName ("Main", _namePackage = Seq ("draco"))
       ),
       _factory = Factory (
-        "Generated",
+        Json.fromString ("Generated"),
         _parameters = Seq (
-          Parameter ("sourceName", "String", Json.Null),
-          Parameter ("sinkName", "String", Json.Null)
+          Parameter ("sourceName", Json.fromString ("String"), Json.Null),
+          Parameter ("sinkName", Json.fromString ("String"), Json.Null)
         )
       )
     )

@@ -16,41 +16,41 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       _modules = Seq.empty,
       _derivation = Seq.empty,
       _elements = Seq(
-        Fixed("typeName", "TypeName"),
-        Fixed("modules", "Seq[TypeName]"),
-        Fixed("derivation", "Seq[TypeName]"),
-        Fixed("elements", "Seq[TypeElement]"),
-        Fixed("factory", "Factory"),
-        Fixed("globalElements", "Seq[BodyElement]")
+        Fixed ("typeName", Json.fromString ("TypeName")),
+        Fixed ("modules", Json.fromString ("Seq[TypeName]")),
+        Fixed ("derivation", Json.fromString ("Seq[TypeName]")),
+        Fixed ("elements", Json.fromString ("Seq[TypeElement]")),
+        Fixed ("factory", Json.fromString ("Factory")),
+        Fixed ("globalElements", Json.fromString ("Seq[BodyElement]"))
       ),
       _factory = Factory(
-        _valueType = "draco.TypeDefinition",
+        _valueType = Json.fromString ("draco.TypeDefinition"),
         _parameters = Seq(
-          Parameter("typeName", "TypeName", Json.Null),
-          Parameter("modules", "Seq[TypeName]", Json.fromString("Seq.empty")),
-          Parameter("derivation", "Seq[TypeName]", Json.fromString("Seq.empty")),
-          Parameter("elements", "Seq[TypeElement]", Json.fromString("Seq.empty")),
-          Parameter("factory", "Factory", Json.fromString("Factory.Null")),
-          Parameter("globalElements", "Seq[BodyElement]", Json.fromString("Seq.empty"))
+          Parameter ("typeName", Json.fromString ("TypeName"), Json.Null),
+          Parameter ("modules", Json.fromString ("Seq[TypeName]"), Json.fromString("Seq.empty")),
+          Parameter ("derivation", Json.fromString ("Seq[TypeName]"), Json.fromString("Seq.empty")),
+          Parameter ("elements", Json.fromString ("Seq[TypeElement]"), Json.fromString("Seq.empty")),
+          Parameter ("factory", Json.fromString ("Factory"), Json.fromString("Factory.Null")),
+          Parameter ("globalElements", Json.fromString ("Seq[BodyElement]"), Json.fromString("Seq.empty"))
         ),
         _body = Seq(
-          Fixed("typeName", "TypeName", Json.fromString("_typeName")),
-          Fixed("modules", "Seq[TypeName]", Json.fromString("_modules")),
-          Fixed("derivation", "Seq[TypeName]", Json.fromString("_derivation")),
-          Fixed("elements", "Seq[TypeElement]", Json.fromString("_elements")),
-          Fixed("factory", "Factory", Json.fromString("_factory")),
-          Fixed("globalElements", "Seq[BodyElement]", Json.fromString("_globalElements"))
+          Fixed ("typeName", Json.fromString ("TypeName"), Json.fromString("_typeName")),
+          Fixed ("modules", Json.fromString ("Seq[TypeName]"), Json.fromString("_modules")),
+          Fixed ("derivation", Json.fromString ("Seq[TypeName]"), Json.fromString("_derivation")),
+          Fixed ("elements", Json.fromString ("Seq[TypeElement]"), Json.fromString("_elements")),
+          Fixed ("factory", Json.fromString ("Factory"), Json.fromString("_factory")),
+          Fixed ("globalElements", Json.fromString ("Seq[BodyElement]"), Json.fromString("_globalElements"))
         )
       ),
       _globalElements = Seq(
-        Dynamic(
+        Dynamic (
           "load",
-          "TypeDefinition",
-          Seq(Parameter("typeName", "TypeName", Json.Null)),
+          Json.fromString ("TypeDefinition"),
+          Seq(Parameter ("typeName", Json.fromString ("TypeName"), Json.Null)),
           Seq(
-            Fixed("sourceContent", "SourceContent", Json.fromString("SourceContent(DracoGenerator.main.sourceRoot, typeName.resourcePath)")),
-            Fixed("sourceJSON", "Json", Json.fromString("parser.parse(sourceContent.sourceString).getOrElse(TypeDefinition(typeName).asJson)")),
-            Fixed("result", "TypeDefinition", Json.fromString("sourceJSON.as[TypeDefinition].getOrElse(Null)"))
+            Fixed ("sourceContent", Json.fromString ("SourceContent"), Json.fromString("SourceContent(DracoGenerator.main.sourceRoot, typeName.resourcePath)")),
+            Fixed ("sourceJSON", Json.fromString ("Json"), Json.fromString("parser.parse(sourceContent.sourceString).getOrElse(TypeDefinition(typeName).asJson)")),
+            Fixed ("result", Json.fromString ("TypeDefinition"), Json.fromString("sourceJSON.as[TypeDefinition].getOrElse(Null)"))
           )
         )
       )
@@ -86,8 +86,8 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       ),
       _dracoAspect = DracoAspect(
         _globalElements = Seq(
-          Fixed("MAX_SIZE", "Int", Json.fromString("1024")),
-          Fixed("DEFAULT_NAME", "String", Json.fromString("\"unnamed\""))
+          Fixed ("MAX_SIZE", Json.fromString ("Int"), Json.fromString("1024")),
+          Fixed ("DEFAULT_NAME", Json.fromString ("String"), Json.fromString("\"unnamed\""))
         )
       )
     )
@@ -149,15 +149,15 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       _typeName = TypeName("Animal", _namePackage = Seq("test", "zoo")),
       _dracoAspect = DracoAspect(
         _modules = Seq(TypeName("Dog", _namePackage = Seq("test", "zoo"))),
-        _elements = Seq(Fixed("name", "String"))
+        _elements = Seq(Fixed ("name", Json.fromString ("String")))
       )
     )
     val dogTd = TypeDefinition(
       _typeName = TypeName("Dog", _namePackage = Seq("test", "zoo")),
       _dracoAspect = DracoAspect(
         _derivation = Seq(TypeName("Animal", _namePackage = Seq("test", "zoo"))),
-        _factory = Factory("Dog", _parameters = Seq(
-          Parameter("name", "String", Json.fromString("\"Fido\""))
+        _factory = Factory (Json.fromString ("Dog"), _parameters = Seq(
+          Parameter ("name", Json.fromString ("String"), Json.fromString("\"Fido\""))
         ))
       )
     )
@@ -183,7 +183,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       _typeName = TypeName("Animal", _namePackage = Seq("test", "zoo")),
       _dracoAspect = DracoAspect(
         _modules = Seq(TypeName("Dog", _namePackage = Seq("test", "zoo"))),
-        _elements = Seq(Fixed("name", "String"))
+        _elements = Seq(Fixed ("name", Json.fromString ("String")))
       ),
       _codecAspect = CodecAspect("species")
     )
@@ -191,8 +191,8 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       _typeName = TypeName("Dog", _namePackage = Seq("test", "zoo")),
       _dracoAspect = DracoAspect(
         _derivation = Seq(TypeName("Animal", _namePackage = Seq("test", "zoo"))),
-        _factory = Factory("Dog", _parameters = Seq(
-          Parameter("name", "String", Json.fromString("\"Fido\""))
+        _factory = Factory (Json.fromString ("Dog"), _parameters = Seq(
+          Parameter ("name", Json.fromString ("String"), Json.fromString("\"Fido\""))
         ))
       )
     )
@@ -212,7 +212,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
     // subtype (Pattern.variables/conditions, Action.variables), not just the
     // parent-trait fields. Before the fix these were dropped on encode.
     val pattern = Pattern(
-      _variables = Seq(Variable("accumulator", "Accumulator"), Variable("i", "Integer"))
+      _variables = Seq(Variable ("accumulator", Json.fromString ("Accumulator")), Variable ("i", Json.fromString ("Integer")))
     )
     val patternJson = pattern.asJson
     assert(patternJson.spaces2.contains("\"variables\""),
@@ -222,7 +222,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       s"Pattern variables lost on round-trip: ${patternBack.variables.map(_.name)}")
 
     val action = Action(
-      _variables = Seq(Variable("i", "Integer")),
+      _variables = Seq(Variable ("i", Json.fromString ("Integer"))),
       _body = Seq(Monadic(Json.fromString("println(i)")))
     )
     val actionJson = action.asJson

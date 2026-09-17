@@ -33,7 +33,14 @@ FILL-INS
   <wire-key>       the JSON key a field encodes to / decodes from (defaults to <name>)
   <pkg-seq>        a space-separated package path -> a namePackage array
 
-VALUE-TYPES  (drake type-expression -> JSON valueType string)
+VALUE-TYPES  (drake type-expression -> JSON valueType)
+  THE FIELD IS A JSON NODE (2026-09-16), on the same terms as a TypeElement's `value`: a STRING is the
+  type's authored text, host-opaque, and is everything the corpus holds today; an OBJECT will be a
+  TYPE-FORM TREE — Atomic (a string leaf), Objective `{"(,)": [...]}`, Parametric `{"()": [F, A ...]}`,
+  Morphic `{"->": [S, T]}` binary and RIGHT-associative (Haskell's: A -> B -> C is A -> (B -> C)), the
+  bounds `{"<:": [parameter, bound]}` / `{">:": [parameter, bound]}` parameter first — once the parser
+  trees the four forms (next). The rows below are the string era: each still maps a drake spelling to
+  the HOST's text, and they retire one constructor at a time as the tree takes over.
   [<T>]            Seq[<T>]
   {<T>}            Set[<T>]
   {<K>, <V>}       {<K>, <V>}          MAP — neutral in the JSON too, carried through unchanged
@@ -545,3 +552,13 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           trees where the JSON has strings — DrakeParseTest's expression-form loss
                                           rises until the JSON is re-canonicalized from the drake (next increment:
                                           `DrakeCLI parse X.drake > X.json`, Scala pinned by DracoGenTest).
+                                          DONE the same day (8acd9c7): 40 JSON files, Value held back under #61.
+  valueType as a JSON NODE          <->   IMPLEMENTED (2026-09-16). The TypeElement family, Factory, Variable and
+    (was a String)                        Case declare `valueType Json`, decoded absent-as-Null and elided
+                                          null-or-empty exactly as `value` is; the corpus stays strings, so no
+                                          definition and no generated line moved except the family's own and
+                                          DracoAspect's emptiness test (`.isNull`). Consumers read
+                                          `.valueType.text` (draco.TypeForm, beside Expression); the engine spells
+                                          the type for the target once, in targetTypes. NEXT: the parser trees the
+                                          four forms (VALUE-TYPES above) and the corpus re-canonicalizes from the
+                                          drake; then typeParameters, which lives in TypeName's identity.

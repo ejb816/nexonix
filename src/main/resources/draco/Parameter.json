@@ -26,7 +26,7 @@
         {
           "kind": "Parameter",
           "name": "valueType",
-          "valueType": "String"
+          "valueType": "Json"
         },
         {
           "kind": "Parameter",

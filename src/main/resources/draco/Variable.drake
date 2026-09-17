@@ -2,8 +2,8 @@ type Variable from BodyElement
   factory
     parameters
       par name String
-      par valueType String
+      par valueType Json
     body
       fix name String _name
-      fix valueType String _valueType
+      fix valueType Json _valueType
 domain draco Draco

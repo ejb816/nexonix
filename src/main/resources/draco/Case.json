@@ -27,8 +27,8 @@
         {
           "kind": "Parameter",
           "name": "valueType",
-          "valueType": "String",
-          "value": "\"\""
+          "valueType": "Json",
+          "value": "Json.Null"
         },
         {
           "kind": "Parameter",

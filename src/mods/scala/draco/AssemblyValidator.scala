@@ -1,5 +1,7 @@
 package draco
 
+import draco.TypeForm.ValueTypeText
+
 /** Validates an [[Assembly]] purely from type definitions — no Pekko, no
   * `ActorContext`, no spawning. This is the property that makes Assembly worth
   * having: the wiring of an actor group is data that can be checked statically.
@@ -63,9 +65,9 @@ object AssemblyValidator {
         case None =>
           errors += s"'${b.from.namePath}' declares no construction parameter '${b.param}'"
         case Some(param) =>
-          actorRefInner(param.valueType) match {
+          actorRefInner(param.valueType.text) match {
             case None =>
-              errors += s"parameter '${b.param}' of '${b.from.namePath}' is '${param.valueType}', not an ActorRef"
+              errors += s"parameter '${b.param}' of '${b.from.namePath}' is '${param.valueType.text}', not an ActorRef"
             case Some(refInner) =>
               messageType(toTd) match {
                 case None =>

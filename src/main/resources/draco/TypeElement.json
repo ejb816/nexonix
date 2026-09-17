@@ -35,8 +35,8 @@
       {
         "kind": "Fixed",
         "name": "valueType",
-        "valueType": "String",
-        "value": "\"\""
+        "valueType": "Json",
+        "value": "Json.Null"
       },
       {
         "kind": "Fixed",

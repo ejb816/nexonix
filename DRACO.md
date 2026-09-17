@@ -159,7 +159,11 @@ no `Rule` or `Actor` suffix, and no `.rule`/`.actor` filename suffix.
 **`TypeElement`** is a sealed family of **twelve** kinds — Fixed, Mutable, Dynamic, Local,
 Parameter, Monadic, Condition, Action, Pattern, Variable, Factory, Case — all extending
 `Primal[Json]`. So `value` is a JSON node: either a host-opaque source string or a
-single-key `{op: [operands]}` expression tree. JSON uses a `"kind"` discriminator;
+single-key `{op: [operands]}` expression tree. **`valueType` is a JSON node on the same terms
+since 2026-09-16** — a string is the type's authored text (all of the corpus today), an object
+will be a type-form tree once the parser trees the four forms; every consumer reads it through
+`TypeForm.text` (`e.valueType.text`), and the engine spells it for the target once, in
+`targetTypes`. JSON uses a `"kind"` discriminator;
 `Codec.sub` narrows the parent codec.
 
 **`TypeName`** is `name` + `namePackage` + `typeParameters`, with derived `namePath` and

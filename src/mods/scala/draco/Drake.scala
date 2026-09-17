@@ -1,6 +1,7 @@
 package draco
 
 import io.circe.Json
+import draco.TypeForm.ValueTypeText
 
 /** The DRAKE projection: the emitter that renders a TypeDefinition to .drake
   * surface, and the parser that reads it back. They are mutual inverses, and the
@@ -231,7 +232,7 @@ object Drake {
   private def leafLines (indent: String, keyword: String, element: TypeElement) : Seq[String] =
     element match {
       case _: Monadic | _: Condition => Seq(valueLine(s"$indent$keyword", element.value))
-      case e => Seq(valueLine(s"$indent$keyword ${elementName(e.name)} ${typeExpressionSlot(e.valueType)}", e.value))
+      case e => Seq(valueLine(s"$indent$keyword ${elementName(e.name)} ${typeExpressionSlot(e.valueType.text)}", e.value))
     }
 
   private def keyword (element: TypeElement) : String = element match {
@@ -263,7 +264,7 @@ object Drake {
     else element match {
       case c: Case => caseLines(c, indent, level)
       case d: Dynamic =>
-      val header = s"$indent${keyword(d)} ${elementName(d.name)} ${typeExpressionSlot(d.valueType)} ["
+      val header = s"$indent${keyword(d)} ${elementName(d.name)} ${typeExpressionSlot(d.valueType.text)} ["
       val parameters =
         if (d.parameters.isEmpty) Seq.empty
         else sectionLines("parameters", d.parameters, level + 1)
@@ -288,7 +289,7 @@ object Drake {
   private def caseLines (c: Case, indent: String, level: Int) : Seq[String] = {
     val head = Seq(s"$indent${keyword(c)}") ++
       (if (c.name.nonEmpty) Seq(elementName(c.name)) else Seq.empty) ++
-      (if (c.valueType.nonEmpty) Seq(typeExpressionSlot(c.valueType)) else Seq.empty)
+      (if (c.valueType.text.nonEmpty) Seq(typeExpressionSlot(c.valueType.text)) else Seq.empty)
     if (!c.value.isNull && expression(c.value).nonEmpty)
       sys.error(s"Drake.emit: case-branch carries a value outside its body — the result is the body element named `value`")
     val statementLines = c.body.flatMap(elementLines(_, level + 1))
@@ -359,7 +360,7 @@ object Drake {
       if (da.elements.isEmpty) Seq.empty
       else sectionLines("elements", da.elements, 1)
     val factory =
-      if (da.factory.valueType.isEmpty) Seq.empty
+      if (da.factory.valueType.text.isEmpty) Seq.empty
       else {
         val parameters =
           if (da.factory.parameters.isEmpty) Seq.empty
@@ -373,8 +374,8 @@ object Drake {
         // the live case is the actor-minting factory, whose ActorType value-type is what
         // tells the Scala projection to mint an actor rather than an instance of the type.
         val head =
-          if (da.factory.valueType == factoryValueType(td.typeName.name, td.typeName.typeParameters)) "  factory"
-          else s"  factory ${typeExpressionSlot(da.factory.valueType)}"
+          if (da.factory.valueType.text == factoryValueType(td.typeName.name, td.typeName.typeParameters)) "  factory"
+          else s"  factory ${typeExpressionSlot(da.factory.valueType.text)}"
         head +: (parameters ++ body)
       }
     val globals =
@@ -794,9 +795,9 @@ object Drake {
   }
 
   /** Consume a value-type slot. `mut {T}` is the one two-token form. */
-  private def takeValueType (c: Cursor) : String = {
+  private def takeValueType (c: Cursor) : Json = {
     val first = c.takeText ()
-    parseTypeExpression (if (first == "mut") s"mut ${c.takeText ()}" else first)
+    Json.fromString (parseTypeExpression (if (first == "mut") s"mut ${c.takeText ()}" else first))
   }
 
   /** A type reference as typeRef spells it: name plus ( ) type parameters. The
@@ -940,10 +941,10 @@ object Drake {
         // statements and `]`; its result, when it has one, is the statement named
         // `value`, exactly as in a dyn-with-body.
         var name      = ""
-        var valueType = ""
+        var valueType = Json.Null
         while (!c.exhausted && !c.atReserved) {
           val t = c.takeText ()
-          if (t.headOption.exists (_.isUpper)) valueType = parseTypeExpression (t) else name = parseElementName (t)
+          if (t.headOption.exists (_.isUpper)) valueType = Json.fromString (parseTypeExpression (t)) else name = parseElementName (t)
         }
         c.expect ("[")
         val body = statements (c)
@@ -1023,7 +1024,7 @@ object Drake {
         case "factory"     =>
           // A named value-type follows `factory` only when it is not the enclosing type.
           val valueType =
-            if (c.exhausted || c.atReserved) factoryValueType (name, typeParameters)
+            if (c.exhausted || c.atReserved) Json.fromString (factoryValueType (name, typeParameters))
             else takeValueType (c)
           factory = Factory (
             valueType,

@@ -159,6 +159,12 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A `valueType` is a JSON node, on the same terms as a `value`.** The TypeElement family, Factory,
+  Variable and Case now declare `valueType Json`: a string is the type's authored text (the whole corpus
+  today), an object will be a type-form tree once the drake parser trees the four forms. Every consumer
+  reads it through `TypeForm.text`; the engine spells it for the target once, at the generate entry.
+  No definition and no generated line moved except the family's own. (2026-09-16)
+
 - **The JSON corpus is re-canonicalized from the drake.** Every definition with a `.drake` now carries
   the JSON `Drake.parse` reads from it (40 files rewritten through `DrakeCLI parse`, 62 already
   identical), so the host-opaque strings the carrier held for calls are trees. Three definitions stay

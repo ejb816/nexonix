@@ -12,6 +12,7 @@
 package scripts
 
 import draco._
+import draco.TypeForm.ValueTypeText
 
 object InspectType {
   def main(args: Array[String]): Unit = {
@@ -65,11 +66,11 @@ object InspectType {
         case _            => "?"
       }
       val v = DracoGenerator.expression(e.value)
-      println(s"    - $kind ${e.name}: ${e.valueType}${if (v.isEmpty) "" else s" = $v"}")
+      println(s"    - $kind ${e.name}: ${e.valueType.text}${if (v.isEmpty) "" else s" = $v"}")
     }
     val f = td.dracoAspect.factory
-    if (f.valueType.nonEmpty) {
-      println(s"  factory          = ${f.valueType} (${f.parameters.size} param(s), ${f.body.size} body element(s))")
+    if (f.valueType.text.nonEmpty) {
+      println(s"  factory          = ${f.valueType.text} (${f.parameters.size} param(s), ${f.body.size} body element(s))")
     } else {
       println(s"  factory          = (none)")
     }

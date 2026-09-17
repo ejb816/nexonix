@@ -48,7 +48,7 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
       "Back")))
   log.info(s"${orientableDomainDefinition.typeName.name} TypePackage: ${orientableDomainDefinition.typeName.namePackage}")
 
-  val valueParameter: Parameter = Parameter ("value", "T", Json.Null)
+  val valueParameter: Parameter = Parameter ("value", Json.fromString ("T"), Json.Null)
   val leftTypeName: TypeName = TypeName ("Left", _namePackage = Seq("draco", "base", "orientable"))
   val rightTypeName: TypeName = TypeName ("Right", _namePackage = Seq("draco", "base", "orientable"))
   val upperTypeName: TypeName = TypeName ("Upper", _namePackage = Seq("draco", "base", "orientable"))
@@ -57,12 +57,12 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
   val backTypeName: TypeName = TypeName ("Back", _namePackage = Seq("draco", "base", "orientable"))
   val orientableParameters: Seq[Parameter] = Seq(valueParameter)
   val boundingBoxTypeName: TypeName = TypeName("BoundingBox", _namePackage = Seq("draco", "base", "orientable"))
-  val leftElement: TypeElement = Fixed ("left", "Left[Radians]")
-  val rightElement: TypeElement = Fixed ("right", "Right[Radians]")
-  val upperElement: TypeElement = Fixed ("upper", "Upper[Radians]")
-  val lowerElement: TypeElement = Fixed ("lower", "Lower[Radians]")
-  val frontElement: TypeElement = Fixed ("front", "Front[Meters]")
-  val backElement: TypeElement = Fixed ("back", "Back[Meters]")
+  val leftElement: TypeElement = Fixed ("left", Json.fromString ("Left[Radians]"))
+  val rightElement: TypeElement = Fixed ("right", Json.fromString ("Right[Radians]"))
+  val upperElement: TypeElement = Fixed ("upper", Json.fromString ("Upper[Radians]"))
+  val lowerElement: TypeElement = Fixed ("lower", Json.fromString ("Lower[Radians]"))
+  val frontElement: TypeElement = Fixed ("front", Json.fromString ("Front[Meters]"))
+  val backElement: TypeElement = Fixed ("back", Json.fromString ("Back[Meters]"))
   val boundingBoxElements: Seq[TypeElement] = Seq(
     leftElement,
     rightElement,
@@ -77,23 +77,23 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
   log.info(s"${coordinatesDomainDefinition.typeName.name} TypePackage: ${coordinatesDomainDefinition.typeName.namePackage}")
 
   val sphericalTypeName: TypeName = TypeName("Spherical", _namePackage = Seq("draco", "base", "coordinates"))
-  val azimuthParameter: Parameter = Parameter ("_azimuth", "Radians", Json.Null)
-  val elevationParameter: Parameter = Parameter ("_elevation", "Radians", Json.Null)
-  val rangeParameter: Parameter = Parameter ("_range", "Meters", Json.Null)
+  val azimuthParameter: Parameter = Parameter ("_azimuth", Json.fromString ("Radians"), Json.Null)
+  val elevationParameter: Parameter = Parameter ("_elevation", Json.fromString ("Radians"), Json.Null)
+  val rangeParameter: Parameter = Parameter ("_range", Json.fromString ("Meters"), Json.Null)
   val sphericalParameters: Seq[Parameter] = Seq (azimuthParameter, elevationParameter, rangeParameter)
-  val azimuthElement: TypeElement = Fixed ("azimuth", "Radians", Json.fromString("_azimuth"))
-  val elevationElement: TypeElement = Fixed ("elevation", "Radians", Json.fromString("_elevation"))
-  val rangeElement: TypeElement = Fixed ("elevation", "Meters", Json.fromString("_range"))
+  val azimuthElement: TypeElement = Fixed ("azimuth", Json.fromString ("Radians"), Json.fromString("_azimuth"))
+  val elevationElement: TypeElement = Fixed ("elevation", Json.fromString ("Radians"), Json.fromString("_elevation"))
+  val rangeElement: TypeElement = Fixed ("elevation", Json.fromString ("Meters"), Json.fromString("_range"))
   val sphericalElements: Seq[TypeElement] = Seq (azimuthElement, elevationElement, rangeElement)
   val sphericalBoundsTypeName: TypeName = TypeName ("SphericalBounds", _namePackage = Seq("draco", "base", "orientable"))
-  val lufParameter: Parameter = Parameter ("luf", "Spherical", Json.Null)
-  val rlbParameter: Parameter = Parameter ("rlb", "Spherical", Json.Null)
-  val leftBoundsElement: TypeElement = Fixed ("left", "Left[Radians]", Json.fromString("Left[Radians](_luf.azimuth)"))
-  val rightBoundsElement: TypeElement = Fixed ("right", "Right[Radians]", Json.fromString("Right[Radians](_rlb.azimuth)"))
-  val upperBoundsElement: TypeElement = Fixed ("upper", "Upper[Radians]", Json.fromString("Upper[Radians](_luf.elevation)"))
-  val lowerBoundsElement: TypeElement = Fixed ("lower", "Lower[Radians]", Json.fromString("Lower[Radians](_rlb.elevation)"))
-  val frontBoundsElement: TypeElement = Fixed ("front", "Front[Meters]", Json.fromString("Front[Meters](_luf.range)"))
-  val backBoundsElement: TypeElement = Fixed ("back", "Back[Meters]", Json.fromString("Back[Meters](_rlb.range)"))
+  val lufParameter: Parameter = Parameter ("luf", Json.fromString ("Spherical"), Json.Null)
+  val rlbParameter: Parameter = Parameter ("rlb", Json.fromString ("Spherical"), Json.Null)
+  val leftBoundsElement: TypeElement = Fixed ("left", Json.fromString ("Left[Radians]"), Json.fromString("Left[Radians](_luf.azimuth)"))
+  val rightBoundsElement: TypeElement = Fixed ("right", Json.fromString ("Right[Radians]"), Json.fromString("Right[Radians](_rlb.azimuth)"))
+  val upperBoundsElement: TypeElement = Fixed ("upper", Json.fromString ("Upper[Radians]"), Json.fromString("Upper[Radians](_luf.elevation)"))
+  val lowerBoundsElement: TypeElement = Fixed ("lower", Json.fromString ("Lower[Radians]"), Json.fromString("Lower[Radians](_rlb.elevation)"))
+  val frontBoundsElement: TypeElement = Fixed ("front", Json.fromString ("Front[Meters]"), Json.fromString("Front[Meters](_luf.range)"))
+  val backBoundsElement: TypeElement = Fixed ("back", Json.fromString ("Back[Meters]"), Json.fromString("Back[Meters](_rlb.range)"))
   val sphericalBoundsParameters: Seq[Parameter] = Seq (lufParameter, rlbParameter)
   val sphericalBoundsElements: Seq[TypeElement] = Seq (
     leftBoundsElement,
@@ -133,42 +133,42 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
       _typeName = leftTypeName,
       _dracoAspect = DracoAspect (
         _derivation = Seq (measureTypeName),
-        _factory = Factory(leftTypeName.namePath, orientableParameters)
+        _factory = Factory(Json.fromString (leftTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = rightTypeName,
       _dracoAspect = DracoAspect (
         _derivation = Seq (measureTypeName),
-        _factory = Factory(rightTypeName.namePath, orientableParameters)
+        _factory = Factory(Json.fromString (rightTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = upperTypeName,
       _dracoAspect = DracoAspect (
         _derivation = Seq (measureTypeName),
-        _factory = Factory(upperTypeName.namePath, orientableParameters)
+        _factory = Factory(Json.fromString (upperTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = lowerTypeName,
       _dracoAspect = DracoAspect (
         _derivation = Seq (measureTypeName),
-        _factory = Factory(lowerTypeName.namePath, orientableParameters)
+        _factory = Factory(Json.fromString (lowerTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = frontTypeName,
       _dracoAspect = DracoAspect (
         _derivation = Seq (measureTypeName),
-        _factory = Factory(frontTypeName.namePath, orientableParameters)
+        _factory = Factory(Json.fromString (frontTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = backTypeName,
       _dracoAspect = DracoAspect (
         _derivation = Seq (measureTypeName),
-        _factory = Factory(backTypeName.namePath, orientableParameters)
+        _factory = Factory(Json.fromString (backTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
@@ -176,7 +176,7 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
       _dracoAspect = DracoAspect (
         _derivation = Seq (orientableDomainDefinition.typeName),
         _elements = boundingBoxElements,
-        _factory = Factory(boundingBoxTypeName.namePath, orientableParameters)
+        _factory = Factory(Json.fromString (boundingBoxTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
@@ -184,7 +184,7 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
       _dracoAspect = DracoAspect (
         _derivation = Seq (coordinatesDomainDefinition.typeName),
         _elements = sphericalElements,
-        _factory = Factory(sphericalTypeName.namePath, sphericalParameters)
+        _factory = Factory(Json.fromString (sphericalTypeName.namePath), sphericalParameters)
       )
     ),
     TypeDefinition(
@@ -192,7 +192,7 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
       _dracoAspect = DracoAspect (
         _derivation = Seq (boundingBoxTypeName),
         _elements = sphericalBoundsElements,
-        _factory = Factory(sphericalBoundsTypeName.namePath, sphericalBoundsParameters)
+        _factory = Factory(Json.fromString (sphericalBoundsTypeName.namePath), sphericalBoundsParameters)
       )
     )
   )

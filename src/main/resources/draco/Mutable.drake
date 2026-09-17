@@ -2,6 +2,6 @@ type Mutable from BodyElement
   factory
     parameters
       par name String
-      par valueType String
+      par valueType Json
       par value Json Json.Null
 domain draco Draco

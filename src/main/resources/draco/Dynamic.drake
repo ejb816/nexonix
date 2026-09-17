@@ -2,13 +2,13 @@ type Dynamic from BodyElement
   factory
     parameters
       par name String
-      par valueType String
+      par valueType Json
       par parameters [Parameter] []
       par body [BodyElement] []
       par value Json Json.Null
     body
       fix name String _name
-      fix valueType String _valueType
+      fix valueType Json _valueType
       fix parameters [Parameter] _parameters
       fix body [BodyElement] _body
       fix value Json _value

@@ -25,7 +25,7 @@ object DracoAspect extends App with DracoType {
       if (x.extensible.name.nonEmpty) Some("extensible" -> x.extensible.asJson) else None,
       if (x.derivation.nonEmpty) Some("derivation" -> x.derivation.asJson) else None,
       if (x.elements.nonEmpty) Some("elements" -> x.elements.asJson) else None,
-      if (x.factory.valueType.nonEmpty) Some("factory" -> x.factory.asJson) else None,
+      if (!x.factory.valueType.isNull) Some("factory" -> x.factory.asJson) else None,
       if (x.globalElements.nonEmpty) Some("globalElements" -> x.globalElements.asJson) else None
     ).flatten
     Json.obj(fields: _*)
@@ -63,5 +63,5 @@ object DracoAspect extends App with DracoType {
 
   lazy val Null: DracoAspect = apply()
 
-  lazy val isEmpty: DracoAspect => Boolean = da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isEmpty && da.globalElements.isEmpty
+  lazy val isEmpty: DracoAspect => Boolean = da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty
 }
