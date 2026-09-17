@@ -6,7 +6,12 @@
       "base"
     ],
     "typeParameters": [
-      "T <: Product"
+      {
+        "<:": [
+          "T",
+          "Product"
+        ]
+      }
     ]
   },
   "dracoAspect": {

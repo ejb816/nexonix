@@ -159,6 +159,11 @@ for the definition that will replace it.
 
 ### Changed
 
+- **The four definitions with compound or bounded type parameters re-canonicalize from the drake.**
+  DomainTransform, TypeTransform, Holon and base/Coordinate now carry their header bounds and tuple
+  derivation arguments as type-form trees, closing the type-form arc for everything with a `.drake`;
+  their generated Scala is unchanged. (2026-09-17)
+
 - **The parser trees the header's type parameters and a reference's arguments.** `type
   Transform(S <: DomainType, T) from Holon((S, T))` parses to type forms: the bound as a leaf with the
   parameter first, the tuple argument as an Objective, a bare variable as an Atomic string. The four

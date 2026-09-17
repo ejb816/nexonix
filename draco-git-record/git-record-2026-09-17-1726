@@ -1,0 +1,35 @@
+# The four JSON files re-canonicalized — accepted by Dev on 2026-09-17 ("Accept, re-canonicalize the four
+# JSON files"), the corpus half of the header-parameters step (4de5b8a). Same procedure as every sweep
+# in this arc: `DrakeCLI parse X.drake > X.json` with the classes Dev's run compiled, over all three
+# roots, the three standing exclusions skipped — EXACTLY the four predicted definitions changed
+# (DomainTransform, TypeTransform, Holon, base/Coordinate), 121 byte-identical, 0 failed; each of the
+# four regenerates its committed Scala with the compiled engine, so no .scala moves.
+#
+# WHAT THE FOUR NOW HOLD: `S <: DomainType` as {"<:": ["S", "DomainType"]} in the header, `(S, T)` as
+# {"(,)": ["S", "T"]} on the Holon derivation, `T <: Product` as a bound leaf. This closes the type-form
+# arc for everything that has a .drake: value types, header parameters and reference arguments are trees
+# wherever the surface says them, and the loss report's "type form" category falls back to the three
+# standing exclusions (ActorAspect, Value x2).
+#
+# DrakeCLI check: src/main json drift 2 (the exclusions), scenario 0, mods 11 — all DRAKE-LESS
+# definitions reached by emit-then-parse (the sentient host-text arguments `(Double, Double)`,
+# `Seq[Waypoint]` joined the six from before); no surface to canonicalize from, outside the parse gate.
+#
+# EXPECTED: 608 tests / 43 suites, all green; surface losses 5 (type form 3 + expression form 2);
+# every other headline unchanged.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-17-1726 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1726 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1726 && git push
+
+--- MESSAGE ---
+The four definitions with compound or bounded type parameters re-canonicalize from the drake
+
+DomainTransform, TypeTransform, Holon and base/Coordinate now carry their header bounds and tuple
+derivation arguments as type-form trees, written by the compiled parser from their drake; every other
+definition with a .drake was already what its surface says, and each of the four regenerates its
+committed Scala unchanged. With this the type-form arc is closed for everything the surface covers:
+value types, header parameters and reference arguments are trees wherever the drake spells them, and
+the parse test's type-form residue is the three standing exclusions.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

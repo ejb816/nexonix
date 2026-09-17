@@ -68,7 +68,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | **expected 11** fields across 105 types — type form 9 (DomainTransform / TypeTransform / Holon / Coordinate's header and derivation parameters, 6, string until the next compiled sweep; ActorAspect and format/json/Value, 3), expression form 2 (format/json/Value, GitHub #61) (predicted at the header-parameters commit, 2026-09-17; measured 5 at `49fc734`) |
+| `DrakeParseTest` | drake surface losses | **expected 5** fields across 105 types — type form 3 (ActorAspect and format/json/Value, the standing exclusions), expression form 2 (format/json/Value, GitHub #61) (the four parameterized definitions re-canonicalized 2026-09-17; measured 11 at `4de5b8a`) |
 | `DrakeParseTest` | Drake.parse scope | 95 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |

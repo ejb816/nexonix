@@ -5,7 +5,12 @@
       "draco"
     ],
     "typeParameters": [
-      "T <: Product"
+      {
+        "<:": [
+          "T",
+          "Product"
+        ]
+      }
     ]
   },
   "domainAspect": {

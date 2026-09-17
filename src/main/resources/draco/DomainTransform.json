@@ -5,8 +5,18 @@
       "draco"
     ],
     "typeParameters": [
-      "S <: DomainType",
-      "T <: DomainType"
+      {
+        "<:": [
+          "S",
+          "DomainType"
+        ]
+      },
+      {
+        "<:": [
+          "T",
+          "DomainType"
+        ]
+      }
     ]
   },
   "dracoAspect": {
@@ -17,7 +27,12 @@
           "draco"
         ],
         "typeParameters": [
-          "(S, T)"
+          {
+            "(,)": [
+              "S",
+              "T"
+            ]
+          }
         ]
       }
     ]

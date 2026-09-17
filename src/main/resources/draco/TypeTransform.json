@@ -5,8 +5,18 @@
       "draco"
     ],
     "typeParameters": [
-      "S <: DracoType",
-      "T <: DracoType"
+      {
+        "<:": [
+          "S",
+          "DracoType"
+        ]
+      },
+      {
+        "<:": [
+          "T",
+          "DracoType"
+        ]
+      }
     ]
   },
   "dracoAspect": {
@@ -17,7 +27,12 @@
           "draco"
         ],
         "typeParameters": [
-          "(S, T)"
+          {
+            "(,)": [
+              "S",
+              "T"
+            ]
+          }
         ]
       }
     ]
