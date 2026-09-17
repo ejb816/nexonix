@@ -6,7 +6,7 @@ import io.circe.syntax.EncoderOps
 trait TypeName extends DracoType {
   val name: String
   val namePackage: Seq[String]
-  val typeParameters: Seq[String]
+  val typeParameters: Seq[Json]
   val namePath: String
   val resourcePath: String
 }
@@ -28,18 +28,18 @@ object TypeName extends App with DracoType {
     for {
       _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
       _namePackage <- cursor.downField("namePackage").as[Option[Seq[String]]].map(_.getOrElse(Seq.empty))
-      _typeParameters <- cursor.downField("typeParameters").as[Option[Seq[String]]].map(_.getOrElse(Seq.empty))
+      _typeParameters <- cursor.downField("typeParameters").as[Option[Seq[Json]]].map(_.getOrElse(Seq.empty))
     } yield TypeName (_name, _namePackage, _typeParameters)
   }
 
   def apply (
     _name: String,
     _namePackage: Seq[String] = Seq.empty,
-    _typeParameters: Seq[String] = Seq.empty
+    _typeParameters: Seq[Json] = Seq.empty
   ) : TypeName = new TypeName {
     override lazy val name: String = _name
     override lazy val namePackage: Seq[String] = _namePackage
-    override lazy val typeParameters: Seq[String] = _typeParameters
+    override lazy val typeParameters: Seq[Json] = _typeParameters
     override lazy val namePath: String = if (namePackage.isEmpty) name else s"${namePackage.mkString(".")}.${name}"
     override lazy val resourcePath: String = if (namePackage.isEmpty) s"/$name.json" else s"/${namePackage.mkString("/")}/$name.json"
     override def equals(other: Any): Boolean = {

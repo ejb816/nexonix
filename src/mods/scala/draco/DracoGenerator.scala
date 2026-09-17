@@ -221,11 +221,19 @@ object DracoGenerator extends App {
     if (idx < 0) name else name.substring(0, idx)
   }
 
+  /** A TYPE PARAMETER of a TypeName in the target's spelling. Since 2026-09-17 a type
+    * parameter is a `Json` on the same terms as a value type — a string is the authored
+    * text (all of the corpus today: `T`, `T <: Product`, `(Double, Double)`), a tree a
+    * type form — and this is where it takes the Scala spelling, through the same
+    * targetType a value type does. TypeName is IDENTITY, so its parameters are not
+    * rewritten in place by targetTypes; they are spelled at each render site instead. */
+  private def typeParameterScala (parameter: Json) : String = targetType(parameter).text
+
   /** Parameterized name from TypeName: "Primal[T]" or "Primal" if no typeParameters. */
   private def parameterizedName (tn: TypeName) : String = {
     val base = tn.name
     if (tn.typeParameters.isEmpty) base
-    else s"$base[${tn.typeParameters.mkString(", ")}]"
+    else s"$base[${tn.typeParameters.map(typeParameterScala).mkString(", ")}]"
   }
 
   /** Wildcard name from TypeName: "Primal[_]" or "Primal" if no typeParameters. */
@@ -239,7 +247,7 @@ object DracoGenerator extends App {
     val args = Seq(
       Some(s""""$name""""),
       if (tn.namePackage.nonEmpty) Some(s"_namePackage = Seq (${tn.namePackage.map(s => s""""$s"""").mkString(", ")})") else None,
-      if (!omitTypeParameters && tn.typeParameters.nonEmpty) Some(s"_typeParameters = Seq (${tn.typeParameters.map(s => s""""$s"""").mkString(", ")})") else None
+      if (!omitTypeParameters && tn.typeParameters.nonEmpty) Some(s"_typeParameters = Seq (${tn.typeParameters.map(p => s"""Json.fromString ("${p.text}")""").mkString(", ")})") else None
     ).flatten
     s"TypeName (${args.mkString(", ")})"
   }
@@ -1099,7 +1107,7 @@ object DracoGenerator extends App {
     val hasGlobalElements = td.dracoAspect.globalElements.nonEmpty
     val objName = td.typeName.name + nameSuffix
     val wName = wildcardTypeName(td.typeName) + nameSuffix
-    val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
+    val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.map(typeParameterScala).mkString(", ")}]"
 
     val parents = Seq(
       if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
@@ -1217,7 +1225,7 @@ object DracoGenerator extends App {
     val factoryBlock =
       if (factory.valueType.text.isEmpty || isActorMintingFactory(factory)) ""
       else {
-        val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.mkString(", ")}]"
+        val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.map(typeParameterScala).mkString(", ")}]"
         s"""
            |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType.text} = new ${factory.valueType.text} ${factoryBody(td)}
            |
@@ -1332,7 +1340,7 @@ object DracoGenerator extends App {
     val fromAspect = Some(td.actorAspect.messageType).filter(_.name.nonEmpty).map(spelled)
     def fromDerivation = td.dracoAspect.derivation
       .find(_.name == "Actor")
-      .flatMap(_.typeParameters.headOption)
+      .flatMap(_.typeParameters.headOption).map(typeParameterScala)
     fromAspect.orElse(fromDerivation).getOrElse("Any")
   }
 

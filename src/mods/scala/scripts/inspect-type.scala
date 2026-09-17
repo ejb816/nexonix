@@ -44,11 +44,11 @@ object InspectType {
     println(s"=== TypeName ===")
     println(s"  name             = ${td.typeName.name}")
     println(s"  namePackage      = ${td.typeName.namePackage.mkString(".")}")
-    println(s"  typeParameters   = ${if (td.typeName.typeParameters.isEmpty) "(none)" else td.typeName.typeParameters.mkString(", ")}")
+    println(s"  typeParameters   = ${if (td.typeName.typeParameters.isEmpty) "(none)" else td.typeName.typeParameters.map(_.text).mkString(", ")}")
 
     println()
     println(s"=== DracoAspect ===")
-    println(s"  derivation       = ${if (td.dracoAspect.derivation.isEmpty) "(none)" else td.dracoAspect.derivation.map(t => s"${t.namePath}${if (t.typeParameters.isEmpty) "" else t.typeParameters.mkString("[", ", ", "]")}").mkString(", ")}")
+    println(s"  derivation       = ${if (td.dracoAspect.derivation.isEmpty) "(none)" else td.dracoAspect.derivation.map(t => s"${t.namePath}${if (t.typeParameters.isEmpty) "" else t.typeParameters.map(_.text).mkString("[", ", ", "]")}").mkString(", ")}")
     println(s"  elements         = ${td.dracoAspect.elements.size} element(s)")
     td.dracoAspect.elements.foreach { e =>
       val kind = e match {

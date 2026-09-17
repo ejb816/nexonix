@@ -1,0 +1,55 @@
+# typeParameters become JSON nodes — accepted by Dev on 2026-09-17 ("Accept, typeParameters as type-form
+# trees next"), the third type-form increment, in the two-step shape the first two took: the FIELD
+# first (this commit), the parser next.
+#
+# ONE CONCEPT: `TypeName.typeParameters` is `[Json]` on the value-type terms — a string is the authored
+# text, a tree a type form. The corpus stays strings, so nothing in any definition moves but TypeName's
+# own trio (drake edited first; JSON and Scala regenerated with the compiled tools — the diff is the
+# three `Seq[String]` -> `Seq[Json]` lines and the decoder's `as[Option[Seq[Json]]]`). The corpus's
+# parameters are `T`, `F`, `L`, `K`/`V`, the BOUNDS `S <: DomainType` / `T <: Product` (in the header,
+# not only in element names as I had assumed — the census corrected it), and on derivations the host
+# text `(Double, Double)`, `Seq[Waypoint]`, `domains.world.World`.
+#
+# WHY NOT REWRITE IN PLACE: TypeName is IDENTITY (structural, #37), so targetTypes does not rewrite its
+# parameters the way it rewrites an element's value type; the engine spells each parameter at its
+# render sites through `typeParameterScala` = targetType(p).text — five sites (parameterizedName, the
+# two `typeParams` headers, the TypeName literal, the retired-Actor message-type fallback). The surface
+# spells a string VERBATIM (as the header always has) and a tree as any type form (typeParameterSurface);
+# foreignRef keeps converting a string through typeExpression. The parser wraps splitApplied's strings;
+# factoryValueType takes the nodes as they are. Equality: `typeParameters == tn.typeParameters` compares
+# Seq[Json] structurally — unchanged text, unchanged meaning.
+#
+# ALSO IN THIS COMMIT: Domain / Rule / Type re-canonicalized from the drake with f4113d2's compiled
+# classes (their elided factory type `{"()": ["Domain", "T"]}`), each regenerating its committed Scala —
+# the 3-field residue the last commit left. Consumers: AssemblyValidator and the two scripts read `.text`.
+# No new test: no surface moved; the gates and the loss report cover the retyping.
+#
+# NOT compiled here. FIRST COMPILE (16:19): main clean; one test error — TypeNameTest builds the Dictionary
+# reference positionally with Seq("K", "V"), which the construction grep (keyed on a named argument) missed; wrapped.
+#
+# EXPECTED: 607 tests / 43 suites, all green. Headlines: surface losses 5 (type form 3 — ActorAspect,
+# Value x2, the standing exclusions — + expression form 2); every other headline unchanged (parse scope
+# 95 + 10, scenario 23 clean, GenDrake 93 of 93, GEN MAP 28/20/0/0, PON unchanged).
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-17-1226 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1226 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1226 && git push
+
+--- MESSAGE ---
+A type parameter is a JSON node, on the value-type terms
+
+`TypeName.typeParameters` is a sequence of JSON nodes: a string is the authored text — the whole
+corpus today, the header bounds `S <: DomainType` and `T <: Product` included — and a tree will be a
+type form once the parser trees the header. TypeName's structural identity compares the nodes as it
+compared the strings. Because identity is not rewritten in place, the engine spells each parameter for
+Scala at its render sites, through the same target rendering a value type takes; the surface spells a
+string verbatim and a tree as any type form.
+
+TypeName's trio moves drake-first, regenerated with the compiled tools. Domain, Rule and Type
+re-canonicalize from the drake, closing the three-field residue the type-form commit left. No
+definition otherwise moves.
+
+Next: the parser trees the header's parameters and a reference's arguments, and the corpus
+re-canonicalizes from the drake.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

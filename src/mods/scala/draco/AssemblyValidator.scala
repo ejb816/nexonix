@@ -37,7 +37,7 @@ object AssemblyValidator {
       .orElse(
         td.dracoAspect.derivation
           .find(_.name == "Actor")
-          .flatMap(_.typeParameters.headOption))
+          .flatMap(_.typeParameters.headOption).map(_.text))
       .map(_.trim)
 
   def validate(assembly: Assembly): Seq[String] = {

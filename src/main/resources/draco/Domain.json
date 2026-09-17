@@ -19,7 +19,12 @@
     ],
     "factory": {
       "kind": "Factory",
-      "valueType": "Domain[T]",
+      "valueType": {
+        "()": [
+          "Domain",
+          "T"
+        ]
+      },
       "parameters": [
         {
           "kind": "Parameter",

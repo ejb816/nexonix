@@ -28,7 +28,7 @@
         "valueType": {
           "()": [
             "Seq",
-            "String"
+            "Json"
           ]
         }
       },
@@ -74,7 +74,7 @@
           "valueType": {
             "()": [
               "Seq",
-              "String"
+              "Json"
             ]
           },
           "value": {
@@ -109,7 +109,7 @@
           "valueType": {
             "()": [
               "Seq",
-              "String"
+              "Json"
             ]
           },
           "value": "_typeParameters"

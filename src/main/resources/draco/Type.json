@@ -11,7 +11,12 @@
   "dracoAspect": {
     "factory": {
       "kind": "Factory",
-      "valueType": "Type[T]",
+      "valueType": {
+        "()": [
+          "Type",
+          "T"
+        ]
+      },
       "parameters": [
         {
           "kind": "Parameter",

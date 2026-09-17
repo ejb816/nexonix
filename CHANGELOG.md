@@ -159,6 +159,12 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A type parameter is a JSON node, on the value-type terms.** `TypeName.typeParameters` is now a
+  sequence of JSON nodes: a string is the authored text (the whole corpus today, bounds included), a
+  tree will be a type form once the parser trees the header. TypeName's structural identity compares
+  the nodes; the engine spells each for Scala at its render sites. The three parameterized factory
+  types left as strings by the last sweep re-canonicalize. (2026-09-17)
+
 - **The drake parser trees the four type forms.** A value-type slot now parses to a type-form tree —
   Atomic, Objective `(A, B)`, Parametric `F(A, B)` with `[T]` / `{T}` / `{K, V}` as Seq / Set / Map,
   Morphic `A -> B` grouping to the right — and the emitter and the engine render a tree back to the

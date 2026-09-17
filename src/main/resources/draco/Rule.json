@@ -41,7 +41,12 @@
     ],
     "factory": {
       "kind": "Factory",
-      "valueType": "Rule[T]",
+      "valueType": {
+        "()": [
+          "Rule",
+          "T"
+        ]
+      },
       "parameters": [
         {
           "kind": "Parameter",

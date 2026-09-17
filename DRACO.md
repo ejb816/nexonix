@@ -67,7 +67,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | **expected 5** fields across 105 types — type form 3 (Domain / Rule / Type's elided parameterized factory type, string until the next compiled sweep), expression form 2 (format/json/Value, GitHub #61), empty-collection 0 (predicted at the type-form commit, 2026-09-17; was 2 at `d59fe20`) |
+| `DrakeParseTest` | drake surface losses | **expected 5** fields across 105 types — type form 3 (ActorAspect and format/json/Value, the standing exclusions), expression form 2 (format/json/Value, GitHub #61), empty-collection 0 (Domain / Rule / Type re-canonicalized 2026-09-17; measured 8 at `f4113d2`) |
 | `DrakeParseTest` | Drake.parse scope | 95 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
@@ -168,7 +168,10 @@ is a type-form tree (the parser trees the four forms since 2026-09-17); every co
 `Codec.sub` narrows the parent codec.
 
 **`TypeName`** is `name` + `namePackage` + `typeParameters`, with derived `namePath` and
-`resourcePath`. It compares **structurally** (GitHub #37). Type parameters are part of the
+`resourcePath`. It compares **structurally** (GitHub #37). Each type parameter is a JSON node on the
+value-type terms since 2026-09-17 — a string is the authored text (`T`, `T <: Product`; all of the
+corpus today), a tree a type form once the parser trees the header — read as text through
+`TypeForm.text` and spelled for Scala at each render site, because identity is not rewritten in place. Type parameters are part of the
 identity: a position holds either a variable or a concrete type, a type is abstract iff any
 position contains a variable at any depth, and only a fully concrete name can be the
 derivation for an atomic term. So `Dictionary(K, V)` ≠ `Dictionary(TypeName, TypeDefinition)`.

@@ -13,6 +13,7 @@
 package scripts
 
 import draco._
+import draco.TypeForm.ValueTypeText
 import scala.collection.mutable
 
 object DerivationChain {
@@ -27,7 +28,7 @@ object DerivationChain {
     val pkg  = args.drop(1).toSeq
 
     def fmt(tn: TypeName): String = {
-      val params = if (tn.typeParameters.isEmpty) "" else tn.typeParameters.mkString("[", ", ", "]")
+      val params = if (tn.typeParameters.isEmpty) "" else tn.typeParameters.map(_.text).mkString("[", ", ", "]")
       s"${tn.namePath}$params"
     }
 

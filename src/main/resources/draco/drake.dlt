@@ -220,7 +220,9 @@ CONVENTIONS
                    Use for construction-local intermediates (ContentSink.sinkPath, SourceContent.sourceURI).
   par _<name>      the leading _ is part of the JSON parameter name; a universal guard against a
                    parameter colliding with a same-named body element during mapping
-  (<T>, ...)       type parameters -> typeName.typeParameters[], one entry per param, verbatim with any bound:
+  (<T>, ...)       type parameters -> typeName.typeParameters[], one entry per param, verbatim with any bound
+                   — each entry a JSON NODE since 2026-09-17 on the value-type terms (VALUE-TYPES): a string is
+                   the authored text, a tree a type form once the parser trees the header (next):
                      (T <: Product)                    -> [ "T <: Product" ]
                      (S <: DracoType, T <: DracoType)  -> [ "S <: DracoType", "T <: DracoType" ]
 
@@ -573,4 +575,12 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           parenthesized). No corpus JSON moved in the commit — the re-canonicalization
                                           from the drake follows with the compiled parser, as the call syntax's did —
                                           so DrakeParseTest's report-only loss gains a "type form" category until it
-                                          lands. The `mut {T}` tail stays a string leaf.
+                                          lands. The `mut {T}` tail stays a string leaf. (The corpus landed in the
+                                          same commit, f4113d2: ScenarioGenTest asserts json == parse(drake).)
+  typeParameters as JSON NODES      <->   IMPLEMENTED (2026-09-17). `TypeName.typeParameters` is `[Json]` on the
+    (was [String])                        value-type terms; the corpus stays strings (`T`, `T <: Product`, `(S, T)`),
+                                          TypeName's structural identity compares the nodes, the engine spells each
+                                          at its render sites through targetType (TypeName is identity, so
+                                          targetTypes does not rewrite it in place), the surface spells a string
+                                          verbatim and a tree as any type form. NEXT: the parser trees the header's
+                                          parameters and the reference arguments, and the corpus re-canonicalizes.

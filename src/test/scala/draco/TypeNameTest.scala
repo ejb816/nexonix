@@ -1,5 +1,6 @@
 package draco
 
+import io.circe.Json
 import org.scalatest.funsuite.AnyFunSuite
 
 /** TypeName's identity is STRUCTURAL (GitHub #37).
@@ -68,7 +69,7 @@ class TypeNameTest extends AnyFunSuite with PersistentTestLog {
    *  something rediscovered later. */
   test("type parameters are part of the identity") {
     val declaration = TypeName("Dictionary", Seq("draco"))
-    val reference   = TypeName("Dictionary", Seq("draco"), Seq("K", "V"))
+    val reference   = TypeName("Dictionary", Seq("draco"), Seq(Json.fromString("K"), Json.fromString("V")))
     assert(declaration != reference)
     assert(declaration.namePath == reference.namePath)
     assert(declaration.resourcePath == reference.resourcePath)

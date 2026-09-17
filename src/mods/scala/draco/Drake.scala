@@ -199,11 +199,17 @@ object Drake {
     else name.substring(0, idx) + "(" + name.substring(idx + 1, name.length - 1) + ")"
   }
 
+  /** A TYPE PARAMETER on the surface: a tree spells as any type form does, a string
+    * VERBATIM — a TypeName's parameters have always been written as authored (`T`,
+    * `T <: Product`), and the string era keeps that until the parser trees them. */
+  private def typeParameterSurface (parameter: Json) : String =
+    if (TypeForm.isTree(parameter)) drakeType(parameter) else parameter.text
+
   /** TypeName reference on the drake surface: name with type parameters in the
     * ( ) type-application form — Map[K, V]'s TypeName -> Map(K, V). */
   private def typeRef (tn: TypeName) : String =
     if (tn.typeParameters.isEmpty) tn.name
-    else s"${tn.name}(${tn.typeParameters.mkString(", ")})"
+    else s"${tn.name}(${tn.typeParameters.map(typeParameterSurface).mkString(", ")})"
 
   /** The universal root, as TypeLoader.rooted spells it. */
   private def isRoot (tn: TypeName) : Boolean =
@@ -226,7 +232,7 @@ object Drake {
     * `mut {T}` has no spelling here — `mut` is a member keyword, so it bounds the
     * clause rather than opening a reference — and no derivation asks for one. */
   private def foreignReference (tn: TypeName) : String = {
-    val arguments = tn.typeParameters.map (typeExpression)
+    val arguments = tn.typeParameters.map (p => if (TypeForm.isTree(p)) drakeType(p) else typeExpression(p.text))
     (tn.name, arguments.size) match {
       case ("Map", 2)          => arguments.mkString ("{", ", ", "}")
       case ("Set", 1)          => s"{${arguments.head}}"
@@ -347,7 +353,7 @@ object Drake {
     val da = td.dracoAspect
     val typeParameters =
       if (td.typeName.typeParameters.isEmpty) ""
-      else s"(${td.typeName.typeParameters.mkString(", ")})"
+      else s"(${td.typeName.typeParameters.map(typeParameterSurface).mkString(", ")})"
 
     /** A `from` / `modules` reference: BARE when it lives in the referring type's own
       * package, QUALIFIED otherwise. The package of a same-package reference is not
@@ -877,7 +883,7 @@ object Drake {
     * own package, and `resolved` supplies it once the domain line has been read. */
   private def parseRef (token: String) : TypeName = {
     val (name, typeParameters) = splitApplied (token)
-    TypeName (name, _typeParameters = typeParameters)
+    TypeName (name, _typeParameters = typeParameters.map (Json.fromString))
   }
 
   /** A reference the surface spells with an OPERATOR carries no package, so it must
@@ -903,8 +909,8 @@ object Drake {
   private def foreignRef (token: String) : TypeName = {
     val s         = token.trim
     val arguments = splitTypeArguments (s.substring (1, s.length - 1)).map (parseTypeExpression)
-    if (s.startsWith ("[")) TypeName ("Seq", _typeParameters = arguments)
-    else TypeName (if (arguments.size == 1) "Set" else "Map", _typeParameters = arguments)
+    if (s.startsWith ("[")) TypeName ("Seq", _typeParameters = arguments.map (Json.fromString))
+    else TypeName (if (arguments.size == 1) "Set" else "Map", _typeParameters = arguments.map (Json.fromString))
   }
 
   /** A package-qualified reference (`domain draco Draco`, `super …`, `extensible …`):
@@ -1038,9 +1044,9 @@ object Drake {
 
   /** The factory's valueType is the enclosing type — the drake surface leaves it
     * implicit (drake.dlt CONVENTIONS: `factory` takes no name). */
-  private def factoryValueType (name: String, typeParameters: Seq[String]) : Json =
+  private def factoryValueType (name: String, typeParameters: Seq[Json]) : Json =
     if (typeParameters.isEmpty) Json.fromString (name)
-    else Json.obj ("()" -> Json.fromValues (Json.fromString (name) +: typeParameters.map (Json.fromString)))
+    else Json.obj ("()" -> Json.fromValues (Json.fromString (name) +: typeParameters))
 
   /** Parse a .drake source into its TypeDefinition — the inverse of emit().
     * The plain-type template plus the rule and actor aspects; codec is the remaining
@@ -1048,7 +1054,8 @@ object Drake {
   def parse (source: String) : TypeDefinition = {
     val c = new Cursor (source, lex (source))
     c.expect ("type")
-    val (name, typeParameters) = splitApplied (c.takeText ())
+    val (name, typeParameterTexts) = splitApplied (c.takeText ())
+    val typeParameters = typeParameterTexts.map (Json.fromString)
     val derivation = Seq.newBuilder[TypeName]
     if (c.at ("from")) {
       c.take ()

@@ -2,18 +2,18 @@ type TypeName
   elements
     fix name String
     fix namePackage [String]
-    fix typeParameters [String]
+    fix typeParameters [Json]
     fix namePath String
     fix resourcePath String
   factory
     parameters
       par name String
       par namePackage [String] []
-      par typeParameters [String] []
+      par typeParameters [Json] []
     body
       fix name String _name
       fix namePackage [String] _namePackage
-      fix typeParameters [String] _typeParameters
+      fix typeParameters [Json] _typeParameters
       fix namePath String if (namePackage.isEmpty) name else s"${namePackage.mkString(".")}.${name}"
       fix resourcePath String if (namePackage.isEmpty) s"/$name.json" else s"/${namePackage.mkString("/")}/$name.json"
       dyn equals Boolean [
