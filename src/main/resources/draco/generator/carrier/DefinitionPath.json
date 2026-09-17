@@ -12,12 +12,22 @@
       {
         "kind": "Fixed",
         "name": "roots",
-        "valueType": "Seq[URI]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "URI"
+          ]
+        }
       },
       {
         "kind": "Dynamic",
         "name": "sources",
-        "valueType": "Seq[URL]",
+        "valueType": {
+          "()": [
+            "Seq",
+            "URL"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -29,7 +39,12 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Seq[URL]",
+            "valueType": {
+              "()": [
+                "Seq",
+                "URL"
+              ]
+            },
             "value": {
               "()": [
                 {
@@ -52,7 +67,12 @@
       {
         "kind": "Dynamic",
         "name": "source",
-        "valueType": "Option[URL]",
+        "valueType": {
+          "()": [
+            "Option",
+            "URL"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -64,7 +84,12 @@
           {
             "kind": "Local",
             "name": "found",
-            "valueType": "Seq[URL]",
+            "valueType": {
+              "()": [
+                "Seq",
+                "URL"
+              ]
+            },
             "value": {
               "()": [
                 "sources",
@@ -85,7 +110,12 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Option[URL]",
+            "valueType": {
+              "()": [
+                "Option",
+                "URL"
+              ]
+            },
             "value": "found.headOption"
           }
         ]
@@ -98,7 +128,12 @@
         {
           "kind": "Parameter",
           "name": "roots",
-          "valueType": "Seq[URI]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "URI"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -112,7 +147,12 @@
       {
         "kind": "Fixed",
         "name": "hostRoots",
-        "valueType": "Seq[URI]",
+        "valueType": {
+          "()": [
+            "Seq",
+            "URI"
+          ]
+        },
         "value": {
           ".": [
             {

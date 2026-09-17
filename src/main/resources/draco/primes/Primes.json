@@ -24,12 +24,22 @@
       {
         "kind": "Dynamic",
         "name": "filter",
-        "valueType": "LazyList[Int]",
+        "valueType": {
+          "()": [
+            "LazyList",
+            "Int"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
             "name": "naturals",
-            "valueType": "LazyList[Int]"
+            "valueType": {
+              "()": [
+                "LazyList",
+                "Int"
+              ]
+            }
           }
         ],
         "body": [
@@ -42,7 +52,12 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "LazyList[Int]",
+            "valueType": {
+              "()": [
+                "LazyList",
+                "Int"
+              ]
+            },
             "value": "p #:: filter(naturals.tail.filter(_ % p != 0))"
           }
         ]
@@ -50,7 +65,12 @@
       {
         "kind": "Dynamic",
         "name": "naturals",
-        "valueType": "LazyList[Int]",
+        "valueType": {
+          "()": [
+            "LazyList",
+            "Int"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -69,7 +89,12 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "LazyList[Int]",
+            "valueType": {
+              "()": [
+                "LazyList",
+                "Int"
+              ]
+            },
             "value": {
               "()": [
                 "LazyList.from",
@@ -83,19 +108,34 @@
       {
         "kind": "Dynamic",
         "name": "composites",
-        "valueType": "Seq[Int]",
+        "valueType": {
+          "()": [
+            "Seq",
+            "Int"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
             "name": "primes",
-            "valueType": "Seq[Int]"
+            "valueType": {
+              "()": [
+                "Seq",
+                "Int"
+              ]
+            }
           }
         ],
         "body": [
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Seq[Int]",
+            "valueType": {
+              "()": [
+                "Seq",
+                "Int"
+              ]
+            },
             "value": {
               "()": [
                 {
@@ -133,19 +173,34 @@
       {
         "kind": "Dynamic",
         "name": "primesFromComposites",
-        "valueType": "Seq[Int]",
+        "valueType": {
+          "()": [
+            "Seq",
+            "Int"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
             "name": "composites",
-            "valueType": "Seq[Int]"
+            "valueType": {
+              "()": [
+                "Seq",
+                "Int"
+              ]
+            }
           }
         ],
         "body": [
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Seq[Int]",
+            "valueType": {
+              "()": [
+                "Seq",
+                "Int"
+              ]
+            },
             "value": {
               "()": [
                 {
@@ -183,7 +238,12 @@
       {
         "kind": "Dynamic",
         "name": "nPrimes",
-        "valueType": "Seq[Int]",
+        "valueType": {
+          "()": [
+            "Seq",
+            "Int"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -195,7 +255,12 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Seq[Int]",
+            "valueType": {
+              "()": [
+                "Seq",
+                "Int"
+              ]
+            },
             "value": {
               "()": [
                 {

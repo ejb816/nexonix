@@ -40,7 +40,12 @@
       {
         "kind": "Fixed",
         "name": "isEmpty",
-        "valueType": "RuleAspect => Boolean",
+        "valueType": {
+          "->": [
+            "RuleAspect",
+            "Boolean"
+          ]
+        },
         "value": "ra => ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty && ra.action.body.isEmpty"
       }
     ]

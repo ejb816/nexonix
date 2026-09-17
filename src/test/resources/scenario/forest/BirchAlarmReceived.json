@@ -32,7 +32,12 @@
         {
           "kind": "Local",
           "name": "received",
-          "valueType": "java.util.List[scenario.birch.BirchJasmonate]",
+          "valueType": {
+            "()": [
+              "java.util.List",
+              "scenario.birch.BirchJasmonate"
+            ]
+          },
           "value": {
             "()": [
               {

@@ -195,7 +195,23 @@
       {
         "kind": "Fixed",
         "name": "commands",
-        "valueType": "{String, Seq[String] => Unit}",
+        "valueType": {
+          "()": [
+            "Map",
+            "String",
+            {
+              "->": [
+                {
+                  "()": [
+                    "Seq",
+                    "String"
+                  ]
+                },
+                "Unit"
+              ]
+            }
+          ]
+        },
         "value": {
           "()": [
             "Map",
@@ -214,7 +230,12 @@
           {
             "kind": "Parameter",
             "name": "args",
-            "valueType": "Array[String]"
+            "valueType": {
+              "()": [
+                "Array",
+                "String"
+              ]
+            }
           }
         ],
         "body": [

@@ -23,12 +23,24 @@
       {
         "kind": "Fixed",
         "name": "kvMap",
-        "valueType": "{K, V}"
+        "valueType": {
+          "()": [
+            "Map",
+            "K",
+            "V"
+          ]
+        }
       },
       {
         "kind": "Dynamic",
         "name": "removed",
-        "valueType": "{K, V}",
+        "valueType": {
+          "()": [
+            "Map",
+            "K",
+            "V"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -40,7 +52,13 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "{K, V}",
+            "valueType": {
+              "()": [
+                "Map",
+                "K",
+                "V"
+              ]
+            },
             "value": {
               "()": [
                 "kvMap.removed",
@@ -53,7 +71,13 @@
       {
         "kind": "Dynamic",
         "name": "updated[V1 >: V]",
-        "valueType": "{K, V1}",
+        "valueType": {
+          "()": [
+            "Map",
+            "K",
+            "V1"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -70,7 +94,13 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "{K, V1}",
+            "valueType": {
+              "()": [
+                "Map",
+                "K",
+                "V1"
+              ]
+            },
             "value": {
               "()": [
                 "kvMap.updated",
@@ -84,7 +114,12 @@
       {
         "kind": "Dynamic",
         "name": "get",
-        "valueType": "Option[V]",
+        "valueType": {
+          "()": [
+            "Option",
+            "V"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -96,7 +131,12 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Option[V]",
+            "valueType": {
+              "()": [
+                "Option",
+                "V"
+              ]
+            },
             "value": {
               "()": [
                 "kvMap.get",
@@ -109,7 +149,17 @@
       {
         "kind": "Dynamic",
         "name": "iterator",
-        "valueType": "Iterator[(K, V)]",
+        "valueType": {
+          "()": [
+            "Iterator",
+            {
+              "(,)": [
+                "K",
+                "V"
+              ]
+            }
+          ]
+        },
         "value": "kvMap.iterator"
       }
     ]

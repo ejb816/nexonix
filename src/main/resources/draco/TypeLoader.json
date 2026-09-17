@@ -10,7 +10,12 @@
       {
         "kind": "Dynamic",
         "name": "readDefinition",
-        "valueType": "Option[TypeDefinition]",
+        "valueType": {
+          "()": [
+            "Option",
+            "TypeDefinition"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -22,7 +27,12 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Option[TypeDefinition]",
+            "valueType": {
+              "()": [
+                "Option",
+                "TypeDefinition"
+              ]
+            },
             "value": "Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }"
           }
         ]
@@ -30,7 +40,12 @@
       {
         "kind": "Dynamic",
         "name": "loadFromResource",
-        "valueType": "Option[TypeDefinition]",
+        "valueType": {
+          "()": [
+            "Option",
+            "TypeDefinition"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -42,7 +57,12 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Option[TypeDefinition]",
+            "valueType": {
+              "()": [
+                "Option",
+                "TypeDefinition"
+              ]
+            },
             "value": {
               "()": [
                 {
@@ -65,7 +85,12 @@
       {
         "kind": "Dynamic",
         "name": "tryLoad",
-        "valueType": "Option[TypeDefinition]",
+        "valueType": {
+          "()": [
+            "Option",
+            "TypeDefinition"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -77,7 +102,12 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Option[TypeDefinition]",
+            "valueType": {
+              "()": [
+                "Option",
+                "TypeDefinition"
+              ]
+            },
             "value": {
               "()": [
                 "loadFromResource",

@@ -15,12 +15,22 @@
       {
         "kind": "Fixed",
         "name": "namePackage",
-        "valueType": "Seq[String]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "String"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "typeParameters",
-        "valueType": "Seq[String]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "String"
+          ]
+        }
       },
       {
         "kind": "Fixed",
@@ -45,7 +55,12 @@
         {
           "kind": "Parameter",
           "name": "namePackage",
-          "valueType": "Seq[String]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "String"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -56,7 +71,12 @@
         {
           "kind": "Parameter",
           "name": "typeParameters",
-          "valueType": "Seq[String]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "String"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -75,13 +95,23 @@
         {
           "kind": "Fixed",
           "name": "namePackage",
-          "valueType": "Seq[String]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "String"
+            ]
+          },
           "value": "_namePackage"
         },
         {
           "kind": "Fixed",
           "name": "typeParameters",
-          "valueType": "Seq[String]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "String"
+            ]
+          },
           "value": "_typeParameters"
         },
         {

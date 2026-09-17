@@ -173,8 +173,25 @@ object DracoGenerator extends App {
     * a string is the type's authored text, a tree (none yet) the type forms — and this
     * is where it takes the target's spelling, once, at the generate entry. Everything
     * downstream reads `.valueType.text` (TypeForm). */
-  private def targetType (valueType: Json) : Json =
-    if (valueType.text.isEmpty) Json.Null else Json.fromString(scalaTypeExpression(valueType.text))
+  def targetType (valueType: Json) : Json =
+    if (TypeForm.isTree(valueType)) Json.fromString(scalaType(valueType))
+    else if (valueType.text.isEmpty) Json.Null
+    else Json.fromString(scalaTypeExpression(valueType.text))
+
+  /** The ScalaTarget spelling of a type-form TREE: `F[A, B]` for every application
+    * (Seq / Set / Map included — the neutral sugar is the surface's), `(A, B)` a tuple,
+    * `S => T` an arrow with a Morphic left operand parenthesized, `p <: b` a bound; a
+    * string leaf is host text and goes through scalaTypeExpression as before. */
+  private def scalaType (form: Json) : String = TypeForm.node(form) match {
+    case None                          => scalaTypeExpression(form.text)
+    case Some(("->", Vector(s, t)))    =>
+      val left = scalaType(s)
+      s"${if (TypeForm.node(s).exists(_._1 == "->")) s"($left)" else left} => ${scalaType(t)}"
+    case Some(("(,)", members))        => members.map(scalaType).mkString("(", ", ", ")")
+    case Some(("()", f +: arguments))  => s"${f.text}[${arguments.map(scalaType).mkString(", ")}]"
+    case Some((op @ ("<:" | ">:"), Vector(p, b))) => s"${scalaType(p)} $op ${scalaType(b)}"
+    case Some((op, _)) => sys.error(s"DracoGenerator.scalaType: not a type form: '$op' in ${form.noSpaces}")
+  }
 
   private lazy val scalaSymbols: Map[String, Vector[String] => String] = Map(
     "join" -> { args => s"${args(1)}.mkString(${args(0)})" }
@@ -931,11 +948,13 @@ object DracoGenerator extends App {
     val parentFieldNames = (parentTd.dracoAspect.elements.map(_.name) ++ parentTd.dracoAspect.factory.parameters.map(_.name)).distinct
 
     // Find representative Parameter for each parent field (from factory params or synthesize from elements)
+    // The parent is LOADED, not generated, so its types are still neutral: they take
+    // the target spelling here, as targetTypes gave this definition's own at the entry.
     val parentParams: Seq[Parameter] = parentFieldNames.flatMap { name =>
       parentTd.dracoAspect.factory.parameters.find(_.name == name).orElse {
         parentTd.dracoAspect.elements.find(_.name == name).map(e => Parameter(e.name, e.valueType, Json.Null))
       }
-    }
+    }.map(targetParameter)
 
     parentParams.map { p =>
       // For discriminated union fields, defaultElision supplies the natural

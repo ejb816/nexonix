@@ -29,7 +29,12 @@
       {
         "kind": "Fixed",
         "name": "isEmpty",
-        "valueType": "CodecAspect => Boolean",
+        "valueType": {
+          "->": [
+            "CodecAspect",
+            "Boolean"
+          ]
+        },
         "value": "ca => ca.discriminator.isEmpty"
       }
     ]

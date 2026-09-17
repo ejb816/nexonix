@@ -15,7 +15,12 @@
       {
         "kind": "Fixed",
         "name": "elementTypeNames",
-        "valueType": "Seq[String]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "String"
+          ]
+        }
       },
       {
         "kind": "Fixed",
@@ -41,7 +46,12 @@
         {
           "kind": "Parameter",
           "name": "elementTypeNames",
-          "valueType": "Seq[String]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "String"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -67,7 +77,12 @@
       {
         "kind": "Fixed",
         "name": "isEmpty",
-        "valueType": "DomainAspect => Boolean",
+        "valueType": {
+          "->": [
+            "DomainAspect",
+            "Boolean"
+          ]
+        },
         "value": "da => da.typeName.name.isEmpty && da.elementTypeNames.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty"
       }
     ]

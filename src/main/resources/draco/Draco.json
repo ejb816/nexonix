@@ -13,7 +13,12 @@
         {
           "kind": "Parameter",
           "name": "problems",
-          "valueType": "java.util.List[Problem]"
+          "valueType": {
+            "()": [
+              "java.util.List",
+              "Problem"
+            ]
+          }
         }
       ]
     }

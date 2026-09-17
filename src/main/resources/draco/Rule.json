@@ -21,12 +21,22 @@
       {
         "kind": "Fixed",
         "name": "pattern",
-        "valueType": "Consumer[Knowledge]"
+        "valueType": {
+          "()": [
+            "Consumer",
+            "Knowledge"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "action",
-        "valueType": "Consumer[RhsContext]"
+        "valueType": {
+          "()": [
+            "Consumer",
+            "RhsContext"
+          ]
+        }
       }
     ],
     "factory": {
@@ -36,12 +46,22 @@
         {
           "kind": "Parameter",
           "name": "pattern",
-          "valueType": "Consumer[Knowledge]"
+          "valueType": {
+            "()": [
+              "Consumer",
+              "Knowledge"
+            ]
+          }
         },
         {
           "kind": "Parameter",
           "name": "action",
-          "valueType": "Consumer[RhsContext]"
+          "valueType": {
+            "()": [
+              "Consumer",
+              "RhsContext"
+            ]
+          }
         }
       ]
     },

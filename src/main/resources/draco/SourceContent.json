@@ -15,7 +15,12 @@
       {
         "kind": "Fixed",
         "name": "sourceLines",
-        "valueType": "Seq[String]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "String"
+          ]
+        }
       },
       {
         "kind": "Fixed",
@@ -69,7 +74,12 @@
         {
           "kind": "Fixed",
           "name": "sourceLines",
-          "valueType": "Seq[String]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "String"
+            ]
+          },
           "value": "try source.getLines().toSeq finally source.close()"
         },
         {

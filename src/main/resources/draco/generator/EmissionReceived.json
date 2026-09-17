@@ -32,7 +32,12 @@
         {
           "kind": "Local",
           "name": "received",
-          "valueType": "java.util.List[Emission]",
+          "valueType": {
+            "()": [
+              "java.util.List",
+              "Emission"
+            ]
+          },
           "value": {
             "()": [
               {

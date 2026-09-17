@@ -20,17 +20,32 @@
       {
         "kind": "Fixed",
         "name": "primeSequence",
-        "valueType": "Seq[Int]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "Int"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "naturalSequence",
-        "valueType": "Seq[Int]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "Int"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "compositeSequence",
-        "valueType": "Seq[Int]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "Int"
+          ]
+        }
       }
     ],
     "factory": {
@@ -48,7 +63,12 @@
         {
           "kind": "Fixed",
           "name": "primeSequence",
-          "valueType": "Seq[Int]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "Int"
+            ]
+          },
           "value": {
             "()": [
               "Primes.nPrimes",
@@ -59,7 +79,12 @@
         {
           "kind": "Fixed",
           "name": "naturalSequence",
-          "valueType": "Seq[Int]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "Int"
+            ]
+          },
           "value": {
             "()": [
               {
@@ -80,7 +105,12 @@
         {
           "kind": "Fixed",
           "name": "compositeSequence",
-          "valueType": "Seq[Int]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "Int"
+            ]
+          },
           "value": {
             "()": [
               "Primes.composites",

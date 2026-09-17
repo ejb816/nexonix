@@ -22,7 +22,12 @@
       {
         "kind": "Fixed",
         "name": "elementTypes",
-        "valueType": "Seq[TypeDefinition]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "TypeDefinition"
+          ]
+        }
       }
     ],
     "factory": {
@@ -39,7 +44,12 @@
         {
           "kind": "Fixed",
           "name": "elementTypes",
-          "valueType": "Seq[TypeDefinition]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "TypeDefinition"
+            ]
+          },
           "value": {
             "()": [
               "_domainDefinition.domainAspect.elementTypeNames.map",
@@ -50,7 +60,13 @@
         {
           "kind": "Fixed",
           "name": "kvMap",
-          "valueType": "{TypeName, TypeDefinition}",
+          "valueType": {
+            "()": [
+              "Map",
+              "TypeName",
+              "TypeDefinition"
+            ]
+          },
           "value": {
             ".": [
               {

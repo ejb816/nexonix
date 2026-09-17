@@ -142,6 +142,9 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       array => Json.fromValues(array.map(surfaceCarried)),
       obj => Json.fromJsonObject(JsonObject.fromIterable(obj.toIterable.map {
         case ("value", v) => "value" -> Json.fromString(Drake.defaultValue(Drake.expression(v)))
+        // A valueType is a string or a type-form tree and the surface spells both one
+        // way; the JSON round-trip compares that spelling until the corpus is trees.
+        case ("valueType", v) => "valueType" -> Json.fromString(Drake.typeSurface(v))
         case (key, v) => key -> surfaceCarried(v)
       })))
 
@@ -318,15 +321,47 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       s"engine rendering: ${DracoGenerator.expression(value)}")
   }
 
+  // --- Type forms, asserted structurally ---
+  //
+  // A value type parses to a TYPE-FORM TREE (drake.dlt VALUE-TYPES): the four forms in
+  // the expression-tree convention. The smallest surface that exhibits each: a Seq
+  // application, a Map application holding a Morphic whose left operand is an
+  // Objective, and a bare arrow slot that groups to the RIGHT. Asserted as trees,
+  // round-tripped on the surface, and rendered by the engine to Scala's spelling.
+
+  test("type forms: [T], {K, V}, (A, B) -> C and A -> B -> C parse to trees and render both ways") {
+    val authored =
+      """type Probe
+        |  elements
+        |    fix names [String]
+        |    fix handlers {String, (Int, Int) -> Unit}
+        |    fix curried (Int -> Int -> Int)
+        |domain draco Draco
+        |""".stripMargin
+    val parsed = Drake.parse(authored)
+    val Seq(names, handlers, curried) = parsed.dracoAspect.elements.map(_.valueType)
+    assert(names == Json.obj("()" -> Json.arr(Json.fromString("Seq"), Json.fromString("String"))), names.noSpaces)
+    assert(handlers == Json.obj("()" -> Json.arr(Json.fromString("Map"), Json.fromString("String"),
+      Json.obj("->" -> Json.arr(Json.obj("(,)" -> Json.arr(Json.fromString("Int"), Json.fromString("Int"))), Json.fromString("Unit"))))),
+      handlers.noSpaces)
+    assert(curried == Json.obj("->" -> Json.arr(Json.fromString("Int"), Json.obj("->" -> Json.arr(Json.fromString("Int"), Json.fromString("Int"))))),
+      s"the arrow did not group to the right: ${curried.noSpaces}")
+    val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
+    if (handNorm != roundNorm)
+      fail("type-form surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
+    assert(DracoGenerator.targetType(handlers).asString.contains("Map[String, (Int, Int) => Unit]"), DracoGenerator.targetType(handlers).noSpaces)
+    assert(DracoGenerator.targetType(curried).asString.contains("Int => Int => Int"), DracoGenerator.targetType(curried).noSpaces)
+  }
+
   // --- The measured tail: where the surface is not yet information-complete ---
 
   test("drake surface losses, unnormalized (report only)") {
-    // A `value` is compared WHOLE, never descended into: its whole point is that the
+    // A `value` — and since the type forms, a `valueType` — is compared WHOLE, never descended into: its whole point is that the
     // same expression may be a string on one side and a tree on the other, and
     // descending would scatter one difference across the tree's leaves — the `.value`
     // key absent on one side, its operands unaccounted for on the other.
     def leafPaths(json: Json, path: String): Seq[(String, String)] =
-      if (path.endsWith(".value")) Seq(path -> json.noSpaces)
+      if (path.endsWith(".value") || path.endsWith(".valueType")) Seq(path -> json.noSpaces)
       else json.arrayOrObject(
         Seq(path -> json.noSpaces),
         array => array.zipWithIndex.flatMap { case (v, i) => leafPaths(v, s"$path[$i]") }.toSeq,
@@ -350,6 +385,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     val byKind = losses.groupBy { case (_, key, was, now) =>
       if (key.endsWith(".value") && emptyCollection.contains(was) && emptyCollection.contains(now)) "empty-collection spelling"
       else if (key.endsWith(".value")) "expression form (string vs tree)"
+      else if (key.endsWith(".valueType")) "type form (string vs tree)"
       else if (key.contains(".derivation") || key.contains(".modules")) "reference package"
       else "OTHER — unaccounted"
     }

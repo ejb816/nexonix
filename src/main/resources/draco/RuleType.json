@@ -10,12 +10,22 @@
       {
         "kind": "Fixed",
         "name": "action",
-        "valueType": "Consumer[RhsContext]"
+        "valueType": {
+          "()": [
+            "Consumer",
+            "RhsContext"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "pattern",
-        "valueType": "Consumer[Knowledge]"
+        "valueType": {
+          "()": [
+            "Consumer",
+            "Knowledge"
+          ]
+        }
       }
     ]
   },

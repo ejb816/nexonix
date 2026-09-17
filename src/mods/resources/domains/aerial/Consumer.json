@@ -84,7 +84,12 @@
         {
           "kind": "Fixed",
           "name": "consumed",
-          "valueType": "java.util.ArrayList[String]",
+          "valueType": {
+            "()": [
+              "java.util.ArrayList",
+              "String"
+            ]
+          },
           "value": "new java.util.ArrayList[String]()"
         },
         {

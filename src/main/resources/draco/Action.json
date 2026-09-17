@@ -18,7 +18,12 @@
       {
         "kind": "Fixed",
         "name": "variables",
-        "valueType": "Seq[Variable]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "Variable"
+          ]
+        }
       }
     ],
     "factory": {
@@ -28,7 +33,12 @@
         {
           "kind": "Parameter",
           "name": "variables",
-          "valueType": "Seq[Variable]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "Variable"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -39,7 +49,12 @@
         {
           "kind": "Parameter",
           "name": "body",
-          "valueType": "Seq[BodyElement]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "BodyElement"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -52,13 +67,23 @@
         {
           "kind": "Fixed",
           "name": "variables",
-          "valueType": "Seq[Variable]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "Variable"
+            ]
+          },
           "value": "_variables"
         },
         {
           "kind": "Fixed",
           "name": "body",
-          "valueType": "Seq[BodyElement]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "BodyElement"
+            ]
+          },
           "value": "_body"
         }
       ]

@@ -33,7 +33,12 @@
         {
           "kind": "Parameter",
           "name": "body",
-          "valueType": "Seq[BodyElement]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "BodyElement"
+            ]
+          },
           "value": {
             ".": [
               "Seq",

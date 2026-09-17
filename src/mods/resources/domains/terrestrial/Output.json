@@ -14,7 +14,12 @@
         {
           "kind": "Parameter",
           "name": "consumer",
-          "valueType": "ActorRef[draco.format.json.JSON]"
+          "valueType": {
+            "()": [
+              "ActorRef",
+              "draco.format.json.JSON"
+            ]
+          }
         }
       ]
     }

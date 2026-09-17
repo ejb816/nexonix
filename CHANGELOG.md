@@ -159,6 +159,13 @@ for the definition that will replace it.
 
 ### Changed
 
+- **The drake parser trees the four type forms.** A value-type slot now parses to a type-form tree —
+  Atomic, Objective `(A, B)`, Parametric `F(A, B)` with `[T]` / `{T}` / `{K, V}` as Seq / Set / Map,
+  Morphic `A -> B` grouping to the right — and the emitter and the engine render a tree back to the
+  drake and Scala spellings. The corpus JSON is re-canonicalized from the drake in the same commit (37
+  files across src/main, the mods actors and the scenario), with the three standing exceptions;
+  `mut {T}` stays host text until `mut` moves to the element. (2026-09-17)
+
 - **A `valueType` is a JSON node, on the same terms as a `value`.** The TypeElement family, Factory,
   Variable and Case now declare `valueType Json`: a string is the type's authored text (the whole corpus
   today), an object will be a type-form tree once the drake parser trees the four forms. Every consumer

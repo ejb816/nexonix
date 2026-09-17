@@ -38,9 +38,14 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   type's authored text, host-opaque, and is everything the corpus holds today; an OBJECT will be a
   TYPE-FORM TREE — Atomic (a string leaf), Objective `{"(,)": [...]}`, Parametric `{"()": [F, A ...]}`,
   Morphic `{"->": [S, T]}` binary and RIGHT-associative (Haskell's: A -> B -> C is A -> (B -> C)), the
-  bounds `{"<:": [parameter, bound]}` / `{">:": [parameter, bound]}` parameter first — once the parser
-  trees the four forms (next). The rows below are the string era: each still maps a drake spelling to
-  the HOST's text, and they retire one constructor at a time as the tree takes over.
+  bounds `{"<:": [parameter, bound]}` / `{">:": [parameter, bound]}` parameter first. THE PARSER TREES
+  THE FOUR FORMS (2026-09-17): every value-type slot parses to a tree, read outside-in — a top-level
+  arrow first (grouping right), then a bound, then the bracket forms, then an application, else Atomic —
+  and the emitter spells a tree back from TypeForm's neutral rendering, a top-level arrow parenthesized
+  in the name-type-value slot. The rows below are read as the SURFACE spelling of each form; their
+  right-hand column is the host text a STRING leaf still carries, which after the corpus
+  re-canonicalizes is only `mut {T}` (`mut` belongs to the element — agreed 2026-09-13, not yet built —
+  so its type stays host text until it does).
   [<T>]            Seq[<T>]
   {<T>}            Set[<T>]
   {<K>, <V>}       {<K>, <V>}          MAP — neutral in the JSON too, carried through unchanged
@@ -562,3 +567,10 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           the type for the target once, in targetTypes. NEXT: the parser trees the
                                           four forms (VALUE-TYPES above) and the corpus re-canonicalizes from the
                                           drake; then typeParameters, which lives in TypeName's identity.
+  the four TYPE FORMS as trees      <->   IMPLEMENTED (2026-09-17). Drake.typeForm reads a value-type slot to a
+    (valueType was host text)             tree; Drake emits one back (drakeType); DracoGenerator.targetType spells
+                                          it for Scala (`F[A]`, `(A, B)`, `S => T`, a Morphic left operand
+                                          parenthesized). No corpus JSON moved in the commit — the re-canonicalization
+                                          from the drake follows with the compiled parser, as the call syntax's did —
+                                          so DrakeParseTest's report-only loss gains a "type form" category until it
+                                          lands. The `mut {T}` tail stays a string leaf.

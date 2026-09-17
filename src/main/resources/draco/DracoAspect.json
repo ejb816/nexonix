@@ -15,7 +15,12 @@
       {
         "kind": "Fixed",
         "name": "modules",
-        "valueType": "Seq[TypeName]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "TypeName"
+          ]
+        }
       },
       {
         "kind": "Fixed",
@@ -25,12 +30,22 @@
       {
         "kind": "Fixed",
         "name": "derivation",
-        "valueType": "Seq[TypeName]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "TypeName"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "elements",
-        "valueType": "Seq[TypeElement]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "TypeElement"
+          ]
+        }
       },
       {
         "kind": "Fixed",
@@ -40,7 +55,12 @@
       {
         "kind": "Fixed",
         "name": "globalElements",
-        "valueType": "Seq[BodyElement]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "BodyElement"
+          ]
+        }
       }
     ],
     "factory": {
@@ -56,7 +76,12 @@
         {
           "kind": "Parameter",
           "name": "modules",
-          "valueType": "Seq[TypeName]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "TypeName"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -73,7 +98,12 @@
         {
           "kind": "Parameter",
           "name": "derivation",
-          "valueType": "Seq[TypeName]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "TypeName"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -84,7 +114,12 @@
         {
           "kind": "Parameter",
           "name": "elements",
-          "valueType": "Seq[TypeElement]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "TypeElement"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -101,7 +136,12 @@
         {
           "kind": "Parameter",
           "name": "globalElements",
-          "valueType": "Seq[BodyElement]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "BodyElement"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -115,7 +155,12 @@
       {
         "kind": "Fixed",
         "name": "isEmpty",
-        "valueType": "DracoAspect => Boolean",
+        "valueType": {
+          "->": [
+            "DracoAspect",
+            "Boolean"
+          ]
+        },
         "value": "da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty"
       }
     ]

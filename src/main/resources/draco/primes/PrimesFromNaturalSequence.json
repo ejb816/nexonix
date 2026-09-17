@@ -53,7 +53,12 @@
         {
           "kind": "Fixed",
           "name": "newText",
-          "valueType": "(Long, String)",
+          "valueType": {
+            "(,)": [
+              "Long",
+              "String"
+            ]
+          },
           "value": {
             "(,)": [
               {

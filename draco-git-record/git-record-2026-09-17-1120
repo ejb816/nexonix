@@ -1,0 +1,75 @@
+# The parser trees the four type forms — accepted by Dev on 2026-09-17 ("Accept, the parser trees the
+# four forms next"), the second of the type-form increments, after valueType became a JSON node (d59fe20).
+#
+# ONE CONCEPT: a value-type slot on the drake surface parses to a TYPE-FORM TREE in the agreed encoding
+# (TypeForm's doc; drake.dlt VALUE-TYPES): Atomic = string leaf, Objective = {"(,)": [...]}, Parametric =
+# {"()": [F, A...]} with [T] / {T} / {K, V} as Seq / Set / Map, Morphic = {"->": [S, T]} binary and
+# RIGHT-associative (Haskell's — confirmed with Dev 2026-09-16 after the 09-13 example had the grouping
+# backwards), bounds {"<:"} / {">:"} parameter first. Three renderers, one per side:
+#   TypeForm.neutral     drake's own spelling of a tree (the tree's TEXT; string leaves verbatim)
+#   Drake.drakeType      the surface — neutral, but a string leaf respelled through typeExpression as
+#                        any string value type is; a top-level arrow parenthesized in the slot
+#   DracoGenerator.scalaType (via targetType, now public)  `F[A]`, `(A, B)`, `S => T`, a Morphic left
+#                        operand parenthesized; string leaves through scalaTypeExpression as before
+# The parser (Drake.typeForm) reads outside-in: top-level arrow (right-grouping), then a bound, then the
+# bracket forms, then an application, else Atomic. `mut {T}` stays HOST TEXT (parseTypeExpression's
+# `mutable.Set[T]`) — `mut` belongs to the element per the 09-13 agreement, not yet built.
+#
+# EMULATED before writing (scratchpad typeforms.py): all 137 distinct value types in the corpus — Scala
+# text -> drake -> tree -> Scala reproduces the text (the four neutral brace maps and the arrow map
+# reproduce the `Map[K, V]` targetTypes already makes of them), and tree -> drake reproduces today's
+# surface; 43 become trees, 94 stay leaves (86 Atomic, 8 mutable.Set).
+#
+# ALSO: AssemblyValidator reads ActorRef[M] STRUCTURALLY (TypeForm.applied handles a tree and a host
+# string alike); the codec gate's inherited parent parameters — loaded, not generated — take the target
+# spelling through targetParameter, which they never needed while every type was host text.
+#
+# TESTS: DrakeParseTest's JSON gate compares a valueType by its ONE surface spelling (Drake.typeSurface)
+# so string and tree eras agree; the loss report gains a "type form (string vs tree)" category; one new
+# structural test ([T], {K, V} holding an Objective-left arrow, a bare arrow grouping right; both
+# renderings). 607 tests.
+#
+# FIRST RUN (2026-09-17 11:36): 606 passed, 1 FAILED — ScenarioGenTest ASSERTS "every scenario .json is
+# what parsing its .drake produces", so the two-commit pattern (parser first, corpus next) cannot hold
+# for the type forms: the scenario JSON must move with the parser. Dev's run had compiled the new
+# parser, so the sweep ran with those classes and is IN THIS COMMIT: `DrakeCLI parse X.drake > X.json`
+# over all three roots — 37 rewritten (29 src/main, 7 mods actors, 1 scenario), 88 identical, 0 failed;
+# the three standing exclusions (BodyElement, ActorAspect, format/json/Value). Verified as before:
+# 23 of 23 rewritten src/main definitions regenerate their committed Scala, the TypeElement family
+# regenerates as a group, DrakeCLI check reports JSON drift only on ActorAspect and Value (excluded) in
+# src/main and on six DRAKE-LESS mods definitions (OriginateReport x4, world/Consumer, world/Provider —
+# reached by emit-then-parse, outside the parse gate, nothing to canonicalize from).
+# The same run showed the loss report DESCENDING into a valueType tree (247 "unaccounted" fields):
+# leafPaths now compares `.valueType` whole, as it does `.value`.
+# ONE MORE PARSER FIX from the sweep's residue: the ELIDED factory type (`factory` with no name on a
+# parameterized type) was built as host text `Domain[T]` by factoryValueType; it is now the tree
+# `{"()": ["Domain", "T"]}` and the emitter's elision test compares by SURFACE (typeSurface), so the
+# string era still elides. Domain / Rule / Type keep the string until the next compiled sweep — 3 fields.
+#
+# EXPECTED: 607 tests / 43 suites, all green. Headlines: surface losses 5 (type form 3 — Domain / Rule /
+# Type — + expression form 2; the run decides and DRACO.md's row says "expected" until pasted); every
+# other headline unchanged (parse scope 95 + 10, scenario 23 clean, GenDrake 93 of 93, GEN MAP
+# 28/20/0/0, PON unchanged).
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-17-1120 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1120 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1120 && git push
+
+--- MESSAGE ---
+The drake parser trees the four type forms
+
+A value-type slot on the drake surface now parses to a type-form tree: Atomic as a string leaf,
+Objective `(A, B)`, Parametric `F(A, B)` with `[T]`, `{T}` and `{K, V}` as the Seq, Set and Map
+applications, and Morphic `A -> B`, binary and grouping to the right as Haskell does. The emitter spells
+a tree back to the surface and the engine spells it for Scala, each from the same tree; the assembly
+validator reads `ActorRef[M]` structurally rather than as text, and the codec gate's inherited parent
+parameters take the target spelling they never needed while every type was host text.
+
+The corpus JSON is re-canonicalized from the drake in the same commit — 37 files across src/main, the
+mods actors and the scenario, whose gate asserts that its JSON is what parsing its drake produces — with
+the three standing exceptions (BodyElement, ActorAspect, format/json/Value). The elided factory type of
+a parameterized type is a tree like any other. `mut {T}` stays host text until `mut` moves to the element. One structural test asserts the
+three forms and the right grouping, and both renderings; the JSON gate compares a value type by its one
+surface spelling so the string and tree eras agree.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

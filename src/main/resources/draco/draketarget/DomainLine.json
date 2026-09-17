@@ -23,7 +23,12 @@
         {
           "kind": "Parameter",
           "name": "package",
-          "valueType": "Seq[String]"
+          "valueType": {
+            "()": [
+              "Seq",
+              "String"
+            ]
+          }
         },
         {
           "kind": "Parameter",

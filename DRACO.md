@@ -45,7 +45,7 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **606 tests / 43
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **607 tests / 43
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -54,7 +54,8 @@ structural test in `DrakeParseTest` for the `++` operator (2026-09-10); then `dr
 (five per-type tests) and its own two-test suite `DomainLineTest` (2026-09-11), which moves the
 type counts to 94 in scope, 104 measured; then `gendrake.DomainLineOf`, the first member of the
 transform domain (2026-09-11), to 95 and 105; then one more `DrakeParseTest` test for the
-call syntax's at-most-once rule (2026-09-16), **606 tests / 43 suites**. These
+call syntax's at-most-once rule (2026-09-16); then one structural `DrakeParseTest` test for the
+four type forms (2026-09-17), **607 tests / 43 suites**. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -66,7 +67,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | **expected 2** fields across 105 types — expression form 2 (format/json/Value's Haskell-form lambda and conditional, GitHub #61), empty-collection spelling 0 (JSON re-canonicalized from the drake, 2026-09-16; was 114 at `a8afcd8`, 15 at `324556c` — paste the run's line and this row loses "expected") |
+| `DrakeParseTest` | drake surface losses | **expected 5** fields across 105 types — type form 3 (Domain / Rule / Type's elided parameterized factory type, string until the next compiled sweep), expression form 2 (format/json/Value, GitHub #61), empty-collection 0 (predicted at the type-form commit, 2026-09-17; was 2 at `d59fe20`) |
 | `DrakeParseTest` | Drake.parse scope | 95 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
@@ -161,7 +162,7 @@ Parameter, Monadic, Condition, Action, Pattern, Variable, Factory, Case — all 
 `Primal[Json]`. So `value` is a JSON node: either a host-opaque source string or a
 single-key `{op: [operands]}` expression tree. **`valueType` is a JSON node on the same terms
 since 2026-09-16** — a string is the type's authored text (all of the corpus today), an object
-will be a type-form tree once the parser trees the four forms; every consumer reads it through
+is a type-form tree (the parser trees the four forms since 2026-09-17); every consumer reads it through
 `TypeForm.text` (`e.valueType.text`), and the engine spells it for the target once, in
 `targetTypes`. JSON uses a `"kind"` discriminator;
 `Codec.sub` narrows the parent codec.
@@ -221,15 +222,19 @@ Value types are
 `[T]` Seq, `{T}` Set, `{K,V}` Map, `mut {T}`, `F(A,B)`, `A -> B`, tuples. The full spec is
 `src/main/resources/draco/drake.dlt`, which is current and authoritative.
 
-**Caveat, and it matters if you author drake:** `Drake.parse` builds expression trees only
+**Caveat, and it matters if you author drake:** `Drake.parse` trees every VALUE TYPE as one of
+the four type forms (2026-09-17; `mut {T}` stays host text until `mut` moves to the element), and
+builds expression trees only
 for calls — `f(a, b)`, positional then `name:value`, one glued token split at depth-0
 parentheses, commas and dots (2026-09-16; the `parameters`/`par` call form, its `[ ]` argument
 brackets and `.member` chain lines are RETIRED) — tuples, and the `++` concatenation operator
 (2026-09-10). Every other value — lambdas, `if/then/else`, `->`, other operators — returns as a
 host-opaque string in *drake* form, which `DracoGenerator.expression` would pass verbatim into
-Scala. Because every parenthesised call now trees, the ~105 host-opaque call strings still in the
-JSON corpus come back as trees on parse; re-canonicalizing the JSON from the drake is the next
-increment. Parse is a measurement tool, not yet an authoring path (GitHub #61).
+Scala. The JSON corpus is re-canonicalized from the drake after each parser step (`DrakeCLI parse
+X.drake > X.json` with the compiled parser; 2026-09-16 for calls, 2026-09-17 for type forms), with
+three deliberate exceptions: BodyElement and ActorAspect (authored-ahead aspects) and
+format/json/Value (Haskell-form lambdas the parser does not tree). Parse is a measurement tool, not
+yet an authoring path (GitHub #61).
 
 **Tiers.** `src/main/scala` is definition-backed. `src/mods/scala` compiles into the same
 package tree and holds the hand-written engine: `DracoGenerator`, `GeneratorCLI`, `Drake`,

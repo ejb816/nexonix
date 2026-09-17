@@ -14,7 +14,12 @@
         {
           "kind": "Parameter",
           "name": "worldConsumer",
-          "valueType": "ActorRef[domains.world.World]"
+          "valueType": {
+            "()": [
+              "ActorRef",
+              "domains.world.World"
+            ]
+          }
         }
       ]
     }

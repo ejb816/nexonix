@@ -1,6 +1,7 @@
 package draco
 
 import draco.TypeForm.ValueTypeText
+import io.circe.Json
 
 /** Validates an [[Assembly]] purely from type definitions — no Pekko, no
   * `ActorContext`, no spawning. This is the property that makes Assembly worth
@@ -21,12 +22,8 @@ object AssemblyValidator {
 
   /** Inner type of an `ActorRef[M]` value type, or None if the type is not an
     * actor reference. */
-  private def actorRefInner(valueType: String): Option[String] = {
-    val trimmed = valueType.trim
-    if (trimmed.startsWith("ActorRef[") && trimmed.endsWith("]"))
-      Some(trimmed.stripPrefix("ActorRef[").stripSuffix("]").trim)
-    else None
-  }
+  private def actorRefInner(valueType: Json): Option[String] =
+    TypeForm.applied(valueType).collect { case ("ActorRef", Seq(inner)) => inner.text }
 
   /** Message type a member receives. The actor ASPECT is the source of truth —
     * actor-ness is aspect presence, so an `Actor[M]` derivation would put a role's
@@ -65,7 +62,7 @@ object AssemblyValidator {
         case None =>
           errors += s"'${b.from.namePath}' declares no construction parameter '${b.param}'"
         case Some(param) =>
-          actorRefInner(param.valueType.text) match {
+          actorRefInner(param.valueType) match {
             case None =>
               errors += s"parameter '${b.param}' of '${b.from.namePath}' is '${param.valueType.text}', not an ActorRef"
             case Some(refInner) =>

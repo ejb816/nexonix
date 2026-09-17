@@ -19,7 +19,12 @@
       {
         "kind": "Fixed",
         "name": "pathElements",
-        "valueType": "Seq[String]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "String"
+          ]
+        }
       },
       {
         "kind": "Dynamic",

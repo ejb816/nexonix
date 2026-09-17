@@ -156,10 +156,40 @@ object Drake {
     * arrow is parenthesized so the value-type reads as one token-group between
     * the name and the value (fix isEmpty (RuleAspect => Boolean) ra => ...);
     * an arrow nested inside a type application needs none (Map(String, [String] => Unit)). */
-  private def typeExpressionSlot (valueType: String) : String = {
-    val converted = typeExpression(valueType)
-    if (splitTopArrow(valueType.trim, scalaArrow).size > 1) s"($converted)" else converted
+  private def typeExpressionSlot (valueType: Json) : String =
+    if (TypeForm.isTree(valueType)) {
+      val rendered = drakeType(valueType)
+      if (TypeForm.node(valueType).exists(_._1 == "->")) s"($rendered)" else rendered
+    } else {
+      val text      = valueType.text
+      val converted = typeExpression(text)
+      if (splitTopArrow(text.trim, scalaArrow).size > 1) s"($converted)" else converted
+    }
+
+  /** A type-form TREE on the drake surface: TypeForm.neutral's spelling, except that
+    * a string LEAF — host text, the `mut {T}` tail — is respelled through
+    * typeExpression as any string value type is. The two renderers agree on every
+    * node; only the leaf differs, and only because the surface owns the respelling. */
+  private def drakeType (form: Json) : String = TypeForm.node(form) match {
+    case None                          => typeExpression(form.text)
+    case Some(("->", Vector(s, t)))    =>
+      val left = drakeType(s)
+      s"${if (TypeForm.node(s).exists(_._1 == "->")) s"($left)" else left} -> ${drakeType(t)}"
+    case Some(("(,)", members))        => members.map(drakeType).mkString("(", ", ", ")")
+    case Some(("()", f +: arguments))  =>
+      (f.text, arguments.map(drakeType)) match {
+        case ("Seq", Seq(a))    => s"[$a]"
+        case ("Set", Seq(a))    => s"{$a}"
+        case ("Map", Seq(k, v)) => s"{$k, $v}"
+        case (head, as)         => s"$head(${as.mkString(", ")})"
+      }
+    case Some((op @ ("<:" | ">:"), Vector(p, b))) => s"${drakeType(p)} $op ${drakeType(b)}"
+    case Some((op, _)) => sys.error(s"Drake.emit: not a type form: '$op' in ${form.noSpaces}")
   }
+
+  /** The value-type slot as the surface spells it, for a string or a tree — public
+    * so DrakeParseTest can compare the two eras by their one surface. */
+  def typeSurface (valueType: Json) : String = typeExpressionSlot(valueType)
 
   /** Element name to drake surface: a method type-parameter rides the name via
     * the ( ) convention — JSON "updated[V1 >: V]" -> drake updated(V1 >: V). */
@@ -232,7 +262,7 @@ object Drake {
   private def leafLines (indent: String, keyword: String, element: TypeElement) : Seq[String] =
     element match {
       case _: Monadic | _: Condition => Seq(valueLine(s"$indent$keyword", element.value))
-      case e => Seq(valueLine(s"$indent$keyword ${elementName(e.name)} ${typeExpressionSlot(e.valueType.text)}", e.value))
+      case e => Seq(valueLine(s"$indent$keyword ${elementName(e.name)} ${typeExpressionSlot(e.valueType)}", e.value))
     }
 
   private def keyword (element: TypeElement) : String = element match {
@@ -264,7 +294,7 @@ object Drake {
     else element match {
       case c: Case => caseLines(c, indent, level)
       case d: Dynamic =>
-      val header = s"$indent${keyword(d)} ${elementName(d.name)} ${typeExpressionSlot(d.valueType.text)} ["
+      val header = s"$indent${keyword(d)} ${elementName(d.name)} ${typeExpressionSlot(d.valueType)} ["
       val parameters =
         if (d.parameters.isEmpty) Seq.empty
         else sectionLines("parameters", d.parameters, level + 1)
@@ -289,7 +319,7 @@ object Drake {
   private def caseLines (c: Case, indent: String, level: Int) : Seq[String] = {
     val head = Seq(s"$indent${keyword(c)}") ++
       (if (c.name.nonEmpty) Seq(elementName(c.name)) else Seq.empty) ++
-      (if (c.valueType.text.nonEmpty) Seq(typeExpressionSlot(c.valueType.text)) else Seq.empty)
+      (if (c.valueType.text.nonEmpty) Seq(typeExpressionSlot(c.valueType)) else Seq.empty)
     if (!c.value.isNull && expression(c.value).nonEmpty)
       sys.error(s"Drake.emit: case-branch carries a value outside its body — the result is the body element named `value`")
     val statementLines = c.body.flatMap(elementLines(_, level + 1))
@@ -374,8 +404,8 @@ object Drake {
         // the live case is the actor-minting factory, whose ActorType value-type is what
         // tells the Scala projection to mint an actor rather than an instance of the type.
         val head =
-          if (da.factory.valueType.text == factoryValueType(td.typeName.name, td.typeName.typeParameters)) "  factory"
-          else s"  factory ${typeExpressionSlot(da.factory.valueType.text)}"
+          if (typeSurface(da.factory.valueType) == typeSurface(factoryValueType(td.typeName.name, td.typeName.typeParameters))) "  factory"
+          else s"  factory ${typeExpressionSlot(da.factory.valueType)}"
         head +: (parameters ++ body)
       }
     val globals =
@@ -797,8 +827,50 @@ object Drake {
   /** Consume a value-type slot. `mut {T}` is the one two-token form. */
   private def takeValueType (c: Cursor) : Json = {
     val first = c.takeText ()
-    Json.fromString (parseTypeExpression (if (first == "mut") s"mut ${c.takeText ()}" else first))
+    typeForm (if (first == "mut") s"mut ${c.takeText ()}" else first)
   }
+
+  /** A drake type expression as a TYPE-FORM TREE (drake.dlt VALUE-TYPES; TypeForm for
+    * the encoding). Read outside-in: a top-level arrow is Morphic and groups to the
+    * RIGHT (`A -> B -> C` is A -> (B -> C), Haskell's); a top-level bound is its leaf;
+    * `[T]` / `{T}` / `{K, V}` are the Seq / Set / Map applications; a parenthesized
+    * list is Objective, a parenthesized single member the arrow slot's wrapper;
+    * `F(A, B)` applies; a bare name is Atomic and stays the string it is. The one
+    * form still carried as HOST TEXT is `mut {T}` — `mut` belongs to the element,
+    * not the type (agreed 2026-09-13, not yet built), so its spelling is the
+    * host's until then, exactly as parseTypeExpression wrote it. */
+  private def typeForm (expr: String) : Json = {
+    val s = expr.trim
+    val arrow = splitTopArrow (s, drakeArrow)
+    if (arrow.size > 1) Json.obj ("->" -> Json.arr (typeForm (arrow.head), typeForm (arrow.tail.mkString (drakeArrow))))
+    else boundForm (s).getOrElse {
+      if (s.startsWith ("mut {") && s.endsWith ("}")) Json.fromString (parseTypeExpression (s))
+      else if (s.startsWith ("[") && s.endsWith ("]")) application ("Seq", Seq (s.substring (1, s.length - 1)))
+      else if (s.startsWith ("{") && s.endsWith ("}")) {
+        val members = splitTypeArguments (s.substring (1, s.length - 1))
+        application (if (members.size == 1) "Set" else "Map", members)
+      }
+      else if (s.startsWith ("(") && s.endsWith (")")) {
+        val members = splitTypeArguments (s.substring (1, s.length - 1))
+        if (members.size == 1) typeForm (members.head)
+        else Json.obj ("(,)" -> Json.fromValues (members.map (typeForm)))
+      }
+      else {
+        val idx = s.indexOf ('(')
+        if (idx <= 0 || !s.endsWith (")")) Json.fromString (s)
+        else application (s.substring (0, idx), splitTypeArguments (s.substring (idx + 1, s.length - 1)))
+      }
+    }
+  }
+
+  private def application (head: String, arguments: Seq[String]) : Json =
+    Json.obj ("()" -> Json.fromValues (Json.fromString (head) +: arguments.map (typeForm)))
+
+  /** `p <: b` / `p >: b` at the top level: a bound leaf, parameter first. */
+  private def boundForm (s: String) : Option[Json] =
+    Seq (" <: ", " >: ").view.map (op => (op, splitTopArrow (s, op))).collectFirst {
+      case (op, Seq (p, b)) => Json.obj (op.trim -> Json.arr (typeForm (p), typeForm (b)))
+    }
 
   /** A type reference as typeRef spells it: name plus ( ) type parameters. The
     * surface carries no package here — a bare reference means the referring type's
@@ -944,7 +1016,7 @@ object Drake {
         var valueType = Json.Null
         while (!c.exhausted && !c.atReserved) {
           val t = c.takeText ()
-          if (t.headOption.exists (_.isUpper)) valueType = Json.fromString (parseTypeExpression (t)) else name = parseElementName (t)
+          if (t.headOption.exists (_.isUpper)) valueType = typeForm (t) else name = parseElementName (t)
         }
         c.expect ("[")
         val body = statements (c)
@@ -966,8 +1038,9 @@ object Drake {
 
   /** The factory's valueType is the enclosing type — the drake surface leaves it
     * implicit (drake.dlt CONVENTIONS: `factory` takes no name). */
-  private def factoryValueType (name: String, typeParameters: Seq[String]) : String =
-    if (typeParameters.isEmpty) name else s"$name[${typeParameters.mkString (", ")}]"
+  private def factoryValueType (name: String, typeParameters: Seq[String]) : Json =
+    if (typeParameters.isEmpty) Json.fromString (name)
+    else Json.obj ("()" -> Json.fromValues (Json.fromString (name) +: typeParameters.map (Json.fromString)))
 
   /** Parse a .drake source into its TypeDefinition — the inverse of emit().
     * The plain-type template plus the rule and actor aspects; codec is the remaining
@@ -1024,7 +1097,7 @@ object Drake {
         case "factory"     =>
           // A named value-type follows `factory` only when it is not the enclosing type.
           val valueType =
-            if (c.exhausted || c.atReserved) Json.fromString (factoryValueType (name, typeParameters))
+            if (c.exhausted || c.atReserved) factoryValueType (name, typeParameters)
             else takeValueType (c)
           factory = Factory (
             valueType,

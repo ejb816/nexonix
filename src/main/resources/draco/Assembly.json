@@ -10,12 +10,22 @@
       {
         "kind": "Fixed",
         "name": "members",
-        "valueType": "Seq[TypeName]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "TypeName"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "bindings",
-        "valueType": "Seq[Binding]"
+        "valueType": {
+          "()": [
+            "Seq",
+            "Binding"
+          ]
+        }
       },
       {
         "kind": "Fixed",
@@ -30,7 +40,12 @@
         {
           "kind": "Parameter",
           "name": "members",
-          "valueType": "Seq[TypeName]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "TypeName"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
@@ -41,7 +56,12 @@
         {
           "kind": "Parameter",
           "name": "bindings",
-          "valueType": "Seq[Binding]",
+          "valueType": {
+            "()": [
+              "Seq",
+              "Binding"
+            ]
+          },
           "value": {
             ".": [
               "Seq",
