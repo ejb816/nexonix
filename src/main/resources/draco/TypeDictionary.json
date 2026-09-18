@@ -23,8 +23,7 @@
         "kind": "Fixed",
         "name": "elementTypes",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "TypeDefinition"
           ]
         }
@@ -51,8 +50,7 @@
           "kind": "Fixed",
           "name": "elementTypes",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "TypeDefinition"
             ]
           },
@@ -67,8 +65,7 @@
           "kind": "Fixed",
           "name": "kvMap",
           "valueType": {
-            "()": [
-              "Map",
+            "{}": [
               "TypeName",
               "TypeDefinition"
             ]

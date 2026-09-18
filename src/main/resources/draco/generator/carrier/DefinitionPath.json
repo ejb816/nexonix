@@ -13,8 +13,7 @@
         "kind": "Fixed",
         "name": "roots",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "URI"
           ]
         }
@@ -23,8 +22,7 @@
         "kind": "Dynamic",
         "name": "sources",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "URL"
           ]
         },
@@ -40,8 +38,7 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": {
-              "()": [
-                "Seq",
+              "[]": [
                 "URL"
               ]
             },
@@ -85,8 +82,7 @@
             "kind": "Local",
             "name": "found",
             "valueType": {
-              "()": [
-                "Seq",
+              "[]": [
                 "URL"
               ]
             },
@@ -129,16 +125,12 @@
           "kind": "Parameter",
           "name": "roots",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "URI"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         }
       ]
@@ -148,8 +140,7 @@
         "kind": "Fixed",
         "name": "hostRoots",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "URI"
           ]
         },

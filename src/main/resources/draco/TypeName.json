@@ -16,8 +16,7 @@
         "kind": "Fixed",
         "name": "namePackage",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "String"
           ]
         }
@@ -26,8 +25,7 @@
         "kind": "Fixed",
         "name": "typeParameters",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "Json"
           ]
         }
@@ -56,32 +54,24 @@
           "kind": "Parameter",
           "name": "namePackage",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "String"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         },
         {
           "kind": "Parameter",
           "name": "typeParameters",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Json"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         }
       ],
@@ -96,8 +86,7 @@
           "kind": "Fixed",
           "name": "namePackage",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "String"
             ]
           },
@@ -107,8 +96,7 @@
           "kind": "Fixed",
           "name": "typeParameters",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Json"
             ]
           },

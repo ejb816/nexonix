@@ -21,8 +21,7 @@
         "kind": "Fixed",
         "name": "primeSequence",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "Int"
           ]
         }
@@ -31,8 +30,7 @@
         "kind": "Fixed",
         "name": "naturalSequence",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "Int"
           ]
         }
@@ -41,8 +39,7 @@
         "kind": "Fixed",
         "name": "compositeSequence",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "Int"
           ]
         }
@@ -64,8 +61,7 @@
           "kind": "Fixed",
           "name": "primeSequence",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Int"
             ]
           },
@@ -80,8 +76,7 @@
           "kind": "Fixed",
           "name": "naturalSequence",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Int"
             ]
           },
@@ -106,8 +101,7 @@
           "kind": "Fixed",
           "name": "compositeSequence",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Int"
             ]
           },

@@ -6,7 +6,8 @@ import io.circe.Json
   * TypeElement's `value` (drake.dlt VALUE-TYPES): a string is the type's text as
   * authored, host-opaque; an object is a TYPE-FORM TREE in the expression-tree
   * convention — Atomic a string leaf, Objective `{"(,)": [...]}`, Parametric
-  * `{"()": [F, A ...]}` (Seq / Set / Map included), Morphic `{"->": [S, T]}` binary
+  * `{"()": [F, A ...]}`, the collection brackets `{"[]": [T]}` and `{"{}": [T]}` /
+  * `{"{}": [K, V]}` (neutral — no host head, 2026-09-18), Morphic `{"->": [S, T]}` binary
   * and right-associative, the bounds `{"<:": [p, b]}` / `{">:": [p, b]}` parameter
   * first. The drake parser trees the four forms since 2026-09-17; a string leaf
   * inside a tree is still host text (the `mut {T}` tail is the one the corpus keeps).
@@ -29,8 +30,8 @@ object TypeForm {
     if (valueType == null || valueType.isNull) ""
     else valueType.asString.getOrElse (neutral (valueType))
 
-  /** drake's own spelling of a tree: `[T]` `{T}` `{K, V}` for the three collection
-    * applications, `F(A, B)` otherwise, `(A, B)` a tuple, `S -> T` an arrow with a
+  /** drake's own spelling of a tree: `[T]` `{T}` `{K, V}` for the bracket nodes,
+    * `F(A, B)` an application, `(A, B)` a tuple, `S -> T` an arrow with a
     * Morphic LEFT operand parenthesized (the arrow groups to the right, so only a
     * left-nested one needs them), `p <: b` / `p >: b` the bounds. String leaves stay
     * verbatim — they are host text, and only the surface knows how to respell them. */
@@ -38,13 +39,9 @@ object TypeForm {
     case None                              => text (valueType)
     case Some (("->", Vector (s, t)))      => s"${morphicOperand (s)} -> ${neutral (t)}"
     case Some (("(,)", members))           => members.map (neutral).mkString ("(", ", ", ")")
-    case Some (("()", f +: arguments))     =>
-      (text (f), arguments.map (neutral)) match {
-        case ("Seq", Seq (a))    => s"[$a]"
-        case ("Set", Seq (a))    => s"{$a}"
-        case ("Map", Seq (k, v)) => s"{$k, $v}"
-        case (head, as)          => s"$head(${as.mkString (", ")})"
-      }
+    case Some (("[]", Vector (a)))         => s"[${neutral (a)}]"
+    case Some (("{}", members))            => members.map (neutral).mkString ("{", ", ", "}")
+    case Some (("()", f +: arguments))     => s"${text (f)}(${arguments.map (neutral).mkString (", ")})"
     case Some ((op @ ("<:" | ">:"), Vector (p, b))) => s"${neutral (p)} $op ${neutral (b)}"
     case Some ((op, _)) => sys.error (s"TypeForm.neutral: not a type form: '$op' in ${valueType.noSpaces}")
   }

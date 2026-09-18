@@ -16,8 +16,7 @@
         "kind": "Fixed",
         "name": "elementTypeNames",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "String"
           ]
         }
@@ -47,16 +46,12 @@
           "kind": "Parameter",
           "name": "elementTypeNames",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "String"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         },
         {

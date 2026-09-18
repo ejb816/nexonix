@@ -171,6 +171,13 @@ for the definition that will replace it.
 
 ### Changed
 
+- **The collection sugar is carried neutrally.** `[T]`, `{T}` and `{K, V}` parse to `{"[]": [T]}` and
+  `{"{}": [...]}` — the bracket is the node key — instead of Seq, Set and Map applications, and the `[]`
+  and `{}` value defaults to `{"[]": []}` / `{"{}": []}` instead of a `Seq.empty` path. No host name
+  enters the carrier for a collection; the Scala target alone spells `Seq[T]`, `Set[T]`, `Map[K, V]` and
+  `Seq.empty`, in one function each. The drake surface is unchanged; 20 JSON definitions re-encode, and
+  the renderer contract gains a `collection` slot. (2026-09-18)
+
 - **Lazy by default, step 4: the actor-minting factory.** `factory ActorType` is a factory, so its
   parameter is now by-name too: `def actorType(_consumer: => ActorRef[M])`, with `lazy val consumer =
   _consumer` as the minted actor's first member, which the action bodies read per message under the bare

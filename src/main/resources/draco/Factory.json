@@ -27,32 +27,24 @@
           "kind": "Parameter",
           "name": "parameters",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Parameter"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         },
         {
           "kind": "Parameter",
           "name": "body",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "BodyElement"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         }
       ],
@@ -67,8 +59,7 @@
           "kind": "Fixed",
           "name": "parameters",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Parameter"
             ]
           },
@@ -78,8 +69,7 @@
           "kind": "Fixed",
           "name": "body",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "BodyElement"
             ]
           },

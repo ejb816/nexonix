@@ -341,8 +341,10 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |""".stripMargin
     val parsed = Drake.parse(authored)
     val Seq(names, handlers, curried) = parsed.dracoAspect.elements.map(_.valueType)
-    assert(names == Json.obj("()" -> Json.arr(Json.fromString("Seq"), Json.fromString("String"))), names.noSpaces)
-    assert(handlers == Json.obj("()" -> Json.arr(Json.fromString("Map"), Json.fromString("String"),
+    // The collection sugar is carried NEUTRALLY: the bracket is the node key, and no
+    // host head (Seq, Map) enters the carrier (2026-09-18).
+    assert(names == Json.obj("[]" -> Json.arr(Json.fromString("String"))), names.noSpaces)
+    assert(handlers == Json.obj("{}" -> Json.arr(Json.fromString("String"),
       Json.obj("->" -> Json.arr(Json.obj("(,)" -> Json.arr(Json.fromString("Int"), Json.fromString("Int"))), Json.fromString("Unit"))))),
       handlers.noSpaces)
     assert(curried == Json.obj("->" -> Json.arr(Json.fromString("Int"), Json.obj("->" -> Json.arr(Json.fromString("Int"), Json.fromString("Int"))))),
@@ -433,7 +435,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
           (rp, key, source.getOrElse(key, "<absent>"), roundTrip.getOrElse(key, "<absent>"))
       }
     }
-    val emptyCollection = Set("\"Seq()\"", "\"Set()\"", "\"Seq.empty\"", "\"Set.empty\"", """{".":["Seq","empty"]}""", """{".":["Set","empty"]}""")
+    val emptyCollection = Set("\"Seq()\"", "\"Set()\"", "\"Seq.empty\"", "\"Set.empty\"", """{".":["Seq","empty"]}""", """{".":["Set","empty"]}""", """{"[]":[]}""", """{"{}":[]}""")
     val byKind = losses.groupBy { case (_, key, was, now) =>
       if (key.endsWith(".value") && emptyCollection.contains(was) && emptyCollection.contains(now)) "empty-collection spelling"
       else if (key.endsWith(".value")) "expression form (string vs tree)"

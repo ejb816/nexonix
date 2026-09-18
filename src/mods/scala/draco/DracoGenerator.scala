@@ -104,6 +104,10 @@ object DracoGenerator extends App {
             case "if"       => s"if (${args(0)}) ${args(1)} else ${args(2)}"
             case "="        => s"${args(0)} = ${args(1)}"
             case "(,)"      => args.mkString("(", ", ", ")")
+            // The neutral collection literals (drake.dlt VALUE-TYPES, 2026-09-18): the
+            // ScalaTarget alone names Seq and Set.
+            case "[]"       => if (args.isEmpty) "Seq.empty" else s"Seq(${args.mkString(", ")})"
+            case "{}"       => if (args.isEmpty) "Set.empty" else s"Set(${args.mkString(", ")})"
             // "++" (drake.dlt CONCATENATION) keeps its spelling: Scala's `++` on a String
             // demands a String operand, where `+` would coerce anything to text.
             case "*" | "==" | "!=" | "||" | "++" => args.mkString(s" $op ")
@@ -179,7 +183,7 @@ object DracoGenerator extends App {
     else Json.fromString(scalaTypeExpression(valueType.text))
 
   /** The ScalaTarget spelling of a type-form TREE: `F[A, B]` for every application
-    * (Seq / Set / Map included — the neutral sugar is the surface's), `(A, B)` a tuple,
+    * (`Seq[T]` / `Set[T]` / `Map[K, V]` for the bracket nodes), `(A, B)` a tuple,
     * `S => T` an arrow with a Morphic left operand parenthesized, `p <: b` a bound; a
     * string leaf is host text and goes through scalaTypeExpression as before. */
   private def scalaType (form: Json) : String = TypeForm.node(form) match {
@@ -188,6 +192,11 @@ object DracoGenerator extends App {
       val left = scalaType(s)
       s"${if (TypeForm.node(s).exists(_._1 == "->")) s"($left)" else left} => ${scalaType(t)}"
     case Some(("(,)", members))        => members.map(scalaType).mkString("(", ", ", ")")
+    // The bracket nodes carry the collection sugar with no host head; this is the one
+    // place `Seq`, `Set` and `Map` are named for a tree (2026-09-18).
+    case Some(("[]", Vector(a)))       => s"Seq[${scalaType(a)}]"
+    case Some(("{}", Vector(a)))       => s"Set[${scalaType(a)}]"
+    case Some(("{}", Vector(k, v)))    => s"Map[${scalaType(k)}, ${scalaType(v)}]"
     case Some(("()", f +: arguments))  => s"${f.text}[${arguments.map(scalaType).mkString(", ")}]"
     case Some((op @ ("<:" | ">:"), Vector(p, b))) => s"${scalaType(p)} $op ${scalaType(b)}"
     case Some((op, _)) => sys.error(s"DracoGenerator.scalaType: not a type form: '$op' in ${form.noSpaces}")

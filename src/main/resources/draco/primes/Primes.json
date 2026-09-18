@@ -109,8 +109,7 @@
         "kind": "Dynamic",
         "name": "composites",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "Int"
           ]
         },
@@ -119,8 +118,7 @@
             "kind": "Parameter",
             "name": "primes",
             "valueType": {
-              "()": [
-                "Seq",
+              "[]": [
                 "Int"
               ]
             }
@@ -131,8 +129,7 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": {
-              "()": [
-                "Seq",
+              "[]": [
                 "Int"
               ]
             },
@@ -174,8 +171,7 @@
         "kind": "Dynamic",
         "name": "primesFromComposites",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "Int"
           ]
         },
@@ -184,8 +180,7 @@
             "kind": "Parameter",
             "name": "composites",
             "valueType": {
-              "()": [
-                "Seq",
+              "[]": [
                 "Int"
               ]
             }
@@ -196,8 +191,7 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": {
-              "()": [
-                "Seq",
+              "[]": [
                 "Int"
               ]
             },
@@ -239,8 +233,7 @@
         "kind": "Dynamic",
         "name": "nPrimes",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "Int"
           ]
         },
@@ -256,8 +249,7 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": {
-              "()": [
-                "Seq",
+              "[]": [
                 "Int"
               ]
             },

@@ -24,8 +24,7 @@
         "kind": "Fixed",
         "name": "kvMap",
         "valueType": {
-          "()": [
-            "Map",
+          "{}": [
             "K",
             "V"
           ]
@@ -35,8 +34,7 @@
         "kind": "Dynamic",
         "name": "removed",
         "valueType": {
-          "()": [
-            "Map",
+          "{}": [
             "K",
             "V"
           ]
@@ -54,8 +52,7 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": {
-              "()": [
-                "Map",
+              "{}": [
                 "K",
                 "V"
               ]
@@ -73,8 +70,7 @@
         "kind": "Dynamic",
         "name": "updated[V1 >: V]",
         "valueType": {
-          "()": [
-            "Map",
+          "{}": [
             "K",
             "V1"
           ]
@@ -98,8 +94,7 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": {
-              "()": [
-                "Map",
+              "{}": [
                 "K",
                 "V1"
               ]

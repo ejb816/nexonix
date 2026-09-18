@@ -26,16 +26,12 @@
           "kind": "Parameter",
           "name": "domains",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "DomainType"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         }
       ],
@@ -44,8 +40,7 @@
           "kind": "Fixed",
           "name": "kvMap",
           "valueType": {
-            "()": [
-              "Map",
+            "{}": [
               "DomainType",
               "TypeDictionary"
             ]

@@ -1,0 +1,49 @@
+# The collection sugar is carried neutrally — accepted by Dev on 2026-09-18 ("Accept, build the encoding
+# fix"), on 374f168 (623 / 44 green).
+#
+# ONE CONCEPT: the drake surface never says Seq, Set or Map — `Dictionary.drake` spells `{K, V1}` — but
+# the parser (2026-09-16) encoded the sugar as Seq / Set / Map APPLICATIONS, `{"()": ["Map","K","V1"]}`, a
+# host head in the normative corpus. Dev's reading: the bracket IS the form — `{"{}": ["K","V1"]}`. So:
+#   `[T]`      -> {"[]": [T]}          `{T}` -> {"{}": [T]}       `{K, V}` -> {"{}": [K, V]}
+#   `[]` value -> {"[]": []}           `{}` value -> {"{}": []}   (was a `Seq.empty` path node)
+# Parser (typeForm, leafValue), emitter (drakeType, expression), TypeForm.neutral, engine (scalaType — the
+# ONE place Seq/Set/Map are named for a tree — and expression), SourceContract (a `collection` slot on
+# SourceTemplates, both template sets, the mirror renderer; three new sample trees in SourceContractTest).
+# The Seq/Set/Map sugar cases are REMOVED from the `()` renderers, so a Seq head now renders `Seq(T)` as any
+# application — the encoding is unambiguous. DrakeParseTest's structural type-form test pins the new nodes;
+# its empty-collection normalizer admits them.
+#
+# OUT OF SCOPE, deliberately: Dictionary's derivation `from {K, V}` still comes back as a foreign TypeName
+# named "Map" (foreignRef / foreignReference) — a REFERENCE, not a type form; it belongs to the scratch-module
+# discussion (a bare reference into the empty name path). The string path (typeExpression /
+# scalaTypeExpression) for the 11 drake-less mods definitions and `mut {T}` is unchanged.
+#
+# CORPUS: re-encoded by a Python walk (valueType / typeParameters subtrees for the heads, value subtrees
+# for the empty path) — NOT the compiled parser, which still writes the old encoding. Safe because
+# json.dumps(indent=2) reproduces 171 of 172 corpus files byte for byte (TupleFact.json is the exception
+# and carries none of this). Measured: 78 collection heads + 22 empty values in 20 files (the heads concentrate: TypeElement.json holds the twelve kinds).
+# A VALUE call `Seq(msg)` (`session.insert(Seq(msg): _*)`) is a `()` node in value position and was NOT
+# rewritten — the head rewrite ran only inside type-form subtrees.
+#
+# RUN: expected 623 tests / 44 suites, all green; every headline unchanged (surface losses 5; GEN MAP 28/20;
+# scenario 23 clean — ScenarioGenTest asserts json == parse(drake) exactly, so this is also the test that
+# the Python encoding equals the new parser's, key for key).
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-18-1633 | sed '1d' > /tmp/msg && git add -A -- src CHANGELOG.md draco-git-record/git-record-2026-09-18-1633 && git commit -F /tmp/msg -- src CHANGELOG.md draco-git-record/git-record-2026-09-18-1633 && git push
+
+--- MESSAGE ---
+The collection sugar is carried neutrally: the bracket is the node, and no host head enters the corpus
+
+`[T]`, `{T}` and `{K, V}` parse to `{"[]": [T]}` and `{"{}": [...]}` rather than to Seq, Set and Map
+applications, and the `[]` and `{}` value defaults to `{"[]": []}` and `{"{}": []}` rather than a
+`Seq.empty` path. The drake surface never named those hosts' types; the parser's 2026-09-16 encoding
+did, and Dev's reading of Dictionary's `{K, V1}` slot corrected it. The Scala target alone spells
+`Seq[T]`, `Set[T]`, `Map[K, V]` and `Seq.empty`, in one function each, and the renderer contract gains
+a `collection` slot so the three expression renderers agree. Twenty definitions re-encode; no
+drake file moves. The remaining host names in the carrier — the leaves, and the heads with no drake
+form yet, Option first — each need a target-neutral representation of their own.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

@@ -53,6 +53,8 @@ object Drake {
             case "\\"       => s"\\${args.init.mkString(" ")} -> ${args.last}"
             case "if"       => s"if ${args(0)} then ${args(1)} else ${args(2)}"
             case "(,)"      => args.mkString("(", ", ", ")")
+            case "[]"       => args.mkString("[", ", ", "]")   // a sequence literal, `[]` when empty
+            case "{}"       => args.mkString("{", ", ", "}")   // a set literal
             case "="        => s"${args(0)}:${args(1)}"
             case "*" | "==" | "!=" | "||" | "++" => args.mkString(s" $op ")
             case _          => sys.error(s"Drake.expression: unknown operator '$op' in ${value.noSpaces}")
@@ -176,13 +178,9 @@ object Drake {
       val left = drakeType(s)
       s"${if (TypeForm.node(s).exists(_._1 == "->")) s"($left)" else left} -> ${drakeType(t)}"
     case Some(("(,)", members))        => members.map(drakeType).mkString("(", ", ", ")")
-    case Some(("()", f +: arguments))  =>
-      (f.text, arguments.map(drakeType)) match {
-        case ("Seq", Seq(a))    => s"[$a]"
-        case ("Set", Seq(a))    => s"{$a}"
-        case ("Map", Seq(k, v)) => s"{$k, $v}"
-        case (head, as)         => s"$head(${as.mkString(", ")})"
-      }
+    case Some(("[]", Vector(a)))       => s"[${drakeType(a)}]"
+    case Some(("{}", members))         => members.map(drakeType).mkString("{", ", ", "}")
+    case Some(("()", f +: arguments))  => s"${f.text}(${arguments.map(drakeType).mkString(", ")})"
     case Some((op @ ("<:" | ">:"), Vector(p, b))) => s"${drakeType(p)} $op ${drakeType(b)}"
     case Some((op, _)) => sys.error(s"Drake.emit: not a type form: '$op' in ${form.noSpaces}")
   }
@@ -629,8 +627,8 @@ object Drake {
     * tail, isObject = drake-native). */
   private def leafValue (rendered: String) : Json = rendered match {
     case ""    => Json.Null
-    case "[]"  => Json.obj ("." -> Json.arr (Json.fromString ("Seq"), Json.fromString ("empty")))
-    case "{}"  => Json.obj ("." -> Json.arr (Json.fromString ("Set"), Json.fromString ("empty")))
+    case "[]"  => Json.obj ("[]" -> Json.arr ())   // the empty sequence, neutral (2026-09-18)
+    case "{}"  => Json.obj ("{}" -> Json.arr ())   // the empty set
     case other => Json.fromString (other)
   }
 
@@ -847,7 +845,7 @@ object Drake {
   /** A drake type expression as a TYPE-FORM TREE (drake.dlt VALUE-TYPES; TypeForm for
     * the encoding). Read outside-in: a top-level arrow is Morphic and groups to the
     * RIGHT (`A -> B -> C` is A -> (B -> C), Haskell's); a top-level bound is its leaf;
-    * `[T]` / `{T}` / `{K, V}` are the Seq / Set / Map applications; a parenthesized
+    * `[T]` / `{T}` / `{K, V}` are the bracket nodes `[]` / `{}` (neutral, no host head); a parenthesized
     * list is Objective, a parenthesized single member the arrow slot's wrapper;
     * `F(A, B)` applies; a bare name is Atomic and stays the string it is. The one
     * form still carried as HOST TEXT is `mut {T}` — `mut` belongs to the element,
@@ -859,10 +857,13 @@ object Drake {
     if (arrow.size > 1) Json.obj ("->" -> Json.arr (typeForm (arrow.head), typeForm (arrow.tail.mkString (drakeArrow))))
     else boundForm (s).getOrElse {
       if (s.startsWith ("mut {") && s.endsWith ("}")) Json.fromString (parseTypeExpression (s))
-      else if (s.startsWith ("[") && s.endsWith ("]")) application ("Seq", Seq (s.substring (1, s.length - 1)))
+      // The collection sugar is carried NEUTRALLY (2026-09-18): the bracket is the node
+      // key — `[T]` is {"[]": [T]}, `{T}` / `{K, V}` are {"{}": [...]} at two arities —
+      // and no target's name (Seq, Set, Map) enters the carrier; each target spells it.
+      else if (s.startsWith ("[") && s.endsWith ("]")) Json.obj ("[]" -> Json.arr (typeForm (s.substring (1, s.length - 1))))
       else if (s.startsWith ("{") && s.endsWith ("}")) {
         val members = splitTypeArguments (s.substring (1, s.length - 1))
-        application (if (members.size == 1) "Set" else "Map", members)
+        Json.obj ("{}" -> Json.fromValues (members.map (typeForm)))
       }
       else if (s.startsWith ("(") && s.endsWith (")")) {
         val members = splitTypeArguments (s.substring (1, s.length - 1))

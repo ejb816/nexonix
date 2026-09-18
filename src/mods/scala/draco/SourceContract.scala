@@ -30,6 +30,11 @@ trait SourceTemplates {
   /** Render a `\` (lambda) node from its already-rendered params and body. Resists
     * pure templating: Scala parenthesises a multi-param list but not a single param. */
   def lambda (params: Seq[String], body: String) : String
+
+  /** Render a collection literal — the `[]` (sequence) or `{}` (set) node with its
+    * already-rendered elements, possibly none. Neutral in the carrier (drake.dlt
+    * VALUE-TYPES, 2026-09-18); only the target names Seq or Set. */
+  def collection (bracket: String, elements: Seq[String]) : String
 }
 
 /** The language-invariant traversal. Recurses operands, dispatches on the operator;
@@ -51,6 +56,7 @@ object ExpressionRenderer {
             case "*" | "==" | "!=" => args.mkString(s" $op ")
             case "->"       => args.mkString(t.arrow)
             case "if"       => t.conditional(args(0), args(1), args(2))
+            case "[]" | "{}" => t.collection(op, args)
             case "\\"       => t.lambda(args.init, args.last)
             case _          => sys.error(s"ExpressionRenderer: unknown operator '$op' in ${value.noSpaces}")
           }
@@ -69,6 +75,10 @@ object ScalaTemplates extends SourceTemplates {
     val rendered = if (params.size == 1) params.head else params.mkString("(", ", ", ")")
     s"$rendered => $body"
   }
+  def collection (bracket: String, elements: Seq[String]) : String = {
+    val head = if (bracket == "[]") "Seq" else "Set"
+    if (elements.isEmpty) s"$head.empty" else s"$head(${elements.mkString(", ")})"
+  }
 }
 
 /** Drake token set — reproduces `Drake.expression`. */
@@ -78,4 +88,6 @@ object DrakeTemplates extends SourceTemplates {
     s"if $cond then $thenBranch else $elseBranch"
   def lambda (params: Seq[String], body: String) : String =
     s"\\${params.mkString(" ")} -> $body"
+  def collection (bracket: String, elements: Seq[String]) : String =
+    elements.mkString(bracket.substring(0, 1), ", ", bracket.substring(1))
 }

@@ -19,8 +19,7 @@
         "kind": "Fixed",
         "name": "variables",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "Variable"
           ]
         }
@@ -29,8 +28,7 @@
         "kind": "Fixed",
         "name": "conditions",
         "valueType": {
-          "()": [
-            "Seq",
+          "[]": [
             "Condition"
           ]
         }
@@ -44,32 +42,24 @@
           "kind": "Parameter",
           "name": "variables",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Variable"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         },
         {
           "kind": "Parameter",
           "name": "conditions",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Condition"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         }
       ],
@@ -78,8 +68,7 @@
           "kind": "Fixed",
           "name": "variables",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Variable"
             ]
           },
@@ -89,8 +78,7 @@
           "kind": "Fixed",
           "name": "conditions",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "Condition"
             ]
           },

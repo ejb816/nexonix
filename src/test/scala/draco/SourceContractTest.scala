@@ -28,6 +28,9 @@ class SourceContractTest extends AnyFunSuite {
     op("==", s("x"), s("y")),
     op("!=", s("x"), s("y")),
     op("()", s("f"), op("\\", s("j"), op("if", s("cond"), s("j"), s("k")))),  // nested
+    op("[]"),                                                           // empty sequence literal
+    op("[]", s("a"), s("b")),                                           // sequence literal
+    op("{}", s("a")),                                                   // set literal
     s("\"Primes\""),                                                    // string literal leaf
     s("plain")                                                          // host-opaque leaf
   )

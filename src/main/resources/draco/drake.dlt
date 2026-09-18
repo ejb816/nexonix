@@ -46,9 +46,9 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   right-hand column is the host text a STRING leaf still carries, which after the corpus
   re-canonicalizes is only `mut {T}` (`mut` belongs to the element — agreed 2026-09-13, not yet built —
   so its type stays host text until it does).
-  [<T>]            Seq[<T>]
-  {<T>}            Set[<T>]
-  {<K>, <V>}       {<K>, <V>}          MAP — neutral in the JSON too, carried through unchanged
+  [<T>]            {"[]": [<T>]}       the three COLLECTION rows are neutral in the JSON (2026-09-18):
+  {<T>}            {"{}": [<T>]}       the bracket is the node key, at one arity a set and at two a
+  {<K>, <V>}       {"{}": [<K>, <V>]}  map; Seq / Set / Map are spelled by the Scala target alone
   mut {<T>}        mutable.Set[<T>]
   <F>(<A> ...)     <F>[<A> ...]        type application
   (<A>, <B>)       (<A>, <B>)          tuple, unchanged
@@ -62,12 +62,16 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   drake type name resolves through draco's own dictionary even when it happens to coincide with the host's
   spelling — is the wrap-type direction, one tier below draco.rete's wrapping of host library types.
   Coincidence of spelling is not identity of term.
-  THE MAP ROW IS THE FIRST ONE ACROSS. Its JSON *is* the drake form, and `Map[K, V]` is produced by the
-  Scala target alone — nothing upstream of emission names it, and nothing downstream of that one function
-  ever sees a brace. It inverts the direction the other rows still run: those put the HOST's spelling in
-  the normative corpus and make every other target pay to undo it. The rest follow one constructor at a
-  time, and when the set crosses, BOTH brace arities are carried through and the case disappears from the
-  two converters entirely — which is the state the whole table is headed for.
+  THE COLLECTION ROWS ARE ACROSS (2026-09-18; the map row was first, 0acf2da). Their JSON *is* the drake
+  form — `{"[]": [T]}`, `{"{}": [T]}`, `{"{}": [K, V]}` — and `Seq[T]` / `Set[T]` / `Map[K, V]` are produced
+  by the Scala target alone, in the one function that spells a tree for it. Between 2026-09-16 and
+  2026-09-18 the parser carried them as Seq / Set / Map APPLICATIONS, a host head in the normative corpus
+  that drake itself never wrote; Dev's reading of Dictionary's `{K, V1}` slot corrected it. The same holds
+  in VALUE position: `[]` and `{}` are `{"[]": []}` / `{"{}": []}`, a sequence or set literal with its
+  elements, and each target spells the empty one (`Seq.empty`). The rows that still put the HOST's
+  spelling in the corpus are the leaves (String, Int, Json, URI …) and the heads with no drake form yet
+  (Option → Presence first; ActorRef, Consumer, LazyList, java.util.List); each needs a target-neutral
+  representation of its own, one at a time.
 
 EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   A <value> emits to JSON in one of two forms; the value's own JSON structure IS the
@@ -212,7 +216,7 @@ CONVENTIONS
                    actor-minting factory, whose value-type is what tells the target to mint an actor rather
                    than an instance of the type.
   [] | {}          in the VALUE position of a name-valueType-value line: the empty-collection default —
-                   [] = Seq.empty, {} = Set.empty. Surface form only; the JSON value carries the host
+                   [] = Seq.empty, {} = Set.empty. Neutral since 2026-09-18 — {"[]": []} / {"{}": []} in the JSON; before, the value carried the host
                    expression (the {".": ["Seq","empty"]} tree, or a legacy "Seq()" string).
   loc <name> <value-type> <value>   a factory/method LOCAL binding -> { kind=Local }: emits a strict
                    `val <name>: <value-type> = <value>`, NOT a declared element (no trait member, no

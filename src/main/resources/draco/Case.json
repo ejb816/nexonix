@@ -34,16 +34,12 @@
           "kind": "Parameter",
           "name": "body",
           "valueType": {
-            "()": [
-              "Seq",
+            "[]": [
               "BodyElement"
             ]
           },
           "value": {
-            ".": [
-              "Seq",
-              "empty"
-            ]
+            "[]": []
           }
         },
         {
