@@ -31,6 +31,12 @@ for the definition that will replace it.
 
 ### Added
 
+- **`Presence(T)`, `Present(T)` and `Absent(T)` — draco's own option, the first members of `draco.drake`.**
+  A parameterized sealed family authored drake-first: `Presence` with `modules [Present, Absent]`, `Present`
+  carrying a `value`, `Absent` bare. The first parameterized family the generator emits; it carries no host
+  codec (a discriminated union over `Presence[T]` cannot name an `Encoder[T]`), and a `Null` whose parameter is
+  typed by the type's own variable instantiates at `Any`. `fold` and `ifThenElse` follow as dyns. (2026-09-17)
+
 - **`DomainLineOf`, the first member of the transform domain.** `draco.gendrake.DomainLineOf from
   draketarget.DomainLine` takes a `TypeDefinition` and constructs the target type from the definition's
   own domain pointer — the mapping factory to `DomainLine`'s substitution string, in the shape a

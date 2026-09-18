@@ -1,0 +1,44 @@
+{
+  "typeName": {
+    "name": "Absent",
+    "namePackage": [
+      "draco",
+      "drake"
+    ],
+    "typeParameters": [
+      "T"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Presence",
+        "namePackage": [
+          "draco",
+          "drake"
+        ],
+        "typeParameters": [
+          "T"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": {
+        "()": [
+          "Absent",
+          "T"
+        ]
+      }
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Drake",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  }
+}

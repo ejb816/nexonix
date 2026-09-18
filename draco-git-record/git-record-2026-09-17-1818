@@ -1,0 +1,58 @@
+# Presence as a family — step 1 of the runtime build proposal Dev accepted on 2026-09-17 ("Accept, Presence
+# as a family first"). Three definitions in draco.drake, authored DRAKE-FIRST and the JSON written by the
+# compiled parser:
+#   Presence(T)                    modules [Present, Absent]                 (root; rooted to DracoType)
+#   Present(T) from Presence(T)    elements fix value T; factory par value T, body fix value T _value
+#   Absent(T)  from Presence(T)    factory (bare)
+#   Drake.drake                    types [Presence Present Absent]           (the runtime domain lists them)
+#
+# THE FIRST PARAMETERIZED SEALED FAMILY the generator emits, which is exactly what this step was for. Run
+# against the compiled engine (classes + an OVERLAY of src/main/resources, so the derivation chain finds
+# Presence.json rather than a stub), the family came out with three defects, two of them the engine's:
+#   1. the root's discriminated codec named a `T` no object can name (`as[T]`, `x.value.asJson`), and the
+#      members' Codec.sub named `Presence` without its argument. FIX (engine): a parameterized family has
+#      NO host codec — codecDeclaration returns "" for a root with type parameters and for a member whose
+#      discriminated parent has them — the rule a parameterized plain type (Value(F)) already lives by.
+#      Presence's codec is the CODEC ASPECT's business, written in drake (agreement item 8); until then the
+#      family is constructible, comparable and projectable, not serializable. No circe import remains.
+#   2. Present's Null was `apply[Nothing](_value = null.asInstanceOf[T])` — T out of scope, and a null cast
+#      to Nothing throws on first touch. FIX (engine): when any factory parameter is typed by one of the
+#      type's own variables (typeVariable: the bound leaf's first operand), Null instantiates at ANY —
+#      `apply[Any](_value = null.asInstanceOf[Any])`. Every existing Null is at Nothing and none mentions
+#      a variable, so no committed line moves.
+#   3. the member companions lacked `with DracoType` / `override` — NOT an engine defect: the compiled
+#      classes' resources had no Presence.json, so chainHits met a typeName-only stub. The overlay fixed
+#      the run; nothing to change.
+# Presence.scala is the overlay output with 1 and 2 hand-applied; the group test decides whether my hand
+# matches the fixed engine. DracoGenTest gates the family as ONE file (sealed), as TypeElement's, with
+# Present/Absent/Presence excluded from the per-type sweep and a `presenceFamily` group test.
+#
+# FIRST RUN (18:34): 617 passed, 1 failed — the group test, as predicted: my hand left a blank line before the
+# codec-less Presence companion's closing brace where the engine emits none; every other line identical.
+# The count is 618 tests, not the ~621 guessed (the per-type gates for the three are fewer than five).
+#
+# Expected: 618 tests / 43 suites (three types x per-type gates + one group test;
+# the run decides), GenDrake 96 of 96, parse scope 98 + 10, surface losses 5 across 108, every other
+# headline unchanged. Read the group test's diff first if anything fails: it is the one place my hand
+# stood in for the engine.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-17-1818 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1818 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-1818 && git push
+
+--- MESSAGE ---
+Presence, Present and Absent are the first members of draco.drake
+
+draco's own option, authored drake-first: `Presence(T)` with `modules [Present, Absent]`, `Present(T)`
+carrying `par value T`, `Absent(T)` bare and parameterized, because variance is a later concept. The
+runtime domain lists them. It is the first parameterized sealed family the generator emits, and the
+generator learned two things from it: a parameterized family carries no host codec, since a
+discriminated union over `Presence[T]` cannot name an `Encoder[T]` and the family's codec is the codec
+aspect's business in drake; and a `Null` whose factory parameter is typed by the type's own variable
+instantiates at `Any`, since `Nothing` has no value to pass. DracoGenTest gates the family as one file,
+as it gates TypeElement's.
+
+Next, as agreed: `fold` as a dyn on Presence defined by dispatch in Present and Absent; then
+lazy-by-default with `now`; then `ifThenElse` as the second dyn.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

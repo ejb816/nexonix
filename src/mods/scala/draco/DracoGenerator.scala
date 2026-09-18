@@ -221,6 +221,14 @@ object DracoGenerator extends App {
     if (idx < 0) name else name.substring(0, idx)
   }
 
+  /** The VARIABLE a type parameter binds: `T` for `T`, `S` for `S <: DomainType` (the
+    * bound leaf's first operand, parameter first). Empty for a form that binds none. */
+  private def typeVariable (parameter: Json) : String = TypeForm.node(parameter) match {
+    case Some((("<:" | ">:"), Vector(p, _))) => p.text
+    case Some(_)                             => ""
+    case None                                => parameter.text.split(" ").head
+  }
+
   /** A TYPE PARAMETER of a TypeName in the target's spelling. Since 2026-09-17 a type
     * parameter is a `Json` on the same terms as a value type — a string is the authored
     * text (all of the corpus today: `T`, `T <: Product`, `(Double, Double)`), a tree a
@@ -1019,12 +1027,21 @@ object DracoGenerator extends App {
 
     // Check for discriminated parent first — intermediate sealed traits (like BodyElement)
     // that derive from a discriminated parent get Codec.sub, not their own discriminated union
+    // A PARAMETERIZED family has no host codec (2026-09-17). A discriminated union over
+    // `Presence[T]` would need an Encoder[T] the object cannot name, and its `Null`
+    // has no T either — the same reason a parameterized plain type (Value[F]) carries
+    // none. Presence's codec is the CODEC ASPECT's business, written in drake, not a
+    // circe instance the host derives; until then the family is codec-less and reads
+    // like Value: constructible, comparable, projectable, not yet serializable.
+    def parameterized (t: TypeDefinition) : Boolean = t.typeName.typeParameters.nonEmpty
     findDiscriminatedParent(td, familyMap) match {
+      case Some(parentName) if familyMap.get(parentName).exists(parameterized) => ""
       case Some(parentName) =>
         // Pattern 3: Codec.sub wiring (includes intermediate sealed traits)
         subtypeCodecDeclaration(td, parentName)
       case None =>
-        if (td.dracoAspect.modules.nonEmpty) {
+        if (td.dracoAspect.modules.nonEmpty && parameterized(td)) ""
+        else if (td.dracoAspect.modules.nonEmpty) {
           // Pattern 2: discriminated union (top-level sealed trait)
           discriminatedCodecDeclaration(td, familyMap)
         } else if (td.dracoAspect.factory.valueType.text.nonEmpty && td.dracoAspect.factory.parameters.nonEmpty) {
@@ -1065,7 +1082,15 @@ object DracoGenerator extends App {
   ) : String = {
     val name = typeName.name + nameSuffix
     val wName = wildcardTypeName(typeName) + nameSuffix
-    val typeParams = if (typeName.typeParameters.isEmpty) "" else s"[${typeName.typeParameters.map(_ => "Nothing").mkString(", ")}]"
+    // `Null` instantiates the type at Nothing — unless a factory parameter is typed by
+    // the type's own variable (`_value: T` on Present[T]): Nothing has no value to pass,
+    // and a null cast to Nothing throws on first touch, so such a type's Null is at Any
+    // with a null Any. Every existing Null is at Nothing; none of them mentions a variable.
+    val variables = typeName.typeParameters.map(typeVariable).filter(_.nonEmpty)
+    def mentionsVariable (text: String) : Boolean =
+      variables.exists(v => text.matches(s"(?s).*\\b${java.util.regex.Pattern.quote(v)}\\b.*"))
+    val instantiation = if (factory.parameters.exists(p => mentionsVariable(p.valueType.text))) "Any" else "Nothing"
+    val typeParams = if (typeName.typeParameters.isEmpty) "" else s"[${typeName.typeParameters.map(_ => instantiation).mkString(", ")}]"
     if (factory.valueType.text.nonEmpty) {
       val allHaveDefaults = factory.parameters.nonEmpty && factory.parameters.forall(p => expression(p.value).nonEmpty)
       if (allHaveDefaults) {
@@ -1073,8 +1098,12 @@ object DracoGenerator extends App {
         // Scala's default-argument resolution provide each one.
         s"lazy val Null: $wName = apply$typeParams()"
       } else {
+        // The type's own variable is not in scope in the object: it reads as the
+        // instantiation chosen above.
+        def instantiated (text: String) : String =
+          variables.foldLeft(text)((t, v) => t.replaceAll(s"\\b${java.util.regex.Pattern.quote(v)}\\b", instantiation))
         val nullArgs = factory.parameters.map { p =>
-          s"    _${p.name} = ${nullValueFor(p.valueType.text, initializer(p.valueType.text, p.value))}"
+          s"    _${p.name} = ${nullValueFor(instantiated(p.valueType.text), initializer(p.valueType.text, p.value))}"
         }
         if (nullArgs.isEmpty) s"lazy val Null: $wName = apply$typeParams()"
         else s"lazy val Null: $wName = apply$typeParams(\n${nullArgs.mkString(",\n")}\n  )"

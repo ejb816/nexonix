@@ -1,2 +1,7 @@
 type Drake from draco Source
 domain draco drake Drake
+  types [
+    Presence
+    Present
+    Absent
+  ]

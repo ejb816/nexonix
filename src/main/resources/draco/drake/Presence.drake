@@ -1,0 +1,6 @@
+type Presence(T)
+  modules [
+    Present
+    Absent
+  ]
+domain draco drake Drake

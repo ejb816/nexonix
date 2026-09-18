@@ -1,17 +1,28 @@
 {
   "typeName": {
-    "name": "Drake",
+    "name": "Presence",
     "namePackage": [
       "draco",
       "drake"
+    ],
+    "typeParameters": [
+      "T"
     ]
   },
   "dracoAspect": {
-    "derivation": [
+    "modules": [
       {
-        "name": "Source",
+        "name": "Present",
         "namePackage": [
-          "draco"
+          "draco",
+          "drake"
+        ]
+      },
+      {
+        "name": "Absent",
+        "namePackage": [
+          "draco",
+          "drake"
         ]
       }
     ]
@@ -23,11 +34,6 @@
         "draco",
         "drake"
       ]
-    },
-    "elementTypeNames": [
-      "Presence",
-      "Present",
-      "Absent"
-    ]
+    }
   }
 }

@@ -1,0 +1,3 @@
+type Absent(T) from Presence(T)
+  factory
+domain draco drake Drake

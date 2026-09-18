@@ -69,7 +69,10 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
     "draco/Variable.json"     -> "TypeElement family member; validated by group test below",
     "draco/Factory.json"      -> "TypeElement family member; validated by group test below",
     "draco/Local.json"        -> "TypeElement family member; validated by group test below",
-    "draco/Case.json"         -> "TypeElement family member; validated by group test below"
+    "draco/Case.json"         -> "TypeElement family member; validated by group test below",
+    "draco/drake/Presence.json" -> "Sealed-trait family root (parameterized); validated by group test below",
+    "draco/drake/Present.json"  -> "Presence family member; validated by group test below",
+    "draco/drake/Absent.json"   -> "Presence family member; validated by group test below"
   )
 
   /** Excluded from per-type *comparison* only — JSON parses test still runs.
@@ -102,6 +105,15 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
     "draco/Factory.json",
     "draco/Local.json",
     "draco/Case.json"
+  )
+
+  /** The Presence family — draco.drake's first members and the first PARAMETERIZED sealed
+   *  family the generator emits (2026-09-17): one file, draco/drake/Presence.scala, as the
+   *  TypeElement family is one file, and for the same reason (sealed). */
+  private val presenceFamily: Seq[String] = Seq(
+    "draco/drake/Presence.json",
+    "draco/drake/Present.json",
+    "draco/drake/Absent.json"
   )
 
   private val perTypeTypes: Seq[Ty] =
@@ -182,6 +194,17 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
   }
 
   // --- TypeElement family: multi-type generation matches TypeElement.scala ---
+
+  test("Presence family: multi-type Generator output matches draco/drake/Presence.scala (whitespace-normalized)") {
+    val tds      = presenceFamily.map(loadTypeDefinition)
+    val genNorm  = normalize(DracoGenerator.generate(tds))
+    val handNorm = normalize(readHandWritten("draco/drake/Presence.scala"))
+    if (genNorm != handNorm) {
+      log.info(s"\n--- Presence family: generated (normalized) ---\n$genNorm")
+      log.info(s"\n--- draco/drake/Presence.scala: hand-written (normalized) ---\n$handNorm")
+      fail(s"Presence family: generated source differs from draco/drake/Presence.scala.\n" + diffReport(handNorm, genNorm))
+    }
+  }
 
   test("TypeElement family: multi-type Generator output matches draco/TypeElement.scala (whitespace-normalized)") {
     val tds      = typeElementFamily.map(loadTypeDefinition)

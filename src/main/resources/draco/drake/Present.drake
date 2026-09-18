@@ -1,0 +1,9 @@
+type Present(T) from Presence(T)
+  elements
+    fix value T
+  factory
+    parameters
+      par value T
+    body
+      fix value T _value
+domain draco drake Drake

@@ -570,6 +570,17 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           the type for the target once, in targetTypes. NEXT: the parser trees the
                                           four forms (VALUE-TYPES above) and the corpus re-canonicalizes from the
                                           drake; then typeParameters, which lives in TypeName's identity.
+  Presence(T) / Present / Absent    <->   IMPLEMENTED (2026-09-17) — draco.drake's first members, the runtime's own
+    (draco's option, not host Option)     sum type: `Presence(T)` with `modules [Present, Absent]`, `Present(T)` carrying
+                                          `par value T`, `Absent(T)` bare and parameterized (variance is the later
+                                          concept). The first PARAMETERIZED sealed family the generator emits, and it
+                                          carries NO host codec: a discriminated union over Presence[T] would need an
+                                          Encoder[T] the companion cannot name, so a parameterized family is codec-less
+                                          as a parameterized plain type (Value(F)) already is — Presence's codec is the
+                                          CODEC ASPECT's business, in drake. A Null whose parameter is typed by the
+                                          type's own variable instantiates at Any, not Nothing. NEXT: `fold` as a dyn
+                                          on Presence, defined by dispatch in Present and Absent; then lazy-by-default
+                                          with `now`; then `ifThenElse` as the second dyn (agreed 2026-09-17).
   the four TYPE FORMS as trees      <->   IMPLEMENTED (2026-09-17). Drake.typeForm reads a value-type slot to a
     (valueType was host text)             tree; Drake emits one back (drakeType); DracoGenerator.targetType spells
                                           it for Scala (`F[A]`, `(A, B)`, `S => T`, a Morphic left operand

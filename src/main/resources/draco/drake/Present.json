@@ -1,0 +1,66 @@
+{
+  "typeName": {
+    "name": "Present",
+    "namePackage": [
+      "draco",
+      "drake"
+    ],
+    "typeParameters": [
+      "T"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Presence",
+        "namePackage": [
+          "draco",
+          "drake"
+        ],
+        "typeParameters": [
+          "T"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "value",
+        "valueType": "T"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": {
+        "()": [
+          "Present",
+          "T"
+        ]
+      },
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "value",
+          "valueType": "T"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "T",
+          "value": "_value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Drake",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  }
+}
