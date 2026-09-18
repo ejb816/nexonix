@@ -3,7 +3,7 @@ package draco.drake
 import draco._
 
 sealed trait Presence[T] extends DracoType {
-  def fold[R](absent: R, present: T => R): R
+  def fold[R](_absent: => R, _present: => T => R): R
 }
 
 object Presence extends App with DracoType {
@@ -14,7 +14,11 @@ object Presence extends App with DracoType {
 
 trait Present[T] extends Presence[T] {
   val value: T
-  def fold[R](absent: R, present: T => R): R = present(value)
+  def fold[R](_absent: => R, _present: => T => R): R = {
+    lazy val absent: R = _absent
+    lazy val present: T => R = _present
+    present(value)
+  }
 }
 
 object Present extends App with DracoType {
@@ -37,7 +41,11 @@ object Present extends App with DracoType {
 }
 
 trait Absent[T] extends Presence[T] {
-  def fold[R](absent: R, present: T => R): R = absent
+  def fold[R](_absent: => R, _present: => T => R): R = {
+    lazy val absent: R = _absent
+    lazy val present: T => R = _present
+    absent
+  }
 }
 
 object Absent extends App with DracoType {

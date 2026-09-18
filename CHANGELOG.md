@@ -171,6 +171,12 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Lazy by default, step 2: method parameters.** A `dyn` parameter is now by-name, arriving as `_x` and
+  bound once to `x` by a `lazy val` prelude the body opens with, so it is evaluated at most once and never
+  if unused; abstract methods carry the same signature, so a Present never evaluates `fold`'s default
+  branch. `now par other Any` on TypeName's `equals` is the first use of the override, where the host's
+  by-value signature must be met. Every method with a parameter regenerates. (2026-09-18)
+
 - **Evaluation is lazy by default; `now` overrides. Step 1: body bindings.** A `fix` or `loc` inside a
   method, action or factory body now renders as a `lazy val`, evaluated at most once on first use, as
   Haskell would. `now` before a member keeps it strict; it rides the element as a Boolean and is a

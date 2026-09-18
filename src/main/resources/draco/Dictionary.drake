@@ -3,20 +3,20 @@ type Dictionary(K, V) from {K, V}
     fix kvMap {K, V}
     dyn removed {K, V} [
       parameters
-        par key K
+        now par key K
       body
         fix value {K, V} kvMap.removed(key)
     ]
     dyn updated(V1 >: V) {K, V1} [
       parameters
-        par key K
-        par value V1
+        now par key K
+        now par value V1
       body
         fix value {K, V1} kvMap.updated(key, value)
     ]
     dyn get Option(V) [
       parameters
-        par key K
+        now par key K
       body
         fix value Option(V) kvMap.get(key)
     ]

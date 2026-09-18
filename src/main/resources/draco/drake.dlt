@@ -309,7 +309,8 @@ EVALUATION  (lazy by default, `now` to override — Haskell's stance, agreed 202
                                         Boolean, elided when false) and applies to fix / mut / loc / par / dyn.
   LANDED IN THREE STEPS, smallest semantic risk first, the corpus needing `now` nowhere (measured 2026-09-17):
     1. body bindings -> lazy val, with `now` itself            (2026-09-17)
-    2. method parameters -> by-name + lazy val prelude          (next)
+    2. method parameters -> by-name + lazy val prelude          (2026-09-18; `now par other Any` on
+                                                                 TypeName.equals, the host's by-value signature)
     3. factory parameters -> by-name                            (after)
 
 BRACKETS  (a construct delimits ITSELF; whitespace is insignificant throughout)
@@ -591,8 +592,12 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
     (EVALUATION)                          factory body renders `lazy val`; `now` before it keeps `val`. TypeElement
                                           gains `now Boolean false` (the binding kinds' factories take it last, so
                                           no caller moves; the Boolean elision rule is new — a false elides). Parser
-                                          and emitter carry the prefix; DrakeParseTest asserts it. Steps 2 and 3
-                                          (parameters) follow.
+                                          and emitter carry the prefix; DrakeParseTest asserts it.
+                                          STEP 2 (2026-09-18): a method parameter is by-name, `_x: => T`, bound once
+                                          by a `lazy val x: T = _x` prelude the body opens with; abstract methods
+                                          carry the same signature, so `fold`'s `absent` is lazy and a Present never
+                                          evaluates it (PresenceTest). First real `now`: TypeName's `equals(other)`
+                                          meets the host's by-value signature. Step 3 (factory parameters) follows.
   Presence(T) / Present / Absent    <->   IMPLEMENTED (2026-09-17) — draco.drake's first members, the runtime's own
     (draco's option, not host Option)     sum type: `Presence(T)` with `modules [Present, Absent]`, `Present(T)` carrying
                                           `par value T`, `Absent(T)` bare and parameterized (variance is the later

@@ -1,0 +1,73 @@
+# Lazy by default, step 2: method parameters — accepted by Dev on 2026-09-18 ("Accept step 2"), on 550a14e.
+#
+# ONE CONCEPT: a `dyn` parameter is CALL-BY-NEED. methodParameters writes `_x: => T` (a default rides along,
+# `_start: => Int = 0`); methodBody opens with a PRELUDE `lazy val x: T = _x` per lazy parameter, so the
+# body reads the bare name and evaluates it at most once — the factory convention (`_name` -> `lazy val
+# name`) applied to methods. A method with a prelude is always a block. Abstract methods carry the same
+# signature (Presence.fold), so implementers match. `now` on a parameter keeps `x: T` and no prelude.
+#
+# FIRST REAL `now`: TypeName's `dyn equals` overrides the host's `equals(that: Any)`, whose parameter is
+# by-value; Scala forbids a by-name override, so TypeName.drake says `now par other Any`. The compiled
+# parser (550a14e) admits `now` only where a binding is, not in a parameters block — the new one does —
+# so the CLI could not write TypeName.json this once and left it EMPTY; restored from HEAD with the one
+# key `"now": true` on `other`, the key the new parser writes, and checked with the compiled emitter
+# (json -> drake reproduces the file) and engine (TypeName.scala unchanged: equals stays strict).
+# The two `_source` parameters (format/Value, json/Value) become `__source` under the uniform rule.
+#
+# TEST: PresenceTest gains "fold's default branch is lazy": `Present(3).fold(sys.error(…), _ + 1)` returns
+# 4, and Absent forces the default exactly once. 622 tests.
+#
+# TWO RUNS, as in step 1. RUN 1: DracoGenTest fails on the definitions with a lazy-parameter method —
+# 12: CLI, ContentSink, Dictionary, TypeLoader, TypeName (hashCode/… no; its OTHER dyns), Presence,
+# Present, Absent, format/Value, format/json/Value, DefinitionPath, Primes — Presence as the family group
+# test. No scenario or mods definition has a parameterized dyn, so ScenarioGenTest and GEN MAP should
+# hold. PASTE the Failed block; I regenerate with the compiled engine over the FULL overlay (main + test
+# resources) and hand RUN 2: 622 tests / 44 suites, all green.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# RUN 1 (10:42): 610 passed, 12 failed — the ten DracoGenTest as predicted, PresenceTest's new laziness test
+# (expected too: it ran against the committed strict fold; I should have said so), and
+# GenerateAndCompileTest's core group, which COMPILES the new output at runtime and found two real defects:
+#   1. `targetTypes` — the entry normalization that rebuilds every element for the target — rebuilt them
+#      WITHOUT `now`, so the flag decoded from JSON was dropped before rendering: TypeName.equals came out
+#      by-name ("method equals overrides nothing"), and step 1's `now` on a binding would have been lost the
+#      same way (no corpus use, so unnoticed). FIX: targetParameter and targetBody carry `_now`.
+#   2. Dictionary implements Scala's own Map methods — get(key), removed(key), updated(key, value) — whose
+#      parameters are by-value ("object creation impossible … K does not match => K"). Same case as equals,
+#      missed because my check looked at method NAMES, not at what the type DERIVES: a type deriving a
+#      foreign type (`from {K, V}`) or defining an explicit `main` meets host signatures. FIX: `now par` on
+#      those four, and on CLI's `main(args)` (App's entry point is by-value). JSON by the fresh compiled
+#      parser, which admits `now` in a parameters block now.
+# Regeneration: the seven flag-free definitions and the Presence family by the compiled engine over a
+# REFRESHED overlay (my first pass reused stale classes and changed nothing — the overlay must be rebuilt
+# from target after every run that recompiles the engine); Dictionary.scala restored from HEAD and
+# TypeName.scala unchanged (every parameter strict, so nothing moves); CLI.scala regenerated, with `main`
+# hand-restored to its strict one-liner, which is what the fixed engine writes for a `now` parameter.
+#
+# RUN 2 (10:56): DID NOT COMPILE — the third target-forced `now`: a Scala method with a by-name parameter
+# cannot be passed where a FUNCTION VALUE is expected (its eta-expansion is `(=> A) => B`, not `A => B`).
+# TypeLoader's `readDefinition` is used as one in its own drake value (`.flatMap(readDefinition)`) and
+# `rooted` by the hand-written engine (`.map(TypeLoader.rooted)`). FIX: `now par url URL`, `now par td
+# TypeDefinition`; their two methods restored to HEAD's strict one-liners (the fixed engine's form). RULE,
+# now three-fold: `now` is required where the target binds the signature — a HOST signature is met
+# (equals, Map ops, main), or the method is USED AS A FUNCTION VALUE. Scanned: TypeLoader's two are the
+# only method-as-function uses in corpus values and hand-written code.
+#
+# RUN 3: expected 622 / 44, all green — the core group compiles, PresenceTest's laziness test passes.
+#
+# COMMIT (after run 2 is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-18-1038 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-1038 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-1038 && git push
+
+--- MESSAGE ---
+Lazy by default, step 2: a method parameter is by-name, bound once by a prelude
+
+A `dyn` parameter arrives as `_x: => T` and the body opens with `lazy val x: T = _x`, so the parameter
+is evaluated at most once, on first use, and never if unused — the factory convention applied to
+methods, and Haskell's call-by-need in Scala's terms. Abstract methods carry the same signature, so
+`fold`'s default branch is lazy in Presence, Present and Absent alike, and PresenceTest shows a Present
+never evaluates it. `now par other Any` on TypeName's `equals` is the override's first use, where the
+host's by-value signature must be met. Every method with a parameter regenerates. Factory parameters
+follow as step 3.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

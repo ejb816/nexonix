@@ -449,10 +449,14 @@ object DracoGenerator extends App {
   ) : String = {
     if (parameters.isEmpty) ""
     else {
+      // LAZY BY DEFAULT (drake.dlt EVALUATION, step 2): a parameter is by-name and arrives as
+      // `_x`, bound call-by-need to `x` by the prelude methodBody writes; `now` keeps the
+      // strict `x: T` — needed where the host's own signature is met (TypeName.equals).
       val params = parameters.map { p =>
         val d = initializer(p.valueType.text, p.value)
         val default = if (d.isEmpty) "" else s" = $d"
-        s"${p.name}: ${p.valueType.text}$default"
+        if (p.now) s"${p.name}: ${p.valueType.text}$default"
+        else s"_${p.name}: => ${p.valueType.text}$default"
       }
       s"(${params.mkString(", ")})"
     }
@@ -539,16 +543,22 @@ object DracoGenerator extends App {
     fullBody: Seq[BodyElement],
     leafValue: String,
     methodIndent: Int = 2,
-    scrutinee: String = ""
+    scrutinee: String = "",
+    parameters: Seq[Parameter] = Seq.empty
   ) : String = {
     // A leaf dyn (`dyn x T expr`) carries its result in its own value field; a block
     // dyn carries it in its body as the element named `value`. Never both.
     val (body, bodyResult) = resultOf(fullBody)
     val value = if (leafValue.nonEmpty) leafValue else bodyResult
     val hasCases = body.exists(_.isInstanceOf[Case])
+    // The call-by-need PRELUDE: each lazy parameter `_x` bound once to `x`, so the body
+    // reads the bare name and evaluates it at most once (drake.dlt EVALUATION, step 2).
+    // A method with a prelude is always a block, however small its body.
+    val prelude = parameters.filterNot(_.now).map(p =>
+      s"${" " * (methodIndent + 2)}lazy val ${p.name}: ${p.valueType.text} = _${p.name}")
     if (body.isEmpty && value.isEmpty) "???"
-    else if (body.isEmpty) value
-    else if (body.size == 1 && value.isEmpty && !hasCases) {
+    else if (prelude.isEmpty && body.isEmpty) value
+    else if (prelude.isEmpty && body.size == 1 && value.isEmpty && !hasCases) {
       // Single statement - just its value (a Unit method's lone effect)
       val v = expression(body.head.value)
       if (v.isEmpty) "???" else v
@@ -572,7 +582,7 @@ object DracoGenerator extends App {
       }
       val statements = statementsWithCases(body, bodyPad, scrutinee, statement)
       val result = if (value.isEmpty) Seq.empty else Seq(indentBlock(value))
-      s"{\n${(statements ++ result).mkString("\n")}\n$bracePad}"
+      s"{\n${(prelude ++ statements ++ result).mkString("\n")}\n$bracePad}"
     }
   }
 
@@ -595,7 +605,7 @@ object DracoGenerator extends App {
           else s"  var ${m.name}: ${m.valueType.text}"
         case d: Dynamic =>
           val result = expression(d.value)
-          if (d.body.nonEmpty || result.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, result, scrutinee = dynScrutinee(d))}"
+          if (d.body.nonEmpty || result.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, result, scrutinee = dynScrutinee(d), parameters = d.parameters)}"
           else s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text}"
         case mo: Monadic =>
           // Verbatim Scala source — for declarations that exceed the
@@ -641,7 +651,7 @@ object DracoGenerator extends App {
       if (factory.body.nonEmpty) factory.body.map {
         case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
         case m: Mutable => s"    override var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
-        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), methodIndent = 4, scrutinee = dynScrutinee(d))}"
+        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), methodIndent = 4, scrutinee = dynScrutinee(d), parameters = d.parameters)}"
         case mo: Monadic => s"    ${expression(mo.value)}"
         case l: Local   => s"    ${binding(l)} ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
         case _: Case    => sys.error("draco: a case-branch is not admitted in a factory body (drake.dlt CASE-BRANCH: an actor's message, or a dyn-with-body)")
@@ -673,7 +683,7 @@ object DracoGenerator extends App {
           val init = if (rendered.isEmpty) s"null.asInstanceOf[${m.valueType.text}]" else rendered
           s"  var ${m.name}: ${m.valueType.text} = $init"
         case d: Dynamic =>
-          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), scrutinee = dynScrutinee(d))}"
+          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), scrutinee = dynScrutinee(d), parameters = d.parameters)}"
         case mo: Monadic =>
           // Indent every line so multi-line global blocks (encoder/decoder/etc.)
           // emit at the correct object-body indent level.
@@ -1875,7 +1885,7 @@ object DracoGenerator extends App {
   }
 
   private def targetParameter (p: Parameter) : Parameter =
-    Parameter(p.name, targetType(p.valueType), p.value)
+    Parameter(p.name, targetType(p.valueType), p.value, _now = p.now)
 
   private def targetVariable (v: Variable) : Variable =
     Variable(v.name, targetType(v.valueType))
@@ -1886,13 +1896,15 @@ object DracoGenerator extends App {
     * would drop them silently. Monadic and Condition have no valueType and no
     * nesting, so they pass through as themselves. */
   private def targetBody (b: BodyElement) : BodyElement = b match {
-    case x: Fixed     => Fixed(x.name, targetType(x.valueType), x.value)
-    case x: Mutable   => Mutable(x.name, targetType(x.valueType), x.value)
-    case x: Local     => Local(x.name, targetType(x.valueType), x.value)
+    // `now` rides along: the entry normalization rebuilds every element, and a rebuilt
+    // element that forgot its strictness would render lazy (it did, on 2026-09-18).
+    case x: Fixed     => Fixed(x.name, targetType(x.valueType), x.value, _now = x.now)
+    case x: Mutable   => Mutable(x.name, targetType(x.valueType), x.value, _now = x.now)
+    case x: Local     => Local(x.name, targetType(x.valueType), x.value, _now = x.now)
     case x: Parameter => targetParameter(x)
     case x: Variable  => targetVariable(x)
     case x: Dynamic   => Dynamic(x.name, targetType(x.valueType),
-                                 x.parameters.map(targetParameter), x.body.map(targetBody), x.value)
+                                 x.parameters.map(targetParameter), x.body.map(targetBody), x.value, _now = x.now)
     case x: Factory   => Factory(targetType(x.valueType),
                                  x.parameters.map(targetParameter), x.body.map(targetBody))
     case x: Pattern   => Pattern(x.variables.map(targetVariable), x.conditions)

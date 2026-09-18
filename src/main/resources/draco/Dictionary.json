@@ -45,7 +45,8 @@
           {
             "kind": "Parameter",
             "name": "key",
-            "valueType": "K"
+            "valueType": "K",
+            "now": true
           }
         ],
         "body": [
@@ -82,12 +83,14 @@
           {
             "kind": "Parameter",
             "name": "key",
-            "valueType": "K"
+            "valueType": "K",
+            "now": true
           },
           {
             "kind": "Parameter",
             "name": "value",
-            "valueType": "V1"
+            "valueType": "V1",
+            "now": true
           }
         ],
         "body": [
@@ -124,7 +127,8 @@
           {
             "kind": "Parameter",
             "name": "key",
-            "valueType": "K"
+            "valueType": "K",
+            "now": true
           }
         ],
         "body": [

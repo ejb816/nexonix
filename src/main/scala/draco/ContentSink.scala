@@ -3,7 +3,7 @@ package draco
 import java.net.URI
 
 trait ContentSink extends DracoType {
-  def write(content: String): Unit
+  def write(_content: => String): Unit
 }
 
 object ContentSink extends App with DracoType {
@@ -16,7 +16,8 @@ object ContentSink extends App with DracoType {
     _logicalPath: String
   ) : ContentSink = new ContentSink {
     lazy val sinkPath: java.nio.file.Path = java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))
-    override def write(content: String): Unit = {
+    override def write(_content: => String): Unit = {
+      lazy val content: String = _content
       java.nio.file.Files.createDirectories(sinkPath.getParent)
       java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))
     }

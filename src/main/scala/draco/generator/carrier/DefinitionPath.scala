@@ -7,8 +7,12 @@ import java.net.URL
 
 trait DefinitionPath extends DracoType {
   val roots: Seq[URI]
-  def sources(resourcePath: String): Seq[URL] = roots.map(root => new URL(root.toString + resourcePath.stripPrefix("/"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)
-  def source(resourcePath: String): Option[URL] = {
+  def sources(_resourcePath: => String): Seq[URL] = {
+    lazy val resourcePath: String = _resourcePath
+    roots.map(root => new URL(root.toString + resourcePath.stripPrefix("/"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)
+  }
+  def source(_resourcePath: => String): Option[URL] = {
+    lazy val resourcePath: String = _resourcePath
     lazy val found: Seq[URL] = sources(resourcePath)
     require(found.size <= 1, s"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: " + found.mkString(", "))
     found.headOption

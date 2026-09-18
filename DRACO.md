@@ -45,7 +45,7 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **621 tests / 44
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **622 tests / 44
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -59,7 +59,8 @@ four type forms (2026-09-17); then one for the header's type parameters (2026-09
 `draco.drake` Presence family — three types, their per-type tests and a `DracoGenTest` group test
 (2026-09-17), which moves the type counts to 98 in scope, 108 measured and GenDrake to 96 of 96; then
 `fold` on the family and its own two-test suite `PresenceTest` (2026-09-17); then one `DrakeParseTest`
-test for `now` (2026-09-17) — **621 tests / 44 suites**. These
+test for `now` (2026-09-17); then a `PresenceTest` test that a Present never evaluates `fold`'s default
+(2026-09-18) — **622 tests / 44 suites**. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -71,7 +72,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | **expected 5** fields across 108 types — type form 3 (ActorAspect and format/json/Value, the standing exclusions), expression form 2 (format/json/Value, GitHub #61) (measured 5 across 105 at `20835f0`; the Presence family adds three types and no loss) |
+| `DrakeParseTest` | drake surface losses | 5 fields across 108 types — type form 3 (ActorAspect and format/json/Value, the standing exclusions), expression form 2 (format/json/Value, GitHub #61) (measured at `550a14e`) |
 | `DrakeParseTest` | Drake.parse scope | 98 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
@@ -221,8 +222,10 @@ map is produced). It then dispatches six ways: two-or-more role aspects → comp
 rule; actor; domain; object-only; plain type.
 
 **Evaluation is lazy by default, `now` overrides** (drake.dlt EVALUATION, 2026-09-17): a `fix` or `loc`
-inside a method, action or factory body renders `lazy val` since step 1; parameters become by-name in
-steps 2 and 3. `now` before a member keeps it strict and is a reserved word; nothing in the corpus needs it.
+inside a method, action or factory body renders `lazy val` (step 1); a method parameter is by-name,
+`_x: => T`, bound once by a `lazy val x = _x` prelude (step 2, 2026-09-18); factory parameters follow in
+step 3. `now` before a member keeps it strict and is a reserved word; its one use is TypeName's
+`equals(other)`, which meets the host's by-value signature.
 
 **DRAKE** is draco's own definition surface — `X.drake` beside every `X.json`.
 `Drake.emit` and `Drake.parse` are mutual inverses in `src/mods/scala/draco/Drake.scala`;

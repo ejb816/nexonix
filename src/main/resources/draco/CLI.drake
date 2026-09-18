@@ -33,7 +33,7 @@ type CLI(L)
     fix commands {String, [String] -> Unit} Map("version" -> (_ => version), "inspect" -> (as => inspect(as.head)), "generate" -> (as => generate(as.head)), "drake" -> (as => drake(as.head)))
     dyn main Unit [
       parameters
-        par args Array(String)
+        now par args Array(String)
       body
         fix value Unit commands.getOrElse(args.headOption.getOrElse("version"), (_: Seq[String]) => version)(args.drop(1).toSeq)
     ]

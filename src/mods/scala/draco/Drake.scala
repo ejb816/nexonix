@@ -1015,7 +1015,7 @@ object Drake {
         if (!c.at ("[")) Dynamic (name, valueType, Seq.empty, Seq.empty, parseValue (c))
         else {
           c.take ()
-          val parameters = parseSection (c, "parameters", Set ("par")).map (_.asInstanceOf[Parameter])
+          val parameters = parseSection (c, "parameters", Set ("par", "now")).map (_.asInstanceOf[Parameter])
           // The `body` section, as in a factory. Its statement named `value` is the
           // result (drake.dlt DYN-WITH-BODY); a block dyn has no value of its own.
           val body       = if (!c.at ("body")) Seq.empty else { c.take (); statements (c) }
@@ -1131,7 +1131,7 @@ object Drake {
             else takeValueType (c)
           factory = Factory (
             valueType,
-            parseSection (c, "parameters", Set ("par")).map (_.asInstanceOf[Parameter]),
+            parseSection (c, "parameters", Set ("par", "now")).map (_.asInstanceOf[Parameter]),
             parseSection (c, "body", declarationKeywords).map (_.asInstanceOf[BodyElement]))
         case "domain"      => domainName = takeQualifiedRef (c)
         case "super"       => superDomain = takeQualifiedRef (c)

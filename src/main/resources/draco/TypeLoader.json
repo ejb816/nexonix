@@ -20,7 +20,8 @@
           {
             "kind": "Parameter",
             "name": "url",
-            "valueType": "URL"
+            "valueType": "URL",
+            "now": true
           }
         ],
         "body": [
@@ -125,7 +126,8 @@
           {
             "kind": "Parameter",
             "name": "td",
-            "valueType": "TypeDefinition"
+            "valueType": "TypeDefinition",
+            "now": true
           }
         ],
         "body": [

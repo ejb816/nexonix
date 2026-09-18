@@ -235,7 +235,8 @@
                 "Array",
                 "String"
               ]
-            }
+            },
+            "now": true
           }
         ],
         "body": [

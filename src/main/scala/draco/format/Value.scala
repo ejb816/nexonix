@@ -6,7 +6,7 @@ import io.circe.Decoder
 trait Value[F] extends DracoType {
   val name: String
   val pathElements: Seq[String]
-  def value[T: Decoder](_source: F): T
+  def value[T: Decoder](__source: => F): T
 }
 
 object Value extends App with DracoType {

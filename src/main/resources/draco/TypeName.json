@@ -134,7 +134,8 @@
             {
               "kind": "Parameter",
               "name": "other",
-              "valueType": "Any"
+              "valueType": "Any",
+              "now": true
             }
           ],
           "body": [
