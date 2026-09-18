@@ -31,6 +31,12 @@ for the definition that will replace it.
 
 ### Added
 
+- **`fold` on Presence, as dispatch.** `dyn fold(R) R` with `absent R` and `present (T -> R)` is declared
+  abstract on `Presence` and defined in `Present` as `present(value)` and in `Absent` as `absent`, all in
+  drake with no host code and no conditional: the eliminator of draco's option is the first member
+  override of a parent `dyn` in the corpus. Call surface `p.fold(absent, f)`; `PresenceTest` exercises
+  both members and dispatch through the parent. (2026-09-17)
+
 - **`Presence(T)`, `Present(T)` and `Absent(T)` — draco's own option, the first members of `draco.drake`.**
   A parameterized sealed family authored drake-first: `Presence` with `modules [Present, Absent]`, `Present`
   carrying a `value`, `Absent` bare. The first parameterized family the generator emits; it carries no host

@@ -22,6 +22,38 @@
         ]
       }
     ],
+    "elements": [
+      {
+        "kind": "Dynamic",
+        "name": "fold[R]",
+        "valueType": "R",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "absent",
+            "valueType": "R"
+          },
+          {
+            "kind": "Parameter",
+            "name": "present",
+            "valueType": {
+              "->": [
+                "T",
+                "R"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "R",
+            "value": "absent"
+          }
+        ]
+      }
+    ],
     "factory": {
       "kind": "Factory",
       "valueType": {

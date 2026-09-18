@@ -1,0 +1,48 @@
+# fold as a dyn on Presence — step 2 of the runtime proposal, accepted by Dev on 2026-09-17 ("Accept, fold
+# as a dyn on Presence next"), on the family of f779578.
+#
+# ONE CONCEPT: the eliminator of draco's option is DISPATCH. Authored drake-first, three files:
+#   Presence.drake   elements dyn fold(R) R [ parameters par absent R  par present (T -> R) ]     (abstract)
+#   Present.drake    … body fix value R present(value)
+#   Absent.drake     … body fix value R absent
+# No host code, no conditional, no symbol table: a two-case sum type eliminated by the polymorphism `dyn`
+# was kept for. First member override of a parent dyn in the corpus. JSON by the compiled parser; Scala by
+# the compiled engine (f779578's, which already carries the family fixes) over the resource overlay — the
+# diff against the committed family file is exactly the three fold lines:
+#   sealed trait Presence[T] extends DracoType { def fold[R](absent: R, present: T => R): R }
+#   trait Present … def fold[R](absent: R, present: T => R): R = present(value)
+#   trait Absent  … def fold[R](absent: R, present: T => R): R = absent
+# so this time no hand stood in for the engine. `present(value)`: the body's result element is named
+# `value` by the result convention and Present's FIELD is named `value` too; the result inlines as the
+# method's expression (the naturals precedent), so `value` resolves to the field, as intended — worth
+# knowing when reading the drake, where `fix value R present(value)` looks self-referential and is not.
+# DrakeCLI check over draco/drake: surface 0, json 0.
+#
+# TEST: src/test/scala/draco/drake/PresenceTest.scala — two tests: fold on Present and Absent directly,
+# and through the parent type with branches of a different type. New suite: 44.
+#
+# STILL STRICT: `absent R` is evaluated at the call whether or not it is chosen — the laziness question
+# Dev raised for ifThenElse applies here too and is the next step (lazy by default, `now` to override).
+#
+# NOT compiled here; the compile risk is the test file alone (the family file is engine output).
+# EXPECTED: 620 tests / 44 suites, all green; every headline unchanged (parse scope 98 + 10, GenDrake
+# 96 of 96, losses 5 across 108).
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-17-2006 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-2006 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-2006 && git push
+
+--- MESSAGE ---
+fold is a dyn on Presence, defined by dispatch in Present and Absent
+
+The eliminator of draco's option is polymorphism, not a conditional: `dyn fold(R) R` with `absent R` and
+`present (T -> R)` is declared abstract on `Presence`, defined in `Present` as `present(value)` and in
+`Absent` as `absent`, all three in drake with no host code. It is the first member override of a parent
+`dyn` in the corpus, and the generated family file differs from the committed one by exactly those
+three lines, written by the engine. The call surface is `p.fold(absent, f)`; PresenceTest exercises
+both members and dispatch through the parent type.
+
+The default branch is still strict, which is the laziness question raised for ifThenElse; it is the next
+step, as agreed: lazy by default, `now` to override.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

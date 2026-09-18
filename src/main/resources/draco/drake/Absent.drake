@@ -1,3 +1,11 @@
 type Absent(T) from Presence(T)
+  elements
+    dyn fold(R) R [
+      parameters
+        par absent R
+        par present (T -> R)
+      body
+        fix value R absent
+    ]
   factory
 domain draco drake Drake

@@ -25,6 +25,30 @@
           "drake"
         ]
       }
+    ],
+    "elements": [
+      {
+        "kind": "Dynamic",
+        "name": "fold[R]",
+        "valueType": "R",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "absent",
+            "valueType": "R"
+          },
+          {
+            "kind": "Parameter",
+            "name": "present",
+            "valueType": {
+              "->": [
+                "T",
+                "R"
+              ]
+            }
+          }
+        ]
+      }
     ]
   },
   "domainAspect": {

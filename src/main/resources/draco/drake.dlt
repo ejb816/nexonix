@@ -578,9 +578,12 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           Encoder[T] the companion cannot name, so a parameterized family is codec-less
                                           as a parameterized plain type (Value(F)) already is — Presence's codec is the
                                           CODEC ASPECT's business, in drake. A Null whose parameter is typed by the
-                                          type's own variable instantiates at Any, not Nothing. NEXT: `fold` as a dyn
-                                          on Presence, defined by dispatch in Present and Absent; then lazy-by-default
-                                          with `now`; then `ifThenElse` as the second dyn (agreed 2026-09-17).
+                                          type's own variable instantiates at Any, not Nothing.
+                                          `fold` LANDED the same day: `dyn fold(R) R` with `absent R` and `present
+                                          (T -> R)`, abstract on Presence, `present(value)` in Present, `absent` in
+                                          Absent — the eliminator as DISPATCH, in drake, no host code, no conditional;
+                                          the first member override of a parent dyn. Call surface `p.fold(absent, f)`.
+                                          NEXT: lazy-by-default with `now`; then `ifThenElse` as the second dyn.
   the four TYPE FORMS as trees      <->   IMPLEMENTED (2026-09-17). Drake.typeForm reads a value-type slot to a
     (valueType was host text)             tree; Drake emits one back (drakeType); DracoGenerator.targetType spells
                                           it for Scala (`F[A]`, `(A, B)`, `S => T`, a Morphic left operand

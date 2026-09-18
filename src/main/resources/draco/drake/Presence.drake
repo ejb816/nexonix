@@ -3,4 +3,10 @@ type Presence(T)
     Present
     Absent
   ]
+  elements
+    dyn fold(R) R [
+      parameters
+        par absent R
+        par present (T -> R)
+    ]
 domain draco drake Drake

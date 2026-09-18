@@ -1,6 +1,13 @@
 type Present(T) from Presence(T)
   elements
     fix value T
+    dyn fold(R) R [
+      parameters
+        par absent R
+        par present (T -> R)
+      body
+        fix value R present(value)
+    ]
   factory
     parameters
       par value T

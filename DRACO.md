@@ -45,7 +45,7 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **618 tests / 43
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **620 tests / 44
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -57,8 +57,8 @@ transform domain (2026-09-11), to 95 and 105; then one more `DrakeParseTest` tes
 call syntax's at-most-once rule (2026-09-16); then one structural `DrakeParseTest` test for the
 four type forms (2026-09-17); then one for the header's type parameters (2026-09-17); then the
 `draco.drake` Presence family — three types, their per-type tests and a `DracoGenTest` group test
-(2026-09-17), which moves the type counts to 98 in scope, 108 measured and GenDrake to 96 of 96 —
-**618 tests / 43 suites**. These
+(2026-09-17), which moves the type counts to 98 in scope, 108 measured and GenDrake to 96 of 96; then
+`fold` on the family and its own two-test suite `PresenceTest` (2026-09-17) — **620 tests / 44 suites**. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -250,7 +250,7 @@ allowed; main → mods is not. Whether mods is now *the* engine tier rather than
 speculative layer is an open question for Dev.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `json`,
-`xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` since 2026-09-17), `draco.draketarget`, `draco.generator` (+ `carrier`),
+`xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` as dispatch, 2026-09-17), `draco.draketarget`, `draco.generator` (+ `carrier`),
 `draco.genscala`, `draco.gendrake`, `draco.scalatarget`. Domains are
 peers in the `DomainDictionary`, not hierarchical. Example domains live in
 `src/mods/scala/domains/` (the World / media chain).
