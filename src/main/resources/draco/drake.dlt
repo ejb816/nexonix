@@ -314,9 +314,10 @@ EVALUATION  (lazy by default, `now` to override — Haskell's stance, agreed 202
     3. factory parameters -> by-name                            (2026-09-18; the factory BODY is the prelude:
                                                                  a bodiless factory binds `override lazy val
                                                                  x = _x` once, a bodied one reads `_x` inside
-                                                                 the lazy members it authors. The actor-minting
-                                                                 `factory ActorType` stays strict: its
-                                                                 parameters are wiring the host reads at start)
+                                                                 the lazy members it authors)
+    4. actor-minting factory parameters -> by-name              (2026-09-18; `factory ActorType` is a factory:
+                                                                 the instance binds `lazy val x = _x` once, the
+                                                                 actions read the bare name — the same prelude)
 
 BRACKETS  (a construct delimits ITSELF; whitespace is insignificant throughout)
   A list-block (elements, parameters, body, globalElements, variables, conditions, modules, types) is
@@ -608,8 +609,12 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           once as the instance's `override lazy val x = _x`, a bodied one reads
                                           `_x` inside the lazy members it authors — so `Present(x)` constructs
                                           without evaluating `x` (PresenceTest). `now par` keeps a parameter
-                                          strict; the corpus needs it nowhere. The actor-minting factory
-                                          (`def actorType(...)`) is a separate convention and stays strict.
+                                          strict; the corpus needs it nowhere.
+                                          STEP 4 (2026-09-18): the actor-minting factory follows — `def actorType
+                                          (_consumer: => ActorRef[M])` with `lazy val consumer = _consumer` as the
+                                          first member of the minted actor, read by its actions per message. The
+                                          four steps close EVALUATION: every parameter, binding and method in the
+                                          corpus is call-by-need, and `now` marks the 8 the host forces.
                                           First consequence seen: a CALLER sequences its effects — Drake.parse
                                           passed cursor reads as arguments and they ran at first read, out of
                                           token order, until bound before the call (133 tests, one run).

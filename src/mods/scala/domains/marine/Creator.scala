@@ -21,8 +21,9 @@ object Creator extends App with DracoType {
     k
   }
 
-  def actorType(consumer: ActorRef[draco.format.json.JSON]): ActorType = new Actor[draco.format.json.JSON] {
+  def actorType(_consumer: => ActorRef[draco.format.json.JSON]): ActorType = new Actor[draco.format.json.JSON] {
     override lazy val typeDefinition: TypeDefinition = Creator.typeDefinition
+    lazy val consumer: ActorRef[draco.format.json.JSON] = _consumer
 
     override def receive(ctx: TypedActorContext[draco.format.json.JSON], msg: draco.format.json.JSON): Behavior[draco.format.json.JSON] = {
       lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()

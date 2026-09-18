@@ -1521,11 +1521,18 @@ object DracoGenerator extends App {
     // a `def` carries no multiplicity commitment, so Orion alone chooses cardinality
     // (call once = single instance, call N = many, each with its own session).
     // Construction params (e.g. a downstream ref) pass through; nullary when none.
+    // LAZY BY DEFAULT (drake.dlt EVALUATION, step 4): the actor-minting factory IS a
+    // factory, so a parameter is by-name, `_x: => T`, and the instance binds it once as a
+    // lazy member — the prelude a plain factory's body is. The action bodies read the bare
+    // name (`session.set("consumer", consumer)`), which resolves to that member. `now`
+    // keeps `x: T` and binds nothing.
     val actorDecl =
-      s"def actorType(${params.map(p => s"${p.name}: ${p.valueType.text}").mkString(", ")}): ActorType"
+      if (params.isEmpty) "def actorType(): ActorType"
+      else s"def actorType${methodParameters(params)}: ActorType"
+    val prelude = params.filterNot(_.now).map(p => s"    lazy val ${p.name}: ${p.valueType.text} = _${p.name}\n").mkString
     s"""  $actorDecl = new Actor[$msgType] {
        |    override lazy val typeDefinition: TypeDefinition = $objName.typeDefinition
-       |
+       |$prelude
        |$setupSection    override def receive(ctx: TypedActorContext[$msgType], msg: $msgType): Behavior[$msgType] = {
        |$recvBlock      Behaviors.same[$msgType]
        |    }

@@ -1,0 +1,41 @@
+# Lazy by default, step 4: the actor-minting factory — accepted by Dev on 2026-09-18 ("Accept, build the
+# fourth step"), on 578c92e (623 / 44 green).
+#
+# ONE CONCEPT: `factory ActorType` is a FACTORY, so its parameter follows step 3, not a convention of its
+# own. `def actorType(_consumer: => ActorRef[M]): ActorType = new Actor[M] { lazy val consumer = _consumer; … }`
+# — the instance binds the parameter once as its first member, and the action bodies (which already
+# read the bare name, `session.set("consumer", consumer)`, per message) resolve to it. Nullary stays
+# `def actorType()`. `now` keeps `x: T` and binds nothing. ONE REFINEMENT from the shape shown to Dev
+# (a local `lazy val` before `new Actor`): the member form is step 3's own prelude and leaves the actor
+# body's indentation alone; the two are observationally identical.
+#
+# Measured: ten actor-minting parameters in ten definitions — Draco (problems), gendrake.Emitter
+# (received), aerial/ethereal/marine/terrestrial Creator, aerial Input, terrestrial Output, world
+# Consumer/Provider. Every read is inside `receive`, per message — not at start, as the step-3 record
+# said. Callers (chain tests, AssemblySpawner's `refs => Member.actorType(refs(0))`) pass values;
+# no caller uses actorType as a function value (grepped).
+#
+# ENGINE: actorBehavior's `actorDecl` goes through methodParameters; a `prelude` line per lazy parameter
+# after the typeDefinition member (empty prelude renders the blank line the template already had, so
+# every nullary actor — the scenario's included — is byte-identical). Hand-applied to the ten
+# projections (regex on the head + one inserted member), matching and differing example domains alike,
+# so GEN MAP holds 28/20. Grepped for the step-3 hazard (effectful argument to actorType): none.
+#
+# RUN: expected 623 tests / 44 suites, all green; every headline unchanged.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-18-1517 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-1517 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-1517 && git push
+
+--- MESSAGE ---
+Lazy by default, step 4: the actor-minting factory's parameter is by-name, bound once by the actor
+
+`factory ActorType` is a factory, so its parameter follows step 3 rather than a convention of its own.
+`def actorType(_consumer: => ActorRef[M])` binds `lazy val consumer = _consumer` as the minted actor's
+first member, which the action bodies read per message under the bare name they already used. Ten
+projections regenerate, two in main and eight in the example domains; nullary actors are unchanged and
+callers pass values. This closes the four steps of drake.dlt EVALUATION: every parameter, binding and
+method in the corpus is call-by-need, and `now` marks the 8 the host forces.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

@@ -20,8 +20,9 @@ object Emitter extends App with DracoType {
     k
   }
 
-  def actorType(received: java.util.List[draco.generator.Emission]): ActorType = new Actor[draco.TypeDefinition] {
+  def actorType(_received: => java.util.List[draco.generator.Emission]): ActorType = new Actor[draco.TypeDefinition] {
     override lazy val typeDefinition: TypeDefinition = Emitter.typeDefinition
+    lazy val received: java.util.List[draco.generator.Emission] = _received
 
     lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
     session.set("received", received)

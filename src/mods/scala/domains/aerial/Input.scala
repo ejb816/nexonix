@@ -10,8 +10,9 @@ object Input extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Input", _namePackage = Seq ("domains", "aerial")))
   lazy val dracoType: Type[Input] = Type[Input] (typeDefinition)
 
-  def actorType(worldConsumer: ActorRef[domains.world.World]): ActorType = new Actor[draco.format.json.JSON] {
+  def actorType(_worldConsumer: => ActorRef[domains.world.World]): ActorType = new Actor[draco.format.json.JSON] {
     override lazy val typeDefinition: TypeDefinition = Input.typeDefinition
+    lazy val worldConsumer: ActorRef[domains.world.World] = _worldConsumer
 
     override def receive(ctx: TypedActorContext[draco.format.json.JSON], msg: draco.format.json.JSON): Behavior[draco.format.json.JSON] = {
       val cursor   = msg.json.hcursor

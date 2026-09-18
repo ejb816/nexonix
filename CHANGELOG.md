@@ -171,6 +171,12 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Lazy by default, step 4: the actor-minting factory.** `factory ActorType` is a factory, so its
+  parameter is now by-name too: `def actorType(_consumer: => ActorRef[M])`, with `lazy val consumer =
+  _consumer` as the minted actor's first member, which the action bodies read per message under the bare
+  name. Ten projections regenerate, two in main and eight in the example domains; callers pass values and
+  do not move. This closes the four steps of drake.dlt EVALUATION. (2026-09-18)
+
 - **A bodied factory reads a parameter once.** Domain, TypeDictionary and DomainLineOf read a factory
   parameter at two sites, which under by-name could evaluate the argument twice. Domain now reads the
   member its first line bound; the other two bind the parameter with `loc x T _x`, the method prelude of

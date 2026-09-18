@@ -23,8 +23,9 @@ object Draco extends App with DracoType {
     k
   }
 
-  def actorType(problems: java.util.List[Problem]): ActorType = new Actor[DracoType] {
+  def actorType(_problems: => java.util.List[Problem]): ActorType = new Actor[DracoType] {
     override lazy val typeDefinition: TypeDefinition = Draco.typeDefinition
+    lazy val problems: java.util.List[Problem] = _problems
 
     lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
     session.set("problems", problems)
