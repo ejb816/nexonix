@@ -171,6 +171,12 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A bodied factory reads a parameter once.** Domain, TypeDictionary and DomainLineOf read a factory
+  parameter at two sites, which under by-name could evaluate the argument twice. Domain now reads the
+  member its first line bound; the other two bind the parameter with `loc x T _x`, the method prelude of
+  step 2 authored in drake, and read that. Three drake lines, JSON and Scala regenerated; the engine is
+  untouched. (2026-09-18)
+
 - **Lazy by default, step 3: factory parameters.** A factory parameter is now by-name, `_x: => T`, and the
   factory body is its prelude: a bodiless factory binds each parameter once as the instance's
   `override lazy val x = _x`, a bodied one reads `_x` inside the lazy members it authors, so an argument

@@ -29,13 +29,19 @@
       "body": [
         {
           "kind": "Local",
+          "name": "definition",
+          "valueType": "TypeDefinition",
+          "value": "_definition"
+        },
+        {
+          "kind": "Local",
           "name": "line",
           "valueType": "DomainLine",
           "value": {
             "()": [
               "DomainLine",
-              "_definition.domainAspect.typeName.namePackage",
-              "_definition.domainAspect.typeName.name"
+              "definition.domainAspect.typeName.namePackage",
+              "definition.domainAspect.typeName.name"
             ]
           }
         },

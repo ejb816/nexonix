@@ -46,7 +46,7 @@
           "value": {
             "()": [
               "TypeDictionary",
-              "_domainDefinition"
+              "typeDefinition"
             ]
           }
         }

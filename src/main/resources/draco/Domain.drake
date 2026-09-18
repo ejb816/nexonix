@@ -4,5 +4,5 @@ type Domain(T) from DomainType
       par domainDefinition TypeDefinition
     body
       fix typeDefinition TypeDefinition _domainDefinition
-      fix typeDictionary TypeDictionary TypeDictionary(_domainDefinition)
+      fix typeDictionary TypeDictionary TypeDictionary(typeDefinition)
 domain draco Draco

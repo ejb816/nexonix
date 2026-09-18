@@ -613,6 +613,9 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           First consequence seen: a CALLER sequences its effects — Drake.parse
                                           passed cursor reads as arguments and they ran at first read, out of
                                           token order, until bound before the call (133 tests, one run).
+                                          A bodied factory that reads a parameter TWICE authors the prelude
+                                          itself — `loc x T _x`, then reads x — or reads the member its first
+                                          line bound (Domain, TypeDictionary, DomainLineOf, 2026-09-18).
   Presence(T) / Present / Absent    <->   IMPLEMENTED (2026-09-17) — draco.drake's first members, the runtime's own
     (draco's option, not host Option)     sum type: `Presence(T)` with `modules [Present, Absent]`, `Present(T)` carrying
                                           `par value T`, `Absent(T)` bare and parameterized (variance is the later

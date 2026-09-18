@@ -3,6 +3,7 @@ type DomainLineOf from draco draketarget DomainLine
     parameters
       par definition TypeDefinition
     body
-      loc line DomainLine DomainLine(_definition.domainAspect.typeName.namePackage, _definition.domainAspect.typeName.name)
+      loc definition TypeDefinition _definition
+      loc line DomainLine DomainLine(definition.domainAspect.typeName.namePackage, definition.domainAspect.typeName.name)
       fix value String line.value
 domain draco gendrake GenDrake
