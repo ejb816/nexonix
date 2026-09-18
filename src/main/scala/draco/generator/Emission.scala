@@ -24,7 +24,7 @@ object Emission extends App with DracoType {
   }
 
   def apply (
-    _value: String
+    _value: => String
   ) : Emission = new Emission {
     override lazy val value: String = _value
     override lazy val typeDefinition: TypeDefinition = Emission.typeDefinition

@@ -34,10 +34,10 @@ object DomainAspect extends App with DracoType {
   }
 
   def apply (
-    _typeName: TypeName = TypeName.Null,
-    _elementTypeNames: Seq[String] = Seq.empty,
-    _source: TypeName = TypeName.Null,
-    _target: TypeName = TypeName.Null
+    _typeName: => TypeName = TypeName.Null,
+    _elementTypeNames: => Seq[String] = Seq.empty,
+    _source: => TypeName = TypeName.Null,
+    _target: => TypeName = TypeName.Null
   ) : DomainAspect = new DomainAspect {
     override lazy val typeName: TypeName = _typeName
     override lazy val elementTypeNames: Seq[String] = _elementTypeNames

@@ -43,13 +43,13 @@ object DracoAspect extends App with DracoType {
   }
 
   def apply (
-    _superDomain: TypeName = TypeName.Null,
-    _modules: Seq[TypeName] = Seq.empty,
-    _extensible: TypeName = TypeName.Null,
-    _derivation: Seq[TypeName] = Seq.empty,
-    _elements: Seq[TypeElement] = Seq.empty,
-    _factory: Factory = Factory.Null,
-    _globalElements: Seq[BodyElement] = Seq.empty
+    _superDomain: => TypeName = TypeName.Null,
+    _modules: => Seq[TypeName] = Seq.empty,
+    _extensible: => TypeName = TypeName.Null,
+    _derivation: => Seq[TypeName] = Seq.empty,
+    _elements: => Seq[TypeElement] = Seq.empty,
+    _factory: => Factory = Factory.Null,
+    _globalElements: => Seq[BodyElement] = Seq.empty
   ) : DracoAspect = new DracoAspect {
     override lazy val superDomain: TypeName = _superDomain
     override lazy val modules: Seq[TypeName] = _modules

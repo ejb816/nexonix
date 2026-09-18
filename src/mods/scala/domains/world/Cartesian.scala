@@ -14,9 +14,9 @@ object Cartesian extends App with DracoType {
   lazy val domainType: Domain[World] = Domain[World] (typeDefinition)
 
   def apply (
-    _x: Double = 0.0,
-    _y: Double = 0.0,
-    _z: Double = 0.0
+    _x: => Double = 0.0,
+    _y: => Double = 0.0,
+    _z: => Double = 0.0
   ) : Cartesian = new Cartesian {
     override lazy val x: Double = _x
     override lazy val y: Double = _y

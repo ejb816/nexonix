@@ -14,7 +14,7 @@ object Numbers extends App with DracoType {
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 
   def apply (
-    _n: Int = 22
+    _n: => Int = 22
   ) : Numbers = new Numbers {
     override lazy val primeSequence: Seq[Int] = Primes.nPrimes(_n)
     override lazy val naturalSequence: Seq[Int] = Primes.naturals(2).take(primeSequence.last - 1)

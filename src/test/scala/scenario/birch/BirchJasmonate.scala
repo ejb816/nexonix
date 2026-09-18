@@ -30,8 +30,8 @@ object BirchJasmonate extends App with DracoType {
   }
 
   def apply (
-    _potency: Micromolar,
-    _compound: Compound
+    _potency: => Micromolar,
+    _compound: => Compound
   ) : BirchJasmonate = new BirchJasmonate {
     override lazy val potency: Micromolar = _potency
     override lazy val compound: Compound = _compound

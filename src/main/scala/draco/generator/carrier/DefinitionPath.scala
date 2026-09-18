@@ -25,7 +25,7 @@ object DefinitionPath extends App with DracoType {
   lazy val domainType: Domain[Carrier] = Domain[Carrier] (typeDefinition)
 
   def apply (
-    _roots: Seq[URI] = Seq.empty
+    _roots: => Seq[URI] = Seq.empty
   ) : DefinitionPath = new DefinitionPath {
     override lazy val roots: Seq[URI] = _roots
     override lazy val typeDefinition: TypeDefinition = DefinitionPath.typeDefinition

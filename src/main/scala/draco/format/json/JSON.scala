@@ -30,7 +30,7 @@ object JSON extends App with DracoType {
 
   lazy val domainType: Domain[JSON] = Domain[JSON] (typeDefinition)
   def apply (
-    _json: Json
+    _json: => Json
   ) : JSON = new JSON {
     override lazy val json: Json = _json
     override lazy val typeDefinition: TypeDefinition = JSON.typeDefinition

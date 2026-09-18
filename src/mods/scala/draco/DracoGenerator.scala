@@ -625,10 +625,17 @@ object DracoGenerator extends App {
   ) : String = {
     if (parameters.isEmpty) ""
     else {
+      // LAZY BY DEFAULT (drake.dlt EVALUATION, step 3): a factory parameter is by-name, `_x: => T`.
+      // The factory body is its prelude: a bodiless factory binds each parameter once as the
+      // instance's `override lazy val x = _x`, and a bodied one reads `_x` inside the lazy members
+      // it authors, so an argument is evaluated on first read and never if unused. `now` keeps the
+      // strict `_x: T`. The actor-minting factory (`def actorType(...)`) is a separate convention
+      // and stays strict: its parameters are wiring the host actor system reads at start.
       val params = parameters.map { p =>
         val d = initializer(p.valueType.text, p.value)
         val default = if (d.isEmpty) "" else s" = $d"
-        s"_${p.name}: ${p.valueType.text}$default"
+        if (p.now) s"_${p.name}: ${p.valueType.text}$default"
+        else s"_${p.name}: => ${p.valueType.text}$default"
       }
       s"\n    ${params.mkString(",\n    ")}\n  "
     }

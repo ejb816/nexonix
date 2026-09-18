@@ -31,9 +31,9 @@ object Assembly extends App with DracoType {
   }
 
   def apply (
-    _members: Seq[TypeName] = Seq.empty,
-    _bindings: Seq[Binding] = Seq.empty,
-    _entry: TypeName = TypeName.Null
+    _members: => Seq[TypeName] = Seq.empty,
+    _bindings: => Seq[Binding] = Seq.empty,
+    _entry: => TypeName = TypeName.Null
   ) : Assembly = new Assembly {
     override lazy val members: Seq[TypeName] = _members
     override lazy val bindings: Seq[Binding] = _bindings

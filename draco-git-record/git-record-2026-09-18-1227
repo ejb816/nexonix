@@ -1,0 +1,76 @@
+# Lazy by default, step 3: factory parameters — agreed with Dev at the session start on 2026-09-18
+# ("Next increment, agreed: lazy step 3"), on 1e3ad40 (622 tests / 44 suites green).
+#
+# ONE CONCEPT: a factory parameter is by-name, `_x: => T`, and the FACTORY BODY IS ITS PRELUDE. A
+# bodiless factory already binds each parameter once as the instance's `override lazy val x = _x`;
+# a bodied one reads `_x` inside the lazy members it authors. So an argument is evaluated on first
+# read and never if unused — `Present(sys.error(…))` constructs, and reading `value` twice evaluates
+# the argument once (PresenceTest, 623 tests). `now par` keeps `_x: T`; the corpus needs it nowhere:
+# no factory apply meets a host signature or is passed as a function value (grepped `.apply` bare,
+# `map(X)`, `forProduct`: none; every decoder CALLS apply in its yield).
+#
+# SCOPE, measured today: 133 factory parameters in 66 definitions (main 101/44, scenario 13/10, mods
+# 19/12). Of those, 122 in 44 projections render through `def apply(...)` and move; the rest belong to
+# the ACTOR-MINTING factory (`factory ActorType` -> `def actorType(consumer: ActorRef[…])`: Draco,
+# gendrake.Emitter, the mods Creators/Input/Output/world Consumer/Provider, scenario actors), a separate
+# convention (isActorMintingFactory) whose bare-named parameters are wiring the host actor system reads
+# at start. Left STRICT, deliberately: by-name there needs the rename-and-prelude shape
+# (`_consumer: => T` + `lazy val consumer`), which is a fourth step if Dev wants it, not a residue of this one.
+#
+# RESIDUE to state, not hide: three bodied factories read one parameter at TWO sites — Domain and
+# TypeDictionary (`_domainDefinition`), DomainLineOf (`_definition`). Each site is inside a lazy member,
+# so the argument is evaluated at most twice, not once. Exact call-by-need there would need either the
+# rename-and-prelude shape (the `_x =` named-argument convention at every call site forbids renaming
+# the parameter) or an authoring change (the second site reads the member the first one bound). Every
+# call site today passes a value, so nothing is observable. Dev's call.
+#
+# ONE-RUN SHAPE, with the two-run as fallback: the change is mechanical (`_x: T` -> `_x: => T` in the
+# apply signature, nothing else moves), so the 44 projections were hand-applied to the fixed engine's
+# form (diff verified pure: only parameter lines changed) instead of waiting for the compiled engine.
+# Codec.scala (hand-written, no definition) and test-only Natural.scala (hand-written, strict val, not
+# gated) untouched. The JSON corpus does not move (no `now` added). Parser already admits `now` in a
+# factory parameters block (step 2); emitter unchanged.
+#
+# RUN 1: expected 623 tests / 44 suites, all green; GEN MAP 28 match / 20 differ (the 12 example
+# projections with a plain factory were swept, matching and differing alike); every headline unchanged.
+# If DracoGenTest names a definition, my hand-applied form differs from the engine's there — paste the
+# Failed block and I regenerate exactly those with the compiled engine over the full overlay (main +
+# test resources), and hand RUN 2.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# RUN 1 (12:28): 490 passed, 133 failed — DracoGenTest GREEN (the hand-applied form is the engine's,
+# byte for byte), GEN MAP 28/20, every headline held; the 133 are DrakeParseTest (every parse-based
+# test) and ScenarioGenTest's json == parse(drake). THE FIRST OBSERVED CONSEQUENCE OF LAZINESS, and a
+# real one: Drake.parse is hand-written Scala calling the drake-defined factories with arguments that
+# CONSUME THE TOKEN CURSOR — `Monadic(parseValue(c))`, `Condition(parseValue(c))`, `Variable(name,
+# takeValueType(c))`, the leaf `Dynamic(…, parseValue(c))`, `Action(Seq.empty, parseBlock(c, …))`,
+# and `Factory(valueType, parseSection(parameters), parseSection(body))`. By-name, those arguments run
+# at first READ of the instance, not in token order (and Factory's two in whichever order the fields are
+# read), so the cursor desynchronises and `expect` throws. FIX at the CALLER, which is where an effect is
+# sequenced under call-by-need (Haskell's stance): each argument bound to a `val` before the call, six
+# sites. The TypeDefinition builder at the end of `parse` reads only locals settled by the loop, so it
+# is unaffected. Grepped the rest of src for effectful expressions in argument position of a
+# capitalized call: none. GOTCHA recorded in DRACO.md §6.
+#
+# RUN 2: expected 623 tests / 44 suites, all green; GEN MAP 28/20; every headline unchanged.
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-18-1227 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-1227 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-1227 && git push
+
+--- MESSAGE ---
+Lazy by default, step 3: a factory parameter is by-name, and the factory body is its prelude
+
+A factory parameter arrives as `_x: => T`. A bodiless factory already binds it once as the instance's
+`override lazy val x = _x`, and a bodied one reads `_x` inside the lazy members it authors, so an
+argument is evaluated on first read and never if unused: `Present(x)` constructs without evaluating
+`x`, and PresenceTest shows two reads evaluate it once. `now par` keeps a parameter strict; nothing
+in the corpus needs it. The actor-minting factory, `def actorType(...)`, is a separate convention and
+stays strict. Every definition with a plain factory regenerates — 122 parameters across 44
+projections in main, the scenario and the example domains. This closes the three steps of drake.dlt
+EVALUATION; ifThenElse as dispatch on Presence can now terminate a recursion. First observed
+consequence: Drake.parse passed cursor-consuming expressions as factory arguments, which by-name
+runs at first read rather than in token order; the six sites now bind the argument before the call,
+where an effect is sequenced under call-by-need.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

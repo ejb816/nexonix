@@ -24,7 +24,7 @@ object Meters extends App with DracoType {
   }
 
   def apply (
-    _value: Double
+    _value: => Double
   ) : Meters = new Meters {
     override lazy val value: Double = _value
     override lazy val typeDefinition: TypeDefinition = Meters.typeDefinition

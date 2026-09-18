@@ -24,7 +24,7 @@ object Surface extends App with DracoType {
   }
 
   def apply (
-    _value: String
+    _value: => String
   ) : Surface = new Surface {
     override lazy val value: String = _value
     override lazy val typeDefinition: TypeDefinition = Surface.typeDefinition

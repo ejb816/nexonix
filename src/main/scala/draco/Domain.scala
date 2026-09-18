@@ -8,7 +8,7 @@ object Domain extends App with DracoType {
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   def apply[T] (
-    _domainDefinition: TypeDefinition
+    _domainDefinition: => TypeDefinition
   ) : Domain[T] = new Domain[T] {
     override lazy val typeDefinition: TypeDefinition = _domainDefinition
     override lazy val typeDictionary: TypeDictionary = TypeDictionary(_domainDefinition)

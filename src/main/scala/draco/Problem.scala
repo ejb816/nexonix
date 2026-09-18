@@ -28,8 +28,8 @@ object Problem extends App with DracoType {
   }
 
   def apply (
-    _subject: TypeName,
-    _message: String
+    _subject: => TypeName,
+    _message: => String
   ) : Problem = new Problem {
     override lazy val subject: TypeName = _subject
     override lazy val message: String = _message

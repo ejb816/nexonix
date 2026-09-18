@@ -10,7 +10,7 @@ object TypeDictionary extends App with DracoType {
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   def apply (
-    _domainDefinition: TypeDefinition
+    _domainDefinition: => TypeDefinition
   ) : TypeDictionary = new TypeDictionary {
     override lazy val elementTypes: Seq[TypeDefinition] = _domainDefinition.domainAspect.elementTypeNames.map(name => TypeDefinition(TypeName(name, _namePackage = _domainDefinition.typeName.namePackage)))
     override lazy val kvMap: Map[TypeName, TypeDefinition] = elementTypes.map(td => (td.typeName, td)).toMap

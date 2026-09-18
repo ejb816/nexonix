@@ -169,10 +169,10 @@ object Fixed extends App with DracoType {
   implicit def decoder: Decoder[Fixed] = codec.decoder
 
   def apply (
-    _name: String,
-    _valueType: Json,
-    _value: Json = Json.Null,
-    _now: Boolean = false
+    _name: => String,
+    _valueType: => Json,
+    _value: => Json = Json.Null,
+    _now: => Boolean = false
   ) : Fixed = new Fixed {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
@@ -203,10 +203,10 @@ object Mutable extends App with DracoType {
   implicit def decoder: Decoder[Mutable] = codec.decoder
 
   def apply (
-    _name: String,
-    _valueType: Json,
-    _value: Json = Json.Null,
-    _now: Boolean = false
+    _name: => String,
+    _valueType: => Json,
+    _value: => Json = Json.Null,
+    _now: => Boolean = false
   ) : Mutable = new Mutable {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
@@ -237,12 +237,12 @@ object Dynamic extends App with DracoType {
   implicit def decoder: Decoder[Dynamic] = codec.decoder
 
   def apply (
-    _name: String,
-    _valueType: Json,
-    _parameters: Seq[Parameter] = Seq.empty,
-    _body: Seq[BodyElement] = Seq.empty,
-    _value: Json = Json.Null,
-    _now: Boolean = false
+    _name: => String,
+    _valueType: => Json,
+    _parameters: => Seq[Parameter] = Seq.empty,
+    _body: => Seq[BodyElement] = Seq.empty,
+    _value: => Json = Json.Null,
+    _now: => Boolean = false
   ) : Dynamic = new Dynamic {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
@@ -277,10 +277,10 @@ object Parameter extends App with DracoType {
   implicit def decoder: Decoder[Parameter] = codec.decoder
 
   def apply (
-    _name: String,
-    _valueType: Json,
-    _value: Json,
-    _now: Boolean = false
+    _name: => String,
+    _valueType: => Json,
+    _value: => Json,
+    _now: => Boolean = false
   ) : Parameter = new Parameter {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
@@ -311,7 +311,7 @@ object Monadic extends App with DracoType {
   implicit def decoder: Decoder[Monadic] = codec.decoder
 
   def apply (
-    _value: Json
+    _value: => Json
   ) : Monadic = new Monadic {
     override lazy val value: Json = _value
     override lazy val typeDefinition: TypeDefinition = Monadic.typeDefinition
@@ -339,8 +339,8 @@ object Pattern extends App with DracoType {
   implicit def decoder: Decoder[Pattern] = codec.decoder
 
   def apply (
-    _variables: Seq[Variable] = Seq.empty,
-    _conditions: Seq[Condition] = Seq.empty
+    _variables: => Seq[Variable] = Seq.empty,
+    _conditions: => Seq[Condition] = Seq.empty
   ) : Pattern = new Pattern {
     override lazy val variables: Seq[Variable] = _variables
     override lazy val conditions: Seq[Condition] = _conditions
@@ -366,8 +366,8 @@ object Action extends App with DracoType {
   implicit def decoder: Decoder[Action] = codec.decoder
 
   def apply (
-    _variables: Seq[Variable] = Seq.empty,
-    _body: Seq[BodyElement] = Seq.empty
+    _variables: => Seq[Variable] = Seq.empty,
+    _body: => Seq[BodyElement] = Seq.empty
   ) : Action = new Action {
     override lazy val variables: Seq[Variable] = _variables
     override lazy val body: Seq[BodyElement] = _body
@@ -391,7 +391,7 @@ object Condition extends App with DracoType {
   implicit def decoder: Decoder[Condition] = codec.decoder
 
   def apply (
-    _value: Json
+    _value: => Json
   ) : Condition = new Condition {
     override lazy val value: Json = _value
     override lazy val typeDefinition: TypeDefinition = Condition.typeDefinition
@@ -416,8 +416,8 @@ object Variable extends App with DracoType {
   implicit def decoder: Decoder[Variable] = codec.decoder
 
   def apply (
-    _name: String,
-    _valueType: Json
+    _name: => String,
+    _valueType: => Json
   ) : Variable = new Variable {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
@@ -444,9 +444,9 @@ object Factory extends App with DracoType {
   implicit def decoder: Decoder[Factory] = codec.decoder
 
   def apply (
-    _valueType: Json,
-    _parameters: Seq[Parameter] = Seq.empty,
-    _body: Seq[BodyElement] = Seq.empty
+    _valueType: => Json,
+    _parameters: => Seq[Parameter] = Seq.empty,
+    _body: => Seq[BodyElement] = Seq.empty
   ) : Factory = new Factory {
     override lazy val valueType: Json = _valueType
     override lazy val parameters: Seq[Parameter] = _parameters
@@ -475,10 +475,10 @@ object Local extends App with DracoType {
   implicit def decoder: Decoder[Local] = codec.decoder
 
   def apply (
-    _name: String,
-    _valueType: Json,
-    _value: Json,
-    _now: Boolean = false
+    _name: => String,
+    _valueType: => Json,
+    _value: => Json,
+    _now: => Boolean = false
   ) : Local = new Local {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
@@ -509,10 +509,10 @@ object Case extends App with DracoType {
   implicit def decoder: Decoder[Case] = codec.decoder
 
   def apply (
-    _name: String = "",
-    _valueType: Json = Json.Null,
-    _body: Seq[BodyElement] = Seq.empty,
-    _value: Json = Json.Null
+    _name: => String = "",
+    _valueType: => Json = Json.Null,
+    _body: => Seq[BodyElement] = Seq.empty,
+    _value: => Json = Json.Null
   ) : Case = new Case {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType

@@ -47,7 +47,7 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **622 tests / 44
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **623 tests / 44
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -62,7 +62,8 @@ four type forms (2026-09-17); then one for the header's type parameters (2026-09
 (2026-09-17), which moves the type counts to 98 in scope, 108 measured and GenDrake to 96 of 96; then
 `fold` on the family and its own two-test suite `PresenceTest` (2026-09-17); then one `DrakeParseTest`
 test for `now` (2026-09-17); then a `PresenceTest` test that a Present never evaluates `fold`'s default
-(2026-09-18) — **622 tests / 44 suites**. These
+(2026-09-18); then one that a factory argument is evaluated on first read and never if unused
+(2026-09-18) — **623 tests / 44 suites**. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -228,9 +229,12 @@ rule; actor; domain; object-only; plain type.
 
 **Evaluation is lazy by default, `now` overrides** (drake.dlt EVALUATION, 2026-09-17): a `fix` or `loc`
 inside a method, action or factory body renders `lazy val` (step 1); a method parameter is by-name,
-`_x: => T`, bound once by a `lazy val x = _x` prelude (step 2, 2026-09-18); factory parameters follow in
-step 3. `now` before a member keeps it strict and is a reserved word; its one use is TypeName's
-`equals(other)`, which meets the host's by-value signature.
+`_x: => T`, bound once by a `lazy val x = _x` prelude (step 2, 2026-09-18); a factory parameter is by-name
+too, and the factory body is its prelude — a bodiless factory binds `override lazy val x = _x`, a bodied
+one reads `_x` inside its lazy members (step 3, 2026-09-18). The actor-minting `factory ActorType`
+(`def actorType(...)`) stays strict. `now` before a member keeps it strict and is a reserved word; it is
+required where the target binds the signature — a host method met (TypeName's `equals`, Dictionary's
+`Map` operations, CLI's `main`) or a method used as a function value (TypeLoader's two).
 
 **DRAKE** is draco's own definition surface — `X.drake` beside every `X.json`.
 `Drake.emit` and `Drake.parse` are mutual inverses in `src/mods/scala/draco/Drake.scala`;
@@ -371,6 +375,10 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   value (`TypeLoader.readDefinition`, `rooted`) cannot take by-name parameters in Scala; mark
   the parameter `now par …`. Find these by what a type DERIVES (a foreign parent, an explicit
   `main`) and by method-as-argument uses, not by method names.
+- **A factory argument is by-name, so a hand-written caller sequences its own effects.** Since lazy
+  step 3 (2026-09-18) `X(expr)` evaluates `expr` on first read of the instance, not at the call. An
+  argument that consumes state — a token cursor, an iterator, a `var` mutated afterwards — must be bound
+  to a `val` before the call. `Drake.parse` had six such sites and failed 133 tests on the first run.
 - **A re-canonicalization sweep de-trees what the parser cannot tree.** `DrakeCLI parse` writes
   back what it reads; an infix condition authored as a tree (`{"==": [{"*": ["i1","i2"]}, "i3"]}`)
   comes back as the string `"i1 * i2 == i3"` until the parser trees infix operators (GitHub #61).

@@ -12,8 +12,8 @@ object ContentSink extends App with DracoType {
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   def apply (
-    _sinkRoot: URI,
-    _logicalPath: String
+    _sinkRoot: => URI,
+    _logicalPath: => String
   ) : ContentSink = new ContentSink {
     lazy val sinkPath: java.nio.file.Path = java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))
     override def write(_content: => String): Unit = {

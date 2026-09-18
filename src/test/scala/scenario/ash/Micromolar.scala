@@ -25,7 +25,7 @@ object Micromolar extends App with DracoType {
   }
 
   def apply (
-    _value: Double
+    _value: => Double
   ) : Micromolar = new Micromolar {
     override lazy val value: Double = _value
     override lazy val typeDefinition: TypeDefinition = Micromolar.typeDefinition

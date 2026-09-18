@@ -23,7 +23,7 @@ object Type extends App with DracoType {
   }
 
   def apply[T] (
-    _typeDefinition: TypeDefinition
+    _typeDefinition: => TypeDefinition
   ) : Type[T] = new Type[T] {
     override lazy val typeDefinition: TypeDefinition = _typeDefinition
   }

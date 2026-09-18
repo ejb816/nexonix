@@ -14,9 +14,9 @@ object Position extends App with DracoType {
   lazy val domainType: Domain[Aerial] = Domain[Aerial] (typeDefinition)
 
   def apply (
-    _latitude: Double = 0.0,
-    _longitude: Double = 0.0,
-    _altitudeFeet: Int = 0
+    _latitude: => Double = 0.0,
+    _longitude: => Double = 0.0,
+    _altitudeFeet: => Int = 0
   ) : Position = new Position {
     override lazy val latitude: Double = _latitude
     override lazy val longitude: Double = _longitude

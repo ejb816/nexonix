@@ -31,9 +31,9 @@ object Binding extends App with DracoType {
   }
 
   def apply (
-    _from: TypeName = TypeName.Null,
-    _param: String = "",
-    _to: TypeName = TypeName.Null
+    _from: => TypeName = TypeName.Null,
+    _param: => String = "",
+    _to: => TypeName = TypeName.Null
   ) : Binding = new Binding {
     override lazy val from: TypeName = _from
     override lazy val param: String = _param

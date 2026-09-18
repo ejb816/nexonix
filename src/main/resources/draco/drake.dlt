@@ -311,7 +311,12 @@ EVALUATION  (lazy by default, `now` to override — Haskell's stance, agreed 202
     1. body bindings -> lazy val, with `now` itself            (2026-09-17)
     2. method parameters -> by-name + lazy val prelude          (2026-09-18; `now par other Any` on
                                                                  TypeName.equals, the host's by-value signature)
-    3. factory parameters -> by-name                            (after)
+    3. factory parameters -> by-name                            (2026-09-18; the factory BODY is the prelude:
+                                                                 a bodiless factory binds `override lazy val
+                                                                 x = _x` once, a bodied one reads `_x` inside
+                                                                 the lazy members it authors. The actor-minting
+                                                                 `factory ActorType` stays strict: its
+                                                                 parameters are wiring the host reads at start)
 
 BRACKETS  (a construct delimits ITSELF; whitespace is insignificant throughout)
   A list-block (elements, parameters, body, globalElements, variables, conditions, modules, types) is
@@ -597,7 +602,17 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           by a `lazy val x: T = _x` prelude the body opens with; abstract methods
                                           carry the same signature, so `fold`'s `absent` is lazy and a Present never
                                           evaluates it (PresenceTest). First real `now`: TypeName's `equals(other)`
-                                          meets the host's by-value signature. Step 3 (factory parameters) follows.
+                                          meets the host's by-value signature.
+                                          STEP 3 (2026-09-18): a factory parameter is by-name, `_x: => T`, and the
+                                          factory body is its prelude — a bodiless factory binds each parameter
+                                          once as the instance's `override lazy val x = _x`, a bodied one reads
+                                          `_x` inside the lazy members it authors — so `Present(x)` constructs
+                                          without evaluating `x` (PresenceTest). `now par` keeps a parameter
+                                          strict; the corpus needs it nowhere. The actor-minting factory
+                                          (`def actorType(...)`) is a separate convention and stays strict.
+                                          First consequence seen: a CALLER sequences its effects — Drake.parse
+                                          passed cursor reads as arguments and they ran at first read, out of
+                                          token order, until bound before the call (133 tests, one run).
   Presence(T) / Present / Absent    <->   IMPLEMENTED (2026-09-17) — draco.drake's first members, the runtime's own
     (draco's option, not host Option)     sum type: `Presence(T)` with `modules [Present, Absent]`, `Present(T)` carrying
                                           `par value T`, `Absent(T)` bare and parameterized (variance is the later

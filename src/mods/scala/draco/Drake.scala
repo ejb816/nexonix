@@ -1003,16 +1003,20 @@ object Drake {
     c.takeText () match {
       // `now <member>`: the member as written, marked strict (drake.dlt EVALUATION).
       case "now" => strict (parseMember (c))
-      case "mon" => Monadic (parseValue (c))
-      case "con" => Condition (parseValue (c))
+      // A factory parameter is by-name (drake.dlt EVALUATION, step 3), so an argument that
+      // consumes the cursor must be bound BEFORE the call: passed inline it would run at first
+      // read, out of token order. The caller sequences its effects — Haskell's stance too.
+      case "mon" => val value = parseValue (c); Monadic (value)
+      case "con" => val value = parseValue (c); Condition (value)
       case "var" =>
-        val name = parseElementName (c.takeText ())
-        Variable (name, takeValueType (c))
+        val name      = parseElementName (c.takeText ())
+        val valueType = takeValueType (c)
+        Variable (name, valueType)
       case "dyn" =>
         val name      = parseElementName (c.takeText ())
         val valueType = takeValueType (c)
         // A dyn-with-body opens with `[`; a leaf dyn carries its result inline.
-        if (!c.at ("[")) Dynamic (name, valueType, Seq.empty, Seq.empty, parseValue (c))
+        if (!c.at ("[")) { val value = parseValue (c); Dynamic (name, valueType, Seq.empty, Seq.empty, value) }
         else {
           c.take ()
           val parameters = parseSection (c, "parameters", Set ("par", "now")).map (_.asInstanceOf[Parameter])
@@ -1115,8 +1119,10 @@ object Drake {
     var message          = Action.Null
     var signal           = Action.Null
 
-    def actionBody (admits: Set[String] = actionKeywords) : Action =
-      Action (Seq.empty, parseBlock (c, admits).map (_.asInstanceOf[BodyElement]))
+    def actionBody (admits: Set[String] = actionKeywords) : Action = {
+      val body = parseBlock (c, admits).map (_.asInstanceOf[BodyElement])   // sequenced: by-name parameter
+      Action (Seq.empty, body)
+    }
 
     while (!c.exhausted) {
       c.takeText () match {
@@ -1129,10 +1135,11 @@ object Drake {
           val valueType =
             if (c.exhausted || c.atReserved) factoryValueType (name, typeParameters)
             else takeValueType (c)
-          factory = Factory (
-            valueType,
-            parseSection (c, "parameters", Set ("par", "now")).map (_.asInstanceOf[Parameter]),
-            parseSection (c, "body", declarationKeywords).map (_.asInstanceOf[BodyElement]))
+          // Sequenced before the call: parameters precede the body on the surface, and a
+          // by-name argument would read them in whichever order the instance is read.
+          val parameters = parseSection (c, "parameters", Set ("par", "now")).map (_.asInstanceOf[Parameter])
+          val body       = parseSection (c, "body", declarationKeywords).map (_.asInstanceOf[BodyElement])
+          factory = Factory (valueType, parameters, body)
         case "domain"      => domainName = takeQualifiedRef (c)
         case "super"       => superDomain = takeQualifiedRef (c)
         case "source"      => domainSource = takeQualifiedRef (c)

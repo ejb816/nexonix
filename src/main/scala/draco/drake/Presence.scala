@@ -27,7 +27,7 @@ object Present extends App with DracoType {
   lazy val domainType: Domain[Drake] = Domain[Drake] (typeDefinition)
 
   def apply[T] (
-    _value: T
+    _value: => T
   ) : Present[T] = new Present[T] {
     override lazy val value: T = _value
     override lazy val typeDefinition: TypeDefinition = Present.typeDefinition

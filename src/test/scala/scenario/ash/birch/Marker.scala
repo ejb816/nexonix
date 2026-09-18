@@ -13,7 +13,7 @@ object Marker extends App with DracoType {
   lazy val domainType: Domain[Ash_Birch] = Domain[Ash_Birch] (typeDefinition)
 
   def apply (
-    _compound: scenario.ash.Compound
+    _compound: => scenario.ash.Compound
   ) : Marker = new Marker {
     override lazy val value: String = _compound.value
     override lazy val typeDefinition: TypeDefinition = Marker.typeDefinition

@@ -28,8 +28,8 @@ object RuleAspect extends App with DracoType {
   }
 
   def apply (
-    _pattern: Pattern = Pattern.Null,
-    _action: Action = Action.Null
+    _pattern: => Pattern = Pattern.Null,
+    _action: => Action = Action.Null
   ) : RuleAspect = new RuleAspect {
     override lazy val pattern: Pattern = _pattern
     override lazy val action: Action = _action

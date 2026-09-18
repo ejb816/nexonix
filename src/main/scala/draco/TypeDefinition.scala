@@ -35,12 +35,12 @@ object TypeDefinition extends App with DracoType {
   }
 
   def apply (
-    _typeName: TypeName,
-    _dracoAspect: DracoAspect = DracoAspect.Null,
-    _domainAspect: DomainAspect = DomainAspect.Null,
-    _ruleAspect: RuleAspect = RuleAspect.Null,
-    _actorAspect: ActorAspect = ActorAspect.Null,
-    _codecAspect: CodecAspect = CodecAspect.Null
+    _typeName: => TypeName,
+    _dracoAspect: => DracoAspect = DracoAspect.Null,
+    _domainAspect: => DomainAspect = DomainAspect.Null,
+    _ruleAspect: => RuleAspect = RuleAspect.Null,
+    _actorAspect: => ActorAspect = ActorAspect.Null,
+    _codecAspect: => CodecAspect = CodecAspect.Null
   ) : TypeDefinition = new TypeDefinition {
     override lazy val typeName: TypeName = _typeName
     override lazy val dracoAspect: DracoAspect = _dracoAspect

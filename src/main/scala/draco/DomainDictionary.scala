@@ -8,7 +8,7 @@ object DomainDictionary extends App with DracoType {
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   def apply (
-    _domains: Seq[DomainType] = Seq.empty
+    _domains: => Seq[DomainType] = Seq.empty
   ) : DomainDictionary = new DomainDictionary {
     override lazy val kvMap: Map[DomainType, TypeDictionary] = _domains.map(domain => (domain, domain.typeDictionary)).toMap
     override lazy val typeDefinition: TypeDefinition = DomainDictionary.typeDefinition

@@ -24,6 +24,20 @@ class PresenceTest extends AnyFunSuite {
     assert(forced == 1, s"the default branch was evaluated $forced times, not once")
   }
 
+  test("a factory argument is lazy: evaluated on first read, never if unused") {
+    // Call-by-need (drake.dlt EVALUATION, step 3): `_value` is by-name and the factory body is
+    // its prelude — bound once as the instance's `override lazy val value` — so constructing a
+    // Present evaluates nothing, and reading `value` twice evaluates the argument once.
+    val never: Presence[Int] = Present[Int](sys.error("the argument was evaluated"))
+    assert(never ne null)
+    var forced = 0
+    def counted: Int = { forced += 1; 3 }
+    val once = Present(counted)
+    assert(forced == 0, "constructing a Present evaluated its argument")
+    assert(once.value + once.value == 6)
+    assert(forced == 1, s"the argument was evaluated $forced times, not once")
+  }
+
   test("fold dispatches through the parent type, and the branches may change type") {
     val present: Presence[Int] = Present(3)
     val absent:  Presence[Int] = Absent[Int]()

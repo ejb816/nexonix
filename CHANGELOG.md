@@ -171,6 +171,17 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Lazy by default, step 3: factory parameters.** A factory parameter is now by-name, `_x: => T`, and the
+  factory body is its prelude: a bodiless factory binds each parameter once as the instance's
+  `override lazy val x = _x`, a bodied one reads `_x` inside the lazy members it authors, so an argument
+  is evaluated on first read and never if unused — `Present(x)` constructs without evaluating `x`
+  (PresenceTest). `now par` keeps a parameter strict; nothing in the corpus needs it. The actor-minting
+  factory (`def actorType(...)`) is a separate convention and stays strict. Every definition with a
+  plain factory regenerates: 122 parameters across 44 projections, main, scenario and example domains
+  alike. First observed consequence: `Drake.parse` passed cursor-consuming expressions as factory
+  arguments, which by-name run at first read rather than in token order; its six sites now bind the
+  argument before the call, where an effect is sequenced under call-by-need. (2026-09-18)
+
 - **Lazy by default, step 2: method parameters.** A `dyn` parameter is now by-name, arriving as `_x` and
   bound once to `x` by a `lazy val` prelude the body opens with, so it is evaluated at most once and never
   if unused; abstract methods carry the same signature, so a Present never evaluates `fold`'s default

@@ -27,8 +27,8 @@ object Value extends App with DracoType {
   }
 
   def apply (
-    _name: String,
-    _pathElements: Seq[String]
+    _name: => String,
+    _pathElements: => Seq[String]
   ) : Value = new Value {
     override lazy val name: String = _name
     override lazy val pathElements: Seq[String] = _pathElements

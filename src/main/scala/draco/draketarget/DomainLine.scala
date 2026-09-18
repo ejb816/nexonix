@@ -10,8 +10,8 @@ object DomainLine extends App with DracoType {
   lazy val domainType: Domain[DrakeTarget] = Domain[DrakeTarget] (typeDefinition)
 
   def apply (
-    _package: Seq[String],
-    _name: String
+    _package: => Seq[String],
+    _name: => String
   ) : DomainLine = new DomainLine {
     override lazy val value: String = "domain " ++ _package.mkString(" ") ++ " " ++ _name
     override lazy val typeDefinition: TypeDefinition = DomainLine.typeDefinition

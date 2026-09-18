@@ -25,7 +25,7 @@ object CodecAspect extends App with DracoType {
   }
 
   def apply (
-    _discriminator: String = ""
+    _discriminator: => String = ""
   ) : CodecAspect = new CodecAspect {
     override lazy val discriminator: String = _discriminator
     override lazy val typeDefinition: TypeDefinition = CodecAspect.typeDefinition

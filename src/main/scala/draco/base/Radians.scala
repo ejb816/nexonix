@@ -24,7 +24,7 @@ object Radians extends App with DracoType {
   }
 
   def apply (
-    _value: Double
+    _value: => Double
   ) : Radians = new Radians {
     override lazy val value: Double = _value
     override lazy val typeDefinition: TypeDefinition = Radians.typeDefinition

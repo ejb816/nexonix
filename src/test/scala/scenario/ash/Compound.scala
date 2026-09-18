@@ -25,7 +25,7 @@ object Compound extends App with DracoType {
   }
 
   def apply (
-    _value: String
+    _value: => String
   ) : Compound = new Compound {
     override lazy val value: String = _value
     override lazy val typeDefinition: TypeDefinition = Compound.typeDefinition

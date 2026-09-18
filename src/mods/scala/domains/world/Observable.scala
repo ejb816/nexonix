@@ -13,8 +13,8 @@ object Observable extends App with DracoType {
   lazy val domainType: Domain[World] = Domain[World] (typeDefinition)
 
   def apply (
-    _geocentric: Cartesian = Cartesian.Null,
-    _heliocentric: Cartesian = Cartesian.Null
+    _geocentric: => Cartesian = Cartesian.Null,
+    _heliocentric: => Cartesian = Cartesian.Null
   ) : Observable = new Observable {
     override lazy val geocentric: Cartesian = _geocentric
     override lazy val heliocentric: Cartesian = _heliocentric

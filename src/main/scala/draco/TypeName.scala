@@ -33,9 +33,9 @@ object TypeName extends App with DracoType {
   }
 
   def apply (
-    _name: String,
-    _namePackage: Seq[String] = Seq.empty,
-    _typeParameters: Seq[Json] = Seq.empty
+    _name: => String,
+    _namePackage: => Seq[String] = Seq.empty,
+    _typeParameters: => Seq[Json] = Seq.empty
   ) : TypeName = new TypeName {
     override lazy val name: String = _name
     override lazy val namePackage: Seq[String] = _namePackage

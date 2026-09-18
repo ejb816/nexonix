@@ -13,7 +13,7 @@ object Potency extends App with DracoType {
   lazy val domainType: Domain[Ash_Birch] = Domain[Ash_Birch] (typeDefinition)
 
   def apply (
-    _potency: scenario.ash.Micromolar
+    _potency: => scenario.ash.Micromolar
   ) : Potency = new Potency {
     override lazy val value: Double = _potency.value * 0.62
     override lazy val typeDefinition: TypeDefinition = Potency.typeDefinition

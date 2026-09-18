@@ -34,10 +34,10 @@ object ActorAspect extends App with DracoType {
   }
 
   def apply (
-    _message: Action = Action.Null,
-    _messageType: TypeName = TypeName.Null,
-    _signal: Action = Action.Null,
-    _start: Action = Action.Null
+    _message: => Action = Action.Null,
+    _messageType: => TypeName = TypeName.Null,
+    _signal: => Action = Action.Null,
+    _start: => Action = Action.Null
   ) : ActorAspect = new ActorAspect {
     override lazy val message: Action = _message
     override lazy val messageType: TypeName = _messageType

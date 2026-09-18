@@ -15,8 +15,8 @@ object SourceContent extends App with DracoType {
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   def apply (
-    _sourceRoot: URI,
-    _logicalPath: String
+    _sourceRoot: => URI,
+    _logicalPath: => String
   ) : SourceContent = new SourceContent {
     lazy val sourceURI: java.net.URI = _sourceRoot.resolve(java.net.URI.create(_logicalPath))
     override lazy val source: BufferedSource = scala.io.Source.fromFile(sourceURI)
