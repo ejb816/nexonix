@@ -16,7 +16,7 @@ object AddNaturalSequence extends App with DracoType {
       val i: Integer = ctx.get[Integer]("$i")
       accumulator.primeSet.addOne(i)
       accumulator.naturalSet.addOne(i)
-      val text: String = s"Added $i to primeSet and naturalSet."
+      lazy val text: String = s"Added $i to primeSet and naturalSet."
       accumulator.intervalTextSet.addOne((System.nanoTime(), text))
   }
 

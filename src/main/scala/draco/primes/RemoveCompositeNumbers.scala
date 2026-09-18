@@ -16,7 +16,7 @@ object RemoveCompositeNumbers extends App with DracoType {
       val i1: Integer = ctx.get[Integer]("$i1")
       val i2: Integer = ctx.get[Integer]("$i2")
       val i3: Integer = ctx.get[Integer]("$i3")
-      val newText: String = s"Composite number $i3 removed -> $i1 * $i2 == $i3"
+      lazy val newText: String = s"Composite number $i3 removed -> $i1 * $i2 == $i3"
       ctx.delete(i3)
       accumulator.primeSet.remove(i3)
       accumulator.compositeSet.addOne(i3)

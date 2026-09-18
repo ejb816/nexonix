@@ -65,6 +65,12 @@
           "name": "value",
           "valueType": "Json",
           "value": "Json.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "now",
+          "valueType": "Boolean",
+          "value": "false"
         }
       ],
       "body": [
@@ -107,6 +113,12 @@
           "name": "value",
           "valueType": "Json",
           "value": "_value"
+        },
+        {
+          "kind": "Fixed",
+          "name": "now",
+          "valueType": "Boolean",
+          "value": "_now"
         }
       ]
     }

@@ -14,7 +14,7 @@ object BirchAlarmReceived extends App with DracoType {
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val jasmonate: scenario.birch.BirchJasmonate = ctx.get[scenario.birch.BirchJasmonate]("$jasmonate")
-      val received: java.util.List[scenario.birch.BirchJasmonate] = ctx.getRuntime().get("received")
+      lazy val received: java.util.List[scenario.birch.BirchJasmonate] = ctx.getRuntime().get("received")
       received.add(jasmonate)
   }
 

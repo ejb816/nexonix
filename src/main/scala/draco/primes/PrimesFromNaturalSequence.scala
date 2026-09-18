@@ -16,7 +16,7 @@ object PrimesFromNaturalSequence extends App with DracoType {
       val i1: Integer = ctx.get[Integer]("$i1")
       val i2: Integer = ctx.get[Integer]("$i2")
       val i3: Integer = ctx.get[Integer]("$i3")
-      val newText: (Long, String) = (System.nanoTime(), s" Remove $i3 ->\t$i3 == $i1 * $i2")
+      lazy val newText: (Long, String) = (System.nanoTime(), s" Remove $i3 ->\t$i3 == $i1 * $i2")
       ctx.delete(i3)
       accumulator.primeSet.remove(i3)
       accumulator.compositeSet.addOne(i3)

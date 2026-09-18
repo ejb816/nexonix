@@ -4,4 +4,5 @@ type Mutable from BodyElement
       par name String
       par valueType Json
       par value Json Json.Null
+      par now Boolean false
 domain draco Draco

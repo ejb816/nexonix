@@ -11,8 +11,8 @@ object CLI extends DracoType {
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   def load(path: String): TypeDefinition = {
-    val source: scala.io.BufferedSource = scala.io.Source.fromFile(path)
-    val text: String = try source.mkString finally source.close()
+    lazy val source: scala.io.BufferedSource = scala.io.Source.fromFile(path)
+    lazy val text: String = try source.mkString finally source.close()
     io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
   }
   def version: Unit = println("Draco 2.0.0-alpha.1")

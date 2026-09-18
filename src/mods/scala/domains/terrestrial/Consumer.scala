@@ -1,4 +1,3 @@
-
 package domains.terrestrial
 
 import draco._
@@ -26,7 +25,7 @@ object Consumer extends App with DracoType {
     override lazy val typeDefinition: TypeDefinition = Consumer.typeDefinition
 
     override def receive(ctx: TypedActorContext[draco.format.json.JSON], msg: draco.format.json.JSON): Behavior[draco.format.json.JSON] = {
-      val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
+      lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
       session.insert(Seq(msg): _*)
       session.fire()
       session.close()

@@ -14,7 +14,7 @@ object Primes extends App with DracoType {
 
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
   def filter(naturals: LazyList[Int]): LazyList[Int] = {
-    val p: Int = naturals.head
+    lazy val p: Int = naturals.head
     p #:: filter(naturals.tail.filter(_ % p != 0))
   }
   def naturals(start: Int = 0, step: Int = 1): LazyList[Int] = LazyList.from(start, step)

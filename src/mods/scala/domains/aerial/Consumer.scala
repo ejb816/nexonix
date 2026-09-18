@@ -24,8 +24,8 @@ object Consumer extends App with DracoType {
   def actorType(): ActorType = new Actor[draco.format.json.JSON] {
     override lazy val typeDefinition: TypeDefinition = Consumer.typeDefinition
 
-    val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
-    val consumed: java.util.ArrayList[String] = new java.util.ArrayList[String]()
+    lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
+    lazy val consumed: java.util.ArrayList[String] = new java.util.ArrayList[String]()
     session.set("consumed", consumed)
 
     override def receive(ctx: TypedActorContext[draco.format.json.JSON], msg: draco.format.json.JSON): Behavior[draco.format.json.JSON] = {

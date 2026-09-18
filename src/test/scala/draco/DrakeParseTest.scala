@@ -378,6 +378,33 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       fail("type-parameter surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
   }
 
+  // --- `now`, the strictness override, asserted structurally ---
+  //
+  // Evaluation is lazy by default (drake.dlt EVALUATION); `now` before a binding keeps it
+  // strict. The flag rides the element, so it must survive parse and emit like any field.
+
+  test("now: a strict binding parses with the flag set and emits with the prefix") {
+    val authored =
+      """type Probe
+        |  elements
+        |    dyn f Int [
+        |      parameters
+        |        par n Int
+        |      body
+        |        now loc doubled Int n * 2
+        |        fix value Int doubled
+        |    ]
+        |domain draco Draco
+        |""".stripMargin
+    val parsed = Drake.parse(authored)
+    val body   = parsed.dracoAspect.elements.head.asInstanceOf[Dynamic].body
+    assert(body.head.now, "the `now` binding did not come back strict")
+    assert(!body(1).now, "the plain binding came back strict")
+    val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
+    if (handNorm != roundNorm)
+      fail("`now` surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
+  }
+
   // --- The measured tail: where the surface is not yet information-complete ---
 
   test("drake surface losses, unnormalized (report only)") {

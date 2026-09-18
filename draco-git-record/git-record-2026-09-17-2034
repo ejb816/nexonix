@@ -1,0 +1,73 @@
+# Lazy by default, step 1: body bindings become lazy val, and `now` arrives — accepted by Dev on 2026-09-17
+# ("Accept, body bindings become lazy val first"), after the shape and the sizing (127 factory params, 33
+# method params, 57 body bindings, 0 mut, 56 src/main definitions touched over the three steps, and NO
+# binding whose dropped effect would need `now`).
+#
+# ONE CONCEPT: a fix / loc inside a method, action or factory body is CALL-BY-NEED. ScalaTarget renders
+# `lazy val` (evaluated at most once, on first use, never if unused — Haskell's stance, Dev's choice);
+# `now` before the member keeps `val`. Seven engine render sites go through `binding(element)`; `mut`
+# stays `var`; a field set by a factory body stays `override lazy val` (no strict val may override a
+# trait's lazy one). Rule VARIABLES (`val i1 = ctx.get…`) are not elements and stay as they are.
+#
+# THE FLAG: TypeElement gains `fix now Boolean false`; Fixed / Mutable / Dynamic / Parameter / Local take
+# `par now Boolean false` LAST (Dynamic's body assigns it), so no hand-written caller moves. Family JSON by
+# the compiled parser, family Scala by the compiled engine, plus ONE hand-applied line: the encoder's
+# `if (x.now) Some("now" -> x.now.asJson) else None` — the Boolean elision rule (a false elides) is new in
+# the engine, which the compiled one did not have. No Boolean factory parameter existed before, so no
+# other codec moves. Parser: `now` reserved and admitted where a binding is; `now <member>` rebuilds the
+# member strict (`strict`); emitter: `keyword` prefixes `now `. DrakeParseTest: one structural test.
+#
+# TWO RUNS, as agreed in the shape. I cannot compile the engine, so:
+#   RUN 1  compiles everything (the regenerated family included) and DracoGenTest FAILS on every src/main
+#          definition with a fix / loc statement in a body — up to 19 (CLI, ContentSink, Dictionary, Draco,
+#          SourceContent, TypeLoader, TypeName, Present, Absent, format/json/Value, DomainLineOf, Emit,
+#          Emitter, EmissionReceived, DefinitionPath, AddNaturalSequence, Primes, PrimesFromNaturalSequence,
+#          RemoveCompositeNumbers; fewer in practice, since a body whose only binding is its `value` result
+#          inlines). Everything else should be green. PASTE the "Failed tests" block.
+#   THEN   I regenerate exactly the flagged .scala with the compiled engine (resource overlay), verify, and
+#          hand you RUN 2, which compiles the regenerated Scala for real and should be all green: 621 tests /
+#          44 suites, every headline unchanged.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# RUN 1 (2026-09-18 01:10): 606 passed, 15 failed — 14 DracoGenTest per-type (the 19 minus Dictionary,
+# TypeLoader, TypeName, Present, Absent, whose only body binding is the inlined `value` result) and
+# ScenarioGenTest's "every scenario definition projects to the Scala committed beside it" (RootInterface,
+# AshBirchAlarm, BirchAlarmReceived — the scenario keeps its projections beside its JSON, which the shape
+# had not listed). GEN MAP moved 28 -> 20: eight example-domain projections that matched only up to
+# whitespace stopped matching on the one lazy line. REGENERATED with the compiled engine over the
+# resource overlay: the 14, the 3, and every mods projection whose normalized diff was solely
+# `val` -> `lazy val` (the gate's own normalization applied, since a byte diff mis-read whitespace as
+# customization). All 17 main+scenario verified equal to the engine's output, normalized.
+#
+# RUN 2: expected 621 tests / 44 suites, all green; GEN MAP back to 28 match / 20 differ; every other
+# headline unchanged.
+#
+# RUN 2 (01:16): 619 passed, 2 failed, both scenario.ash.RootInterface — MY regeneration's fault, not the
+# engine's: RootInterface is an ACTOR, and an actor's projection walks its domain chain through the loader
+# to gather the rules its Knowledge owns; the overlay held only src/main/resources, so the scenario's domain
+# resolved to a stub and the CLI wrote an actor with two rules missing (the "misses 2"). Overlay extended
+# with src/test/resources; the three scenario projections regenerated; RootInterface now differs from HEAD
+# by exactly its one lazy line. LESSON for the overlay workflow: include every resource root the generated
+# type can reach — main AND scenario — before generating an actor.
+#
+# RUN 3: expected 621 / 44, all green, GEN MAP 28/20, every headline unchanged.
+#
+# COMMIT (after run 3 is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-17-2034 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-2034 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-17-2034 && git push
+
+--- MESSAGE ---
+Evaluation is lazy by default, and now overrides it: body bindings become lazy val
+
+A `fix` or `loc` inside a method, action or factory body is call-by-need: the ScalaTarget renders it as
+a `lazy val`, evaluated at most once on first use and never if unused, which is Haskell's stance and
+the one drake takes. `now` before a member keeps it strict. It rides the element as a Boolean that
+elides when false, the binding kinds' factories take it as a trailing default so no caller moves, and it
+is a reserved word the parser and emitter carry. Nothing in the corpus needs it: no binding's effect
+depends on being forced unused.
+
+This is the first of three steps, smallest semantic risk first; method parameters and then factory
+parameters become by-name next, which is what lets `ifThenElse` as dispatch on Presence terminate a
+recursion. The generated Scala of every definition with a body binding regenerates.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

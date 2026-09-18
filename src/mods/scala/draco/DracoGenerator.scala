@@ -221,6 +221,15 @@ object DracoGenerator extends App {
     if (idx < 0) name else name.substring(0, idx)
   }
 
+  /** A BINDING inside a body — a `fix` or `loc` statement of a method, an action or a
+    * factory — is LAZY BY DEFAULT (drake.dlt EVALUATION, 2026-09-17): call-by-need, as in
+    * Haskell, so it is evaluated at most once, on first use, and never if unused. `now` on
+    * the element is the override that keeps today's strict `val`. A `mut` has no lazy
+    * form and stays a `var`; a field set by a factory body stays `override lazy val`,
+    * because Scala lets no strict val override a trait's lazy one. Parameters follow in
+    * the next two steps (method, then factory). */
+  private def binding (element: TypeElement) : String = if (element.now) "val" else "lazy val"
+
   /** The VARIABLE a type parameter binds: `T` for `T`, `S` for `S <: DomainType` (the
     * bound leaf's first operand, parameter first). Empty for a form that binds none. */
   private def typeVariable (parameter: Json) : String = TypeForm.node(parameter) match {
@@ -341,7 +350,7 @@ object DracoGenerator extends App {
     // Generate body statements from Action.body
     val bodyStatements = action.body.map {
       case f: Fixed =>
-        if (f.name.nonEmpty) s"      val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
+        if (f.name.nonEmpty) s"      ${binding(f)} ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
         else s"      ${expression(f.value)}"
       case m: Mutable =>
         if (m.name.nonEmpty) s"      var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
@@ -355,7 +364,7 @@ object DracoGenerator extends App {
         // `loc` in a RULE action fell through to the BodyElement catch-all and its
         // binding was silently dropped — the initializer emitted as a bare statement
         // and every later reference to the name left dangling.
-        s"      val ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
+        s"      ${binding(l)} ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
       case v: Variable =>
         s"      val ${v.name}: ${v.valueType.text} = ctx.get[${v.valueType.text}](\"$$${v.name}\")"
       case _: Case =>
@@ -555,11 +564,11 @@ object DracoGenerator extends App {
           .map(line => if (line.isEmpty) "" else s"$pad$line")
           .mkString("\n")
       def statement(e: BodyElement, pad: String): String = e match {
-        case f: Fixed    => s"${pad}val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
+        case f: Fixed    => s"${pad}${binding(f)} ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
         case m: Mutable  => s"${pad}var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
-        case l: Local    => s"${pad}val ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
+        case l: Local    => s"${pad}${binding(l)} ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
         case mo: Monadic => indentBlock(expression(mo.value), pad)
-        case be: BodyElement => s"${pad}val ${be.name}: ${be.valueType.text} = ${initializer(be.valueType.text, be.value)}"
+        case be: BodyElement => s"${pad}${binding(be)} ${be.name}: ${be.valueType.text} = ${initializer(be.valueType.text, be.value)}"
       }
       val statements = statementsWithCases(body, bodyPad, scrutinee, statement)
       val result = if (value.isEmpty) Seq.empty else Seq(indentBlock(value))
@@ -634,7 +643,7 @@ object DracoGenerator extends App {
         case m: Mutable => s"    override var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
         case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), methodIndent = 4, scrutinee = dynScrutinee(d))}"
         case mo: Monadic => s"    ${expression(mo.value)}"
-        case l: Local   => s"    val ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
+        case l: Local   => s"    ${binding(l)} ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
         case _: Case    => sys.error("draco: a case-branch is not admitted in a factory body (drake.dlt CASE-BRANCH: an actor's message, or a dyn-with-body)")
         case be: BodyElement => s"    override lazy val ${be.name}: ${be.valueType.text} = ${initializer(be.valueType.text, be.value)}"
       }
@@ -733,6 +742,8 @@ object DracoGenerator extends App {
       case s if s.startsWith("Seq[")   => Some(s"x.${p.name}.nonEmpty")
       case s if s.startsWith("Map[")   => Some(s"x.${p.name}.nonEmpty")
       case "Json"                      => Some(jsonNonEmpty(p.name))
+      // A Boolean's natural emptiness is false: `now` (TypeElement) elides unless set.
+      case "Boolean"                   => Some(s"x.${p.name}")
       case "Factory"                   => Some(s"!x.${p.name}.valueType.isNull")
       case "Action"                    => Some(s"x.${p.name}.body.nonEmpty")
       case "Pattern"                   => Some(s"x.${p.name}.variables.nonEmpty")
@@ -756,6 +767,7 @@ object DracoGenerator extends App {
     case s if s.startsWith("Seq[") => Some(s"x.${p.name}.nonEmpty")
     case s if s.startsWith("Map[") => Some(s"x.${p.name}.nonEmpty")
     case "Json"                    => Some(jsonNonEmpty(p.name))
+    case "Boolean"                 => Some(s"x.${p.name}")
     case _                         => None
   }
 
@@ -1453,7 +1465,7 @@ object DracoGenerator extends App {
     * ctx variable bindings: the body operates on `knowledge`, the message, and `ctx`. */
   private def actorActionBody (action: Action, indent: String = "      ") : String = {
     def statement(e: BodyElement, pad: String): String = e match {
-      case f: Fixed if f.name.nonEmpty   => s"${pad}val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
+      case f: Fixed if f.name.nonEmpty   => s"${pad}${binding(f)} ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
       case m: Mutable if m.name.nonEmpty => s"${pad}var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
       case be: BodyElement               => s"$pad${expression(be.value)}"
     }

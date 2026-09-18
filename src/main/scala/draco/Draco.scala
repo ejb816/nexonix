@@ -26,7 +26,7 @@ object Draco extends App with DracoType {
   def actorType(problems: java.util.List[Problem]): ActorType = new Actor[DracoType] {
     override lazy val typeDefinition: TypeDefinition = Draco.typeDefinition
 
-    val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+    lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
     session.set("problems", problems)
 
     override def receive(ctx: TypedActorContext[DracoType], msg: DracoType): Behavior[DracoType] = {

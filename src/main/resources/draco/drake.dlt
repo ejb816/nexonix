@@ -295,6 +295,23 @@ CASE-BRANCH  (a Case element: an ordered branch on which SIBLING SUBTYPE of a sc
   dispatch — 13 of the corpus's 14 actors. A single whole-type branch (`case ashSap AshSap [ ... ]`) is
   legal, and is how a message is given an authored name rather than the target's supplied one.
 
+EVALUATION  (lazy by default, `now` to override — Haskell's stance, agreed 2026-09-17)
+  Every binding a body evaluates (fix, loc), every parameter and every method is LAZY: CALL-BY-NEED, evaluated
+  at most once, on first use, and never if unused. A target whose default is eager renders the lazy forms
+  as its deferred ones — ScalaTarget: a body binding is `lazy val`; a parameter is by-name `_x: => T` bound
+  to `lazy val x = _x` on entry (by-name alone would be call-by-name, re-evaluated per use). `mut` has no
+  lazy form and is strict by nature. A field a factory body sets stays the trait's `lazy val` (no strict val
+  may override it). Effects (`mon`) run in order as statements; a lazy binding runs when first read, which is
+  what lets `ifThenElse` as dispatch on Presence terminate a recursion — its branches are never both forced.
+    now <member>                     -> { …, now: true }   the STRICTNESS OVERRIDE (Haskell's `!`), a modifier
+                                        before the member's own keyword: `now loc x Int f(n)`, `now par n Int`.
+                                        `now` is reserved; absent means lazy. It rides the element (TypeElement.now,
+                                        Boolean, elided when false) and applies to fix / mut / loc / par / dyn.
+  LANDED IN THREE STEPS, smallest semantic risk first, the corpus needing `now` nowhere (measured 2026-09-17):
+    1. body bindings -> lazy val, with `now` itself            (2026-09-17)
+    2. method parameters -> by-name + lazy val prelude          (next)
+    3. factory parameters -> by-name                            (after)
+
 BRACKETS  (a construct delimits ITSELF; whitespace is insignificant throughout)
   A list-block (elements, parameters, body, globalElements, variables, conditions, modules, types) is
   written head-then-members. Whitespace — spaces, newlines, indentation — is INSIGNIFICANT, purely for
@@ -570,6 +587,12 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           the type for the target once, in targetTypes. NEXT: the parser trees the
                                           four forms (VALUE-TYPES above) and the corpus re-canonicalizes from the
                                           drake; then typeParameters, which lives in TypeName's identity.
+  lazy by default, `now`            <->   STEP 1 IMPLEMENTED (2026-09-17): a fix / loc inside a method, action or
+    (EVALUATION)                          factory body renders `lazy val`; `now` before it keeps `val`. TypeElement
+                                          gains `now Boolean false` (the binding kinds' factories take it last, so
+                                          no caller moves; the Boolean elision rule is new — a false elides). Parser
+                                          and emitter carry the prefix; DrakeParseTest asserts it. Steps 2 and 3
+                                          (parameters) follow.
   Presence(T) / Present / Absent    <->   IMPLEMENTED (2026-09-17) — draco.drake's first members, the runtime's own
     (draco's option, not host Option)     sum type: `Presence(T)` with `modules [Present, Absent]`, `Present(T)` carrying
                                           `par value T`, `Absent(T)` bare and parameterized (variance is the later

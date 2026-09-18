@@ -75,6 +75,12 @@
         "name": "value",
         "valueType": "Json",
         "value": "Json.Null"
+      },
+      {
+        "kind": "Fixed",
+        "name": "now",
+        "valueType": "Boolean",
+        "value": "false"
       }
     ]
   },

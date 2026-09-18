@@ -18,7 +18,7 @@ object SourceContent extends App with DracoType {
     _sourceRoot: URI,
     _logicalPath: String
   ) : SourceContent = new SourceContent {
-    val sourceURI: java.net.URI = _sourceRoot.resolve(java.net.URI.create(_logicalPath))
+    lazy val sourceURI: java.net.URI = _sourceRoot.resolve(java.net.URI.create(_logicalPath))
     override lazy val source: BufferedSource = scala.io.Source.fromFile(sourceURI)
     override lazy val sourceLines: Seq[String] = try source.getLines().toSeq finally source.close()
     override lazy val sourceString: String = sourceLines.mkString("\n")
@@ -29,5 +29,6 @@ object SourceContent extends App with DracoType {
     _sourceRoot = null.asInstanceOf[URI],
     _logicalPath = ""
   )
+
 
 }

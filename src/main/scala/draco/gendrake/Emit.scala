@@ -13,7 +13,7 @@ object Emit extends App with DracoType {
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val definition: TypeDefinition = ctx.get[TypeDefinition]("$definition")
-      val emission: draco.generator.Emission = draco.generator.Emission(draco.Drake.emit(definition))
+      lazy val emission: draco.generator.Emission = draco.generator.Emission(draco.Drake.emit(definition))
       ctx.insert(emission)
   }
 

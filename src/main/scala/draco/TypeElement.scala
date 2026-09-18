@@ -9,6 +9,7 @@ sealed trait TypeElement extends Primal[Json] {
   lazy val parameters: Seq[Parameter] = Seq.empty
   lazy val body: Seq[BodyElement] = Seq.empty
   lazy val value: Json = Json.Null
+  lazy val now: Boolean = false
 }
 
 object TypeElement extends App with DracoType {
@@ -37,7 +38,8 @@ object TypeElement extends App with DracoType {
       if (!x.valueType.isNull && x.valueType.asString.forall(_.nonEmpty)) Some("valueType" -> x.valueType.asJson) else None,
       if (x.parameters.nonEmpty) Some("parameters" -> x.parameters.asJson) else None,
       if (x.body.nonEmpty) Some("body" -> x.body.asJson) else None,
-      if (!x.value.isNull && x.value.asString.forall(_.nonEmpty)) Some("value" -> x.value.asJson) else None
+      if (!x.value.isNull && x.value.asString.forall(_.nonEmpty)) Some("value" -> x.value.asJson) else None,
+      if (x.now) Some("now" -> x.now.asJson) else None
     ).flatten ++ (x match {
       case x: Pattern => Seq(
         if (x.variables.nonEmpty) Some("variables" -> x.variables.asJson) else None,
@@ -57,14 +59,16 @@ object TypeElement extends App with DracoType {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
           _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
           _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
-        } yield Fixed (_name, _valueType, _value)
+          _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
+        } yield Fixed (_name, _valueType, _value, _now)
 
       case "Mutable" =>
         for {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
           _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
           _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
-        } yield Mutable (_name, _valueType, _value)
+          _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
+        } yield Mutable (_name, _valueType, _value, _now)
 
       case "Dynamic" =>
         for {
@@ -73,14 +77,16 @@ object TypeElement extends App with DracoType {
           _parameters <- cursor.downField("parameters").as[Option[Seq[Parameter]]].map(_.getOrElse(Seq.empty))
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
           _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
-        } yield Dynamic (_name, _valueType, _parameters, _body, _value)
+          _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
+        } yield Dynamic (_name, _valueType, _parameters, _body, _value, _now)
 
       case "Parameter" =>
         for {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
           _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
           _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
-        } yield Parameter (_name, _valueType, _value)
+          _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
+        } yield Parameter (_name, _valueType, _value, _now)
 
       case "Monadic" =>
         for {
@@ -122,7 +128,8 @@ object TypeElement extends App with DracoType {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
           _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
           _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
-        } yield Local (_name, _valueType, _value)
+          _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
+        } yield Local (_name, _valueType, _value, _now)
 
       case "Case" =>
         for {
@@ -164,18 +171,21 @@ object Fixed extends App with DracoType {
   def apply (
     _name: String,
     _valueType: Json,
-    _value: Json = Json.Null
+    _value: Json = Json.Null,
+    _now: Boolean = false
   ) : Fixed = new Fixed {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
     override lazy val value: Json = _value
+    override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Fixed.typeDefinition
   }
 
   lazy val Null: Fixed = apply(
     _name = "",
     _valueType = Json.Null,
-    _value = Json.Null
+    _value = Json.Null,
+    _now = false
   )
 
 
@@ -195,18 +205,21 @@ object Mutable extends App with DracoType {
   def apply (
     _name: String,
     _valueType: Json,
-    _value: Json = Json.Null
+    _value: Json = Json.Null,
+    _now: Boolean = false
   ) : Mutable = new Mutable {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
     override lazy val value: Json = _value
+    override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Mutable.typeDefinition
   }
 
   lazy val Null: Mutable = apply(
     _name = "",
     _valueType = Json.Null,
-    _value = Json.Null
+    _value = Json.Null,
+    _now = false
   )
 
 
@@ -228,13 +241,15 @@ object Dynamic extends App with DracoType {
     _valueType: Json,
     _parameters: Seq[Parameter] = Seq.empty,
     _body: Seq[BodyElement] = Seq.empty,
-    _value: Json = Json.Null
+    _value: Json = Json.Null,
+    _now: Boolean = false
   ) : Dynamic = new Dynamic {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
     override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val body: Seq[BodyElement] = _body
     override lazy val value: Json = _value
+    override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Dynamic.typeDefinition
   }
 
@@ -243,7 +258,8 @@ object Dynamic extends App with DracoType {
     _valueType = Json.Null,
     _parameters = Seq.empty,
     _body = Seq.empty,
-    _value = Json.Null
+    _value = Json.Null,
+    _now = false
   )
 
 
@@ -263,18 +279,21 @@ object Parameter extends App with DracoType {
   def apply (
     _name: String,
     _valueType: Json,
-    _value: Json
+    _value: Json,
+    _now: Boolean = false
   ) : Parameter = new Parameter {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
     override lazy val value: Json = _value
+    override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Parameter.typeDefinition
   }
 
   lazy val Null: Parameter = apply(
     _name = "",
     _valueType = Json.Null,
-    _value = Json.Null
+    _value = Json.Null,
+    _now = false
   )
 
 
@@ -458,18 +477,21 @@ object Local extends App with DracoType {
   def apply (
     _name: String,
     _valueType: Json,
-    _value: Json
+    _value: Json,
+    _now: Boolean = false
   ) : Local = new Local {
     override lazy val name: String = _name
     override lazy val valueType: Json = _valueType
     override lazy val value: Json = _value
+    override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Local.typeDefinition
   }
 
   lazy val Null: Local = apply(
     _name = "",
     _valueType = Json.Null,
-    _value = Json.Null
+    _value = Json.Null,
+    _now = false
   )
 
 

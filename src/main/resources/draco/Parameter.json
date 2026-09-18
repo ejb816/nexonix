@@ -32,6 +32,12 @@
           "kind": "Parameter",
           "name": "value",
           "valueType": "Json"
+        },
+        {
+          "kind": "Parameter",
+          "name": "now",
+          "valueType": "Boolean",
+          "value": "false"
         }
       ]
     }

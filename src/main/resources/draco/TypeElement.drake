@@ -8,4 +8,5 @@ type TypeElement from Primal(Json)
     fix parameters [Parameter] []
     fix body [BodyElement] []
     fix value Json Json.Null
+    fix now Boolean false
 domain draco Draco

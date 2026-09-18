@@ -24,7 +24,7 @@ object RootInterface extends App with DracoType {
   def actorType(): ActorType = new Actor[AshSap] {
     override lazy val typeDefinition: TypeDefinition = RootInterface.typeDefinition
 
-    val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
+    lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
 
     override def receive(ctx: TypedActorContext[AshSap], msg: AshSap): Behavior[AshSap] = {
       msg match {

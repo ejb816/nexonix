@@ -45,7 +45,7 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **620 tests / 44
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **621 tests / 44
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -58,7 +58,8 @@ call syntax's at-most-once rule (2026-09-16); then one structural `DrakeParseTes
 four type forms (2026-09-17); then one for the header's type parameters (2026-09-17); then the
 `draco.drake` Presence family — three types, their per-type tests and a `DracoGenTest` group test
 (2026-09-17), which moves the type counts to 98 in scope, 108 measured and GenDrake to 96 of 96; then
-`fold` on the family and its own two-test suite `PresenceTest` (2026-09-17) — **620 tests / 44 suites**. These
+`fold` on the family and its own two-test suite `PresenceTest` (2026-09-17); then one `DrakeParseTest`
+test for `now` (2026-09-17) — **621 tests / 44 suites**. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -218,6 +219,10 @@ with `TypeLoader.rooted` (absent derivation means derives-`DracoType`) and `targ
 (the neutral `{K,V}` → Scala `Map[K,V]` rewrite — the *only* place the Scala spelling of a
 map is produced). It then dispatches six ways: two-or-more role aspects → composed;
 rule; actor; domain; object-only; plain type.
+
+**Evaluation is lazy by default, `now` overrides** (drake.dlt EVALUATION, 2026-09-17): a `fix` or `loc`
+inside a method, action or factory body renders `lazy val` since step 1; parameters become by-name in
+steps 2 and 3. `now` before a member keeps it strict and is a reserved word; nothing in the corpus needs it.
 
 **DRAKE** is draco's own definition surface — `X.drake` beside every `X.json`.
 `Drake.emit` and `Drake.parse` are mutual inverses in `src/mods/scala/draco/Drake.scala`;

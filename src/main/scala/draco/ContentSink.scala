@@ -15,7 +15,7 @@ object ContentSink extends App with DracoType {
     _sinkRoot: URI,
     _logicalPath: String
   ) : ContentSink = new ContentSink {
-    val sinkPath: java.nio.file.Path = java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))
+    lazy val sinkPath: java.nio.file.Path = java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))
     override def write(content: String): Unit = {
       java.nio.file.Files.createDirectories(sinkPath.getParent)
       java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))
@@ -27,5 +27,6 @@ object ContentSink extends App with DracoType {
     _sinkRoot = null.asInstanceOf[URI],
     _logicalPath = ""
   )
+
 
 }

@@ -13,7 +13,7 @@ object EmissionReceived extends App with DracoType {
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val emission: Emission = ctx.get[Emission]("$emission")
-      val received: java.util.List[Emission] = ctx.getRuntime().get("received")
+      lazy val received: java.util.List[Emission] = ctx.getRuntime().get("received")
       received.add(emission)
   }
 

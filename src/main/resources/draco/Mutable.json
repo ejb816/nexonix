@@ -33,6 +33,12 @@
           "name": "value",
           "valueType": "Json",
           "value": "Json.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "now",
+          "valueType": "Boolean",
+          "value": "false"
         }
       ]
     }

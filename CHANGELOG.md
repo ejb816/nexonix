@@ -171,6 +171,12 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Evaluation is lazy by default; `now` overrides. Step 1: body bindings.** A `fix` or `loc` inside a
+  method, action or factory body now renders as a `lazy val`, evaluated at most once on first use, as
+  Haskell would. `now` before a member keeps it strict; it rides the element as a Boolean and is a
+  reserved word. Nothing in the corpus needs it. Method and factory parameters follow in two further
+  steps. (2026-09-17)
+
 - **The four definitions with compound or bounded type parameters re-canonicalize from the drake.**
   DomainTransform, TypeTransform, Holon and base/Coordinate now carry their header bounds and tuple
   derivation arguments as type-form trees, closing the type-form arc for everything with a `.drake`;

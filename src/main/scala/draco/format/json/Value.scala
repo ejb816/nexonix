@@ -33,7 +33,7 @@ object Value extends App with DracoType {
     override lazy val name: String = _name
     override lazy val pathElements: Seq[String] = _pathElements
     override def value[T: Decoder](_source: JSON): T = {
-      val pathValue: Json = pathElements.foldLeft(Option(_source.json))((e, a) => e.flatMap(j => if (j.isArray) j.hcursor.downN(a.toInt).focus else j.hcursor.downField(a).focus)).orNull
+      lazy val pathValue: Json = pathElements.foldLeft(Option(_source.json))((e, a) => e.flatMap(j => if (j.isArray) j.hcursor.downN(a.toInt).focus else j.hcursor.downField(a).focus)).orNull
       if (pathValue != null) pathValue.as[T].getOrElse(null.asInstanceOf[T]) else null.asInstanceOf[T]
     }
     override lazy val typeDefinition: TypeDefinition = Value.typeDefinition

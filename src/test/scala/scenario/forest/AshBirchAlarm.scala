@@ -14,7 +14,7 @@ object AshBirchAlarm extends App with DracoType {
   def w0(jasmonate: scenario.ash.AshJasmonate): Boolean = jasmonate.potency.value > 0.5
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val jasmonate: scenario.ash.AshJasmonate = ctx.get[scenario.ash.AshJasmonate]("$jasmonate")
-      val primed: scenario.birch.BirchJasmonate = scenario.birch.BirchJasmonate(scenario.ash.birch.Potency(jasmonate.potency), scenario.ash.birch.Marker(jasmonate.compound))
+      lazy val primed: scenario.birch.BirchJasmonate = scenario.birch.BirchJasmonate(scenario.ash.birch.Potency(jasmonate.potency), scenario.ash.birch.Marker(jasmonate.compound))
       ctx.insert(primed)
   }
 

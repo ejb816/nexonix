@@ -272,7 +272,11 @@ object Drake {
       case e => Seq(valueLine(s"$indent$keyword ${elementName(e.name)} ${typeExpressionSlot(e.valueType)}", e.value))
     }
 
-  private def keyword (element: TypeElement) : String = element match {
+  /** The element's keyword, prefixed `now ` when it is marked strict (drake.dlt
+    * EVALUATION): the override reads before the keyword, as it is parsed. */
+  private def keyword (element: TypeElement) : String = (if (element.now) "now " else "") + bareKeyword (element)
+
+  private def bareKeyword (element: TypeElement) : String = element match {
     case _: Fixed     => "fix"
     case _: Mutable   => "mut"
     case _: Dynamic   => "dyn"
@@ -512,7 +516,7 @@ object Drake {
   /** The member keywords that can open a STATEMENT inside a dyn-with-body — the
     * bindings and effects, and a case-branch (drake.dlt CASE-BRANCH), which is
     * admitted in a dyn body and in an actor's `message`, nowhere else. */
-  private val statementKeywords: Set[String] = Set ("fix", "mut", "loc", "mon", "case")
+  private val statementKeywords: Set[String] = Set ("fix", "mut", "loc", "mon", "case", "now")
 
   /** Every token that bounds a member — the reserved words a value slot stops at.
     * drake.dlt's whitespace-insignificance rests on this set: a value runs until
@@ -532,6 +536,9 @@ object Drake {
       // longer here: the dyn result marker retired with a5d2f5b and the named-argument
       // marker with the call syntax, so no bare `=` remains on the surface.
       "++",
+      // `now` (drake.dlt EVALUATION) — the strictness override, a modifier before the
+      // element's own keyword, as `mut` is a keyword before a name.
+      "now",
       "[", "]")
 
   /** One drake token: its source text and its span.
@@ -984,7 +991,7 @@ object Drake {
 
   /** The member keywords a declaration block admits (elements / factory body /
     * globals): every BodyElement form, `dyn` included. */
-  private val declarationKeywords: Set[String] = Set ("fix", "mut", "dyn", "loc")
+  private val declarationKeywords: Set[String] = Set ("fix", "mut", "dyn", "loc", "now")
 
   /** What an ACTION body admits (a rule's `action`, an actor's start / message /
     * signal): the declaration forms plus `mon`, since an action is mostly effects. */
@@ -994,6 +1001,8 @@ object Drake {
     * a body); every other keyword is a single leaf. */
   private def parseMember (c: Cursor) : TypeElement = {
     c.takeText () match {
+      // `now <member>`: the member as written, marked strict (drake.dlt EVALUATION).
+      case "now" => strict (parseMember (c))
       case "mon" => Monadic (parseValue (c))
       case "con" => Condition (parseValue (c))
       case "var" =>
@@ -1041,6 +1050,17 @@ object Drake {
         }
       case other => sys.error (s"Drake.parse: unknown member keyword '$other'")
     }
+  }
+
+  /** The member rebuilt with `now` set. Only the binding kinds carry the flag: a value
+    * a body evaluates (fix, mut, loc), a parameter, a method. */
+  private def strict (element: TypeElement) : TypeElement = element match {
+    case e: Fixed     => Fixed (e.name, e.valueType, e.value, _now = true)
+    case e: Mutable   => Mutable (e.name, e.valueType, e.value, _now = true)
+    case e: Local     => Local (e.name, e.valueType, e.value, _now = true)
+    case e: Parameter => Parameter (e.name, e.valueType, e.value, _now = true)
+    case e: Dynamic   => Dynamic (e.name, e.valueType, e.parameters, e.body, e.value, _now = true)
+    case e            => sys.error (s"Drake.parse: `now` applies to a binding, a parameter or a method, not to '${e.getClass.getSimpleName}'")
   }
 
   /** The factory's valueType is the enclosing type — the drake surface leaves it
