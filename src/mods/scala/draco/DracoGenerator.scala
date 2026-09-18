@@ -203,7 +203,11 @@ object DracoGenerator extends App {
   }
 
   private lazy val scalaSymbols: Map[String, Vector[String] => String] = Map(
-    "join" -> { args => s"${args(1)}.mkString(${args(0)})" }
+    "join" -> { args => s"${args(1)}.mkString(${args(0)})" },
+    // `presence x` (drake.dlt SYMBOLS, 2026-09-18): the host's optional value as a Presence,
+    // the ONE conversion at the host boundary; a `match` so that both branches are typed
+    // against the declared result and `Absent()` infers its parameter from it.
+    "presence" -> { args => s"(${args(0)} match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })" }
   )
 
   /** A tree in a String-typed slot denotes its SURFACE TEXT and renders quoted (the
@@ -419,7 +423,7 @@ object DracoGenerator extends App {
       val simple = baseName(tn.name)
       unqualifiedScope(td).exists(p =>
         p != tn.namePackage &&
-        scala.util.Try(TypeLoader.tryLoad(TypeName(simple, _namePackage = p)).isDefined).getOrElse(false))
+        scala.util.Try(TypeLoader.tryLoad(TypeName(simple, _namePackage = p)).fold(false, _ => true)).getOrElse(false))
     }
 
   /** A derivation reference on the extends clause. Package-qualified when a bare

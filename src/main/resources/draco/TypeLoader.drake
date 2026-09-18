@@ -1,22 +1,22 @@
 type TypeLoader
   globals
-    dyn readDefinition Option(TypeDefinition) [
+    dyn readDefinition draco.drake.Presence(TypeDefinition) [
       parameters
         now par url URL
       body
-        fix value Option(TypeDefinition) Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }
+        fix value draco.drake.Presence(TypeDefinition) presence(Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() })
     ]
-    dyn loadFromResource Option(TypeDefinition) [
+    dyn loadFromResource draco.drake.Presence(TypeDefinition) [
       parameters
         par resourcePath String
       body
-        fix value Option(TypeDefinition) draco.generator.carrier.DefinitionPath.default.source(resourcePath).flatMap(readDefinition)
+        fix value draco.drake.Presence(TypeDefinition) draco.generator.carrier.DefinitionPath.default.source(resourcePath).fold(draco.drake.Absent(), readDefinition)
     ]
-    dyn tryLoad Option(TypeDefinition) [
+    dyn tryLoad draco.drake.Presence(TypeDefinition) [
       parameters
         par typeName TypeName
       body
-        fix value Option(TypeDefinition) loadFromResource(typeName.resourcePath)
+        fix value draco.drake.Presence(TypeDefinition) loadFromResource(typeName.resourcePath)
     ]
     dyn rooted TypeDefinition [
       parameters
@@ -28,6 +28,6 @@ type TypeLoader
       parameters
         par typeName TypeName
       body
-        fix value TypeDefinition tryLoad(typeName).map(rooted).getOrElse(TypeDefinition(typeName))
+        fix value TypeDefinition tryLoad(typeName).fold(TypeDefinition(typeName), rooted)
     ]
 domain draco Draco

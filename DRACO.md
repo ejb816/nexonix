@@ -206,6 +206,9 @@ There is no `typeInstance` and no `*Instance` trait.
 TypeLoader.loadType → tryLoad → draco.generator.carrier.DefinitionPath.default.source(resourcePath) → readDefinition
 ```
 
+The loader path speaks `Presence`, not the host's option, since 2026-09-18: `source`, `readDefinition`,
+`loadFromResource` and `tryLoad` declare `draco.drake.Presence(T)`, convert once at the host boundary with
+the `presence` symbol, and chain with `fold`; `Dictionary.get` keeps `Option` because it overrides `Map.get`.
 `rooted` appends the universal root to any definition carrying no draco-domain parent — an
 absent derivation is the common case, a solely foreign one (`Dictionary`) the other — so no
 definition in the corpus spells `DracoType`.

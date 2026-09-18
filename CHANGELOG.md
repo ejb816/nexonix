@@ -171,6 +171,14 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Option becomes Presence on the loader path.** `DefinitionPath.source` and TypeLoader's `readDefinition`,
+  `loadFromResource` and `tryLoad` now declare `draco.drake.Presence(T)` instead of the host's `Option`.
+  Each converts once at its host boundary through the new declared symbol `presence`, which the Scala
+  target renders as a match into `Present` or `Absent`, and chains with `fold` rather than a host
+  combinator; `loadType` reads `tryLoad(typeName).fold(TypeDefinition(typeName), rooted)`. `Dictionary.get`
+  keeps `Option`: it overrides the host's `Map.get`. First of the host heads to take a target-neutral
+  form. (2026-09-18)
+
 - **The collection sugar is carried neutrally.** `[T]`, `{T}` and `{K, V}` parse to `{"[]": [T]}` and
   `{"{}": [...]}` — the bracket is the node key — instead of Seq, Set and Map applications, and the `[]`
   and `{}` value defaults to `{"[]": []}` / `{"{}": []}` instead of a `Seq.empty` path. No host name

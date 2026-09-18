@@ -66,7 +66,7 @@
         "name": "source",
         "valueType": {
           "()": [
-            "Option",
+            "draco.drake.Presence",
             "URL"
           ]
         },
@@ -108,11 +108,16 @@
             "name": "value",
             "valueType": {
               "()": [
-                "Option",
+                "draco.drake.Presence",
                 "URL"
               ]
             },
-            "value": "found.headOption"
+            "value": {
+              "()": [
+                "presence",
+                "found.headOption"
+              ]
+            }
           }
         ]
       }
@@ -130,7 +135,8 @@
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         }
       ]

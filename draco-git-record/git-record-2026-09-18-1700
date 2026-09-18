@@ -1,0 +1,44 @@
+# Option becomes Presence on the loader path — shape accepted by Dev on 2026-09-18 ("Yes, the boundary, with
+# fold doing the chaining"), on 0b0e63a (623 / 44 green).
+#
+# ONE CONCEPT: the host's optional value crosses into draco ONCE, at the boundary where the host produced
+# it, through a declared symbol — `presence(x)` (drake.dlt SYMBOLS, beside `join`) — and from there the
+# definition speaks Presence(T) and chains with `fold`. Four members move: DefinitionPath.source
+# (`presence(found.headOption)`), TypeLoader.readDefinition (`presence(<the circe read>)`), loadFromResource
+# (`source(p).fold(Absent(), readDefinition)`), tryLoad (type only); loadType chains
+# `tryLoad(tn).fold(TypeDefinition(tn), rooted)`. The type is spelled `draco.drake.Presence(T)` — qualified,
+# as every cross-package value type in the corpus is. Dictionary.get is EXCLUDED: it overrides the host's
+# Map.get, whose result type the host fixes — the same reason its parameter is `now`.
+#
+# ENGINE: scalaSymbols gains `presence` -> `(x match { case Some(v) => draco.drake.Present(v); case None =>
+# draco.drake.Absent() })`. A match, not map/getOrElse: each branch is typed against the DECLARED result, so
+# `Absent()` infers its parameter (Presence is invariant; a lub would be an existential). PROBED with
+# scalac from the exported classpath before authoring (scratchpad Probe.scala): fold(Absent(), readDefinition)
+# infers R from the function argument; fold(TypeDefinition(tn), rooted) and fold(false, _ => true) compile.
+# The engine's one hand-written consumer, `tryLoad(...).isDefined` (isAmbiguousBare), is now
+# `.fold(false, _ => true)`. No test touches the loader's Option API.
+#
+# TRIO: drake authored; JSON by the compiled parser (0b0e63a — `presence(...)` is an ordinary call, the
+# circe read inside it an opaque leaf); Scala by the compiled engine with the one symbol it lacks
+# hand-rendered to the new engine's spelling; DrakeCLI check: both round-trip.
+#
+# RUN: expected 623 tests / 44 suites, all green; every headline unchanged (surface losses 5 —
+# TypeLoader's opaque values are opaque still).
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-18-1700 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-1700 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-1700 && git push
+
+--- MESSAGE ---
+Option becomes Presence on the loader path: one conversion at the host boundary, then fold
+
+DefinitionPath.source and TypeLoader's readDefinition, loadFromResource and tryLoad declare
+`draco.drake.Presence(T)` in place of the host's Option. Each converts once, where the host produced the
+optional value, through the declared symbol `presence`, which the Scala target renders as a match into
+Present or Absent typed by the declared result; past the boundary the definition chains with `fold`,
+never a host combinator. Dictionary.get keeps Option because it overrides the host's Map.get. The first
+host head to take a target-neutral form; ActorRef, Consumer, LazyList and the Java lists follow, each
+surfaced first.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

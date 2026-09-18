@@ -12,7 +12,7 @@
         "name": "readDefinition",
         "valueType": {
           "()": [
-            "Option",
+            "draco.drake.Presence",
             "TypeDefinition"
           ]
         },
@@ -30,11 +30,16 @@
             "name": "value",
             "valueType": {
               "()": [
-                "Option",
+                "draco.drake.Presence",
                 "TypeDefinition"
               ]
             },
-            "value": "Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }"
+            "value": {
+              "()": [
+                "presence",
+                "Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }"
+              ]
+            }
           }
         ]
       },
@@ -43,7 +48,7 @@
         "name": "loadFromResource",
         "valueType": {
           "()": [
-            "Option",
+            "draco.drake.Presence",
             "TypeDefinition"
           ]
         },
@@ -60,7 +65,7 @@
             "name": "value",
             "valueType": {
               "()": [
-                "Option",
+                "draco.drake.Presence",
                 "TypeDefinition"
               ]
             },
@@ -74,7 +79,12 @@
                         "resourcePath"
                       ]
                     },
-                    "flatMap"
+                    "fold"
+                  ]
+                },
+                {
+                  "()": [
+                    "draco.drake.Absent"
                   ]
                 },
                 "readDefinition"
@@ -88,7 +98,7 @@
         "name": "tryLoad",
         "valueType": {
           "()": [
-            "Option",
+            "draco.drake.Presence",
             "TypeDefinition"
           ]
         },
@@ -105,7 +115,7 @@
             "name": "value",
             "valueType": {
               "()": [
-                "Option",
+                "draco.drake.Presence",
                 "TypeDefinition"
               ]
             },
@@ -161,21 +171,11 @@
                   ".": [
                     {
                       "()": [
-                        {
-                          ".": [
-                            {
-                              "()": [
-                                "tryLoad",
-                                "typeName"
-                              ]
-                            },
-                            "map"
-                          ]
-                        },
-                        "rooted"
+                        "tryLoad",
+                        "typeName"
                       ]
                     },
-                    "getOrElse"
+                    "fold"
                   ]
                 },
                 {
@@ -183,7 +183,8 @@
                     "TypeDefinition",
                     "typeName"
                   ]
-                }
+                },
+                "rooted"
               ]
             }
           }

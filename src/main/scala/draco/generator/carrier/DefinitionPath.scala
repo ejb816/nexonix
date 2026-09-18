@@ -11,11 +11,11 @@ trait DefinitionPath extends DracoType {
     lazy val resourcePath: String = _resourcePath
     roots.map(root => new URL(root.toString + resourcePath.stripPrefix("/"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)
   }
-  def source(_resourcePath: => String): Option[URL] = {
+  def source(_resourcePath: => String): draco.drake.Presence[URL] = {
     lazy val resourcePath: String = _resourcePath
     lazy val found: Seq[URL] = sources(resourcePath)
     require(found.size <= 1, s"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: " + found.mkString(", "))
-    found.headOption
+    (found.headOption match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
   }
 }
 

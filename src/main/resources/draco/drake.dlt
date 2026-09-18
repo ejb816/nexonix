@@ -70,8 +70,11 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   in VALUE position: `[]` and `{}` are `{"[]": []}` / `{"{}": []}`, a sequence or set literal with its
   elements, and each target spells the empty one (`Seq.empty`). The rows that still put the HOST's
   spelling in the corpus are the leaves (String, Int, Json, URI …) and the heads with no drake form yet
-  (Option → Presence first; ActorRef, Consumer, LazyList, java.util.List); each needs a target-neutral
-  representation of its own, one at a time.
+  (ActorRef, Consumer, LazyList, java.util.List); each needs a target-neutral representation of its own,
+  one at a time. OPTION WENT FIRST (2026-09-18): the loader path — DefinitionPath.source, TypeLoader's
+  readDefinition / loadFromResource / tryLoad — declares `Presence(T)`, converts ONCE at its host boundary
+  with the `presence` symbol, and chains with `fold`. Dictionary.get keeps Option: it overrides the
+  host's Map.get, whose result the host fixes, the same way its parameter is `now`.
 
 EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   A <value> emits to JSON in one of two forms; the value's own JSON structure IS the
@@ -109,6 +112,10 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   DECLARED NAMES (SYMBOLS) — a name applied on the application surface whose spelling is per target,
     the primitives a substitution string needs beyond `++`. Each is declared here before use, and
     each target renders it (DracoGenerator.scalaSymbols today; GenScala's transform types in time):
+    presence <x>       the host's OPTIONAL value as a Presence(T) — the ONE conversion at a host boundary
+                       (2026-09-18): `presence(found.headOption)`. ScalaTarget renders a match into
+                       Present / Absent, typed by the declared result. Chaining past the boundary is
+                       `fold`, never a host combinator: `source(p).fold(Absent(), readDefinition)`.
     join  <sep> <xs>   Haskell's intercalate, separator FIRST — `join(" ", _package)`;
                        ScalaTarget renders xs.mkString(sep). Chosen over `intercalate` (obscure) and
                        `splice` (means insertion in JS/Perl) as the name every target's reader knows;
