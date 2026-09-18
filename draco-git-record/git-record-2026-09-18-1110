@@ -1,0 +1,32 @@
+# draco-dev-journal: chapter 78 — written IN THIS SESSION at Dev's request ("it might be time update
+# draco-dev-jpurnal"), through the update-draco-journal skill, from the session extracts
+# (tools/extract_sessions.py run here, since this Code session can read ~/.claude/projects). The standing
+# rule that Cowork writes chapters stands; this is the exception Dev asked for, and the chapter is built
+# from the record, not from memory: the session's Claude Code identifier changed three times, so the record
+# arrived as four extracts sharing one start time — the chapter uses the longest (34 pairs, a superset)
+# and omits a retry artifact in a shorter fork. 26 exchanges: assertive prompts verbatim (typos kept),
+# pure result pastes folded into the preceding reply as italic parentheticals, directive-plus-paste
+# prompts quoted with the paste summarized, tool work reduced to a run count per reply. Status section
+# written from the eleven commits (a8afcd8 … c60a9ed). Intro: opening paragraph to seventy-eight chapters
+# / September 18, a Breakthroughs entry for lazy-by-default, Status at Chapter 78, index entry.
+# The journal request and the skill's own instruction text are the session's last two prompts; the
+# commit confirmation for this record may be appended to the chapter when recorded.
+# No code, no corpus, no suite run needed. PATH-SCOPED, as every journal commit is. tools/extracted is
+# not tracked and is not in the commit.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-18-1110 | sed '1d' > /tmp/msg && git add -A -- draco-dev-journal/draco-dev-chapter-78.md draco-dev-journal/draco-dev-chapter-00-intro.md draco-git-record/git-record-2026-09-18-1110 && git commit -F /tmp/msg -- draco-dev-journal/draco-dev-chapter-78.md draco-dev-journal/draco-dev-chapter-00-intro.md draco-git-record/git-record-2026-09-18-1110 && git push
+
+--- MESSAGE ---
+draco-dev-journal: chapter 78, the call syntax, type-form trees, Presence, and laziness by default
+
+Chapter 78 transcribes the September 16–18 session: the eleven commits from the call syntax landing
+through the JSON corpus re-canonicalizing from the drake, value types and type parameters becoming trees
+of the four type forms, the Presence family and fold as dispatch, and the discussion that made laziness
+the language default with now to override, with its first two steps landed. Twenty-six exchanges from
+the session record, Dev's prompts verbatim; the intro gains its seventy-eighth entry, a Breakthroughs
+note on laziness, and the Status at Chapter 78.
+
+Written in this session at Dev's request through the journal skill; every other chapter remains
+Cowork's.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
