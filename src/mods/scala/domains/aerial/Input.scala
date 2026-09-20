@@ -1,7 +1,7 @@
 package domains.aerial
 
 import draco._
-import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}
+import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
 trait Input extends DracoType
@@ -10,9 +10,9 @@ object Input extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Input", _namePackage = Seq ("domains", "aerial")))
   lazy val dracoType: Type[Input] = Type[Input] (typeDefinition)
 
-  def actorType(_worldConsumer: => ActorRef[domains.world.World]): ActorType = new Actor[draco.format.json.JSON] {
+  def actorType(_worldConsumer: => domains.world.World => Unit): ActorType = new Actor[draco.format.json.JSON] {
     override lazy val typeDefinition: TypeDefinition = Input.typeDefinition
-    lazy val worldConsumer: ActorRef[domains.world.World] = _worldConsumer
+    lazy val worldConsumer: domains.world.World => Unit = _worldConsumer
 
     override def receive(ctx: TypedActorContext[draco.format.json.JSON], msg: draco.format.json.JSON): Behavior[draco.format.json.JSON] = {
       val cursor   = msg.json.hcursor
@@ -21,7 +21,7 @@ object Input extends App with DracoType {
         _longitude    = cursor.get[Double]("longitude").getOrElse(0.0),
         _altitudeFeet = cursor.get[Int]("altitudeFeet").getOrElse(0)
       )
-      worldConsumer ! position
+      worldConsumer(position)
       Behaviors.same[draco.format.json.JSON]
     }
 

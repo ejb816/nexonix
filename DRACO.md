@@ -235,8 +235,9 @@ inside a method, action or factory body renders `lazy val` (step 1); a method pa
 `_x: => T`, bound once by a `lazy val x = _x` prelude (step 2, 2026-09-18); a factory parameter is by-name
 too, and the factory body is its prelude — a bodiless factory binds `override lazy val x = _x`, a bodied
 one reads `_x` inside its lazy members (step 3, 2026-09-18); the actor-minting `factory ActorType`
-follows the same convention, `def actorType(_consumer: => ActorRef[M])` with `lazy val consumer =
-_consumer` as the minted actor's first member (step 4, 2026-09-18). `now` before a member keeps it strict and is a reserved word; it is
+follows the same convention, `def actorType(_consumer: => M => Unit)` with `lazy val consumer =
+_consumer` as the minted actor's first member (step 4, 2026-09-18; the parameter was the host's `ActorRef[M]`
+until the consumer form landed the same day — see drake.dlt VALUE-TYPES). `now` before a member keeps it strict and is a reserved word; it is
 required where the target binds the signature — a host method met (TypeName's `equals`, Dictionary's
 `Map` operations, CLI's `main`) or a method used as a function value (TypeLoader's two).
 

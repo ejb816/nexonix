@@ -34,7 +34,7 @@ class EtherealChainTest extends AnyFunSuite {
       val consumer: ActorRef[draco.format.json.JSON] =
         ctx.spawn(Consumer.actorType().asInstanceOf[Actor[draco.format.json.JSON]], "consumer")
       val creator: ActorRef[draco.format.json.JSON] =
-        ctx.spawn(Creator.actorType(consumer).asInstanceOf[Actor[draco.format.json.JSON]], "creator")
+        ctx.spawn(Creator.actorType(consumer ! _).asInstanceOf[Actor[draco.format.json.JSON]], "creator")
       Behaviors.receiveMessage { msg =>
         creator ! msg
         Behaviors.same

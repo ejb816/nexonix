@@ -25,7 +25,12 @@
         {
           "kind": "Parameter",
           "name": "target",
-          "valueType": "ActorRef[domains.world.World]"
+          "valueType": {
+            "->": [
+              "domains.world.World",
+              "Unit"
+            ]
+          }
         }
       ]
     }

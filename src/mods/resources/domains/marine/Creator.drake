@@ -1,7 +1,7 @@
 type Creator
   factory ActorType
     parameters
-      par consumer ActorRef(draco.format.json.JSON)
+      par consumer (draco.format.json.JSON -> Unit)
 domain domains marine Marine
 actor
   messageType draco format json JSON

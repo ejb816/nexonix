@@ -1,0 +1,50 @@
+# ActorRef becomes a consumer of M — shape accepted by Dev on 2026-09-18 ("Accept, build the ActorRef form";
+# reading confirmed verbatim: "a consumer of M, the assembly keeps identity ... The term 'ActorRef' is
+# provisional"), on 20778f3 (623 / 44 green).
+#
+# ONE CONCEPT: what an actor holds is not a reference but a consumer of M — `(M -> Unit)`, drake's own arrow
+# — and sending is application. The assembly keeps the host's refs (identity) and converts each ONCE at its
+# boundary, `ref ! _`, when it hands a member its constructor arguments; a member only applies a function.
+# Haskell realizes the same parameter as a function into IO; Scala as a Pekko ref wrapped in one.
+#
+# MOVED: six drake parameters (Creator x4, Input, Output) — `par consumer (draco.format.json.JSON -> Unit)`;
+# the arrow is PARENTHESIZED in the name-type-value slot, which the first pass missed: the parser read
+# `JSON -> Unit` as type JSON with default value `-> Unit` and the engine wrote `_consumer: => JSON = -> Unit`.
+# Two sends in drake (`consumer(report)`, `worldConsumer(position)`). Six drake-less JSON authored as the
+# parser writes trees: world Consumer/Provider valueType, OriginateReport x4 valueType + host text
+# (`get[draco.format.json.JSON => Unit]("consumer")`, `consumer(originate(intent))`) — the last four
+# `org.apache.pekko` leaves leave the corpus. Twelve projections: Creator x4 by the compiled engine (they
+# MATCH; the ActorRef import drops out of the pekko import line by itself), the eight DIFF ones by hand on
+# exactly the moved lines (verified against the engine's output for Input/Output). Hand-written:
+# AssemblyValidator reads `{"->": [M, "Unit"]}` (messages say "a consumer of M"); WorldAssemblyTest x3,
+# AerialAssemblyTest, the three chain tests: `.actorType(ref ! _)`. DracoActorTest's `actorType(problems)`
+# is a java.util.List, not a ref — my regex touched it and I reverted it.
+#
+# NOT MOVED, named: Rule/RuleType's `Consumer(Knowledge)` / `Consumer(RhsContext)` — the same form, but
+# Evrete's registration hooks; its own step. AssemblySpawner keeps `Seq[ActorRef[Any]]` — that is the
+# identity Dev said the assembly keeps.
+#
+# CHECK: DrakeCLI check src/mods/resources — surface drift 0; json drift 11 at HEAD -> 5 now: the six
+# drake-less definitions authored as trees (OriginateReport x4, world Consumer/Provider) round-trip for
+# the first time; the 5 left are the sentient host-text derivation args, untouched. No engine change, so ONE RUN.
+#
+# RUN: expected 623 tests / 44 suites, all green; GEN MAP 28/20 (Creators regenerated, DIFF stay DIFF);
+# every headline unchanged. The four chain tests and two assembly tests exercise the boundary for real.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-18-2333 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-2333 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-18-2333 && git push
+
+--- MESSAGE ---
+An actor's reference parameter is a consumer of its message type, and sending is application
+
+The six actor-minting parameters typed by the host's `ActorRef(M)` are `(M -> Unit)`, drake's own arrow,
+and a send is `consumer(report)`. The assembly keeps the host's refs and converts each once at its
+boundary when it hands a member its arguments; a member only applies a function, which Haskell realizes
+as a function into IO and Scala as a Pekko ref wrapped in one. The four OriginateReport actions read the
+consumer back from the session as a function, so the last Pekko leaves leave the corpus. The term
+"ActorRef" is provisional until Pekko is integrated through drake definitions with implementations in
+the Scala target. No engine change.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

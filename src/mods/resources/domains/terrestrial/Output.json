@@ -15,9 +15,9 @@
           "kind": "Parameter",
           "name": "consumer",
           "valueType": {
-            "()": [
-              "ActorRef",
-              "draco.format.json.JSON"
+            "->": [
+              "draco.format.json.JSON",
+              "Unit"
             ]
           }
         }
@@ -115,7 +115,12 @@
         },
         {
           "kind": "Monadic",
-          "value": "consumer ! report"
+          "value": {
+            "()": [
+              "consumer",
+              "report"
+            ]
+          }
         }
       ]
     },

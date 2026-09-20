@@ -2,7 +2,7 @@ package domains.terrestrial
 
 import draco._
 import domains._
-import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}
+import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.Knowledge
 
@@ -21,9 +21,9 @@ object Creator extends App with DracoType {
     k
   }
 
-  def actorType(_consumer: => ActorRef[draco.format.json.JSON]): ActorType = new Actor[draco.format.json.JSON] {
+  def actorType(_consumer: => draco.format.json.JSON => Unit): ActorType = new Actor[draco.format.json.JSON] {
     override lazy val typeDefinition: TypeDefinition = Creator.typeDefinition
-    lazy val consumer: ActorRef[draco.format.json.JSON] = _consumer
+    lazy val consumer: draco.format.json.JSON => Unit = _consumer
 
     override def receive(ctx: TypedActorContext[draco.format.json.JSON], msg: draco.format.json.JSON): Behavior[draco.format.json.JSON] = {
       lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()

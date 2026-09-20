@@ -1,7 +1,7 @@
 package domains.world
 
 import draco._
-import org.apache.pekko.actor.typed.{ActorRef, Behavior, Signal, TypedActorContext}
+import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
 trait Consumer extends Actor[World]
@@ -10,9 +10,9 @@ object Consumer extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Consumer", _namePackage = Seq ("domains", "world")))
   lazy val dracoType: Type[Consumer] = Type[Consumer] (typeDefinition)
 
-  def actorType(_provider: => ActorRef[World]): ActorType = new Actor[World] {
+  def actorType(_provider: => World => Unit): ActorType = new Actor[World] {
     override lazy val typeDefinition: TypeDefinition = Consumer.typeDefinition
-    lazy val provider: ActorRef[World] = _provider
+    lazy val provider: World => Unit = _provider
 
     override def receive(ctx: TypedActorContext[World], msg: World): Behavior[World] = {
       msg match {
@@ -25,7 +25,7 @@ object Consumer extends App with DracoType {
             _longitude       = lon,
             _elevationMetres = math.round(h).toInt
           )
-          provider ! location
+          provider(location)
         case _ => // no transform rule for this source type yet
       }
       Behaviors.same[World]

@@ -20,10 +20,11 @@ import io.circe.Json
   */
 object AssemblyValidator {
 
-  /** Inner type of an `ActorRef[M]` value type, or None if the type is not an
-    * actor reference. */
+  /** The message type a CONSUMER parameter accepts — `M -> Unit`, drake's own arrow
+    * (2026-09-18; the host's `ActorRef[M]` before) — or None if the type is not one. The
+    * assembly keeps the refs; a member sees only a function it applies. */
   private def actorRefInner(valueType: Json): Option[String] =
-    TypeForm.applied(valueType).collect { case ("ActorRef", Seq(inner)) => inner.text }
+    TypeForm.node(valueType).collect { case ("->", Vector(m, u)) if u.asString.contains("Unit") => m.text }
 
   /** Message type a member receives. The actor ASPECT is the source of truth —
     * actor-ness is aspect presence, so an `Actor[M]` derivation would put a role's
@@ -64,13 +65,13 @@ object AssemblyValidator {
         case Some(param) =>
           actorRefInner(param.valueType) match {
             case None =>
-              errors += s"parameter '${b.param}' of '${b.from.namePath}' is '${param.valueType.text}', not an ActorRef"
+              errors += s"parameter '${b.param}' of '${b.from.namePath}' is '${param.valueType.text}', not a consumer (M -> Unit)"
             case Some(refInner) =>
               messageType(toTd) match {
                 case None =>
                   errors += s"binding target '${b.to.namePath}' is not an Actor[_] (no message type to satisfy '${b.param}')"
                 case Some(msg) if msg != refInner =>
-                  errors += s"binding '${b.from.namePath}.${b.param}' expects ActorRef[$refInner] but '${b.to.namePath}' receives $msg"
+                  errors += s"binding '${b.from.namePath}.${b.param}' expects a consumer of $refInner but '${b.to.namePath}' receives $msg"
                 case Some(_) => // matched
               }
           }

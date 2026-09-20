@@ -15,9 +15,9 @@
           "kind": "Parameter",
           "name": "worldConsumer",
           "valueType": {
-            "()": [
-              "ActorRef",
-              "domains.world.World"
+            "->": [
+              "domains.world.World",
+              "Unit"
             ]
           }
         }
@@ -118,7 +118,12 @@
         },
         {
           "kind": "Monadic",
-          "value": "worldConsumer ! position"
+          "value": {
+            "()": [
+              "worldConsumer",
+              "position"
+            ]
+          }
         }
       ]
     },

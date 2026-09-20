@@ -3,7 +3,6 @@ package domains.terrestrial
 
 import draco._
 import domains._
-import org.apache.pekko.actor.typed.ActorRef
 import org.evrete.api.{Knowledge, RhsContext}
 import java.util.function.Consumer
 
@@ -32,9 +31,9 @@ object OriginateReport extends App {
 
   private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
       val intent: MarchIntent = ctx.get[MarchIntent]("$intent")
-      val consumer: ActorRef[draco.format.json.JSON] =
-        ctx.getRuntime().get[ActorRef[draco.format.json.JSON]]("consumer")
-      consumer ! originate(intent)
+      val consumer: draco.format.json.JSON => Unit =
+        ctx.getRuntime().get[draco.format.json.JSON => Unit]("consumer")
+      consumer(originate(intent))
   }
 
   private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {

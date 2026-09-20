@@ -35,7 +35,7 @@ class AerialAssemblyTest extends AnyFunSuite {
       ((_: Seq[ActorRef[Any]]) => Consumer.actorType().asInstanceOf[Behavior[Any]]),
     Creator.typeDefinition.typeName.namePath ->
       ((refs: Seq[ActorRef[Any]]) =>
-        Creator.actorType(refs.head.asInstanceOf[ActorRef[draco.format.json.JSON]]).asInstanceOf[Behavior[Any]])
+        Creator.actorType(refs.head.asInstanceOf[ActorRef[draco.format.json.JSON]] ! _).asInstanceOf[Behavior[Any]])
   )
 
   private def intent(callsign: String, flightLevel: Int): FlightIntent = {

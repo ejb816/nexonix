@@ -171,6 +171,13 @@ for the definition that will replace it.
 
 ### Changed
 
+- **An actor's reference parameter is a consumer of its message type.** The six actor-minting parameters
+  typed by the host's `ActorRef(M)` are now `(M -> Unit)`, drake's own arrow, and the two sends in drake
+  are applications, `consumer(report)`; the four `OriginateReport` actions read the consumer back from the
+  session as a function and apply it, which removes the last Pekko leaves from the corpus. The assembly
+  keeps the refs and converts each at its boundary; `AssemblyValidator` reads the message type from the
+  arrow. No engine change; twelve example projections and six tests move. (2026-09-18)
+
 - **Option becomes Presence on the loader path.** `DefinitionPath.source` and TypeLoader's `readDefinition`,
   `loadFromResource` and `tryLoad` now declare `draco.drake.Presence(T)` instead of the host's `Option`.
   Each converts once at its host boundary through the new declared symbol `presence`, which the Scala

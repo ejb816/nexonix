@@ -1,11 +1,11 @@
 type Output
   factory ActorType
     parameters
-      par consumer ActorRef(draco.format.json.JSON)
+      par consumer (draco.format.json.JSON -> Unit)
 domain domains terrestrial Terrestrial
 actor
   messageType domains world World
   message
     fix payload io.circe.Json io.circe.Json.obj(("type", io.circe.Json.fromString("LOCATION")), ("latitude", io.circe.Json.fromDoubleOrNull(location.latitude)), ("longitude", io.circe.Json.fromDoubleOrNull(location.longitude)), ("elevationMetres", io.circe.Json.fromInt(location.elevationMetres)))
     fix report domains.terrestrial.LocationReport domains.terrestrial.LocationReport(typeDefinition:LocationReport.typeDefinition, json:payload)
-    mon consumer ! report
+    mon consumer(report)

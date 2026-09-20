@@ -49,16 +49,16 @@ class WorldAssemblyTest extends AnyFunSuite {
   private val constructors: Map[String, AssemblySpawner.Constructor] = Map(
     Input.namePath ->
       ((refs: Seq[ActorRef[Any]]) =>
-        domains.aerial.Input.actorType(refs.head.asInstanceOf[ActorRef[World]]).asInstanceOf[Behavior[Any]]),
+        domains.aerial.Input.actorType(refs.head.asInstanceOf[ActorRef[World]] ! _).asInstanceOf[Behavior[Any]]),
     WConsumer.namePath ->
       ((refs: Seq[ActorRef[Any]]) =>
-        domains.world.Consumer.actorType(refs.head.asInstanceOf[ActorRef[World]]).asInstanceOf[Behavior[Any]]),
+        domains.world.Consumer.actorType(refs.head.asInstanceOf[ActorRef[World]] ! _).asInstanceOf[Behavior[Any]]),
     WProvider.namePath ->
       ((refs: Seq[ActorRef[Any]]) =>
-        domains.world.Provider.actorType(refs.head.asInstanceOf[ActorRef[World]]).asInstanceOf[Behavior[Any]]),
+        domains.world.Provider.actorType(refs.head.asInstanceOf[ActorRef[World]] ! _).asInstanceOf[Behavior[Any]]),
     Output.namePath ->
       ((refs: Seq[ActorRef[Any]]) =>
-        domains.terrestrial.Output.actorType(refs.head.asInstanceOf[ActorRef[J]]).asInstanceOf[Behavior[Any]]),
+        domains.terrestrial.Output.actorType(refs.head.asInstanceOf[ActorRef[J]] ! _).asInstanceOf[Behavior[Any]]),
     TConsumer.namePath ->
       ((_: Seq[ActorRef[Any]]) =>
         domains.terrestrial.Consumer.actorType().asInstanceOf[Behavior[Any]])
