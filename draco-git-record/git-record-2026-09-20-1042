@@ -1,0 +1,41 @@
+# [T] is the lazy sequence: LazyList leaves the definition — Dev, 2026-09-20: "Yes, `[T]` is the lazy
+# sequence, unboundedness in the value". On d2b9cf6 (623 / 44 green).
+#
+# ONE CONCEPT: drake evaluates by need, so `[T]` is Haskell's list and holds [2, 3 ..] without a second
+# type. Primes' five `LazyList(Int)` slots (filter's result and parameter, naturals' result, two value
+# lines) become `[Int]`; the two host constructions in its values become declared SYMBOLS:
+#   progression(start, step)   Haskell's [start, start+step ..]   ScalaTarget: LazyList.from(start, step)
+#   cons(x, xs)                Haskell's x : xs, tail by need     ScalaTarget: LazyList.cons(x, LazyList.from(xs))
+# NAMES ARE MINE, flagged once: `from` would have been the natural name for the first and is drake's
+# derivation keyword; `cons` is the universal name for the second. Dev may rename either.
+#
+# WHY IT WORKS ON A STRICT TARGET: LazyList is a Seq. A `[Int]` typed Seq[Int] whose value is a LazyList
+# dispatches head / tail / filter / take to the lazy implementations at run time; LazyList.cons takes its
+# tail by name; LazyList.from returns a LazyList unchanged and wraps any other Seq lazily, so the sieve's
+# recursive tail is never forced by the constructor. PROBED: Primes.scala compiled against the exported
+# classpath and RUN — nPrimes(10) = List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29); naturals(2).take(5) and
+# composites(...) as before. Numbers.naturalSequence and the primes tests already read Seq.
+#
+# TRIO: drake authored; JSON by the compiled parser (the two calls tree — `cons(p, filter(...))` nests as
+# a call of a call); Scala by the compiled engine with the two symbols it lacks hand-rendered to the new
+# scalaSymbols spellings. Engine: two rows in scalaSymbols. ONE definition, one projection.
+#
+# RUN: expected 623 tests / 44 suites, all green; every headline unchanged (surface losses 5 — the sieve's
+# lambda `_ % p != 0` is an opaque argument still).
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-20-1042 | sed '1d' > /tmp/msg && git add -A -- src CHANGELOG.md draco-git-record/git-record-2026-09-20-1042 && git commit -F /tmp/msg -- src CHANGELOG.md draco-git-record/git-record-2026-09-20-1042 && git push
+
+--- MESSAGE ---
+[T] is the lazy sequence, unboundedness in the value: LazyList leaves the definition
+
+Drake evaluates by need, so `[T]` is Haskell's list and needs no second sequence form. Primes' five
+`LazyList(Int)` slots are `[Int]`, and the two ways its values build a sequence lazily are declared
+symbols: `progression(start, step)`, the unbounded arithmetic sequence, and `cons(x, xs)`, whose tail is
+by need. The Scala target spells both with LazyList, whose values are Seqs, so head, tail, filter and
+take on a `[T]` stay lazy at run time and the sieve terminates; compiled and run against the classpath
+before handover. One definition moves.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

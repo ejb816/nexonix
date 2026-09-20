@@ -207,7 +207,14 @@ object DracoGenerator extends App {
     // `presence x` (drake.dlt SYMBOLS, 2026-09-18): the host's optional value as a Presence,
     // the ONE conversion at the host boundary; a `match` so that both branches are typed
     // against the declared result and `Absent()` infers its parameter from it.
-    "presence" -> { args => s"(${args(0)} match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })" }
+    "presence" -> { args => s"(${args(0)} match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })" },
+    // `[T]` is the LAZY sequence, unboundedness in the value (Dev, 2026-09-20) — Haskell's list.
+    // The ScalaTarget's Seq is strict, so the two ways a definition BUILDS one lazily are
+    // symbols spelled with LazyList, whose values are Seqs: `progression(start, step)`, the
+    // unbounded arithmetic sequence, and `cons(x, xs)`, whose tail is by-name — LazyList.from
+    // returns a LazyList unchanged and wraps any other Seq lazily.
+    "progression" -> { args => s"LazyList.from(${args(0)}, ${args(1)})" },
+    "cons"        -> { args => s"LazyList.cons(${args(0)}, LazyList.from(${args(1)}))" }
   )
 
   /** A tree in a String-typed slot denotes its SURFACE TEXT and renders quoted (the

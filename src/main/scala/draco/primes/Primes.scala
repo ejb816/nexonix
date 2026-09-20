@@ -13,12 +13,12 @@ object Primes extends App with DracoType {
   lazy val elementTypeNames: Seq[String] = Seq ("Accumulator", "Numbers", "AddNaturalSequence", "PrimesFromNaturalSequence", "RemoveCompositeNumbers")
 
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
-  def filter(_naturals: => LazyList[Int]): LazyList[Int] = {
-    lazy val naturals: LazyList[Int] = _naturals
+  def filter(_naturals: => Seq[Int]): Seq[Int] = {
+    lazy val naturals: Seq[Int] = _naturals
     lazy val p: Int = naturals.head
-    p #:: filter(naturals.tail.filter(_ % p != 0))
+    LazyList.cons(p, LazyList.from(filter(naturals.tail.filter(_ % p != 0))))
   }
-  def naturals(_start: => Int = 0, _step: => Int = 1): LazyList[Int] = {
+  def naturals(_start: => Int = 0, _step: => Int = 1): Seq[Int] = {
     lazy val start: Int = _start
     lazy val step: Int = _step
     LazyList.from(start, step)

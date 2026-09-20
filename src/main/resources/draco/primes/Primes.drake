@@ -2,19 +2,19 @@ type Primes
   elements
     fix knowledge org.evrete.api.Knowledge Rule.knowledgeService.newKnowledge("Primes")
   globals
-    dyn filter LazyList(Int) [
+    dyn filter [Int] [
       parameters
-        par naturals LazyList(Int)
+        par naturals [Int]
       body
         loc p Int naturals.head
-        fix value LazyList(Int) p #:: filter(naturals.tail.filter(_ % p != 0))
+        fix value [Int] cons(p, filter(naturals.tail.filter(_ % p != 0)))
     ]
-    dyn naturals LazyList(Int) [
+    dyn naturals [Int] [
       parameters
         par start Int 0
         par step Int 1
       body
-        fix value LazyList(Int) LazyList.from(start, step)
+        fix value [Int] progression(start, step)
     ]
     dyn composites [Int] [
       parameters

@@ -70,7 +70,12 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   in VALUE position: `[]` and `{}` are `{"[]": []}` / `{"{}": []}`, a sequence or set literal with its
   elements, and each target spells the empty one (`Seq.empty`). The rows that still put the HOST's
   spelling in the corpus are the leaves (String, Int, Json, URI …) and the heads with no drake form yet
-  (LazyList, java.util.List); each needs a target-neutral representation of its own, one at a time.
+  (java.util.List); each needs a target-neutral representation of its own, one at a time.
+  LAZYLIST WENT FOURTH (2026-09-20, Dev: "`[T]` is the lazy sequence, unboundedness in the value"): drake
+  evaluates by need, so `[T]` IS Haskell's list and no second sequence form exists; Primes' five
+  `LazyList(Int)` slots are `[Int]`. The residue is the ScalaTarget's alone — its Seq is strict — and it is
+  the two ways a definition BUILDS a sequence lazily, `progression` and `cons` (SYMBOLS), spelled with
+  LazyList, whose values are Seqs, so head / tail / filter / take on a `[T]` stay lazy at run time.
   CONSUMER WENT THIRD (2026-09-20, Dev: "I would prefer that Consumer not appear in drake or json as part
   of the type definition"): Rule / RuleType declare `pattern (Knowledge -> Unit)` and `action (RhsContext
   -> Unit)` — both arguments draco.rete wrap types, so the slot is fully draco-spelled — and a rule's
@@ -128,6 +133,11 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
                        (2026-09-18): `presence(found.headOption)`. ScalaTarget renders a match into
                        Present / Absent, typed by the declared result. Chaining past the boundary is
                        `fold`, never a host combinator: `source(p).fold(Absent(), readDefinition)`.
+    progression <start> <step>   the UNBOUNDED arithmetic sequence — Haskell's [start, start+step ..] — as a
+                       `[T]` (2026-09-20). ScalaTarget: `LazyList.from(start, step)`, a Seq that is lazy.
+    cons <x> <xs>      Haskell's `x : xs`, the tail by need (2026-09-20). ScalaTarget: `LazyList.cons(x,
+                       LazyList.from(xs))` — from returns a LazyList unchanged and wraps any other Seq
+                       lazily, so a recursive definition (Primes' sieve) terminates.
     join  <sep> <xs>   Haskell's intercalate, separator FIRST — `join(" ", _package)`;
                        ScalaTarget renders xs.mkString(sep). Chosen over `intercalate` (obscure) and
                        `splice` (means insertion in JS/Perl) as the name every target's reader knows;

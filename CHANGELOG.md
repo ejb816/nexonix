@@ -171,6 +171,12 @@ for the definition that will replace it.
 
 ### Changed
 
+- **`[T]` is the lazy sequence; `LazyList` leaves the definition.** Unboundedness is a property of the
+  value, as in Haskell, so Primes' five `LazyList(Int)` slots are `[Int]`. Two declared symbols carry the
+  two ways a definition builds a sequence lazily: `progression(start, step)`, the unbounded arithmetic
+  sequence, and `cons(x, xs)`, whose tail is by need; the Scala target spells them with `LazyList`, whose
+  values are Seqs, so the sieve terminates and `take` stays lazy. One definition moves. (2026-09-20)
+
 - **A rule's `pattern` and `action` are functions; Java's `Consumer` leaves the definition.** `Rule` and
   `RuleType` declare `(Knowledge -> Unit)` and `(RhsContext -> Unit)`, and a pattern is applied,
   `pattern(knowledge)`, in the actor's knowledge block and the tests. Evrete's `execute` takes

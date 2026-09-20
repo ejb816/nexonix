@@ -25,8 +25,7 @@
         "kind": "Dynamic",
         "name": "filter",
         "valueType": {
-          "()": [
-            "LazyList",
+          "[]": [
             "Int"
           ]
         },
@@ -35,8 +34,7 @@
             "kind": "Parameter",
             "name": "naturals",
             "valueType": {
-              "()": [
-                "LazyList",
+              "[]": [
                 "Int"
               ]
             }
@@ -53,12 +51,27 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": {
-              "()": [
-                "LazyList",
+              "[]": [
                 "Int"
               ]
             },
-            "value": "p #:: filter(naturals.tail.filter(_ % p != 0))"
+            "value": {
+              "()": [
+                "cons",
+                "p",
+                {
+                  "()": [
+                    "filter",
+                    {
+                      "()": [
+                        "naturals.tail.filter",
+                        "_ % p != 0"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
           }
         ]
       },
@@ -66,8 +79,7 @@
         "kind": "Dynamic",
         "name": "naturals",
         "valueType": {
-          "()": [
-            "LazyList",
+          "[]": [
             "Int"
           ]
         },
@@ -90,14 +102,13 @@
             "kind": "Fixed",
             "name": "value",
             "valueType": {
-              "()": [
-                "LazyList",
+              "[]": [
                 "Int"
               ]
             },
             "value": {
               "()": [
-                "LazyList.from",
+                "progression",
                 "start",
                 "step"
               ]
