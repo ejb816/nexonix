@@ -7,5 +7,12 @@ type Absent(T) from Presence(T)
       body
         fix value R absent
     ]
+    dyn ifThenElse(R) R [
+      parameters
+        par thenBranch R
+        par elseBranch R
+      body
+        fix value R elseBranch
+    ]
   factory
 domain draco drake Drake

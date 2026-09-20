@@ -8,6 +8,13 @@ type Present(T) from Presence(T)
       body
         fix value R present(value)
     ]
+    dyn ifThenElse(R) R [
+      parameters
+        par thenBranch R
+        par elseBranch R
+      body
+        fix value R thenBranch
+    ]
   factory
     parameters
       par value T

@@ -223,7 +223,10 @@ object DracoGenerator extends App {
     "cons"        -> { args => s"LazyList.cons(${args(0)}, LazyList.from(${args(1)}))" },
     // `add(xs, x)` — the one operation a `+` collection grants (drake.dlt SYMBOLS,
     // 2026-09-20): in place, the same call on a Buffer and on a mutable Set.
-    "add"         -> { args => s"${args(0)} += ${args(1)}" }
+    "add"         -> { args => s"${args(0)} += ${args(1)}" },
+    // `guard(b)` (drake.dlt SYMBOLS, 2026-09-20): a truth as a PRESENCE OF NOTHING — Haskell's
+    // guard — the one bridge from a host Boolean to `ifThenElse`, which dispatches on Presence.
+    "guard"       -> { args => s"(if (${args(0)}) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]())" }
   )
 
   /** A tree in a String-typed slot denotes its SURFACE TEXT and renders quoted (the

@@ -9,4 +9,9 @@ type Presence(T)
         par absent R
         par present (T -> R)
     ]
+    dyn ifThenElse(R) R [
+      parameters
+        par thenBranch R
+        par elseBranch R
+    ]
 domain draco drake Drake

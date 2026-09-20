@@ -38,6 +38,15 @@ class PresenceTest extends AnyFunSuite {
     assert(forced == 1, s"the argument was evaluated $forced times, not once")
   }
 
+  test("ifThenElse dispatches on the presence and never evaluates the branch not taken") {
+    // The conditional is DISPATCH, not a keyword (Dev, 2026-09-17): Present takes the
+    // then-branch, Absent the else-branch, and both parameters are by-name, so the branch
+    // not taken is never forced — which is what lets a recursion through it terminate.
+    // A Boolean reaches it as a presence of nothing, through `guard` (2026-09-20).
+    assert(Present(()).ifThenElse(1, sys.error("the else branch was evaluated")) == 1)
+    assert(Absent[Unit]().ifThenElse(sys.error("the then branch was evaluated"), 2) == 2)
+  }
+
   test("fold dispatches through the parent type, and the branches may change type") {
     val present: Presence[Int] = Present(3)
     val absent:  Presence[Int] = Absent[Int]()

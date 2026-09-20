@@ -62,6 +62,31 @@
             }
           }
         ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "ifThenElse[R]",
+        "valueType": "R",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "thenBranch",
+            "valueType": "R"
+          },
+          {
+            "kind": "Parameter",
+            "name": "elseBranch",
+            "valueType": "R"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "R",
+            "value": "thenBranch"
+          }
+        ]
       }
     ],
     "factory": {

@@ -151,6 +151,12 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
     cons <x> <xs>      Haskell's `x : xs`, the tail by need (2026-09-20). ScalaTarget: `LazyList.cons(x,
                        LazyList.from(xs))` — from returns a LazyList unchanged and wraps any other Seq
                        lazily, so a recursive definition (Primes' sieve) terminates.
+    guard <b>          a truth as a PRESENCE OF NOTHING — Haskell's guard (2026-09-20, Dev: "a presence of
+                       nothing, bridged by guard"): `Present(())` when b holds, `Absent` when not, a
+                       Presence(Unit). THE bridge from a host Boolean to `ifThenElse`, which dispatches on
+                       a Presence: `guard(p).ifThenElse(t, e)`. ScalaTarget: an `if` into Present[Unit] /
+                       Absent[Unit]. The predicate itself stays host text behind it, as the circe read
+                       stays behind `presence`.
     add <xs> <x>       IN-PLACE add to a `+` collection (2026-09-20) — `add(received, emission)`. ScalaTarget:
                        `xs += x`, the same call on a Buffer and a mutable Set. Not `append`, which is
                        Haskell's `++`, concatenation, and not in place.
@@ -683,7 +689,13 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           (T -> R)`, abstract on Presence, `present(value)` in Present, `absent` in
                                           Absent — the eliminator as DISPATCH, in drake, no host code, no conditional;
                                           the first member override of a parent dyn. Call surface `p.fold(absent, f)`.
-                                          NEXT: lazy-by-default with `now`; then `ifThenElse` as the second dyn.
+                                          `ifThenElse` LANDED 2026-09-20 as the SECOND dyn: `dyn ifThenElse(R) R`
+                                          with `thenBranch R` / `elseBranch R`, abstract on Presence, `thenBranch`
+                                          in Present, `elseBranch` in Absent — dispatch, no keyword, both branches
+                                          by need so a recursion through it terminates (PresenceTest). A Boolean
+                                          reaches it through `guard` (SYMBOLS); TypeLoader.rooted is the first use.
+                                          TypeName's two `if`s dissolve into a join under the scratch-module reading
+                                          (next); DefinitionPath's two sit inside a lambda and wait on GitHub #61.
   the four TYPE FORMS as trees      <->   IMPLEMENTED (2026-09-17). Drake.typeForm reads a value-type slot to a
     (valueType was host text)             tree; Drake emits one back (drakeType); DracoGenerator.targetType spells
                                           it for Scala (`F[A]`, `(A, B)`, `S => T`, a Morphic left operand

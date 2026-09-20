@@ -31,6 +31,13 @@ for the definition that will replace it.
 
 ### Added
 
+- **`ifThenElse` on Presence, as dispatch, and `guard`.** `dyn ifThenElse(R) R` with `thenBranch` and
+  `elseBranch` is declared abstract on `Presence` and defined in `Present` as the then-branch and in `Absent`
+  as the else-branch; both parameters are by need, so the branch not taken is never evaluated and a
+  recursion through it terminates (`PresenceTest`). A Boolean reaches it as a presence of nothing through
+  the declared symbol `guard`, which the Scala target spells as an `if` into `Present[Unit]` or
+  `Absent[Unit]`. `TypeLoader.rooted` is the first use: `guard(<predicate>).ifThenElse(td, ...)`. (2026-09-20)
+
 - **`fold` on Presence, as dispatch.** `dyn fold(R) R` with `absent R` and `present (T -> R)` is declared
   abstract on `Presence` and defined in `Present` as `present(value)` and in `Absent` as `absent`, all in
   drake with no host code and no conditional: the eliminator of draco's option is the first member

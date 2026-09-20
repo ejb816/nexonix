@@ -1,0 +1,44 @@
+# ifThenElse as dispatch on Presence, and guard — Dev, 2026-09-20: "Yes, a presence of nothing, bridged by
+# guard". On c7c3f19 (623 / 44 green).
+#
+# ONE CONCEPT: the conditional is DISPATCH (Dev, 2026-09-17), the second dyn on the family after fold:
+# `dyn ifThenElse(R) R` with `par thenBranch R`, `par elseBranch R`, abstract on Presence; Present's body
+# `fix value R thenBranch`, Absent's `fix value R elseBranch`. Both parameters are by-name (lazy step 2), so
+# the branch not taken is never forced — the reason laziness was made the default. A Boolean has nothing
+# to carry, so it reaches the dispatch as a PRESENCE OF NOTHING: `guard(b)` (SYMBOLS, beside presence /
+# progression / cons / add) is Haskell's guard — Present(()) when b holds, Absent when not, a Presence(Unit).
+# ScalaTarget: `(if (b) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]())`, both branches
+# explicit so the `if` types as Presence[Unit] (Presence is invariant).
+#
+# THE CORPUS'S CONDITIONALS, five: TypeName's two are the empty-path special case and dissolve into a join
+# under the scratch-module reading (NEXT, with Dictionary's foreign Map reference); DefinitionPath's two sit
+# inside a lambda the parser does not tree (#61) and stay host text; TypeLoader.rooted is the one that moves:
+# `guard(<the derivation predicate, host text>).ifThenElse(td, TypeDefinition(...))`. `now par td` stays —
+# rooted is still passed as a function value to fold.
+#
+# TRIO: drake authored; JSON by the compiled parser (`guard(...)` and `.ifThenElse(...)` are ordinary calls;
+# the predicate and the TypeDefinition(...) construction are opaque arguments); Presence family Scala by the
+# compiled engine (no engine dependency); TypeLoader.scala by the compiled engine with `guard` hand-rendered
+# to the new symbol row. PROBED: Presence.scala + TypeLoader.scala compiled together against the classpath.
+# DrakeCLI check: the standing two. PresenceTest gains one test — 624.
+#
+# RUN: expected 624 tests / 44 suites, all green; every headline unchanged. One run (the only engine change
+# is the symbol row, hand-rendered at its one use).
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-20-1339 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-20-1339 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-20-1339 && git push
+
+--- MESSAGE ---
+ifThenElse is dispatch on Presence, and a Boolean reaches it as a presence of nothing through guard
+
+`dyn ifThenElse(R) R` with a then-branch and an else-branch is abstract on Presence, the then-branch in
+Present and the else-branch in Absent: the conditional is polymorphism, not a keyword, and because both
+parameters are by need the branch not taken is never evaluated, so a recursion through it terminates.
+A Boolean carries nothing, so it reaches the dispatch as a presence of nothing through the declared
+symbol `guard`, Haskell's, which the Scala target spells as an `if` into Present or Absent of Unit.
+TypeLoader.rooted is the first use. TypeName's two conditionals dissolve into a join next; the two
+inside DefinitionPath's lambda wait on the parser.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

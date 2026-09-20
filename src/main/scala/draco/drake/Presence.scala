@@ -4,6 +4,7 @@ import draco._
 
 sealed trait Presence[T] extends DracoType {
   def fold[R](_absent: => R, _present: => T => R): R
+  def ifThenElse[R](_thenBranch: => R, _elseBranch: => R): R
 }
 
 object Presence extends App with DracoType {
@@ -18,6 +19,11 @@ trait Present[T] extends Presence[T] {
     lazy val absent: R = _absent
     lazy val present: T => R = _present
     present(value)
+  }
+  def ifThenElse[R](_thenBranch: => R, _elseBranch: => R): R = {
+    lazy val thenBranch: R = _thenBranch
+    lazy val elseBranch: R = _elseBranch
+    thenBranch
   }
 }
 
@@ -46,6 +52,11 @@ trait Absent[T] extends Presence[T] {
     lazy val present: T => R = _present
     absent
   }
+  def ifThenElse[R](_thenBranch: => R, _elseBranch: => R): R = {
+    lazy val thenBranch: R = _thenBranch
+    lazy val elseBranch: R = _elseBranch
+    elseBranch
+  }
 }
 
 object Absent extends App with DracoType {
@@ -58,6 +69,5 @@ object Absent extends App with DracoType {
   }
 
   lazy val Null: Absent[_] = apply[Nothing]()
-
 
 }
