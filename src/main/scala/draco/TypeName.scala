@@ -40,8 +40,8 @@ object TypeName extends App with DracoType {
     override lazy val name: String = _name
     override lazy val namePackage: Seq[String] = _namePackage
     override lazy val typeParameters: Seq[Json] = _typeParameters
-    override lazy val namePath: String = if (namePackage.isEmpty) name else s"${namePackage.mkString(".")}.${name}"
-    override lazy val resourcePath: String = if (namePackage.isEmpty) s"/$name.json" else s"/${namePackage.mkString("/")}/$name.json"
+    override lazy val namePath: String = (namePackage ++ Seq(name)).mkString(".")
+    override lazy val resourcePath: String = "/" ++ (namePackage ++ Seq(name ++ ".json")).mkString("/")
     override def equals(other: Any): Boolean = {
       other match {
         case tn: TypeName =>

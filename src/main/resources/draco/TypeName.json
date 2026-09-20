@@ -106,13 +106,53 @@
           "kind": "Fixed",
           "name": "namePath",
           "valueType": "String",
-          "value": "if (namePackage.isEmpty) name else s\"${namePackage.mkString(\".\")}.${name}\""
+          "value": {
+            "()": [
+              "join",
+              "\".\"",
+              {
+                "++": [
+                  "namePackage",
+                  {
+                    "[]": [
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
           "kind": "Fixed",
           "name": "resourcePath",
           "valueType": "String",
-          "value": "if (namePackage.isEmpty) s\"/$name.json\" else s\"/${namePackage.mkString(\"/\")}/$name.json\""
+          "value": {
+            "++": [
+              "\"/\"",
+              {
+                "()": [
+                  "join",
+                  "\"/\"",
+                  {
+                    "++": [
+                      "namePackage",
+                      {
+                        "[]": [
+                          {
+                            "++": [
+                              "name",
+                              "\".json\""
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
           "kind": "Dynamic",

@@ -76,7 +76,9 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   2026-09-18 the parser carried them as Seq / Set / Map APPLICATIONS, a host head in the normative corpus
   that drake itself never wrote; Dev's reading of Dictionary's `{K, V1}` slot corrected it. The same holds
   in VALUE position: `[]` and `{}` are `{"[]": []}` / `{"{}": []}`, a sequence or set literal with its
-  elements, and each target spells the empty one (`Seq.empty`). The rows that still put the HOST's
+  elements, and each target spells the empty one (`Seq.empty`); a NON-EMPTY literal parses too since
+  2026-09-20 — `[name]`, `[x, y]`, `{a, b}`: one bracket group with nothing before it, members read as
+  values (TypeName's `namePackage ++ [name]` is the first use). The rows that still put the HOST's
   spelling in the corpus are the leaves (String, Int, Json, URI …) and the heads with no drake form yet
   — none of the HEADS is left. JAVA.UTIL.LIST WENT FIFTH (2026-09-20): the collectors an actor's caller hands
   in and a rule appends to (Draco's problems, Emitter's received, the scenario's received, aerial's consumed)
@@ -160,7 +162,8 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
     add <xs> <x>       IN-PLACE add to a `+` collection (2026-09-20) — `add(received, emission)`. ScalaTarget:
                        `xs += x`, the same call on a Buffer and a mutable Set. Not `append`, which is
                        Haskell's `++`, concatenation, and not in place.
-    join  <sep> <xs>   Haskell's intercalate, separator FIRST — `join(" ", _package)`;
+    join  <sep> <xs>   Haskell's intercalate, separator FIRST — `join(" ", _package)`; a compound xs (a `++`
+                       run) is parenthesized by the ScalaTarget: `(namePackage ++ Seq(name)).mkString(".")`;
                        ScalaTarget renders xs.mkString(sep). Chosen over `intercalate` (obscure) and
                        `splice` (means insertion in JS/Perl) as the name every target's reader knows;
                        chosen over an invented infix (`+|+`) because a name carries its meaning in and
@@ -694,8 +697,11 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           in Present, `elseBranch` in Absent — dispatch, no keyword, both branches
                                           by need so a recursion through it terminates (PresenceTest). A Boolean
                                           reaches it through `guard` (SYMBOLS); TypeLoader.rooted is the first use.
-                                          TypeName's two `if`s dissolve into a join under the scratch-module reading
-                                          (next); DefinitionPath's two sit inside a lambda and wait on GitHub #61.
+                                          TypeName's two `if`s DISSOLVED into joins (2026-09-20): the empty path is a
+                                          module like any other, so `join(".", namePackage ++ [name])` spells every
+                                          namePath and `"/" ++ join("/", namePackage ++ [name ++ ".json"])` every
+                                          resourcePath; the special case, and the two interpolated host strings, are
+                                          gone. DefinitionPath's two sit inside a lambda and wait on GitHub #61.
   the four TYPE FORMS as trees      <->   IMPLEMENTED (2026-09-17). Drake.typeForm reads a value-type slot to a
     (valueType was host text)             tree; Drake emits one back (drakeType); DracoGenerator.targetType spells
                                           it for Scala (`F[A]`, `(A, B)`, `S => T`, a Morphic left operand

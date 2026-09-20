@@ -258,8 +258,8 @@ the four type forms (2026-09-17; no host-text type form remains since `[T]+` lan
 builds expression trees only
 for calls — `f(a, b)`, positional then `name:value`, one glued token split at depth-0
 parentheses, commas and dots (2026-09-16; the `parameters`/`par` call form, its `[ ]` argument
-brackets and `.member` chain lines are RETIRED) — tuples, and the `++` concatenation operator
-(2026-09-10). Every other value — lambdas, `if/then/else`, `->`, other operators — returns as a
+brackets and `.member` chain lines are RETIRED) — tuples, the `++` concatenation operator
+(2026-09-10), and collection literals `[x, y]` / `{a, b}` (2026-09-20). Every other value — lambdas, `if/then/else`, `->`, other operators — returns as a
 host-opaque string in *drake* form, which `DracoGenerator.expression` would pass verbatim into
 Scala. The JSON corpus is re-canonicalized from the drake after each parser step (`DrakeCLI parse
 X.drake > X.json` with the compiled parser; 2026-09-16 for calls, 2026-09-17 for type forms), with

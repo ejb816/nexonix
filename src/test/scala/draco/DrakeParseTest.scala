@@ -338,10 +338,15 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |    fix handlers {String, (Int, Int) -> Unit}
         |    fix curried (Int -> Int -> Int)
         |    fix buffer [String]+
+        |    fix tail [String] [x, y]
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
-    val Seq(names, handlers, curried, buffer) = parsed.dracoAspect.elements.map(_.valueType)
+    val Seq(names, handlers, curried, buffer, _) = parsed.dracoAspect.elements.map(_.valueType)
+    // A collection LITERAL in value position is the `[]` node with its members (2026-09-20).
+    val tail = parsed.dracoAspect.elements.last.value
+    assert(tail == Json.obj("[]" -> Json.arr(Json.fromString("x"), Json.fromString("y"))), tail.noSpaces)
+    assert(DracoGenerator.expression(tail) == "Seq(x, y)", DracoGenerator.expression(tail))
     // The collection sugar is carried NEUTRALLY: the bracket is the node key, and no
     // host head (Seq, Map) enters the carrier (2026-09-18).
     assert(names == Json.obj("[]" -> Json.arr(Json.fromString("String"))), names.noSpaces)

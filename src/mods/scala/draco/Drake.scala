@@ -638,6 +638,24 @@ object Drake {
     * CONCATENATION). */
   private def parseValue (c: Cursor) : Json = concatenation (c, operand (c))
 
+  /** True iff the bracket opening `token` closes at its last character — the token is one
+    * group and nothing else. Quoted text is skipped whole. */
+  private def closesWhole (token: String) : Boolean = {
+    var depth = 0; var i = 0; var quoted = false
+    while (i < token.length) {
+      val ch = token (i)
+      if (quoted) { if (ch == '"' && token (i - 1) != '\\') quoted = false }
+      else ch match {
+        case '"' => quoted = true
+        case '(' | '[' | '{' => depth += 1
+        case ')' | ']' | '}' => depth -= 1; if (depth == 0 && i != token.length - 1) return false
+        case _ =>
+      }
+      i += 1
+    }
+    depth == 0
+  }
+
   /** One operand of a top-level value slot: its raw span, bounded by the next reserved
     * word, then read exactly as text inside a call is (see value). */
   private def operand (c: Cursor) : Json = value (span (c))
@@ -689,6 +707,15 @@ object Drake {
     * one-tuple). A token with no closing group is a path (a.f(x).g selects on a call)
     * or a leaf. */
   private def treed (token: String) : Json = {
+    // A COLLECTION LITERAL (2026-09-20): a token that is one `[ ]` or `{ }` group with nothing
+    // before it — `[name]`, `[x, y]`, `{a, b}` — is the sequence / set literal, the `[]` / `{}`
+    // value node with its members read as values (the empty ones already parse to it).
+    if (token.length >= 2 && "[{".contains (token.head) && closesWhole (token)) {
+      val key    = if (token.head == '[') "[]" else "{}"
+      val inside = token.substring (1, token.length - 1).trim
+      val items  = if (inside.isEmpty) Seq.empty[Json] else splitDepthZero (inside, ',').map (m => value (m.trim))
+      return Json.obj (key -> Json.fromValues (items))
+    }
     val open = groupStart (token)
     if (open > 0) {
       val head   = token.substring (0, open)

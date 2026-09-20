@@ -14,8 +14,8 @@ type TypeName
       fix name String _name
       fix namePackage [String] _namePackage
       fix typeParameters [Json] _typeParameters
-      fix namePath String if (namePackage.isEmpty) name else s"${namePackage.mkString(".")}.${name}"
-      fix resourcePath String if (namePackage.isEmpty) s"/$name.json" else s"/${namePackage.mkString("/")}/$name.json"
+      fix namePath String join(".", namePackage ++ [name])
+      fix resourcePath String "/" ++ join("/", namePackage ++ [name ++ ".json"])
       dyn equals Boolean [
         parameters
           now par other Any

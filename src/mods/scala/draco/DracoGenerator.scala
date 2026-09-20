@@ -209,7 +209,9 @@ object DracoGenerator extends App {
   }
 
   private lazy val scalaSymbols: Map[String, Vector[String] => String] = Map(
-    "join" -> { args => s"${args(1)}.mkString(${args(0)})" },
+    // A compound sequence operand (a `++` run) is parenthesized, or mkString binds to
+    // its last piece alone (2026-09-20: `join(".", namePackage ++ [name])`).
+    "join" -> { args => val xs = args(1); val operand = if (xs.exists(_.isWhitespace)) s"($xs)" else xs; s"$operand.mkString(${args(0)})" },
     // `presence x` (drake.dlt SYMBOLS, 2026-09-18): the host's optional value as a Presence,
     // the ONE conversion at the host boundary; a `match` so that both branches are typed
     // against the declared result and `Absent()` infers its parameter from it.

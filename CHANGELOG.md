@@ -178,6 +178,13 @@ for the definition that will replace it.
 
 ### Changed
 
+- **TypeName's paths are joins; the empty package is no special case.** `namePath` is
+  `join(".", namePackage ++ [name])` and `resourcePath` is `"/" ++ join("/", namePackage ++ [name ++ ".json"])`:
+  an empty path contributes no segments, so the two conditionals and their interpolated host strings are
+  gone and the values are trees. The parser now reads a non-empty collection literal, `[x, y]` or `{a, b}`,
+  as the `[]` / `{}` node with its members, and the Scala target parenthesizes a compound `join` operand.
+  Every path the loader resolves is unchanged. (2026-09-20)
+
 - **Mutable collections are `[T]+`, `{T}+` and `{K, V}+`; the Java lists leave the definition.** A trailing
   `+` on a collection bracket names its mutable version wherever a type is written, carried as the node
   key `[]+` / `{}+`; `fix` and `mut` speak only of the name. The Scala target spells a mutable buffer, set

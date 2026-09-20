@@ -1,0 +1,48 @@
+# TypeName's paths are joins: the empty package is no special case — Dev, 2026-09-20 ("Accept, build the
+# namePath join"), on 2897ee8 (624 / 44 green).
+#
+# ONE CONCEPT: under Dev's reading that the EMPTY name path is a module like any other (the local scratch
+# module), namePath and resourcePath need no conditional: the segments and the name are one sequence, and
+# an empty path contributes no segments.
+#   fix namePath String join(".", namePackage ++ [name])
+#   fix resourcePath String "/" ++ join("/", namePackage ++ [name ++ ".json"])
+# The two `if`s and the two `s"..."` host strings are gone; the values are trees the parser builds.
+#
+# PARSER: a NON-EMPTY collection literal in value position — `[name]`, `[x, y]`, `{a, b}` — was an opaque
+# leaf (probed with the compiled parser before authoring). `treed` now reads a token that is ONE bracket
+# group with nothing before it (closesWhole) as the `[]` / `{}` node with its members read as values; the
+# empty literals already parsed to those nodes. The emitter (`[a, b]`) and both expression renderers
+# (`Seq(a, b)`) were in place since the encoding fix. ENGINE: `join` parenthesizes a compound sequence
+# operand — `xs.mkString(sep)` on a `++` run would bind to the last piece alone.
+#
+# TRIO: drake authored; JSON by the compiled parser with the two literal leaves treed exactly as the new
+# parser does; TypeName.scala's two lines hand-rendered. PROBED: TypeName.scala compiled against the
+# classpath and RUN — TypeName("X") gives X and /X.json, the qualified one draco.format.json.Value and
+# /draco/format/json/Value.json, so every resource the loader resolves is unchanged. DrakeCLI check:
+# TypeName round-trips under the compiled emitter. DrakeParseTest's structural type-form test gains a
+# `[x, y]` literal and its engine spelling (still 624 tests).
+#
+# NOT TOUCHED, deliberately: the eight sites that read an EMPTY package as "foreign" (rooted, the emitter's
+# foreignReference for Dictionary's `{K, V}`, six in the engine's reference spelling). This step changed
+# the spelling of the empty path, not its meaning; telling a scratch-module reference from a host-type
+# reference is the next discussion.
+#
+# RUN: expected 624 tests / 44 suites, all green; every headline unchanged (surface losses 5: TypeName's
+# two values were opaque strings and are trees now, and both round-trip). One run.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-20-1347 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-20-1347 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-20-1347 && git push
+
+--- MESSAGE ---
+TypeName's paths are joins: the empty package is a module like any other, not a special case
+
+`namePath` is `join(".", namePackage ++ [name])` and `resourcePath` is `"/" ++ join("/", namePackage ++
+[name ++ ".json"])`. An empty path contributes no segments, so the two conditionals and their
+interpolated host strings are gone and both values are trees. The parser reads a non-empty collection
+literal as the `[]` or `{}` node with its members, and the Scala target parenthesizes a compound `join`
+operand. Every path the loader resolves is unchanged, checked by running the new TypeName. What an
+empty package means to the eight sites that read it as foreign is the next discussion.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
