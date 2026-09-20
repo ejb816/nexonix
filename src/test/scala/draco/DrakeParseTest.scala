@@ -337,10 +337,11 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |    fix names [String]
         |    fix handlers {String, (Int, Int) -> Unit}
         |    fix curried (Int -> Int -> Int)
+        |    fix buffer [String]+
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
-    val Seq(names, handlers, curried) = parsed.dracoAspect.elements.map(_.valueType)
+    val Seq(names, handlers, curried, buffer) = parsed.dracoAspect.elements.map(_.valueType)
     // The collection sugar is carried NEUTRALLY: the bracket is the node key, and no
     // host head (Seq, Map) enters the carrier (2026-09-18).
     assert(names == Json.obj("[]" -> Json.arr(Json.fromString("String"))), names.noSpaces)
@@ -349,11 +350,14 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       handlers.noSpaces)
     assert(curried == Json.obj("->" -> Json.arr(Json.fromString("Int"), Json.obj("->" -> Json.arr(Json.fromString("Int"), Json.fromString("Int"))))),
       s"the arrow did not group to the right: ${curried.noSpaces}")
+    // The MUTABLE collection: the `+` rides the node key (2026-09-20).
+    assert(buffer == Json.obj("[]+" -> Json.arr(Json.fromString("String"))), buffer.noSpaces)
     val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
     if (handNorm != roundNorm)
       fail("type-form surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
     assert(DracoGenerator.targetType(handlers).asString.contains("Map[String, (Int, Int) => Unit]"), DracoGenerator.targetType(handlers).noSpaces)
     assert(DracoGenerator.targetType(curried).asString.contains("Int => Int => Int"), DracoGenerator.targetType(curried).noSpaces)
+    assert(DracoGenerator.targetType(buffer).asString.contains("mutable.Buffer[String]"), DracoGenerator.targetType(buffer).noSpaces)
   }
 
   // --- Type parameters as type forms, asserted structurally ---

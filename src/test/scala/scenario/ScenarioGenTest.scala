@@ -219,7 +219,7 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
   test("the forest runs: an ash alarm crosses to birch, attenuated") {
     import scenario.ash.{AshJasmonate, Compound, Micromolar}
 
-    val received  = new java.util.ArrayList[scenario.birch.BirchJasmonate]()
+    val received  = scala.collection.mutable.ArrayBuffer[scenario.birch.BirchJasmonate]()
     val knowledge = Rule.knowledgeService.newKnowledge("scenarioForest")
     // The same two rules the actor's Knowledge accepts, in the same order.
     scenario.forest.AshBirchAlarm.ruleType.pattern(knowledge)
@@ -239,7 +239,7 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
       session.fire()
     } finally session.close()
 
-    val crossed = received.asScala.toSeq
+    val crossed = received.toSeq
     crossed.foreach(j => log.info(f"  crossed: potency=${j.potency.value}%.3f uM  compound=${j.compound.value}"))
     console.info(s"the forest runs: ${crossed.size} of 2 ash alarms crossed to birch")
 

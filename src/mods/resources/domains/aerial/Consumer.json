@@ -53,7 +53,7 @@
           "kind": "Monadic",
           "value": {
             "()": [
-              "consumed.forEach",
+              "consumed.foreach",
               "(e: String) => domains.aerial.AerialSink.record(e)"
             ]
           }
@@ -85,12 +85,13 @@
           "kind": "Fixed",
           "name": "consumed",
           "valueType": {
-            "()": [
-              "java.util.ArrayList",
+            "[]+": [
               "String"
             ]
           },
-          "value": "new java.util.ArrayList[String]()"
+          "value": {
+            "[]": []
+          }
         },
         {
           "kind": "Monadic",

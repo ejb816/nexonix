@@ -15,8 +15,7 @@
           "kind": "Parameter",
           "name": "received",
           "valueType": {
-            "()": [
-              "java.util.List",
+            "[]+": [
               "draco.generator.Emission"
             ]
           }

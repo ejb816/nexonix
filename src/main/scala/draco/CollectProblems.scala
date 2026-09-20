@@ -1,6 +1,7 @@
 package draco
 
 import org.evrete.api.{Knowledge, RhsContext}
+import scala.collection.mutable
 
 trait CollectProblems
 
@@ -11,7 +12,8 @@ object CollectProblems extends App with DracoType {
 
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val p: Problem = ctx.get[Problem]("$p")
-      ctx.getRuntime().get[java.util.List[Problem]]("problems").add(p)
+      lazy val problems: mutable.Buffer[Problem] = ctx.getRuntime().get("problems")
+      problems += p
   }
 
   private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {

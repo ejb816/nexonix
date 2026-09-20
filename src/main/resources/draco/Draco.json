@@ -14,8 +14,7 @@
           "kind": "Parameter",
           "name": "problems",
           "valueType": {
-            "()": [
-              "java.util.List",
+            "[]+": [
               "Problem"
             ]
           }

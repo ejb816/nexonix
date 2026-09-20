@@ -49,7 +49,15 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   [<T>]            {"[]": [<T>]}       the three COLLECTION rows are neutral in the JSON (2026-09-18):
   {<T>}            {"{}": [<T>]}       the bracket is the node key, at one arity a set and at two a
   {<K>, <V>}       {"{}": [<K>, <V>]}  map; Seq / Set / Map are spelled by the Scala target alone
-  mut {<T>}        mutable.Set[<T>]
+  [<T>]+           mutable.Buffer[<T>]  the MUTABLE collections (2026-09-20, Dev): the bracket pair names the
+  {<T>}+           mutable.Set[<T>]     collection and a trailing `+` its mutable version, WHEREVER a type is
+  {<K>, <V>}+      mutable.Map[<K>, <V>] written — {"[]+": [T]}, {"{}+": [...]} in the JSON. COLLECTION BRACKETS
+                                       ONLY: `()+` is left out, reserved for mutable TREES (mixed mutable and
+                                       immutable tree types and tree instance values — Dev's idea, later).
+                                       `fix` / `mut` say nothing about the container: they are the NAME's val /
+                                       var alone. An empty `[]` / `{}` in a `+` slot is the mutable empty. The
+                                       `+` grants ONE operation, `add(xs, x)` (SYMBOLS). `mut {T}` host text
+                                       RETIRED with this row (Accumulator was its last use).
   <F>(<A> ...)     <F>[<A> ...]        type application
   (<A>, <B>)       (<A>, <B>)          tuple, unchanged
   <A> -> <B>       <A> => <B>          function arrow — the SAME token drake uses for a "->" VALUE node
@@ -70,7 +78,12 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   in VALUE position: `[]` and `{}` are `{"[]": []}` / `{"{}": []}`, a sequence or set literal with its
   elements, and each target spells the empty one (`Seq.empty`). The rows that still put the HOST's
   spelling in the corpus are the leaves (String, Int, Json, URI …) and the heads with no drake form yet
-  (java.util.List); each needs a target-neutral representation of its own, one at a time.
+  — none of the HEADS is left. JAVA.UTIL.LIST WENT FIFTH (2026-09-20): the collectors an actor's caller hands
+  in and a rule appends to (Draco's problems, Emitter's received, the scenario's received, aerial's consumed)
+  are "a sequenced values container for post hoc sorting into an indexed table" (Dev) — not a consumer — and
+  a container's mutability must be in its TYPE, because a `mut` on the caller's element is invisible inside
+  the callee's `par`: so `[Problem]+`, `loc received [Emission]+`, `add(received, emission)`. The leaves
+  (String, Int, Json, URI, the evrete and pekko types) remain the host's spellings.
   LAZYLIST WENT FOURTH (2026-09-20, Dev: "`[T]` is the lazy sequence, unboundedness in the value"): drake
   evaluates by need, so `[T]` IS Haskell's list and no second sequence form exists; Primes' five
   `LazyList(Int)` slots are `[Int]`. The residue is the ScalaTarget's alone — its Seq is strict — and it is
@@ -138,6 +151,9 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
     cons <x> <xs>      Haskell's `x : xs`, the tail by need (2026-09-20). ScalaTarget: `LazyList.cons(x,
                        LazyList.from(xs))` — from returns a LazyList unchanged and wraps any other Seq
                        lazily, so a recursive definition (Primes' sieve) terminates.
+    add <xs> <x>       IN-PLACE add to a `+` collection (2026-09-20) — `add(received, emission)`. ScalaTarget:
+                       `xs += x`, the same call on a Buffer and a mutable Set. Not `append`, which is
+                       Haskell's `++`, concatenation, and not in place.
     join  <sep> <xs>   Haskell's intercalate, separator FIRST — `join(" ", _package)`;
                        ScalaTarget renders xs.mkString(sep). Chosen over `intercalate` (obscure) and
                        `splice` (means insertion in JS/Perl) as the name every target's reader knows;

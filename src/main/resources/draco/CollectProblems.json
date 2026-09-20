@@ -28,29 +28,35 @@
       "kind": "Action",
       "body": [
         {
-          "kind": "Monadic",
+          "kind": "Local",
+          "name": "problems",
+          "valueType": {
+            "[]+": [
+              "Problem"
+            ]
+          },
           "value": {
             "()": [
               {
                 ".": [
                   {
                     "()": [
-                      {
-                        ".": [
-                          {
-                            "()": [
-                              "ctx.getRuntime"
-                            ]
-                          },
-                          "get[java.util.List[Problem]]"
-                        ]
-                      },
-                      "\"problems\""
+                      "ctx.getRuntime"
                     ]
                   },
-                  "add"
+                  "get"
                 ]
               },
+              "\"problems\""
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "add",
+              "problems",
               "p"
             ]
           }

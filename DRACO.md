@@ -248,11 +248,12 @@ name lists always bracketed, keyword blocks never, openers bracket themselves. R
 are bare in the referring type's own package, qualified elsewhere, and written as a type
 expression when the referent is outside every draco domain (`Dictionary` derives `{K, V}`).
 Value types are
-`[T]` Seq, `{T}` Set, `{K,V}` Map, `mut {T}`, `F(A,B)`, `A -> B`, tuples. The full spec is
+`[T]` Seq, `{T}` Set, `{K,V}` Map, their mutable versions `[T]+`, `{T}+`, `{K,V}+` (2026-09-20; `mut {T}` retired),
+`F(A,B)`, `A -> B`, tuples. The full spec is
 `src/main/resources/draco/drake.dlt`, which is current and authoritative.
 
 **Caveat, and it matters if you author drake:** `Drake.parse` trees every VALUE TYPE as one of
-the four type forms (2026-09-17; `mut {T}` stays host text until `mut` moves to the element), and
+the four type forms (2026-09-17; no host-text type form remains since `[T]+` landed on 2026-09-20), and
 builds expression trees only
 for calls — `f(a, b)`, positional then `name:value`, one glued token split at depth-0
 parentheses, commas and dots (2026-09-16; the `parameters`/`par` call form, its `[ ]` argument

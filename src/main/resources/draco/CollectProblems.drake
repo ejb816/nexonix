@@ -5,4 +5,5 @@ rule
     variables
       var p Problem
   action
-    mon ctx.getRuntime().get[java.util.List[Problem]]("problems").add(p)
+    loc problems [Problem]+ ctx.getRuntime().get("problems")
+    mon add(problems, p)

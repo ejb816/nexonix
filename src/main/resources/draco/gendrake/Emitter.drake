@@ -1,7 +1,7 @@
 type Emitter
   factory ActorType
     parameters
-      par received java.util.List(draco.generator.Emission)
+      par received [draco.generator.Emission]+
 domain draco gendrake GenDrake
 actor
   messageType draco TypeDefinition

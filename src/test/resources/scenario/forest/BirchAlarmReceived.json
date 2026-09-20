@@ -33,8 +33,7 @@
           "kind": "Local",
           "name": "received",
           "valueType": {
-            "()": [
-              "java.util.List",
+            "[]+": [
               "scenario.birch.BirchJasmonate"
             ]
           },
@@ -58,7 +57,8 @@
           "kind": "Monadic",
           "value": {
             "()": [
-              "received.add",
+              "add",
+              "received",
               "jasmonate"
             ]
           }

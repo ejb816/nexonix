@@ -1,7 +1,7 @@
 type Draco
   factory ActorType
     parameters
-      par problems java.util.List(Problem)
+      par problems [Problem]+
 domain draco Draco
   types [
     Action

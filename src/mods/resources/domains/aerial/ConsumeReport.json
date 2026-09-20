@@ -21,8 +21,24 @@
       "kind": "Action",
       "body": [
         {
+          "kind": "Local",
+          "name": "consumed",
+          "valueType": {
+            "[]+": [
+              "String"
+            ]
+          },
+          "value": "ctx.getRuntime().get(\"consumed\")"
+        },
+        {
           "kind": "Monadic",
-          "value": "ctx.getRuntime().get[java.util.List[String]](\"consumed\").add(report.json.noSpaces)"
+          "value": {
+            "()": [
+              "add",
+              "consumed",
+              "report.json.noSpaces"
+            ]
+          }
         }
       ]
     }

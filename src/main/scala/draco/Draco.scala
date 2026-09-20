@@ -1,5 +1,6 @@
 package draco
 
+import scala.collection.mutable
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.Knowledge
@@ -23,9 +24,9 @@ object Draco extends App with DracoType {
     k
   }
 
-  def actorType(_problems: => java.util.List[Problem]): ActorType = new Actor[DracoType] {
+  def actorType(_problems: => mutable.Buffer[Problem]): ActorType = new Actor[DracoType] {
     override lazy val typeDefinition: TypeDefinition = Draco.typeDefinition
-    lazy val problems: java.util.List[Problem] = _problems
+    lazy val problems: mutable.Buffer[Problem] = _problems
 
     lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
     session.set("problems", problems)

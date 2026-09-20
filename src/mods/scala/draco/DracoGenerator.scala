@@ -197,6 +197,12 @@ object DracoGenerator extends App {
     case Some(("[]", Vector(a)))       => s"Seq[${scalaType(a)}]"
     case Some(("{}", Vector(a)))       => s"Set[${scalaType(a)}]"
     case Some(("{}", Vector(k, v)))    => s"Map[${scalaType(k)}, ${scalaType(v)}]"
+    // The MUTABLE collections, `[T]+` / `{T}+` / `{K, V}+` (drake.dlt VALUE-TYPES, 2026-09-20):
+    // the `+` rides the node key; the ScalaTarget spells the mutable container, a Buffer
+    // being a Seq and a mutable Set a Set, so a `+` type reads as its immutable one.
+    case Some(("[]+", Vector(a)))      => s"mutable.Buffer[${scalaType(a)}]"
+    case Some(("{}+", Vector(a)))      => s"mutable.Set[${scalaType(a)}]"
+    case Some(("{}+", Vector(k, v)))   => s"mutable.Map[${scalaType(k)}, ${scalaType(v)}]"
     case Some(("()", f +: arguments))  => s"${f.text}[${arguments.map(scalaType).mkString(", ")}]"
     case Some((op @ ("<:" | ">:"), Vector(p, b))) => s"${scalaType(p)} $op ${scalaType(b)}"
     case Some((op, _)) => sys.error(s"DracoGenerator.scalaType: not a type form: '$op' in ${form.noSpaces}")
@@ -214,7 +220,10 @@ object DracoGenerator extends App {
     // unbounded arithmetic sequence, and `cons(x, xs)`, whose tail is by-name — LazyList.from
     // returns a LazyList unchanged and wraps any other Seq lazily.
     "progression" -> { args => s"LazyList.from(${args(0)}, ${args(1)})" },
-    "cons"        -> { args => s"LazyList.cons(${args(0)}, LazyList.from(${args(1)}))" }
+    "cons"        -> { args => s"LazyList.cons(${args(0)}, LazyList.from(${args(1)}))" },
+    // `add(xs, x)` — the one operation a `+` collection grants (drake.dlt SYMBOLS,
+    // 2026-09-20): in place, the same call on a Buffer and on a mutable Set.
+    "add"         -> { args => s"${args(0)} += ${args(1)}" }
   )
 
   /** A tree in a String-typed slot denotes its SURFACE TEXT and renders quoted (the
@@ -223,6 +232,10 @@ object DracoGenerator extends App {
     * (`sourceLines.mkString("\n")` in a String slot is a call, not a type spelled as
     * text). No corpus definition holds a tree of any other kind in a String slot. */
   private def defaultInitializer (valueType: String, value: Json) : String = {
+    // An EMPTY collection literal in a MUTABLE slot is the mutable empty: `[]` in a
+    // `[T]+` is `mutable.Buffer.empty[T]`, `{}` in a `{T}+` is `mutable.Set.empty[T]`.
+    val emptyLiteral = Expression.node(value).exists { case (op, args) => (op == "[]" || op == "{}") && args.isEmpty }
+    if (emptyLiteral && valueType.startsWith("mutable.")) return valueType.replaceFirst("\\[", ".empty[")
     val rendered = expression(value)
     val computes = Expression.isConcat(value) || Expression.isApplication(value)
     if (value != null && value.isObject && valueType == "String" && !computes) "\"" + rendered + "\""
@@ -1633,7 +1646,7 @@ object DracoGenerator extends App {
   private def composedImports (td: TypeDefinition) : String = {
     val contributions = Seq(
       if (isDomain(td)) Some(typeImports(td, hasCodec(td), "domain")) else None,
-      if (isRule(td)) Some(ruleImports(td.typeName.namePackage)) else None,
+      if (isRule(td)) Some(ruleImports(td)) else None,
       if (hasActorBehavior(td)) Some(actorImports(td)) else None
     ).flatten
     val lines = contributions.flatMap(_.split("\n")).filter(_.nonEmpty).distinct
@@ -1739,7 +1752,12 @@ object DracoGenerator extends App {
     // context-bounded name ("value[T: Decoder]") carries a type in its bound.
     val methodShaped = td.dracoAspect.elements ++ td.dracoAspect.factory.body ++ td.dracoAspect.globalElements
     val nested = methodShaped.flatMap(e => e.parameters.map(_.valueType.text) ++ e.body.map(_.valueType.text))
+    // Rule and actor ACTION bodies declare locals too (a rule's `loc received [Emission]+`,
+    // an actor's `fix consumed [String]+`); their types reach the import rule as well.
+    val actionBodies = (td.ruleAspect.action +: Seq(td.actorAspect.start, td.actorAspect.message, td.actorAspect.signal))
+      .flatMap(a => if (a == null) Seq.empty else a.body.map(_.valueType.text))
     val allValueTypes = td.dracoAspect.elements.map(_.valueType.text) ++
+      actionBodies ++
       td.dracoAspect.factory.parameters.map(_.valueType.text) ++
       td.dracoAspect.factory.body.map(_.valueType.text) ++
       td.dracoAspect.globalElements.map(_.valueType.text) ++
@@ -2010,7 +2028,7 @@ object DracoGenerator extends App {
          |${composedGlobal(td)}
          |""".stripMargin
     } else if (isRule(td)) {
-      val imports = ruleImports(td.typeName.namePackage)
+      val imports = ruleImports(td)
       val ruleName = td.typeName.name
       s"""
          |package ${td.typeName.namePackage.mkString(".")}
@@ -2106,8 +2124,14 @@ object DracoGenerator extends App {
     s"package $pkg\n$imports\n${typeBlocks.mkString("\n\n")}\n"
   }
 
-  private def ruleImports (namePackage: Seq[String]) : String = {
-    val allImports = packageHierarchyImports(namePackage) ++ ruleFrameworkImports
+  private def ruleImports (td: TypeDefinition) : String = {
+    // A rule's action may declare a `+` collection local (`loc received [Emission]+`), which
+    // the ScalaTarget spells with `mutable.`; the rule path has no external block, so the
+    // one import it can need is appended here (2026-09-20).
+    val mutableRef =
+      if (td.ruleAspect.action != null && td.ruleAspect.action.body.exists(_.valueType.text.contains("mutable.")))
+        Seq("import scala.collection.mutable") else Seq.empty
+    val allImports = packageHierarchyImports(td.typeName.namePackage) ++ ruleFrameworkImports ++ mutableRef
     allImports.mkString("\n")
   }
 

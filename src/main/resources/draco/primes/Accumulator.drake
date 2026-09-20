@@ -1,13 +1,13 @@
 type Accumulator from Primes
   elements
-    fix primeSet mut {Int}
-    fix compositeSet mut {Int}
-    fix naturalSet mut {Int}
-    fix intervalTextSet mut {(Long, String)}
+    fix primeSet {Int}+
+    fix compositeSet {Int}+
+    fix naturalSet {Int}+
+    fix intervalTextSet {(Long, String)}+
   factory
     body
-      fix primeSet mut {Int} mutable.Set[Int] ()
-      fix compositeSet mut {Int} mutable.Set[Int] ()
-      fix naturalSet mut {Int} mutable.Set[Int] ()
-      fix intervalTextSet mut {(Long, String)} mutable.Set[(Long, String)] ()
+      fix primeSet {Int}+ {}
+      fix compositeSet {Int}+ {}
+      fix naturalSet {Int}+ {}
+      fix intervalTextSet {(Long, String)}+ {}
 domain draco primes Primes

@@ -171,6 +171,14 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Mutable collections are `[T]+`, `{T}+` and `{K, V}+`; the Java lists leave the definition.** A trailing
+  `+` on a collection bracket names its mutable version wherever a type is written, carried as the node
+  key `[]+` / `{}+`; `fix` and `mut` speak only of the name. The Scala target spells a mutable buffer, set
+  or map, and an empty `[]` or `{}` in a `+` slot as the mutable empty. One declared symbol, `add(xs, x)`,
+  is the operation the `+` grants. The four collectors an actor's caller hands in and a rule appends to
+  are `[T]+`, and Accumulator's `mut {T}` host text becomes `{Int}+`, retiring the last host-text type
+  form. `()+` is reserved. (2026-09-20)
+
 - **`[T]` is the lazy sequence; `LazyList` leaves the definition.** Unboundedness is a property of the
   value, as in Haskell, so Primes' five `LazyList(Int)` slots are `[Int]`. Two declared symbols carry the
   two ways a definition builds a sequence lazily: `progression(start, step)`, the unbounded arithmetic

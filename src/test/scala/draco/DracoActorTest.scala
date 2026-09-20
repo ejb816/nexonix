@@ -41,13 +41,13 @@ class DracoActorTest extends AnyFunSuite {
   /** Spawn a Draco actor, send it every fact as a message, let it collapse each
    *  in turn, stop it, and return the findings it accumulated. */
   private def validateViaActor(name: String, facts: Seq[DracoType]): Seq[Problem] = {
-    val problems = new java.util.ArrayList[Problem]()
+    val problems = scala.collection.mutable.ArrayBuffer[Problem]()
     val system = ActorSystem(Draco.actorType(problems).asInstanceOf[Actor[DracoType]], name)
     facts.foreach(system ! _)
     Thread.sleep(1000)
     system.terminate()
     Await.result(system.whenTerminated, 5.seconds)
-    problems.asScala.toSeq
+    problems.toSeq
   }
 
   test("the Draco actor validates the loaded foundation clean") {

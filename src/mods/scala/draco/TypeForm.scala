@@ -41,6 +41,8 @@ object TypeForm {
     case Some (("(,)", members))           => members.map (neutral).mkString ("(", ", ", ")")
     case Some (("[]", Vector (a)))         => s"[${neutral (a)}]"
     case Some (("{}", members))            => members.map (neutral).mkString ("{", ", ", "}")
+    case Some (("[]+", Vector (a)))        => s"[${neutral (a)}]+"
+    case Some (("{}+", members))           => members.map (neutral).mkString ("{", ", ", "}+")
     case Some (("()", f +: arguments))     => s"${text (f)}(${arguments.map (neutral).mkString (", ")})"
     case Some ((op @ ("<:" | ">:"), Vector (p, b))) => s"${neutral (p)} $op ${neutral (b)}"
     case Some ((op, _)) => sys.error (s"TypeForm.neutral: not a type form: '$op' in ${valueType.noSpaces}")

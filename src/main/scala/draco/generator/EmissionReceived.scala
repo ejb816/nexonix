@@ -2,6 +2,7 @@ package draco.generator
 
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
+import scala.collection.mutable
 
 trait EmissionReceived
 
@@ -12,8 +13,8 @@ object EmissionReceived extends App with DracoType {
 
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val emission: Emission = ctx.get[Emission]("$emission")
-      lazy val received: java.util.List[Emission] = ctx.getRuntime().get("received")
-      received.add(emission)
+      lazy val received: mutable.Buffer[Emission] = ctx.getRuntime().get("received")
+      received += emission
   }
 
   private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {

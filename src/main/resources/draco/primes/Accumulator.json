@@ -20,22 +20,43 @@
       {
         "kind": "Fixed",
         "name": "primeSet",
-        "valueType": "mutable.Set[Int]"
+        "valueType": {
+          "{}+": [
+            "Int"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "compositeSet",
-        "valueType": "mutable.Set[Int]"
+        "valueType": {
+          "{}+": [
+            "Int"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "naturalSet",
-        "valueType": "mutable.Set[Int]"
+        "valueType": {
+          "{}+": [
+            "Int"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "intervalTextSet",
-        "valueType": "mutable.Set[(Long, String)]"
+        "valueType": {
+          "{}+": [
+            {
+              "(,)": [
+                "Long",
+                "String"
+              ]
+            }
+          ]
+        }
       }
     ],
     "factory": {
@@ -45,26 +66,55 @@
         {
           "kind": "Fixed",
           "name": "primeSet",
-          "valueType": "mutable.Set[Int]",
-          "value": "mutable.Set[Int] ()"
+          "valueType": {
+            "{}+": [
+              "Int"
+            ]
+          },
+          "value": {
+            "{}": []
+          }
         },
         {
           "kind": "Fixed",
           "name": "compositeSet",
-          "valueType": "mutable.Set[Int]",
-          "value": "mutable.Set[Int] ()"
+          "valueType": {
+            "{}+": [
+              "Int"
+            ]
+          },
+          "value": {
+            "{}": []
+          }
         },
         {
           "kind": "Fixed",
           "name": "naturalSet",
-          "valueType": "mutable.Set[Int]",
-          "value": "mutable.Set[Int] ()"
+          "valueType": {
+            "{}+": [
+              "Int"
+            ]
+          },
+          "value": {
+            "{}": []
+          }
         },
         {
           "kind": "Fixed",
           "name": "intervalTextSet",
-          "valueType": "mutable.Set[(Long, String)]",
-          "value": "mutable.Set[(Long, String)] ()"
+          "valueType": {
+            "{}+": [
+              {
+                "(,)": [
+                  "Long",
+                  "String"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "{}": []
+          }
         }
       ]
     }

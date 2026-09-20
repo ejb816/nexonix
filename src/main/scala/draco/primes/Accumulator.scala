@@ -16,10 +16,10 @@ object Accumulator extends App with DracoType {
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
 
   def apply () : Accumulator = new Accumulator {
-    override lazy val primeSet: mutable.Set[Int] = mutable.Set[Int] ()
-    override lazy val compositeSet: mutable.Set[Int] = mutable.Set[Int] ()
-    override lazy val naturalSet: mutable.Set[Int] = mutable.Set[Int] ()
-    override lazy val intervalTextSet: mutable.Set[(Long, String)] = mutable.Set[(Long, String)] ()
+    override lazy val primeSet: mutable.Set[Int] = mutable.Set.empty[Int]
+    override lazy val compositeSet: mutable.Set[Int] = mutable.Set.empty[Int]
+    override lazy val naturalSet: mutable.Set[Int] = mutable.Set.empty[Int]
+    override lazy val intervalTextSet: mutable.Set[(Long, String)] = mutable.Set.empty[(Long, String)]
     override lazy val typeDefinition: TypeDefinition = Accumulator.typeDefinition
   }
 

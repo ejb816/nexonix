@@ -3,6 +3,7 @@ package scenario.forest
 import draco._
 import scenario._
 import org.evrete.api.{Knowledge, RhsContext}
+import scala.collection.mutable
 
 trait BirchAlarmReceived
 
@@ -13,8 +14,8 @@ object BirchAlarmReceived extends App with DracoType {
 
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val jasmonate: scenario.birch.BirchJasmonate = ctx.get[scenario.birch.BirchJasmonate]("$jasmonate")
-      lazy val received: java.util.List[scenario.birch.BirchJasmonate] = ctx.getRuntime().get("received")
-      received.add(jasmonate)
+      lazy val received: mutable.Buffer[scenario.birch.BirchJasmonate] = ctx.getRuntime().get("received")
+      received += jasmonate
   }
 
   private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {

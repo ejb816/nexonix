@@ -3,6 +3,7 @@ package domains.aerial
 import draco._
 import domains._
 import org.evrete.api.{Knowledge, RhsContext}
+import scala.collection.mutable
 
 trait ConsumeReport
 
@@ -13,7 +14,8 @@ object ConsumeReport extends App with DracoType {
 
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val report: PositionReport = ctx.get[PositionReport]("$report")
-      ctx.getRuntime().get[java.util.List[String]]("consumed").add(report.json.noSpaces)
+      lazy val consumed: mutable.Buffer[String] = ctx.getRuntime().get("consumed")
+      consumed += report.json.noSpaces
   }
 
   private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {

@@ -5,5 +5,5 @@ rule
     variables
       var emission Emission
   action
-    loc received java.util.List(Emission) ctx.getRuntime().get("received")
-    mon received.add(emission)
+    loc received [Emission]+ ctx.getRuntime().get("received")
+    mon add(received, emission)

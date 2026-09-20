@@ -4,6 +4,7 @@ import draco._
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.Knowledge
+import scala.collection.mutable
 
 trait Emitter extends DracoType
 
@@ -20,9 +21,9 @@ object Emitter extends App with DracoType {
     k
   }
 
-  def actorType(_received: => java.util.List[draco.generator.Emission]): ActorType = new Actor[draco.TypeDefinition] {
+  def actorType(_received: => mutable.Buffer[draco.generator.Emission]): ActorType = new Actor[draco.TypeDefinition] {
     override lazy val typeDefinition: TypeDefinition = Emitter.typeDefinition
-    lazy val received: java.util.List[draco.generator.Emission] = _received
+    lazy val received: mutable.Buffer[draco.generator.Emission] = _received
 
     lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
     session.set("received", received)

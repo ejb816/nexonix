@@ -40,12 +40,12 @@ class AerialActorTest extends AnyFunSuite {
     val knowledge = Rule.knowledgeService.newKnowledge("AerialConsumeRuleTest")
     ConsumeReport.ruleType.pattern(knowledge)
     val session = knowledge.newStatefulSession()
-    val consumed = new java.util.ArrayList[String]()
+    val consumed = scala.collection.mutable.ArrayBuffer[String]()
     session.set("consumed", consumed)
     session.insert(Seq(report("NX1042", 35000)): _*)
     session.fire()
     session.close()
-    assert(consumed.asScala.exists(_.contains("NX1042")))
+    assert(consumed.exists(_.contains("NX1042")))
   }
 
   test("Consumer actor accumulates a PositionReport and reaps it to the sink at PostStop") {

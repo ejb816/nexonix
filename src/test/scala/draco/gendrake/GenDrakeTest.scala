@@ -76,7 +76,7 @@ class GenDrakeTest extends AnyFunSuite with PersistentTestLog {
     }
     assume(pairs.nonEmpty, s"no definitions under $dracoRoot")
 
-    val received  = new java.util.ArrayList[draco.generator.Emission]()
+    val received  = scala.collection.mutable.ArrayBuffer[draco.generator.Emission]()
     val knowledge = Rule.knowledgeService.newKnowledge("genDrake")
     // The same two rules the Emitter's Knowledge accepts, in the same order — and the
     // DEFAULT activation mode, because this is a CHAIN: Emit's output is what
@@ -92,7 +92,7 @@ class GenDrakeTest extends AnyFunSuite with PersistentTestLog {
     } finally session.close()
 
     val expected = pairs.map(_._2).toSet
-    val got      = received.asScala.map(s => normalize(s.value)).toSet
+    val got      = received.map(s => normalize(s.value)).toSet
     val missing  = expected diff got
     val extra    = got diff expected
     missing.foreach(m => log.info(s"\n--- expected, not received ---\n$m"))

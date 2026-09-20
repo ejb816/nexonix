@@ -180,6 +180,8 @@ object Drake {
     case Some(("(,)", members))        => members.map(drakeType).mkString("(", ", ", ")")
     case Some(("[]", Vector(a)))       => s"[${drakeType(a)}]"
     case Some(("{}", members))         => members.map(drakeType).mkString("{", ", ", "}")
+    case Some(("[]+", Vector(a)))      => s"[${drakeType(a)}]+"
+    case Some(("{}+", members))        => members.map(drakeType).mkString("{", ", ", "}+")
     case Some(("()", f +: arguments))  => s"${f.text}(${arguments.map(drakeType).mkString(", ")})"
     case Some((op @ ("<:" | ">:"), Vector(p, b))) => s"${drakeType(p)} $op ${drakeType(b)}"
     case Some((op, _)) => sys.error(s"Drake.emit: not a type form: '$op' in ${form.noSpaces}")
@@ -837,10 +839,7 @@ object Drake {
   }
 
   /** Consume a value-type slot. `mut {T}` is the one two-token form. */
-  private def takeValueType (c: Cursor) : Json = {
-    val first = c.takeText ()
-    typeForm (if (first == "mut") s"mut ${c.takeText ()}" else first)
-  }
+  private def takeValueType (c: Cursor) : Json = typeForm (c.takeText ())
 
   /** A drake type expression as a TYPE-FORM TREE (drake.dlt VALUE-TYPES; TypeForm for
     * the encoding). Read outside-in: a top-level arrow is Morphic and groups to the
@@ -856,7 +855,10 @@ object Drake {
     val arrow = splitTopArrow (s, drakeArrow)
     if (arrow.size > 1) Json.obj ("->" -> Json.arr (typeForm (arrow.head), typeForm (arrow.tail.mkString (drakeArrow))))
     else boundForm (s).getOrElse {
-      if (s.startsWith ("mut {") && s.endsWith ("}")) Json.fromString (parseTypeExpression (s))
+      // A trailing `+` is the MUTABLE collection (2026-09-20): `[T]+`, `{T}+`, `{K, V}+`, the
+      // `+` riding the node key. `mut {T}` (host text) retired with it.
+      if (s.startsWith ("[") && s.endsWith ("]+")) Json.obj ("[]+" -> Json.arr (typeForm (s.substring (1, s.length - 2))))
+      else if (s.startsWith ("{") && s.endsWith ("}+")) Json.obj ("{}+" -> Json.fromValues (splitTypeArguments (s.substring (1, s.length - 2)).map (typeForm)))
       // The collection sugar is carried NEUTRALLY (2026-09-18): the bracket is the node
       // key — `[T]` is {"[]": [T]}, `{T}` / `{K, V}` are {"{}": [...]} at two arities —
       // and no target's name (Seq, Set, Map) enters the carrier; each target spells it.
