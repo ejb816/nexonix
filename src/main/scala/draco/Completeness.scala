@@ -1,7 +1,6 @@
 package draco
 
 import org.evrete.api.{Knowledge, RhsContext}
-import java.util.function.Consumer
 
 trait Completeness
 
@@ -13,12 +12,12 @@ object Completeness extends App with DracoType {
   def w1(td: TypeDefinition): Boolean = draco.DomainAspect.isEmpty(td.domainAspect)
   def w2(td: TypeDefinition): Boolean = draco.RuleAspect.isEmpty(td.ruleAspect)
   def w3(td: TypeDefinition): Boolean = draco.ActorAspect.isEmpty(td.actorAspect)
-  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val td: TypeDefinition = ctx.get[TypeDefinition]("$td")
       ctx.insert(Problem(td.typeName, s"member ${td.typeName.name} is declared but unauthored (no JSON on disk)"))
   }
 
-  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
     knowledge
     .builder()
     .newRule ("draco.Completeness")
@@ -29,7 +28,7 @@ object Completeness extends App with DracoType {
     .where("draco.Completeness.w1($td)")
     .where("draco.Completeness.w2($td)")
     .where("draco.Completeness.w3($td)")
-    .execute (action)
+    .execute (action(_))
     .build()
   }
 

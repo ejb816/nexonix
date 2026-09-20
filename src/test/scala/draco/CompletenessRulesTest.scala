@@ -46,7 +46,7 @@ class CompletenessRulesTest extends AnyFunSuite {
     val collected = ListBuffer.empty[Problem]
     try {
       val knowledge: Knowledge = service.newKnowledge("Completeness")
-      Completeness.ruleType.pattern.accept(knowledge)
+      Completeness.ruleType.pattern(knowledge)
       knowledge
         .builder()
         .newRule("draco.CollectProblems")

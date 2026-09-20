@@ -11,9 +11,9 @@
         "kind": "Fixed",
         "name": "action",
         "valueType": {
-          "()": [
-            "Consumer",
-            "RhsContext"
+          "->": [
+            "RhsContext",
+            "Unit"
           ]
         }
       },
@@ -21,9 +21,9 @@
         "kind": "Fixed",
         "name": "pattern",
         "valueType": {
-          "()": [
-            "Consumer",
-            "Knowledge"
+          "->": [
+            "Knowledge",
+            "Unit"
           ]
         }
       }

@@ -59,7 +59,7 @@ class GenDrakeTest extends AnyFunSuite with PersistentTestLog {
   test("the Emitter accepts every rule its domain chain owns") {
     val projected = Paths.get("src/main/scala/draco/gendrake/Emitter.scala")
     val accepted  = Using.resource(scala.io.Source.fromFile(projected.toFile))(
-      _.getLines().filter(_.contains(".ruleType.pattern.accept(")).toList)
+      _.getLines().filter(_.contains(".ruleType.pattern(")).toList)
     accepted.foreach(l => log.info(s"  accepts: ${l.trim}"))
     assert(accepted.exists(_.contains("Emit.ruleType")), "Emitter does not accept GenDrake's own rule Emit")
     assert(accepted.exists(_.contains("EmissionReceived.ruleType")), "Emitter does not accept its super-domain's rule EmissionReceived")
@@ -81,8 +81,8 @@ class GenDrakeTest extends AnyFunSuite with PersistentTestLog {
     // The same two rules the Emitter's Knowledge accepts, in the same order — and the
     // DEFAULT activation mode, because this is a CHAIN: Emit's output is what
     // EmissionReceived matches.
-    Emit.ruleType.pattern.accept(knowledge)
-    draco.generator.EmissionReceived.ruleType.pattern.accept(knowledge)
+    Emit.ruleType.pattern(knowledge)
+    draco.generator.EmissionReceived.ruleType.pattern(knowledge)
 
     val session = knowledge.newStatefulSession()
     try {

@@ -380,6 +380,10 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   value (`TypeLoader.readDefinition`, `rooted`) cannot take by-name parameters in Scala; mark
   the parameter `now par …`. Find these by what a type DERIVES (a foreign parent, an explicit
   `main`) and by method-as-argument uses, not by method names.
+- **Evrete's `execute` takes Java's `Consumer`; a Scala function value is refused there, a lambda literal
+  converts.** A rule's `pattern` and `action` are functions (`(Knowledge -> Unit)`, `(RhsContext -> Unit)`,
+  2026-09-20), applied as `pattern(knowledge)`; the engine's rule template writes `execute (action(_))` at
+  the one call Evrete owns. Never hand a function value to a Java functional-interface parameter.
 - **A factory argument is by-name, so a hand-written caller sequences its own effects.** Since lazy
   step 3 (2026-09-18) `X(expr)` evaluates `expr` on first read of the instance, not at the call. An
   argument that consumes state — a token cursor, an iterator, a `var` mutated afterwards — must be bound

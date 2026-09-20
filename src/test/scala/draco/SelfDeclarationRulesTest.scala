@@ -41,8 +41,8 @@ class SelfDeclarationRulesTest extends AnyFunSuite {
     val collected = ListBuffer.empty[Problem]
     try {
       val knowledge: Knowledge = service.newKnowledge("Validation")
-      Completeness.ruleType.pattern.accept(knowledge)
-      SelfDeclaration.ruleType.pattern.accept(knowledge)
+      Completeness.ruleType.pattern(knowledge)
+      SelfDeclaration.ruleType.pattern(knowledge)
       knowledge
         .builder()
         .newRule("draco.CollectProblems")

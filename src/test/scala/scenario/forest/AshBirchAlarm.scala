@@ -3,7 +3,6 @@ package scenario.forest
 import draco._
 import scenario._
 import org.evrete.api.{Knowledge, RhsContext}
-import java.util.function.Consumer
 
 trait AshBirchAlarm
 
@@ -12,13 +11,13 @@ object AshBirchAlarm extends App with DracoType {
   lazy val dracoType: Type[AshBirchAlarm] = Type[AshBirchAlarm] (typeDefinition)
   lazy val domainType: Domain[Forest] = Domain[Forest] (typeDefinition)
   def w0(jasmonate: scenario.ash.AshJasmonate): Boolean = jasmonate.potency.value > 0.5
-  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val jasmonate: scenario.ash.AshJasmonate = ctx.get[scenario.ash.AshJasmonate]("$jasmonate")
       lazy val primed: scenario.birch.BirchJasmonate = scenario.birch.BirchJasmonate(scenario.ash.birch.Potency(jasmonate.potency), scenario.ash.birch.Marker(jasmonate.compound))
       ctx.insert(primed)
   }
 
-  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
     knowledge
     .builder()
     .newRule ("scenario.forest.AshBirchAlarm")
@@ -26,7 +25,7 @@ object AshBirchAlarm extends App with DracoType {
       "$jasmonate", classOf[scenario.ash.AshJasmonate]
     )
     .where("scenario.forest.AshBirchAlarm.w0($jasmonate)")
-    .execute (action)
+    .execute (action(_))
     .build()
   }
 

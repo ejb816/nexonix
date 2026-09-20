@@ -38,9 +38,9 @@ class FoundationValidationTest extends AnyFunSuite {
     val collected = ListBuffer.empty[Problem]
     try {
       val knowledge: Knowledge = service.newKnowledge("Foundation")
-      Completeness.ruleType.pattern.accept(knowledge)
-      SelfDeclaration.ruleType.pattern.accept(knowledge)
-      DerivationResolvable.ruleType.pattern.accept(knowledge)
+      Completeness.ruleType.pattern(knowledge)
+      SelfDeclaration.ruleType.pattern(knowledge)
+      DerivationResolvable.ruleType.pattern(knowledge)
       // A Problem fact needs a working-memory node BEFORE the rules insert it, and
       // fire(Class, Consumer) does NOT allocate it (the insert happens mid-fire, before
       // the harvest argument applies), so a Problem-consuming rule both allocates the

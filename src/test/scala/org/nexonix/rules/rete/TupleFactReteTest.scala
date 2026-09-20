@@ -28,7 +28,7 @@ class TupleFactReteTest extends AnyFunSuite with PersistentTestLog {
   test("TupleFact") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge = service.newKnowledge("TupleFact.rule")
-    TupleFact.ruleType.pattern.accept(knowledge)
+    TupleFact.ruleType.pattern(knowledge)
     val session = knowledge.newStatefulSession()
     try {
       session.insert(Seq (fact): _*)

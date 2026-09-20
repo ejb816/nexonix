@@ -16,10 +16,10 @@ object Draco extends App with DracoType {
 
   private lazy val knowledge: Knowledge = {
     val k = Rule.knowledgeService.newKnowledge("Draco")
-    CollectProblems.ruleType.pattern.accept(k)
-    Completeness.ruleType.pattern.accept(k)
-    DerivationResolvable.ruleType.pattern.accept(k)
-    SelfDeclaration.ruleType.pattern.accept(k)
+    CollectProblems.ruleType.pattern(k)
+    Completeness.ruleType.pattern(k)
+    DerivationResolvable.ruleType.pattern(k)
+    SelfDeclaration.ruleType.pattern(k)
     k
   }
 

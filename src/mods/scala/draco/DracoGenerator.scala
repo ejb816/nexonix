@@ -1331,17 +1331,21 @@ object DracoGenerator extends App {
   // --- Rule companion generation ---
 
   /** The rule aspect's object-body contribution: condition functions + action +
-    * pattern + ruleType. Shared by `ruleGlobal` (single-aspect emission) and
+    * pattern + ruleType. `pattern` and `action` are FUNCTIONS (drake: `(Knowledge -> Unit)`,
+    * `(RhsContext -> Unit)`, 2026-09-20); Java's Consumer is named nowhere in the definition.
+    * The ONE boundary is Evrete's `execute`, which takes java.util.function.Consumer: a
+    * lambda LITERAL converts there, a function value does not, so the template writes
+    * `execute (action(_))`. Shared by `ruleGlobal` (single-aspect emission) and
     * `composedGlobal` (additive multi-aspect composition), so both emit the
     * identical block. */
   private def ruleBody (td: TypeDefinition) : String = {
     val name = td.typeName.name
     s"""${conditionFunctions(td.ruleAspect.pattern.conditions, td.ruleAspect.pattern.variables)}
-       |  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+       |  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
        |${actionBody(td.ruleAspect.action, td.ruleAspect.pattern.variables)}
        |  }
        |
-       |  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+       |  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
        |    knowledge
        |    .builder()
        |    .newRule ("${td.typeName.namePath}")
@@ -1349,7 +1353,7 @@ object DracoGenerator extends App {
        |${factVariables(td.ruleAspect.pattern.variables)}
        |    )
        |${whereConditions(td.ruleAspect.pattern.conditions, td.ruleAspect.pattern.variables, td.typeName.namePath)}
-       |    .execute (action)
+       |    .execute (action(_))
        |    .build()
        |  }
        |
@@ -1478,7 +1482,7 @@ object DracoGenerator extends App {
         val spelled =
           if (tn.namePackage.isEmpty || tn.namePackage == td.typeName.namePackage) tn.name
           else s"${tn.namePackage.mkString(".")}.${tn.name}"
-        s"    $spelled.ruleType.pattern.accept(k)"
+        s"    $spelled.ruleType.pattern(k)"
       }.mkString("\n")
       s"""  private lazy val knowledge: Knowledge = {
          |    val k = Rule.knowledgeService.newKnowledge("$tag")
@@ -1753,8 +1757,7 @@ object DracoGenerator extends App {
   )
 
   private lazy val ruleFrameworkImports: Seq[String] = Seq(
-    "import org.evrete.api.{Knowledge, RhsContext}",
-    "import java.util.function.Consumer"
+    "import org.evrete.api.{Knowledge, RhsContext}"
   )
 
   private def packageHierarchyImports (namePackage: Seq[String]) : Seq[String] = {

@@ -15,8 +15,8 @@ object Emitter extends App with DracoType {
 
   private lazy val knowledge: Knowledge = {
     val k = Rule.knowledgeService.newKnowledge("Emitter")
-    Emit.ruleType.pattern.accept(k)
-    draco.generator.EmissionReceived.ruleType.pattern.accept(k)
+    Emit.ruleType.pattern(k)
+    draco.generator.EmissionReceived.ruleType.pattern(k)
     k
   }
 

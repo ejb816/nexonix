@@ -16,8 +16,8 @@ object RootInterface extends App with DracoType {
 
   private lazy val knowledge: Knowledge = {
     val k = Rule.knowledgeService.newKnowledge("RootInterface")
-    scenario.forest.AshBirchAlarm.ruleType.pattern.accept(k)
-    scenario.forest.BirchAlarmReceived.ruleType.pattern.accept(k)
+    scenario.forest.AshBirchAlarm.ruleType.pattern(k)
+    scenario.forest.BirchAlarmReceived.ruleType.pattern(k)
     k
   }
 

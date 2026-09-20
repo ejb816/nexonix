@@ -32,7 +32,7 @@ class DerivationResolvableRulesTest extends AnyFunSuite {
     val collected = ListBuffer.empty[Problem]
     try {
       val knowledge: Knowledge = service.newKnowledge("Validation")
-      DerivationResolvable.ruleType.pattern.accept(knowledge)
+      DerivationResolvable.ruleType.pattern(knowledge)
       knowledge
         .builder()
         .newRule("draco.CollectProblems")

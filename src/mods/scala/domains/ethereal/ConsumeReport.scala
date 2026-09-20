@@ -4,7 +4,6 @@ package domains.ethereal
 import draco._
 import domains._
 import org.evrete.api.{Knowledge, RhsContext}
-import java.util.function.Consumer
 
 trait ConsumeReport
 
@@ -13,12 +12,12 @@ object ConsumeReport extends App {
   lazy val dracoType: Type[ConsumeReport] = Type[ConsumeReport] (typeDefinition)
   lazy val domainType: Domain[Ethereal] = Domain[Ethereal] (typeDefinition)
 
-  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val report: EphemerisReport = ctx.get[EphemerisReport]("$report")
       domains.ethereal.EtherealSink.record(report.json.noSpaces)
   }
 
-  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
     knowledge
     .builder()
     .newRule ("domains.ethereal.ConsumeReport")
@@ -26,7 +25,7 @@ object ConsumeReport extends App {
       "$report", classOf[EphemerisReport]
     )
 
-    .execute (action)
+    .execute (action(_))
     .build()
   }
 

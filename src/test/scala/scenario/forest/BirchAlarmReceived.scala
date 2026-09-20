@@ -3,7 +3,6 @@ package scenario.forest
 import draco._
 import scenario._
 import org.evrete.api.{Knowledge, RhsContext}
-import java.util.function.Consumer
 
 trait BirchAlarmReceived
 
@@ -12,13 +11,13 @@ object BirchAlarmReceived extends App with DracoType {
   lazy val dracoType: Type[BirchAlarmReceived] = Type[BirchAlarmReceived] (typeDefinition)
   lazy val domainType: Domain[Forest] = Domain[Forest] (typeDefinition)
 
-  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val jasmonate: scenario.birch.BirchJasmonate = ctx.get[scenario.birch.BirchJasmonate]("$jasmonate")
       lazy val received: java.util.List[scenario.birch.BirchJasmonate] = ctx.getRuntime().get("received")
       received.add(jasmonate)
   }
 
-  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
     knowledge
     .builder()
     .newRule ("scenario.forest.BirchAlarmReceived")
@@ -26,7 +25,7 @@ object BirchAlarmReceived extends App with DracoType {
       "$jasmonate", classOf[scenario.birch.BirchJasmonate]
     )
 
-    .execute (action)
+    .execute (action(_))
     .build()
   }
 

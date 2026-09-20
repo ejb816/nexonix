@@ -4,7 +4,6 @@ package domains.ethereal
 import draco._
 import domains._
 import org.evrete.api.{Knowledge, RhsContext}
-import java.util.function.Consumer
 
 trait OriginateReport
 
@@ -29,14 +28,14 @@ object OriginateReport extends App {
     }
   }
 
-  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val intent: LaunchIntent = ctx.get[LaunchIntent]("$intent")
       val consumer: draco.format.json.JSON => Unit =
         ctx.getRuntime().get[draco.format.json.JSON => Unit]("consumer")
       consumer(originate(intent))
   }
 
-  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
     knowledge
     .builder()
     .newRule ("domains.ethereal.OriginateReport")
@@ -44,7 +43,7 @@ object OriginateReport extends App {
       "$intent", classOf[LaunchIntent]
     )
 
-    .execute (action)
+    .execute (action(_))
     .build()
   }
 

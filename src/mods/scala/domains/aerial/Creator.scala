@@ -16,8 +16,8 @@ object Creator extends App with DracoType {
 
   private lazy val knowledge: Knowledge = {
     val k = Rule.knowledgeService.newKnowledge("Creator")
-    ConsumeReport.ruleType.pattern.accept(k)
-    OriginateReport.ruleType.pattern.accept(k)
+    ConsumeReport.ruleType.pattern(k)
+    OriginateReport.ruleType.pattern(k)
     k
   }
 

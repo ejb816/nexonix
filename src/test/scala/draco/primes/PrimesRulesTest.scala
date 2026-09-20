@@ -112,7 +112,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
   test("PrimesFromNaturalSequence.rule") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge = service.newKnowledge("PrimesFromNaturalSequence.rule")
-    PrimesFromNaturalSequence.ruleType.pattern.accept(knowledge)
+    PrimesFromNaturalSequence.ruleType.pattern(knowledge)
     inputNaturalSequence(
       session = knowledge.newStatefulSession(),
       accumulator = Accumulator (),
@@ -124,8 +124,8 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
   test("AddAndRemoveRulesTest") {
     val service: KnowledgeService = new KnowledgeService()
     val knowledge: Knowledge = service.newKnowledge("AddAndRemoveRulesTest")
-    AddNaturalSequence.ruleType.pattern.accept(knowledge)
-    RemoveCompositeNumbers.ruleType.pattern.accept(knowledge)
+    AddNaturalSequence.ruleType.pattern(knowledge)
+    RemoveCompositeNumbers.ruleType.pattern(knowledge)
     // The accumulator is hoisted out of the call so the test can READ it afterwards.
     // Building a rule and firing a session is not evidence that either rule matched:
     // a pattern variable whose declared type does not match what working memory holds

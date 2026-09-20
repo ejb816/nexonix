@@ -1,7 +1,6 @@
 package draco
 
 import org.evrete.api.{Knowledge, RhsContext}
-import java.util.function.Consumer
 
 trait CollectProblems
 
@@ -10,12 +9,12 @@ object CollectProblems extends App with DracoType {
   lazy val dracoType: Type[CollectProblems] = Type[CollectProblems] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
-  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val p: Problem = ctx.get[Problem]("$p")
       ctx.getRuntime().get[java.util.List[Problem]]("problems").add(p)
   }
 
-  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
     knowledge
     .builder()
     .newRule ("draco.CollectProblems")
@@ -23,7 +22,7 @@ object CollectProblems extends App with DracoType {
       "$p", classOf[Problem]
     )
 
-    .execute (action)
+    .execute (action(_))
     .build()
   }
 

@@ -2,7 +2,6 @@ package draco.primes
 
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
-import java.util.function.Consumer
 
 trait PrimesFromNaturalSequence
 
@@ -11,7 +10,7 @@ object PrimesFromNaturalSequence extends App with DracoType {
   lazy val dracoType: Type[PrimesFromNaturalSequence] = Type[PrimesFromNaturalSequence] (typeDefinition)
   lazy val domainType: Domain[Primes] = Domain[Primes] (typeDefinition)
   def w0(i1: Integer, i2: Integer, i3: Integer): Boolean = i1 * i2 == i3
-  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val accumulator: Accumulator = ctx.get[Accumulator]("$accumulator")
       val i1: Integer = ctx.get[Integer]("$i1")
       val i2: Integer = ctx.get[Integer]("$i2")
@@ -23,7 +22,7 @@ object PrimesFromNaturalSequence extends App with DracoType {
       accumulator.intervalTextSet.addOne(newText)
   }
 
-  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
     knowledge
     .builder()
     .newRule ("draco.primes.PrimesFromNaturalSequence")
@@ -34,7 +33,7 @@ object PrimesFromNaturalSequence extends App with DracoType {
       "$i3", classOf[Integer]
     )
     .where("draco.primes.PrimesFromNaturalSequence.w0($i1, $i2, $i3)")
-    .execute (action)
+    .execute (action(_))
     .build()
   }
 

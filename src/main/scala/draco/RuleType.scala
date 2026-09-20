@@ -1,12 +1,11 @@
 package draco
 
-import java.util.function.Consumer
 import org.evrete.api.Knowledge
 import org.evrete.api.RhsContext
 
 trait RuleType extends DracoType {
-  val action: Consumer[RhsContext]
-  val pattern: Consumer[Knowledge]
+  val action: RhsContext => Unit
+  val pattern: Knowledge => Unit
 }
 
 object RuleType extends App with DracoType {

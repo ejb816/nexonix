@@ -164,7 +164,7 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
       // anything with it, and a gate reading the definitions would have reported that
       // as healthy.
       val accepted = Using.resource(scala.io.Source.fromFile(scalaPath(td.typeName).toFile))(
-        _.getLines().count(_.contains(".ruleType.pattern.accept(")))
+        _.getLines().count(_.contains(".ruleType.pattern(")))
       chain.foreach { d =>
         val label = if (d.typeName.namePath == td.domainAspect.typeName.namePath) "own domain" else "super"
         log.info(f"  ${td.typeName.namePath}%-28s $label%-10s ${d.typeName.namePath}%-24s owns=${rulesIn(d).size} ${rulesIn(d).mkString("[", ", ", "]")}")
@@ -222,8 +222,8 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
     val received  = new java.util.ArrayList[scenario.birch.BirchJasmonate]()
     val knowledge = Rule.knowledgeService.newKnowledge("scenarioForest")
     // The same two rules the actor's Knowledge accepts, in the same order.
-    scenario.forest.AshBirchAlarm.ruleType.pattern.accept(knowledge)
-    scenario.forest.BirchAlarmReceived.ruleType.pattern.accept(knowledge)
+    scenario.forest.AshBirchAlarm.ruleType.pattern(knowledge)
+    scenario.forest.BirchAlarmReceived.ruleType.pattern(knowledge)
 
     // A CHAIN — one rule's output is the other's input — so the DEFAULT activation mode
     // is the right one and its fire cycle walks the generations. CONTINUOUS is for

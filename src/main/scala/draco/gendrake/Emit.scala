@@ -2,7 +2,6 @@ package draco.gendrake
 
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
-import java.util.function.Consumer
 
 trait Emit
 
@@ -11,13 +10,13 @@ object Emit extends App with DracoType {
   lazy val dracoType: Type[Emit] = Type[Emit] (typeDefinition)
   lazy val domainType: Domain[GenDrake] = Domain[GenDrake] (typeDefinition)
 
-  private lazy val action: Consumer[RhsContext] = (ctx: RhsContext) => {
+  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val definition: TypeDefinition = ctx.get[TypeDefinition]("$definition")
       lazy val emission: draco.generator.Emission = draco.generator.Emission(draco.Drake.emit(definition))
       ctx.insert(emission)
   }
 
-  private lazy val pattern: Consumer[Knowledge] = (knowledge: Knowledge) => {
+  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
     knowledge
     .builder()
     .newRule ("draco.gendrake.Emit")
@@ -25,7 +24,7 @@ object Emit extends App with DracoType {
       "$definition", classOf[TypeDefinition]
     )
 
-    .execute (action)
+    .execute (action(_))
     .build()
   }
 

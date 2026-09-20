@@ -70,8 +70,14 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   in VALUE position: `[]` and `{}` are `{"[]": []}` / `{"{}": []}`, a sequence or set literal with its
   elements, and each target spells the empty one (`Seq.empty`). The rows that still put the HOST's
   spelling in the corpus are the leaves (String, Int, Json, URI …) and the heads with no drake form yet
-  (Consumer, LazyList, java.util.List); each needs a target-neutral representation of its own, one at a
-  time. ACTORREF WENT SECOND (2026-09-18, Dev: "a consumer of M, the assembly keeps identity"): a parameter
+  (LazyList, java.util.List); each needs a target-neutral representation of its own, one at a time.
+  CONSUMER WENT THIRD (2026-09-20, Dev: "I would prefer that Consumer not appear in drake or json as part
+  of the type definition"): Rule / RuleType declare `pattern (Knowledge -> Unit)` and `action (RhsContext
+  -> Unit)` — both arguments draco.rete wrap types, so the slot is fully draco-spelled — and a rule's
+  pattern is APPLIED, `pattern(knowledge)`. Java's Consumer was there because Evrete is Java and its
+  `execute` takes java.util.function.Consumer; a Scala function VALUE is refused at that call and a lambda
+  LITERAL converts, so the ScalaTarget writes `execute (action(_))` at that one call and names the
+  interface nowhere else. ACTORREF WENT SECOND (2026-09-18, Dev: "a consumer of M, the assembly keeps identity"): a parameter
   typed by the host's `ActorRef(M)` is `(M -> Unit)` — drake's own arrow, parenthesized in the
   name-type-value slot — and sending is APPLICATION, `consumer(report)`. The ASSEMBLY keeps the host's refs
   and converts each at its boundary (`ref ! _`) when it hands a member its arguments; a member only ever

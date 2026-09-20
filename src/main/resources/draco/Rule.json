@@ -22,9 +22,9 @@
         "kind": "Fixed",
         "name": "pattern",
         "valueType": {
-          "()": [
-            "Consumer",
-            "Knowledge"
+          "->": [
+            "Knowledge",
+            "Unit"
           ]
         }
       },
@@ -32,9 +32,9 @@
         "kind": "Fixed",
         "name": "action",
         "valueType": {
-          "()": [
-            "Consumer",
-            "RhsContext"
+          "->": [
+            "RhsContext",
+            "Unit"
           ]
         }
       }
@@ -52,9 +52,9 @@
           "kind": "Parameter",
           "name": "pattern",
           "valueType": {
-            "()": [
-              "Consumer",
-              "Knowledge"
+            "->": [
+              "Knowledge",
+              "Unit"
             ]
           }
         },
@@ -62,9 +62,9 @@
           "kind": "Parameter",
           "name": "action",
           "valueType": {
-            "()": [
-              "Consumer",
-              "RhsContext"
+            "->": [
+              "RhsContext",
+              "Unit"
             ]
           }
         }

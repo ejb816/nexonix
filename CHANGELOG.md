@@ -171,6 +171,13 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A rule's `pattern` and `action` are functions; Java's `Consumer` leaves the definition.** `Rule` and
+  `RuleType` declare `(Knowledge -> Unit)` and `(RhsContext -> Unit)`, and a pattern is applied,
+  `pattern(knowledge)`, in the actor's knowledge block and the tests. Evrete's `execute` takes
+  `java.util.function.Consumer`, which a lambda literal converts to and a function value does not, so the
+  rule template writes `execute (action(_))` at that one call; the `Consumer` import drops out of every
+  rule projection. Twenty rule projections and twenty call sites move. (2026-09-20)
+
 - **An actor's reference parameter is a consumer of its message type.** The six actor-minting parameters
   typed by the host's `ActorRef(M)` are now `(M -> Unit)`, drake's own arrow, and the two sends in drake
   are applications, `consumer(report)`; the four `OriginateReport` actions read the consumer back from the
