@@ -50,7 +50,17 @@
               {
                 "()": [
                   "_domains.map",
-                  "domain => (domain, domain.typeDictionary)"
+                  {
+                    "\\": [
+                      "domain",
+                      {
+                        "(,)": [
+                          "domain",
+                          "domain.typeDictionary"
+                        ]
+                      }
+                    ]
+                  }
                 ]
               },
               "toMap"

@@ -322,6 +322,50 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       s"engine rendering: ${DracoGenerator.expression(value)}")
   }
 
+  // --- The operator layer, asserted structurally ---
+  //
+  // Infix operators are read FLAT and reassociated by fixity — Haskell's Prelude table
+  // (drake.dlt EXPRESSIONS, 2026-09-21) — and a lambda `\p -> body` is the `\` node whose
+  // body takes everything right of its arrow, because the arrow is the loosest operator.
+  // The three shapes the corpus carries: a product under an equality (the Primes guards),
+  // a disjunction of inequalities (SelfDeclaration), and a lambda over a conjunction (the
+  // aspects' isEmpty). Asserted as trees, round-tripped both ways, rendered by the engine
+  // (which spells the lambda with the host's arrow), and a chained non-associative
+  // operator refused.
+
+  test("operators: fixity trees `i1 * i2 == i3`, `||` over `!=`, and a lambda over `&&`") {
+    val authored =
+      """type Guarded
+        |  elements
+        |    fix product Boolean i1 * i2 == i3
+        |    fix either Boolean a.name != b.name || a.pkg != b.pkg
+        |    fix empty (Guarded -> Boolean) \g -> g.left.isEmpty && g.right.isEmpty && g.rest.isEmpty
+        |domain draco Draco
+        |""".stripMargin
+    val parsed = Drake.parse(authored)
+    val values = parsed.dracoAspect.elements.map(e => e.name -> e.value).toMap
+    def leaf(s: String) = Json.fromString(s)
+    assert(values("product") == Json.obj("==" -> Json.arr(Json.obj("*" -> Json.arr(leaf("i1"), leaf("i2"))), leaf("i3"))),
+      s"product: ${values("product").noSpaces}")
+    assert(values("either") == Json.obj("||" -> Json.arr(
+      Json.obj("!=" -> Json.arr(leaf("a.name"), leaf("b.name"))),
+      Json.obj("!=" -> Json.arr(leaf("a.pkg"), leaf("b.pkg"))))),
+      s"either: ${values("either").noSpaces}")
+    assert(values("empty") == Json.obj("\\" -> Json.arr(leaf("g"),
+      Json.obj("&&" -> Json.arr(leaf("g.left.isEmpty"), leaf("g.right.isEmpty"), leaf("g.rest.isEmpty"))))),
+      s"empty: ${values("empty").noSpaces}")
+    val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
+    if (handNorm != roundNorm)
+      fail("operator surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
+    val once  = TypeDefinition.encoder(parsed).spaces2
+    val twice = TypeDefinition.encoder(Drake.parse(Drake.emit(parsed))).spaces2
+    if (once != twice) fail("parse(emit(parse(text))) drifted from parse(text)." + diffReport(once, twice, "once", "twice"))
+    assert(DracoGenerator.expression(values("empty")) == "g => g.left.isEmpty && g.right.isEmpty && g.rest.isEmpty",
+      s"engine rendering: ${DracoGenerator.expression(values("empty"))}")
+    assert(Expression.rootNames(values("empty")) == Set.empty[String], "a lambda's parameter is bound, not a root")
+    assertThrows[RuntimeException](Drake.parse(authored.replace("i1 * i2 == i3", "i1 == i2 == i3")))
+  }
+
   // --- Type forms, asserted structurally ---
   //
   // A value type parses to a TYPE-FORM TREE (drake.dlt VALUE-TYPES): the four forms in

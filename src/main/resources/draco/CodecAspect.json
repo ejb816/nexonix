@@ -35,7 +35,12 @@
             "Boolean"
           ]
         },
-        "value": "ca => ca.discriminator.isEmpty"
+        "value": {
+          "\\": [
+            "ca",
+            "ca.discriminator.isEmpty"
+          ]
+        }
       }
     ]
   },

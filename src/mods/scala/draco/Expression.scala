@@ -64,6 +64,8 @@ object Expression {
           val args = operands.asArray.getOrElse(Vector(operands))
           // A path SELECTS through its tail; only its head is a reference.
           if (op == ".") args.headOption.map(rootNames).getOrElse(Set.empty)
+          // A lambda BINDS its leading operands: the body's roots, less the parameters.
+          else if (op == "\\") args.lastOption.map(rootNames).getOrElse(Set.empty[String]) -- args.init.flatMap(_.asString)
           else args.flatMap(rootNames).toSet
         case _ => Set.empty
       }

@@ -6,6 +6,6 @@ type TypeDictionary from Dictionary(TypeName, TypeDefinition)
       par domainDefinition TypeDefinition
     body
       loc domainDefinition TypeDefinition _domainDefinition
-      fix elementTypes [TypeDefinition] domainDefinition.domainAspect.elementTypeNames.map(name => TypeDefinition(TypeName(name, _namePackage = domainDefinition.typeName.namePackage)))
-      fix kvMap {TypeName, TypeDefinition} elementTypes.map(td => (td.typeName, td)).toMap
+      fix elementTypes [TypeDefinition] domainDefinition.domainAspect.elementTypeNames.map(\name -> TypeDefinition(TypeName(name, _namePackage = domainDefinition.typeName.namePackage)))
+      fix kvMap {TypeName, TypeDefinition} elementTypes.map(\td -> (td.typeName, td)).toMap
 domain draco Draco

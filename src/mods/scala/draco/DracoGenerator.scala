@@ -110,7 +110,8 @@ object DracoGenerator extends App {
             case "{}"       => if (args.isEmpty) "Set.empty" else s"Set(${args.mkString(", ")})"
             // "++" (drake.dlt CONCATENATION) keeps its spelling: Scala's `++` on a String
             // demands a String operand, where `+` would coerce anything to text.
-            case "*" | "==" | "!=" | "||" | "++" => args.mkString(s" $op ")
+            case "*" | "/" | "%" | "+" | "-" | "++" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "&&" | "||" =>
+              args.mkString(s" $op ")
             case _          => sys.error(s"DracoGenerator.expression: unknown operator '$op' in ${value.noSpaces}")
           }
         case _ => sys.error(s"DracoGenerator.expression: unrenderable value ${value.noSpaces}")

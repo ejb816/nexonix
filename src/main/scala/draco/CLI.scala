@@ -29,6 +29,6 @@ object CLI extends DracoType {
     lazy val path: String = _path
     println(Drake.emit(load(path)))
   }
-  lazy val commands: Map[String, Seq[String] => Unit] = Map("version" -> (_ => version), "inspect" -> (as => inspect(as.head)), "generate" -> (as => generate(as.head)), "drake" -> (as => drake(as.head)))
+  lazy val commands: Map[String, Seq[String] => Unit] = Map(("version", _ => version), ("inspect", as => inspect(as.head)), ("generate", as => generate(as.head)), ("drake", as => drake(as.head)))
   def main(args: Array[String]): Unit = commands.getOrElse(args.headOption.getOrElse("version"), (_: Seq[String]) => version)(args.drop(1).toSeq)
 }

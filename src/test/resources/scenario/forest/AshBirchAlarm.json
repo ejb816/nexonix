@@ -28,7 +28,12 @@
       "conditions": [
         {
           "kind": "Condition",
-          "value": "jasmonate.potency.value > 0.5"
+          "value": {
+            ">": [
+              "jasmonate.potency.value",
+              "0.5"
+            ]
+          }
         }
       ]
     },

@@ -78,7 +78,19 @@
             "Boolean"
           ]
         },
-        "value": "da => da.typeName.name.isEmpty && da.elementTypeNames.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty"
+        "value": {
+          "\\": [
+            "da",
+            {
+              "&&": [
+                "da.typeName.name.isEmpty",
+                "da.elementTypeNames.isEmpty",
+                "da.source.name.isEmpty",
+                "da.target.name.isEmpty"
+              ]
+            }
+          ]
+        }
       }
     ]
   },

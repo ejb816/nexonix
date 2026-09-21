@@ -43,7 +43,17 @@
       "conditions": [
         {
           "kind": "Condition",
-          "value": "i1 * i2 == i3"
+          "value": {
+            "==": [
+              {
+                "*": [
+                  "i1",
+                  "i2"
+                ]
+              },
+              "i3"
+            ]
+          }
         }
       ]
     },

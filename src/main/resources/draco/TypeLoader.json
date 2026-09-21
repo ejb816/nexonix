@@ -152,7 +152,22 @@
                     {
                       "()": [
                         "guard",
-                        "DracoAspect.parents(td.dracoAspect).nonEmpty || (td.typeName.name == \"DracoType\" && td.typeName.namePackage == Seq(\"draco\"))"
+                        {
+                          "||": [
+                            {
+                              ".": [
+                                {
+                                  "()": [
+                                    "DracoAspect.parents",
+                                    "td.dracoAspect"
+                                  ]
+                                },
+                                "nonEmpty"
+                              ]
+                            },
+                            "(td.typeName.name == \"DracoType\" && td.typeName.namePackage == Seq(\"draco\"))"
+                          ]
+                        }
                       ]
                     },
                     "ifThenElse"

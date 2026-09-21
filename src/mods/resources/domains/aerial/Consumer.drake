@@ -10,5 +10,5 @@ actor
     mon session.insert(Seq(msg): _*)
     mon session.fire()
   signal
-    mon consumed.foreach((e: String) => domains.aerial.AerialSink.record(e))
+    mon consumed.foreach(\(e: String) -> domains.aerial.AerialSink.record(e))
     mon session.close()

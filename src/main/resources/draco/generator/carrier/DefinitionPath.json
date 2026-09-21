@@ -49,13 +49,46 @@
                     {
                       "()": [
                         "roots.map",
-                        "root => new URL(root.toString + resourcePath.stripPrefix(\"/\"))"
+                        {
+                          "\\": [
+                            "root",
+                            "new URL(root.toString + resourcePath.stripPrefix(\"/\"))"
+                          ]
+                        }
                       ]
                     },
                     "filter"
                   ]
                 },
-                "url => scala.util.Try(url.openStream().close()).isSuccess"
+                {
+                  "\\": [
+                    "url",
+                    {
+                      ".": [
+                        {
+                          "()": [
+                            "scala.util.Try",
+                            {
+                              "()": [
+                                {
+                                  ".": [
+                                    {
+                                      "()": [
+                                        "url.openStream"
+                                      ]
+                                    },
+                                    "close"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "isSuccess"
+                      ]
+                    }
+                  ]
+                }
               ]
             }
           }
@@ -98,8 +131,23 @@
             "value": {
               "()": [
                 "require",
-                "found.size <= 1",
-                "s\"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: \" + found.mkString(\", \")"
+                {
+                  "<=": [
+                    "found.size",
+                    "1"
+                  ]
+                },
+                {
+                  "+": [
+                    "s\"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: \"",
+                    {
+                      "()": [
+                        "found.mkString",
+                        "\", \""
+                      ]
+                    }
+                  ]
+                }
               ]
             }
           },
@@ -135,8 +183,7 @@
             ]
           },
           "value": {
-            "[]": [
-            ]
+            "[]": []
           }
         }
       ]
@@ -190,13 +237,23 @@
                             "map"
                           ]
                         },
-                        "entry => new java.io.File(entry)"
+                        {
+                          "\\": [
+                            "entry",
+                            "new java.io.File(entry)"
+                          ]
+                        }
                       ]
                     },
                     "map"
                   ]
                 },
-                "file => if (file.getName.endsWith(\".jar\")) URI.create(\"jar:\" + file.toURI.toString + \"!/\") else URI.create(if (file.toURI.toString.endsWith(\"/\")) file.toURI.toString else file.toURI.toString + \"/\")"
+                {
+                  "\\": [
+                    "file",
+                    "if (file.getName.endsWith(\".jar\")) URI.create(\"jar:\" + file.toURI.toString + \"!/\") else URI.create(if (file.toURI.toString.endsWith(\"/\")) file.toURI.toString else file.toURI.toString + \"/\")"
+                  ]
+                }
               ]
             },
             "toSeq"

@@ -1,0 +1,79 @@
+# The drake parser reads infix operators by fixity, and a lambda — Dev, 2026-09-21 ("I know that I want
+# the generator to see an expression tree where ever one exists in drake, rather than require the
+# generator parse arbitrarily complex expressions"; "None of the arrows that can be used in drake seem to
+# be given operator precedence in your table. For me that would solve the tree-form error example you
+# gave"; and, on `=>` staying out of the table, "Yes, if by 'stays out' you mean it is generated for Scala
+# based on what is in the expression tree in json"). On 912e4e8 (624 / 44 green). GitHub #61, point one.
+#
+# ONE CONCEPT: the operator layer. A value's token run is split FLAT at every declared infix operator and
+# reassociated by fixity — Haskell's Prelude table, since drake takes Haskell's semantics: `* / %` 7 left,
+# `+ -` 6 left, `++` 5 right, the six comparisons 4 non-associative, `&&` 3 right, `||` 2 right, and `->`
+# at 0, BELOW every other row. The arrow's place is Dev's correction and what made the lambda part of the
+# same step: a lambda `\p1 p2 -> body` is a token opening with `\` in operand position, its parameters up
+# to the arrow, its body everything after, and because the arrow is the loosest operator the body takes
+# the whole conjunction to its right — the wrong-scope tree that the whole-run rule had been guarding
+# against cannot arise. `++`, `&&` and `||` are flat variadic nodes; a chained non-associative operator
+# (`a == b == c`) is an error at parse, as in Haskell. `++` leaves the reserved set: a span runs to the
+# next KEYWORD and the operators inside it are read by fixity, so `concatenation` and `operand` at the
+# cursor are gone and `a == b ++ c` associates by the table rather than by where the cursor stopped.
+# THE WHOLE-RUN RULE, kept for its honest remainder: a run trees only when every operand is ONE token or
+# the lambda; a run with a several-token operand — a host `if`, a `new`, a block, a typed binder outside
+# a lambda — stays the raw leaf it was, so the generator never receives a tree with the wrong scope and
+# the loss report keeps measuring it. A parenthesized group is still a leaf (`(x)` is not a
+# sub-expression; that, with minimal parenthesization in the renderers, is the next step). `=>` is never
+# a drake token: it is the Scala target's spelling of the `\` node.
+#
+# MOVED: Drake.scala — `fixity`, `flattened`, `expression` (the flat split and the lambda), `lambdaOf`,
+# `resolve` (precedence climbing), `infixNode`; `parseValue` is `value(span(c))`; the emitter spells every
+# table operator. DracoGenerator.expression spells the same set. Expression.rootNames: a lambda BINDS its
+# parameters (the body's roots less them). DrakeParseTest: one structural test — the Primes guard, the
+# SelfDeclaration disjunction, a lambda over a conjunction, the engine rendering, the bound parameter,
+# and the refused chain. CORPUS: every lambda written in the host's form converts to `\p -> body` —
+# RuleAspect, DracoAspect (three), DomainAspect, CodecAspect, DomainDictionary, TypeDictionary (two),
+# DefinitionPath (four), CLI's `main` (a typed binder as a leaf), aerial Consumer — and CLI's command map
+# is tuples, `Map(("version", \_ -> version), ...)`, since `->` in a value is the arrow, not the host's
+# pair. Eighteen JSON files re-canonicalized by the compiled parser (the overlay recipe): the three
+# de-treed rule conditions are trees again, TypeName's equals, TypeLoader's guard argument, Numbers',
+# Primes' and DefinitionPath's operator runs, Potency and AshBirchAlarm in the scenario. drake.dlt:
+# the operator table with fixities under EXPRESSIONS, the operator layer and whole-run rule in place of
+# the "(future) surface grammar", CONCATENATION and the call section updated. DRACO.md caveat and gotcha,
+# README's tail and residue row, CHANGELOG.
+#
+# NOT CHANGED, deliberately: DerivationResolvable's condition and TypeLoader's source read keep the
+# host arrow — each body is a `{ ... }` BLOCK, which the parser would read as a set literal; a block form
+# is a design still to have. ActorAspect (authored-ahead) and format/json/Value (its `if … then … else`,
+# still opaque) keep their exceptions. DomainDictionary.scala and TypeDictionary.scala differ from the
+# engine by one blank line — pre-existing (the old engine on the old JSON differs identically) and
+# inside the whitespace-normalized gate.
+#
+# PROBED: Drake, Expression, DracoGenerator and the regenerated CLI.scala compiled against the exported
+# classpath, clean. The compiled parser swept all three resource trees: 28 files differ, 8 by the printer's
+# empty-array spelling only, 2 the standing exclusions, 18 written. The engine regenerated every changed
+# main type byte-equal to its Scala but CLI (the tuple form, copied from the engine). Then the SUITES ran
+# on the compiled classes with the scalatest Runner (recipe in memory): DrakeParseTest 222 / 0 failed —
+# losses 5 across 108 types [expression form 2] [type form 3], scope 98 draco + 10 mods, 0 held back;
+# DrakeGenTest 107; DracoGenTest 164; ScenarioDrakeTest 23 files clean; ScenarioGenTest 5 (the forest
+# runs); GenDrakeTest 96 of 96; ExampleDomainsGenTest 28 / 20 / 0 / 0; PresenceTest 5;
+# SubtypeFactVisibilityTest, DerivationResolvableRulesTest, PrimesTest, PrimesRulesTest — all green.
+# The run below is the gate, not a second opinion on those numbers.
+#
+# RUN: expected 625 tests / 44 suites, all green; every headline unchanged.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-21-1107 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md README.md CHANGELOG.md draco-git-record/git-record-2026-09-21-1107 && git commit -F /tmp/msg -- src DRACO.md README.md CHANGELOG.md draco-git-record/git-record-2026-09-21-1107 && git push
+
+--- MESSAGE ---
+The drake parser reads infix operators by fixity, and a lambda's body is everything right of its arrow
+
+A value's token run is split flat at every declared infix operator and reassociated by Haskell's
+Prelude fixities, with the arrow below every other row so a lambda `\p1 p2 -> body` takes the
+whole run to its right; `++`, `&&` and `||` are flat variadic nodes, a chained non-associative
+operator is refused, and `++` is no longer a reserved word. A run with an operand of several
+tokens stays a host-opaque string whole, so no tree ever carries the wrong scope. The corpus's
+lambdas are written in the `\` form and the Scala target spells `=>` from the node, CLI's command
+map is tuples, and eighteen definitions carry the trees the sweeps had de-treed, the three rule
+conditions among them.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

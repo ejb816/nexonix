@@ -176,7 +176,28 @@
                   "kind": "Fixed",
                   "name": "value",
                   "valueType": "Boolean",
-                  "value": "name == tn.name && namePackage == tn.namePackage && typeParameters == tn.typeParameters"
+                  "value": {
+                    "&&": [
+                      {
+                        "==": [
+                          "name",
+                          "tn.name"
+                        ]
+                      },
+                      {
+                        "==": [
+                          "namePackage",
+                          "tn.namePackage"
+                        ]
+                      },
+                      {
+                        "==": [
+                          "typeParameters",
+                          "tn.typeParameters"
+                        ]
+                      }
+                    ]
+                  }
                 }
               ]
             },

@@ -32,7 +32,12 @@
           "kind": "Fixed",
           "name": "value",
           "valueType": "Double",
-          "value": "_potency.value * 0.62"
+          "value": {
+            "*": [
+              "_potency.value",
+              "0.62"
+            ]
+          }
         }
       ]
     }

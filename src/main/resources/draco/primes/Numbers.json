@@ -93,7 +93,12 @@
                   "take"
                 ]
               },
-              "primeSequence.last - 1"
+              {
+                "-": [
+                  "primeSequence.last",
+                  "1"
+                ]
+              }
             ]
           }
         },

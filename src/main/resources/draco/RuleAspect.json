@@ -46,7 +46,18 @@
             "Boolean"
           ]
         },
-        "value": "ra => ra.pattern.variables.isEmpty && ra.pattern.conditions.isEmpty && ra.action.body.isEmpty"
+        "value": {
+          "\\": [
+            "ra",
+            {
+              "&&": [
+                "ra.pattern.variables.isEmpty",
+                "ra.pattern.conditions.isEmpty",
+                "ra.action.body.isEmpty"
+              ]
+            }
+          ]
+        }
       }
     ]
   },

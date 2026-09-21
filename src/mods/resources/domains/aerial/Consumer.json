@@ -54,7 +54,17 @@
           "value": {
             "()": [
               "consumed.foreach",
-              "(e: String) => domains.aerial.AerialSink.record(e)"
+              {
+                "\\": [
+                  "(e: String)",
+                  {
+                    "()": [
+                      "domains.aerial.AerialSink.record",
+                      "e"
+                    ]
+                  }
+                ]
+              }
             ]
           }
         },

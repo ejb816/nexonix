@@ -78,8 +78,7 @@
             ]
           },
           "value": {
-            "[]": [
-            ]
+            "[]": []
           }
         },
         {
@@ -97,8 +96,7 @@
             ]
           },
           "value": {
-            "[]": [
-            ]
+            "[]": []
           }
         },
         {
@@ -110,8 +108,7 @@
             ]
           },
           "value": {
-            "[]": [
-            ]
+            "[]": []
           }
         },
         {
@@ -129,8 +126,7 @@
             ]
           },
           "value": {
-            "[]": [
-            ]
+            "[]": []
           }
         }
       ]
@@ -145,7 +141,22 @@
             "Boolean"
           ]
         },
-        "value": "da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty"
+        "value": {
+          "\\": [
+            "da",
+            {
+              "&&": [
+                "da.superDomain.name.isEmpty",
+                "da.modules.isEmpty",
+                "da.extensible.name.isEmpty",
+                "da.derivation.isEmpty",
+                "da.elements.isEmpty",
+                "da.factory.valueType.isNull",
+                "da.globalElements.isEmpty"
+              ]
+            }
+          ]
+        }
       },
       {
         "kind": "Fixed",
@@ -160,7 +171,37 @@
             }
           ]
         },
-        "value": "da => da.derivation.filter(_.hcursor.downField(\"name\").succeeded).flatMap(_.as[TypeName].toOption)"
+        "value": {
+          "\\": [
+            "da",
+            {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "da.derivation.filter",
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "_.hcursor.downField",
+                                "\"name\""
+                              ]
+                            },
+                            "succeeded"
+                          ]
+                        }
+                      ]
+                    },
+                    "flatMap"
+                  ]
+                },
+                "_.as[TypeName].toOption"
+              ]
+            }
+          ]
+        }
       },
       {
         "kind": "Fixed",
@@ -175,7 +216,27 @@
             }
           ]
         },
-        "value": "da => da.derivation.filterNot(_.hcursor.downField(\"name\").succeeded)"
+        "value": {
+          "\\": [
+            "da",
+            {
+              "()": [
+                "da.derivation.filterNot",
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "_.hcursor.downField",
+                        "\"name\""
+                      ]
+                    },
+                    "succeeded"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       }
     ]
   },

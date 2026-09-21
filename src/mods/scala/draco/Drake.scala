@@ -56,7 +56,8 @@ object Drake {
             case "[]"       => args.mkString("[", ", ", "]")   // a sequence literal, `[]` when empty
             case "{}"       => args.mkString("{", ", ", "}")   // a set literal
             case "="        => s"${args(0)}:${args(1)}"
-            case "*" | "==" | "!=" | "||" | "++" => args.mkString(s" $op ")
+            // every declared infix operator (the fixity table) spells itself, spaced
+            case _ if fixity.contains(op) => args.mkString(s" $op ")
             case _          => sys.error(s"Drake.expression: unknown operator '$op' in ${value.noSpaces}")
           }
         case _ => sys.error(s"Drake.expression: unrenderable value ${value.noSpaces}")
@@ -511,12 +512,11 @@ object Drake {
       // `case` (drake.dlt CASE-BRANCH) — reserved from 3b on, once the last definition
       // carrying the word inside host-opaque text (TypeName.equals) had converted.
       "case",
-      // `++` (drake.dlt CONCATENATION) — the first operator-layer symbol the parser
-      // trees. Reserving it is what closes the operand before it: a value slot stops
-      // at `++` as it stops at any keyword, so no layout is consulted. `=` is no
-      // longer here: the dyn result marker retired with a5d2f5b and the named-argument
-      // marker with the call syntax, so no bare `=` remains on the surface.
-      "++",
+      // No operator is reserved. `++` was, from 2026-09-10 until the operator layer landed
+      // (2026-09-21): reserving it closed the operand before it at the cursor, which is now
+      // `value`'s job for every operator alike — a span runs to the next KEYWORD and the
+      // operators inside it are read by fixity. `=` is not here either: the dyn result
+      // marker retired with a5d2f5b and the named-argument marker with the call syntax.
       // `now` (drake.dlt EVALUATION) — the strictness override, a modifier before the
       // element's own keyword, as `mut` is a keyword before a name.
       "now",
@@ -615,9 +615,9 @@ object Drake {
     case other => Json.fromString (other)
   }
 
-  /** The value slot: one OPERAND, then any `++` run it opens (drake.dlt
-    * CONCATENATION). */
-  private def parseValue (c: Cursor) : Json = concatenation (c, operand (c))
+  /** The value slot: every token up to the next reserved keyword, read as ONE
+    * expression (drake.dlt EXPRESSIONS) — its operators by fixity, a lambda to the end. */
+  private def parseValue (c: Cursor) : Json = value (span (c))
 
   /** True iff the bracket opening `token` closes at its last character — the token is one
     * group and nothing else. Quoted text is skipped whole. */
@@ -637,44 +637,114 @@ object Drake {
     depth == 0
   }
 
-  /** One operand of a top-level value slot: its raw span, bounded by the next reserved
-    * word, then read exactly as text inside a call is (see value). */
-  private def operand (c: Cursor) : Json = value (span (c))
+  /** Value text as it stands INSIDE a call's parentheses, a tuple, a collection literal,
+    * or a top-level span. The parentheses bound it, so the reserved words that bound a
+    * top-level slot are ordinary text here — `LazyList.from(start, step)` applies to a
+    * parameter named `start`, not to the actor block. What IS read is the OPERATOR
+    * LAYER (drake.dlt EXPRESSIONS, 2026-09-21): a run of operands separated by the
+    * declared infix operators, reassociated by fixity, and a lambda `\p1 p2 -> body`
+    * whose body runs to the end of the text. */
+  private def value (text: String) : Json = expression (lex (text), text)
 
-  /** `first` followed by a `++` run, folded into one flat `++` node. `++` is
-    * reserved, so the operand before it has already closed; each later operand reads
-    * exactly as the first did. */
-  private def concatenation (c: Cursor, first: Json) : Json =
-    if (!c.at ("++")) first
-    else {
-      val pieces = Vector.newBuilder[Json]
-      pieces += first
-      while (c.at ("++")) { c.take (); pieces += operand (c) }
-      Json.obj ("++" -> Json.fromValues (pieces.result ()))
+  /** The fixity of every declared infix operator — Haskell's Prelude table, since drake
+    * takes Haskell's semantics: a precedence, and whether a run of one precedence
+    * groups left, right, or not at all (a chained non-associative operator is an error
+    * at parse, as in Haskell). The arrow sits BELOW every other row, so a lambda body
+    * takes everything to its right — the arrow's fixity is what makes a lambda's scope
+    * unambiguous (Dev, 2026-09-21). `++`, `&&` and `||` are FLAT VARIADIC in the tree,
+    * one node for the whole run; the others stay binary. */
+  private final case class Fixity (precedence: Int, associativity: Char)
+  private val fixity: Map[String, Fixity] = Map (
+    "*"  -> Fixity (7, 'l'), "/"  -> Fixity (7, 'l'), "%"  -> Fixity (7, 'l'),
+    "+"  -> Fixity (6, 'l'), "-"  -> Fixity (6, 'l'),
+    "++" -> Fixity (5, 'r'),
+    "==" -> Fixity (4, 'n'), "!=" -> Fixity (4, 'n'),
+    "<"  -> Fixity (4, 'n'), "<=" -> Fixity (4, 'n'), ">"  -> Fixity (4, 'n'), ">=" -> Fixity (4, 'n'),
+    "&&" -> Fixity (3, 'r'),
+    "||" -> Fixity (2, 'r'),
+    "->" -> Fixity (0, 'r'))
+  private val flattened: Set[String] = Set ("++", "&&", "||")
+
+  /** One expression over a token run. The run is split FLAT at every operator token; a
+    * lambda — a token opening with `\` in operand position — takes every token after it
+    * as its parameters and body, so it is always the LAST operand. The run trees only
+    * when every operand is ONE token (or the lambda). An operand of several tokens is a
+    * form the parser does not read — a host `if`, a `new`, a block — and treeing around
+    * it would hand the generator a tree with the wrong scope, so such a run stays the
+    * raw leaf it was, its spacing intact, and the loss report measures it. */
+  private def expression (tokens: Vector[Token], source: String) : Json = {
+    if (tokens.isEmpty) return Json.Null
+    def raw = leafValue (source.substring (tokens.head.start, tokens.last.end))
+    val lambdaAt = tokens.indexWhere (_.text.startsWith ("\\"))
+    val lambda   =
+      if (lambdaAt >= 0 && (lambdaAt == 0 || fixity.contains (tokens (lambdaAt - 1).text)))
+        Some (lambdaOf (tokens.drop (lambdaAt), source))
+      else None
+    val head      = if (lambda.isDefined) tokens.take (lambdaAt) else tokens
+    val runs      = Vector.newBuilder[Vector[Token]]
+    val operators = Vector.newBuilder[String]
+    var run       = Vector.newBuilder[Token]
+    head.foreach { t =>
+      if (fixity.contains (t.text)) { runs += run.result (); operators += t.text; run = Vector.newBuilder[Token] }
+      else run += t
     }
-
-  /** Value text as it stands INSIDE a call's parentheses, a tuple, or a top-level
-    * span. The parentheses bound it, so the reserved words that bound a top-level slot
-    * are ordinary text here — `LazyList.from(start, step)` applies to a parameter
-    * named `start`, not to the actor block — and only `++` is read: the text is a run
-    * of operands, each a single token (treed) or a raw multi-token leaf whose internal
-    * spacing survives verbatim. A top-level span reaches here already bounded, with
-    * its own `++` run handled by the cursor, so it is always one operand. */
-  private def value (text: String) : Json = {
-    val tokens = lex (text)
-    val runs   = Vector.newBuilder[Vector[Token]]
-    var run    = Vector.newBuilder[Token]
-    tokens.foreach { t => if (t.text == "++") { runs += run.result (); run = Vector.newBuilder[Token] } else run += t }
     runs += run.result ()
-    def operandOf (run: Vector[Token]) : Json = run.size match {
-      case 0 => Json.Null
-      case 1 => treed (run.head.text)
-      case _ => leafValue (text.substring (run.head.start, run.last.end))
+    val allRuns = runs.result ()
+    val ops     = operators.result ()
+    val operands: Option[Vector[Json]] = lambda match {
+      case Some (l) =>
+        // the head ends in an operator (or is empty), so its final run is empty and the
+        // lambda stands in that operand's place
+        val before = allRuns.init
+        if (before.exists (_.size != 1)) None else Some (before.map (r => treed (r.head.text)) :+ l)
+      case None =>
+        if (ops.isEmpty) return (if (allRuns.head.size == 1) treed (allRuns.head.head.text) else raw)
+        if (allRuns.exists (_.size != 1)) None else Some (allRuns.map (r => treed (r.head.text)))
     }
-    runs.result () match {
-      case Vector (single) => operandOf (single)
-      case several         => Json.obj ("++" -> Json.fromValues (several.map (operandOf)))
+    operands.fold (raw) (os => resolve (os, ops))
+  }
+
+  /** A lambda, `\p1 p2 -> body` (drake.dlt EXPRESSIONS, Haskell form): the `\` node,
+    * parameters then body. The `\` glues to the first parameter or stands alone; a
+    * parameter is one token, so a host-typed binder `(x: T)` is carried as the leaf it
+    * is. The body is read as an expression in its own right. */
+  private def lambdaOf (tokens: Vector[Token], source: String) : Json = {
+    def text  = source.substring (tokens.head.start, tokens.last.end)
+    val arrow = tokens.indexWhere (_.text == "->")
+    if (arrow < 0) sys.error (s"Drake.parse: a lambda has no arrow in '$text'")
+    val params = (tokens.head.text.drop (1) +: tokens.slice (1, arrow).map (_.text)).filter (_.nonEmpty)
+    val body   = tokens.drop (arrow + 1)
+    if (params.isEmpty || body.isEmpty) sys.error (s"Drake.parse: a lambda needs a parameter and a body in '$text'")
+    Json.obj ("\\" -> Json.fromValues (params.map (Json.fromString) :+ expression (body, source)))
+  }
+
+  /** Reassociate a flat operator run by fixity — Haskell's resolution, done by
+    * precedence climbing over the operands and the operators between them. A run of a
+    * flattened operator becomes one node; two operators of one precedence that do not
+    * associate with each other (`a == b == c`) are an error, as in Haskell. */
+  private def resolve (operands: Vector[Json], operators: Vector[String]) : Json = {
+    var next = 0   // the operator about to be read; operands(next) is the operand before it
+    def climb (floor: Int) : Json = {
+      var left = operands (next)
+      var last = Option.empty[Fixity]
+      while (next < operators.length && fixity (operators (next)).precedence >= floor) {
+        val op = operators (next)
+        val f  = fixity (op)
+        if (last.exists (l => l.precedence == f.precedence && (l.associativity == 'n' || f.associativity == 'n' || l.associativity != f.associativity)))
+          sys.error (s"Drake.parse: '$op' does not associate with the operator before it; parenthesize")
+        next += 1
+        val right = climb (if (f.associativity == 'r') f.precedence else f.precedence + 1)
+        left = infixNode (op, left, right)
+        last = Some (f)
+      }
+      left
     }
+    climb (0)
+  }
+
+  private def infixNode (op: String, left: Json, right: Json) : Json = {
+    val rightRun = if (flattened (op)) Expression.node (right).filter (_._1 == op).map (_._2) else None
+    Json.obj (op -> Json.fromValues (left +: rightRun.getOrElse (Vector (right))))
   }
 
   /** Tree a single value token (drake.dlt APPLICATION SURFACE). A token ending in a

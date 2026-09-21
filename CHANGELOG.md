@@ -178,6 +178,17 @@ for the definition that will replace it.
 
 ### Changed
 
+- **The drake parser reads infix operators by fixity, and a lambda.** A value's token run is
+  split flat at every declared operator — `* / %`, `+ -`, `++`, `== != < <= > >=`, `&&`, `||`,
+  `->` — and reassociated by Haskell's Prelude fixities, with the arrow below every other row so
+  a lambda `\p1 p2 -> body` takes everything right of its arrow; `++`, `&&` and `||` are flat
+  variadic nodes, a chained non-associative operator is an error, and `++` is no longer a
+  reserved word. A run with an operand of several tokens — a host `if`, a `new`, a block —
+  stays a host-opaque string whole, so no tree ever carries the wrong scope. The corpus's
+  lambdas are written in the `\` form (the Scala target spells `=>` from the node), CLI's command
+  map is tuples, and eighteen definitions carry the trees the sweeps had de-treed, the three rule
+  conditions among them; the generated Scala is unchanged but for CLI's map. (2026-09-21)
+
 - **A foreign parent is a type form; an empty package is the nameless domain.** `DracoAspect.derivation`
   is now `[Json]`: a draco parent is carried as its TypeName, a parent outside every draco domain as a
   type-form node — Dictionary's `{"{}": ["K", "V"]}` in place of a TypeName called `Map` with no

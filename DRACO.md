@@ -47,7 +47,7 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **624 tests / 44
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **625 tests / 44
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -63,8 +63,8 @@ four type forms (2026-09-17); then one for the header's type parameters (2026-09
 `fold` on the family and its own two-test suite `PresenceTest` (2026-09-17); then one `DrakeParseTest`
 test for `now` (2026-09-17); then a `PresenceTest` test that a Present never evaluates `fold`'s default
 (2026-09-18); then one that a factory argument is evaluated on first read and never if unused
-(2026-09-18); then one that `ifThenElse` never evaluates the branch not taken (2026-09-20) — **624 tests / 44
-suites**. These
+(2026-09-18); then one that `ifThenElse` never evaluates the branch not taken (2026-09-20); then one `DrakeParseTest` test for the operator layer and the lambda
+(2026-09-21) — **625 tests / 44 suites**. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
@@ -260,16 +260,20 @@ Value types are
 
 **Caveat, and it matters if you author drake:** `Drake.parse` trees every VALUE TYPE as one of
 the four type forms (2026-09-17; no host-text type form remains since `[T]+` landed on 2026-09-20), and
-builds expression trees only
-for calls — `f(a, b)`, positional then `name:value`, one glued token split at depth-0
-parentheses, commas and dots (2026-09-16; the `parameters`/`par` call form, its `[ ]` argument
-brackets and `.member` chain lines are RETIRED) — tuples, the `++` concatenation operator
-(2026-09-10), and collection literals `[x, y]` / `{a, b}` (2026-09-20). Every other value — lambdas, `if/then/else`, `->`, other operators — returns as a
+builds expression trees for calls — `f(a, b)`, positional then `name:value`, one glued token split
+at depth-0 parentheses, commas and dots (2026-09-16; the `parameters`/`par` call form, its `[ ]`
+argument brackets and `.member` chain lines are RETIRED) — tuples, collection literals `[x, y]` /
+`{a, b}` (2026-09-20), the INFIX OPERATOR LAYER — `* / %`, `+ -`, `++`, the six comparisons, `&&`,
+`||` and `->`, read flat and reassociated by Haskell's Prelude fixities with the arrow loosest of all
+(2026-09-21; `++` alone since 2026-09-10) — and a LAMBDA `\p1 p2 -> body`, the `\` node, whose body
+takes everything right of its arrow (2026-09-21). A run trees only when every operand is ONE token
+or the lambda; a run with a several-token operand — a host `if`, a `new`, a block — stays whole as a
 host-opaque string in *drake* form, which `DracoGenerator.expression` would pass verbatim into
-Scala. The JSON corpus is re-canonicalized from the drake after each parser step (`DrakeCLI parse
-X.drake > X.json` with the compiled parser; 2026-09-16 for calls, 2026-09-17 for type forms), with
+Scala, so the parser never hands the engine a tree with the wrong scope. A parenthesized group is
+still a leaf. `=>` is never a drake token: it is the Scala target's spelling of the lambda node. The JSON corpus is re-canonicalized from the drake after each parser step (`DrakeCLI parse
+X.drake > X.json` with the compiled parser; 2026-09-16 for calls, 2026-09-17 for type forms, 2026-09-21 for operators and lambdas), with
 three deliberate exceptions: BodyElement and ActorAspect (authored-ahead aspects) and
-format/json/Value (Haskell-form lambdas the parser does not tree). Parse is a measurement tool, not
+format/json/Value (its `if … then … else`, which the parser does not tree). Parse is a measurement tool, not
 yet an authoring path (GitHub #61).
 
 **Tiers.** `src/main/scala` is definition-backed. `src/mods/scala` compiles into the same
@@ -401,8 +405,10 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   (hand-written, no definition) and twenty-one test sites stopped the first run at compile.
 - **A re-canonicalization sweep de-trees what the parser cannot tree.** `DrakeCLI parse` writes
   back what it reads; an infix condition authored as a tree (`{"==": [{"*": ["i1","i2"]}, "i3"]}`)
-  comes back as the string `"i1 * i2 == i3"` until the parser trees infix operators (GitHub #61).
+  came back as the string `"i1 * i2 == i3"` until the parser treed infix operators (2026-09-21).
   Three conditions (`PrimesFromNaturalSequence`, `RemoveCompositeNumbers`, `SelfDeclaration`)
   lost their trees this way on 2026-09-16; the generated Scala is identical, so no gate saw it.
+  The operator layer restored all three on 2026-09-21. What the parser still cannot tree — a host
+  `if`, a block, a parenthesized sub-expression — a sweep still de-trees: read the diff of every sweep.
 
 <!-- draco-docs-synced-through: chapter 80 -->

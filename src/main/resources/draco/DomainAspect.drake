@@ -11,5 +11,5 @@ type DomainAspect
       par source TypeName TypeName.Null
       par target TypeName TypeName.Null
   globals
-    fix isEmpty (DomainAspect -> Boolean) da => da.typeName.name.isEmpty && da.elementTypeNames.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty
+    fix isEmpty (DomainAspect -> Boolean) \da -> da.typeName.name.isEmpty && da.elementTypeNames.isEmpty && da.source.name.isEmpty && da.target.name.isEmpty
 domain draco Draco

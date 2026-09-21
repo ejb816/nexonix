@@ -65,7 +65,17 @@
                     {
                       "()": [
                         "naturals.tail.filter",
-                        "_ % p != 0"
+                        {
+                          "!=": [
+                            {
+                              "%": [
+                                "_",
+                                "p"
+                              ]
+                            },
+                            "0"
+                          ]
+                        }
                       ]
                     }
                   ]
@@ -172,7 +182,12 @@
                     "take"
                   ]
                 },
-                "primes.last - 1"
+                {
+                  "-": [
+                    "primes.last",
+                    "1"
+                  ]
+                }
               ]
             }
           }
@@ -234,7 +249,12 @@
                     "take"
                   ]
                 },
-                "composites.last - composites.length"
+                {
+                  "-": [
+                    "composites.last",
+                    "composites.length"
+                  ]
+                }
               ]
             }
           }

@@ -213,10 +213,65 @@
         "value": {
           "()": [
             "Map",
-            "\"version\" -> (_ => version)",
-            "\"inspect\" -> (as => inspect(as.head))",
-            "\"generate\" -> (as => generate(as.head))",
-            "\"drake\" -> (as => drake(as.head))"
+            {
+              "(,)": [
+                "\"version\"",
+                {
+                  "\\": [
+                    "_",
+                    "version"
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"inspect\"",
+                {
+                  "\\": [
+                    "as",
+                    {
+                      "()": [
+                        "inspect",
+                        "as.head"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"generate\"",
+                {
+                  "\\": [
+                    "as",
+                    {
+                      "()": [
+                        "generate",
+                        "as.head"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"drake\"",
+                {
+                  "\\": [
+                    "as",
+                    {
+                      "()": [
+                        "drake",
+                        "as.head"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
           ]
         }
       },
@@ -253,7 +308,12 @@
                         "\"version\""
                       ]
                     },
-                    "(_: Seq[String]) => version"
+                    {
+                      "\\": [
+                        "(_: Seq[String])",
+                        "version"
+                      ]
+                    }
                   ]
                 },
                 {

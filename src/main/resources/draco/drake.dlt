@@ -123,8 +123,19 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
     "->"  function/type arrow — HASKELL FORM; binary, right-associative at the surface;
           ScalaTarget renders " => " (in a String-typed slot the quoted rendering carries
           the target spelling: {"->": [RhsContext-path, "Unit"]} -> "org.evrete.api.RhsContext => Unit")
-    "*"   numeric product; "==" equality — infix, operands joined with the operator
-          ({"==": [{"*": ["i1","i2"]}, "i3"]} renders "i1 * i2 == i3")
+    INFIX OPERATORS — every declared infix operator is a node key, operands joined with the spaced
+          operator on either surface ({"==": [{"*": ["i1","i2"]}, "i3"]} renders "i1 * i2 == i3").
+          The table, and its FIXITY (the parser's, 2026-09-21 — Haskell's Prelude, since drake takes
+          Haskell's semantics; a tree is already associated, so fixity is a surface concern only):
+            7  *  /  %        left
+            6  +  -           left
+            5  ++             right, FLAT VARIADIC (one node holds the whole run)
+            4  == != < <= > >=   none (a chain `a == b == c` is an error at parse, as in Haskell)
+            3  &&             right, FLAT VARIADIC
+            2  ||             right, FLAT VARIADIC
+            0  ->             right — BELOW every other row, so a lambda body takes everything to its
+                              right (Dev, 2026-09-21: the arrow's fixity is what makes a lambda's scope
+                              unambiguous). `->` is also the function/type arrow node (below).
     "()"  application — first operand applied to the rest; a literal argument keeps its
           embedded quotes ({"()": [{".": ["Rule","knowledgeService","newKnowledge"]}, "\"Primes\""]}
           renders Rule.knowledgeService.newKnowledge("Primes")). drake surface f(a, b) — see
@@ -134,13 +145,12 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
           The tree carries no arrow token — structure separates params from body.
     "if"  conditional — HASKELL FORM: [cond, then, else]. drake surface if c then t else e ;
           ScalaTarget renders if (c) t else e.
-    "!="  inequality — infix, operands joined with the operator
     "++"  CONCATENATION — HASKELL FORM; FLAT VARIADIC (associative): one node holds every piece in
           order, string literals interleaved with names and applications — the neutral form of a
           SUBSTITUTION STRING ({"++": ["\"domain \"", {"()": ["packagePart","package"]}, "\" \"", "name"]}).
           drake surface a ++ b ++ c ; ScalaTarget renders " ++ " (tighter than +, which coerces any
-          right operand to text). THE FIRST OPERATOR THE PARSER TREES (2026-09-10) — see CONCATENATION
-          under APPLICATION SURFACE for how its operands bound themselves.
+          right operand to text). The first operator the parser treed (2026-09-10), reserved until the
+          operator layer landed (2026-09-21); now one row of the fixity table like any other.
   DECLARED NAMES (SYMBOLS) — a name applied on the application surface whose spelling is per target,
     the primitives a substitution string needs beyond `++`. Each is declared here before use, and
     each target renders it (DracoGenerator.scalaSymbols today; GenScala's transform types in time):
@@ -175,17 +185,21 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   a construct (null, asInstanceOf, hcursor) stays verbatim — form is drake's, atoms may
   be the target's. First exemplar: Value.drake's dyn value (lambdas + if-then-else).
   FIXITY lives ONLY at the drake surface: a JSON tree is already associated, so precedence
-  and associativity are pure parse/print concerns. The (future) surface grammar is two-layer:
-    expr := app (opsym app)*      -- operator layer parsed FLAT; no precedence in the grammar
-    app  := atom atom*            -- application by juxtaposition; binds tightest
-    atom := name | literal | ( expr ) | ( opsym ) | `name`
-  with a fixity-resolution pass (Haskell-style) reassociating the flat operator sequence
-  from each operator symbol's declared precedence/associativity (default infixl 9).
-  Symbolic names apply infix, alphanumeric names prefix; (op) uses an operator as a value,
-  `name` uses an identifier infix. Composition is not special syntax — it is just another
-  declared 2-ary symbol.
+  and associativity are pure parse/print concerns. THE OPERATOR LAYER (parser, 2026-09-21): a
+  value's token run is split FLAT at every operator in the table above and reassociated by
+  fixity (precedence climbing, Haskell's resolution). A lambda `\p1 p2 -> body` is read in the
+  same pass — a token opening with `\` in operand position takes every token after it: the
+  parameters up to the arrow, the body as an expression — so it is always the LAST operand of
+  its run. THE WHOLE-RUN RULE: a run trees only when every operand is ONE token (a name, a
+  literal, a call, a tuple, a collection literal, a parenthesized group) or the lambda; a run
+  with a several-token operand — a host `if`, a `new`, a block, a typed binder outside a
+  lambda — is a form the parser does not read, and treeing around it would hand the generator
+  a tree with the WRONG SCOPE, so the whole run stays the raw leaf it was and the loss report
+  measures it. A parenthesized group is still a LEAF (`(x)` is not read as a sub-expression;
+  that, and minimal parenthesization in the renderers, is the next step). Still ahead of the
+  grammar sketched here: application by juxtaposition, `(op)` as a value, `name` infix.
   RENDERING (procedural Generator, current): Generator.expression renders a tree back to
-  its Scala surface — "." dot-joins, "*"/"=="/"!=" join with the spaced operator, "->"
+  its Scala surface — "." dot-joins, every infix operator joins with its spaced symbol, "->"
   joins with " => ", "()" applies, "\" and "if" render their Scala spellings. Rendering
   is FLAT (no parenthesization): minimal parens require the fixity table, so they arrive
   with the surface grammar; until then authored trees must read back correctly under the
@@ -215,11 +229,12 @@ APPLICATION SURFACE  (how a "()" tree is written in a value position — the CAL
   INSIDE THE PARENTHESES the reserved words are ordinary text. A top-level value slot is bounded by the
   next reserved keyword because nothing else can bound it; an argument is bounded by its commas and the
   closing `)`, so `LazyList.from(start, step)` applies to a parameter named `start`, and a lambda binder
-  may be called `domain`. Only `++` is read inside (below).
+  may be called `domain`. What IS read inside is the operator layer (EXPRESSIONS): operators by
+  fixity, and a lambda, exactly as at the top level.
   HOW THE TOKEN IS TREED. From the end: a token ending in a `( )` group applies what precedes the group
   to what the group holds, split at depth-0 commas (string literals skipped whole); each argument is
   read as a value in its own right, so a nested call trees and a text no grammar covers (`primes.last -
-  1`, `Seq(msg): _*`, `_ => version`) stays a raw leaf with its spacing intact. What precedes the group
+  1` is now a `-` tree; `Seq(msg): _*` and a host `if` stay raw leaves with their spacing intact). What precedes the group
   is a PATH split at depth-0 dots, and the last element that is itself a call closes the receiver:
       cursor.get[Double]("latitude").getOrElse(0.0)
         -> { "()": [ { ".": [ { "()": [ "cursor.get[Double]", "\"latitude\"" ] }, "getOrElse" ] }, "0.0" ] }
@@ -235,9 +250,10 @@ APPLICATION SURFACE  (how a "()" tree is written in a value position — the CAL
   CONCATENATION — a `++` sequence in a value position is one flat tree, and each operand is a LEAF (a
   literal or a name) or a CALL, which is one token and so needs nothing to bound it:
       fix value String "domain " ++ join(" ", _package) ++ " " ++ _name
-  `++` is a reserved token, so a top-level value slot stops at it and the operand before it is closed;
-  inside a call's parentheses `++` is likewise read, so `f("a" ++ b)` is f applied to the concatenation,
-  and a concatenation may be an argument or a tuple member alike.
+  `++` is one row of the fixity table (it was a reserved token from 2026-09-10 to 2026-09-21): a
+  value slot runs to the next keyword and the operators inside it are read by fixity, at the top level
+  and inside a call's parentheses alike, so `f("a" ++ b)` is f applied to the concatenation, and a
+  concatenation may be an argument or a tuple member.
 
 REFERENCES  (how `from` and `modules` name another type)
   <Name> *(<A> ...)                  BARE — resolves in the REFERRING TYPE'S OWN package

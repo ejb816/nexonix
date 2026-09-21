@@ -26,7 +26,22 @@
       "conditions": [
         {
           "kind": "Condition",
-          "value": "d.typeDefinition.domainAspect.typeName.name != d.typeDefinition.typeName.name || d.typeDefinition.domainAspect.typeName.namePackage != d.typeDefinition.typeName.namePackage"
+          "value": {
+            "||": [
+              {
+                "!=": [
+                  "d.typeDefinition.domainAspect.typeName.name",
+                  "d.typeDefinition.typeName.name"
+                ]
+              },
+              {
+                "!=": [
+                  "d.typeDefinition.domainAspect.typeName.namePackage",
+                  "d.typeDefinition.typeName.namePackage"
+                ]
+              }
+            ]
+          }
         }
       ]
     },
