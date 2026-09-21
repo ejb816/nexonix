@@ -1,0 +1,32 @@
+# draco-dev-journal: chapters 79 and 80 — Dev, 2026-09-21: "I think you can do update-draco-docs as well as
+# updating draco-dev-journal. Proceed with both" — and, asked one chapter or two, "Two chapters."
+#
+# SOURCE: the extracts refreshed by tools/extract_sessions.py (1156 pairs). After chapter 78 the record
+# holds five segments sharing one start time — this one conversation, whose identifier changed four times —
+# deduplicated by prompt into 38 exchanges: 16 on September 18 (chapter 79), 22 on September 20–21
+# (chapter 80, "continues ch.79"), the day with no session between them the split. My first
+# deduplication keyed on a prompt's first 200 characters and so collapsed the three pasted `sbt test`
+# transcripts of the derivation-form runs into one; the two lost exchanges were recovered by timestamp
+# and folded into chapter 80's last block as the delegated actions they are, replacing the gap marker.
+# Each chapter was transcribed by a subagent from its extract alone, chapter 78 as the exemplar, then
+# verified here: every Dev prompt verbatim (typos kept), every one answered, no summary-only section,
+# one Status each, no gaps. Chapter 79: 15 Dev blocks, 57 KB. Chapter 80: 21 Dev blocks, 62 KB.
+# Intro: eighty chapters through September 21, index entries for both, Status at Chapter 79 and 80, one
+# entry under The Breakthroughs ("Every host head a drake form").
+#
+# The docs sync (DRACO.md, README.md through chapter 80) is the SEPARATE commit that follows, in the
+# update-draco-docs skill's form.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-21-1007 | sed '1d' > /tmp/msg && git add -A -- draco-dev-journal draco-git-record/git-record-2026-09-21-1007 && git commit -F /tmp/msg -- draco-dev-journal draco-git-record/git-record-2026-09-21-1007 && git push
+
+--- MESSAGE ---
+draco-dev-journal: chapters 79 and 80, the neutral carrier from lazy step 3 to the nameless domain
+
+Chapter 79 transcribes September 18: lazy steps 3 and 4, the discussion that turned "package" into
+the empty path and Dictionary's slot into the encoding fix, Option as Presence, and an actor's
+reference as a consumer of its message type. Chapter 80 transcribes September 20–21: Consumer,
+LazyList, the mutable-collection discussion and build, ifThenElse with guard, TypeName's paths as
+joins, and the derivation slot carrying a type form with the empty package as the nameless domain.
+The intro indexes both and carries their Status lines.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
