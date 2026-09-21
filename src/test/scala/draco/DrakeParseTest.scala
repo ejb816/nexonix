@@ -366,6 +366,53 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     assertThrows[RuntimeException](Drake.parse(authored.replace("i1 * i2 == i3", "i1 == i2 == i3")))
   }
 
+  // --- Parenthesized sub-expressions, and the minimal pair on each surface ---
+  //
+  // A `( )` group holding one expression the parser reads dissolves into that tree
+  // (2026-09-21): a tree is already associated, so the pair is not information. Each
+  // renderer writes back the MINIMAL pair by its own target's fixity — drake's table in the
+  // emitter, Scala's in the engine, where `++` ranks with `+` and everything groups left —
+  // and a lambda as an operand takes a pair wherever the surface could not read it whole.
+  // An authored redundant pair is what the round-trip deliberately does not reproduce, so
+  // the surface is compared against its canonical form, then round-tripped from there.
+
+  test("parentheses: a group dissolves into its tree, and each renderer writes the minimal pair") {
+    val authored =
+      """type Grouped
+        |  elements
+        |    fix redundant Boolean a || (b && c)
+        |    fix needed Boolean (a || b) && c
+        |    fix flat [Int] xs ++ (ys ++ zs)
+        |    fix sum [Int] xs ++ (n + 1)
+        |    fix lambda Boolean (\x -> x.isEmpty) && d
+        |domain draco Draco
+        |""".stripMargin
+    val parsed = Drake.parse(authored)
+    val values = parsed.dracoAspect.elements.map(e => e.name -> e.value).toMap
+    def leaf(s: String) = Json.fromString(s)
+    def node(op: String, xs: Json*) = Json.obj(op -> Json.arr(xs: _*))
+    assert(values("redundant") == node("||", leaf("a"), node("&&", leaf("b"), leaf("c"))), values("redundant").noSpaces)
+    assert(values("needed") == node("&&", node("||", leaf("a"), leaf("b")), leaf("c")), values("needed").noSpaces)
+    assert(values("flat") == node("++", leaf("xs"), leaf("ys"), leaf("zs")), values("flat").noSpaces)
+    assert(values("sum") == node("++", leaf("xs"), node("+", leaf("n"), leaf("1"))), values("sum").noSpaces)
+    assert(values("lambda") == node("&&", node("\\", leaf("x"), leaf("x.isEmpty")), leaf("d")), values("lambda").noSpaces)
+    val canonical = authored
+      .replace("a || (b && c)", "a || b && c")
+      .replace("xs ++ (ys ++ zs)", "xs ++ ys ++ zs")
+      .replace("xs ++ (n + 1)", "xs ++ n + 1")
+    val emitted = Drake.emit(parsed)
+    if (normalize(canonical) != normalize(emitted))
+      fail("the minimal pair did not produce the canonical surface." + diffReport(normalize(canonical), normalize(emitted), "canonical", "emitted"))
+    val once  = TypeDefinition.encoder(parsed).spaces2
+    val twice = TypeDefinition.encoder(Drake.parse(emitted)).spaces2
+    if (once != twice) fail("parse(emit(parse(text))) drifted from parse(text)." + diffReport(once, twice, "once", "twice"))
+    val scala = values.view.mapValues(DracoGenerator.expression).toMap
+    assert(scala("redundant") == "a || b && c", scala("redundant"))
+    assert(scala("needed") == "(a || b) && c", scala("needed"))
+    assert(scala("sum") == "xs ++ (n + 1)", scala("sum"))
+    assert(scala("lambda") == "(x => x.isEmpty) && d", scala("lambda"))
+  }
+
   // --- Type forms, asserted structurally ---
   //
   // A value type parses to a TYPE-FORM TREE (drake.dlt VALUE-TYPES): the four forms in

@@ -1,0 +1,63 @@
+# A parenthesized sub-expression dissolves into its tree; each renderer writes the minimal pair —
+# Dev, 2026-09-21 ("Next parser steps as you suggest"), the step named at the close of 665926e
+# (625 / 44 green). GitHub #61.
+#
+# ONE CONCEPT: parentheses are a SURFACE, not a node. A `( )` group with nothing before it and no
+# depth-0 comma used to be an opaque leaf; now `treed` reads its inside as a value, and when that
+# is a tree the group DISSOLVES into it — a tree is already associated, so the pair carries nothing.
+# A group the parser reads as a leaf keeps its parentheses (`(x: T)`, a host `if`), because there
+# the pair may be the host's. The renderers then write the MINIMAL pair, each by its OWN target's
+# fixity: Drake.render by drake's table (a looser child; an equally tight child on the side its
+# associativity does not cover; a lambda or conditional only when something follows it, since the
+# arrow's fixity lets it run to the end; the receiver of a path or the head of an application when
+# it is any of those). DracoGenerator.render by Scala's precedence — first character, all grouping
+# left, `++` ranked WITH `+` where drake ranks it below — and a lambda, arrow or conditional always,
+# since none of them is an infix operand in Scala. So `xs ++ (n + 1)` keeps its pair in Scala and
+# loses it in drake, `(a || b) && c` keeps it on both, `a || (b && c)` loses it on both. The same
+# tree, parenthesized per target: the fixity that was "a surface concern only" (dlt) now has both
+# surfaces to prove it.
+#
+# MOVED: Drake.scala — the paren branch of `treed`; `expression` is `render(value, None, 0, 1)`
+# with `parenthesized`. DracoGenerator.scala — `render` with `scalaPrecedence` (lazy val: the
+# engine extends App) and `scalaParenthesized`. DrakeParseTest: one structural test — five
+# authored groups, the trees, the canonical drake surface (redundant pairs gone, `++` flattened
+# through a pair), the round trip from there, four Scala renderings. CORPUS: exactly one value in
+# all three trees held a group the parser now reads — TypeLoader.rooted's guard argument, `A ||
+# (B && C)` — so its trio moved: the JSON to the `||`-over-`&&` tree by the compiled parser, the
+# drake to the pair-less line by the compiled emitter (`emit --write` on the overlay, copied back),
+# the Scala by the compiled engine (the Scala condition also pair-less: `||` below `&&` there too),
+# and compiled clean. drake.dlt (the group in EXPRESSIONS and APPLICATION SURFACE, RENDERING no
+# longer flat), DRACO.md (caveat, gotcha, baseline 626), README (tail, residue row, open item),
+# CHANGELOG.
+#
+# PRE-EXISTING, not touched: the emitter would rewrite domains/terrestrial/Output.drake (mods;
+# the old engine says the same); DomainDictionary, TypeDictionary, Assembly, Binding, Domain,
+# TypeDefinition, DomainLineOf and TypeElement / Presence differ from the engine's output by a
+# blank line or by a hand-held family the gate accounts for (old engine identical on each).
+#
+# PROBED: Drake, Expression, DracoGenerator and the regenerated TypeLoader.scala compiled against
+# the exported classpath. The compiled parser swept all three trees: TypeLoader the only semantic
+# change besides the two standing exclusions. Every main type regenerated and diffed. Then the
+# suites on the compiled classes (scalatest Runner, recipe in memory): DrakeParseTest 223 — losses
+# 5 across 108 [expression form 2] [type form 3], scope 98 + 10, 0 held back; DrakeGenTest 107;
+# DracoGenTest 164; ScenarioDrakeTest 23 clean; ScenarioGenTest 5; GenDrakeTest 96 of 96;
+# ExampleDomainsGenTest 28 / 20 / 0 / 0 — all green.
+#
+# RUN: expected 626 tests / 44 suites, all green; every headline unchanged.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-21-1136 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md README.md CHANGELOG.md draco-git-record/git-record-2026-09-21-1136 && git commit -F /tmp/msg -- src DRACO.md README.md CHANGELOG.md draco-git-record/git-record-2026-09-21-1136 && git push
+
+--- MESSAGE ---
+A parenthesized sub-expression dissolves into its tree, and each renderer writes the minimal pair by its own target's fixity
+
+A group holding one expression the parser reads is that expression's tree; the pair is not
+information once the tree is associated, and a group the parser reads as a leaf keeps it. The
+drake emitter writes back only the pairs drake's fixity needs, the Scala target only the pairs
+Scala's precedence needs, where `++` ranks with `+` and every operator groups left, so the same
+tree is parenthesized per target. TypeLoader's guard, the one grouped value in the corpus, lost
+its redundant pair on both surfaces.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

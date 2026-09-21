@@ -40,13 +40,20 @@ object Drake {
     * spelling: since 2026-09-16 there is no multi-line `parameters` / `par` form to
     * unfold into, so this flat rendering is what every value position gets. The tree
     * keeps `=` as its named-argument key; the surface spells the colon. */
-  def expression (value: Json) : String = {
+  def expression (value: Json) : String = render (value, None, 0, 1)
+
+  /** Render `value` standing as operand `index` of `count` under the node `parent` (None at
+    * the top), with the MINIMAL parenthesization (2026-09-21): a tree is already
+    * associated, so a pair is written only where the surface would otherwise read the tree
+    * differently — see `parenthesized`. */
+  private def render (value: Json, parent: Option[String], index: Int, count: Int) : String = {
     if (value == null || value.isNull) ""
     else value.asString.getOrElse {
       value.asObject.map(_.toList) match {
         case Some((op, operands) :: Nil) =>
-          val args = operands.asArray.getOrElse(Vector(operands)).map(expression)
-          op match {
+          val all  = operands.asArray.getOrElse(Vector(operands))
+          val args = all.zipWithIndex.map { case (a, i) => render(a, Some(op), i, all.size) }
+          val text = op match {
             case "."        => args.mkString(".")
             case "->"       => args.mkString(" -> ")
             case "()"       => s"${args.head}(${args.tail.mkString(", ")})"
@@ -60,10 +67,33 @@ object Drake {
             case _ if fixity.contains(op) => args.mkString(s" $op ")
             case _          => sys.error(s"Drake.expression: unknown operator '$op' in ${value.noSpaces}")
           }
+          if (parent.exists(p => parenthesized(p, op, index, count))) s"($text)" else text
         case _ => sys.error(s"Drake.expression: unrenderable value ${value.noSpaces}")
       }
     }
   }
+
+  /** Whether the node `child`, operand `index` of `count` under `parent`, needs its pair on
+    * the DRAKE surface — by drake's own fixity table, since the parse reads it back by the
+    * same table. Under an infix parent: a looser child always; an equally tight child on
+    * the side its associativity does not cover (left-grouping: any but the first; right-
+    * grouping: any but the last; non-associative: either); a lambda or conditional only
+    * when something follows it, since otherwise it runs to the end as the arrow's fixity
+    * says. Under a path or an application: the receiver or head when it is any of those.
+    * Arguments, tuple and literal members, a lambda's own body: never. */
+  private def parenthesized (parent: String, child: String, index: Int, count: Int) : Boolean =
+    (fixity.get(parent), fixity.get(child)) match {
+      case (Some(p), Some(c)) =>
+        c.precedence < p.precedence ||
+          (c.precedence == p.precedence && (p.associativity match {
+            case 'l' => index > 0
+            case 'r' => index < count - 1
+            case _   => true
+          }))
+      case (Some(_), None) => (child == "\\" || child == "if") && index < count - 1
+      case (None, _)       => (parent == "." || parent == "()") && index == 0 &&
+                                (fixity.contains(child) || child == "\\" || child == "if")
+    }
 
   /** Render a value into the slot after `prefix`, on ONE line. Every value form — a
     * leaf, a call, a tuple, a `++` run — is a single line now that a call is one
@@ -781,9 +811,18 @@ object Drake {
       val function = if (groupStart (head) > 0) treed (head) else path (head).getOrElse (Json.fromString (head))
       Json.obj ("()" -> Json.fromValues (function +: args))
     } else if (open == 0) {
-      val members = splitDepthZero (token.substring (1, token.length - 1), ',')
+      val inside  = token.substring (1, token.length - 1)
+      val members = splitDepthZero (inside, ',')
       if (members.size >= 2) Json.obj ("(,)" -> Json.fromValues (members.map (m => value (m.trim))))
-      else leafValue (token)
+      else {
+        // A PARENTHESIZED SUB-EXPRESSION (2026-09-21): the group holds one expression. When
+        // the parser reads it as a tree the parentheses DISSOLVE — a tree is already
+        // associated, so the pair is not information; each renderer writes back the minimal
+        // pair its own target needs (`parenthesized`). A group the parser reads as a leaf
+        // keeps its parentheses, because there they may be the host's.
+        val inner = value (inside.trim)
+        if (inner.isObject) inner else leafValue (token)
+      }
     } else path (token).getOrElse (leafValue (token))
   }
 

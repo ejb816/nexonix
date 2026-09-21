@@ -195,16 +195,18 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   with a several-token operand — a host `if`, a `new`, a block, a typed binder outside a
   lambda — is a form the parser does not read, and treeing around it would hand the generator
   a tree with the WRONG SCOPE, so the whole run stays the raw leaf it was and the loss report
-  measures it. A parenthesized group is still a LEAF (`(x)` is not read as a sub-expression;
-  that, and minimal parenthesization in the renderers, is the next step). Still ahead of the
-  grammar sketched here: application by juxtaposition, `(op)` as a value, `name` infix.
+  measures it. A PARENTHESIZED GROUP holding one expression the parser reads DISSOLVES into
+  that tree (2026-09-21): the pair is not information once the tree is associated, and each
+  renderer writes back the MINIMAL pair by its own target's fixity — the emitter by this table,
+  the ScalaTarget by Scala's (where `++` ranks with `+` and every operator groups left, so
+  `xs ++ (n + 1)` keeps its pair in Scala and loses it in drake) — a lambda or conditional
+  as an operand taking a pair wherever the surface could not read it whole. A group the parser
+  reads as a LEAF keeps its parentheses (`(x: T)`, a host `if`). Still ahead of the grammar
+  sketched here: application by juxtaposition, `(op)` as a value, `name` infix.
   RENDERING (procedural Generator, current): Generator.expression renders a tree back to
   its Scala surface — "." dot-joins, every infix operator joins with its spaced symbol, "->"
-  joins with " => ", "()" applies, "\" and "if" render their Scala spellings. Rendering
-  is FLAT (no parenthesization): minimal parens require the fixity table, so they arrive
-  with the surface grammar; until then authored trees must read back correctly under the
-  target's precedence, parenthesizing explicitly inside a host-opaque leaf when they would
-  not. A tree in a String-typed slot
+  joins with " => ", "()" applies, "\" and "if" render their Scala spellings — with the
+  MINIMAL parentheses by Scala's own precedence (2026-09-21). A tree in a String-typed slot
   renders as a string literal: the slot's runtime type is String, so the tree denotes its
   surface text (TypeElement's own valueType field is the exemplar). TypeElement.value is
   Json; a string value passes through expression() verbatim, so the whole legacy corpus is
@@ -241,8 +243,9 @@ APPLICATION SURFACE  (how a "()" tree is written in a value position — the CAL
   which is the same nested spine the retired chain lines spelled one call per line — a chain is not a
   construct, it is a call whose function is a selection on a call. A path with no call in it stays the
   one string it was written as (`0.0` included). A group with NOTHING before it is a TUPLE when it holds a
-  depth-0 comma — `("type", f("LOCATION"))` -> { "(,)": [ ... ] } — and an opaque parenthesized leaf
-  otherwise (`(x)` is not a one-tuple). The emitter writes the flat form back (`f(a, b)`, `, ` between
+  depth-0 comma — `("type", f("LOCATION"))` -> { "(,)": [ ... ] } — and otherwise a PARENTHESIZED
+  SUB-EXPRESSION, which dissolves into its tree when the parser reads one and stays an opaque leaf
+  with its pair when it does not (`(x)` is never a one-tuple; see EXPRESSIONS). The emitter writes the flat form back (`f(a, b)`, `, ` between
   arguments, `name:value`), so a value is ONE LINE on the surface in every form.
   NO HEAD ELISION. A construction of the declared value type spells the head like any other call —
   `fix report LocationReport LocationReport(typeDefinition:td, json:payload)` — because `(…)` alone is a

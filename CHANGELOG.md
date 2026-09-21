@@ -178,6 +178,14 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A parenthesized sub-expression dissolves into its tree; each renderer writes the minimal pair.**
+  A `( )` group holding one expression the parser reads is that expression's tree — the pair is not
+  information once the tree is associated — and a group the parser reads as a leaf keeps its
+  parentheses. The drake emitter writes back only the pairs drake's own fixity needs; the Scala
+  target writes only the pairs Scala's precedence needs, where `++` ranks with `+` and every
+  operator groups left, so the same tree is parenthesized per target. `TypeLoader.rooted`'s guard
+  lost its redundant pair on both surfaces. (2026-09-21)
+
 - **The drake parser reads infix operators by fixity, and a lambda.** A value's token run is
   split flat at every declared operator — `* / %`, `+ -`, `++`, `== != < <= > >=`, `&&`, `||`,
   `->` — and reassociated by Haskell's Prelude fixities, with the arrow below every other row so

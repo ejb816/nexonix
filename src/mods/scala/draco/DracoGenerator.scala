@@ -81,16 +81,19 @@ object DracoGenerator extends App {
     * leaf keeps its embedded quotes ("\"Primes\"") and passes through verbatim.
     * This renderer is the ScalaTarget projection: lambda renders (p1, p2) =>
     * body (bare param when single), if renders if (c) t else e.
-    * Rendering is FLAT — no parenthesization; minimal parens arrive with the
-    * surface fixity model (drake.dlt EXPRESSIONS), so authored trees must be
-    * ones whose flat rendering reads back correctly under Scala precedence. */
-  def expression (value: Json) : String = {
+    * Rendering writes the MINIMAL parentheses by SCALA'S precedence (2026-09-21):
+    * the tree is already associated, and a pair appears only where Scala would read
+    * the flat text differently — `scalaParenthesized` below. */
+  def expression (value: Json) : String = render(value, None, 0, 1)
+
+  private def render (value: Json, parent: Option[String], index: Int, count: Int) : String = {
     if (value == null || value.isNull) ""
     else value.asString.getOrElse {
       value.asObject.map(_.toList) match {
         case Some((op, operands) :: Nil) =>
-          val args = operands.asArray.getOrElse(Vector(operands)).map(expression)
-          op match {
+          val all  = operands.asArray.getOrElse(Vector(operands))
+          val args = all.zipWithIndex.map { case (a, i) => render(a, Some(op), i, all.size) }
+          val text = op match {
             case "."        => args.mkString(".")
             case "->"       => args.mkString(" => ")
             case "()"       =>
@@ -110,12 +113,39 @@ object DracoGenerator extends App {
             case "{}"       => if (args.isEmpty) "Set.empty" else s"Set(${args.mkString(", ")})"
             // "++" (drake.dlt CONCATENATION) keeps its spelling: Scala's `++` on a String
             // demands a String operand, where `+` would coerce anything to text.
-            case "*" | "/" | "%" | "+" | "-" | "++" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "&&" | "||" =>
-              args.mkString(s" $op ")
+            case _ if scalaPrecedence.contains(op) => args.mkString(s" $op ")
             case _          => sys.error(s"DracoGenerator.expression: unknown operator '$op' in ${value.noSpaces}")
           }
+          if (parent.exists(p => scalaParenthesized(p, op, index, count))) s"($text)" else text
         case _ => sys.error(s"DracoGenerator.expression: unrenderable value ${value.noSpaces}")
       }
+    }
+  }
+
+  /** Scala's precedence for the infix operators the tree language declares — by the
+    * operator's FIRST character, as the language defines it, every one grouping left:
+    * `* / %` above `+ -` and `++` (which Scala ranks with `+`, where drake ranks it
+    * below), above the comparisons, above `== !=`, above `&&`, above `||`. This is the
+    * ScalaTarget's table, not drake's: the same tree is parenthesized per target. */
+  private lazy val scalaPrecedence: Map[String, Int] = Map(
+    "*" -> 9, "/" -> 9, "%" -> 9,
+    "+" -> 8, "-" -> 8, "++" -> 8,
+    "<" -> 6, "<=" -> 6, ">" -> 6, ">=" -> 6,
+    "==" -> 5, "!=" -> 5,
+    "&&" -> 4,
+    "||" -> 3)
+
+  /** Whether the node `child`, operand `index` of `count` under `parent`, needs a pair in
+    * SCALA: under an infix parent, a looser child, or an equally tight one that is not the
+    * first (all group left), and a lambda, arrow or conditional always, since none of them
+    * is an infix operand in Scala; as the receiver of a path or the head of an application,
+    * any of those. Arguments, tuple and literal members, a lambda's body: never. */
+  private def scalaParenthesized (parent: String, child: String, index: Int, count: Int) : Boolean = {
+    def clause (op: String) = op == "\\" || op == "->" || op == "if"
+    (scalaPrecedence.get(parent), scalaPrecedence.get(child)) match {
+      case (Some(p), Some(c)) => c < p || (c == p && index > 0)
+      case (Some(_), None)    => clause(child)
+      case (None, _)          => (parent == "." || parent == "()") && index == 0 && (scalaPrecedence.contains(child) || clause(child))
     }
   }
 

@@ -165,7 +165,27 @@
                                 "nonEmpty"
                               ]
                             },
-                            "(td.typeName.name == \"DracoType\" && td.typeName.namePackage == Seq(\"draco\"))"
+                            {
+                              "&&": [
+                                {
+                                  "==": [
+                                    "td.typeName.name",
+                                    "\"DracoType\""
+                                  ]
+                                },
+                                {
+                                  "==": [
+                                    "td.typeName.namePackage",
+                                    {
+                                      "()": [
+                                        "Seq",
+                                        "\"draco\""
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
                           ]
                         }
                       ]
