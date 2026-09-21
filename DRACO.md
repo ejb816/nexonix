@@ -331,8 +331,8 @@ first fails the gate, the regeneration follows, the second is green).
 Only this file has been verified. As of 2026-08-15 the others are stale and should not be
 trusted without checking the code:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 78 on
-  2026-09-18.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 80 on
+  2026-09-21.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -395,10 +395,14 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   step 3 (2026-09-18) `X(expr)` evaluates `expr` on first read of the instance, not at the call. An
   argument that consumes state — a token cursor, an iterator, a `var` mutated afterwards — must be bound
   to a `val` before the call. `Drake.parse` had six such sites and failed 133 tests on the first run.
+- **When a slot's type changes, grep its named-argument construction as well as its reads.** Changing
+  `DracoAspect.derivation` from `[TypeName]` to `[Json]` (2026-09-21), every `.derivation` reader was
+  found and moved; every `_derivation = Seq(TypeName(...))` construction was not — `Generated.scala`
+  (hand-written, no definition) and twenty-one test sites stopped the first run at compile.
 - **A re-canonicalization sweep de-trees what the parser cannot tree.** `DrakeCLI parse` writes
   back what it reads; an infix condition authored as a tree (`{"==": [{"*": ["i1","i2"]}, "i3"]}`)
   comes back as the string `"i1 * i2 == i3"` until the parser trees infix operators (GitHub #61).
   Three conditions (`PrimesFromNaturalSequence`, `RemoveCompositeNumbers`, `SelfDeclaration`)
   lost their trees this way on 2026-09-16; the generated Scala is identical, so no gate saw it.
 
-<!-- draco-docs-synced-through: chapter 78 -->
+<!-- draco-docs-synced-through: chapter 80 -->

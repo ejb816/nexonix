@@ -177,18 +177,18 @@ Every element carries a `value`, and **the value's own structure classifies it**
 - a **string** is host-opaque source text, carried through to the target verbatim
 - an **object** `{op: [operands]}` is a normative **expression tree** — `.` for paths, `()`
   for application, `->` for the arrow, `\` for abstraction, `if`, `(,)` for tuples, `=` for
-  a named argument, `++` for concatenation
+  a named argument, `++` for concatenation, `[]` and `{}` for a sequence or set literal
 
 A **value type** is a node on the same terms: a string is the type's authored text, an object is
-a **type-form tree** — Atomic (a name), Objective `(A, B)`, Parametric `F(A, B)` with `[T]`, `{T}`
-and `{K, V}` as the sequence, set and map applications, Morphic `A -> B` grouping to the right as
-Haskell does — and so is each of a type name's parameters (`S <: DomainType` is a bound leaf with
+a **type-form tree** — Atomic (a name), Objective `(A, B)`, Parametric `F(A, B)`, the collection
+brackets `[T]`, `{T}` and `{K, V}` carried as the bracket itself with no host head, their mutable
+versions `[T]+`, `{T}+` and `{K, V}+`, Morphic `A -> B` grouping to the right as Haskell does — and so is each of a type name's parameters (`S <: DomainType` is a bound leaf with
 the parameter first). Every value type the surface spells is a tree today. Every element also
 carries `now`, the strictness override (see *Evaluation* below).
 
 The tree form is the direction of travel: a tree is projectable into any target, a string
-is only meaningful to the one it was written for. Calls, tuples, concatenations and every type
-are trees; lambdas, conditionals and infix operators are the remaining host-opaque tail.
+is only meaningful to the one it was written for. Calls, tuples, concatenations, collection literals
+and every type are trees; lambdas, conditionals and infix operators are the remaining host-opaque tail.
 
 ### Definitions, surfaces, and targets
 
@@ -205,14 +205,16 @@ DRAKE is draco's own definition language. Its full specification is
 type declares itself and its derivation, then keyword sections (`elements`, `factory`,
 `globals`, `modules`), then `domain`, then optionally `rule` and `actor`. References are
 written bare when they resolve in the referring type's own package and qualified
-otherwise; a reference to a type outside every draco domain carries no package at all and
-is written as a type expression (`Dictionary` derives `{K, V}`). Value types are `[T]` sequence, `{T}` set, `{K, V}` map, `mut {T}` mutable set,
-`F(A, B)` application, `(A, B)` tuple, `A -> B` arrow.
+otherwise; a parent outside every draco domain is not a reference but a type expression, carried
+in the derivation as the type form it is (`Dictionary` derives `{K, V}`). An empty package marks
+nothing foreign: it is the nameless domain, draco's default package. Value types are `[T]` sequence,
+`{T}` set, `{K, V}` map, `[T]+`, `{T}+` and `{K, V}+` their mutable versions, `F(A, B)` application,
+`(A, B)` tuple, `A -> B` arrow.
 
 Emission (`Drake.emit`) and parsing (`Drake.parse`) are mutual inverses, gated in both
 directions across the corpus. A call is written `f(a, b)`, positional arguments first, then
 `name:value`, an omitted parameter taking its declared default. One caveat for authors: **the
-parser builds expression trees only for calls, tuples, `++`, and every type form.** Lambdas,
+parser builds expression trees only for calls, tuples, `++`, collection literals, and every type form.** Lambdas,
 conditionals and infix operators come back as opaque text, so parsing is an authoring path for
 structure and a measurement tool for the rest.
 
@@ -222,7 +224,11 @@ target whose default is eager renders the deferred forms. `now` before a member 
 which a target needs where it must meet a host signature. The draco runtime lives in
 `draco.drake`: `Presence(T)` with `Present` and `Absent` is draco's own option, and its
 eliminator `fold` is polymorphism rather than a conditional — declared on the family, defined by
-each member. A conditional follows the same shape.
+each member. `ifThenElse` is the second: `Present` takes the then-branch, `Absent` the else-branch,
+both by need, so the branch not taken is never evaluated and a recursion through it terminates; a
+Boolean reaches it as a presence of nothing through `guard`. Six declared symbols — `join`,
+`presence`, `progression`, `cons`, `add`, `guard` — are the places a definition meets a host
+boundary; each target spells each of them once.
 
 ### Loading
 
@@ -243,7 +249,11 @@ The default path derives its roots from the host environment, but that is one re
 not the definition. A path can be constructed from given roots with no host mechanism
 involved, which is what makes the concept meaningful in a target that has none. A name that
 resolves nowhere yields a name-only stub, which is a legitimate state — a member may be
-declared before it is authored.
+declared before it is authored. The loader path speaks `Presence`, not the host's option, converting
+once at its host boundary. The empty package is the **nameless domain** — draco's default package,
+whose identity is the empty path; it has no name and no companion, nothing permanent may refer to it,
+and `.drake` (the one line `domain`) and `.json` at the resource root anchor it for the parser and
+emitter.
 
 ### Domains
 
@@ -407,17 +417,19 @@ that becomes feasible; this list exists so the leaks are visible rather than ass
 | Residue | Where | What neutral would look like |
 |---|---|---|
 | **[scala]** Strictness forced by the host | evaluation is lazy by default in the definition, but a method that meets a host signature or is passed as a function value must be marked `now` | a projection that can defer everything, so `now` is only ever the author's choice |
-| **[scala]** The mutable-set spelling | `mut {T}` in a value type is still carried as host text | `mut` on the element only, the container type neutral, the target choosing its mutable form |
 | **[scala]** Host-opaque value strings | lambdas, conditionals and infix operators in element `value`s (rule conditions among them) are still target source text | trees for every operator both renderers already know (GitHub #61) |
 | **[scala]** Codec realization | `CodecAspect` is neutral (a discriminator), but codec derivation is expressed in one host library's encoder/decoder pair | a serialization capability domain, projected per target |
 | **[scala]** Rule-evaluation binding | conditions are compiled by the host rule engine at runtime, requiring fully qualified names, and working memory boxes primitives | `draco.rete` as a capability domain expressing evaluation *discipline*, not one engine's configuration |
-| **[scala]** Actor behaviour binding | `Actor(T)`'s derivation reaches a host actor library's behaviour type | an actor capability domain, with the host behaviour supplied by the target |
+| **[scala]** Actor behaviour binding | an actor's parameters are neutral (`(M -> Unit)`) and the assembly holds the host's references, but the minted actor's template is a host actor library's behaviour | an actor capability domain — the host library integrated through drake definitions with implementations in the Scala target |
+| **[scala]** The leaves | `String`, `Int`, `Json`, `URI` and the evrete and pekko types are the host's names wherever a value type names them | draco-owned names for the primitives and wrap types for the libraries, spelled per target |
 | **[scala]** Structural-identity members | `TypeName`'s identity comparison is authored as host-named members | a declared property — "this type's identity is structural" — that each target projects its own way |
 | **[scala]** Host codecs for parameterized families | a parameterized closed family (`Presence(T)`) has no serialization, because the host codec cannot be named without its parameter | the codec aspect defining the default codec in drake, per type, projected per target |
 
-The map constructor is the worked example of the whole column: it moved from a host name to
-`{K, V}` in both the definition and the surface, with the host spelling produced in exactly
-one function in the target. Each row above is the same move, not yet made.
+Every host *head* has now made the move the map constructor made first: the collection brackets
+and their mutable versions, `Presence` for the option, a consumer for an actor's reference, functions
+for a rule's hooks, `[T]` for the lazy sequence, a type form for a foreign parent — each with its host
+spelling produced in exactly one function of the target and the host named nowhere in the definition.
+The rows above are what is left.
 
 ---
 
@@ -452,21 +464,23 @@ support one architectural goal: transformations that preserve meaning.
   unique-or-error across explicit roots.
 - **Drake as the Source** — calls, tuples, concatenations and every type form parse to trees,
   and the JSON corpus is what the drake parses to.
-- **A runtime of draco's own** — `Presence` with `fold` as dispatch, and lazy evaluation by
-  default with `now` to override, realized in the Scala target as deferred bindings and
-  by-name parameters.
+- **A runtime of draco's own** — `Presence` with `fold` and `ifThenElse` as dispatch, `guard`
+  bridging a Boolean, and lazy evaluation by default with `now` to override, realized in the Scala
+  target as deferred bindings and by-name parameters.
+- **A target-neutral carrier** — no host collection, option, reference, function-interface or
+  sequence name stands in a definition; a foreign parent is a type form; the empty package is the
+  nameless domain.
 
 ## Work in progress
 
 The backlog is [GitHub Issues](https://github.com/ejb816/nexonix/issues). Larger
 directions:
 
-- **Lazy evaluation, completed** — factory parameters are the last binding form still strict;
-  then `ifThenElse` as a second dispatch on `Presence`, which is what a recursive definition
-  needs to terminate.
 - **Expression grammar** — parsing lambdas, conditionals and infix operators into trees,
-  closing the last gap between the surface and the definition (rule conditions are its most
-  visible case).
+  closing the last gap between the surface and the definition: three rule conditions are strings
+  again since the September sweeps, and DefinitionPath's two conditionals sit inside a lambda.
+- **The leaves** — the host's names for the primitives and the rule-engine and actor-library types,
+  the last host residue in the corpus, each needing a draco-owned or wrap form.
 - **Target-side aspect types** — `draketarget.DomainAspect` and its peers, the substitution
   strings for each aspect's syntactic form, with `DomainLine` the first.
 - **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
@@ -606,4 +620,4 @@ engine — the projection and surface implementations that the framework does no
 describe as definitions. Whether that tier is permanent or transitional is an open
 question.
 
-<!-- draco-docs-synced-through: chapter 78 -->
+<!-- draco-docs-synced-through: chapter 80 -->
