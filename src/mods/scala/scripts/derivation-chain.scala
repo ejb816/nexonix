@@ -58,7 +58,7 @@ object DerivationChain {
       println(s"${"  " * depth}$marker ${fmt(tn)}$suffix")
 
       if (loaded(td)) {
-        td.dracoAspect.derivation.foreach(child => walk(child, depth + 1, seen))
+        DracoAspect.parents(td.dracoAspect).foreach(child => walk(child, depth + 1, seen))
       }
     }
 

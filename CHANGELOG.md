@@ -178,6 +178,15 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A foreign parent is a type form; an empty package is the nameless domain.** `DracoAspect.derivation`
+  is now `[Json]`: a draco parent is carried as its TypeName, a parent outside every draco domain as a
+  type-form node — Dictionary's `{"{}": ["K", "V"]}` in place of a TypeName called `Map` with no
+  package. `DracoAspect.parents` and `foreignParents` read the two apart, and no site reads an empty
+  package as foreign any more; `rooted` appends the root to a definition with no named parent. The
+  empty package is draco's default package, the nameless domain, whose identity is the empty path; it
+  has no companion and no name, and `src/main/resources/.drake` (`domain`) and `.json` anchor it for the
+  parser and emitter, which now accept a nameless definition. (2026-09-20)
+
 - **TypeName's paths are joins; the empty package is no special case.** `namePath` is
   `join(".", namePackage ++ [name])` and `resourcePath` is `"/" ++ join("/", namePackage ++ [name ++ ".json"])`:
   an empty path contributes no segments, so the two conditionals and their interpolated host strings are

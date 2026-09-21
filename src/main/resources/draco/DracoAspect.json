@@ -31,7 +31,7 @@
         "name": "derivation",
         "valueType": {
           "[]": [
-            "TypeName"
+            "Json"
           ]
         }
       },
@@ -78,7 +78,8 @@
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         },
         {
@@ -92,11 +93,12 @@
           "name": "derivation",
           "valueType": {
             "[]": [
-              "TypeName"
+              "Json"
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         },
         {
@@ -108,7 +110,8 @@
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         },
         {
@@ -126,7 +129,8 @@
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         }
       ]
@@ -142,6 +146,36 @@
           ]
         },
         "value": "da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty"
+      },
+      {
+        "kind": "Fixed",
+        "name": "parents",
+        "valueType": {
+          "->": [
+            "DracoAspect",
+            {
+              "[]": [
+                "TypeName"
+              ]
+            }
+          ]
+        },
+        "value": "da => da.derivation.filter(_.hcursor.downField(\"name\").succeeded).flatMap(_.as[TypeName].toOption)"
+      },
+      {
+        "kind": "Fixed",
+        "name": "foreignParents",
+        "valueType": {
+          "->": [
+            "DracoAspect",
+            {
+              "[]": [
+                "Json"
+              ]
+            }
+          ]
+        },
+        "value": "da => da.derivation.filterNot(_.hcursor.downField(\"name\").succeeded)"
       }
     ]
   },

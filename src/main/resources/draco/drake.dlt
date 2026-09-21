@@ -250,6 +250,12 @@ REFERENCES  (how `from` and `modules` name another type)
   begins the following one — `from draco Dictionary(K, V) draco DracoType` is two references, and
   `from Unit draco Primal(T)` is a bare one followed by a qualified one. Same rule that already
   bounds `extensible org apache pekko actor typed ExtensibleBehavior(T)`.
+  A FOREIGN parent — one outside every draco domain — is not a reference at all but a TYPE EXPRESSION,
+  `from {K, V}` (Dictionary), and the carrier holds it as the type-form node it is (2026-09-20:
+  `derivation` is `[Json]`, a TypeName for a draco parent, a form for a foreign one; `DracoAspect.parents`
+  reads the names). An EMPTY package therefore says nothing about foreignness: it is the NAMELESS
+  DOMAIN, draco's default package, whose identity is the empty path — no name, no companion, nothing
+  permanent may refer to it; `.drake` (the one line `domain`) and `.json` at the resource root anchor it.
   `domain` / `super` / `extensible` are ALWAYS qualified — each names something outside the type
   being declared, so there is no own-package for them to be inferred against. `messageType` is NOT
   one of these: an actor's message type is an ordinary type reference and follows the bare/qualified

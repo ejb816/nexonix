@@ -87,7 +87,7 @@ class FoundationValidationTest extends AnyFunSuite {
       TypeDefinition(
         TypeName("Dangler", _namePackage = Seq("draco")),
         _dracoAspect = DracoAspect(
-          _derivation = Seq(TypeName("Nonexistent", _namePackage = Seq("draco")))))
+          _derivation = Seq (TypeName.encoder (TypeName("Nonexistent", _namePackage = Seq("draco"))))))
     val misdeclaredDomain: DomainType =                    // SelfDeclaration
       Domain[Any](
         TypeDefinition(

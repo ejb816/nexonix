@@ -88,7 +88,7 @@ class ScenarioDrakeTest extends AnyFunSuite with draco.PersistentTestLog {
     log.info("\nas parsed:")
     outcomes.flatMap(o => o.parsed.map(o.path -> _)).foreach { case (path, td) =>
       val da = td.dracoAspect
-      log.info(f"  $path%-34s from=${da.derivation.map(_.namePath).mkString(",")}%-28s " +
+      log.info(f"  $path%-34s from=${draco.DracoAspect.parents(da).map(_.namePath).mkString(",")}%-28s " +
         f"super=${da.superDomain.namePath}%-26s domain=${td.domainAspect.typeName.namePath}%-26s " +
         s"elements=${da.elements.size} types=${td.domainAspect.elementTypeNames.size} " +
         s"rule=${!draco.RuleAspect.isEmpty(td.ruleAspect)} actor=${!draco.ActorAspect.isEmpty(td.actorAspect)}")

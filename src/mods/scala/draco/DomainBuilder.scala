@@ -109,7 +109,7 @@ object DomainBuilder {
     }
 
     val derivation: Seq[String] = members.flatMap { m =>
-      m.dracoAspect.derivation
+      DracoAspect.parents(m.dracoAspect)
         .filter(_.namePackage.headOption.contains("draco"))
         .collect {
           case anc if isStub(DracoGenerator.loadType(anc)) =>

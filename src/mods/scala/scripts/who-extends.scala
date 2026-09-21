@@ -52,7 +52,7 @@ object WhoExtends {
       if (key == target) return true
       val td = DracoGenerator.loadType(tn)
       if (!loaded(td)) return false
-      td.dracoAspect.derivation.exists(parent => reaches(parent, target, seen))
+      DracoAspect.parents(td.dracoAspect).exists(parent => reaches(parent, target, seen))
     }
 
     case class Match(elementPath: String, derivationHead: String)
@@ -75,7 +75,7 @@ object WhoExtends {
             val elementTd = DracoGenerator.loadType(elementTn)
             val head =
               if (!loaded(elementTd) || elementTd.dracoAspect.derivation.isEmpty) "(no direct derivation)"
-              else "extends " + elementTd.dracoAspect.derivation.map(_.name).mkString(" with ")
+              else "extends " + DracoAspect.parents(elementTd.dracoAspect).map(_.name).mkString(" with ")
             matches += Match(elementTn.namePath, head)
           }
         }

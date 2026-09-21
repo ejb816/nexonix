@@ -381,7 +381,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     assert(parsed.typeName.typeParameters == Seq(
       Json.obj("<:" -> Json.arr(Json.fromString("S"), Json.fromString("DomainType"))),
       Json.fromString("T")), parsed.typeName.typeParameters.map(_.noSpaces).mkString(", "))
-    val holon = parsed.dracoAspect.derivation.find(_.name == "Holon").getOrElse(fail("Holon not derived"))
+    val holon = DracoAspect.parents(parsed.dracoAspect).find(_.name == "Holon").getOrElse(fail("Holon not derived"))
     assert(holon.typeParameters == Seq(Json.obj("(,)" -> Json.arr(Json.fromString("S"), Json.fromString("T")))),
       holon.typeParameters.map(_.noSpaces).mkString(", "))
     val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))

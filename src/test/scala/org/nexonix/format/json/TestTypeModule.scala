@@ -107,74 +107,74 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
   val tdList: Seq[TypeDefinition] = Seq[TypeDefinition] (
     TypeDefinition(
       _typeName = unitDomainDefinition.typeName,
-      _dracoAspect = DracoAspect (_derivation = Seq (baseDomainDefinition.typeName))
+      _dracoAspect = DracoAspect (_derivation = Seq (TypeName.encoder (baseDomainDefinition.typeName)))
     ),
     TypeDefinition(
       _typeName = measureTypeName,
-      _dracoAspect = DracoAspect (_derivation = Seq (baseDomainDefinition.typeName))
+      _dracoAspect = DracoAspect (_derivation = Seq (TypeName.encoder (baseDomainDefinition.typeName)))
     ),
     TypeDefinition(
       _typeName = angleTypeName,
-      _dracoAspect = DracoAspect (_derivation = Seq (measureTypeName))
+      _dracoAspect = DracoAspect (_derivation = Seq (TypeName.encoder (measureTypeName)))
     ),
     TypeDefinition(
       _typeName = radiansTypeName,
-      _dracoAspect = DracoAspect (_derivation = Seq (angleTypeName))
+      _dracoAspect = DracoAspect (_derivation = Seq (TypeName.encoder (angleTypeName)))
     ),
     TypeDefinition(
       _typeName = distanceTypeName,
-      _dracoAspect = DracoAspect (_derivation = Seq (measureTypeName))
+      _dracoAspect = DracoAspect (_derivation = Seq (TypeName.encoder (measureTypeName)))
     ),
     TypeDefinition(
       _typeName = metersTypeName,
-      _dracoAspect = DracoAspect (_derivation = Seq (distanceTypeName))
+      _dracoAspect = DracoAspect (_derivation = Seq (TypeName.encoder (distanceTypeName)))
     ),
     TypeDefinition(
       _typeName = leftTypeName,
       _dracoAspect = DracoAspect (
-        _derivation = Seq (measureTypeName),
+        _derivation = Seq (TypeName.encoder (measureTypeName)),
         _factory = Factory(Json.fromString (leftTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = rightTypeName,
       _dracoAspect = DracoAspect (
-        _derivation = Seq (measureTypeName),
+        _derivation = Seq (TypeName.encoder (measureTypeName)),
         _factory = Factory(Json.fromString (rightTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = upperTypeName,
       _dracoAspect = DracoAspect (
-        _derivation = Seq (measureTypeName),
+        _derivation = Seq (TypeName.encoder (measureTypeName)),
         _factory = Factory(Json.fromString (upperTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = lowerTypeName,
       _dracoAspect = DracoAspect (
-        _derivation = Seq (measureTypeName),
+        _derivation = Seq (TypeName.encoder (measureTypeName)),
         _factory = Factory(Json.fromString (lowerTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = frontTypeName,
       _dracoAspect = DracoAspect (
-        _derivation = Seq (measureTypeName),
+        _derivation = Seq (TypeName.encoder (measureTypeName)),
         _factory = Factory(Json.fromString (frontTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = backTypeName,
       _dracoAspect = DracoAspect (
-        _derivation = Seq (measureTypeName),
+        _derivation = Seq (TypeName.encoder (measureTypeName)),
         _factory = Factory(Json.fromString (backTypeName.namePath), orientableParameters)
       )
     ),
     TypeDefinition(
       _typeName = boundingBoxTypeName,
       _dracoAspect = DracoAspect (
-        _derivation = Seq (orientableDomainDefinition.typeName),
+        _derivation = Seq (TypeName.encoder (orientableDomainDefinition.typeName)),
         _elements = boundingBoxElements,
         _factory = Factory(Json.fromString (boundingBoxTypeName.namePath), orientableParameters)
       )
@@ -182,7 +182,7 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
     TypeDefinition(
       _typeName = sphericalTypeName,
       _dracoAspect = DracoAspect (
-        _derivation = Seq (coordinatesDomainDefinition.typeName),
+        _derivation = Seq (TypeName.encoder (coordinatesDomainDefinition.typeName)),
         _elements = sphericalElements,
         _factory = Factory(Json.fromString (sphericalTypeName.namePath), sphericalParameters)
       )
@@ -190,7 +190,7 @@ class TestTypeModule extends AnyFunSuite with PersistentTestLog  {
     TypeDefinition(
       _typeName = sphericalBoundsTypeName,
       _dracoAspect = DracoAspect (
-        _derivation = Seq (boundingBoxTypeName),
+        _derivation = Seq (TypeName.encoder (boundingBoxTypeName)),
         _elements = sphericalBoundsElements,
         _factory = Factory(Json.fromString (sphericalBoundsTypeName.namePath), sphericalBoundsParameters)
       )

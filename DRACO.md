@@ -156,6 +156,8 @@ Compact by intent. Architecture detail belongs in `README.md` once that file is 
 `TypeDefinition extends Aspects { val typeName }`, and `Aspects` is **five** slots:
 
 - `dracoAspect` — superDomain, modules, extensible, derivation, elements, factory, globalElements
+  (`derivation` is `[Json]` since 2026-09-20: a TypeName object for a draco parent, a type-form node
+  for a FOREIGN one — Dictionary's `{"{}": ["K", "V"]}`; read names through `DracoAspect.parents`)
 - `domainAspect` — typeName (self-loop for a domain, container pointer otherwise), elementTypeNames,
   source, target (both present = a **transform domain**; role is presence, as everywhere else)
 - `ruleAspect` — pattern, action
@@ -210,9 +212,12 @@ TypeLoader.loadType → tryLoad → draco.generator.carrier.DefinitionPath.defau
 The loader path speaks `Presence`, not the host's option, since 2026-09-18: `source`, `readDefinition`,
 `loadFromResource` and `tryLoad` declare `draco.drake.Presence(T)`, convert once at the host boundary with
 the `presence` symbol, and chain with `fold`; `Dictionary.get` keeps `Option` because it overrides `Map.get`.
-`rooted` appends the universal root to any definition carrying no draco-domain parent — an
-absent derivation is the common case, a solely foreign one (`Dictionary`) the other — so no
-definition in the corpus spells `DracoType`.
+`rooted` appends the universal root to any definition carrying no NAMED parent — an absent
+derivation is the common case, a solely foreign one (`Dictionary`, whose parent is a type form) the
+other — so no definition in the corpus spells `DracoType`. An EMPTY package is not "foreign": it is
+the nameless domain, draco's default package, whose whole identity is the empty path (Dev, 2026-09-20).
+It has no companion, no dictionary entry and no name; `src/main/resources/.drake` (the one line `domain`)
+and `.json` are its anchor for the parser and emitter, and nothing permanent may refer to it.
 
 `DefinitionPath` — in `draco.generator.carrier`, the generator's source side, where host
 realization is the content rather than a leak — holds `roots: Seq[URI]` explicitly and

@@ -67,7 +67,7 @@ class DerivationResolvableRulesTest extends AnyFunSuite {
     val dangler: TypeDefinition = TypeDefinition(
       TypeName("Dangler", _namePackage = Seq("draco")),
       _dracoAspect = DracoAspect(
-        _derivation = Seq(TypeName("Nonexistent", _namePackage = Seq("draco")))))
+        _derivation = Seq (TypeName.encoder (TypeName("Nonexistent", _namePackage = Seq("draco"))))))
 
     val problems = problemsFrom(Seq(dangler))
     assert(problems.size == 1, s"expected exactly one Problem; got ${problems.size}")

@@ -36,7 +36,7 @@ object AssemblyValidator {
       .filter(_.name.nonEmpty)
       .map(_.namePath)
       .orElse(
-        td.dracoAspect.derivation
+        DracoAspect.parents(td.dracoAspect)
           .find(_.name == "Actor")
           .flatMap(_.typeParameters.headOption).map(_.text))
       .map(_.trim)

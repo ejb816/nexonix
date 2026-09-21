@@ -79,7 +79,7 @@ object ListDomain {
             s"$msg message-step(s), $sig signal-step(s)"
           case _ =>
             if (elementTd.dracoAspect.derivation.isEmpty) "(no derivation)"
-            else "extends " + elementTd.dracoAspect.derivation.map(_.name).mkString(" with ")
+            else "extends " + DracoAspect.parents(elementTd.dracoAspect).map(_.name).mkString(" with ")
         }
         Row(kind, elementName, detail, missing = false)
       }

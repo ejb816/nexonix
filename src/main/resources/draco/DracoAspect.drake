@@ -3,7 +3,7 @@ type DracoAspect
     fix superDomain TypeName
     fix modules [TypeName]
     fix extensible TypeName
-    fix derivation [TypeName]
+    fix derivation [Json]
     fix elements [TypeElement]
     fix factory Factory
     fix globalElements [BodyElement]
@@ -12,10 +12,12 @@ type DracoAspect
       par superDomain TypeName TypeName.Null
       par modules [TypeName] []
       par extensible TypeName TypeName.Null
-      par derivation [TypeName] []
+      par derivation [Json] []
       par elements [TypeElement] []
       par factory Factory Factory.Null
       par globalElements [BodyElement] []
   globals
     fix isEmpty (DracoAspect -> Boolean) da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty
+    fix parents (DracoAspect -> [TypeName]) da => da.derivation.filter(_.hcursor.downField("name").succeeded).flatMap(_.as[TypeName].toOption)
+    fix foreignParents (DracoAspect -> [Json]) da => da.derivation.filterNot(_.hcursor.downField("name").succeeded)
 domain draco Draco

@@ -1,0 +1,65 @@
+# A foreign parent is a type form; an empty package is the nameless domain — Dev, 2026-09-20 ("Yes, the
+# derivation slot carries a type form for a foreign parent ... the empty domain stays nameless, build the
+# derivation form. Files name .drake and .json should exist in the empty package directory ... just an
+# anchor for the generator and emitter"). On 14e969a (624 / 44 green).
+#
+# ONE CONCEPT: the surface already told a draco parent (a NAME, `from Presence(T)`) from a foreign one (a
+# TYPE FORM, `from {K, V}`); only the carrier conflated them, storing the foreign parent as a TypeName
+# called Map with no package, and eight sites read "empty package" as "foreign". Now the carrier holds
+# each as what it is: `DracoAspect.derivation: [Json]` — a TypeName object or a type-form node —
+# with `DracoAspect.parents` / `foreignParents` (drake globals) reading them apart. "Foreign" means "a
+# form, not a name"; an EMPTY package is free to mean the nameless domain — Java's default package —
+# whose identity is the empty path: no companion, no name, no dictionary entry, nothing permanent may
+# refer to it (Dev). Its ANCHOR: src/main/resources/.drake = the one line `domain`, .json = the encoder's
+# form of a nameless definition ({"typeName": {"name": ""}}; an empty self-loop elides like any absence).
+# The parser accepts a definition whose first word is `domain` (nameless), the emitter writes one back.
+#
+# MOVED: DracoAspect (slot type + two globals; Scala regenerated: derivation Seq[Json], codec follows),
+# TypeLoader.rooted (`DracoAspect.parents(td.dracoAspect).nonEmpty`, root appended as `TypeName.encoder(...)`),
+# DerivationResolvable's condition, Dictionary.json (the form). Drake.scala: the `from` loop keeps each
+# reference as Left(name) / Right(form) and encodes at the end; `resolved` drops operatorCarried;
+# the emitter spells names by reference and forms by drakeType; foreignReference and operatorCarried
+# RETIRED (foreignRef / opensTypeExpression stay for the parse branch). Engine: chainHits, typeExtends
+# (forms through scalaType — `extends Map[K, V]` as before), the codec gate's two walks, actor message
+# type, isActor, imports, referenced packages, and the composed merge (extensible encoded) — all through
+# parents. DomainBuilder, AssemblyValidator, three tests, four mods scripts likewise.
+# PROBED: DracoAspect, TypeLoader, DerivationResolvable, Drake, DracoGenerator, DomainBuilder and
+# AssemblyValidator compiled TOGETHER against the exported classpath, clean.
+#
+# NOT CHANGED: Dictionary.scala (`extends Map[K, V]`, the form's spelling is the old spelling).
+# The compiled DrakeCLI check cannot judge this commit (old decoder, old header rule) — the run does.
+#
+# RUN: expected 624 tests / 44 suites, all green; every headline unchanged (parse scope 98 + 10: the
+# anchor sits above draco/ and no walker reaches it). TWO-RUN SHAPE if DracoGenTest names a file.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# RUN 1 (22:20): did not compile — Generated.scala, hand-written core infra with no definition, builds a
+# DracoAspect with `_derivation = Seq(TypeName(...))`, and my search for consumers read the SLOT
+# (`.derivation`) but not its CONSTRUCTION (`_derivation =`). Twenty-two such sites: Generated.scala and
+# twenty-one in four tests (TestTypeModule 15, TypeDefinitionTest 2, FoundationValidationTest 1,
+# DerivationResolvableRulesTest 1), each now `Seq (TypeName.encoder (...))`. TypeDefinitionTest's
+# hand-spelled `"Seq[TypeName]"` slots describe a definition it only encodes and generates, so they stand.
+# LESSON: when a slot's type changes, grep its named-argument construction as well as its reads.
+#
+# RUN 2 (09:27, 2026-09-21): main compiled; the TEST stage stopped on ScenarioDrakeTest, package scenario,
+# which imports only Drake and TypeDefinition from draco — `DracoAspect.parents` qualified there. Every
+# other use resolves (package draco, or `import draco._`).
+#
+# RUN 3: expected 624 tests / 44 suites, all green; every headline unchanged.
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-20-1942 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-20-1942 && git commit -F /tmp/msg -- src DRACO.md CHANGELOG.md draco-git-record/git-record-2026-09-20-1942 && git push
+
+--- MESSAGE ---
+A foreign parent is a type form, and an empty package is the nameless domain, not a foreign mark
+
+The derivation slot carries each parent as what the surface writes: a draco parent as its name, a
+parent outside every draco domain as a type form, so Dictionary's `{K, V}` is the node `{"{}": ["K",
+"V"]}` and no host name stands in the corpus for it. `DracoAspect.parents` and `foreignParents` read the
+two apart, and no site reads an empty package as foreign any more. The empty package is draco's default
+package, the nameless domain whose identity is the empty path: no companion, no name, nothing permanent
+may refer to it, and `.drake` and `.json` at the resource root anchor it for the parser and emitter,
+which accept a nameless definition.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

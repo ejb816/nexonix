@@ -48,7 +48,7 @@ object InspectType {
 
     println()
     println(s"=== DracoAspect ===")
-    println(s"  derivation       = ${if (td.dracoAspect.derivation.isEmpty) "(none)" else td.dracoAspect.derivation.map(t => s"${t.namePath}${if (t.typeParameters.isEmpty) "" else t.typeParameters.map(_.text).mkString("[", ", ", "]")}").mkString(", ")}")
+    println(s"  derivation       = ${if (td.dracoAspect.derivation.isEmpty) "(none)" else DracoAspect.parents(td.dracoAspect).map(t => s"${t.namePath}${if (t.typeParameters.isEmpty) "" else t.typeParameters.map(_.text).mkString("[", ", ", "]")}").mkString(", ")}")
     println(s"  elements         = ${td.dracoAspect.elements.size} element(s)")
     td.dracoAspect.elements.foreach { e =>
       val kind = e match {

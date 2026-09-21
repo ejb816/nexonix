@@ -7,7 +7,7 @@ trait DracoAspect extends DracoType {
   val superDomain: TypeName
   val modules: Seq[TypeName]
   val extensible: TypeName
-  val derivation: Seq[TypeName]
+  val derivation: Seq[Json]
   val elements: Seq[TypeElement]
   val factory: Factory
   val globalElements: Seq[BodyElement]
@@ -35,7 +35,7 @@ object DracoAspect extends App with DracoType {
       _superDomain <- cursor.downField("superDomain").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
       _modules <- cursor.downField("modules").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
       _extensible <- cursor.downField("extensible").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
-      _derivation <- cursor.downField("derivation").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
+      _derivation <- cursor.downField("derivation").as[Option[Seq[Json]]].map(_.getOrElse(Seq.empty))
       _elements <- cursor.downField("elements").as[Option[Seq[TypeElement]]].map(_.getOrElse(Seq.empty))
       _factory <- cursor.downField("factory").as[Option[Factory]].map(_.getOrElse(Factory.Null))
       _globalElements <- cursor.downField("globalElements").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
@@ -46,7 +46,7 @@ object DracoAspect extends App with DracoType {
     _superDomain: => TypeName = TypeName.Null,
     _modules: => Seq[TypeName] = Seq.empty,
     _extensible: => TypeName = TypeName.Null,
-    _derivation: => Seq[TypeName] = Seq.empty,
+    _derivation: => Seq[Json] = Seq.empty,
     _elements: => Seq[TypeElement] = Seq.empty,
     _factory: => Factory = Factory.Null,
     _globalElements: => Seq[BodyElement] = Seq.empty
@@ -54,7 +54,7 @@ object DracoAspect extends App with DracoType {
     override lazy val superDomain: TypeName = _superDomain
     override lazy val modules: Seq[TypeName] = _modules
     override lazy val extensible: TypeName = _extensible
-    override lazy val derivation: Seq[TypeName] = _derivation
+    override lazy val derivation: Seq[Json] = _derivation
     override lazy val elements: Seq[TypeElement] = _elements
     override lazy val factory: Factory = _factory
     override lazy val globalElements: Seq[BodyElement] = _globalElements
@@ -64,4 +64,6 @@ object DracoAspect extends App with DracoType {
   lazy val Null: DracoAspect = apply()
 
   lazy val isEmpty: DracoAspect => Boolean = da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty
+  lazy val parents: DracoAspect => Seq[TypeName] = da => da.derivation.filter(_.hcursor.downField("name").succeeded).flatMap(_.as[TypeName].toOption)
+  lazy val foreignParents: DracoAspect => Seq[Json] = da => da.derivation.filterNot(_.hcursor.downField("name").succeeded)
 }

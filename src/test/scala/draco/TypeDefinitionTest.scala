@@ -155,7 +155,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
     val dogTd = TypeDefinition(
       _typeName = TypeName("Dog", _namePackage = Seq("test", "zoo")),
       _dracoAspect = DracoAspect(
-        _derivation = Seq(TypeName("Animal", _namePackage = Seq("test", "zoo"))),
+        _derivation = Seq (TypeName.encoder (TypeName("Animal", _namePackage = Seq("test", "zoo")))),
         _factory = Factory (Json.fromString ("Dog"), _parameters = Seq(
           Parameter ("name", Json.fromString ("String"), Json.fromString("\"Fido\""))
         ))
@@ -190,7 +190,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
     val dogTd = TypeDefinition(
       _typeName = TypeName("Dog", _namePackage = Seq("test", "zoo")),
       _dracoAspect = DracoAspect(
-        _derivation = Seq(TypeName("Animal", _namePackage = Seq("test", "zoo"))),
+        _derivation = Seq (TypeName.encoder (TypeName("Animal", _namePackage = Seq("test", "zoo")))),
         _factory = Factory (Json.fromString ("Dog"), _parameters = Seq(
           Parameter ("name", Json.fromString ("String"), Json.fromString("\"Fido\""))
         ))

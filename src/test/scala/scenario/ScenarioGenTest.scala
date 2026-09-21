@@ -191,7 +191,7 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
       log.info(s"  ${dom.typeName.namePath}  $src -> $tgt")
       dom.domainAspect.elementTypeNames.flatMap { n =>
         val member  = TypeLoader.loadType(TypeName(n, _namePackage = dom.typeName.namePackage))
-        val derives = member.dracoAspect.derivation.filter(_.name != "DracoType")
+        val derives = DracoAspect.parents(member.dracoAspect).filter(_.name != "DracoType")
         val params  = member.dracoAspect.factory.parameters
         // Deliberately NOT required: that a member derive the transform domain itself.
         // `Potency` IS a birch Micromolar and LIVES IN Ash_Birch — containment is the

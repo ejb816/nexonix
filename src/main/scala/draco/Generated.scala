@@ -13,9 +13,7 @@ object Generated extends App {
       _namePackage = Seq ("draco")
     ),
     _dracoAspect = DracoAspect (
-      _derivation = Seq (
-        TypeName ("Main", _namePackage = Seq ("draco"))
-      ),
+      _derivation = Seq (TypeName.encoder (TypeName ("Main", _namePackage = Seq ("draco")))),
       _factory = Factory (
         Json.fromString ("Generated"),
         _parameters = Seq (

@@ -216,33 +216,6 @@ object Drake {
   private def isRoot (tn: TypeName) : Boolean =
     tn.name == "DracoType" && tn.namePackage == Seq ("draco")
 
-  /** A FOREIGN reference: a parent that lives in no draco domain. Every draco type
-    * is declared inside one, so an EMPTY namePackage says the referent is outside
-    * draco's graph entirely — Dictionary's map parent is the corpus's only one.
-    *
-    * It is spelled as a TYPE EXPRESSION rather than as a name, so Dictionary reads
-    * `from {K, V}` — the same notation its own `kvMap` element already uses, one
-    * concept spelled one way in one file. The operator carries what the name used
-    * to, which is also what closes the round trip: a bare NAME in reference position
-    * means "my own package" and so cannot come back package-less, while an operator
-    * has no package to lose and nothing to resolve.
-    *
-    * This is typeExpression's counterpart in reference position, and it differs on
-    * exactly one case: a map arrives here NAMED, because a reference is nominal,
-    * where a valueType arrives already neutral ({K, V} in the JSON since 0acf2da).
-    * `mut {T}` has no spelling here — `mut` is a member keyword, so it bounds the
-    * clause rather than opening a reference — and no derivation asks for one. */
-  private def foreignReference (tn: TypeName) : String = {
-    val arguments = tn.typeParameters.map (p => if (TypeForm.isTree(p)) drakeType(p) else typeExpression(p.text))
-    (tn.name, arguments.size) match {
-      case ("Map", 2)          => arguments.mkString ("{", ", ", "}")
-      case ("Set", 1)          => s"{${arguments.head}}"
-      case ("Seq", 1)          => s"[${arguments.head}]"
-      case (name, 0)           => name
-      case (name, _)           => s"$name(${arguments.mkString (", ")})"
-    }
-  }
-
   /** A dyn-with-body opens its own sub-block; its container needs [ ]. */
   private def opensBlock (element: TypeElement) : Boolean = element match {
     case d: Dynamic => d.parameters.nonEmpty || d.body.nonEmpty
@@ -374,8 +347,7 @@ object Drake {
       * A reference with NO package is FOREIGN — outside every draco domain — and is
       * spelled as a type expression instead (foreignReference). */
     def reference (tn: TypeName) : String =
-      if (tn.namePackage.isEmpty) foreignReference(tn)
-      else if (tn.namePackage == td.typeName.namePackage) typeRef(tn)
+      if (tn.namePackage == td.typeName.namePackage) typeRef(tn)
       else (tn.namePackage :+ typeRef(tn)).mkString(" ")
 
     // The universal root is spelled only where it is NOT reconstructable, which is
@@ -384,12 +356,20 @@ object Drake {
     // parent, so the root alone — and the root beside a FOREIGN parent, which is
     // Dictionary — comes back on its own. Beside a draco parent it would not, so
     // there it stays on the surface.
-    val rootRestored = !da.derivation.exists(tn => !isRoot(tn) && tn.namePackage.nonEmpty)
-    val spelled      = if (rootRestored) da.derivation.filterNot(isRoot) else da.derivation
-    val fromClause   = if (spelled.isEmpty) "" else s" from ${spelled.map(reference).mkString(" ")}"
+    // A derivation entry is a NAME (a draco parent) or a TYPE FORM (a foreign parent), and the
+    // surface spells each as what it is: the name by reference, the form by drakeType.
+    val parents      = DracoAspect.parents(da)
+    val rootRestored = !parents.exists(tn => !isRoot(tn))
+    val spelled      = da.derivation.flatMap { j =>
+      if (j.hcursor.downField("name").succeeded) j.as[TypeName].toOption.filterNot(tn => rootRestored && isRoot(tn)).map(reference)
+      else Some(drakeType(j))
+    }
+    val fromClause   = if (spelled.isEmpty) "" else s" from ${spelled.mkString(" ")}"
     // The drake surface names the bare concept (AddNaturalSequence); rule-/actor-ness
     // is carried by the ruleAspect/actorAspect, never by the type name.
-    val header = s"type ${td.typeName.name}$typeParameters$fromClause"
+    // The NAMELESS domain (draco's default package, 2026-09-20) has no header: its anchor
+    // definition is the one line `domain`.
+    val header = if (td.typeName.name.isEmpty) "" else s"type ${td.typeName.name}$typeParameters$fromClause"
 
     val modules =
       if (da.modules.isEmpty) Seq.empty
@@ -424,7 +404,8 @@ object Drake {
       else sectionLines("globals", da.globalElements, 1)
 
     val domain =
-      if (td.domainAspect.typeName.name.nonEmpty) {
+      if (td.typeName.name.isEmpty) Seq("domain")
+      else if (td.domainAspect.typeName.name.nonEmpty) {
         // typeRef, not the bare name: a domain may be PARAMETERIZED
         // (draco.format.Format(F)), and its type parameters are load-bearing —
         // the Scala projection emits Domain[Format[_]] from them. Spelling the
@@ -490,7 +471,7 @@ object Drake {
         "actor" +: (messageType ++ block("start", aa.start) ++ block("message", aa.message) ++ block("signal", aa.signal))
       }
 
-    ((header +: (modules ++ extensible ++ elements ++ factory ++ globals)) ++ domain ++ rule ++ actor).mkString("", "\n", "\n")
+    ((Seq(header).filter(_.nonEmpty) ++ (modules ++ extensible ++ elements ++ factory ++ globals)) ++ domain ++ rule ++ actor).mkString("", "\n", "\n")
   }
 
   // --- Parsing (.drake surface -> JSON TypeDefinition) ---
@@ -924,13 +905,6 @@ object Drake {
     TypeName (name, _typeParameters = typeParameters.map (typeForm))
   }
 
-  /** A reference the surface spells with an OPERATOR carries no package, so it must
-    * not be resolved against the referring type: it is foreign by construction. The
-    * test is the emitter's own spelling rather than a second list of primitive names,
-    * so the two sides cannot drift apart. */
-  private def operatorCarried (tn: TypeName) : Boolean =
-    opensTypeExpression (foreignReference (tn))
-
   /** True of a token that opens a TYPE EXPRESSION rather than a name — the two
     * bracket operators foreignReference spells. `[` is only ever a Seq here: a lone
     * `[` (one followed by whitespace) lexes as a block bracket and is reserved, so
@@ -1108,19 +1082,26 @@ object Drake {
     * increment and is rejected loudly rather than silently dropped. */
   def parse (source: String) : TypeDefinition = {
     val c = new Cursor (source, lex (source))
-    c.expect ("type")
+    // A definition whose first word is `domain` is the NAMELESS domain's anchor (draco's
+    // default package, 2026-09-20): no header, no name, the empty path its whole identity.
+    val nameless = c.at ("domain")
+    if (!nameless) c.expect ("type")
     // The header's parameters are TYPE FORMS (drake.dlt CONVENTIONS): a bare variable is
     // an Atomic string, `S <: DomainType` a bound leaf, exactly as a value-type slot reads.
-    val (name, typeParameterTexts) = splitApplied (c.takeText ())
+    val (name, typeParameterTexts) = if (nameless) ("", Seq.empty[String]) else splitApplied (c.takeText ())
     val typeParameters = typeParameterTexts.map (typeForm)
-    val derivation = Seq.newBuilder[TypeName]
+    // A parent is a NAME (a draco type, resolved against the domain once it is read) or a
+    // TYPE FORM (a foreign parent, outside every draco domain — Dictionary's `{K, V}`), and the
+    // carrier holds each as what it is (2026-09-20); order is kept.
+    val derivation = Seq.newBuilder[Either[TypeName, Json]]
     if (c.at ("from")) {
       c.take ()
       // Each reference may carry package words. The case rule bounds the SEQUENCE as
       // well as each member: lower-case words are package, the first upper-case token
       // ends the reference, and the next lower-case word starts the following one —
       // so `from draco Dictionary(K, V) draco DracoType` needs no separator.
-      while (!c.exhausted && !c.atReserved) derivation += takeQualifiedRef (c)
+      while (!c.exhausted && !c.atReserved)
+        derivation += (if (c.peek.exists (opensTypeExpression)) Right (typeForm (c.takeText ())) else Left (takeQualifiedRef (c)))
     }
 
     var modules          = Seq.empty[TypeName]
@@ -1170,7 +1151,7 @@ object Drake {
           val parameters = parseSection (c, "parameters", Set ("par", "now")).map (_.asInstanceOf[Parameter])
           val body       = parseSection (c, "body", declarationKeywords).map (_.asInstanceOf[BodyElement])
           factory = Factory (valueType, parameters, body)
-        case "domain"      => domainName = takeQualifiedRef (c)
+        case "domain"      => domainName = if (c.exhausted || c.atReserved) TypeName.Null else takeQualifiedRef (c)
         case "super"       => superDomain = takeQualifiedRef (c)
         case "source"      => domainSource = takeQualifiedRef (c)
         case "target"      => domainTarget = takeQualifiedRef (c)
@@ -1201,7 +1182,7 @@ object Drake {
     // `domain` on the surface and the owning package is not known until the whole
     // source has been read.
     def resolved (tn: TypeName) : TypeName =
-      if (tn.name.isEmpty || tn.namePackage.nonEmpty || operatorCarried (tn)) tn
+      if (tn.name.isEmpty || tn.namePackage.nonEmpty) tn
       else TypeName (tn.name, domainName.namePackage, tn.typeParameters)
 
     TypeDefinition (
@@ -1210,7 +1191,7 @@ object Drake {
         _superDomain    = superDomain,
         _modules        = modules.map (resolved),
         _extensible     = extensible,
-        _derivation     = derivation.result ().map (resolved),
+        _derivation     = derivation.result ().map { case Left (tn) => TypeName.encoder (resolved (tn)); case Right (form) => form },
         _elements       = elements,
         _factory        = factory,
         _globalElements = globalElements),

@@ -57,7 +57,7 @@ object DracoGenerator extends App {
     if (seen.contains(td.typeName.namePath)) return false
     if (td.typeName.name == targetName) return true
     val nextSeen = seen + td.typeName.namePath
-    td.dracoAspect.derivation.exists { tn =>
+    DracoAspect.parents(td.dracoAspect).exists { tn =>
       if (tn.name == targetName) true
       else {
         try chainHits(loadType(tn), targetName, nextSeen)
@@ -469,16 +469,19 @@ object DracoGenerator extends App {
     td: TypeDefinition
   ) : String = {
     val ext = td.dracoAspect.extensible
-    val derivation = td.dracoAspect.derivation
+    // A derivation entry is a NAME (a draco parent, spelled by reference) or a TYPE FORM
+    // (a foreign parent — Dictionary's `{K, V}` — spelled as the target spells a type).
+    val derivation: Seq[String] = td.dracoAspect.derivation.map { j =>
+      if (j.hcursor.downField("name").succeeded) derivationRef(td, j.as[TypeName].toOption.getOrElse(TypeName.Null))
+      else scalaType(j)
+    }
     if (ext.name.nonEmpty) {
       val head = parameterizedName(ext)
       if (derivation.isEmpty) s"extends $head"
-      else s"extends $head with ${derivation.map(derivationRef(td, _)).mkString(" with ")}"
+      else s"extends $head with ${derivation.mkString(" with ")}"
     } else if (derivation.nonEmpty) {
-      val head = derivationRef(td, derivation.head)
-      val tail = derivation.tail.map(derivationRef(td, _))
-      if (tail.isEmpty) s"extends $head"
-      else s"extends $head with ${tail.mkString(" with ")}"
+      if (derivation.tail.isEmpty) s"extends ${derivation.head}"
+      else s"extends ${derivation.head} with ${derivation.tail.mkString(" with ")}"
     } else ""
   }
 
@@ -832,7 +835,7 @@ object DracoGenerator extends App {
     td: TypeDefinition,
     familyMap: Map[String, TypeDefinition]
   ) : Option[String] = {
-    td.dracoAspect.derivation.map(tn => baseName(tn.name)).flatMap { name =>
+    DracoAspect.parents(td.dracoAspect).map(tn => baseName(tn.name)).flatMap { name =>
       familyMap.get(name) match {
         case Some(parentTd) if parentTd.dracoAspect.modules.nonEmpty =>
           // Parent has modules — but check if it in turn derives from a higher discriminated parent
@@ -873,7 +876,7 @@ object DracoGenerator extends App {
     familyMap: Map[String, TypeDefinition],
     seen: Set[String] = Set.empty
   ) : Set[String] = {
-    td.dracoAspect.derivation.flatMap { tn =>
+    DracoAspect.parents(td.dracoAspect).flatMap { tn =>
       val name = baseName(tn.name)
       if (seen.contains(name)) Set.empty[String]
       else {
@@ -1438,7 +1441,7 @@ object DracoGenerator extends App {
       if (tn.namePackage.isEmpty || tn.namePackage == td.typeName.namePackage) parameterizedName(tn)
       else s"${tn.namePackage.mkString(".")}.${parameterizedName(tn)}"
     val fromAspect = Some(td.actorAspect.messageType).filter(_.name.nonEmpty).map(spelled)
-    def fromDerivation = td.dracoAspect.derivation
+    def fromDerivation = DracoAspect.parents(td.dracoAspect)
       .find(_.name == "Actor")
       .flatMap(_.typeParameters.headOption).map(typeParameterScala)
     fromAspect.orElse(fromDerivation).getOrElse("Any")
@@ -1702,7 +1705,7 @@ object DracoGenerator extends App {
     !RuleAspect.isEmpty(td.ruleAspect)
 
   private def isActor (td: TypeDefinition) : Boolean =
-    td.dracoAspect.derivation.exists(tn => Set("ActorType", "ExtensibleBehavior").contains(tn.name))
+    DracoAspect.parents(td.dracoAspect).exists(tn => Set("ActorType", "ExtensibleBehavior").contains(tn.name))
 
   /** Object-only type: no trait, no factory, no derivation, but has globalElements.
     * Emits object extending DracoType with dracoType = this. */
@@ -1768,7 +1771,7 @@ object DracoGenerator extends App {
       td.dracoAspect.globalElements.map(_.valueType.text) ++
       nested ++
       methodShaped.map(_.name) ++
-      td.dracoAspect.derivation.map(_.name) ++
+      DracoAspect.parents(td.dracoAspect).map(_.name) ++
       Seq(td.dracoAspect.extensible.name)
     val typeNames = allValueTypes.flatMap(extractTypeNames).distinct
     val standard = typeNames.flatMap(externalTypeImports.get)
@@ -1824,7 +1827,7 @@ object DracoGenerator extends App {
     val ownInits: Set[Seq[String]] = td.typeName.namePackage.inits.toSet
     val covered: Set[Seq[String]] = ownInits + Seq("draco") ++ wellKnownExternalPackages
     val referenced: Seq[TypeName] =
-      (td.dracoAspect.derivation
+      (DracoAspect.parents(td.dracoAspect)
         ++ td.dracoAspect.modules
         ++ Seq(td.dracoAspect.extensible, td.dracoAspect.superDomain,
                td.domainAspect.source, td.domainAspect.target, td.domainAspect.typeName))
@@ -2115,7 +2118,7 @@ object DracoGenerator extends App {
       _typeName = ordered.head.typeName,
       _dracoAspect = DracoAspect(
         _derivation = ordered.flatMap(_.dracoAspect.derivation) ++
-          ordered.map(_.dracoAspect.extensible).filter(_.name.nonEmpty),
+          ordered.map(_.dracoAspect.extensible).filter(_.name.nonEmpty).map(TypeName.encoder(_)),
         _elements = ordered.flatMap(_.dracoAspect.elements),
         _factory = Factory(Json.Null, _parameters = ordered.flatMap(_.dracoAspect.factory.parameters)),
         _globalElements = ordered.flatMap(_.dracoAspect.globalElements)
