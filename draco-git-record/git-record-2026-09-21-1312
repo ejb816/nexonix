@@ -1,0 +1,57 @@
+# A conditional is ifThenElse on a Presence; the `if` node leaves the tree language — Dev, 2026-09-21
+# ("Accept your recommendation": no parser step, convert the four conditionals to the form decided on
+# 2026-09-17). On 309ea4d (626 / 44 green). GitHub #61.
+#
+# ONE CONCEPT: the corpus held four conditionals as host text — Value's two in the Haskell `if … then
+# … else` form (inside its fold lambda, and as its `value` result) and DefinitionPath's two in Scala's
+# `if (…) … else …`, nested inside the hostRoots lambda. The decided form already existed and was
+# already treed: `guard(c).ifThenElse(t, e)`, a call on a path, both branches by need, TypeLoader.rooted
+# its first use. So the four became that, with `++` where DefinitionPath's inner branch had the host's
+# `+`. The `if` node — which only Value.json ever carried — retires from Drake.render, DracoGenerator
+# .render, their `parenthesized` clauses and drake.dlt; the HASKELL-FORM SURFACE section now names the
+# lambda alone. Value comes off the re-canonicalization exclusion list: its JSON is re-canonicalized
+# WHOLE by the compiled parser (value trees and type forms alike), and the loss headline drops from
+# 5 fields to 1 — ActorAspect's type form, the authored-ahead aspect that stays.
+#
+# MOVED: Value.drake / .json / .scala, DefinitionPath.drake / .json / .scala (the Scala from the
+# compiled engine: a guard renders `(if (c) draco.drake.Present[Unit](()) else draco.drake.Absent
+# [Unit]()).ifThenElse(t, e)`, exactly TypeLoader's spelling), Drake.scala, DracoGenerator.scala,
+# drake.dlt, DRACO.md (exceptions, the loss baseline row), README (tail, residue row, open item),
+# CHANGELOG. No test changes; the count stays at 626.
+#
+# PROBED: Drake, Expression, DracoGenerator compiled against the exported classpath; then the two
+# regenerated Scala files compiled INTO the overlay, so the suites exercised the new Value. The
+# compiled parser swept all three trees: no semantic change beyond the two files and the ActorAspect
+# exclusion; every main type regenerated and diffed (the two files, plus the pre-existing blank-line
+# set). Suites on the compiled classes: DrakeParseTest 223 — losses 1 across 108 [type form 1], scope
+# 98 + 10; DrakeGenTest 107; DracoGenTest 164; org.nexonix.format.json.TestValue 2 (Value's runtime
+# behaviour on the new code); TypeNameTest 6; GenDrakeTest 96 of 96; ScenarioGenTest 5 — all green.
+#
+# RUN: expected 626 tests / 44 suites, all green; ONE HEADLINE MOVES BY DESIGN — "drake surface
+# losses: 1 fields across 108 types [type form (string vs tree): 1]" — every other unchanged.
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# RUN 1 (2026-09-22 08:58): 624 / 2 failed — draco.SourceContractTest, the factored-renderer PROTOTYPE
+# (`ExpressionRenderer` + `ScalaTemplates` / `DrakeTemplates`), whose shared corpus fed an `if` tree to
+# both production renderers and got the unknown-operator error; a suite the probe did not run because
+# nothing I changed named it. The prototype loses its `conditional` slot and its `case "if"`, the corpus
+# its two `if` trees (the nested one is now a lambda over a call). Compiled and run on the probe: 3 / 0.
+# LESSON: a change to a renderer's operator set must run SourceContractTest — it mirrors both renderers.
+#
+# RUN 2: expected 626 tests / 44 suites, all green; losses 1 as above.
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-21-1312 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md README.md CHANGELOG.md draco-git-record/git-record-2026-09-21-1312 && git commit -F /tmp/msg -- src DRACO.md README.md CHANGELOG.md draco-git-record/git-record-2026-09-21-1312 && git push
+
+--- MESSAGE ---
+A conditional is ifThenElse on a Presence, and the if node leaves the tree language
+
+The four conditionals the corpus still carried as host text, Value's two in the Haskell form and
+DefinitionPath's two in Scala's, are `guard(c).ifThenElse(t, e)`, the dispatch form decided on
+2026-09-17 and already treed as a call. Every value in both files is a tree, Value comes off the
+exclusion list and its JSON is re-canonicalized whole, both renderers and drake.dlt drop the `if`
+node that only Value ever carried, and the surface-loss headline falls from five fields to the
+one ActorAspect type form.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

@@ -32,7 +32,11 @@
         {
           "kind": "Parameter",
           "name": "pathElements",
-          "valueType": "Seq[String]"
+          "valueType": {
+            "[]": [
+              "String"
+            ]
+          }
         }
       ],
       "body": [
@@ -45,7 +49,11 @@
         {
           "kind": "Fixed",
           "name": "pathElements",
-          "valueType": "Seq[String]",
+          "valueType": {
+            "[]": [
+              "String"
+            ]
+          },
           "value": "_pathElements"
         },
         {
@@ -70,21 +78,11 @@
                     "()": [
                       {
                         "()": [
-                          {
-                            ".": [
-                              "pathElements",
-                              "foldLeft"
-                            ]
-                          },
+                          "pathElements.foldLeft",
                           {
                             "()": [
                               "Option",
-                              {
-                                ".": [
-                                  "_source",
-                                  "json"
-                                ]
-                              }
+                              "_source.json"
                             ]
                           }
                         ]
@@ -95,40 +93,29 @@
                           "a",
                           {
                             "()": [
-                              {
-                                ".": [
-                                  "e",
-                                  "flatMap"
-                                ]
-                              },
+                              "e.flatMap",
                               {
                                 "\\": [
                                   "j",
                                   {
-                                    "if": [
+                                    "()": [
                                       {
                                         ".": [
-                                          "j",
-                                          "isArray"
+                                          {
+                                            "()": [
+                                              "guard",
+                                              "j.isArray"
+                                            ]
+                                          },
+                                          "ifThenElse"
                                         ]
                                       },
                                       {
                                         ".": [
                                           {
                                             "()": [
-                                              {
-                                                ".": [
-                                                  "j",
-                                                  "hcursor",
-                                                  "downN"
-                                                ]
-                                              },
-                                              {
-                                                ".": [
-                                                  "a",
-                                                  "toInt"
-                                                ]
-                                              }
+                                              "j.hcursor.downN",
+                                              "a.toInt"
                                             ]
                                           },
                                           "focus"
@@ -138,13 +125,7 @@
                                         ".": [
                                           {
                                             "()": [
-                                              {
-                                                ".": [
-                                                  "j",
-                                                  "hcursor",
-                                                  "downField"
-                                                ]
-                                              },
+                                              "j.hcursor.downField",
                                               "a"
                                             ]
                                           },
@@ -170,36 +151,30 @@
               "name": "value",
               "valueType": "T",
               "value": {
-                "if": [
+                "()": [
                   {
-                    "!=": [
-                      "pathValue",
-                      "null"
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "!=": [
+                              "pathValue",
+                              "null"
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
                     ]
                   },
                   {
                     "()": [
-                      {
-                        ".": [
-                          "pathValue",
-                          "as[T]",
-                          "getOrElse"
-                        ]
-                      },
-                      {
-                        ".": [
-                          "null",
-                          "asInstanceOf[T]"
-                        ]
-                      }
+                      "pathValue.as[T].getOrElse",
+                      "null.asInstanceOf[T]"
                     ]
                   },
-                  {
-                    ".": [
-                      "null",
-                      "asInstanceOf[T]"
-                    ]
-                  }
+                  "null.asInstanceOf[T]"
                 ]
               }
             }

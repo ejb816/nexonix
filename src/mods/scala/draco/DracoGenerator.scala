@@ -76,11 +76,11 @@ object DracoGenerator extends App {
     * Haskell form; ScalaTarget renders " => "), "()"
     * (application — first operand applied to the rest), "\" (lambda — Haskell
     * form \p1 p2 -> body: leading operands are parameters, last is the body),
-    * "if" (Haskell form if c then t else e: [cond, then, else]), and the infix
+    * and the infix
     * set ("*", "==", "!=") joining operands with the operator. A string-literal
     * leaf keeps its embedded quotes ("\"Primes\"") and passes through verbatim.
     * This renderer is the ScalaTarget projection: lambda renders (p1, p2) =>
-    * body (bare param when single), if renders if (c) t else e.
+    * body (bare param when single). A conditional is `ifThenElse` on a Presence — a call.
     * Rendering writes the MINIMAL parentheses by SCALA'S precedence (2026-09-21):
     * the tree is already associated, and a pair appears only where Scala would read
     * the flat text differently — `scalaParenthesized` below. */
@@ -104,7 +104,6 @@ object DracoGenerator extends App {
             case "\\"       =>
               val params = if (args.size == 2) args.head else args.init.mkString("(", ", ", ")")
               s"$params => ${args.last}"
-            case "if"       => s"if (${args(0)}) ${args(1)} else ${args(2)}"
             case "="        => s"${args(0)} = ${args(1)}"
             case "(,)"      => args.mkString("(", ", ", ")")
             // The neutral collection literals (drake.dlt VALUE-TYPES, 2026-09-18): the
@@ -141,7 +140,7 @@ object DracoGenerator extends App {
     * is an infix operand in Scala; as the receiver of a path or the head of an application,
     * any of those. Arguments, tuple and literal members, a lambda's body: never. */
   private def scalaParenthesized (parent: String, child: String, index: Int, count: Int) : Boolean = {
-    def clause (op: String) = op == "\\" || op == "->" || op == "if"
+    def clause (op: String) = op == "\\" || op == "->"
     (scalaPrecedence.get(parent), scalaPrecedence.get(child)) match {
       case (Some(p), Some(c)) => c < p || (c == p && index > 0)
       case (Some(_), None)    => clause(child)

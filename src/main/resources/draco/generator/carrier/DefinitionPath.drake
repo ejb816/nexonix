@@ -19,6 +19,6 @@ type DefinitionPath
     parameters
       par roots [URI] []
   globals
-    fix hostRoots [URI] System.getProperty("java.class.path", "").split(java.io.File.pathSeparatorChar).filter(_.nonEmpty).map(\entry -> new java.io.File(entry)).map(\file -> if (file.getName.endsWith(".jar")) URI.create("jar:" + file.toURI.toString + "!/") else URI.create(if (file.toURI.toString.endsWith("/")) file.toURI.toString else file.toURI.toString + "/")).toSeq
+    fix hostRoots [URI] System.getProperty("java.class.path", "").split(java.io.File.pathSeparatorChar).filter(_.nonEmpty).map(\entry -> new java.io.File(entry)).map(\file -> guard(file.getName.endsWith(".jar")).ifThenElse(URI.create("jar:" ++ file.toURI.toString ++ "!/"), URI.create(guard(file.toURI.toString.endsWith("/")).ifThenElse(file.toURI.toString, file.toURI.toString ++ "/")))).toSeq
     fix default DefinitionPath DefinitionPath(hostRoots)
 domain draco generator carrier Carrier

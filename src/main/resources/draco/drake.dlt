@@ -143,8 +143,9 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
     "\"   lambda — HASKELL FORM: leading operands are the parameters, last is the body.
           drake surface \e a -> body ; ScalaTarget renders (e, a) => body (bare param when single).
           The tree carries no arrow token — structure separates params from body.
-    "if"  conditional — HASKELL FORM: [cond, then, else]. drake surface if c then t else e ;
-          ScalaTarget renders if (c) t else e.
+    (no "if" node: a CONDITIONAL is `ifThenElse` on a Presence — `guard(c).ifThenElse(t, e)`, a call
+          like any other, both branches by need. The Haskell-form node Value once carried retired
+          2026-09-21 with its last two uses.)
     "++"  CONCATENATION — HASKELL FORM; FLAT VARIADIC (associative): one node holds every piece in
           order, string literals interleaved with names and applications — the neutral form of a
           SUBSTITUTION STRING ({"++": ["\"domain \"", {"()": ["packagePart","package"]}, "\" \"", "name"]}).
@@ -179,11 +180,11 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
                        chosen over an invented infix (`+|+`) because a name carries its meaning in and
                        costs no reservation or fixity entry. (2026-09-11)
     (further operators arrive with corpus conversion, each declared before use)
-  HASKELL-FORM SURFACE — drake adopts Haskell's syntactic forms for value-expression
-  constructs (\ lambda, if-then-else); the tree is form-neutral and each generator transform
-  (GenScala, GenDrake, …) renders its own spelling (ScalaTarget shown above). Host-bound vocabulary inside
-  a construct (null, asInstanceOf, hcursor) stays verbatim — form is drake's, atoms may
-  be the target's. First exemplar: Value.drake's dyn value (lambdas + if-then-else).
+  HASKELL-FORM SURFACE — drake adopts Haskell's syntactic form for the lambda (\p1 p2 -> body); the
+  tree is form-neutral and each generator transform (GenScala, GenDrake, …) renders its own spelling
+  (ScalaTarget shown above). Host-bound vocabulary inside a construct (null, asInstanceOf, hcursor)
+  stays verbatim — form is drake's, atoms may be the target's. Exemplar: Value.drake's dyn value
+  (lambdas over `guard(…).ifThenElse(…)`).
   FIXITY lives ONLY at the drake surface: a JSON tree is already associated, so precedence
   and associativity are pure parse/print concerns. THE OPERATOR LAYER (parser, 2026-09-21): a
   value's token run is split FLAT at every operator in the table above and reassociated by
@@ -205,7 +206,7 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
   sketched here: application by juxtaposition, `(op)` as a value, `name` infix.
   RENDERING (procedural Generator, current): Generator.expression renders a tree back to
   its Scala surface — "." dot-joins, every infix operator joins with its spaced symbol, "->"
-  joins with " => ", "()" applies, "\" and "if" render their Scala spellings — with the
+  joins with " => ", "()" applies, "\" renders its Scala spelling — with the
   MINIMAL parentheses by Scala's own precedence (2026-09-21). A tree in a String-typed slot
   renders as a string literal: the slot's runtime type is String, so the tree denotes its
   surface text (TypeElement's own valueType field is the exemplar). TypeElement.value is

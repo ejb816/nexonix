@@ -14,7 +14,7 @@ import io.circe.Json
   * expression slots are nearly identical to Drake's (arrow `->`, `if…then…else`, `\…->`),
   * so the expression layer costs almost nothing for Haskell.
   *
-  * FINDING (the honest boundary): `arrow` and `conditional` reduce to pure substitution
+  * FINDING (the honest boundary): `arrow` reduces (and `conditional` did, until the `if` node retired 2026-09-21: a conditional is `ifThenElse` on a Presence, a call) to pure substitution
   * strings; `lambda` does NOT — Scala's "bare param when single, else parenthesise"
   * rule is structural logic, not a template. This is the same structural-vs-surface
   * seam that shows up larger at the declaration layer (trait+companion vs typeclass).
@@ -23,9 +23,6 @@ import io.circe.Json
 trait SourceTemplates {
   /** Infix token joining the operands of an `->` (function/type arrow) node. */
   def arrow: String
-
-  /** Render an `if` node. Pure template: Scala `if (c) t else e`, drake `if c then t else e`. */
-  def conditional (cond: String, thenBranch: String, elseBranch: String) : String
 
   /** Render a `\` (lambda) node from its already-rendered params and body. Resists
     * pure templating: Scala parenthesises a multi-param list but not a single param. */
@@ -55,7 +52,6 @@ object ExpressionRenderer {
             case "="        => s"${args(0)} = ${args(1)}"
             case "*" | "==" | "!=" => args.mkString(s" $op ")
             case "->"       => args.mkString(t.arrow)
-            case "if"       => t.conditional(args(0), args(1), args(2))
             case "[]" | "{}" => t.collection(op, args)
             case "\\"       => t.lambda(args.init, args.last)
             case _          => sys.error(s"ExpressionRenderer: unknown operator '$op' in ${value.noSpaces}")
@@ -69,8 +65,6 @@ object ExpressionRenderer {
 /** Scala token set — reproduces `DracoGenerator.expression`. */
 object ScalaTemplates extends SourceTemplates {
   val arrow: String = " => "
-  def conditional (cond: String, thenBranch: String, elseBranch: String) : String =
-    s"if ($cond) $thenBranch else $elseBranch"
   def lambda (params: Seq[String], body: String) : String = {
     val rendered = if (params.size == 1) params.head else params.mkString("(", ", ", ")")
     s"$rendered => $body"
@@ -84,8 +78,6 @@ object ScalaTemplates extends SourceTemplates {
 /** Drake token set — reproduces `Drake.expression`. */
 object DrakeTemplates extends SourceTemplates {
   val arrow: String = " -> "
-  def conditional (cond: String, thenBranch: String, elseBranch: String) : String =
-    s"if $cond then $thenBranch else $elseBranch"
   def lambda (params: Seq[String], body: String) : String =
     s"\\${params.mkString(" ")} -> $body"
   def collection (bracket: String, elements: Seq[String]) : String =

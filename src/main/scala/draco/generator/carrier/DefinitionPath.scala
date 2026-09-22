@@ -33,6 +33,6 @@ object DefinitionPath extends App with DracoType {
 
   lazy val Null: DefinitionPath = apply()
 
-  lazy val hostRoots: Seq[URI] = System.getProperty("java.class.path", "").split(java.io.File.pathSeparatorChar).filter(_.nonEmpty).map(entry => new java.io.File(entry)).map(file => if (file.getName.endsWith(".jar")) URI.create("jar:" + file.toURI.toString + "!/") else URI.create(if (file.toURI.toString.endsWith("/")) file.toURI.toString else file.toURI.toString + "/")).toSeq
+  lazy val hostRoots: Seq[URI] = System.getProperty("java.class.path", "").split(java.io.File.pathSeparatorChar).filter(_.nonEmpty).map(entry => new java.io.File(entry)).map(file => (if (file.getName.endsWith(".jar")) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(URI.create("jar:" ++ file.toURI.toString ++ "!/"), URI.create((if (file.toURI.toString.endsWith("/")) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(file.toURI.toString, file.toURI.toString ++ "/")))).toSeq
   lazy val default: DefinitionPath = DefinitionPath(hostRoots)
 }

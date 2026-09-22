@@ -76,7 +76,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 5 fields across 108 types — type form 3 (ActorAspect and format/json/Value, the standing exclusions), expression form 2 (format/json/Value, GitHub #61) (measured at `550a14e`) |
+| `DrakeParseTest` | drake surface losses | 1 field across 108 types — type form 1 (ActorAspect, the standing exclusion); expression form 0 since the last conditionals became `guard(c).ifThenElse(t, e)` (measured 2026-09-21, after `309ea4d`) |
 | `DrakeParseTest` | Drake.parse scope | 98 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
@@ -274,8 +274,8 @@ holding an expression the parser reads DISSOLVES into its tree, and each rendere
 minimal pair by its own target's fixity (2026-09-21) — so an authored redundant pair does not survive
 re-canonicalization. `=>` is never a drake token: it is the Scala target's spelling of the lambda node. The JSON corpus is re-canonicalized from the drake after each parser step (`DrakeCLI parse
 X.drake > X.json` with the compiled parser; 2026-09-16 for calls, 2026-09-17 for type forms, 2026-09-21 for operators and lambdas), with
-three deliberate exceptions: BodyElement and ActorAspect (authored-ahead aspects) and
-format/json/Value (its `if … then … else`, which the parser does not tree). Parse is a measurement tool, not
+two deliberate exceptions: BodyElement and ActorAspect (authored-ahead aspects); format/json/Value
+came off the list on 2026-09-21 when its conditionals became `guard(c).ifThenElse(t, e)`. Parse is a measurement tool, not
 yet an authoring path (GitHub #61).
 
 **Tiers.** `src/main/scala` is definition-backed. `src/mods/scala` compiles into the same

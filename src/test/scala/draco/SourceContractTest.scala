@@ -22,12 +22,11 @@ class SourceContractTest extends AnyFunSuite {
     op("()", s("f"), s("x"), s("y")),
     op("\\", s("x"), op("()", s("f"), s("x"))),                         // single param
     op("\\", s("x"), s("y"), op("()", s("g"), s("x"), s("y"))),         // multi param
-    op("if", s("cond"), s("thenV"), s("elseV")),
     op("(,)", s("k"), s("v")),
     op("*", s("a"), s("b")),
     op("==", s("x"), s("y")),
     op("!=", s("x"), s("y")),
-    op("()", s("f"), op("\\", s("j"), op("if", s("cond"), s("j"), s("k")))),  // nested
+    op("()", s("f"), op("\\", s("j"), op("()", s("g"), s("j"), s("k")))),      // nested: a lambda over a call
     op("[]"),                                                           // empty sequence literal
     op("[]", s("a"), s("b")),                                           // sequence literal
     op("{}", s("a")),                                                   // set literal

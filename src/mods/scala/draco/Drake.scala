@@ -20,7 +20,7 @@ object Drake {
   //
   // Where DracoGenerator.expression renders a value tree to Scala's spelling, the
   // expression() below renders the same tree to its drake surface (Haskell forms —
-  // \ lambda, if-then-else, -> arrow). emit() writes the drake.dlt TEMPLATE: bare
+  // \ lambda, -> arrow). emit() writes the drake.dlt TEMPLATE: bare
   // `factory`, `globals` keyword, keyword blocks unbracketed with brackets on the
   // OPENER (a dyn-with-body delimits its own body), `from` omitted when the
   // derivation is DracoType alone. Covers the plain-type template + the rule and
@@ -29,8 +29,7 @@ object Drake {
   /** Render a TypeElement `value` to its drake surface form. Same tree contract
     * as DracoGenerator.expression: a string is host-opaque source text passed through
     * verbatim; {op: [operands]} applies the operator. Haskell-form spellings:
-    * "->" renders " -> ", "\" renders \p1 p2 -> body, "if" renders
-    * if c then t else e. A tree in a String-typed slot needs no quoting here —
+    * "->" renders " -> ", "\" renders \p1 p2 -> body. A tree in a String-typed slot needs no quoting here —
     * the drake surface carries the expression itself (Action.drake's unquoted
     * arrow), quoting is the ScalaTarget projection's concern.
     *
@@ -58,7 +57,8 @@ object Drake {
             case "->"       => args.mkString(" -> ")
             case "()"       => s"${args.head}(${args.tail.mkString(", ")})"
             case "\\"       => s"\\${args.init.mkString(" ")} -> ${args.last}"
-            case "if"       => s"if ${args(0)} then ${args(1)} else ${args(2)}"
+            // no "if": a conditional is `ifThenElse` on a Presence, a call like any other
+            // (retired from the tree language 2026-09-21 with Value's last two)
             case "(,)"      => args.mkString("(", ", ", ")")
             case "[]"       => args.mkString("[", ", ", "]")   // a sequence literal, `[]` when empty
             case "{}"       => args.mkString("{", ", ", "}")   // a set literal
@@ -77,10 +77,10 @@ object Drake {
     * the DRAKE surface — by drake's own fixity table, since the parse reads it back by the
     * same table. Under an infix parent: a looser child always; an equally tight child on
     * the side its associativity does not cover (left-grouping: any but the first; right-
-    * grouping: any but the last; non-associative: either); a lambda or conditional only
-    * when something follows it, since otherwise it runs to the end as the arrow's fixity
-    * says. Under a path or an application: the receiver or head when it is any of those.
-    * Arguments, tuple and literal members, a lambda's own body: never. */
+    * grouping: any but the last; non-associative: either); a lambda only when something
+    * follows it, since otherwise it runs to the end as the arrow's fixity says. Under a
+    * path or an application: the receiver or head when it is any of those. Arguments,
+    * tuple and literal members, a lambda's own body: never. */
   private def parenthesized (parent: String, child: String, index: Int, count: Int) : Boolean =
     (fixity.get(parent), fixity.get(child)) match {
       case (Some(p), Some(c)) =>
@@ -90,9 +90,9 @@ object Drake {
             case 'r' => index < count - 1
             case _   => true
           }))
-      case (Some(_), None) => (child == "\\" || child == "if") && index < count - 1
+      case (Some(_), None) => child == "\\" && index < count - 1
       case (None, _)       => (parent == "." || parent == "()") && index == 0 &&
-                                (fixity.contains(child) || child == "\\" || child == "if")
+                                (fixity.contains(child) || child == "\\")
     }
 
   /** Render a value into the slot after `prefix`, on ONE line. Every value form — a

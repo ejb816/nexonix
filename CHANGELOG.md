@@ -178,6 +178,13 @@ for the definition that will replace it.
 
 ### Changed
 
+- **A conditional is `ifThenElse` on a Presence; the `if` node leaves the tree language.** The four
+  conditionals the corpus still carried as host text — Value's two in the Haskell form, DefinitionPath's
+  two in Scala's — are `guard(c).ifThenElse(t, e)`, the dispatch form decided on 2026-09-17, so every
+  value in both files is a tree and Value comes off the exclusion list. Both renderers and drake.dlt drop
+  the `if` node, which only Value ever carried, as does the factored-renderer prototype's contract test.
+  The surface-loss headline falls from five fields to the one ActorAspect type form. (2026-09-21)
+
 - **A parenthesized sub-expression dissolves into its tree; each renderer writes the minimal pair.**
   A `( )` group holding one expression the parser reads is that expression's tree — the pair is not
   information once the tree is associated — and a group the parser reads as a leaf keeps its

@@ -188,8 +188,8 @@ carries `now`, the strictness override (see *Evaluation* below).
 
 The tree form is the direction of travel: a tree is projectable into any target, a string
 is only meaningful to the one it was written for. Calls, tuples, concatenations, collection literals
-every type, infix operators, lambdas and parenthesized sub-expressions are trees; conditionals
-and blocks are the remaining host-opaque tail.
+every type, infix operators, lambdas and parenthesized sub-expressions are trees, and a
+conditional is a call on a Presence; blocks are the remaining host-opaque tail.
 
 ### Definitions, surfaces, and targets
 
@@ -418,7 +418,7 @@ that becomes feasible; this list exists so the leaks are visible rather than ass
 | Residue | Where | What neutral would look like |
 |---|---|---|
 | **[scala]** Strictness forced by the host | evaluation is lazy by default in the definition, but a method that meets a host signature or is passed as a function value must be marked `now` | a projection that can defer everything, so `now` is only ever the author's choice |
-| **[scala]** Host-opaque value strings | conditionals, blocks and typed binders in element `value`s are still target source text | trees for the forms drake has no surface for yet — a conditional is `ifThenElse` on a Presence, a block is still to be designed (GitHub #61) |
+| **[scala]** Host-opaque value strings | blocks and typed binders in element `value`s are still target source text | trees for the forms drake has no surface for yet — a conditional is `ifThenElse` on a Presence, a block is still to be designed (GitHub #61) |
 | **[scala]** Codec realization | `CodecAspect` is neutral (a discriminator), but codec derivation is expressed in one host library's encoder/decoder pair | a serialization capability domain, projected per target |
 | **[scala]** Rule-evaluation binding | conditions are compiled by the host rule engine at runtime, requiring fully qualified names, and working memory boxes primitives | `draco.rete` as a capability domain expressing evaluation *discipline*, not one engine's configuration |
 | **[scala]** Actor behaviour binding | an actor's parameters are neutral (`(M -> Unit)`) and the assembly holds the host's references, but the minted actor's template is a host actor library's behaviour | an actor capability domain — the host library integrated through drake definitions with implementations in the Scala target |
@@ -478,8 +478,8 @@ The backlog is [GitHub Issues](https://github.com/ejb816/nexonix/issues). Larger
 directions:
 
 - **Expression grammar** — infix operators, lambdas and parenthesized sub-expressions parse to
-  trees since 2026-09-21, and each renderer writes the minimal pair by its target's fixity; what
-  remains is the conditional inside DefinitionPath's lambdas and the block bodies
+  trees since 2026-09-21, each renderer writes the minimal pair by its target's fixity, and the
+  last conditionals became `guard(c).ifThenElse(t, e)`; what remains is the block bodies
   (DerivationResolvable's condition, TypeLoader's source read).
 - **The leaves** — the host's names for the primitives and the rule-engine and actor-library types,
   the last host residue in the corpus, each needing a draco-owned or wrap form.

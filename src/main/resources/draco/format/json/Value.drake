@@ -10,7 +10,7 @@ type Value from draco format Value(JSON)
         parameters
           par _source JSON
         body
-          loc pathValue Json pathElements.foldLeft(Option(_source.json))(\e a -> e.flatMap(\j -> if j.isArray then j.hcursor.downN(a.toInt).focus else j.hcursor.downField(a).focus)).orNull
-          fix value T if pathValue != null then pathValue.as[T].getOrElse(null.asInstanceOf[T]) else null.asInstanceOf[T]
+          loc pathValue Json pathElements.foldLeft(Option(_source.json))(\e a -> e.flatMap(\j -> guard(j.isArray).ifThenElse(j.hcursor.downN(a.toInt).focus, j.hcursor.downField(a).focus))).orNull
+          fix value T guard(pathValue != null).ifThenElse(pathValue.as[T].getOrElse(null.asInstanceOf[T]), null.asInstanceOf[T])
       ]
 domain draco format json JSON
