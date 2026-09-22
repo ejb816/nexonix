@@ -37,7 +37,53 @@
             "value": {
               "()": [
                 "presence",
-                "Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() }"
+                {
+                  "()": [
+                    "bracket",
+                    {
+                      "()": [
+                        "scala.io.Source.fromURL",
+                        "url"
+                      ]
+                    },
+                    {
+                      "\\": [
+                        "s",
+                        {
+                          "()": [
+                            "s.close"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "\\": [
+                        "s",
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                {
+                                  ".": [
+                                    {
+                                      "()": [
+                                        "io.circe.parser.parse",
+                                        "s.mkString"
+                                      ]
+                                    },
+                                    "flatMap"
+                                  ]
+                                },
+                                "_.as[TypeDefinition]"
+                              ]
+                            },
+                            "toOption"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
               ]
             }
           }
@@ -246,6 +292,64 @@
                   ]
                 },
                 "rooted"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "isStub",
+        "valueType": "Boolean",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "TypeName"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Local",
+            "name": "td",
+            "valueType": "TypeDefinition",
+            "value": {
+              "()": [
+                "loadType",
+                "typeName"
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Boolean",
+            "value": {
+              "&&": [
+                {
+                  "()": [
+                    "DracoAspect.isEmpty",
+                    "td.dracoAspect"
+                  ]
+                },
+                {
+                  "()": [
+                    "DomainAspect.isEmpty",
+                    "td.domainAspect"
+                  ]
+                },
+                {
+                  "()": [
+                    "RuleAspect.isEmpty",
+                    "td.ruleAspect"
+                  ]
+                },
+                {
+                  "()": [
+                    "ActorAspect.isEmpty",
+                    "td.actorAspect"
+                  ]
+                }
               ]
             }
           }

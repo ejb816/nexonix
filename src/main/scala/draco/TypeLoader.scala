@@ -11,7 +11,7 @@ object TypeLoader extends App with DracoType {
   lazy val dracoType: Type[TypeLoader] = Type[TypeLoader] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
-  def readDefinition(url: URL): draco.drake.Presence[TypeDefinition] = (Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() } match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
+  def readDefinition(url: URL): draco.drake.Presence[TypeDefinition] = ({ val s = scala.io.Source.fromURL(url); try io.circe.parser.parse(s.mkString).flatMap(_.as[TypeDefinition]).toOption finally s.close() } match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
   def loadFromResource(_resourcePath: => String): draco.drake.Presence[TypeDefinition] = {
     lazy val resourcePath: String = _resourcePath
     draco.generator.carrier.DefinitionPath.default.source(resourcePath).fold(draco.drake.Absent(), readDefinition)
@@ -24,5 +24,10 @@ object TypeLoader extends App with DracoType {
   def loadType(_typeName: => TypeName): TypeDefinition = {
     lazy val typeName: TypeName = _typeName
     tryLoad(typeName).fold(TypeDefinition(typeName), rooted)
+  }
+  def isStub(_typeName: => TypeName): Boolean = {
+    lazy val typeName: TypeName = _typeName
+    lazy val td: TypeDefinition = loadType(typeName)
+    DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect)
   }
 }

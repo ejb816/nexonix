@@ -178,6 +178,14 @@ for the definition that will replace it.
 
 ### Changed
 
+- **`bracket` is a declared symbol, and no expression form in the corpus is host-opaque.** A resource
+  scope is `bracket(acquire, release, use)`, Haskell's Control.Exception.bracket, a call on the surface
+  with two lambdas over the resource; the Scala target spells it as the block an author writes, the
+  resource bound to `use`'s parameter under `try`, the release under `finally`. TypeLoader's source
+  read is that call, and DerivationResolvable's condition calls a new `TypeLoader.isStub`, the local
+  binding it held as a block now a dyn-with-body. Every value in both corpora is a tree down to its
+  leaves. (2026-09-22)
+
 - **A conditional is `ifThenElse` on a Presence; the `if` node leaves the tree language.** The four
   conditionals the corpus still carried as host text — Value's two in the Haskell form, DefinitionPath's
   two in Scala's — are `guard(c).ifThenElse(t, e)`, the dispatch form decided on 2026-09-17, so every

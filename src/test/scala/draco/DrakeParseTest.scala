@@ -413,6 +413,35 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     assert(scala("lambda") == "(x => x.isEmpty) && d", scala("lambda"))
   }
 
+  // --- bracket: a resource scope as application, spelled per target ---
+  //
+  // `bracket(acquire, release, use)` is Haskell's Control.Exception.bracket, a declared symbol
+  // (drake.dlt DECLARED NAMES, 2026-09-22): the resource scope is a CALL on the surface, its two
+  // lambdas over the resource, and nothing here is a block. The Scala target spells the block
+  // an author writes, the resource bound to `use`'s parameter — and binds a release parameter
+  // named otherwise inside the finally. The tree, the round trip, and both spellings.
+
+  test("bracket: a resource scope is a call, and the Scala target spells it as try/finally") {
+    val authored =
+      """type Scoped
+        |  elements
+        |    fix text String bracket(open(path), \s -> close(s), \s -> s.read)
+        |    fix renamed String bracket(open(path), \r -> close(r), \s -> s.read)
+        |domain draco Draco
+        |""".stripMargin
+    val parsed = Drake.parse(authored)
+    val values = parsed.dracoAspect.elements.map(e => e.name -> e.value).toMap
+    def leaf(s: String) = Json.fromString(s)
+    def node(op: String, xs: Json*) = Json.obj(op -> Json.arr(xs: _*))
+    assert(values("text") == node("()", leaf("bracket"), node("()", leaf("open"), leaf("path")),
+      node("\\", leaf("s"), node("()", leaf("close"), leaf("s"))), node("\\", leaf("s"), leaf("s.read"))), values("text").noSpaces)
+    val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
+    if (handNorm != roundNorm) fail("bracket surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
+    assert(DracoGenerator.expression(values("text")) == "{ val s = open(path); try s.read finally close(s) }", DracoGenerator.expression(values("text")))
+    assert(DracoGenerator.expression(values("renamed")) == "{ val s = open(path); try s.read finally { val r = s; close(r) } }", DracoGenerator.expression(values("renamed")))
+    assert(Expression.rootNames(values("text")) == Set("bracket", "open", "path", "close"), Expression.rootNames(values("text")).toString)
+  }
+
   // --- Type forms, asserted structurally ---
   //
   // A value type parses to a TYPE-FORM TREE (drake.dlt VALUE-TYPES): the four forms in

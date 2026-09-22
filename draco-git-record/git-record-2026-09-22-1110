@@ -1,0 +1,61 @@
+# bracket is a declared symbol, and no expression form in the corpus is host-opaque — Dev, 2026-09-22
+# ("Is there Haskell equivalent to scala.util.Using and would drake need a new syntactic form for it?"
+# … "Yes, accept bracket given the Generator can use it for multiple target languages and not add any
+# more host names to drake"). On 0dc4900 (626 / 44 green). GitHub #61.
+#
+# ONE CONCEPT: the two blocks left in the corpus were different things in the same braces. Derivation
+# Resolvable's condition BOUND a name to reuse it — a `let`, which drake already has as the dyn-with-
+# body: it is now `TypeLoader.isStub(anc)`, a global dyn with one `loc` and a `value` (the name is mine,
+# after DRACO.md's "typeName-only stub"; Dev's to rename), and the condition is a lambda over a
+# conjunction with a call, treed whole. TypeLoader's source read was a RESOURCE SCOPE — open, read,
+# close whatever happens — which in Haskell is `bracket acquire release use`, a FUNCTION, not syntax.
+# So drake gains one declared symbol, beside presence / guard / join, in Haskell's name and argument
+# order, and no form. The ScalaTarget spells it from the TREES (not the rendered arguments) as the
+# block an author writes — `{ val s = acquire; try <use body> finally <release body> }` — the
+# resource bound to the `use` lambda's parameter, a release parameter named otherwise bound inside the
+# finally, a non-lambda applied to the resource. The close-on-failure guarantee lives in the target's
+# `finally` as it lives inside Haskell's function; nothing on the surface is a block. The null guard
+# (`Option(url).flatMap`) went with it: readDefinition's only caller folds a Presence(URL), so the url
+# is never null. RESULT: every value in both corpora is a tree down to its leaves; what stays host-
+# spelled is the leaves (String, Int, Json, URL, fromURL, circe, evrete, pekko) and a lambda's typed
+# binder `(x: T)`, carried as the leaf it is.
+#
+# MOVED: DracoGenerator.render — the `bracket` case before the symbol table, `bracketBlock`; drake.dlt
+# DECLARED NAMES; TypeLoader.drake / .json / .scala (readDefinition, and isStub after loadType);
+# DerivationResolvable.drake / .json / .scala (w0 is one line); DrakeParseTest — one test: the tree,
+# the round trip, both Scala spellings (same-named and renamed release), the bound parameter absent
+# from rootNames (627); DRACO.md baseline; README tail, residue row, open item; CHANGELOG.
+#
+# GOTCHA MET: a local `def lambda1` inside DracoGenerator crashed scalac at the jvm phase ("assertion
+# failed: DracoGenerator$$anonfun$lambda1$1$1") — the name collides with the compiler's synthetic
+# lambda naming. Renamed `unary`. The probe caught it; the first partial overlay had rendered `bracket`
+# as a bare call, which is what a stale engine does with an unknown symbol.
+#
+# PROBED: Drake, Expression, DracoGenerator, SourceContract compiled; the compiled parser swept all three
+# trees (only the two files moved, plus ActorAspect's standing exclusion); every main type regenerated
+# and diffed (the two files, plus the pre-existing blank-line set); TypeLoader.scala and Derivation
+# Resolvable.scala compiled INTO the overlay, so every suite below loaded its definitions through the
+# new readDefinition. Suites on the compiled classes: DrakeParseTest 224 — losses 1 [type form 1],
+# scope 98 + 10; DrakeGenTest 107; DracoGenTest 164; SourceContractTest 3; DerivationResolvableRulesTest
+# 2; FoundationValidationTest 2; CompletenessRulesTest 2; TypeNameTest 6; TestValue 2; GenDrakeTest 96
+# of 96; ScenarioGenTest 5; PrimesRulesTest 6 — all green.
+#
+# RUN: expected 627 tests / 44 suites, all green; every headline unchanged (losses 1).
+#
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+#
+# COMMIT (after the run is green):
+#   cd /Users/edwardburke/IdeaProjects/nexonix && sed -n "/^--- MESSAGE ---$/,\$p" draco-git-record/git-record-2026-09-22-1110 | sed '1d' > /tmp/msg && git add -A -- src DRACO.md README.md CHANGELOG.md draco-git-record/git-record-2026-09-22-1110 && git commit -F /tmp/msg -- src DRACO.md README.md CHANGELOG.md draco-git-record/git-record-2026-09-22-1110 && git push
+
+--- MESSAGE ---
+bracket is a declared symbol, and no expression form in the corpus is host-opaque
+
+A resource scope is `bracket(acquire, release, use)`, Haskell's function in Haskell's argument
+order, a call on the surface with two lambdas over the resource; the Scala target spells it as the
+block an author writes, the resource bound to the use lambda's parameter under try, the release
+under finally, so the guarantee lives in the target as it lives inside Haskell's function.
+TypeLoader's source read is that call, and DerivationResolvable's condition calls the new
+`TypeLoader.isStub`, the binding it held as a block now a dyn-with-body. Every value in both
+corpora is a tree down to its leaves.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

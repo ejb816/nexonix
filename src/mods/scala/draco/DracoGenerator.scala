@@ -96,6 +96,9 @@ object DracoGenerator extends App {
           val text = op match {
             case "."        => args.mkString(".")
             case "->"       => args.mkString(" => ")
+            // `bracket` (drake.dlt DECLARED NAMES, 2026-09-22) is spelled from the TREES, not the
+            // rendered arguments: the resource is bound to the `use` lambda's parameter.
+            case "()" if all.head == Json.fromString("bracket") && all.size == 4 => bracketBlock(all(1), all(2), all(3))
             case "()"       =>
               scalaSymbols.get(args.head) match {
                 case Some(spell) => spell(args.tail)
@@ -119,6 +122,24 @@ object DracoGenerator extends App {
         case _ => sys.error(s"DracoGenerator.expression: unrenderable value ${value.noSpaces}")
       }
     }
+  }
+
+  /** `bracket(acquire, release, use)` — Haskell's Control.Exception.bracket — spelled as the
+    * block a Scala author writes: the resource bound to the `use` lambda's parameter, its body
+    * under `try`, the `release` body under `finally`. A `release` whose parameter is named
+    * otherwise is bound inside the finally; a `use` or `release` that is not a one-parameter
+    * lambda is applied to the resource. The guarantee lives in the target's `finally`, as it
+    * lives inside Haskell's function: nothing on the drake surface is a block. */
+  private def bracketBlock (acquire: Json, release: Json, use: Json) : String = {
+    def unary (v: Json) : Option[(String, Json)] =
+      Expression.node(v).collect { case ("\\", Vector(p, body)) if p.asString.exists(_.nonEmpty) => (p.asString.get, body) }
+    val resource = unary(use).map(_._1).getOrElse("resource")
+    def applied (v: Json) : String = unary(v) match {
+      case Some((p, body)) if p == resource => expression(body)
+      case Some((p, body))                  => s"{ val $p = $resource; ${expression(body)} }"
+      case None                             => s"${expression(v)}($resource)"
+    }
+    s"{ val $resource = ${expression(acquire)}; try ${applied(use)} finally ${applied(release)} }"
   }
 
   /** Scala's precedence for the infix operators the tree language declares — by the

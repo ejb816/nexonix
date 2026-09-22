@@ -179,6 +179,15 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
                        `splice` (means insertion in JS/Perl) as the name every target's reader knows;
                        chosen over an invented infix (`+|+`) because a name carries its meaning in and
                        costs no reservation or fixity entry. (2026-09-11)
+    bracket <acquire> <release> <use>   Haskell's Control.Exception.bracket (2026-09-22): acquire a resource, hand
+                       it to `use`, and run `release` on it whatever `use` does — the RESOURCE SCOPE as application,
+                       no block on the surface. `use` and `release` are lambdas over the resource. ScalaTarget spells
+                       the block an author writes, the resource bound to `use`'s parameter: `{ val s = acquire; try
+                       <use body> finally <release body> }` (a release parameter named otherwise is bound inside the
+                       finally). The one use: TypeLoader.readDefinition, `presence(bracket(scala.io.Source.fromURL(url),
+                       \s -> s.close(), \s -> io.circe.parser.parse(s.mkString).flatMap(_.as[TypeDefinition]).toOption))`.
+                       Chosen because the Generator can spell it for every target and it adds no host name to drake
+                       (Dev, 2026-09-22).
     (further operators arrive with corpus conversion, each declared before use)
   HASKELL-FORM SURFACE — drake adopts Haskell's syntactic form for the lambda (\p1 p2 -> body); the
   tree is form-neutral and each generator transform (GenScala, GenDrake, …) renders its own spelling

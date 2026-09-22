@@ -39,7 +39,27 @@
                   "exists"
                 ]
               },
-              "anc => anc.namePackage.headOption.contains(\"draco\") && { val a = draco.TypeLoader.loadType(anc); draco.DracoAspect.isEmpty(a.dracoAspect) && draco.DomainAspect.isEmpty(a.domainAspect) && draco.RuleAspect.isEmpty(a.ruleAspect) && draco.ActorAspect.isEmpty(a.actorAspect) }"
+              {
+                "\\": [
+                  "anc",
+                  {
+                    "&&": [
+                      {
+                        "()": [
+                          "anc.namePackage.headOption.contains",
+                          "\"draco\""
+                        ]
+                      },
+                      {
+                        "()": [
+                          "draco.TypeLoader.isStub",
+                          "anc"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
             ]
           }
         }

@@ -4,7 +4,7 @@ type TypeLoader
       parameters
         now par url URL
       body
-        fix value draco.drake.Presence(TypeDefinition) presence(Option(url).flatMap { u => val source = scala.io.Source.fromURL(u); try io.circe.parser.parse(source.mkString).flatMap(_.as[TypeDefinition]).toOption finally source.close() })
+        fix value draco.drake.Presence(TypeDefinition) presence(bracket(scala.io.Source.fromURL(url), \s -> s.close(), \s -> io.circe.parser.parse(s.mkString).flatMap(_.as[TypeDefinition]).toOption))
     ]
     dyn loadFromResource draco.drake.Presence(TypeDefinition) [
       parameters
@@ -29,5 +29,12 @@ type TypeLoader
         par typeName TypeName
       body
         fix value TypeDefinition tryLoad(typeName).fold(TypeDefinition(typeName), rooted)
+    ]
+    dyn isStub Boolean [
+      parameters
+        par typeName TypeName
+      body
+        loc td TypeDefinition loadType(typeName)
+        fix value Boolean DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect)
     ]
 domain draco Draco

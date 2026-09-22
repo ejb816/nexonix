@@ -47,7 +47,7 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **626 tests / 44
+**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **627 tests / 44
 suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -64,7 +64,8 @@ four type forms (2026-09-17); then one for the header's type parameters (2026-09
 test for `now` (2026-09-17); then a `PresenceTest` test that a Present never evaluates `fold`'s default
 (2026-09-18); then one that a factory argument is evaluated on first read and never if unused
 (2026-09-18); then one that `ifThenElse` never evaluates the branch not taken (2026-09-20); then one `DrakeParseTest` test for the operator layer and the lambda
-(2026-09-21); then one for the parenthesized sub-expression and the minimal pair (2026-09-21) — **626 tests / 44 suites**. These
+(2026-09-21); then one for the parenthesized sub-expression and the minimal pair (2026-09-21); then one for `bracket`
+(2026-09-22) — **627 tests / 44 suites**. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
