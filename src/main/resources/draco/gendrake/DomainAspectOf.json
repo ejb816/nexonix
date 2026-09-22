@@ -1,0 +1,202 @@
+{
+  "typeName": {
+    "name": "DomainAspectOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DomainAspectText",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DomainAspectOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "parameterText",
+          "valueType": {
+            "->": [
+              "Json",
+              "draco.drake.Text"
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "definition",
+          "valueType": "TypeDefinition",
+          "value": "_definition"
+        },
+        {
+          "kind": "Local",
+          "name": "parameterText",
+          "valueType": {
+            "->": [
+              "Json",
+              "draco.drake.Text"
+            ]
+          },
+          "value": "_parameterText"
+        },
+        {
+          "kind": "Local",
+          "name": "reference",
+          "valueType": {
+            "->": [
+              "TypeName",
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "name",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "name.name.isEmpty"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  "\"\"",
+                  {
+                    "()": [
+                      "join",
+                      "\" \"",
+                      {
+                        "++": [
+                          "name.namePackage",
+                          {
+                            "[]": [
+                              {
+                                "++": [
+                                  "name.name",
+                                  {
+                                    "()": [
+                                      {
+                                        ".": [
+                                          {
+                                            "()": [
+                                              "guard",
+                                              "name.typeParameters.isEmpty"
+                                            ]
+                                          },
+                                          "ifThenElse"
+                                        ]
+                                      },
+                                      "\"\"",
+                                      {
+                                        "++": [
+                                          "\"(\"",
+                                          {
+                                            "()": [
+                                              "join",
+                                              "\", \"",
+                                              {
+                                                "()": [
+                                                  "name.typeParameters.map",
+                                                  "parameterText"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          "\")\""
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "aspect",
+          "valueType": "DomainAspect",
+          "value": "definition.domainAspect"
+        },
+        {
+          "kind": "Local",
+          "name": "rendered",
+          "valueType": "DomainAspectText",
+          "value": {
+            "()": [
+              "DomainAspectText",
+              {
+                "()": [
+                  "reference",
+                  "aspect.typeName"
+                ]
+              },
+              {
+                "()": [
+                  "reference",
+                  "definition.dracoAspect.superDomain"
+                ]
+              },
+              {
+                "()": [
+                  "reference",
+                  "aspect.source"
+                ]
+              },
+              {
+                "()": [
+                  "reference",
+                  "aspect.target"
+                ]
+              },
+              "aspect.elementTypeNames",
+              "definition.typeName.name.isEmpty"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "draco.drake.Text",
+          "value": "rendered.value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

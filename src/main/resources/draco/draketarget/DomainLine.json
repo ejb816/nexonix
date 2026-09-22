@@ -25,21 +25,21 @@
           "name": "package",
           "valueType": {
             "[]": [
-              "String"
+              "draco.drake.Text"
             ]
           }
         },
         {
           "kind": "Parameter",
           "name": "name",
-          "valueType": "String"
+          "valueType": "draco.drake.Text"
         }
       ],
       "body": [
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "String",
+          "valueType": "draco.drake.Text",
           "value": {
             "++": [
               "\"domain \"",

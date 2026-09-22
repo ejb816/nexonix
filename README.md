@@ -283,7 +283,7 @@ examples, the canonical material is what ships:
 | `draco.drake` | the definition surface as a domain — **a Source** — and the runtime: `Presence(T)`, `Present`, `Absent`, with `fold` as dispatch |
 | `draco.generator` (+ `carrier`) | the super-domain of every generator transform; `carrier` is the input seam — where definitions are found and read |
 | `draco.genscala`, `draco.gendrake` | the transforms `Draco → ScalaTarget` and `Draco → DrakeTarget`, each `from Generator(<target>)` |
-| `draco.scalatarget`, `draco.draketarget` | the Targets — the Scala language, and the emission side of the definition language (`Surface`, `DomainLine`) |
+| `draco.scalatarget`, `draco.draketarget` | the Targets — the Scala language, and the emission side of the definition language (`Surface`, `DomainAspectText`, and the retained `DomainLine` helper) |
 | `draco.rete` | rule-evaluation capability, held as its own vocabulary |
 
 **Source and Target are roles**, held as two empty marker types in the root domain that a
@@ -299,9 +299,14 @@ and each generator sub-domain derives it for one target — `GenScala from Gener
 target-neutral product (the rendered text of a definition), and `EmissionReceived`, its receiver.
 A transform domain is a domain of TRANSFORM TYPES: each member derives a type on the target side
 and takes parameters typed `TypeDefinition`; the domain carries no function of its own. Today
-`GenDrake` holds `DomainLineOf`, the first transform type (a definition's domain pointer to the
-`domain` line, through the substitution string `DomainLine`), the rule `Emit`, which wraps the
-hand-written emitter, and the actor `Emitter` that runs the chain; `GenScala` holds nothing yet,
+`GenDrake` holds `DomainAspectOf`, which maps a definition to the complete `DomainAspectText`
+section: domain reference, super-domain, source, target and ordered member names. It preserves
+type arguments in all references and reads the super-domain from `DracoAspect`, without moving
+that field into `DomainAspect`. Type-parameter spelling is an explicit function supplied by
+the Drake renderer; the transform does not call the full emitter. `Drake.emit` now uses this
+definition-backed section, so it also runs through the existing `Emit` rule and `Emitter` actor.
+The other sections remain hand-written. `DomainLineOf` and `DomainLine` are retained as
+compatibility helpers, not the complete domain-aspect API. `GenScala` holds nothing yet,
 and the six-way dispatch in `DracoGenerator` is its transform types, unwritten. `DrakeTarget` exists beside `Drake` so that what
 is learned targeting other languages can be turned on the definition language itself.
 
@@ -433,6 +438,15 @@ for a rule's hooks, `[T]` for the lazy sequence, a type form for a foreign paren
 spelling produced in exactly one function of the target and the host named nowhere in the definition.
 The rows above are what is left.
 
+The first leaf migration is `draco.drake.Text`: immutable Unicode text with exact equality,
+no implicit normalization, concatenation and separator-first `join`. Nominal now names it as
+its underlying value type; Surface, DomainLine, DomainLineOf and Emission also use it for their text
+inputs and results. Scala realizes Text-typed values as `String`, without a wrapper;
+the definition and its generated companion describe the owned type. Only the fully qualified
+identity is mapped, including inside type forms, so unrelated types named Text are unaffected.
+Other String slots and non-Scala realizations remain future work. Character indexing and
+encoding policies are deliberately outside this increment.
+
 ---
 
 ## Semantic preservation in data transformation
@@ -485,11 +499,12 @@ directions:
   typed binder and the leaves do.
 - **The leaves** — the host's names for the primitives and the rule-engine and actor-library types,
   the last host residue in the corpus, each needing a draco-owned or wrap form.
-- **Target-side aspect types** — `draketarget.DomainAspect` and its peers, the substitution
-  strings for each aspect's syntactic form, with `DomainLine` the first.
+- **Target-side aspect types** — `DomainAspectText` and `DomainAspectOf` now render the complete
+  domain section in the live Drake emitter. The other aspects and definition-backed
+  type-parameter spelling remain to be developed.
 - **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
-  runs, wrapping the hand-written emitter; the transform types that replace the engine's
-  dispatch, one per aspect's syntactic form, are unwritten for both targets. Additional targets
+  runs through an emitter whose domain section is now definition-backed; the remaining
+  aspect transforms and Scala target transforms are still unwritten. Additional targets
   beyond Scala follow the same shape.
 - **Dreams** — an editor for creating and modifying types, domains, rules, and actors
   through their definitions.

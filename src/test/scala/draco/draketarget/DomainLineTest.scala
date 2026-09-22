@@ -1,6 +1,7 @@
 package draco.draketarget
 
 import draco._
+import io.circe.Json
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.file.{Files, Path, Paths}
@@ -16,7 +17,7 @@ import scala.util.Using
  *  The oracle is the corpus: every committed `.drake` under `src/main` carries one
  *  `domain` line, and `DomainLine` built from the definition's own domain pointer must
  *  reproduce it byte for byte. A domain line carrying type parameters (`Format(F)`) is
- *  outside `DomainLine`'s shape — its name is a String — and is counted, not compared.
+ *  outside `DomainLine`'s shape — its name is Text without type arguments — and is counted, not compared.
  *  The mapping from a definition to the two arguments is `gendrake.DomainLineOf`, the
  *  first member of the transform domain: this test hands it the definition and only
  *  compares. */
@@ -38,6 +39,18 @@ class DomainLineTest extends AnyFunSuite with PersistentTestLog {
     Using.resource(scala.io.Source.fromFile(drakeBeside(p).toFile))(_.getLines().find(_.startsWith("domain ")))
 
   test("DomainLine renders the one line it is built from") {
+    val text = Json.fromString("draco.drake.Text")
+    val surface = TypeLoader.loadType(TypeName("Surface", Seq("draco", "draketarget")))
+    val line = TypeLoader.loadType(TypeName("DomainLine", Seq("draco", "draketarget")))
+    val mapped = TypeLoader.loadType(TypeName("DomainLineOf", Seq("draco", "gendrake")))
+    assert(DracoAspect.parents(surface.dracoAspect).find(_.name == "Primal").get.typeParameters == Seq(text))
+    assert(surface.dracoAspect.factory.parameters.map(_.valueType) == Seq(text))
+    assert(line.dracoAspect.factory.parameters.map(_.valueType) ==
+      Seq(Json.obj("[]" -> Json.arr(text)), text))
+    Seq(line, mapped).foreach { td =>
+      assert(td.dracoAspect.factory.body.find(_.name == "value").get.valueType == text)
+    }
+    assert(Surface("\u00e9").value == "\u00e9")
     assert(DomainLine(Seq("draco", "draketarget"), "DrakeTarget").value == "domain draco draketarget DrakeTarget")
   }
 

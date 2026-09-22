@@ -47,8 +47,8 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, measured at `87a2bb9` (2026-08-31).** The suite now runs **627 tests / 44
-suites**: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+**The baselines, originating at `87a2bb9` (2026-08-31).** The current full-suite baseline is
+**652 tests / 46 suites**, verified by Dev's run on 2026-09-22. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
@@ -65,20 +65,24 @@ test for `now` (2026-09-17); then a `PresenceTest` test that a Present never eva
 (2026-09-18); then one that a factory argument is evaluated on first read and never if unused
 (2026-09-18); then one that `ifThenElse` never evaluates the branch not taken (2026-09-20); then one `DrakeParseTest` test for the operator layer and the lambda
 (2026-09-21); then one for the parenthesized sub-expression and the minimal pair (2026-09-21); then one for `bracket`
-(2026-09-22) — **627 tests / 44 suites**. These
+(2026-09-22) — **627 tests / 44 suites**. The Text increment adds five corpus tests and
+four tests in `draco.drake.TextTest`: **636 tests / 45 suites passed** in Dev's full
+sbt run; all report-only figures matched the then-current baselines. A direct compiled-class probe also passed 506 tests / 5 suites (TextTest, DracoGenTest,
+DrakeGenTest, DrakeParseTest, GenDrakeTest); it measured 99 draco types in scope, 109 measured,
+one surface loss, and GenDrake 97 of 97. These
 are the headlines those tests print. They go to the console
 logger, not to the per-suite files, so they have to be caught off stdout — every row below
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|CO-DECLARATION|error|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 1 field across 108 types — type form 1 (ActorAspect, the standing exclusion); expression form 0 since the last conditionals became `guard(c).ifThenElse(t, e)` (measured 2026-09-21, after `309ea4d`) |
-| `DrakeParseTest` | Drake.parse scope | 98 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 1 field across 111 types — type form 1 (ActorAspect), expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 101 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -92,6 +96,13 @@ and the git-record already follow, and for the same reason: a figure nobody is o
 maintain is one nobody can trust. The alpha.6 notes still quote 16 surface-loss fields;
 that was true when written and became 15 at `324556c`, which is exactly the drift this
 table exists to make visible.
+
+**Verified domain-aspect increment (2026-09-22):** two new definition-backed types,
+`draketarget.DomainAspectText` and `gendrake.DomainAspectOf`, add ten corpus tests;
+the new six-test `DomainAspectTest` brings the full count to **652 tests / 46 suites passed**.
+GenDrake emitted 99/99 definitions. The new section test reproduced all 101 complete
+domain sections, including the parameterized domain omitted by the retained DomainLine
+compatibility test, with zero exclusions. All report-only figures match the table above.
 
 Two of these have since become ASSERTIONS and are deliberately not listed: the scenario
 now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports. So
@@ -284,6 +295,14 @@ package tree and holds the hand-written engine: `DracoGenerator`, `GeneratorCLI`
 `DrakeCLI`, `Expression`, `DomainBuilder`, `Assembly*`, `SourceContract`. mods → main is
 allowed; main → mods is not. Whether mods is now *the* engine tier rather than a
 speculative layer is an open question for Dev.
+
+**Domain-aspect generation (2026-09-22).** `draketarget.DomainAspectText` owns complete
+domain-section layout; `gendrake.DomainAspectOf` maps from TypeDefinition, reading the
+super-domain from DracoAspect and the other fields from DomainAspect. `Drake.emit`
+uses this generated transform, which reaches the running Emit/EmissionReceived flow.
+The transform receives type-parameter spelling as an explicit callback, supplied by
+the existing Drake type-form renderer; it never calls back into the full emitter.
+`DomainLine` and `DomainLineOf` remain compatibility helpers, not full aspect renderers.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `json`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),

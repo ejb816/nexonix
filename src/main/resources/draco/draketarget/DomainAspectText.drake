@@ -1,0 +1,16 @@
+type DomainAspectText from Surface
+  factory
+    parameters
+      par domainReference draco.drake.Text
+      par parentReference draco.drake.Text ""
+      par sourceReference draco.drake.Text ""
+      par targetReference draco.drake.Text ""
+      par members [draco.drake.Text] []
+      par nameless Boolean false
+    body
+      loc parentLines [draco.drake.Text] guard(_parentReference.isEmpty).ifThenElse([], ["  super " ++ _parentReference])
+      loc sourceLines [draco.drake.Text] guard(_sourceReference.isEmpty).ifThenElse([], ["  source " ++ _sourceReference])
+      loc targetLines [draco.drake.Text] guard(_targetReference.isEmpty).ifThenElse([], ["  target " ++ _targetReference])
+      loc memberLines [draco.drake.Text] guard(_members.isEmpty).ifThenElse([], ["  types ["] ++ _members.map(\member -> "    " ++ member) ++ ["  ]"])
+      fix value draco.drake.Text guard(_nameless).ifThenElse("domain", guard(_domainReference.isEmpty).ifThenElse("", join("\n", ["domain " ++ _domainReference] ++ parentLines ++ sourceLines ++ targetLines ++ memberLines)))
+domain draco draketarget DrakeTarget

@@ -14,7 +14,7 @@
           "draco"
         ],
         "typeParameters": [
-          "String"
+          "draco.drake.Text"
         ]
       }
     ],
@@ -25,7 +25,7 @@
         {
           "kind": "Parameter",
           "name": "value",
-          "valueType": "String"
+          "valueType": "draco.drake.Text"
         }
       ]
     }

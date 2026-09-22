@@ -1,0 +1,32 @@
+# Use Text in the generator's Emission
+#
+# Dev approved the narrow follow-on after the three Drake target building blocks.
+# Emission is the product passed through the running Emit / EmissionReceived rule
+# chain. Change its Primal argument and factory input from String to the qualified
+# draco.drake.Text identity; leave the flow, names and representation unchanged.
+# Extend the existing GenDrakeTest corpus test to pin both owned Text references.
+# No new tests or corpus members; baseline counts are expected to stay unchanged.
+#
+# Author drake first and parse JSON with the compiled DrakeCLI. Regenerate Scala
+# with the compiled GeneratorCLI against a fresh current-resource overlay, replacing
+# the original compiled class root rather than duplicating it. Generated Scala is
+# byte-identical before/after; the checked-in Scala agrees with the generation gate
+# and remains unchanged. DrakeCLI check: surface drift 0, json drift 0, skipped 0.
+#
+# Dev's full sbt run completed 2026-09-22 at 13:42:38: 636 tests / 45 suites passed.
+# Report-only values match: example map 28/20/0/0; PON 80/550/42; canonical 7;
+# surface losses 1 across 109; parse scope 99 + 10; scenario 23 clean;
+# subtype co-declaration still drops the fact (known). GenDrake emitted 97/97;
+# DomainLine reproduced 98/98 supported lines with one parameterized exclusion.
+# No sbt, commit, push or issue creation performed by the agent.
+#
+# Full gate before commit/push (Dev runs):
+# sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+
+--- MESSAGE ---
+Use Draco Text for generator Emission values
+
+Migrate Emission's underlying type and factory input to draco.drake.Text,
+retaining its Scala representation and existing generator rule flow.
+Re-canonicalize JSON from drake and strengthen the GenDrake corpus test to
+assert the owned type references. Update the specification and documentation.

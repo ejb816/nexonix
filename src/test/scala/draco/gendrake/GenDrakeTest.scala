@@ -69,6 +69,11 @@ class GenDrakeTest extends AnyFunSuite with PersistentTestLog {
   // ---- Gate 2 ----
 
   test("GenDrake runs: every definition crosses to an Emission that is its own .drake") {
+    val text = io.circe.Json.fromString("draco.drake.Text")
+    val emission = TypeLoader.loadType(TypeName("Emission", Seq("draco", "generator")))
+    assert(DracoAspect.parents(emission.dracoAspect).find(_.name == "Primal").get.typeParameters == Seq(text))
+    assert(emission.dracoAspect.factory.parameters.map(_.valueType) == Seq(text))
+
     val pairs = jsonPaths.flatMap { p =>
       val name = p.getFileName.toString.stripSuffix(".json")
       if (authoredAhead.contains(name) || !Files.isRegularFile(drakeBeside(p))) None

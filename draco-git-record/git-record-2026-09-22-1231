@@ -1,0 +1,49 @@
+# Text is a Draco-owned leaf, first used by Nominal
+#
+# Dev selected host-neutral names as the next direction and accepted text first:
+# immutable Unicode text, exact equality without implicit normalization, concatenation
+# and separator-first join; character indexing deferred. Dev then approved Text in
+# the Drake runtime domain and a Scala native-string realization, not a value wrapper.
+#
+# Text.drake is the source; Text.json was produced by the compiled DrakeCLI parser,
+# Text.scala by DracoGenerator. Drake's membership trio is updated. Nominal now names
+# Primal(draco.drake.Text); its JSON is parsed from that source and regenerated Scala
+# is byte-identical to the committed file. No other String slot is migrated.
+#
+# The generator maps only the exact qualified leaf draco.drake.Text at its existing
+# target type spelling boundary. Recursive type forms already pass their leaves there.
+# Bare Text and other qualified names are not captured. The generated Text trait and
+# companion are descriptors, following the capability-descriptor pattern, not the
+# representation of a text value. This is deliberately not a general alias mechanism,
+# and does not implement another target or unqualified primitive-name resolution.
+#
+# Verification: compiled the changed generator and three projections using the local
+# Scala compiler, not sbt. Re-canonicalized the three JSONs with DrakeCLI. Direct runner:
+# 506 tests / 5 suites passed (TextTest, DracoGenTest, DrakeGenTest, DrakeParseTest,
+# GenDrakeTest). Surface losses 1 across 109; scope 99 + 10; GenDrake 97 of 97.
+# Dev's full sbt run completed 2026-09-22 at 12:38:56: 636 tests / 45 suites passed.
+# Report-only figures checked: example map 28/20/0/0; PON 80/550/42; canonical 7;
+# surface losses 1 across 109; parse scope 99 + 10, none held back; scenario 23 clean;
+# mods actors pending drake 0; subtype co-declaration still drops the fact (known baseline).
+# GenDrake 97/97; the forest run passed. No new regression in these measurements.
+#
+# Probe correction: duplicate resource roots initially hid ancestry during emission;
+# the corrected classpath replaces, rather than supplements, original classes. The
+# corpus suites also need the overlay at target/<probe>/classes because Main derives
+# source paths three directories up from its class resource. Final regeneration and
+# all five suites used that layout with current main, mods and test resources.
+#
+# Full gate before commit/push (Dev runs):
+# sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+# Commit message follows; use a file with git commit -F, never a heredoc.
+
+--- MESSAGE ---
+Text is a Draco-owned leaf, and Nominal names it without changing its Scala representation
+
+Define immutable Unicode text in draco.drake with exact equality, concatenation
+and join. Map the qualified identity to Scala String at the target type boundary;
+leave unrelated Text names and the rest of the String corpus unchanged.
+
+Add Text's definition trio and Drake membership, migrate Nominal drake-first,
+and test nested projection plus executed Unicode, equality and join behavior.
+Record the scoped probe and the pending full-suite gate in DRACO.md.

@@ -5,5 +5,5 @@ type DomainLineOf from draco draketarget DomainLine
     body
       loc definition TypeDefinition _definition
       loc line DomainLine DomainLine(definition.domainAspect.typeName.namePackage, definition.domainAspect.typeName.name)
-      fix value String line.value
+      fix value draco.drake.Text line.value
 domain draco gendrake GenDrake

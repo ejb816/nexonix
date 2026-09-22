@@ -1,0 +1,43 @@
+# Extend Text to the existing Drake target building blocks
+#
+# Dev approved the narrow Text migration for Surface, DomainLine and DomainLineOf.
+# Preserve their names and behavior. Full domain-aspect representation and
+# transformation remain a separate increment; the current types only render the
+# domain reference and are not substituted into the main handwritten emitter here.
+#
+# Author the three drake definitions first, parse their JSON with the compiled
+# DrakeCLI, and regenerate Scala with the compiled DracoGenerator through GeneratorCLI.
+# Use a copy of the compiled classes overlaid with current main/mods/test resources,
+# replacing the original classes root on the runtime classpath to avoid duplicates.
+# All three generated Scala outputs are byte-identical before/after the migration.
+# Surface and DomainLine also match checked-in Scala byte-for-byte. DomainLineOf's
+# generated output already has one extra blank line before its closing brace;
+# preserve the checked-in Scala rather than introduce unrelated formatting churn.
+# All three Scala artifacts therefore remain unchanged and agree with the definitions
+# under the existing whitespace-normalized generation gate.
+#
+# DrakeCLI check over these three definition pairs: surface drift 0, json drift 0,
+# skipped 0. Extend the existing DomainLineTest assertion to pin Text in Surface's
+# derivation and factory, DomainLine's scalar/sequence inputs, and both result slots.
+# No new test cases or corpus types; expected baseline counts remain unchanged.
+#
+# Dev's full sbt run completed 2026-09-22 at 13:34:20: 636 tests / 45 suites passed,
+# with no failures, aborted suites, canceled, ignored or pending tests.
+# DomainLine reproduced 98/98 supported declarations, 1 parameterized skipped, 0 wrong.
+# Report-only baselines match: example map 28/20/0/0; PON 80/550/42; canonical 7;
+# surface losses 1 across 109; parse scope 99 + 10, none held back; scenario 23 clean;
+# mods actors pending drake 0; subtype co-declaration still drops the fact (known).
+# GenDrake emitted 97/97 definitions; the forest scenario passed.
+# No sbt, commit, push or GitHub issue creation performed.
+#
+# Full gate before commit/push (Dev runs):
+# sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+
+--- MESSAGE ---
+Use Draco Text in the Drake target building blocks
+
+Migrate Surface, DomainLine and DomainLineOf text slots from String to the
+qualified Draco Text identity, preserving names and generated Scala behavior.
+Re-canonicalize the JSON from drake and verify unchanged Scala generation and
+zero round-trip drift. Strengthen DomainLineTest to pin the owned type references.
+Document the migration; leave full domain-aspect generation for a separate step.

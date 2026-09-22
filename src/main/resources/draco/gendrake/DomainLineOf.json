@@ -48,7 +48,7 @@
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "String",
+          "valueType": "draco.drake.Text",
           "value": "line.value"
         }
       ]

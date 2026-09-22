@@ -1965,6 +1965,9 @@ object DracoGenerator extends App {
     * copied character for character, so a brace-free expression — every valueType in
     * the corpus at the time this landed — comes back identical. */
   private def scalaTypeExpression (valueType: String) : String = {
+    // Match the owned identity, never an unqualified name in another domain.
+    // Text's definition is a descriptor; its values use the target's native text.
+    if (valueType == "draco.drake.Text") return "String"
     if (!valueType.contains('{')) return valueType
     val out = new StringBuilder
     var i   = 0

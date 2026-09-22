@@ -21,7 +21,7 @@
           "draco"
         ],
         "typeParameters": [
-          "String"
+          "draco.drake.Text"
         ]
       }
     ]

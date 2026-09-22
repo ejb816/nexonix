@@ -3,4 +3,5 @@ domain draco draketarget DrakeTarget
   types [
     Surface
     DomainLine
+    DomainAspectText
   ]

@@ -34,6 +34,19 @@ FILL-INS
   <pkg-seq>        a space-separated package path -> a namePackage array
 
 VALUE-TYPES  (drake type-expression -> JSON valueType)
+  TEXT (2026-09-22): `draco.drake.Text` is draco-owned immutable Unicode text. Equality is exact,
+  with no implicit Unicode normalization. The empty literal is text; `++` concatenates text,
+  and `join(separator, texts)` inserts the separator between members, yielding empty text for
+  an empty sequence and the member unchanged for a singleton. No character indexing, length
+  unit, locale comparison, normalization or malformed-encoding policy is introduced here.
+  The Scala target realizes a Text-typed value as `String`, not a wrapper instance. The generated
+  Text companion/trait describe the type, as target-backed capability descriptors do; they are
+  not the runtime representation of a Text value. References use the qualified identity
+  `draco.drake.Text` in this first increment, including within compound type forms. A bare `Text`
+  is not globally reserved or rewritten. Nominal is the first consumer: `Primal(draco.drake.Text)`.
+  Surface, DomainLine, DomainLineOf and Emission also name Text in their text inputs and results.
+  Remaining String slots are unmigrated; other target realizations are not implemented yet.
+
   THE FIELD IS A JSON NODE (2026-09-16), on the same terms as a TypeElement's `value`: a STRING is the
   type's authored text, host-opaque, and is everything the corpus holds today; an OBJECT will be a
   TYPE-FORM TREE — Atomic (a string leaf), Objective `{"(,)": [...]}`, Parametric `{"()": [F, A ...]}`,

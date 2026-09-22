@@ -1,0 +1,13 @@
+type DomainAspectOf from draco draketarget DomainAspectText
+  factory
+    parameters
+      par definition TypeDefinition
+      par parameterText (Json -> draco.drake.Text)
+    body
+      loc definition TypeDefinition _definition
+      loc parameterText (Json -> draco.drake.Text) _parameterText
+      loc reference (TypeName -> draco.drake.Text) \name -> guard(name.name.isEmpty).ifThenElse("", join(" ", name.namePackage ++ [name.name ++ guard(name.typeParameters.isEmpty).ifThenElse("", "(" ++ join(", ", name.typeParameters.map(parameterText)) ++ ")")]))
+      loc aspect DomainAspect definition.domainAspect
+      loc rendered DomainAspectText DomainAspectText(reference(aspect.typeName), reference(definition.dracoAspect.superDomain), reference(aspect.source), reference(aspect.target), aspect.elementTypeNames, definition.typeName.name.isEmpty)
+      fix value draco.drake.Text rendered.value
+domain draco gendrake GenDrake

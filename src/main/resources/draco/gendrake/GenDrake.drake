@@ -5,6 +5,7 @@ domain draco gendrake GenDrake
   target draco draketarget DrakeTarget
   types [
     DomainLineOf
+    DomainAspectOf
     Emit
     Emitter
   ]

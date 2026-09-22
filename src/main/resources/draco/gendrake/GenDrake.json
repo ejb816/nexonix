@@ -36,6 +36,7 @@
     },
     "elementTypeNames": [
       "DomainLineOf",
+      "DomainAspectOf",
       "Emit",
       "Emitter"
     ],

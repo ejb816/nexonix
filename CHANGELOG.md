@@ -31,6 +31,19 @@ for the definition that will replace it.
 
 ### Added
 
+- **Definition-backed domain-aspect generation.** `DomainAspectText` and `DomainAspectOf`
+  render complete Drake domain sections, including parameterized references, membership,
+  super-domain and transform direction. The live Drake emitter uses this transform; the
+  super-domain remains owned by DracoAspect. Six focused tests cover the mapping, edge
+  cases, full corpus and running rule chain. Existing domain-line helpers remain available.
+  The full gate passed: 652 tests across 46 suites, with report-only baselines matching. (2026-09-22)
+
+- **`draco.drake.Text`, the first owned text leaf.** Immutable Unicode text with exact equality,
+  no implicit normalization, concatenation and separator-first join; the Scala target realizes
+  its qualified identity as `String`, also inside type forms, without wrapping values. Nominal
+  is the first migrated definition and its Scala projection is unchanged. Four focused tests
+  cover membership, projection, Nominal and executed text operations. (2026-09-22)
+
 - **`ifThenElse` on Presence, as dispatch, and `guard`.** `dyn ifThenElse(R) R` with `thenBranch` and
   `elseBranch` is declared abstract on `Presence` and defined in `Present` as the then-branch and in `Absent`
   as the else-branch; both parameters are by need, so the branch not taken is never evaluated and a
@@ -177,6 +190,15 @@ for the definition that will replace it.
   Recorded in DRACO.md's gotchas, since nothing throws and no test fails when it happens.
 
 ### Changed
+
+- **Text in generator Emission.** Emission now names `draco.drake.Text` as its
+  underlying value and factory input. GenDrakeTest pins those references alongside
+  its existing end-to-end emission checks; the Scala representation is unchanged. (2026-09-22)
+
+- **Text in the Drake target building blocks.** Surface, DomainLine and DomainLineOf
+  now name `draco.drake.Text` in their text inputs and results. Generated Scala is
+  byte-identical before and after; names and domain-line behavior are unchanged.
+  DomainLineTest also checks the owned Text references. (2026-09-22)
 
 - **`bracket` is a declared symbol, and no expression form in the corpus is host-opaque.** A resource
   scope is `bracket(acquire, release, use)`, Haskell's Control.Exception.bracket, a call on the surface

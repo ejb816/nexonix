@@ -1,5 +1,5 @@
-type Surface from draco Primal(String)
+type Surface from draco Primal(draco.drake.Text)
   factory
     parameters
-      par value String
+      par value draco.drake.Text
 domain draco draketarget DrakeTarget

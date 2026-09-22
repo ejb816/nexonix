@@ -27,7 +27,8 @@
     "elementTypeNames": [
       "Presence",
       "Present",
-      "Absent"
+      "Absent",
+      "Text"
     ]
   }
 }

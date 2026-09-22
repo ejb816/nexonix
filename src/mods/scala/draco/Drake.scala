@@ -234,7 +234,7 @@ object Drake {
     * builds one for every header parameter and reference argument since 2026-09-17);
     * a string — the JSON corpus until it re-canonicalizes — spells VERBATIM, as a
     * TypeName's parameters have always been written. */
-  private def typeParameterSurface (parameter: Json) : String =
+  private[draco] def typeParameterSurface (parameter: Json) : String =
     if (TypeForm.isTree(parameter)) drakeType(parameter) else parameter.text
 
   /** TypeName reference on the drake surface: name with type parameters in the
@@ -434,30 +434,10 @@ object Drake {
       if (da.globalElements.isEmpty) Seq.empty
       else sectionLines("globals", da.globalElements, 1)
 
-    val domain =
-      if (td.typeName.name.isEmpty) Seq("domain")
-      else if (td.domainAspect.typeName.name.nonEmpty) {
-        // typeRef, not the bare name: a domain may be PARAMETERIZED
-        // (draco.format.Format(F)), and its type parameters are load-bearing —
-        // the Scala projection emits Domain[Format[_]] from them. Spelling the
-        // reference bare here dropped them from the surface entirely.
-        val head = s"domain ${(td.domainAspect.typeName.namePackage :+ typeRef(td.domainAspect.typeName)).mkString(" ")}"
-        val superDomain =
-          if (da.superDomain.name.isEmpty) Seq.empty
-          else Seq(s"  super ${(da.superDomain.namePackage :+ typeRef(da.superDomain)).mkString(" ")}")
-        // A DIRECTION makes the domain a TRANSFORM domain (drake.dlt: `source` /
-        // `target`). Role is presence, so nothing else marks it — and both ends are
-        // written even though one is enough to detect, because one alone names no
-        // conversion.
-        val direction =
-          Seq(("source", td.domainAspect.source), ("target", td.domainAspect.target))
-            .collect { case (kw, tn) if tn.name.nonEmpty =>
-              s"  $kw ${(tn.namePackage :+ typeRef(tn)).mkString(" ")}" }
-        val types =
-          if (td.domainAspect.elementTypeNames.isEmpty) Seq.empty
-          else nameListLines("types", td.domainAspect.elementTypeNames)
-        head +: (superDomain ++ direction ++ types)
-      } else Seq.empty
+    // Section layout and aspect mapping are definition-backed. Type-parameter
+    // spelling remains an explicit dependency on this target's type-form renderer.
+    val domainText = draco.gendrake.DomainAspectOf(td, typeParameterSurface(_)).value
+    val domain = if (domainText.isEmpty) Seq.empty else Seq(domainText)
 
     // rule aspect (drake.dlt: `rule` head, then `pattern` { variables, conditions }
     // and `action` body). variables/conditions are LEAF blocks (var/con open no

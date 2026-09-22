@@ -1,8 +1,8 @@
 type DomainLine from Surface
   factory
     parameters
-      par package [String]
-      par name String
+      par package [draco.drake.Text]
+      par name draco.drake.Text
     body
-      fix value String "domain " ++ join(" ", _package) ++ " " ++ _name
+      fix value draco.drake.Text "domain " ++ join(" ", _package) ++ " " ++ _name
 domain draco draketarget DrakeTarget

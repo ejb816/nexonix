@@ -1,0 +1,64 @@
+# Complete definition-backed domain-aspect generation in the running Drake path
+#
+# Dev approved the recommendation after establishing that type and domain belong
+# in definitions, with a self-reference for domains and a containing-domain reference
+# for their members. The work replaces line-level composition in the engine, not the
+# DomainAspect schema or ownership of superDomain (which remains in DracoAspect).
+#
+# DomainAspectText is the target's rendered section. DomainAspectOf is the transform
+# from TypeDefinition: preserve package-qualified references and all type arguments,
+# take domain membership/source/target from DomainAspect, and superDomain from DracoAspect.
+# The nameless anchor and missing-reference stubs retain the old emitter behavior.
+# A lone source or target is preserved as authored, not validated or silently discarded.
+# Member order is preserved. Text is the result and all textual target inputs.
+#
+# Type-parameter spelling remains an explicit Json-to-Text dependency provided by
+# Drake's existing type-form renderer. This avoids a new main-to-mods dependency or
+# recursion into the full emitter. The generated transform owns reference composition
+# and section layout; it does not claim to replace the remaining handwritten aspects.
+# Drake.emit now uses it, so the existing Emit/EmissionReceived/Emitter path does too.
+# DomainLine and DomainLineOf remain available for compatibility, without claiming
+# complete coverage. No user definitions or names are migrated away from those helpers.
+#
+# Author new types and domain memberships in drake, parse their JSON using compiled
+# DrakeCLI, and generate Scala using compiled GeneratorCLI against a fresh current-
+# resource overlay. All four touched definition trios passed DrakeCLI check with
+# surface drift 0, json drift 0, skipped 0. The compiled tool is the previous emitter;
+# this verifies definitions/round-trips, NOT the newly integrated runtime behavior.
+#
+# Add six tests in DomainAspectTest: complete layout, self/containment and ownership,
+# parameterized references in all four positions, nameless/missing/empty-package edges,
+# all corpus domain sections with no parameterized exclusion, and the running rule chain.
+# Dev's full sbt run completed 2026-09-22 at 14:57:14: 652 tests / 46 suites passed,
+# with no failures, aborted suites, canceled, ignored or pending tests.
+# DomainAspect reproduced 101 complete sections, 1 parameterized included, 0 skipped.
+# GenDrake emitted 99/99 definitions. Parse scope 101 draco + 10 mods, 0 held back;
+# surface losses 1 across 111 (the standing ActorAspect type-form exclusion).
+# Report-only baselines match: example map 28/20/0/0; PON 80/550/42; canonical 7;
+# scenario 23 clean; mods actors pending drake 0; subtype co-declaration still drops
+# the fact (known baseline). The forest scenario passed.
+# No sbt, commit, push, or GitHub issue creation performed by the agent.
+#
+# Full gate before commit/push (Dev runs):
+# sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+
+--- MESSAGE ---
+Introduce Draco Text and definition-backed domain-aspect generation
+
+Define draco.drake.Text with a Scala native-string realization. Migrate Nominal,
+Surface, DomainLine, DomainLineOf and Emission without changing their Scala
+representation, and test the owned identity and text operations.
+
+Add DomainAspectText and DomainAspectOf and register them in their domains.
+Route Drake.emit's domain section through the generated transform while retaining
+the existing type-parameter renderer as an explicit dependency. Preserve field
+ownership, reference parameters, member ordering and compatibility edge cases.
+Keep DomainLine and DomainLineOf as compatibility helpers.
+
+Cover target layout, aspect mapping, parameterized references, corpus sections and
+the running rule chain. The full gate passed: 652 tests across 46 suites, 101
+complete domain sections reproduced, and 99 of 99 GenDrake definitions emitted.
+Record updated corpus counts and unchanged report-only loss baselines.
+
+Include the incremental Text, target-text, Emission and domain-aspect records
+as the audit trail for this combined change.

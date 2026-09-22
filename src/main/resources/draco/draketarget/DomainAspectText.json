@@ -1,0 +1,312 @@
+{
+  "typeName": {
+    "name": "DomainAspectText",
+    "namePackage": [
+      "draco",
+      "draketarget"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DomainAspectText",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "domainReference",
+          "valueType": "draco.drake.Text"
+        },
+        {
+          "kind": "Parameter",
+          "name": "parentReference",
+          "valueType": "draco.drake.Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "sourceReference",
+          "valueType": "draco.drake.Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "targetReference",
+          "valueType": "draco.drake.Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "members",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "nameless",
+          "valueType": "Boolean",
+          "value": "false"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "parentLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_parentReference.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"  super \"",
+                      "_parentReference"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "sourceLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_sourceReference.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"  source \"",
+                      "_sourceReference"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "targetLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_targetReference.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"  target \"",
+                      "_targetReference"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "memberLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_members.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"  types [\""
+                    ]
+                  },
+                  {
+                    "()": [
+                      "_members.map",
+                      {
+                        "\\": [
+                          "member",
+                          {
+                            "++": [
+                              "\"    \"",
+                              "member"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "[]": [
+                      "\"  ]\""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "draco.drake.Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_nameless"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              "\"domain\"",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "_domainReference.isEmpty"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  "\"\"",
+                  {
+                    "()": [
+                      "join",
+                      "\"\\n\"",
+                      {
+                        "++": [
+                          {
+                            "[]": [
+                              {
+                                "++": [
+                                  "\"domain \"",
+                                  "_domainReference"
+                                ]
+                              }
+                            ]
+                          },
+                          "parentLines",
+                          "sourceLines",
+                          "targetLines",
+                          "memberLines"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}
