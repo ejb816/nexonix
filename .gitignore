@@ -4,7 +4,16 @@
 target/
 /project/project/
 /src/generated/
-/.draco/
+# Share only the documentation skill; keep settings, worktrees and other local data private.
+/.draco/*
+!/.draco/skills/
+/.draco/skills/*
+!/.draco/skills/update-draco-docs/
+/.draco/skills/update-draco-docs/*
+!/.draco/skills/update-draco-docs/SKILL.md
+!/.draco/skills/update-draco-docs/scripts/
+/.draco/skills/update-draco-docs/scripts/*
+!/.draco/skills/update-draco-docs/scripts/check_links.sh
 /.draco-tmp/
 .DS_Store
 

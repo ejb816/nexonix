@@ -1,0 +1,26 @@
+# Share the documentation skill between Claude Code and Codex
+#
+# Dev explicitly requested cross-agent continuity for the previously ignored skill.
+# Allowlist only .draco/skills/update-draco-docs/SKILL.md and its scripts/check_links.sh.
+# Retain ignore coverage for all other .draco data, including settings and worktrees.
+# Remove the hardcoded checkout path and local-only wording. DRACO.md and README
+# point both agents to one procedure; direct reading works without automatic skill
+# discovery, per-agent copies or a .claude symlink. Preserve the existing safe checker.
+#
+# Update the handoff to recognize Dev's successful aa7ece9 commit/push and distinguish
+# this uncommitted increment. Chapter coverage remains 83; the September 27 decision
+# is sourced in this conversation and record, not yet a new journal chapter.
+# Runtime source, private memories and agent symlinks are unchanged. No sbt, commit,
+# push or issue creation. Verify allowlist boundaries, helper syntax/report behavior
+# and whitespace before handoff. Include the two newly unignored files when committing.
+# Checks passed: both intended files are unignored; representative settings, worktree,
+# other-skill and extra-file paths remain ignored. Bash syntax and report mode pass,
+# staged/unstaged whitespace checks pass, and src/agent-symlink diffs are empty.
+
+--- MESSAGE ---
+Share the documentation maintenance skill across development agents
+
+Allowlist the update-draco-docs skill and link checker while keeping other .draco
+contents private. Use checkout-relative instructions and direct shared-document
+entrypoints so Claude Code and Codex follow one versioned procedure without relying
+on automatic discovery. Refresh the handoff and changelog for this increment.

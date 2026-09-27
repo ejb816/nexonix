@@ -191,6 +191,11 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Portable documentation maintenance skill.** Selectively version the shared
+  update-draco-docs procedure and link checker, with direct entrypoints for Claude
+  Code and Codex and no machine-specific checkout path. Other .draco settings and
+  worktrees remain ignored. (2026-09-27)
+
 - **Journal reconciled through chapter 83.** Recover the Claude Code expression-tree
   and bracket session, record Codex's Text/domain-aspect increment with explicit source
   limits, and synchronize the introduction, architecture docs and shared handoff.

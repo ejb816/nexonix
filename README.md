@@ -648,4 +648,9 @@ evidence and documentation gaps. Both may maintain the project documentation and
 is required. The journal preserves sourced history, while the handoff tracks current work.
 The same handoff protocol applies in either direction, independently of the selected model.
 
+The shared [documentation skill](.draco/skills/update-draco-docs/SKILL.md) and its
+link checker are version-controlled alongside these documents. Either agent can
+read the skill directly from the checkout; automatic discovery is not required.
+Other `.draco` contents, including local settings and worktrees, remain ignored.
+
 <!-- draco-docs-synced-through: chapter 83 -->

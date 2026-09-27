@@ -453,6 +453,14 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
 
 ## 7. Claude Code / Codex handoffs
 
+**Shared documentation skill.** When Dev requests journal/documentation maintenance,
+read [.draco/skills/update-draco-docs/SKILL.md](.draco/skills/update-draco-docs/SKILL.md).
+Both agents use this single version-controlled procedure and its link checker, even
+when their tool does not automatically discover that directory. Do not create a
+second agent-specific copy or require a .claude link to read it. DRACO.md takes
+precedence in a conflict. Only the skill file and checker are allowlisted under
+.draco; local settings, worktrees and other material remain ignored.
+
 This protocol works in both directions and is independent of the selected model.
 Changing the agent or model does not change project permissions or accepted decisions.
 The repository is the shared continuity record; private chat histories and tool-local

@@ -6,15 +6,14 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-09-23, by Codex, in the Draco continuity task.
+- Updated: 2026-09-27, by Codex, in the Draco continuity task.
 - Destination: either Claude Code or Codex when Dev chooses to continue; no session dispatched.
-- Observed branch/HEAD: `main`, `7de07ba` (Text and definition-backed domain-aspect generation).
-- Tree before the continuity work: clean. The policy update and journal reconciliation
-  are uncommitted; the IDE may have staged some files. Changes cover shared rules,
-  chapters 81-83 and their introduction, README, this handoff, CHANGELOG and records
-  at September 23 1503 and 1536; not runtime code. Inspect staged and unstaged changes.
-- Push evidence: Dev supplied successful push output for `7de07ba` on September 22.
-  Local `main` and `origin/main` agree at inspection; no fresh remote query performed.
+- Observed branch/HEAD: `main`, `aa7ece9` (journal and shared handoff through chapter 83).
+- Dev supplied successful commit/push output for `aa7ece9`; no fresh remote query performed.
+  The runtime checkpoint remains `7de07ba`.
+- Tree before this increment: clean. Current uncommitted work makes the documentation
+  skill and checker versionable, updates their shared entrypoints, this handoff,
+  CHANGELOG and the September 27 1050 git record. No runtime source changes.
 - Permission: Dev explicitly authorized both agents to maintain the journal and shared
   documentation on September 23. The former Cowork-only restriction is superseded.
   Existing sbt/commit/push and new-issue restrictions remain in force.
@@ -73,14 +72,22 @@ runtime file or .gitignore changes were found. These checks are not a new sbt re
   re-import them wholesale. Retrieve only a specific missing source if needed and available.
 - No private Claude Code or Codex auto-memory has been synchronized or overwritten.
   Shared continuity now lives in tracked project files; tool-local memory may point here.
-- The ignored `.draco/skills/update-draco-docs` skill and checker were corrected locally.
-  Report mode is non-mutating; authorized repairs only create missing links. A normal
-  project commit does not carry this local skill; shared rules remain in DRACO.md.
+- On September 27 Dev authorized sharing the formerly local documentation skill.
+  `.gitignore` now allowlists only `.draco/skills/update-draco-docs/SKILL.md` and
+  `scripts/check_links.sh`; other .draco data remains ignored. DRACO.md directs both
+  agents to read the same file, independent of automatic discovery or .claude setup.
+  The skill uses the checkout root rather than a machine-specific path. Report mode
+  remains non-mutating; authorized repairs only create missing links.
+- Chapter 83 and its sync markers remain the journal endpoint. This September 27
+  sharing decision is recorded in this conversation and the new git record, but has
+  not yet been added as a journal chapter. Historical local-only statements describe
+  the September 23 state and are not rewritten retrospectively.
 
 ## Resumption
 
-The authorized documentation reconciliation is complete through chapter 83, awaiting
-Dev's review and commit/push. Verify the actual diff; do not assume every staged file
+The chapter-83 reconciliation was committed and pushed as aa7ece9. The shared-skill
+increment now awaits Dev's review and commit/push; include the two newly unignored
+skill files explicitly. Verify the actual diff rather than assuming every staged file
 belongs to this work. No further Draco feature has been selected. Dev still runs any
 required sbt, commit and push commands; no new GitHub issue is authorized. Missing
 historical dialogue is not permission to invent it or restart completed implementation.
