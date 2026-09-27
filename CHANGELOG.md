@@ -191,6 +191,9 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Handoff checkpoint at `79b363f`.** DEVELOPMENT_HANDOFF.md records the committed
+  and pushed shared-skill increment as the current HEAD. (2026-09-27)
+
 - **Portable documentation maintenance skill.** Selectively version the shared
   update-draco-docs procedure and link checker, with direct entrypoints for Claude
   Code and Codex and no machine-specific checkout path. Other .draco settings and

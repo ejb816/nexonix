@@ -1,0 +1,20 @@
+# Record the shared-skill commit in the development handoff
+#
+# Dev committed and pushed 79b363f using Codex's commands. DEVELOPMENT_HANDOFF.md,
+# written with that increment, still described it as awaiting commit/push. Refresh
+# the checkpoint: HEAD 79b363f over aa7ece9, tree clean after it, runtime checkpoint
+# unchanged at 7de07ba; point the September 27 coverage note at record 1050 and its
+# commit; reduce Resumption to this refresh. One CHANGELOG line under [Unreleased].
+#
+# Written by Claude Code, the first handoff edit since Dev made the Claude Code /
+# Codex alternation a standing practice (DRACO.md section 7, committed in aa7ece9).
+# Documentation only. No runtime code, journal chapter, sync marker or test baseline
+# changed. No sbt, commit, push or issue creation. Local origin/main matches HEAD;
+# no fresh remote query made.
+
+--- MESSAGE ---
+Record 79b363f as the current development handoff checkpoint
+
+Update DEVELOPMENT_HANDOFF.md now that the shared documentation skill is committed
+and pushed: HEAD, clean-tree state and resumption no longer describe it as pending.
+Add the corresponding CHANGELOG line and git record.

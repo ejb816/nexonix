@@ -6,14 +6,14 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-09-27, by Codex, in the Draco continuity task.
+- Updated: 2026-09-27, by Claude Code, after Dev committed and pushed the shared-skill increment.
 - Destination: either Claude Code or Codex when Dev chooses to continue; no session dispatched.
-- Observed branch/HEAD: `main`, `aa7ece9` (journal and shared handoff through chapter 83).
-- Dev supplied successful commit/push output for `aa7ece9`; no fresh remote query performed.
-  The runtime checkpoint remains `7de07ba`.
-- Tree before this increment: clean. Current uncommitted work makes the documentation
-  skill and checker versionable, updates their shared entrypoints, this handoff,
-  CHANGELOG and the September 27 1050 git record. No runtime source changes.
+- Observed branch/HEAD: `main`, `79b363f` (shared documentation skill across agents),
+  over `aa7ece9` (journal and shared handoff through chapter 83).
+- Dev committed and pushed `79b363f` with Codex's commands; local `main` and `origin/main`
+  agree at `79b363f`. No fresh remote query performed. The runtime checkpoint remains `7de07ba`.
+- Tree after `79b363f`: clean. The only uncommitted work is this checkpoint refresh,
+  its CHANGELOG line and git record 2026-09-27-1215. No runtime source changes.
 - Permission: Dev explicitly authorized both agents to maintain the journal and shared
   documentation on September 23. The former Cowork-only restriction is superseded.
   Existing sbt/commit/push and new-issue restrictions remain in force.
@@ -79,15 +79,14 @@ runtime file or .gitignore changes were found. These checks are not a new sbt re
   The skill uses the checkout root rather than a machine-specific path. Report mode
   remains non-mutating; authorized repairs only create missing links.
 - Chapter 83 and its sync markers remain the journal endpoint. This September 27
-  sharing decision is recorded in this conversation and the new git record, but has
+  sharing decision is recorded in git record 2026-09-27-1050 (commit `79b363f`), but has
   not yet been added as a journal chapter. Historical local-only statements describe
   the September 23 state and are not rewritten retrospectively.
 
 ## Resumption
 
-The chapter-83 reconciliation was committed and pushed as aa7ece9. The shared-skill
-increment now awaits Dev's review and commit/push; include the two newly unignored
-skill files explicitly. Verify the actual diff rather than assuming every staged file
-belongs to this work. No further Draco feature has been selected. Dev still runs any
+The chapter-83 reconciliation was committed and pushed as aa7ece9, and the shared-skill
+increment as 79b363f. Only this checkpoint refresh awaits Dev's commit/push. Verify the
+actual diff rather than assuming every staged file belongs to this work. No further Draco feature has been selected. Dev still runs any
 required sbt, commit and push commands; no new GitHub issue is authorized. Missing
 historical dialogue is not permission to invent it or restart completed implementation.
