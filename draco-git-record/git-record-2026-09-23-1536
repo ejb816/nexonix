@@ -1,0 +1,42 @@
+# Reconcile the development journal and shared documentation through chapter 83
+#
+# Continues the explicit shared-maintenance policy recorded at 2026-09-23-1503.
+# Journal chapter 80 stopped at 5fd801d. Recover subsequent Claude Code session
+# 3df62d0b-dcac-4979-9085-52eac92d20dd as chapter 81, retaining Dev's corrections
+# and the failed first conditional full run. The bracket full-run reply is absent
+# from that source: expected 627 is not a witnessed run. Chapter 82 uses selected
+# Codex dialogue and Dev's test/push evidence; initial Text work is explicitly
+# summarized from records. Chapter 83 records authorization and documentation work.
+#
+# Update the introduction's index/outlook, DRACO.md and README.md through chapter 83,
+# and DEVELOPMENT_HANDOFF.md with coverage and source limits. Correct Nominal(String)
+# in README and carry the SourceContract operator-consumer lesson. Historical statuses
+# retain their old numbers. CHANGELOG records this documentary change.
+#
+# Local-only: .draco/skills/update-draco-docs and its checker acknowledge tracked agent
+# symlinks and avoid report-mode writes. Authorized --fix only creates missing links;
+# conflicts are never automatically replaced. .draco is ignored, so normal commits do
+# not carry these convenience changes. Portable rules remain in DRACO.md. No private
+# auto-memory or external AGENTS path was created or rewritten by this increment.
+#
+# Runtime checkpoint remains 7de07ba, pushed by Dev, with the prior recorded full gate
+# of 652 tests / 46 suites. No sbt, commit, push or issue action. Verify markdown links,
+# transcript provenance, markers, diffs and shell helper behavior before handoff.
+# Neither tracked agent symlink is written through.
+#
+# Verification completed: staged/unstaged whitespace checks, Markdown links/fences,
+# chapter structure and markers, all 33 non-responsive source turns in chapter 81,
+# local skill metadata, Bash syntax, and isolated helper cases (report does not write;
+# missing-link repair works; regular files and wrong-target links are not replaced).
+# No src, agent-link or .gitignore diff against HEAD. No fresh runtime test claimed.
+
+--- MESSAGE ---
+Reconcile the Draco journal and shared agent handoff through chapter 83
+
+Record the Claude Code parser-to-bracket session and Codex Text/domain-aspect work
+with explicit transcript provenance and verification scope. Document Dev's shared
+journal authorization, synchronize the chapter index and project documentation,
+and preserve a bidirectional Claude Code/Codex checkpoint in DEVELOPMENT_HANDOFF.md.
+
+Correct stale symlink and Nominal documentation, retain historical test evidence,
+and distinguish local ignored tooling from the portable project rules.

@@ -1,18 +1,20 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across eighty chapters of development sessions between March 22 and September 21, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions are transcribed as dialogues between Dev (the framework's creator) and the model (Claude, serving as pair-programming partner), capturing not just the code changes but the reasoning, missteps, and discoveries along the way.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across eighty-three chapters of development sessions between March 22 and September 23, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
 The canonical chapter format is a near-verbatim transcript:
 
 - **Assertive Dev prompts** — prompts in which Dev directs, questions, decides, or corrects — are transcribed verbatim, labeled **[Dev]**.
-- **Model responses** to those prompts are transcribed near-verbatim, labeled **[Claude]** (earlier chapters use **Dev:** / **Draco:**; the content contract is the same).
+- **Model responses** to those prompts are transcribed near-verbatim, labeled **[Claude]** or **[Codex]** according to the source agent (earlier chapters use **Dev:** / **Draco:**; the content contract is the same). Record the model variant only when known from the source; do not infer it.
 - **Responsive prompts** — Dev pasting back the results of commands or actions the model asked Dev to execute (`sbt test` output, tool runs) — are *not* transcribed as prompts. They are summarized and folded into the model's preceding response as an italic parenthetical, e.g. *(Delegated action — Dev ran `sbt test`: all 195 pass.)*
 - Each chapter opens with a header block (**Session date**, **Topic**) and closes with a **Status** section (corpus counts, test counts, queued follow-ups).
 - Exchanges are separated by `---` rules; code, tool output, and file content appear in fenced code blocks.
 
-Chapter 15 documents the original transcription methodology (session data as source of truth, self-propagating format). The journal is now maintained from outside the development sessions — chapters are rebuilt and appended from the recorded session data rather than by the session-resident model — precisely so that journal upkeep never disrupts the development flow, and so the format cannot devolve.
+Chapter 15 documents the original transcription methodology (session data as source of truth, self-propagating format). Journal maintenance was subsequently assigned outside development sessions to protect that format. On September 23, 2026, Dev explicitly authorized both Claude Code and Codex to maintain the journal and shared project documentation during development and bidirectional handoffs; Cowork is no longer required as an intermediary. The source and format requirements remain unchanged. The shared protocol lives in DRACO.md, section 7, and DEVELOPMENT_HANDOFF.md records the current checkpoint and uncovered history.
+
+Use available session evidence for dialogue, preserving which agent spoke. Project files, git records and diffs may support an explicitly labeled factual summary where transcripts are missing, but must not be turned into invented quotations. Mark gaps rather than silently bridging them. New chapters retain Session date, Topic and closing Status; update this introduction's index and coverage when adding them. A documentation-sync marker advances only after those chapters have actually been reviewed against DRACO.md and README.md.
 
 A note on provenance: chapters 1–21 are original in-session transcripts; chapters 37–58 were rebuilt to the canonical format from recorded session data in July 2026; chapters 59–60 were rewritten in-session the same way. Chapters 22–36 remain in their original summary form — their session data had already been purged by Claude Code's retention window before the rebuild, and the journal does not fabricate dialogue it cannot source.
 
@@ -72,9 +74,9 @@ Selected moments that shifted the framework's trajectory:
 
 ### Where It's Heading
 
-- **Generator[L]** — the language-parameterized super-domain, the north star from Chapter 43 onward: generation reframed as `Format[Json] => Format[Draco] => Format[L]`, with actors and rules doing the generation work. The self-port to Haskell is the validating criterion. By Chapter 58, all open architecture (the presence/inference model, declared-codec migration, Encoder/Decoder subelements) is explicitly deferred to Generator[L]; the procedural `draco.Generator` is frozen.
+- **Definition-backed generation** — the earlier Generator[L] direction now has `draco.Generator(T)`, the peer GenDrake and GenScala transform domains, and the handwritten engine renamed DracoGenerator. GenDrake runs through rules; its complete domain section is definition-backed as of chapter 82, while the other aspect sections remain handwritten. A second target remains a validation direction, not a completed implementation or a newly authorized next task.
 
-- **DRAKE** — draco's native authoring tongue (`.drake`), transparent to canonical JSON. The corpus completed at Chapter 61; value expressions became structured trees at Chapter 62; the `JSON → .drake` emitter arrived in Chapters 63–64 (plain types, rules, actors — codec emission and the parser, #44, remain before a true round-trip). The Monadic-bare-expression, host-reserved-domain-name, and naming-collision lints are queued.
+- **DRAKE** — the definition Source, with JSON its normative runtime/bootstrap carrier. The parser and emitter round-trip the measured corpus; chapter 81 adds infix/lambda trees and minimal parentheses, retires conditional nodes in favor of ifThenElse and introduces bracket as a symbol. No corpus expression-form loss remains; ActorAspect's known type-form discrepancy remains. This does not claim general codec-aspect round-trip coverage or completion of the authoring path.
 
 - **Dreams** — the user development layer (Domain Rules Editor Actor Message Service), second layer of the three-layer charter stated in Chapter 40: draco → Dreams → Orion. `src/mods` hosts its early stand-ins (`DomainBuilder`, and eventually TransformBuilder — whose `validate` is exactly "does meaning survive the change of representation").
 
@@ -82,7 +84,13 @@ Selected moments that shifted the framework's trajectory:
 
 - **Primes / PON** — combinatorial induction over Prime Ordinal Notation as "draco in draco," the proving ground for DRAKE and the disciplined Monadic register.
 
-The recurring theme across all sixty sessions is that self-description creates complexity: a type system closed over itself means every change to a foundational type can create circular dependencies, initialization-order bugs, and shadowing issues. The `lazy val` discipline, deferred factory defaults, classpath loading, the Haskell test, and finally DRAKE-as-recognizer are all engineering responses to the same mathematical property. The framework is learning to describe itself without tripping over its own reflection.
+The recurring theme across the journal is that self-description creates complexity: a type system closed over itself means every change to a foundational type can create circular dependencies, initialization-order bugs, and shadowing issues. The `lazy val` discipline, deferred factory defaults, classpath loading, the Haskell test, and finally DRAKE-as-recognizer are all engineering responses to the same mathematical property. The framework is learning to describe itself without tripping over its own reflection.
+
+**Status at Chapter 83:** shared Claude Code/Codex journal and documentation maintenance is explicitly authorized, with a bidirectional protocol in DRACO.md and a tracked DEVELOPMENT_HANDOFF.md checkpoint. Chapters 81-83 reconcile the range after chapter 80, disclosing transcript limits. This documentation increment is uncommitted at its close; no new runtime test is claimed and no next feature is authorized.
+
+**Status at Chapter 82:** Text serves Nominal and the generator's text types; DomainAspectText/DomainAspectOf render the complete domain section on the live Drake path, with superDomain still owned by DracoAspect. Dev verified 652 tests / 46 suites, then committed and pushed `7de07ba`. Scope 101 draco + 10 mods, 111 measured, one surface loss, GenDrake 99/99, complete domain sections 101 with one parameterized, none skipped. Other aspects and type-parameter spelling retain handwritten support.
+
+**Status at Chapter 81:** infix/lambda trees, minimal parentheses, ifThenElse in place of conditional nodes and bracket as a declared symbol. The source records 626 passing tests after a two-failure SourceContract correction; its bracket tail hands off an expected 627/44 without a pasted full-run reply. Git establishes `8e59cbe`; the later successor's full gate is recorded in chapter 82. Historical counts below remain unchanged.
 
 **Status at Chapter 80:** every host head in the corpus has a drake form — the collection brackets carried as themselves with mutable versions `[T]+` / `{T}+` / `{K, V}+`, `Presence` on the loader path, an actor's peer as `(M -> Unit)`, a rule's hooks as functions, `[T]` the lazy sequence, a foreign parent a type form in `derivation: [Json]` — and the empty package is the nameless domain, draco's default package, anchored by `src/main/resources/.drake` and `.json`; `ifThenElse` is the second dyn on `Presence`, a Boolean reaching it through `guard`; six declared symbols (`join`, `presence`, `progression`, `cons`, `add`, `guard`) are where a definition meets a host boundary; 624 tests / 44 suites at `5fd801d`, 98 types in scope / 108 measured, GenDrake 96 of 96, losses 5, GEN MAP 28/20. Remaining host residue: the leaves (`String`, `Int`, `Json`, `URI`, the evrete and pekko types) and DefinitionPath's two lambda-internal conditionals (#61). Queued: the parser for lambdas and infix (three de-treed rule conditions wait on it), the symbol names Dev may rename, the abstract-types-and-codecs question, `DomainAspect`.
 
@@ -417,3 +425,15 @@ The session that closed drake.dlt EVALUATION and opened the target-neutral carri
 ### [Chapter 80 — Consumer, LazyList, Mutable Collections, ifThenElse and the Nameless Domain](draco-dev-chapter-80.md)
 
 The continuation, seven commits from 623/44 to 624/44: the ActorRef form confirmed (`2fcf58e`); a rule's `pattern` and `action` as functions with Java's `Consumer` named only at Evrete's `execute` (`d2b9cf6`, after Dev's reason for it and a compiler probe of both forms); `[T]` as the lazy sequence with `progression` and `cons` (`8e04ee7`); the collectors discussion — "a sequenced values container for post hoc sorting", `mut` as the element kind, mutability that must be in the type to cross a call, and Dev's `[T]+` / `{T}+` / `{K, V}+` with `()+` reserved for mutable trees — landing as the last host-text type form retired (`c7c3f19`, whose first run "failed, intentionally" on one import placement); `ifThenElse` as dispatch on `Presence` with `guard` as the presence of nothing (`2897ee8`); TypeName's paths as joins (`14e969a`); and the derivation slot carrying a type form for a foreign parent, the empty package meaning the nameless domain — no name, no companion, anchored by `.drake` and `.json` at the resource root (`5fd801d`, three runs: a slot type changed and its named-argument constructions had not been grepped).
+
+### [Chapter 81 - Expression Trees, Conditionals and Bracket](draco-dev-chapter-81.md)
+
+Recovered Claude Code dialogue: Dev rejects opaque lambda bodies and puts the arrow in the precedence table; parenthesized expressions become trees, conditional nodes retire, and bracket names resource scope without a new syntactic form. The missed SourceContract operator set and first failed full run remain in the record. The bracket full-run reply is absent from the source, not invented.
+
+### [Chapter 82 - Text and Definition-Backed Domain-Aspect Generation](draco-dev-chapter-82.md)
+
+Codex's Text checkpoint and focused migrations lead into Dev's five-aspect clarification and complete domain-section generation on the live rule path. Selected dialogue is distinguished from record-backed summaries. Dev's full run passes 652 tests / 46 suites and the combined work is pushed as `7de07ba`.
+
+### [Chapter 83 - Shared Journal and Development Continuity](draco-dev-chapter-83.md)
+
+Dev explicitly authorizes both agents to maintain the journal and project documentation. Tracked symlinks preserve one operating-rules source; the shared handoff separates implementation, verification, commits and documentary coverage. Private memory is not silently imported and the local documentation skill becomes non-mutating by default.

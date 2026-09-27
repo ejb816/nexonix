@@ -318,7 +318,7 @@ Unit
   |     +-- Distance(T)  +-- Meters
   |     +-- Rotation(T)  +-- Radians
   +-- Ordinal       (Unit, Primal(Enumeration))  -- ordered categories
-  +-- Nominal       (Unit, Primal(String))       -- unordered labels
+  +-- Nominal       (Unit, Primal(draco.drake.Text)) -- unordered labels
 
 Coordinate(T)  (Holon(T))                        -- spatial position
 ```
@@ -639,4 +639,13 @@ engine — the projection and surface implementations that the framework does no
 describe as definitions. Whether that tier is permanent or transitional is an open
 question.
 
-<!-- draco-docs-synced-through: chapter 80 -->
+## Development Continuity
+
+Claude Code and Codex share [DRACO.md](DRACO.md) as their operating rules and use
+[DEVELOPMENT_HANDOFF.md](DEVELOPMENT_HANDOFF.md) for the current checkpoint, verification
+evidence and documentation gaps. Both may maintain the project documentation and
+[development journal](draco-dev-journal/draco-dev-chapter-00-intro.md); no Cowork intermediary
+is required. The journal preserves sourced history, while the handoff tracks current work.
+The same handoff protocol applies in either direction, independently of the selected model.
+
+<!-- draco-docs-synced-through: chapter 83 -->

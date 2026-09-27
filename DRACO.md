@@ -1,9 +1,10 @@
 # DRACO.md
 
-Operating rules for Claude Code (claude.ai/code) in this repository. `CLAUDE.md` is a
-symlink to this file, so it is auto-loaded every session.
+Shared operating rules for Claude Code and Codex in this repository. `CLAUDE.md` and
+`AGENTS.md` are symlinks to this file. Read `DEVELOPMENT_HANDOFF.md` when resuming work
+or transferring development between agents; the bidirectional protocol is in section 7.
 
-**Every factual claim below was verified against the tree on 2026-08-15.** The previous
+**The architecture baseline was audited on 2026-08-15; later verified updates are dated below.** The previous
 version of this file described an architecture that had not existed for months — the
 `*Instance` triad, `typeInstance` vals, `TypeElement extends Primal[String]`, Generator
 owning type loading. It steered sessions wrong for as long as it stood. If you find a
@@ -109,15 +110,23 @@ now projects, wires and runs under `ScenarioGenTest`, which fails rather than re
 does `GenDrakeTest`'s `GenDrake runs` line — in the capture grep for visibility, not here.
 Moving a measurement into an assertion is the goal; the table should shrink over time.
 
-**Where things are recorded** — four artifacts, four jobs, do not conflate them:
+**Where things are recorded** — distinct artifacts and jobs, do not conflate them:
 
 | artifact | holds | who writes it |
 |---|---|---|
-| auto-memory (`MEMORY.md` + notes) | durable knowledge: conventions, feedback, how the system works | this session, as work happens |
+| auto-memory (`MEMORY.md` + notes) | tool-local retrieval aids for conventions and feedback; shared decisions must also be in project documents | the active agent, as work happens |
 | GitHub Issues | work to do; decisions deferred | only with Dev's approval |
 | `draco-git-record/` | audit trail — one file per commit, containing the commit message | this session, before the commit |
 | `CHANGELOG.md` | the *fact* of each change, for a reader outside the tree | this session, **in the same commit as the record** |
-| `draco-dev-journal/` | historical narrative | **Cowork, not this session** — do not write or suggest chapters |
+| `draco-dev-journal/` | sourced historical narrative, preserving dialogue and corrections | Claude Code or Codex; Cowork may also contribute when Dev assigns it |
+| `DEVELOPMENT_HANDOFF.md` | current checkpoint, evidence, open decisions and documentation coverage for the next agent | the outgoing agent; the incoming agent verifies it against the tree |
+
+**Journal authorization (Dev, 2026-09-23).** Claude Code and Codex both have explicit
+permission to maintain the journal, DRACO.md, README.md and project-embedded continuity
+records during development and handoffs. This supersedes the Cowork-only restriction;
+no separate Cowork handoff is required. Preserve the journal's source and format rules,
+and distinguish verified facts, Dev's decisions and model proposals. This permission
+does not authorize sbt, commits, pushes, new GitHub issues or unrelated changes.
 
 **The CHANGELOG entry is written with the git-record, not at release time.** Both go in
 the commit they describe. The record carries the reasoning; the CHANGELOG carries one or
@@ -354,19 +363,21 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Only this file has been verified. As of 2026-08-15 the others are stale and should not be
-trusted without checking the code:
+Current documentation was reconciled through journal chapter 83 on 2026-09-23.
+Dates below distinguish that reconciliation from earlier rewrites; always check
+claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 80 on
-  2026-09-21.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 83 on
+  2026-09-23.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
   questions). One shared skeleton; only the toolchain, projection command, running, and
   command set are target-specific.
-- **`AGENTS.md`** — a *diverged older copy* of this file (June 2026, the retired `*Instance`
-  architecture), tracked in git, not a symlink. Should be one; making it one deletes tracked
-  content, so it is Dev's call (queued 2026-09-18).
+- **`AGENTS.md` / `CLAUDE.md`** — tracked symlinks to DRACO.md, verified 2026-09-23.
+  Both agents read the same operating rules; edit DRACO.md, never the symlinks.
+- **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
+  refresh it at a handoff or completed development increment, and verify it on resumption.
 - **`CHANGELOG.md`** — **current.** Release blocks through alpha.6 (2026-08-17); `[Unreleased]`
   carries one entry per commit since, written with each commit's record, and was consolidated
   into one section each (Added / Changed / Fixed / Build) with a lead paragraph on 2026-09-09.
@@ -375,19 +386,26 @@ trusted without checking the code:
 
 **Related documentation.** `README.md` (architecture, for a reader outside the tree),
 `CHANGELOG.md` (the fact of each change), `draco-dev-journal/` (the session transcripts; the
-`## Status` section of the latest chapter is the running state), `src/main/resources/draco/drake.dlt`
+`## Status` section of each chapter is its historical closing state), `DEVELOPMENT_HANDOFF.md`
+(current resumption checkpoint), `src/main/resources/draco/drake.dlt`
 (the surface specification).
 
-**Local setup.** `CLAUDE.md`, `AGENTS.md` and `.claude` are git-ignored local symlinks — `CLAUDE.md`
-and `AGENTS.md` to this file, `.claude` to `.draco` — recreated after cloning with
-`ln -sfn DRACO.md CLAUDE.md && ln -sfn DRACO.md AGENTS.md && ln -sfn .draco .claude`. Never write
-through a symlink: many tools replace it with a regular file. Tool-specific material (Claude Code
+**Local setup.** `CLAUDE.md` and `AGENTS.md` are tracked symlinks to this file;
+`.claude` is an untracked local symlink to `.draco`. Inspect before any repair. With Dev's
+approval, create only missing links using `ln -s DRACO.md CLAUDE.md`,
+`ln -s DRACO.md AGENTS.md` or `ln -s .draco .claude` as appropriate; do not force-replace
+an existing file, directory or different link. Never write through a symlink: many tools
+replace it with a regular file. Tool-specific material (Claude Code
 auto-memory, `.claude`/`.draco` settings) lives outside this file.
 
 ---
 
 ## 6. Gotchas worth carrying
 
+- **Expression vocabulary has more than two consumers.** Alongside Drake and DracoGenerator,
+  the SourceContract prototype and its tests carry operator cases. Retiring the `if` node
+  passed scoped probes but failed two SourceContractTest cases in the first full run
+  (chapter 81). Search every consumer and retain the full-suite gate.
 - **Evrete** compiles conditions as Java at runtime: fully qualified class names required.
   Working memory is boxed — rule variables use `classOf[Integer]`, not `classOf[Int]`.
   A single-fact insert needs `Seq(fact): _*`. Tuple facts need a `forEach` declaration.
@@ -433,4 +451,55 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   The operator layer restored all three on 2026-09-21. What the parser still cannot tree — a host
   `if`, a block — a sweep still de-trees: read the diff of every sweep.
 
-<!-- draco-docs-synced-through: chapter 80 -->
+## 7. Claude Code / Codex handoffs
+
+This protocol works in both directions and is independent of the selected model.
+Changing the agent or model does not change project permissions or accepted decisions.
+The repository is the shared continuity record; private chat histories and tool-local
+memory are optional evidence, not prerequisites or hidden sources of authority.
+Since 2026-09-27 Dev alternates development sessions between Claude Code and Codex as a
+standing practice; the cadence is set by experience, so every session begins by receiving
+a handoff and every completed increment ends by preparing one.
+
+### Receiving a handoff
+
+1. Read these rules and `DEVELOPMENT_HANDOFF.md`, then inspect the actual branch, HEAD,
+   working-tree changes and relevant files. Do not reset, overwrite or assume ownership
+   of another agent's uncommitted work. A clean tree and matching commit are observations,
+   not permanent properties of a handoff.
+2. Read the latest journal Status and only the chapters, git records or transcripts
+   needed for the current task. Earlier sessions already covered by the journal need
+   not be re-imported. If evidence is unavailable, record the gap rather than invent it.
+3. Distinguish implemented, generated, compiled, tested, committed and pushed states.
+   Record who ran tests, their code checkpoint, scope and report-only numbers. A result
+   from before a relevant edit does not verify that edit; local remote-tracking state
+   is not fresh proof of a remote push.
+4. Summarize the recovered checkpoint and any discrepancies. Continue only the work
+   Dev has authorized; proposed next steps and deferred decisions are not approvals.
+
+### Preparing a handoff
+
+1. Update `DEVELOPMENT_HANDOFF.md` with the agent/date, branch and observed HEAD, changes
+   still in the tree, completed work, verification evidence, blockers, decisions and the
+   next authorized action. Identify a destination if Dev has chosen one; otherwise leave
+   the checkpoint available to either agent. Writing it does not launch another session.
+2. Keep DRACO.md, README.md, CHANGELOG.md and the git record aligned with changes actually
+   made. Shared decisions and durable lessons belong in these project files, not only in
+   auto-memory. Do not overwrite another tool's private memory as a substitute for handoff.
+3. Track journal coverage separately from code/documentation currency. Reconcile the last
+   chapter's closing commit with git history, including changes from either agent. Name
+   uncovered ranges and available sources. Do not silently skip older uncovered work to
+   reach a newer Codex or Claude Code increment.
+4. When writing journal chapters, follow the Introduction's Journal Conventions: source
+   Dev's words verbatim and model replies near-verbatim, label Claude and Codex distinctly,
+   preserve corrections, and summarize delegated command results with their provenance.
+   Git records and diffs support factual summaries, not reconstructed dialogue. Missing
+   transcripts must be disclosed; voice noise and duplicate delivery are not new decisions.
+5. Update the chapter index when adding chapters. Advance `draco-docs-synced-through`
+   markers only after reviewing the corresponding chapters against DRACO.md and README.md.
+   Keep coverage gaps explicit; never advance a marker merely because code is newer.
+6. Give Dev a concise handoff summary, the remaining verification or decisions, and any
+   requested commands to run. Do not commit, push, run sbt, create an issue or contact
+   another agent merely because a handoff is ready.
+
+<!-- draco-docs-synced-through: chapter 83 -->

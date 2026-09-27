@@ -1,0 +1,34 @@
+# Shared documentation and journal continuity across Claude Code and Codex
+#
+# Dev described successful in-session journal upkeep in Claude Code after switching
+# models, and explicitly authorized Codex to continue with that permission. Both
+# directions of development handoff should use project-embedded evidence rather than
+# depend on model-specific implicit permissions or private chat memory.
+#
+# Replace the Cowork-only rule in DRACO.md and the journal Introduction. Preserve
+# the near-verbatim source contract, distinguish Claude from Codex, and disclose
+# missing transcript evidence instead of reconstructing dialogue from git records.
+# Add a symmetric incoming/outgoing protocol and DEVELOPMENT_HANDOFF.md checkpoint.
+# README links the shared workflow. Correct the stale claim that AGENTS.md is a
+# diverged copy: git mode 120000 and local link targets confirm both agent instruction
+# files are tracked links to DRACO.md. No symlink was replaced or written through.
+#
+# Coverage audit: journal chapter 80 closes at 5fd801d. Later parser, conditional,
+# bracket and Text/domain-aspect commits remain uncovered by new chapters. Mark
+# that gap without skipping earlier Claude Code work or advancing sync markers.
+# The code checkpoint is 7de07ba, verified 652/46 in Dev's September 22 run; Dev's
+# supplied push output establishes the reported push. No fresh remote query made.
+#
+# Documentation only. No runtime code, private auto-memory, historical chapter
+# dialogue, or test baseline numbers changed. No sbt, commit, push or issue creation.
+# Verify diff whitespace and links before handing over. No new journal chapter
+# claimed or written in this increment.
+
+--- MESSAGE ---
+Define shared Claude Code and Codex documentation handoffs
+
+Authorize both agents to maintain the development journal and project documents,
+replacing the Cowork-only restriction without weakening source provenance rules.
+Add bidirectional handoff procedures and a tracked current-state checkpoint with
+verified test evidence, remaining journal coverage and resumption boundaries.
+Update README, journal conventions and changelog; correct the agent symlink status.

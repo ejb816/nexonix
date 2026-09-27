@@ -191,6 +191,16 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Journal reconciled through chapter 83.** Recover the Claude Code expression-tree
+  and bracket session, record Codex's Text/domain-aspect increment with explicit source
+  limits, and synchronize the introduction, architecture docs and shared handoff.
+  Historical test results remain separate from this documentation-only update. (2026-09-23)
+
+- **Shared Claude Code / Codex continuity.** Both agents are explicitly authorized to
+  maintain the journal and project documentation. DRACO.md defines bidirectional handoffs,
+  and DEVELOPMENT_HANDOFF.md records the current checkpoint, verification and journal gaps;
+  source-backed journal conventions and existing execution restrictions remain in force. (2026-09-23)
+
 - **Text in generator Emission.** Emission now names `draco.drake.Text` as its
   underlying value and factory input. GenDrakeTest pins those references alongside
   its existing end-to-end emission checks; the Scala representation is unchanged. (2026-09-22)
