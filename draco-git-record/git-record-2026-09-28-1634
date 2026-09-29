@@ -1,0 +1,58 @@
+# Definition-backed generation of the Draco aspect, for Drake output only
+#
+# Dev explicitly clarified target scope, then authorized this increment. The Draco
+# aspect denotes which definition fields are rendered; Drake denotes the output.
+# This does not migrate Scala source generation or add a GenScala implementation.
+#
+# Add DracoAspectText and DracoAspectOf as synchronized Drake/JSON/generated Scala
+# trios, and register them in DrakeTarget and GenDrake. The target owns type-section
+# layout; the transform owns mapping, own-package references, reconstructable root
+# elision and factory-result elision. SuperDomain remains owned by DracoAspect and
+# rendered in the existing domain section. Four explicit callbacks carry parameter,
+# type-form, type-slot and element-body rendering; main does not depend on mods.
+# Drake.emit delegates the complete type section and retains rule/actor behavior
+# and codec rejection. DracoGenerator itself is unchanged.
+#
+# Seven DracoAspectTest tests cover target order, roots/foreign parents, nested
+# parameters/references, factory results and bodies, nameless/absent factories,
+# the corpus, and actual rule emission. ActorAspect and BodyElement are authored
+# ahead of JSON; capture their old emitted sections as documented fixtures rather
+# than excluding them. Every corpus definition participates in the new assertion.
+#
+# Initial probe compilation exposed a mods-only Json.text extension in the new
+# definition; route presence detection through the explicit slot renderer instead.
+# A test fixture also needed Factory's required valueType. The first test overlay
+# duplicated classpath roots; correct the isolated classpath instead of weakening
+# DefinitionPath's unique-root rule. The next run exposed the preexisting ActorAspect
+# authored-ahead difference, addressed with frozen before-migration fixtures.
+#
+# Verification: changed generated sources, Drake and the new test compile directly
+# into an isolated overlay. 538 tests / 7 suites pass: DracoAspectTest, DomainAspectTest,
+# DracoGenTest, DrakeGenTest, DrakeParseTest, GenDrakeTest and SourceContractTest.
+# Corpus: 103 Draco + 10 mods in parse scope; 1 loss across 113, expression loss 0.
+# GenDrake 101/101; Draco and domain section tests each cover 103, none skipped;
+# domain parameterized count remains 1, Draco uses 2 frozen authored-ahead baselines.
+# Compare old/new emitters against the same current resources: 103 Drake + 103 Scala
+# projections byte-identical. These include the newly added types; existing Scala
+# generated files change only for the two domain member lists.
+# Dev subsequently ran the full gate on September 28 at 17:04: 669 tests / 47 suites
+# passed, zero failures or aborted suites. Pasted output and saved /tmp/sbt-test.log
+# agree. All report-only baselines match: example map 28/20/0/0 of 48; PON 80 numbers,
+# 550 expressions, 42 discrepancies, 7 canonical differences; scenario 23 clean;
+# forest assertion passes; known subtype co-declaration limitation unchanged.
+# File-only DrakeGenTest baseline: zero mods actors pending Drake authoring.
+#
+# Update DRACO.md, README, CHANGELOG and handoff with scoped and full-run evidence.
+# Journal coverage remains chapter 83; this increment is not
+# yet a journal chapter. No commit, push or new issue action by Codex.
+
+--- MESSAGE ---
+Generate the Draco aspect through definitions on the Drake emission path
+
+Add DracoAspectText and DracoAspectOf with synchronized definition trios and domain
+membership. Move type-section layout and mapping into these definitions, retaining
+explicit callbacks for type and element rendering without changing Scala generation.
+
+Cover roots, references, factories, nested bodies, corpus sections and the running
+rule path. Preserve authored-ahead definitions using documented pre-migration
+fixtures. Update project documentation and handoff with verification scope.

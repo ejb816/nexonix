@@ -1,0 +1,15 @@
+type BodyElement from TypeElement
+  modules [
+    Fixed
+    Mutable
+    Dynamic
+    Parameter
+    Monadic
+    Pattern
+    Action
+    Condition
+    Variable
+    Factory
+    Local
+    Case
+  ]

@@ -1,0 +1,538 @@
+{
+  "typeName": {
+    "name": "DracoAspectText",
+    "namePackage": [
+      "draco",
+      "draketarget"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DracoAspectText",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "name",
+          "valueType": "draco.drake.Text"
+        },
+        {
+          "kind": "Parameter",
+          "name": "parents",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "modules",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "extensible",
+          "valueType": "draco.drake.Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "elements",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "factoryPresent",
+          "valueType": "Boolean",
+          "value": "false"
+        },
+        {
+          "kind": "Parameter",
+          "name": "factoryResult",
+          "valueType": "draco.drake.Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "factoryParameters",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "factoryBody",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "globals",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "header",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_name.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"type \"",
+                      "_name",
+                      {
+                        "()": [
+                          {
+                            ".": [
+                              {
+                                "()": [
+                                  "guard",
+                                  "_parents.isEmpty"
+                                ]
+                              },
+                              "ifThenElse"
+                            ]
+                          },
+                          "\"\"",
+                          {
+                            "++": [
+                              "\" from \"",
+                              {
+                                "()": [
+                                  "join",
+                                  "\" \"",
+                                  "_parents"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "moduleLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_modules.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"  modules [\""
+                    ]
+                  },
+                  {
+                    "()": [
+                      "_modules.map",
+                      {
+                        "\\": [
+                          "member",
+                          {
+                            "++": [
+                              "\"    \"",
+                              "member"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "[]": [
+                      "\"  ]\""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "extensibleLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_extensible.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"  extensible \"",
+                      "_extensible"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "elementLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_elements.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"  elements\""
+                    ]
+                  },
+                  "_elements"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "parameterLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_factoryParameters.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"    parameters\""
+                    ]
+                  },
+                  "_factoryParameters"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "bodyLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_factoryBody.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"    body\""
+                    ]
+                  },
+                  "_factoryBody"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "factoryLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_factoryPresent"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      {
+                        "++": [
+                          "\"  factory\"",
+                          {
+                            "()": [
+                              {
+                                ".": [
+                                  {
+                                    "()": [
+                                      "guard",
+                                      "_factoryResult.isEmpty"
+                                    ]
+                                  },
+                                  "ifThenElse"
+                                ]
+                              },
+                              "\"\"",
+                              {
+                                "++": [
+                                  "\" \"",
+                                  "_factoryResult"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "parameterLines",
+                  "bodyLines"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "globalLines",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_globals.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"  globals\""
+                    ]
+                  },
+                  "_globals"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "draco.drake.Text",
+          "value": {
+            "()": [
+              "join",
+              "\"\\n\"",
+              {
+                "++": [
+                  "header",
+                  "moduleLines",
+                  "extensibleLines",
+                  "elementLines",
+                  "factoryLines",
+                  "globalLines"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+type DracoAspectText from Surface
+  factory
+    parameters
+      par name draco.drake.Text
+      par parents [draco.drake.Text] []
+      par modules [draco.drake.Text] []
+      par extensible draco.drake.Text ""
+      par elements [draco.drake.Text] []
+      par factoryPresent Boolean false
+      par factoryResult draco.drake.Text ""
+      par factoryParameters [draco.drake.Text] []
+      par factoryBody [draco.drake.Text] []
+      par globals [draco.drake.Text] []
+    body
+      loc header [draco.drake.Text] guard(_name.isEmpty).ifThenElse([], ["type " ++ _name ++ guard(_parents.isEmpty).ifThenElse("", " from " ++ join(" ", _parents))])
+      loc moduleLines [draco.drake.Text] guard(_modules.isEmpty).ifThenElse([], ["  modules ["] ++ _modules.map(\member -> "    " ++ member) ++ ["  ]"])
+      loc extensibleLines [draco.drake.Text] guard(_extensible.isEmpty).ifThenElse([], ["  extensible " ++ _extensible])
+      loc elementLines [draco.drake.Text] guard(_elements.isEmpty).ifThenElse([], ["  elements"] ++ _elements)
+      loc parameterLines [draco.drake.Text] guard(_factoryParameters.isEmpty).ifThenElse([], ["    parameters"] ++ _factoryParameters)
+      loc bodyLines [draco.drake.Text] guard(_factoryBody.isEmpty).ifThenElse([], ["    body"] ++ _factoryBody)
+      loc factoryLines [draco.drake.Text] guard(_factoryPresent).ifThenElse(["  factory" ++ guard(_factoryResult.isEmpty).ifThenElse("", " " ++ _factoryResult)] ++ parameterLines ++ bodyLines, [])
+      loc globalLines [draco.drake.Text] guard(_globals.isEmpty).ifThenElse([], ["  globals"] ++ _globals)
+      fix value draco.drake.Text join("\n", header ++ moduleLines ++ extensibleLines ++ elementLines ++ factoryLines ++ globalLines)
+domain draco draketarget DrakeTarget

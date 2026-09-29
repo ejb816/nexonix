@@ -1,0 +1,14 @@
+type ActorAspect
+  elements
+    fix message Action
+    fix messageType TypeName
+    fix signal Action
+    fix start Action
+  factory
+    parameters
+      par message Action Action.Null
+      par messageType TypeName TypeName.Null
+      par signal Action Action.Null
+      par start Action Action.Null
+  globals
+    fix isEmpty (ActorAspect -> Boolean) aa => aa.message.body.isEmpty && aa.signal.body.isEmpty && aa.start.body.isEmpty

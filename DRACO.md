@@ -48,8 +48,8 @@ real defects in one August session were caught only by reading a headline that m
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
-**The baselines, originating at `87a2bb9` (2026-08-31).** The current full-suite baseline is
-**652 tests / 46 suites**, verified by Dev's run on 2026-09-22. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+**The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**669 tests / 47 suites**, verified by Dev's run on 2026-09-28. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
@@ -76,14 +76,14 @@ logger, not to the per-suite files, so they have to be caught off stdout — eve
 except the last `DrakeGenTest` one, which prints only to its per-suite file:
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|CO-DECLARATION|error|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 1 field across 111 types — type form 1 (ActorAspect), expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 101 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 1 field across 113 types — type form 1 (ActorAspect), expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 103 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -103,7 +103,19 @@ table exists to make visible.
 the new six-test `DomainAspectTest` brings the full count to **652 tests / 46 suites passed**.
 GenDrake emitted 99/99 definitions. The new section test reproduced all 101 complete
 domain sections, including the parameterized domain omitted by the retained DomainLine
-compatibility test, with zero exclusions. All report-only figures match the table above.
+compatibility test, with zero exclusions. All report-only figures matched the then-current table.
+
+**Verified Draco-aspect increment (2026-09-28):** two new types add ten corpus tests
+and DracoAspectTest adds seven focused tests. Dev's full run passed **669 tests / 47
+suites**, with no failures or aborted suites and all report-only baselines matching.
+An isolated compiled-class probe had passed **538
+tests / 7 suites** (DracoAspectTest, DomainAspectTest, DracoGenTest, DrakeGenTest,
+DrakeParseTest, GenDrakeTest, SourceContractTest). GenDrake emitted 101/101 definitions;
+both aspect probes covered 103 sections with none skipped. The Draco probe uses frozen
+pre-migration sections for ActorAspect and BodyElement, whose authored sources remain
+ahead of JSON. Both Drake and Scala projections were byte-identical before/after over
+all 103 current JSON definitions. The full run also confirmed the table above and zero
+mods actors pending Drake authoring in the file-only report.
 
 Two of these have since become ASSERTIONS and are deliberately not listed: the scenario
 now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports. So
@@ -312,6 +324,17 @@ uses this generated transform, which reaches the running Emit/EmissionReceived f
 The transform receives type-parameter spelling as an explicit callback, supplied by
 the existing Drake type-form renderer; it never calls back into the full emitter.
 `DomainLine` and `DomainLineOf` remain compatibility helpers, not full aspect renderers.
+
+**Draco-aspect generation (2026-09-28).** `draketarget.DracoAspectText` owns the type
+section's layout; `gendrake.DracoAspectOf` maps the header, derivation, modules,
+extensibility, elements, factory and globals. It preserves own-package reference
+elision, reconstructable-root elision and implicit versus explicit factory results.
+`Drake.emit` delegates to it through `dracoAspectText`. Four explicit callbacks retain
+parameter/type-form/value-type-slot spelling and element-body rendering in Drake;
+the generated main types do not depend on mods classes. Super-domain output remains
+in the domain section and owned by DracoAspect. This is Drake output only: the
+Scala generator and GenScala have not been migrated. Rule/actor rendering and codec
+rejection retain their existing behavior.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `json`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),

@@ -243,10 +243,6 @@ object Drake {
     if (tn.typeParameters.isEmpty) tn.name
     else s"${tn.name}(${tn.typeParameters.map(typeParameterSurface).mkString(", ")})"
 
-  /** The universal root, as TypeLoader.rooted spells it. */
-  private def isRoot (tn: TypeName) : Boolean =
-    tn.name == "DracoType" && tn.namePackage == Seq ("draco")
-
   /** A dyn-with-body opens its own sub-block; its container needs [ ]. */
   private def opensBlock (element: TypeElement) : Boolean = element match {
     case d: Dynamic => d.parameters.nonEmpty || d.body.nonEmpty
@@ -347,10 +343,11 @@ object Drake {
   private def sectionLines (keyword: String, members: Seq[TypeElement], level: Int) : Seq[String] =
     s"${"  " * level}$keyword" +: members.flatMap(elementLines(_, level + 1))
 
-  /** A bracketed name list (modules / types — both top-level type sections):
-    * names carry no bounding keyword, so the [ ] are always required. */
-  private def nameListLines (keyword: String, names: Seq[String]) : Seq[String] =
-    (s"  $keyword [" +: names.map(n => s"    $n")) :+ "  ]"
+  /** The type section is definition-backed; type forms and element bodies still
+    * use this target's renderers through explicit dependencies. */
+  private[draco] def dracoAspectText (td: TypeDefinition) : String =
+    draco.gendrake.DracoAspectOf(td, typeParameterSurface(_), drakeType(_),
+      typeSurface(_), elementLines(_, _)).value
 
   /** Emit the .drake surface for a TypeDefinition (the drake.dlt TEMPLATE:
     * plain-type sections + domain + rule + actor). The codec aspect is the next
@@ -359,80 +356,13 @@ object Drake {
     if (!CodecAspect.isEmpty(td.codecAspect))
       sys.error(s"Drake.emit: codec aspect not yet emitted (next increment): ${td.typeName.name}")
 
-    val da = td.dracoAspect
-    val typeParameters =
-      if (td.typeName.typeParameters.isEmpty) ""
-      else s"(${td.typeName.typeParameters.map(typeParameterSurface).mkString(", ")})"
+    val dracoText = dracoAspectText(td)
+    val typeSection = if (dracoText.isEmpty) Seq.empty else Seq(dracoText)
 
-    /** A `from` / `modules` reference: BARE when it lives in the referring type's own
-      * package, QUALIFIED otherwise. The package of a same-package reference is not
-      * information — it is the package we are already in — and drake.dlt INFERENCE says
-      * explicit iff not reconstructable. Measured over the corpus: 67 of 112 references
-      * are same-package, so spelling every one of them would add words to the majority
-      * of references purely to restate where they already are.
-      *
-      * `domain` / `super` / `extensible` stay unconditionally qualified: each names
-      * something OUTSIDE the type being declared (its domain, that domain's parent, the
-      * host base it extends), so there is no "own package" for them to be inferred from.
-      *
-      * A reference with NO package is FOREIGN — outside every draco domain — and is
-      * spelled as a type expression instead (foreignReference). */
+    // Actor message references retain the same package-relative spelling.
     def reference (tn: TypeName) : String =
       if (tn.namePackage == td.typeName.namePackage) typeRef(tn)
       else (tn.namePackage :+ typeRef(tn)).mkString(" ")
-
-    // The universal root is spelled only where it is NOT reconstructable, which is
-    // drake.dlt INFERENCE applied to the one reference that is never authored:
-    // TypeLoader.rooted appends DracoType to any definition carrying no draco-domain
-    // parent, so the root alone — and the root beside a FOREIGN parent, which is
-    // Dictionary — comes back on its own. Beside a draco parent it would not, so
-    // there it stays on the surface.
-    // A derivation entry is a NAME (a draco parent) or a TYPE FORM (a foreign parent), and the
-    // surface spells each as what it is: the name by reference, the form by drakeType.
-    val parents      = DracoAspect.parents(da)
-    val rootRestored = !parents.exists(tn => !isRoot(tn))
-    val spelled      = da.derivation.flatMap { j =>
-      if (j.hcursor.downField("name").succeeded) j.as[TypeName].toOption.filterNot(tn => rootRestored && isRoot(tn)).map(reference)
-      else Some(drakeType(j))
-    }
-    val fromClause   = if (spelled.isEmpty) "" else s" from ${spelled.mkString(" ")}"
-    // The drake surface names the bare concept (AddNaturalSequence); rule-/actor-ness
-    // is carried by the ruleAspect/actorAspect, never by the type name.
-    // The NAMELESS domain (draco's default package, 2026-09-20) has no header: its anchor
-    // definition is the one line `domain`.
-    val header = if (td.typeName.name.isEmpty) "" else s"type ${td.typeName.name}$typeParameters$fromClause"
-
-    val modules =
-      if (da.modules.isEmpty) Seq.empty
-      else nameListLines("modules", da.modules.map(reference))
-    val extensible =
-      if (da.extensible.name.isEmpty) Seq.empty
-      else Seq(s"  extensible ${(da.extensible.namePackage :+ typeRef(da.extensible)).mkString(" ")}")
-    val elements =
-      if (da.elements.isEmpty) Seq.empty
-      else sectionLines("elements", da.elements, 1)
-    val factory =
-      if (da.factory.valueType.text.isEmpty) Seq.empty
-      else {
-        val parameters =
-          if (da.factory.parameters.isEmpty) Seq.empty
-          else sectionLines("parameters", da.factory.parameters, 2)
-        val body =
-          if (da.factory.body.isEmpty) Seq.empty
-          else sectionLines("body", da.factory.body, 2)
-        // A factory normally constructs the enclosing type, and that is what makes its
-        // value-type elidable (drake.dlt CONVENTIONS: `factory` takes no name). When it
-        // constructs something else it is NOT reconstructable and has to be spelled —
-        // the live case is the actor-minting factory, whose ActorType value-type is what
-        // tells the Scala projection to mint an actor rather than an instance of the type.
-        val head =
-          if (typeSurface(da.factory.valueType) == typeSurface(factoryValueType(td.typeName.name, td.typeName.typeParameters))) "  factory"
-          else s"  factory ${typeExpressionSlot(da.factory.valueType)}"
-        head +: (parameters ++ body)
-      }
-    val globals =
-      if (da.globalElements.isEmpty) Seq.empty
-      else sectionLines("globals", da.globalElements, 1)
 
     // Section layout and aspect mapping are definition-backed. Type-parameter
     // spelling remains an explicit dependency on this target's type-form renderer.
@@ -482,7 +412,7 @@ object Drake {
         "actor" +: (messageType ++ block("start", aa.start) ++ block("message", aa.message) ++ block("signal", aa.signal))
       }
 
-    ((Seq(header).filter(_.nonEmpty) ++ (modules ++ extensible ++ elements ++ factory ++ globals)) ++ domain ++ rule ++ actor).mkString("", "\n", "\n")
+    (typeSection ++ domain ++ rule ++ actor).mkString("", "\n", "\n")
   }
 
   // --- Parsing (.drake surface -> JSON TypeDefinition) ---

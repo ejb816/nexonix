@@ -37,6 +37,7 @@
     "elementTypeNames": [
       "DomainLineOf",
       "DomainAspectOf",
+      "DracoAspectOf",
       "Emit",
       "Emitter"
     ],

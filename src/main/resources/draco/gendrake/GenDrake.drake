@@ -6,6 +6,7 @@ domain draco gendrake GenDrake
   types [
     DomainLineOf
     DomainAspectOf
+    DracoAspectOf
     Emit
     Emitter
   ]

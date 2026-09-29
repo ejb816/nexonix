@@ -31,6 +31,13 @@ for the definition that will replace it.
 
 ### Added
 
+- **Definition-backed Draco-aspect generation for Drake output.** DracoAspectText and
+  DracoAspectOf render the type section on the live emitter path, preserving header,
+  parent, module, factory and body behavior with explicit handwritten rendering callbacks.
+  Seven focused tests include corpus and running-rule coverage. Dev's full run passed
+  669 tests across 47 suites, with report-only baselines matching. Scala source generation
+  is unchanged. (2026-09-28)
+
 - **Definition-backed domain-aspect generation.** `DomainAspectText` and `DomainAspectOf`
   render complete Drake domain sections, including parameterized references, membership,
   super-domain and transform direction. The live Drake emitter uses this transform; the

@@ -1,0 +1,717 @@
+{
+  "typeName": {
+    "name": "DracoAspectOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DracoAspectText",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DracoAspectOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "parameterText",
+          "valueType": {
+            "->": [
+              "Json",
+              "draco.drake.Text"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "formText",
+          "valueType": {
+            "->": [
+              "Json",
+              "draco.drake.Text"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "slotText",
+          "valueType": {
+            "->": [
+              "Json",
+              "draco.drake.Text"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "elementText",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "TypeElement",
+                  "Int"
+                ]
+              },
+              {
+                "[]": [
+                  "draco.drake.Text"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "definition",
+          "valueType": "TypeDefinition",
+          "value": "_definition"
+        },
+        {
+          "kind": "Local",
+          "name": "parameterText",
+          "valueType": {
+            "->": [
+              "Json",
+              "draco.drake.Text"
+            ]
+          },
+          "value": "_parameterText"
+        },
+        {
+          "kind": "Local",
+          "name": "formText",
+          "valueType": {
+            "->": [
+              "Json",
+              "draco.drake.Text"
+            ]
+          },
+          "value": "_formText"
+        },
+        {
+          "kind": "Local",
+          "name": "slotText",
+          "valueType": {
+            "->": [
+              "Json",
+              "draco.drake.Text"
+            ]
+          },
+          "value": "_slotText"
+        },
+        {
+          "kind": "Local",
+          "name": "elementText",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "TypeElement",
+                  "Int"
+                ]
+              },
+              {
+                "[]": [
+                  "draco.drake.Text"
+                ]
+              }
+            ]
+          },
+          "value": "_elementText"
+        },
+        {
+          "kind": "Local",
+          "name": "aspect",
+          "valueType": "DracoAspect",
+          "value": "definition.dracoAspect"
+        },
+        {
+          "kind": "Local",
+          "name": "appliedName",
+          "valueType": {
+            "->": [
+              "TypeName",
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "name",
+              {
+                "++": [
+                  "name.name",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              "name.typeParameters.isEmpty"
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      "\"\"",
+                      {
+                        "++": [
+                          "\"(\"",
+                          {
+                            "()": [
+                              "join",
+                              "\", \"",
+                              {
+                                "()": [
+                                  "name.typeParameters.map",
+                                  "parameterText"
+                                ]
+                              }
+                            ]
+                          },
+                          "\")\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "reference",
+          "valueType": {
+            "->": [
+              "TypeName",
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "name",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "==": [
+                              "name.namePackage",
+                              "definition.typeName.namePackage"
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "()": [
+                      "appliedName",
+                      "name"
+                    ]
+                  },
+                  {
+                    "()": [
+                      "join",
+                      "\" \"",
+                      {
+                        "++": [
+                          "name.namePackage",
+                          {
+                            "[]": [
+                              {
+                                "()": [
+                                  "appliedName",
+                                  "name"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "root",
+          "valueType": {
+            "->": [
+              "TypeName",
+              "Boolean"
+            ]
+          },
+          "value": {
+            "\\": [
+              "name",
+              {
+                "&&": [
+                  {
+                    "==": [
+                      "name.name",
+                      "\"DracoType\""
+                    ]
+                  },
+                  {
+                    "==": [
+                      "name.namePackage",
+                      {
+                        "[]": [
+                          "\"draco\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "rootRestored",
+          "valueType": "Boolean",
+          "value": {
+            ".": [
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "DracoAspect.parents",
+                          "aspect"
+                        ]
+                      },
+                      "filterNot"
+                    ]
+                  },
+                  "root"
+                ]
+              },
+              "isEmpty"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "parents",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "()": [
+              "aspect.derivation.flatMap",
+              {
+                "\\": [
+                  "parent",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              {
+                                ".": [
+                                  {
+                                    "()": [
+                                      "parent.hcursor.downField",
+                                      "\"name\""
+                                    ]
+                                  },
+                                  "succeeded"
+                                ]
+                              }
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              {
+                                ".": [
+                                  {
+                                    "()": [
+                                      "parent.as[TypeName].toOption.filterNot",
+                                      {
+                                        "\\": [
+                                          "name",
+                                          {
+                                            "&&": [
+                                              "rootRestored",
+                                              {
+                                                "()": [
+                                                  "root",
+                                                  "name"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  "map"
+                                ]
+                              },
+                              "reference"
+                            ]
+                          },
+                          "toSeq"
+                        ]
+                      },
+                      {
+                        "[]": [
+                          {
+                            "()": [
+                              "formText",
+                              "parent"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "name",
+          "valueType": "draco.drake.Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "definition.typeName.name.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              "\"\"",
+              {
+                "()": [
+                  "appliedName",
+                  "definition.typeName"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "extensible",
+          "valueType": "draco.drake.Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "aspect.extensible.name.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              "\"\"",
+              {
+                "()": [
+                  "join",
+                  "\" \"",
+                  {
+                    "++": [
+                      "aspect.extensible.namePackage",
+                      {
+                        "[]": [
+                          {
+                            "()": [
+                              "appliedName",
+                              "aspect.extensible"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "factoryType",
+          "valueType": "Json",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "definition.typeName.typeParameters.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "()": [
+                  "Json.fromString",
+                  "definition.typeName.name"
+                ]
+              },
+              {
+                "()": [
+                  "Json.obj",
+                  {
+                    "(,)": [
+                      "\"()\"",
+                      {
+                        "()": [
+                          "Json.fromValues",
+                          {
+                            "++": [
+                              {
+                                "[]": [
+                                  {
+                                    "()": [
+                                      "Json.fromString",
+                                      "definition.typeName.name"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "definition.typeName.typeParameters"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "factoryPresent",
+          "valueType": "Boolean",
+          "value": {
+            ".": [
+              {
+                "()": [
+                  "slotText",
+                  "aspect.factory.valueType"
+                ]
+              },
+              "nonEmpty"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "factoryResult",
+          "valueType": "draco.drake.Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "factoryPresent"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "==": [
+                              {
+                                "()": [
+                                  "slotText",
+                                  "aspect.factory.valueType"
+                                ]
+                              },
+                              {
+                                "()": [
+                                  "slotText",
+                                  "factoryType"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  "\"\"",
+                  {
+                    "()": [
+                      "slotText",
+                      "aspect.factory.valueType"
+                    ]
+                  }
+                ]
+              },
+              "\"\""
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "rendered",
+          "valueType": "DracoAspectText",
+          "value": {
+            "()": [
+              "DracoAspectText",
+              "name",
+              "parents",
+              {
+                "()": [
+                  "aspect.modules.map",
+                  "reference"
+                ]
+              },
+              "extensible",
+              {
+                "()": [
+                  "aspect.elements.flatMap",
+                  {
+                    "\\": [
+                      "element",
+                      {
+                        "()": [
+                          "elementText",
+                          "element",
+                          "2"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "factoryPresent",
+              "factoryResult",
+              {
+                "()": [
+                  "aspect.factory.parameters.flatMap",
+                  {
+                    "\\": [
+                      "element",
+                      {
+                        "()": [
+                          "elementText",
+                          "element",
+                          "3"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  "aspect.factory.body.flatMap",
+                  {
+                    "\\": [
+                      "element",
+                      {
+                        "()": [
+                          "elementText",
+                          "element",
+                          "3"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  "aspect.globalElements.flatMap",
+                  {
+                    "\\": [
+                      "element",
+                      {
+                        "()": [
+                          "elementText",
+                          "element",
+                          "2"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "draco.drake.Text",
+          "value": "rendered.value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

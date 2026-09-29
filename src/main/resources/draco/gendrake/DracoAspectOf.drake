@@ -1,0 +1,28 @@
+type DracoAspectOf from draco draketarget DracoAspectText
+  factory
+    parameters
+      par definition TypeDefinition
+      par parameterText (Json -> draco.drake.Text)
+      par formText (Json -> draco.drake.Text)
+      par slotText (Json -> draco.drake.Text)
+      par elementText ((TypeElement, Int) -> [draco.drake.Text])
+    body
+      loc definition TypeDefinition _definition
+      loc parameterText (Json -> draco.drake.Text) _parameterText
+      loc formText (Json -> draco.drake.Text) _formText
+      loc slotText (Json -> draco.drake.Text) _slotText
+      loc elementText ((TypeElement, Int) -> [draco.drake.Text]) _elementText
+      loc aspect DracoAspect definition.dracoAspect
+      loc appliedName (TypeName -> draco.drake.Text) \name -> name.name ++ guard(name.typeParameters.isEmpty).ifThenElse("", "(" ++ join(", ", name.typeParameters.map(parameterText)) ++ ")")
+      loc reference (TypeName -> draco.drake.Text) \name -> guard(name.namePackage == definition.typeName.namePackage).ifThenElse(appliedName(name), join(" ", name.namePackage ++ [appliedName(name)]))
+      loc root (TypeName -> Boolean) \name -> name.name == "DracoType" && name.namePackage == ["draco"]
+      loc rootRestored Boolean DracoAspect.parents(aspect).filterNot(root).isEmpty
+      loc parents [draco.drake.Text] aspect.derivation.flatMap(\parent -> guard(parent.hcursor.downField("name").succeeded).ifThenElse(parent.as[TypeName].toOption.filterNot(\name -> rootRestored && root(name)).map(reference).toSeq, [formText(parent)]))
+      loc name draco.drake.Text guard(definition.typeName.name.isEmpty).ifThenElse("", appliedName(definition.typeName))
+      loc extensible draco.drake.Text guard(aspect.extensible.name.isEmpty).ifThenElse("", join(" ", aspect.extensible.namePackage ++ [appliedName(aspect.extensible)]))
+      loc factoryType Json guard(definition.typeName.typeParameters.isEmpty).ifThenElse(Json.fromString(definition.typeName.name), Json.obj(("()", Json.fromValues([Json.fromString(definition.typeName.name)] ++ definition.typeName.typeParameters))))
+      loc factoryPresent Boolean slotText(aspect.factory.valueType).nonEmpty
+      loc factoryResult draco.drake.Text guard(factoryPresent).ifThenElse(guard(slotText(aspect.factory.valueType) == slotText(factoryType)).ifThenElse("", slotText(aspect.factory.valueType)), "")
+      loc rendered DracoAspectText DracoAspectText(name, parents, aspect.modules.map(reference), extensible, aspect.elements.flatMap(\element -> elementText(element, 2)), factoryPresent, factoryResult, aspect.factory.parameters.flatMap(\element -> elementText(element, 3)), aspect.factory.body.flatMap(\element -> elementText(element, 3)), aspect.globalElements.flatMap(\element -> elementText(element, 2)))
+      fix value draco.drake.Text rendered.value
+domain draco gendrake GenDrake
