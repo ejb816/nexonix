@@ -4,6 +4,15 @@ The `mods/` source tier sits alongside `src/main/` (draco core) and `src/test/`
 (core test fixtures). It contains content that *uses* draco-as-a-dependency —
 the kind of code an external author would write on top of the published jar.
 
+The next transport/codec experiment is described in
+[ZeroMQ and Domain Codec Contract](ZEROMQ_CODEC_CONTRACT.md). It distinguishes
+Dev's accepted rule-owned message flow from proposed envelope and implementation
+choices; it is a design checkpoint, not an implemented feature.
+
+[Service](resources/draco/service/README.md) is the first staged domain for neutral
+service capabilities and configuration. The current increment establishes its empty
+domain trio and dictionary integration only; no transport dependency is added.
+
 **Constraints:**
 - Depends on `src/main`'s artifact (via sbt's `dependsOn(root)`).
 - Introduces **no new third-party dependencies of its own**. Anything mods/ needs

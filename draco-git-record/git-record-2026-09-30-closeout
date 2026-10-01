@@ -1,0 +1,35 @@
+# Combined Service, contract and journal checkpoint
+#
+# Dev requested review and closeout of all pending work before the next increment.
+# Preserve the September 29 contract, September 30 Service and journal records as
+# the detailed preparation history; this record supplies the combined commit message.
+# Review the complete pending diff, source-backed chapters 84-87 and transcript audit.
+# Verify the frozen original-log prefix and all 53 preserved message texts, hashes,
+# timestamps and sequence. Historical journal statuses and source boundaries remain
+# unchanged. Clarify current handoff authorization, test scopes and pending state;
+# place the journal changelog entry under the existing Added heading.
+#
+# Runtime files are unchanged from Dev's full 674-test / 48-suite run, with unchanged
+# report-only baselines. Whitespace, chapter links/fences and agent-link checks pass.
+# No sbt, commit or push run by Codex. Await Dev's command results before proposing
+# the smallest neutral capability/configuration increment for discussion. No ZeroMQ
+# dependency, envelope, socket pattern or codec declaration choice is settled here.
+#
+--- MESSAGE ---
+Establish the staged Service domain and close the messaging and journal checkpoint
+
+Add the target-neutral draco.service.Service domain trio under src/mods with five
+tests for canonical projections, companion loading and dictionary integration.
+Keep membership empty ahead of capability and configuration definitions.
+
+Document rule-owned JSON parsing, dictionary-based domain dispatch and domain-owned
+conversion. Distinguish accepted responsibilities from proposed ZeroMQ envelope,
+socket and codec details; add no transport dependency or codec behavior.
+
+Preserve journal chapters 84-87 and a bounded original-message extract with counts,
+timestamps, hashes and provenance limits. Reconcile shared documentation, the
+documentation skill and handoff while preserving historical statuses.
+
+Validation: Dev's full suite passed 674 tests / 48 suites with unchanged report-only
+baselines. Resumption review verified transcript integrity, links and whitespace;
+runtime files were unchanged after that full run.

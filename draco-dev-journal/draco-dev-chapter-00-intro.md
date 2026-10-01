@@ -1,8 +1,15 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across eighty-three chapters of development sessions between March 22 and September 23, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across eighty-seven chapters of development sessions between March 22 and September 30, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
+
+**September 30 integrity checkpoint:** The [retrieval audit](sources/codex-2026-09-23-to-30-audit.md)
+preserves source times and order for 26 complete written exchanges plus the open audit
+request: five exchanges check chapter 83 and 21 feed chapters 84-87. Original message
+records survive both observed compactions. This establishes recoverability for this
+bounded sequence, not completeness of the entire task. Compaction summaries cannot
+support quotations; missing originals require an explicit gap or labeled narrative.
 
 The canonical chapter format is a near-verbatim transcript:
 
@@ -437,3 +444,30 @@ Codex's Text checkpoint and focused migrations lead into Dev's five-aspect clari
 ### [Chapter 83 - Shared Journal and Development Continuity](draco-dev-chapter-83.md)
 
 Dev explicitly authorizes both agents to maintain the journal and project documentation. Tracked symlinks preserve one operating-rules source; the shared handoff separates implementation, verification, commits and documentary coverage. Private memory is not silently imported and the local documentation skill becomes non-mutating by default.
+
+### [Chapter 84 - Sharing the Documentation Skill](draco-dev-chapter-84.md)
+
+Dev questions the local-only skill and authorizes portable cross-agent procedures.
+The September 23 journal update is pushed as aa7ece9, then the skill and checker are
+shared in 79b363f. Other private settings remain ignored; duplicate commit commands
+from the other agent are explicitly not run.
+
+### [Chapter 85 - Definition-Backed Draco-Aspect Generation](draco-dev-chapter-85.md)
+
+Dev establishes Drake-only scope before authorizing implementation. DracoAspectOf
+and DracoAspectText take over type-section layout while Scala projection stays unchanged.
+The focused probe passes 538/7; Dev's full run passes 669/47 with unchanged baselines.
+
+### [Chapter 86 - Rule-Owned Messaging and the Service Domain](draco-dev-chapter-86.md)
+
+Before rule-aspect migration, Dev specifies rule-owned JSON parsing and domain dispatch,
+corrects the input message type to host JSON, and establishes Service as a neutral home.
+The Draco-aspect work is pushed as fc2537f; transport remains a contract draft. The
+first Service increment adds an empty domain trio and five dedicated gates, not ZeroMQ.
+
+### [Chapter 87 - Full-Suite Verification and Transcript Continuity](draco-dev-chapter-87.md)
+
+Dev's Service run passes 674/48. Session-transition advice leads to the distinction
+between compacted working context and preserved transcript evidence. Dev requests a
+counted, timestamped audit before journal closeout; original records are recovered and
+preserved, with explicit limits on claims of completeness.

@@ -31,6 +31,17 @@ for the definition that will replace it.
 
 ### Added
 
+- **Journal and continuity checkpoint.** Add chapters 84-87 and a timestamped,
+  source-hashed transcript audit; verify chapter 83's selected dialogue against
+  originals. Shared rules require retrieval counts and explicit gaps. Reconcile the
+  handoff for the combined Service/contract closeout and record Dev's 674-test /
+  48-suite result with unchanged report-only baselines. (2026-09-30)
+
+- **Early-access Service domain.** Establish the target-neutral draco.service.Service
+  definition trio in src/mods, with explicit projection and dictionary-integration
+  tests. The domain intentionally has no members yet; configuration, wrappers and
+  transport dependencies remain subsequent work. (2026-09-30)
+
 - **Definition-backed Draco-aspect generation for Drake output.** DracoAspectText and
   DracoAspectOf render the type section on the live emitter path, preserving header,
   parent, module, factory and body behavior with explicit handwritten rendering callbacks.
@@ -197,6 +208,10 @@ for the definition that will replace it.
   Recorded in DRACO.md's gotchas, since nothing throws and no test fails when it happens.
 
 ### Changed
+
+- **ZeroMQ/codec design checkpoint.** Document rule-owned JSON parsing, active-dictionary
+  routing and domain conversion, with proposed envelope/codec contracts and acceptance
+  checks for an early-access slice. No transport dependency or codec behavior changed. (2026-09-29)
 
 - **Handoff checkpoint at `79b363f`.** DEVELOPMENT_HANDOFF.md records the committed
   and pushed shared-skill increment as the current HEAD. (2026-09-27)

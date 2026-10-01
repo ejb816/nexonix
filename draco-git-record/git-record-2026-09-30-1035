@@ -1,0 +1,37 @@
+# Establish the early-access Service domain before transport integration
+#
+# Dev requested draco.service.Service as the neutral home for capability-wrapper and
+# configuration definitions, then authorized the first increment. Establish only the
+# domain anchor now; do not invent placeholder configuration types or add ZeroMQ.
+# Add Service.drake, parse its JSON and generate its Scala under src/mods. No changes
+# to root's existing source/resource wiring, no Draco member registration: Service
+# is a dictionary peer, not a member of the root domain. Empty membership is intentional.
+#
+# Five ServiceTest tests supply the gates absent from main-corpus discovery: canonical
+# Drake/JSON projections, exact generated Scala, compiled companion identity/loading,
+# DomainBuilder validation and composition with Base, and non-stub generation.
+# Directly compiled the new companion and test in an isolated class/resource overlay;
+# ServiceTest + DomainBuilderTest passed 15 tests / 2 suites. All three resource tiers
+# were overlaid with unique classpath roots. No sbt run by Codex; expected full gate
+# 674 tests / 48 suites, up five tests and one suite from Dev's verified 669/47.
+# Existing corpus counts should not move: Service is in the staged draco tree.
+#
+# Document the domain's empty initial scope and next neutral configuration/capability
+# work. Preserve prior uncommitted ZeroMQ contract work and its September 29 record,
+# adding Dev's Service-first sequencing correction rather than discarding the draft.
+# Update README, DRACO, CHANGELOG and handoff. Journal remains through chapter 83.
+# No ZeroMQ dependency, actor/codec metamodel edit, service instance, commit or push.
+
+# Verification addendum, September 30: Dev's full sbt run passed 674 tests / 48
+# suites with unchanged report-only baselines. Pasted output and saved log agree.
+# Codex did not run sbt. Journal closeout is recorded separately in -journal.
+
+--- MESSAGE ---
+Establish the target-neutral Service domain in the early-access tier
+
+Add draco.service.Service as a self-declaring domain with synchronized Drake,
+JSON and generated Scala artifacts under src/mods. Verify its projections,
+compiled companion, DomainBuilder validation, dictionary composition and generation.
+
+Document the intentionally empty initial scope and Service-first sequencing before
+neutral configuration/capability members and target-language transport wrappers.

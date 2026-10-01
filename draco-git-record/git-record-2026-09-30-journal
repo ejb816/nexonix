@@ -1,0 +1,31 @@
+# Journal closeout and original-message recovery audit
+#
+# Dev requested journal updates plus counts, times and sequence of intact exchanges
+# to assess possible compaction damage. Recover original response_item messages from
+# the current task's local JSONL, freezing source lines 1-2351. Preserve only bounded
+# user/final message records, not tools, reasoning, environment or event mirrors.
+# The extract records exact message text, hashes, timestamps and physical source lines.
+#
+# 53 messages: 27 user, 26 final replies. Five complete exchanges audit chapter 83;
+# 21 complete exchanges and the open request supply chapters 84-87. The selected
+# chapter-83 commentary reply is also verified separately, with only apostrophe and
+# line-wrap normalization. Both observed compactions leave originals retrievable.
+# No loss observed in this bounded sequence; no independent capture inventory proves
+# whole-task completeness. Preserve older chapter source limitations and statuses.
+#
+# Update the index, shared rules/skill, README and handoff through chapter 87.
+# Record Dev's 674-test / 48-suite success and unchanged report-only headlines.
+# Existing Service and transport-contract work is preserved, not reimplemented.
+# No sbt, commit, push, new task, issue or private-memory synchronization performed.
+#
+--- MESSAGE ---
+Preserve original Draco exchanges and reconcile the journal through chapter 87
+
+Add a bounded timestamped transcript extract and retrieval audit across two
+compactions. Record message and exchange counts, source sequence, text hashes,
+editorial exclusions and limits on completeness claims. Verify chapter 83's
+selected dialogue and add chapters covering the shared skill, Draco-aspect
+generation, Service-first messaging and the continuity audit.
+
+Align the shared documentation and skill with source-backed journal maintenance
+and record Dev's successful 674-test, 48-suite Service verification.

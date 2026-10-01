@@ -73,6 +73,14 @@ portable dependency. The common protocol is in tracked documents.
 
 ## Status
 
+*September 30 provenance addendum:* The five Dev prompts above were recovered from
+original session records and matched after trimming surrounding whitespace. The
+Codex progress reply was also recovered; apostrophe normalization and line wrapping
+make it near-verbatim. Five complete exchanges from this chapter's session window
+are preserved in the [source extract](sources/codex-2026-09-23-to-30.jsonl).
+The [retrieval audit](sources/codex-2026-09-23-to-30-audit.md) records times, sequence
+and compaction limits. This addendum does not change the historical status below.
+
 The development checkpoint remains `7de07ba`, with Dev's prior 652-test / 46-suite full
 run. This increment changes documentation and a local documentation helper, not runtime
 source; no new sbt run is claimed. Journal coverage now reaches chapter 83, with disclosed

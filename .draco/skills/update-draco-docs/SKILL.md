@@ -20,6 +20,14 @@ Automatic skill discovery is not required, and no per-agent copy should be creat
 - Verify architecture against source, changes against commits and git records, dialogue
   against actual transcripts and delegated actions against Dev's output. Summaries
   cannot establish verbatim dialogue or a passing run.
+- For journal updates after compaction, preserve a bounded extract of original messages
+  with source identity, source-line sequence, UTC timestamps and text hashes. Report
+  user messages, final replies, complete exchanges, omissions and open turns separately.
+  Deduplicate event mirrors; never use replacement-history summaries as original dialogue.
+  Test recoverability on both sides of observed compactions without claiming that the
+  absence of a detected gap proves complete historical capture. Audit existing quotations
+  in the covered range; retain their historical Status. Do not copy tools, reasoning,
+  credentials or unrelated conversation material into the project transcript.
 - Both Claude Code and Codex may maintain the journal under Dev's September 23 permission;
   Cowork is not mandatory. This does not authorize sbt, commits, pushes or new issues.
 

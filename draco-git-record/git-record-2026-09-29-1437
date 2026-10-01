@@ -1,0 +1,30 @@
+# Establish the ZeroMQ/domain-codec design checkpoint
+#
+# Dev confirmed fc2537f committed and pushed; status main...origin/main is clean
+# before this increment. The Draco-aspect full gate is 669 tests / 47 suites.
+# Proceed to the next agreed stage: concrete messaging/codec contracts before code.
+#
+# Inspect DomainDictionary, DomainType, AssemblySpawner, ActorType, the generated
+# Emitter, Codec and current codec generation. Dictionary entries hold definitions,
+# not live endpoints. AssemblySpawner uses namePath, so parameterized identities need
+# explicit care. Codec requires both sides; codec-aspect selectors remain a sketch.
+#
+# Add src/mods/ZEROMQ_CODEC_CONTRACT.md, separating Dev's accepted flow from proposals.
+# Parsing and routing belong in ZeroMQ actor rules; domain actors receive JSON and
+# own typed conversion. Record the missing live-domain/input-endpoint association,
+# source identity provenance, and missing/null/invalid decoder distinctions.
+# Propose an envelope and a bounded first scenario without presenting unapproved
+# field names, forwarding granularity or delivery patterns as Dev's decisions.
+# Ask whether outputs target a configured destination or the originating peer.
+#
+# Link the design from mods README and handoff; update CHANGELOG. No dependency,
+# actor implementation, codec syntax, generated source or test changes. No sbt,
+# commit, push, issue creation or external network listener. Journal coverage stays83.
+
+--- MESSAGE ---
+Document the rule-driven ZeroMQ and domain codec contract
+
+Separate accepted actor/rule responsibilities from proposed envelope and codec
+semantics. Identify live endpoint wiring and codec declaration gaps, define a
+bounded early-access scenario and its acceptance checks, and refresh the handoff
+after the successful Draco-aspect commit and push.

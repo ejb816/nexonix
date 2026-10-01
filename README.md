@@ -495,6 +495,11 @@ support one architectural goal: transformations that preserve meaning.
 
 ## Work in progress
 
+The early-access `draco.service.Service` domain lives under `src/mods` as the neutral
+home for future service capability and configuration definitions. Its initial trio
+loads and composes with domain dictionaries; it has no members or running service
+implementation yet. See the [Service scope](src/mods/resources/draco/service/README.md).
+
 The backlog is [GitHub Issues](https://github.com/ejb816/nexonix/issues). Larger
 directions:
 
@@ -659,4 +664,11 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-<!-- draco-docs-synced-through: chapter 83 -->
+Journal coverage reaches chapter 87, including the shared documentation skill,
+Drake-only Draco-aspect generation, Service-first transport planning and transcript
+continuity audit. Dev's September 30 full run passed 674 tests / 48 suites; the staged
+Service domain has five dedicated gates and does not change main-corpus counts.
+The [retrieval audit](draco-dev-journal/sources/codex-2026-09-23-to-30-audit.md)
+records recoverable original exchanges and limits separately from code verification.
+
+<!-- draco-docs-synced-through: chapter 87 -->

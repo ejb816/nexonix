@@ -49,7 +49,7 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**669 tests / 47 suites**, verified by Dev's run on 2026-09-28. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+**674 tests / 48 suites**, verified by Dev's run on 2026-09-30. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
@@ -342,6 +342,17 @@ rejection retain their existing behavior.
 peers in the `DomainDictionary`, not hierarchical. Example domains live in
 `src/mods/scala/domains/` (the World / media chain).
 
+**Service staging (2026-09-30).** `draco.service.Service` is a self-declaring peer
+domain under `src/mods/{resources,scala}/draco/service`. Its trio is generated and
+has no members yet. It is the intended neutral home for service capabilities and
+configuration, ahead of target-language ZeroMQ wrappers, not a running service.
+Do not add it to Draco's member list: use explicit DomainDictionary composition.
+The main-corpus gates do not scan staged draco definitions; ServiceTest provides
+five explicit projection, loading, validation and dictionary/generation checks.
+The focused ServiceTest + DomainBuilderTest probe passed 15 tests / 2 suites;
+Dev's full suite passed 674 tests / 48 suites on September 30. Existing corpus report
+counts stay unchanged because this definition is outside those scans.
+
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member
 parameters` chain lines and `[ ]` argument brackets (a call is `f(a, b)` since 2026-09-16), the
@@ -386,12 +397,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 83 on 2026-09-23.
+Current documentation was reconciled through journal chapter 87 on 2026-09-30.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 83 on
-  2026-09-23.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 87 on
+  2026-09-30.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -533,4 +544,16 @@ a handoff and every completed increment ends by preparing one.
    requested commands to run. Do not commit, push, run sbt, create an issue or contact
    another agent merely because a handoff is ready.
 
-<!-- draco-docs-synced-through: chapter 83 -->
+### Transcript integrity at handoff
+
+Compaction summaries are working context, never quotation evidence. Before journal
+updates, recover original message records and preserve a bounded project-local extract
+with source identity, sequence, timestamps, text hashes and explicit exclusions. Report
+user/reply counts and paired exchanges separately; do not count event mirrors twice.
+Distinguish missing originals, editorial omissions and the currently unanswered turn.
+Report observed compactions without attributing gaps to them absent evidence. Verify
+older quotations when extending an already-journaled task, but preserve historical Status.
+Prefer a new development task at a verified increment boundary after the handoff is
+current, not solely because compaction occurred. No task is created automatically.
+
+<!-- draco-docs-synced-through: chapter 87 -->
