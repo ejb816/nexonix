@@ -1,2 +1,5 @@
 type Service
 domain draco service Service
+  types [
+    TextOutput
+  ]

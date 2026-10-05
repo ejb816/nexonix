@@ -1,0 +1,7 @@
+type TextOutput
+  elements
+    fix send (draco.drake.Text -> Boolean)
+  factory
+    parameters
+      par send (draco.drake.Text -> Boolean)
+domain draco service Service

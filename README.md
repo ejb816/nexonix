@@ -497,8 +497,15 @@ support one architectural goal: transformations that preserve meaning.
 
 The early-access `draco.service.Service` domain lives under `src/mods` as the neutral
 home for future service capability and configuration definitions. Its initial trio
-loads and composes with domain dictionaries; it has no members or running service
-implementation yet. See the [Service scope](src/mods/resources/draco/service/README.md).
+loads and composes with domain dictionaries. TextOutput is now its first member,
+used by a staged ZeroMQ actor bridge with rule-owned parsing and dictionary dispatch;
+the authoring service is not implemented yet. The agreed first service supports authoring and validation of
+domain/type definitions and dictionary composition. A local actor-based initialization
+client consumes canonical JSON definitions in parallel with the external ZeroMQ path.
+ServiceConfiguration contains Assembly; consuming projects own persistence. Generation
+and activation follow as explicit operations. See the
+[Service plan](src/mods/resources/draco/service/README.md) and
+[ZeroMQ integration proposal](src/mods/ZEROMQ_CODEC_CONTRACT.md).
 
 The backlog is [GitHub Issues](https://github.com/ejb816/nexonix/issues). Larger
 directions:
@@ -664,11 +671,11 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 87, including the shared documentation skill,
-Drake-only Draco-aspect generation, Service-first transport planning and transcript
-continuity audit. Dev's September 30 full run passed 674 tests / 48 suites; the staged
-Service domain has five dedicated gates and does not change main-corpus counts.
-The [retrieval audit](draco-dev-journal/sources/codex-2026-09-23-to-30-audit.md)
-records recoverable original exchanges and limits separately from code verification.
+Journal coverage reaches chapter 89, including the committed Service checkpoint,
+primordial authoring decisions, local initialization and restored timestamped records.
+The [new retrieval audit](draco-dev-journal/sources/codex-2026-09-30-to-10-05-audit.md)
+preserves 11 complete exchanges plus the open implementation request. Earlier audits
+and historical statuses are unchanged. The bridge probe passed 548/7; Dev's October 5
+full run then passed 685 tests / 49 suites with unchanged report-only baselines.
 
-<!-- draco-docs-synced-through: chapter 87 -->
+<!-- draco-docs-synced-through: chapter 89 -->

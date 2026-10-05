@@ -7,11 +7,12 @@ the kind of code an external author would write on top of the published jar.
 The next transport/codec experiment is described in
 [ZeroMQ and Domain Codec Contract](ZEROMQ_CODEC_CONTRACT.md). It distinguishes
 Dev's accepted rule-owned message flow from proposed envelope and implementation
-choices; it is a design checkpoint, not an implemented feature.
+choices; it records the staged bridge and distinguishes its provisional fixture protocol
+from the future authoring API.
 
 [Service](resources/draco/service/README.md) is the first staged domain for neutral
-service capabilities and configuration. The current increment establishes its empty
-domain trio and dictionary integration only; no transport dependency is added.
+service capabilities and configuration. Its domain now contains TextOutput; the root build carries the JeroMQ dependency
+for the bounded bridge under scala/draco/service/zeromq.
 
 **Constraints:**
 - Depends on `src/main`'s artifact (via sbt's `dependsOn(root)`).

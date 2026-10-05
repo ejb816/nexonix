@@ -1,0 +1,30 @@
+# Reconcile Service decisions and recommend the next ZeroMQ increment
+#
+# Source: Dev's messages in the current Codex task after the 604aff2 confirmation.
+# Record decisions as a planning summary, not invented journal dialogue. Preserve
+# chapter 87 and its bounded transcript; explicitly disclose subsequent coverage gap.
+# Reconcile handoff, DRACO, README, Service notes, transport contract and CHANGELOG.
+# Shared project files carry continuity; no private memory changes.
+#
+# Accepted: ServiceConfiguration contains Assembly; external definition authoring,
+# validation and dictionary composition come first; generation/activation are explicit
+# later operations. Local canonical-JSON initialization uses existing actors/messages
+# independently of ZeroMQ. Persistence belongs to the consuming project.
+# Proposed: bounded JeroMQ/actor bridge with a real rule/dictionary round trip,
+# fixture-specific wire/socket choices and existing codecs before later codec work.
+# No dependency added, runtime edited, sbt run, commit, push or new issue created.
+# Latest full-suite evidence remains Dev's 674 tests / 48 suites at Service checkpoint.
+#
+--- MESSAGE ---
+Record the primordial authoring service plan and next ZeroMQ integration step
+
+Align shared documentation and project continuity with Assembly-containing service
+configuration, definition authoring/validation and dictionary composition, independent
+actor-based initialization from canonical JSON, and project-owned persistence.
+Keep generation and activation explicit subsequent operations.
+
+Refresh the committed 604aff2 checkpoint and recommend a bounded ZeroMQ actor bridge
+with rule-owned parsing and dictionary dispatch. Preserve unresolved protocol choices
+and historical journal provenance; disclose the post-chapter-87 coverage gap.
+
+Documentation only; the verified 674-test / 48-suite runtime is unchanged.

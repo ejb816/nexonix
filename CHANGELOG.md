@@ -31,6 +31,15 @@ for the definition that will replace it.
 
 ### Added
 
+- **Bounded ZeroMQ actor bridge.** Stage TextOutput and a JeroMQ 0.6.0 loopback
+  transport with rule-owned JSON parsing, exact domain-dictionary dispatch and
+  domain-source output wrapping. Add projection and transport/routing/lifecycle tests;
+  direct probe passes 548 tests / 7 suites and Dev's full run passes 685 tests /
+  49 suites with unchanged report-only baselines. (2026-10-05)
+- **Journal chapters 88-89.** Recover 11 original exchanges plus the open bridge
+  request with a bounded transcript audit; preserve historical statuses. Restore
+  timestamped git-record filenames, retaining committed exceptions. (2026-10-05)
+
 - **Journal and continuity checkpoint.** Add chapters 84-87 and a timestamped,
   source-hashed transcript audit; verify chapter 83's selected dialogue against
   originals. Shared rules require retrieval counts and explicit gaps. Reconcile the
@@ -208,6 +217,11 @@ for the definition that will replace it.
   Recorded in DRACO.md's gotchas, since nothing throws and no test fails when it happens.
 
 ### Changed
+
+- **Service plan and ZeroMQ next step.** Record agreed authoring, validation and
+  dictionary composition scope, Assembly-containing configuration, independent local
+  initialization and project-owned persistence. Refresh the committed checkpoint
+  and propose a bounded ZeroMQ/actor integration gate. No runtime changes. (2026-10-05)
 
 - **ZeroMQ/codec design checkpoint.** Document rule-owned JSON parsing, active-dictionary
   routing and domain conversion, with proposed envelope/codec contracts and acceptance

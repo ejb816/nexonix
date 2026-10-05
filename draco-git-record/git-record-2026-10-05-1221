@@ -1,0 +1,61 @@
+# Recover the journal and implement the bounded ZeroMQ actor bridge
+#
+# Dev accepted returning to timestamped git-record filenames, requested journal
+# maintenance, then authorized the previously recommended bridge increment.
+# Rename the pending planning record to -1107 using its recovered closing response
+# timestamp. Keep committed descriptive filenames as historical exceptions.
+#
+# Chapters 88-89 recover the previous task's closing exchange, the 604aff2 checkpoint
+# and this task's Service design dialogue. The source extract has 23 records, 12 user
+# messages and 11 final replies: 11 exchanges plus the open implementation request.
+# One exchange overlaps chapter 87 intentionally; prior statuses/audits are unchanged.
+# Advance reviewed documentation markers to 89, but keep this implementation's results
+# in the handoff: they occur after the preserved dialogue boundary.
+#
+# Root pins org.zeromq:jeromq:0.6.0 (its runtime transitive dependency is jnacl 1.0.0).
+# Add the canonical TextOutput trio and update the Service membership trio. send is
+# Text -> Boolean, indicating bounded queue acceptance rather than peer delivery.
+# Add handwritten staging PairTextTransport, BridgeRules and ZeroMqBridge. Socket
+# operations live on one owning thread; queues, frame sizes and waits are bounded.
+# Rule actions parse incoming JSON, resolve complete domain identity, dispatch payload
+# to the configured JSON actor, and wrap domain-produced JSON with bound source identity.
+# Delete handled facts to prevent repeated sends. Errors are local bounded diagnostics
+# with counters. No new codec syntax, persistence, initialization or authoring operations.
+#
+# Provisional fixture: one PAIR peer on ephemeral loopback TCP, one UTF-8 frame,
+# destinationDomain/payload input, sourceDomain/payload output, payload-only forwarding.
+# These are not production protocol decisions. The peer uses plain JeroMQ without
+# Draco; native-libzmq compatibility was not tested. The bridge owns its actor system
+# and startup dictionary snapshot; future service assembly/live editing are separate.
+#
+# Verification: compile changed sources/tests with the existing Scala compiler into
+# a fresh /tmp overlay, including current main/mods/test resources and downloaded pinned
+# jars. The first socket probe hit sandbox bind restrictions; a broader probe then hit
+# Main.roots' layout assumption. After correcting both harness constraints, 548 tests /
+# 7 suites passed: ServiceTest, ZeroMqBridgeTest, DomainBuilderTest, DracoGenTest,
+# DrakeGenTest, DrakeParseTest, GenDrakeTest. Parse scope 103+10, one known loss across
+# 113, GenDrake 101/101 and zero file-only mods pending Drake remained unchanged.
+# Verification addendum: Dev's full sbt run passed 685 tests / 49 suites on October 5
+# at 13:01:12 EDT, with no failures/aborts and unchanged report-only baselines. Pasted
+# output matches /tmp/sbt-test.log and the file-only pending Drake count remains zero.
+# No sbt, commit, push, new issue or parallel agent launched by Codex.
+#
+--- MESSAGE ---
+Stage the ZeroMQ actor bridge and preserve Service design history
+
+Add a generated TextOutput capability and Service membership, pin JeroMQ 0.6.0
+in the root build, and stage bounded single-owner socket I/O connected to a Draco
+rule actor. Keep JSON parsing, exact dictionary routing and source-tagged output
+in rules; preserve domain-owned payload conversion and retract handled facts.
+
+Exercise a provisional loopback PAIR protocol through a plain ZeroMQ peer and
+separate JSON-input/typed-output domain actors. Cover identity ambiguity, malformed
+input, queue overflow, send timeout and lifecycle behavior. Leave production wire
+choices, authoring, persistence and generation/activation outside this increment.
+
+Recover chapters 88-89 with original-message counts, timestamps, hashes and source
+limits. Restore timestamped git-record names and update shared documentation/handoff.
+
+Validation: direct compiled-class probe passed 548 tests / 7 suites with unchanged
+measured corpus baselines. Dev's full sbt gate passed 685 tests / 49 suites with
+no failures or aborted suites and unchanged report-only baselines.

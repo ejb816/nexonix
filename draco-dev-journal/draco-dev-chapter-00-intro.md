@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across eighty-seven chapters of development sessions between March 22 and September 30, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across eighty-nine chapters of development sessions between March 22 and October 5, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -471,3 +471,15 @@ Dev's Service run passes 674/48. Session-transition advice leads to the distinct
 between compacted working context and preserved transcript evidence. Dev requests a
 counted, timestamped audit before journal closeout; original records are recovered and
 preserved, with explicit limits on claims of completeness.
+
+### [Chapter 88 - Service Checkpoint and Task Handoff](draco-dev-chapter-88.md)
+
+The prior audit’s final reply is recovered, the new task closes the Service checkpoint,
+and Dev commits and pushes 604aff2. Initial Service member proposals remain proposals.
+
+### [Chapter 89 - Primordial Authoring and Parallel Initialization](draco-dev-chapter-89.md)
+
+Dev establishes definition authoring, validation and dictionary composition, separates
+generation/activation, and assigns persistence to the consuming project. Endogenous
+initialization can proceed independently of ZeroMQ. Timestamped git records are restored;
+the next actor-bridge increment is authorized.

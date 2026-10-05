@@ -6,17 +6,15 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-09-30, by Codex, after resumption review of the complete pending checkpoint.
-- Destination: either Claude Code or Codex when Dev chooses to continue; no session dispatched.
-- Observed branch/HEAD: `main`, `fc2537f` (Draco-aspect generation), matching the local
-  origin/main tracking ref. Dev's earlier output confirms that push. The current tree
-  contains the pending Service, contract and documentation changes; no fresh remote
-  query performed here.
-- Prior uncommitted work is the ZeroMQ/codec contract and September 29 record. This
-  increment adds the Service trio in src/mods, ServiceTest, domain documentation and
-  record 2026-09-30-1035, plus shared documentation updates. Preserve both increments.
-- Dev authorized the Draco-aspect implementation after clarifying Drake-only scope.
-  Dev's September 28 full run verified the implementation now committed at fc2537f, 669/47.
+- Updated: 2026-10-05, by Codex, after reviewing Dev's successful full-suite bridge run.
+- Observed branch/HEAD: main at 604aff2, matching the local origin/main tracking ref.
+  Dev supplied successful commit/push output for this checkpoint; no fresh remote query.
+- The Service/contract/journal closeout is committed. Tree was clean before this
+  increment. Current changes include the prior planning docs, chapters 88-89 and
+  source audit, the timestamped record rename, JeroMQ dependency, TextOutput/Service
+  trios, handwritten bridge engine and tests. Nothing from this increment is committed.
+- Project-local continuity is carried by this handoff, DRACO.md and the Service plan.
+  No private agent memory was overwritten or relied upon as shared authority.
 - Permission: Dev explicitly authorized both agents to maintain the journal and shared
   documentation on September 23. The former Cowork-only restriction is superseded.
   Existing sbt/commit/push and new-issue restrictions remain in force.
@@ -24,8 +22,9 @@ snapshot against the current tree before acting.
 ## Completed Development
 
 - The staged draco.service.Service domain now loads as a self-declaring dictionary
-  peer with empty membership. DomainBuilder validates and generates it and composes
-  it with Base. No service instances, wrappers or configuration types are implemented.
+  peer, now containing TextOutput. DomainBuilder validates and generates it and
+  composes it with Base. The bounded ZeroMQ bridge is staged; authoring operations,
+  ServiceConfiguration, initialization client and persistence remain unimplemented.
 - Draco-owned Text is realized as native Scala String. Nominal, Surface, DomainLine,
   DomainLineOf and Emission name Text in their definitions without changing runtime representation.
 - DomainAspectText and DomainAspectOf generate the complete domain section used by Drake.emit
@@ -68,7 +67,7 @@ the saved /tmp/sbt-test.log agree; Codex also checked the file-only baseline.
 
 The September 28 results apply to the Draco-aspect implementation before Service;
 the September 30 results include Service. Neither run verifies a ZeroMQ/codec
-implementation, which does not exist yet. On September 28 Codex also compiled the changed Scala and new test in an isolated overlay,
+implementation; the new bridge has only the later scoped verification below. On September 28 Codex also compiled the changed Scala and new test in an isolated overlay,
 then passed 538 tests across seven suites: DracoAspectTest, DomainAspectTest,
 DracoGenTest, DrakeGenTest, DrakeParseTest, GenDrakeTest and SourceContractTest.
 The current scoped measurements are 103 Draco + 10 mods, one loss across 113,
@@ -97,7 +96,7 @@ runtime file or .gitignore changes were found. These checks are not a new sbt re
 
 - The previous journal update (chapters 81-83) covered the range after chapter 80's
   `5fd801d` through the September 23 documentation handoff. Current coverage reaches
-  chapter 87 as detailed below.
+  chapter 89 as detailed below.
 - Chapter 81 recovers parser/operators `665926e`, parentheses `309ea4d`, conditional
   cleanup `0dc4900` and bracket `8e59cbe` from Claude Code session
   `3df62d0b-dcac-4979-9085-52eac92d20dd`. Its final bracket full-run reply is absent;
@@ -121,7 +120,7 @@ runtime file or .gitignore changes were found. These checks are not a new sbt re
   the September 23 state and are not rewritten retrospectively.
 - Chapters 85-87 now cover Drake-only Draco-aspect generation, its September 29 push,
   rule-owned messaging, Service-first staging, the 674/48 full run and transcript integrity.
-  Both documentation sync markers reach chapter 87. Chapter 83 gained a provenance
+  At that checkpoint both documentation sync markers reached chapter 87. Chapter 83 gained a provenance
   addendum without changing its historical Status; chapters 81-82 remain unchanged.
 - The bounded transcript/audit under draco-dev-journal/sources preserves 53 messages:
   27 user and 26 final replies, 26 complete exchanges plus the open audit request.
@@ -130,36 +129,64 @@ runtime file or .gitignore changes were found. These checks are not a new sbt re
   independent inventory proves complete original capture. Earlier source gaps remain.
   The source boundary precedes this documentation work's closing response.
 
+Chapters 88-89 now cover the prior task's closing reply, the 604aff2 commit/push,
+and this task's Service decisions through the bridge authorization. A new bounded
+extract preserves 23 messages (12 user, 11 final replies), 11 exchanges plus the open
+request. One exchange overlaps chapter 87 to close its formerly open request. Both
+sync markers reach 89; prior chapter statuses and the September 30 audit are unchanged.
+The current bridge implementation is after that source boundary, so its implementation
+results belong here and in the git record until a later sourced journal pass.
+
 ## Resumption
 
-The Draco-aspect implementation is full-suite verified and committed/pushed as
-fc2537f. Service-first staging is implemented and full-suite verified at 674/48.
-The Service/contract changes and journal closeout remain uncommitted. Dev requested
-their combined closeout in this task, followed by a path-scoped commit/push command
-using a prepared message file. Wait for Dev's command results and confirm that
-checkpoint before proceeding. Then propose the smallest coherent set of neutral
-service capability/configuration definitions for discussion before implementation.
-Keep those definitions under src/mods/{resources,scala}/draco and tests in src/test.
-The later sequence remains the reference
-service and dependency wrappers. The contract draft is in src/mods/ZEROMQ_CODEC_CONTRACT.md;
-its envelope/socket proposals remain unapproved and transport implementation has not begun.
-Dev still runs sbt, commit and push commands; no new GitHub issue is authorized. Missing
-historical dialogue is not permission to invent it or restart completed implementation.
+604aff2 is the committed checkpoint. The pending bridge is directly compiled and
+verified: 548 tests / 7 suites passed (ServiceTest, ZeroMqBridgeTest, DomainBuilderTest,
+DracoGenTest, DrakeGenTest, DrakeParseTest, GenDrakeTest). Scope measured 103 draco +
+10 mods, one loss across 113 types, GenDrake 101/101, with zero pending mods actors in
+DrakeGenTest's file report. Dev subsequently verified the full suite as recorded below.
+
+The sandbox initially denied local socket binding; the socket probe then passed with
+loopback access. A wider probe initially aborted because Main.roots derives paths
+from compiled-class location; recreating target/scala-2.13/classes layout in /tmp
+fixed the harness. Current source/resource overlay and dependency jars are isolated
+under /tmp/draco-zmq-check; /tmp/draco-zmq-probe.log contains the passing run.
+
+Dev's full sbt run passed 685 tests / 49 suites (11 additional tests, one suite),
+zero failures/aborts, finishing October 5 at 13:01:12 America/New_York. Pasted output
+matches /tmp/sbt-test.log; all report-only figures match DRACO.md, including the
+zero-pending-Drake file report. This is the latest verified full-suite baseline.
+Only verification documentation changed after that run. The increment is ready for
+Dev's scoped commit/push; wait for those results before the next implementation.
+Codex did not run sbt, commit or push.
+
+The pending git-record-2026-10-05-service-plan was renamed to -1107 using the source
+closeout time (15:07 UTC / 11:07 EDT). Its old path may still appear as an index addition
+plus working-tree deletion until Dev stages the rename; include both paths in scope.
+Committed descriptive filenames remain historical exceptions. Future names use HHMM.
 
 ## Next Increment
 
-Dev redirected the sequence before dependency integration: establish draco.service.Service
-as the target-neutral home for wrapper contracts and configuration, with a dictionary-based
-reference service that can grow into the domain rules editor. The authorized first
-increment establishes only the domain trio and integration gates, intentionally no members.
-Do not interpret the earlier socket question as a blocker to defining Service. Future
-configuration and capability shapes need to be established on their own terms.
+Accepted decisions from the current task, recorded October 5:
 
-Dev authorized the previously proposed order on September 29: close the verified
-Draco-aspect increment independently, establish the messaging/codec contracts, build
-an end-to-end early-access slice in src/mods, then use it to settle actor/codec
-additions before resuming definition-backed aspect migrations. Rule-aspect migration
-is deferred. No ZeroMQ dependency or new codec syntax has been implemented yet.
+- ServiceConfiguration contains Assembly; other proposed member shapes remain open.
+- The primordial external client creates/modifies domain and type definitions and
+  creates/modifies a DomainDictionary. First implement authoring, validation and
+  dictionary composition. Generation and activation are later explicit operations.
+- An endogenous initialization client builds the initial Draco domain dictionary
+  from supplied canonical JSON definitions using existing actors/messages. It needs
+  no external transport and can be developed in parallel with ZeroMQ integration.
+- Both client paths share service operations. Bootstrap ordering remains to be
+  designed; a prebuilt dictionary is not the only intended initialization path.
+- The consuming project owns persistence. Wire format/transport details belong to
+  the ZeroMQ dependency integration, not the local initialization client's API.
+
+The authorized first bridge now implements a provisional loopback PAIR, one-frame
+UTF-8 protocol with payload-only input and source-tagged output to the same peer.
+It uses a startup dictionary snapshot, exact identity and configured endpoints; the
+JeroMQ peer test exercises Draco TypeName input/output rules. Production socket,
+reply/correlation and failure-wire choices remain open, as do custom codec declarations.
+Stage implementation in src/mods/{resources,scala}/draco and tests in src/test.
+Rule-aspect migration remains deferred pending the service/transport work.
 
 Accepted message flow, from Dev's clarification:
 
@@ -183,7 +210,7 @@ socket wiring and correlation requirements. Full-envelope versus payload-only fo
 and custom-codec declaration representation also remain explicit design choices.
 Prototype implementation belongs in src/mods/{resources,scala}/draco, with tests in
 src/test. Transport-specific fields are not automatically additions to ActorAspect.
-This planning evidence and Service establishment are now journaled in chapters 86-87.
-No new configuration types, transport dependency or codec selectors were implemented
-by the documentation closeout. The transcript rules are shared through DRACO.md and
+The earlier transport planning and Service establishment are journaled in chapters 86-87.
+The old documentation closeout added no runtime behavior; this increment adds the
+bridge and dependency, but no configuration types or codec selectors. The transcript rules are shared through DRACO.md and
 the tracked documentation skill; no private memory store was overwritten.

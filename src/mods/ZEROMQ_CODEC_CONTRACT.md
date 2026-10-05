@@ -1,17 +1,70 @@
 # ZeroMQ and Domain Codec Contract
 
-Status: design checkpoint, September 29, 2026. The accepted flow below comes from
-Dev; the concrete envelope and staging choices are proposals for the first slice.
-No ZeroMQ dependency, transport adapter or new codec syntax is implemented yet.
-The prior Draco-aspect increment is committed as fc2537f and full-suite verified
-at 669 tests / 47 suites.
+Status: October 5, 2026. The September 30 Service/contract/journal checkpoint is
+committed and pushed as 604aff2. Its latest full-suite result is 674 tests / 48 suites.
+The authorized bridge increment is now staged and independently probed at 548 tests /
+7 suites; Dev's October 5 full sbt run passed 685 tests / 49 suites, with unchanged
+report-only baselines and zero pending mods actors in the file-only report. No new codec
+syntax, authoring operations, generation/activation operation or persistence was added.
 
-September 30 sequencing correction from Dev: establish draco.service.Service before
-adding the dependency. Its initial domain trio now exists under mods, with no members
-yet. Neutral service capability/configuration definitions belong there; target-language
-wrappers implement the dependency-facing behavior. The reference service is intended
-to be able to grow into a domain rules editor. This precedes the socket/envelope choices
-below, which remain proposals rather than accepted configuration semantics.
+Dev established definition authoring, validation and DomainDictionary composition as
+the primordial service, followed by explicit generation/activation. ServiceConfiguration
+contains Assembly. Local initialization can advance through existing Draco actors/messages
+independently of external transport. Persistence belongs to the consuming project.
+See the [Service plan](resources/draco/service/README.md).
+
+## Implemented Bridge Fixture
+
+- Root pins org.zeromq:jeromq:0.6.0. Its published POM targets Java 8 and declares
+  jnacl 1.0.0; the direct probe included both artifacts. This is a JVM realization;
+  neutral definitions do not expose JeroMQ types. Sources: [release POM](https://repo.maven.apache.org/maven2/org/zeromq/jeromq/0.6.0/jeromq-0.6.0.pom)
+  and [upstream documentation](https://github.com/zeromq/jeromq/tree/v0.6.0).
+- TextOutput is a generated Service member with send: Text -> Boolean. The result
+  reports bounded-queue acceptance, never delivery. Service's membership trio and
+  dedicated tests move with it; the main corpus scans remain unchanged.
+- PairTextTransport owns its socket and context on one I/O thread. It binds only
+  loopback TCP to an ephemeral port. Incoming/outgoing/error queues and frame sizes
+  are bounded; error counters remain available when the diagnostic queue fills.
+  Sends time out and discard rather than retry indefinitely. Shutdown uses a stop
+  flag and bounded join, never Thread.interrupt or cross-thread socket close.
+- ZeroMqBridge uses existing Draco Actor and Rule primitives. Its timer drains bounded
+  text/result queues into working memory; BridgeRules parse and route, then retract
+  each fact. A domain output gets a callback bound to its configured source identity.
+  The dictionary is a startup snapshot; live dictionary updates are future authoring
+  work, not silently provided by this fixture.
+- The executable test sends a TypeName JSON payload through the Draco domain's fixture
+  input rule, which decodes it; a separate typed output actor rule encodes it. The
+  transport rules resolve the domain by complete TypeName identity and create the
+  outgoing envelope. The plain JeroMQ peer has no Draco dependency. Native libzmq
+  interoperability is not claimed by this test.
+
+## Provisional Fixture Protocol and Limits
+
+The fixture uses one PAIR peer, one UTF-8 frame per message, payload-only forwarding,
+and responses sent to that same peer. The inbound object has destinationDomain and
+payload; the outbound object has sourceDomain and payload, as illustrated below.
+These are implementation choices for this bounded proof, not an accepted authoring
+wire API, general reply-routing convention or commitment to PAIR for the real service.
+No correlation, peer multiplexing, reconnect recovery, durable delivery or retry
+semantics are promised. Assembly-based lifecycle and ServiceConfiguration are future
+work; each bridge fixture currently owns its actor system.
+
+Malformed JSON/envelopes, invalid identities, unknown/ambiguous domains and missing
+or ambiguous input endpoints fail without dispatch. Multipart and malformed UTF-8
+are rejected. Socket-level oversized-frame limits can disconnect a peer; they do not
+promise a JSON error reply. Domain payload decoding stays in the domain's input rules.
+Diagnostics are local counters/queues; no failure envelope has been standardized.
+
+Nine bridge tests plus seven Service tests pass. The seven-suite probe additionally
+covers DomainBuilderTest, DracoGenTest, DrakeGenTest, DrakeParseTest and GenDrakeTest.
+It reports 103 draco + 10 mods types, one known loss across 113 types, and GenDrake
+101/101. The first socket probe failed because sandbox binding was denied; the first
+broader probe aborted because its temporary directory layout broke Main.roots. Both
+harness constraints were corrected before the successful probe. No sbt run by Codex.
+
+Next join the shared authoring/local initialization track to the bridge, and select
+production addressing/socket and failure/correlation behavior explicitly. The codec
+proposals below remain separate from this existing-codec transport proof.
 
 ## Accepted Responsibilities
 
@@ -110,10 +163,10 @@ projection support together. Never introduce a surface declaration that silently
 falls back to inferred codecs. The existing field-level codec sketch does not settle
 the representation of a complete custom conversion body.
 
-## First Executable Slice
+## Later Authoring/Codec Slice (Earlier Proposal)
 
-Use one external sender, one active dictionary domain with distinct JSON-input and
-typed-output actors, and one external receiver. Exercise a small typed value with
+After the initial transport gate, use one external sender, one active dictionary
+domain with distinct JSON-input and typed-output actors, and one external receiver. Exercise a small typed value with
 both default and custom JSON representations. Keep routing configuration explicit.
 Additional peers and delivery policies follow after the first path is proven.
 

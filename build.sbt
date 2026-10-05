@@ -16,6 +16,8 @@ lazy val dependencies =
     val scalaTestVersion = "3.2.15"
     val scalaVersion = "2.13.16"
     val scalaSwingVersion = "2.1.1"
+    val jeromqVersion = "0.6.0"
+    val jeromq = "org.zeromq" % "jeromq" % jeromqVersion
     val jlineVersion = "3.22.0"
     val pekkoActorTyped = "org.apache.pekko" %% "pekko-actor-typed" % pekkoActorVersion
     val pekkoActorTestkitTyped = "org.apache.pekko" %% "pekko-actor-testkit-typed" % pekkoActorVersion
@@ -86,7 +88,8 @@ lazy val root = (project in file("."))
       dependencies.scalaReflect,
       dependencies.scalaSwing,
       dependencies.scalaCompiler,
-      dependencies.jline
+      dependencies.jline,
+      dependencies.jeromq
     ),
 
     assembly / mainClass := Some("draco.CLI"),

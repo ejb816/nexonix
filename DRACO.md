@@ -49,7 +49,7 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**674 tests / 48 suites**, verified by Dev's run on 2026-09-30. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+**685 tests / 49 suites**, verified by Dev's run on 2026-10-05. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
@@ -145,6 +145,10 @@ the commit they describe. The record carries the reasoning; the CHANGELOG carrie
 two sentences of observable fact under `[Unreleased]`. Attaching it to a step that already
 happens is the point — this file fell two and a half months behind when it depended on
 remembering.
+
+**Git-record filenames use `git-record-YYYY-MM-DD-HHMM` in local project time.**
+Use the record heading to describe its purpose. Dev restored this convention on
+2026-10-05; committed descriptive-suffix records remain historical exceptions.
 
 **Commit messages go through a file, never a heredoc.** A long `git commit -F - <<'EOF'`
 breaks on paste and the remainder runs as shell commands. Write the message to a file and
@@ -343,8 +347,8 @@ peers in the `DomainDictionary`, not hierarchical. Example domains live in
 `src/mods/scala/domains/` (the World / media chain).
 
 **Service staging (2026-09-30).** `draco.service.Service` is a self-declaring peer
-domain under `src/mods/{resources,scala}/draco/service`. Its trio is generated and
-has no members yet. It is the intended neutral home for service capabilities and
+domain under `src/mods/{resources,scala}/draco/service`. Its initial trio was generated with
+no members. It is the intended neutral home for service capabilities and
 configuration, ahead of target-language ZeroMQ wrappers, not a running service.
 Do not add it to Draco's member list: use explicit DomainDictionary composition.
 The main-corpus gates do not scan staged draco definitions; ServiceTest provides
@@ -352,6 +356,30 @@ five explicit projection, loading, validation and dictionary/generation checks.
 The focused ServiceTest + DomainBuilderTest probe passed 15 tests / 2 suites;
 Dev's full suite passed 674 tests / 48 suites on September 30. Existing corpus report
 counts stay unchanged because this definition is outside those scans.
+
+**Service plan (Dev decisions, recorded 2026-10-05; not implemented).**
+ServiceConfiguration contains Assembly. The primordial service supports external
+creation/modification of domain/type definitions and DomainDictionary composition;
+the first increment is authoring, validation and composition. Generation and activation
+are later explicit operations. An endogenous initialization client uses existing
+actors/messages and canonical JSON definitions, independently of the ZeroMQ track.
+The consuming project owns persistence. Parsing remains rule-owned and dispatch
+uses the active dictionary. See src/mods/resources/draco/service/README.md for the
+shared plan and src/mods/ZEROMQ_CODEC_CONTRACT.md for the next integration proposal.
+The empty Service anchor is committed in 604aff2; proposed envelope/socket/codec
+choices are not settled. Journal coverage remains chapter 89.
+
+**ZeroMQ bridge staging (2026-10-05).** Service now contains TextOutput, the neutral
+Text -> Boolean send capability (queue acceptance only). Root pins JeroMQ 0.6.0.
+The handwritten mods bridge uses existing Draco actors/rules, bounded queues and
+one socket-owning thread. JSON parsing, exact dictionary resolution and output wrapping
+remain rule actions. The executable loopback PAIR/single-frame fixture forwards the
+payload to a JSON-input actor and returns typed-output JSON to the same peer; those
+protocol choices are provisional. No authoring, initialization client, new codec syntax
+or persistence is implemented. Direct compiled-class probe: 548 tests / 7 suites,
+existing measured baselines unchanged. Dev's full run passed 685 tests / 49 suites
+on October 5, with zero failures/aborts and unchanged report-only baselines, including
+zero pending mods actors in the file-only Drake report. See the contract for limitations.
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member
@@ -397,12 +425,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 87 on 2026-09-30.
+Current documentation was reconciled through journal chapter 89 on 2026-10-05.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 87 on
-  2026-09-30.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 89 on
+  2026-10-05.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -556,4 +584,4 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 87 -->
+<!-- draco-docs-synced-through: chapter 89 -->

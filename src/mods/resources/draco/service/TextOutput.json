@@ -1,0 +1,48 @@
+{
+  "typeName": {
+    "name": "TextOutput",
+    "namePackage": [
+      "draco",
+      "service"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "send",
+        "valueType": {
+          "->": [
+            "draco.drake.Text",
+            "Boolean"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "TextOutput",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "send",
+          "valueType": {
+            "->": [
+              "draco.drake.Text",
+              "Boolean"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Service",
+      "namePackage": [
+        "draco",
+        "service"
+      ]
+    }
+  }
+}
