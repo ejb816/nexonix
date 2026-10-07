@@ -1,0 +1,20 @@
+{
+  "typeName": {
+    "name": "Editor",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  }
+}

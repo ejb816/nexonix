@@ -1,0 +1,42 @@
+# Establish the Dreams layer's name skeleton
+#
+# Dev requested draco.dreams.Dreams, draco.dreams.editor.Editor and draco.dreams.user.User
+# as the next layer around core, then explicitly authorized adding the skeleton.
+# Start from clean main at 45cad3e (Dev confirmed successful bridge commit/push).
+#
+# Add empty self-declaring domain trios under src/mods/{resources,scala}/draco/dreams.
+# Parse canonical JSON and generate Scala with the current compiled CLIs, using an
+# isolated copy of classes overlaid with current main/mods/test resources. Replace
+# src/main/scala/draco/dreams/Dreams.scala to avoid duplicate fully qualified names.
+# Leave legacy draco.dreams.Service and Orion scaffolds unchanged and document that
+# they are not registered domains or aliases of draco.service.Service.
+#
+# Domains compose as dictionary peers; package nesting adds no super-domain edges
+# or membership. Do not alter Draco or Service member lists, transport behavior,
+# validation semantics or the authoring protocol. Correct the script's stale scaffold
+# location comment without changing its default domain list or runtime behavior.
+#
+# DreamsTest: five tests per trio plus a combined composition check with Draco/Service.
+# Direct probe passed 555 tests / 7 suites: DreamsTest, ServiceTest, DomainBuilderTest,
+# DracoGenTest, DrakeGenTest, DrakeParseTest and GenDrakeTest. Parse scope 103+10, one
+# known loss across 113, GenDrake 101/101 and file-only pending mods actors 0 unchanged.
+# Verification addendum: Dev's October 7 full run passed 701 tests / 50 suites,
+# zero failures/aborts, finishing at 10:29:32 EDT. Pasted output matches the saved
+# log; all report-only baselines and the file-only zero-pending Drake count match.
+# Journal stays at chapter 89; handoff discloses uncovered later work. No new dialogue
+# fabricated, private memory overwritten, sbt run, commit, push or issue created.
+#
+--- MESSAGE ---
+Establish Dreams, Editor and User as empty staged Draco domains
+
+Add canonical Drake/JSON/generated Scala trios for the three Dreams-layer domain
+anchors. Replace the old main Dreams trait under the same fully qualified name and
+preserve the unrelated legacy Service and Orion scaffolds.
+
+Verify projections, companion loading, validation, generation and peer composition
+with Draco and Service. Keep membership empty and avoid deriving domain relationships
+from package nesting. Update scope documentation and the shared development handoff.
+
+Validation: isolated compiled-class probe passed 555 tests / 7 suites with unchanged
+measured corpus baselines. Dev's full sbt gate passed 701 tests / 50 suites, with
+no failures or aborted suites and unchanged report-only baselines.

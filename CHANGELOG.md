@@ -31,6 +31,11 @@ for the definition that will replace it.
 
 ### Added
 
+- **Dreams name skeleton.** Add empty Dreams, Editor and User domain trios in the
+  staging tier, replacing the handwritten Dreams scaffold and adding 16 projection,
+  loading and dictionary-composition tests. Direct probe passes 555 tests / 7 suites;
+  Dev's full run passes 701 tests / 50 suites with unchanged report-only baselines. (2026-10-07)
+
 - **Bounded ZeroMQ actor bridge.** Stage TextOutput and a JeroMQ 0.6.0 loopback
   transport with rule-owned JSON parsing, exact domain-dictionary dispatch and
   domain-source output wrapping. Add projection and transport/routing/lifecycle tests;

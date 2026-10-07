@@ -49,7 +49,7 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**685 tests / 49 suites**, verified by Dev's run on 2026-10-05. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+**701 tests / 50 suites**, verified by Dev's run on 2026-10-07. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
@@ -380,6 +380,17 @@ or persistence is implemented. Direct compiled-class probe: 548 tests / 7 suites
 existing measured baselines unchanged. Dev's full run passed 685 tests / 49 suites
 on October 5, with zero failures/aborts and unchanged report-only baselines, including
 zero pending mods actors in the file-only Drake report. See the contract for limitations.
+
+**Dreams name skeleton (2026-10-07).** draco.dreams.Dreams,
+draco.dreams.editor.Editor and draco.dreams.user.User are empty, self-declaring
+peer domains with trios under src/mods/{resources,scala}/draco/dreams. The old main
+Dreams trait is replaced by generated staging source under the same fully qualified
+name. Package nesting implies neither domain membership nor super-domain inheritance.
+The legacy draco.dreams.Service and Orion scaffolds remain separate, unregistered
+Scala traits; they are not new domain definitions. DreamsTest supplies 16 explicit
+gates. The direct probe passed 555 tests / 7 suites; Dev's October 7 full run passed
+701 tests / 50 suites with zero failures/aborts and unchanged report-only baselines.
+See the Dreams README for scope.
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member

@@ -18,7 +18,8 @@ package scripts
 import draco._
 
 object ListDomains {
-  // Canonical first-party domains in src/main. Dreams / Orion live in src/mods.
+  // Defaults remain the core domains. Staged Dreams domains can be named explicitly;
+  // the legacy Orion Scala scaffolds are not definition-backed domains.
   private val defaultDomains: Seq[(String, Seq[String])] = Seq(
     ("Draco",    Seq("draco")),
     ("Base",     Seq("draco", "base")),

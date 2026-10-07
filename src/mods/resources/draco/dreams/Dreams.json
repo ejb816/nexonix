@@ -1,0 +1,18 @@
+{
+  "typeName": {
+    "name": "Dreams",
+    "namePackage": [
+      "draco",
+      "dreams"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Dreams",
+      "namePackage": [
+        "draco",
+        "dreams"
+      ]
+    }
+  }
+}

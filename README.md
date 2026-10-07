@@ -524,8 +524,9 @@ directions:
   runs through an emitter whose Draco and domain section mappings are definition-backed; the remaining
   aspect transforms and Scala target transforms are still unwritten. Additional targets
   beyond Scala follow the same shape.
-- **Dreams** — an editor for creating and modifying types, domains, rules, and actors
-  through their definitions.
+- **Dreams** — empty Dreams, Editor and User domain trios now establish the next
+  layer around core. Definition-authoring behavior remains future work; see the
+  [Dreams skeleton](src/mods/resources/draco/dreams/README.md).
 - **Orion** — cross-domain system-of-systems interaction patterns.
 
 ---
@@ -638,12 +639,14 @@ src/
         generator/ generator/carrier/ genscala/ gendrake/ scalatarget/ draketarget/
     scala/
       draco/                    -- projection-canonical framework source, same packages
-        dreams/                 -- Dreams scaffold (+ orion/)
+        dreams/                 -- legacy Service and orion/ scaffolds; domain anchors are staged
   test/
     resources/scenario/         -- the forest scenario: a full trio corpus in the test tree
     resources/ scala/           -- gates, rule tests, example-domain tests
   mods/                         -- engine tier and example domains
     scala/draco/                -- DracoGenerator, Drake, CLIs, DomainBuilder, Assembly
+    scala/draco/dreams/         -- generated Dreams, editor.Editor and user.User anchors
+    resources/draco/dreams/     -- canonical Drake/JSON domain trios
     scala/domains/              -- World media example chain
     scala/scripts/              -- bin/draco-sc scripts
     resources/domains/          -- example-domain definitions
@@ -677,5 +680,7 @@ The [new retrieval audit](draco-dev-journal/sources/codex-2026-09-30-to-10-05-au
 preserves 11 complete exchanges plus the open implementation request. Earlier audits
 and historical statuses are unchanged. The bridge probe passed 548/7; Dev's October 5
 full run then passed 685 tests / 49 suites with unchanged report-only baselines.
+The subsequent Dreams skeleton passed Dev's October 7 full run: 701 tests / 50
+suites, again with unchanged report-only baselines. Journal coverage remains 89.
 
 <!-- draco-docs-synced-through: chapter 89 -->

@@ -66,3 +66,10 @@ Only the initial bridge is implemented; no parallel agent work was launched.
 integration: the main-corpus gates do not discover draco definitions in src/mods.
 Seven tests now cover Service membership plus TextOutput projection and send behavior. Do not register Service
 as a member of draco.Draco just to make it discoverable: domains are dictionary peers.
+
+## Surrounding Dreams layer
+
+The [Dreams skeleton](../dreams/README.md) adds empty Dreams, Editor and User domains
+before authoring implementation. Editor is the intended home for editing application
+concepts; Service retains reusable service capabilities. These domains are composed
+as dictionary peers, with no changes to the accepted authoring/initialization plan.

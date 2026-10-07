@@ -6,13 +6,12 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-10-05, by Codex, after reviewing Dev's successful full-suite bridge run.
-- Observed branch/HEAD: main at 604aff2, matching the local origin/main tracking ref.
-  Dev supplied successful commit/push output for this checkpoint; no fresh remote query.
-- The Service/contract/journal closeout is committed. Tree was clean before this
-  increment. Current changes include the prior planning docs, chapters 88-89 and
-  source audit, the timestamped record rename, JeroMQ dependency, TextOutput/Service
-  trios, handwritten bridge engine and tests. Nothing from this increment is committed.
+- Updated: 2026-10-07, by Codex, after reviewing Dev's successful Dreams full-suite run.
+- Observed branch/HEAD: main at 45cad3e, matching local origin/main. Dev supplied
+  successful commit/push output for the bridge; no fresh remote query performed.
+- Tree was clean before this increment. Pending work adds Dreams/Editor/User trios,
+  replaces the old main Dreams scaffold, adds DreamsTest and reconciles documentation.
+  Legacy Service/Orion scaffolds and the bridge runtime are unchanged.
 - Project-local continuity is carried by this handoff, DRACO.md and the Service plan.
   No private agent memory was overwritten or relied upon as shared authority.
 - Permission: Dev explicitly authorized both agents to maintain the journal and shared
@@ -20,6 +19,12 @@ snapshot against the current tree before acting.
   Existing sbt/commit/push and new-issue restrictions remain in force.
 
 ## Completed Development
+
+- Dreams, Editor and User now have empty domain trios in the mods staging tier. The
+  generated Dreams replaces the former main trait under the same fully qualified
+  name; no duplicate source remains. All three are dictionary peers and introduce
+  no parent/member relationships. DreamsTest adds 16 tests. See the
+  [Dreams scope](src/mods/resources/draco/dreams/README.md).
 
 - The staged draco.service.Service domain now loads as a self-declaring dictionary
   peer, now containing TextOutput. DomainBuilder validates and generates it and
@@ -67,7 +72,7 @@ the saved /tmp/sbt-test.log agree; Codex also checked the file-only baseline.
 
 The September 28 results apply to the Draco-aspect implementation before Service;
 the September 30 results include Service. Neither run verifies a ZeroMQ/codec
-implementation; the new bridge has only the later scoped verification below. On September 28 Codex also compiled the changed Scala and new test in an isolated overlay,
+implementation; the bridge has the later full verification recorded below. On September 28 Codex also compiled the changed Scala and new test in an isolated overlay,
 then passed 538 tests across seven suites: DracoAspectTest, DomainAspectTest,
 DracoGenTest, DrakeGenTest, DrakeParseTest, GenDrakeTest and SourceContractTest.
 The current scoped measurements are 103 Draco + 10 mods, one loss across 113,
@@ -139,32 +144,43 @@ results belong here and in the git record until a later sourced journal pass.
 
 ## Resumption
 
-604aff2 is the committed checkpoint. The pending bridge is directly compiled and
-verified: 548 tests / 7 suites passed (ServiceTest, ZeroMqBridgeTest, DomainBuilderTest,
-DracoGenTest, DrakeGenTest, DrakeParseTest, GenDrakeTest). Scope measured 103 draco +
-10 mods, one loss across 113 types, GenDrake 101/101, with zero pending mods actors in
-DrakeGenTest's file report. Dev subsequently verified the full suite as recorded below.
+45cad3e is the committed/pushed bridge checkpoint. Dev's October 5 full run passed
+685 tests / 49 suites, no failures/aborts, with unchanged report-only figures and
+zero pending mods actors in the file-only Drake report. This is the historical
+bridge result; the Dreams full-suite verification follows below.
 
-The sandbox initially denied local socket binding; the socket probe then passed with
-loopback access. A wider probe initially aborted because Main.roots derives paths
-from compiled-class location; recreating target/scala-2.13/classes layout in /tmp
-fixed the harness. Current source/resource overlay and dependency jars are isolated
-under /tmp/draco-zmq-check; /tmp/draco-zmq-probe.log contains the passing run.
+The pending Dreams increment passed a direct compiled-class probe: 555 tests /
+7 suites (DreamsTest, ServiceTest, DomainBuilderTest, DracoGenTest, DrakeGenTest,
+DrakeParseTest, GenDrakeTest). New suite: 16 tests. Scope remained 103 draco + 10 mods,
+one known loss across 113 types, GenDrake 101/101, zero pending mods actors in the
+file report. Current resources from all three tiers were overlaid on copied classes;
+changed companions and tests were compiled in /tmp/draco-dreams-check. Probe log:
+/tmp/draco-dreams-probe.log. The bridge socket suite was not rerun in this scope.
 
-Dev's full sbt run passed 685 tests / 49 suites (11 additional tests, one suite),
-zero failures/aborts, finishing October 5 at 13:01:12 America/New_York. Pasted output
-matches /tmp/sbt-test.log; all report-only figures match DRACO.md, including the
-zero-pending-Drake file report. This is the latest verified full-suite baseline.
-Only verification documentation changed after that run. The increment is ready for
-Dev's scoped commit/push; wait for those results before the next implementation.
-Codex did not run sbt, commit or push.
+Dev's October 7 full sbt run passed 701 tests / 50 suites, zero failures/aborts,
+finishing at 10:29:32 America/New_York. Pasted output matches /tmp/sbt-test.log;
+all report-only baselines match DRACO.md, including zero pending mods actors in
+the file-only Drake report. Only verification documentation changed after that run.
+The increment is ready for Dev's scoped commit/push; await those results before
+the next implementation.
+No sbt, commit or push was run by Codex. New record uses the restored HHMM convention;
+committed descriptive filenames remain historical exceptions.
 
-The pending git-record-2026-10-05-service-plan was renamed to -1107 using the source
-closeout time (15:07 UTC / 11:07 EDT). Its old path may still appear as an index addition
-plus working-tree deletion until Dev stages the rename; include both paths in scope.
-Committed descriptive filenames remain historical exceptions. Future names use HHMM.
+Journal coverage remains through chapter 89 and the original implementation request.
+Bridge implementation/full-run/push, the October 6 authoring recommendation, and
+October 7 Dreams discussion/implementation remain outside that transcript boundary.
+Current decisions and evidence are recorded here and in the timestamped git record;
+a later journal pass must retrieve original exchanges, not reconstruct quotations.
+Historical chapter statuses and source extracts remain unchanged.
 
 ## Next Increment
+
+Dev explicitly authorized the Dreams skeleton on October 7 before the authoring
+increment. The three empty anchors are now implemented. After their full-suite and
+commit checkpoint, resume the shared authoring/local initialization design. Editor is
+the intended application domain; Service remains the capability/configuration domain.
+The October 6 candidate-batch/atomic-acceptance proposal remains a proposal, not a
+newly implemented or implicitly approved protocol.
 
 Accepted decisions from the current task, recorded October 5:
 
