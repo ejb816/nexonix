@@ -15,6 +15,7 @@
       ]
     },
     "elementTypeNames": [
+      "ServiceConfiguration",
       "TextOutput"
     ]
   }

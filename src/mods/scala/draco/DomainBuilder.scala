@@ -1,38 +1,35 @@
 package draco
 
-/** DomainBuilder — a `src/mods` stand-in for an under-development draco core
-  * capability: comprehensively define a *domain dictionary* from JSON alone,
-  * stand up a concrete, fully-populated instance of it, and generate code
-  * (skeleton-tolerant) for the whole dictionary.
+/** DomainBuilder — the resource-backed convenience for standing up a populated
+  * domain: load a domain's own definition and every member it names from the
+  * definition resources, hand them to core's `Domain` factory, and return the
+  * concrete `DomainType`. Since 2026-10-09 core's `TypeDictionary` and `Domain`
+  * factories accept supplied member definitions, so population itself is a core
+  * capability; what remains here is the *loading* — which members, from where —
+  * and the procedural validation and generation helpers built on it.
   *
-  * == Why this is a stand-in ==
-  * A domain is already comprehensively describable in JSON today — a domain's
-  * `.json` carries `domainAspect.elementTypeNames`, and each member has its own
-  * `.json` in the same resource package. The *data* side is complete.
-  *
-  * The *concrete-instance* side is not. `TypeDictionary.apply(domainDefinition)`
-  * builds its members as `elementTypeNames.map(n => TypeDefinition(TypeName(n)))`
-  * — the empty `TypeDefinition` constructor (all aspects `Null`). It never calls
-  * `DracoGenerator.loadType`, so a concrete `TypeDictionary` holds member *names* but
-  * not member *content*, and you cannot generate code from it. DomainBuilder
-  * supplies the populated counterpart by loading each member's full definition.
+  * == The ontology ==
+  * `ontology` composes already-defined domains into a `DomainOntology`, the
+  * cross-domain structure that was called `DomainDictionary` until 2026-10-09.
+  * "Dictionary" now names only a domain's own `TypeDictionary`; the ontology is
+  * built from domains and their intra- and inter-relationships, of which today's
+  * map holds only membership. The Editor actor (`draco.dreams.editor`) takes an
+  * accepted ontology as its reference set and validates a candidate domain
+  * against the ontology that would result, never against the classpath.
   *
   * == Promotion path ==
   * This lives in `src/mods/scala/draco/` under `package draco`, mirroring
   * `src/main/scala/draco/`. The shared package name means sbt and the IDE flag
   * any duplicate FQN, so the stand-in cannot silently diverge from — or collide
-  * with — what it is destined to become. When core's dictionary instantiation is
-  * made comprehensive (or this lands in the dreams layer), the file moves from
-  * the mods `draco` tree to the main `draco` tree and any conflict resolves in
-  * place. Built entirely from draco's public API — no new third-party deps.
+  * with — what it is destined to become. Built entirely from draco's public API —
+  * no new third-party deps.
   *
-  * @see [[TypeDictionary]] for the hollow counterpart this completes.
+  * @see [[TypeDictionary]] for the population these loaders feed.
   */
 object DomainBuilder {
 
-  /** Load a member's full `TypeDefinition`. The aspect suffix (`.rule` / `.actor`)
-    * is baked into the `elementTypeName`, so `TypeName.resourcePath` already points
-    * at the correct JSON and a plain `loadType` resolves every aspect uniformly.
+  /** Load a member's full `TypeDefinition`. `TypeName.resourcePath` points at
+    * the member's JSON and a plain `loadType` resolves every aspect uniformly.
     * A member named but not yet authored comes back as an empty TD (a stub). */
   private def loadMember(name: String, namePackage: Seq[String]): TypeDefinition =
     DracoGenerator.loadType(TypeName(name, _namePackage = namePackage))
@@ -45,34 +42,23 @@ object DomainBuilder {
       RuleAspect.isEmpty(td.ruleAspect) &&
       ActorAspect.isEmpty(td.actorAspect)
 
-  /** Comprehensively define a domain from JSON: load its own definition, then load
-    * every member named in `domainAspect.elementTypeNames`, and return a concrete
-    * `Domain` whose `typeDictionary` is *populated* with the loaded definitions —
-    * the non-hollow counterpart to `TypeDictionary.apply`. */
+  /** Define a domain from its resources: load its own definition, then load
+    * every member named in `domainAspect.elementTypeNames`, and return the
+    * concrete `Domain` core builds from them — its `typeDictionary` populated
+    * with the loaded definitions. A member with no resource is a stub entry. */
   def define(name: String, namePackage: Seq[String]): DomainType = {
     val domainDef = DracoGenerator.loadType(TypeName(name, _namePackage = namePackage))
     val members: Seq[TypeDefinition] =
       domainDef.domainAspect.elementTypeNames.map(m => loadMember(m, namePackage))
-
-    val populated = new TypeDictionary {
-      override lazy val elementTypes: Seq[TypeDefinition] = members
-      override lazy val kvMap: Map[TypeName, TypeDefinition] =
-        members.map(td => (td.typeName, td)).toMap
-      override lazy val typeDefinition: TypeDefinition = TypeDictionary.typeDefinition
-    }
-
-    new Domain[Any] {
-      override lazy val typeDefinition: TypeDefinition = domainDef
-      override lazy val typeDictionary: TypeDictionary = populated
-    }
+    Domain[Any](domainDef, members)
   }
 
-  /** Assemble the cross-domain `DomainDictionary` from one or more already-defined
-    * domains. Delegates to `DomainDictionary.apply`; because the supplied domains
-    * carry populated `typeDictionary`s (from [[define]]), the resulting registry is
-    * fully populated too. */
-  def dictionary(domains: DomainType*): DomainDictionary =
-    DomainDictionary(domains)
+  /** Compose the `DomainOntology` from one or more already-defined domains.
+    * Delegates to `DomainOntology.apply`; because the supplied domains carry
+    * populated `typeDictionary`s (from [[define]]), the ontology defines every
+    * member they hold. */
+  def ontology(domains: DomainType*): DomainOntology =
+    DomainOntology(domains)
 
   /** Validate a built domain against the structural invariants the endogenous
     * draco domains are expected to uphold. Returns a list of human-readable
@@ -82,21 +68,26 @@ object DomainBuilder {
     * (and, eventually, domain-expert-authored ones) can be held to zero.
     *
     * Checks (battery 1–2):
-    *  1. Self-declaration — the domain's `domainAspect.typeName` matches its own
-    *     `typeName` (it actually claims to be the domain it is loaded as).
+    *  1. Self-declaration — the domain's `domainAspect.typeName` equals its own
+    *     `typeName`, type parameters included (it actually claims to be the
+    *     domain it is loaded as).
     *  2. Completeness — every declared member resolves to real content, not the
     *     empty (stub) `TypeDefinition` a missing JSON would yield.
     *  3. Derivation resolvability — every draco-internal ancestor named in a
     *     member's `dracoAspect.derivation` itself resolves to a definition, so no
     *     member claims an inheritance chain that dangles. External supertypes
     *     (non-`draco` packages, e.g. Pekko/Evrete) are out of scope and skipped.
+    *     This procedural check resolves through the definition resources, which
+    *     is what a resource-loaded domain is accountable to; the rule
+    *     `draco.DerivationResolvable` resolves against the `DomainOntology` in
+    *     working memory instead, so a candidate domain is never judged by the
+    *     classpath.
     */
   def validate(domain: DomainType): Seq[String] = {
     val td = domain.typeDefinition
 
     val selfDeclaration: Seq[String] =
-      if (td.domainAspect.typeName.name == td.typeName.name &&
-          td.domainAspect.typeName.namePackage == td.typeName.namePackage) Nil
+      if (td.domainAspect.typeName == td.typeName) Nil
       else Seq(
         s"domain ${td.typeName.namePath} does not self-declare: " +
           s"domainAspect.typeName is ${td.domainAspect.typeName.namePath}")

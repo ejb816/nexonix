@@ -7,7 +7,8 @@ The authorized bridge increment is now staged and independently probed at 548 te
 report-only baselines and zero pending mods actors in the file-only report. No new codec
 syntax, authoring operations, generation/activation operation or persistence was added.
 
-Dev established definition authoring, validation and DomainDictionary composition as
+Dev established definition authoring, validation and domain-ontology composition (the
+`DomainOntology`, called `DomainDictionary` until 2026-10-09) as
 the primordial service, followed by explicit generation/activation. ServiceConfiguration
 contains Assembly. Local initialization can advance through existing Draco actors/messages
 independently of external transport. Persistence belongs to the consuming project.
@@ -71,7 +72,7 @@ proposals below remain separate from this existing-codec transport proof.
 1. ZeroMQ transports text containing JSON. Received text enters the ZeroMQ actor's
    working memory. Its rules parse that text into the target language's JSON value.
 2. Rules in that actor extract destination-domain information from the JSON, resolve
-   it through the active domain dictionary and dispatch JSON to the domain input actor.
+   it through the active domain ontology and dispatch JSON to the domain input actor.
 3. The input actor's message type is JSON (Circe Json in the Scala target). Rules in
    that actor convert the JSON into typed domain data. The transport does not choose
    the domain payload type or its decoder.
@@ -84,10 +85,10 @@ dispatcher inside that adapter. Domain input/output rules own the codec calls.
 
 ## Existing Support and Gaps
 
-- DomainDictionary maps DomainType to TypeDictionary. It does not store live actors.
-  Resolve a wire domain identity against the active dictionary first, then find the
+- DomainOntology maps DomainType to TypeDictionary. It does not store live actors.
+  Resolve a wire domain identity against the active ontology first, then find the
   input endpoint associated with that resolved domain. A separate live endpoint table
-  cannot authorize a domain absent from the active dictionary.
+  cannot authorize a domain absent from the active ontology.
 - Match complete TypeName identity, including package and type parameters. namePath
   alone omits parameters. Reject missing or ambiguous matches; do not load arbitrary
   classes or resources named by untrusted incoming text.

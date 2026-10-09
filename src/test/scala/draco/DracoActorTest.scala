@@ -21,7 +21,9 @@ import scala.jdk.CollectionConverters._
  *  working memory) are picked up as members, nothing declared twice.
  *
  *  Facts arrive as messages: every first-party domain as a `DomainType`, every
- *  member as a `TypeDefinition` — both are `DracoType`, the actor's message type.
+ *  member as a `TypeDefinition`, and the foundation's `DomainOntology`, which
+ *  `DerivationResolvable` resolves parents against — all three are `DracoType`,
+ *  the actor's message type.
  */
 class DracoActorTest extends AnyFunSuite {
 
@@ -37,6 +39,8 @@ class DracoActorTest extends AnyFunSuite {
     val members: Seq[TypeDefinition] = built.flatMap(_.typeDictionary.elementTypes)
     (built, members)
   }
+
+  private def ontologyOf(domains: Seq[DomainType]): DomainOntology = DomainBuilder.ontology(domains: _*)
 
   /** Spawn a Draco actor, send it every fact as a message, let it collapse each
    *  in turn, stop it, and return the findings it accumulated. */
@@ -54,7 +58,7 @@ class DracoActorTest extends AnyFunSuite {
     val (domains, members) = loadFoundation()
     assert(members.nonEmpty, "the foundation dictionary should be populated")
 
-    val problems = validateViaActor("dracoValidateClean", domains ++ members)
+    val problems = validateViaActor("dracoValidateClean", (domains ++ members) :+ ontologyOf(domains))
     assert(problems.isEmpty,
       s"the actor should find the foundation self-consistent; got:\n  - " +
         problems.map(p => s"${p.subject.name}: ${p.message}").mkString("\n  - "))
@@ -66,7 +70,7 @@ class DracoActorTest extends AnyFunSuite {
     // yields the minimal stub definition, which Completeness must flag.
     val ghost = TypeLoader.loadType(TypeName("Nonexistent", _namePackage = Seq("draco")))
 
-    val problems = validateViaActor("dracoValidateBroken", (domains ++ members) :+ ghost)
+    val problems = validateViaActor("dracoValidateBroken", (domains ++ members) :+ ghost :+ ontologyOf(domains))
     assert(problems.size == 1,
       s"exactly one finding expected; got:\n  - " +
         problems.map(p => s"${p.subject.name}: ${p.message}").mkString("\n  - "))

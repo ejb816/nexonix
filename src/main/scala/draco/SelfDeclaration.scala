@@ -8,7 +8,7 @@ object SelfDeclaration extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("SelfDeclaration", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[SelfDeclaration] = Type[SelfDeclaration] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
-  def w0(d: DomainType): Boolean = d.typeDefinition.domainAspect.typeName.name != d.typeDefinition.typeName.name || d.typeDefinition.domainAspect.typeName.namePackage != d.typeDefinition.typeName.namePackage
+  def w0(d: DomainType): Boolean = d.typeDefinition.domainAspect.typeName != d.typeDefinition.typeName
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val d: DomainType = ctx.get[DomainType]("$d")
       ctx.insert(Problem(d.typeDefinition.typeName, s"domain ${d.typeDefinition.typeName.name} does not self-declare: domainAspect.typeName is ${d.typeDefinition.domainAspect.typeName.name}"))

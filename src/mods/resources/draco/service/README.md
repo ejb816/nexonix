@@ -13,8 +13,9 @@ not peer receipt. The current Scala wrapper realizes Text as String.
 The handwritten staging engine under src/mods/scala/draco/service/zeromq contains
 PairTextTransport (socket ownership and text queues), BridgeRules (JSON and dictionary
 routing rules) and ZeroMqBridge (the Draco actor membrane). This is an executable
-transport fixture, not the primordial authoring service. ServiceConfiguration,
-DomainInterface, authoring operations and the initialization client remain unimplemented.
+transport fixture, not the primordial authoring service. ServiceConfiguration now exists
+(it contains an Assembly, nothing more yet); DomainInterface, further authoring
+operations and the initialization client remain unimplemented.
 
 ## Agreed direction (recorded October 5, 2026)
 
@@ -22,7 +23,8 @@ This section summarizes Dev's decisions in the current Codex task after checkpoi
 604aff2; it is a planning record, not reconstructed dialogue or implemented behavior.
 
 The primordial service lets an external client create and modify domain/type
-definitions and create and modify a DomainDictionary. The first authoring increment
+definitions and create and modify a DomainOntology (the domain ontology, called
+DomainDictionary until 2026-10-09). The first authoring increment
 covers authoring, validation and dictionary composition. Generation and activation
 follow as separate, explicit operations; accepting a definition does not execute it.
 
@@ -30,7 +32,7 @@ ServiceConfiguration contains Assembly. The remaining configuration fields, capa
 names and operation/message definitions are still to be designed. The earlier
 TextTransport and DomainInterface names were proposals, not accepted definitions.
 
-A Draco-endogenous initialization client builds the initial Draco domain dictionary
+A Draco-endogenous initialization client builds the initial Draco domain ontology
 from a supplied set of canonical JSON type definitions. It uses existing Draco actors
 and actor messages, needs no external communication, and can be developed in parallel
 with ZeroMQ integration. Both clients use the shared authoring, validation and
@@ -65,11 +67,13 @@ Only the initial bridge is implemented; no parallel agent work was launched.
 `draco.service.ServiceTest` explicitly checks this staged trio and dictionary
 integration: the main-corpus gates do not discover draco definitions in src/mods.
 Seven tests now cover Service membership plus TextOutput projection and send behavior. Do not register Service
-as a member of draco.Draco just to make it discoverable: domains are dictionary peers.
+as a member of draco.Draco just to make it discoverable: domains are ontology peers.
 
 ## Surrounding Dreams layer
 
 The [Dreams skeleton](../dreams/README.md) adds empty Dreams, Editor and User domains
 before authoring implementation. Editor is the intended home for editing application
 concepts; Service retains reusable service capabilities. These domains are composed
-as dictionary peers, with no changes to the accepted authoring/initialization plan.
+as ontology peers. The first authoring slice (2026-10-09) lives in Editor: Latent, Actual
+and the Editor actor; see the Dreams README. Service gained ServiceConfiguration, which
+contains an Assembly, the same day.

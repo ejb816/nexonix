@@ -6,227 +6,111 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-10-07, by Codex, after reviewing Dev's successful Dreams full-suite run.
-- Observed branch/HEAD: main at 45cad3e, matching local origin/main. Dev supplied
-  successful commit/push output for the bridge; no fresh remote query performed.
-- Tree was clean before this increment. Pending work adds Dreams/Editor/User trios,
-  replaces the old main Dreams scaffold, adds DreamsTest and reconciles documentation.
-  Legacy Service/Orion scaffolds and the bridge runtime are unchanged.
-- Project-local continuity is carried by this handoff, DRACO.md and the Service plan.
-  No private agent memory was overwritten or relied upon as shared authority.
-- Permission: Dev explicitly authorized both agents to maintain the journal and shared
-  documentation on September 23. The former Cowork-only restriction is superseded.
-  Existing sbt/commit/push and new-issue restrictions remain in force.
+- Updated: 2026-10-09, by Claude Code, at the end of the first authoring increment.
+- Observed branch/HEAD: main at f54da3f, matching local origin/main; no fresh remote query.
+- The tree carries TWO uncommitted bodies of work: Codex's 2026-10-07 documentation
+  checkpoint (chapters 90–92, their transcript audit, index, shared docs, record
+  `git-record-2026-10-07-1105`), which Dev had not committed when this session began,
+  and this session's authoring increment (code, definitions, tests, docs, record
+  `git-record-2026-10-09-1218`). The shared documents (CHANGELOG, DRACO.md, README,
+  this file) contain both sets of edits, so one commit is proposed; see Resumption.
+- Destination: either agent. Dev alternates sessions; the next step is Dev's full
+  `sbt test`, then the commit/push.
+- Permission: Dev authorized both agents to maintain the journal and shared documentation
+  on September 23. sbt, commit, push and new-issue restrictions remain in force.
+
+## Decisions this session (Dev, 2026-10-09)
+
+- `DomainDictionary` is the **domain ontology**, `DomainOntology`: an operational ontology
+  built from domains and their intra- and inter-relationships. "Dictionary" was an
+  expedient on the way to a formal ontology and now names only a domain's `TypeDictionary`.
+- The authoring types are **Latent** and **Actual**, and they operate on **domains**, not
+  ontologies: a Latent is one domain in candidate form, an Actual the accepted (or
+  rejected) domain. Ontologies are built from domains and their relationships.
+- Scope boundary accepted: this increment takes a Latent to an Actual one domain at a
+  time, reusing core's rules; composing Actuals into a `DomainOntology` with explicit
+  intra- and inter-relationships is the increment after. The Editor builds its own
+  knowledge from core's rule patterns (no reply protocol on the Draco actor).
 
 ## Completed Development
 
-- Dreams, Editor and User now have empty domain trios in the mods staging tier. The
-  generated Dreams replaces the former main trait under the same fully qualified
-  name; no duplicate source remains. All three are dictionary peers and introduce
-  no parent/member relationships. DreamsTest adds 16 tests. See the
-  [Dreams scope](src/mods/resources/draco/dreams/README.md).
-
-- The staged draco.service.Service domain now loads as a self-declaring dictionary
-  peer, now containing TextOutput. DomainBuilder validates and generates it and
-  composes it with Base. The bounded ZeroMQ bridge is staged; authoring operations,
-  ServiceConfiguration, initialization client and persistence remain unimplemented.
-- Draco-owned Text is realized as native Scala String. Nominal, Surface, DomainLine,
-  DomainLineOf and Emission name Text in their definitions without changing runtime representation.
-- DomainAspectText and DomainAspectOf generate the complete domain section used by Drake.emit
-  and thus the existing generator rule flow. Parameterized references and member order survive;
-  superDomain remains in DracoAspect. Type-parameter spelling is still a callback to the
-  handwritten Drake renderer.
-- DracoAspectText and DracoAspectOf now provide the complete fundamental type-section
-  layout/mapping on that same path, including reference/root/factory-result elision.
-  Four callbacks retain type-parameter, type-form, value-type-slot and element-body
-  rendering in Drake. SuperDomain stays owned by DracoAspect and output in the domain
-  section. Rule/actor emission and codec rejection remain unchanged; Scala generation
-  has not migrated. Seven focused tests and two frozen authored-ahead fixtures were added.
-- DomainLine and DomainLineOf remain compatibility helpers. Follow-on transport/codec
-  work is authorized as described under Next Increment, not inferred from a proposal.
-- Supporting records: `draco-git-record/git-record-2026-09-22-1231`, `-1331`, `-1339`,
-  and `-1453` (the latter contains the combined commit message).
+- **Ontology rename.** `DomainOntology` replaces `DomainDictionary` across the trio, the
+  Draco member list, `DomainBuilder` (`dictionary` → `ontology`), the ZeroMQ bridge and
+  five tests; `defines(typeName)` added. Map shape unchanged.
+- **Core composition.** `TypeDictionary(domainDefinition, members = [])` and
+  `Domain(domainDefinition, members = [])` populate from supplied definitions;
+  `DomainBuilder.define` loads from resources and delegates.
+- **Core validation.** `DerivationResolvable` joins the `DomainOntology` fact and flags
+  any named parent it does not define — no package filter, no loader call.
+  `SelfDeclaration` compares the whole TypeName. The validation suites and the Draco
+  actor test insert the ontology as a fact.
+- **Service.** `ServiceConfiguration` contains an `Assembly` (the accepted shape).
+- **Editor.** `Latent`, `Actual` and the `Editor` actor in `draco.dreams.editor`, as
+  generated trios under `src/mods/{resources,scala}/draco/dreams/editor`. Actual's
+  populated `domain` is a dyn, not a carried field (codec eligibility is not transitive).
+- **Tests.** `EditorTest` (13: six trio checks, one structural, six behavioural: acceptance
+  with a populated domain, Completeness/DerivationResolvable/SelfDeclaration problems,
+  ordering and non-mutation, JSON round trip). ServiceTest +2, SelfDeclarationRulesTest +1,
+  DerivationResolvableRulesTest rewritten (+1, including a parent no resource holds).
+  DreamsTest keeps Dreams and User only. DomainBuilderTest checks `defines`.
+- **Docs.** DRACO.md (orientation paragraph, §1 probe sentence, three §6 gotchas, retired
+  list), README (ontology vocabulary, work in progress, status), drake.dlt history line,
+  ZEROMQ contract, Service/Dreams/mods READMEs, CHANGELOG (Added + Changed), git record.
 
 ## Verification
 
-September 30 Service increment: generated JSON/Scala, directly compiled the new
-companion and ServiceTest in an isolated overlay, and passed 15 tests / 2 suites
-(ServiceTest and DomainBuilderTest). Dev then ran the full suite: **674 tests / 48
-suites passed**, zero failures or aborted suites, finishing September 30 at 10:38:48
-America/New_York. Pasted results agree with /tmp/sbt-test.log; the file-only pending
-Drake report is zero. The existing corpus measurements below remain unchanged: those scans do not
-include staged draco definitions; five dedicated ServiceTest checks cover this trio.
+Claude did not run sbt. A compiled-class probe recompiled the WHOLE tree — main, mods
+and tests — into `target/scala-2.13/probe-{classes,test-classes}` (the `Domain` factory's
+new parameter makes every compiled companion binary-stale, so a partial overlay was not
+an option), overlaid current resources (hidden dotfiles excluded, as sbt excludes them),
+and ran every suite with the scalatest Runner:
 
-Dev ran the full suite on September 28, finishing at 17:04:22:
-**669 tests / 47 suites passed**, zero failures or aborted suites. Pasted output and
-the saved /tmp/sbt-test.log agree; Codex also checked the file-only baseline.
+- **713 tests, 0 failed, 0 aborted**; 52 suites as the Runner counts (51 as sbt will:
+  50 + EditorTest). Expected sbt arithmetic from Dev's 701: −5 +13 +2 +1 +1 = 713.
+- Report-only headlines all match DRACO.md: gen map 28/20/0/0 of 48; surface losses 1
+  across 113; parse scope 103 draco + 10 mods; PON 80/550/42; canonical 7; scenario 23
+  clean; DomainAspect 103/1/0; DracoAspect 103/2/0; GenDrake 101/101; CO-DECLARATION
+  DROPS THE FACT; mods actors pending Drake authoring 0 (file-only).
+- Earlier probe iterations caught: the ambiguous single-fact `insert` (fixed with
+  `Seq(fact): _*`); unsupplied members never reaching working memory (the Editor now
+  inserts the candidate's populated `elementTypes`); the obsolete `draco`-package filter.
+- The probe directories were removed afterwards. Probe logs: scratchpad only, transient.
 
-- Complete domain sections: 103 reproduced, 1 parameterized included, 0 skipped.
-- Complete Draco sections: 103 reproduced, 2 frozen authored-ahead baselines, 0 skipped.
-- GenDrake: 101/101 emitted, 0 missing or unexpected.
-- Parse scope: 103 draco + 10 mods; surface losses: 1 across 113 types (known ActorAspect loss).
-- Example generation: 28 match / 20 differ / 0 error / 0 missing of 48.
-- PON: 80 numbers / 550 expressions / 42 discrepancies; canonical differences: 7.
-- Scenario: 23 clean; forest scenario passed; mods actors pending Drake authoring: 0.
-- Known Evrete subtype co-declaration limitation unchanged; it is not a newly fixed behavior.
-
-The September 28 results apply to the Draco-aspect implementation before Service;
-the September 30 results include Service. Neither run verifies a ZeroMQ/codec
-implementation; the bridge has the later full verification recorded below. On September 28 Codex also compiled the changed Scala and new test in an isolated overlay,
-then passed 538 tests across seven suites: DracoAspectTest, DomainAspectTest,
-DracoGenTest, DrakeGenTest, DrakeParseTest, GenDrakeTest and SourceContractTest.
-The current scoped measurements are 103 Draco + 10 mods, one loss across 113,
-GenDrake 101/101, and both aspect sections reproduced across 103 definitions with
-none skipped. The Draco test uses two documented pre-migration fixtures for the
-authored-ahead ActorAspect and BodyElement surfaces. Comparing old/new emitters with
-the same current resources produced 103 byte-identical Drake and 103 byte-identical
-Scala projections. Dev's subsequent full run confirmed 669 tests / 47 suites and
-all report-only baselines. Codex did not run sbt.
-Temporary probe log: /tmp/draco-aspect-probe.log; it may be overwritten.
-
-September 30 resumption review: Codex reviewed the complete pending diff and checked
-the preserved transcript against the original log, including its frozen prefix hash
-and all 53 message texts, hashes, timestamps and source order. Chapter 84-87 final
-replies match the extract. Agent-link reporting and whitespace checks passed.
-Runtime files remain unchanged from Dev's verified Service run; no new sbt run is claimed.
-
-Documentation checks on September 23 passed: staged/unstaged whitespace, chapter links,
-fence balance and required sections, chapter-83 markers, and preservation of all 33
-non-responsive source turns in chapter 81. The local helper passed Bash syntax and
-isolated checks for non-mutating reporting, creation of missing links, and refusal to
-replace regular files or wrong-target links. Agent links remain tracked symlinks; no
-runtime file or .gitignore changes were found. These checks are not a new sbt result.
+The last Dev-verified full run remains 701 tests / 50 suites on 2026-10-07 (f54da3f).
+That result does not verify this increment.
 
 ## Documentation Coverage
 
-- The previous journal update (chapters 81-83) covered the range after chapter 80's
-  `5fd801d` through the September 23 documentation handoff. Current coverage reaches
-  chapter 89 as detailed below.
-- Chapter 81 recovers parser/operators `665926e`, parentheses `309ea4d`, conditional
-  cleanup `0dc4900` and bracket `8e59cbe` from Claude Code session
-  `3df62d0b-dcac-4979-9085-52eac92d20dd`. Its final bracket full-run reply is absent;
-  scoped probes and expected counts remain distinct from witnessed results.
-- Chapter 82 uses selected Codex exchanges and Dev's run/push output. The initial Text
-  task is a record-backed summary, not a recovered full transcript. Chapter 83 records
-  explicit permission and the documentation work. These source limits are disclosed;
-  coverage does not mean every dialogue has been preserved.
-- Earlier moved sessions are already covered by the journal as Dev described; do not
-  re-import them wholesale. Retrieve only a specific missing source if needed and available.
-- No private Claude Code or Codex auto-memory has been synchronized or overwritten.
-  Shared continuity now lives in tracked project files; tool-local memory may point here.
-- On September 27 Dev authorized sharing the formerly local documentation skill.
-  `.gitignore` now allowlists only `.draco/skills/update-draco-docs/SKILL.md` and
-  `scripts/check_links.sh`; other .draco data remains ignored. DRACO.md directs both
-  agents to read the same file, independent of automatic discovery or .claude setup.
-  The skill uses the checkout root rather than a machine-specific path. Report mode
-  remains non-mutating; authorized repairs only create missing links.
-- Chapter 84 now covers the September 27 sharing decision and commit `79b363f`.
-  Historical local-only statements describe
-  the September 23 state and are not rewritten retrospectively.
-- Chapters 85-87 now cover Drake-only Draco-aspect generation, its September 29 push,
-  rule-owned messaging, Service-first staging, the 674/48 full run and transcript integrity.
-  At that checkpoint both documentation sync markers reached chapter 87. Chapter 83 gained a provenance
-  addendum without changing its historical Status; chapters 81-82 remain unchanged.
-- The bounded transcript/audit under draco-dev-journal/sources preserves 53 messages:
-  27 user and 26 final replies, 26 complete exchanges plus the open audit request.
-  Five exchanges audit chapter 83; 21 feed chapters 84-87. Original records survive
-  both observed compactions. No loss is observed in that recovered sequence, but no
-  independent inventory proves complete original capture. Earlier source gaps remain.
-  The source boundary precedes this documentation work's closing response.
-
-Chapters 88-89 now cover the prior task's closing reply, the 604aff2 commit/push,
-and this task's Service decisions through the bridge authorization. A new bounded
-extract preserves 23 messages (12 user, 11 final replies), 11 exchanges plus the open
-request. One exchange overlaps chapter 87 to close its formerly open request. Both
-sync markers reach 89; prior chapter statuses and the September 30 audit are unchanged.
-The current bridge implementation is after that source boundary, so its implementation
-results belong here and in the git record until a later sourced journal pass.
+- Journal coverage reaches chapter 92 (Codex, 2026-10-07, uncommitted). Both
+  `draco-docs-synced-through` markers stay at 92: DRACO.md and README are code-current
+  for this increment, but **chapter 93 — this Claude session — is not written.** Its
+  source is this session's transcript (Dev's three messages: the handoff opener, the
+  Latent/Actual/ontology naming, the "Latent and Actual operate on domains" correction
+  and acceptance). Write it per the journal conventions before advancing the markers.
+- Codex's chapters 90–92 and their audit are untouched by this session.
 
 ## Resumption
 
-45cad3e is the committed/pushed bridge checkpoint. Dev's October 5 full run passed
-685 tests / 49 suites, no failures/aborts, with unchanged report-only figures and
-zero pending mods actors in the file-only Drake report. This is the historical
-bridge result; the Dreams full-suite verification follows below.
+1. Dev runs the full gate (expected 713 tests / 51 suites, baselines unchanged):
 
-The pending Dreams increment passed a direct compiled-class probe: 555 tests /
-7 suites (DreamsTest, ServiceTest, DomainBuilderTest, DracoGenTest, DrakeGenTest,
-DrakeParseTest, GenDrakeTest). New suite: 16 tests. Scope remained 103 draco + 10 mods,
-one known loss across 113 types, GenDrake 101/101, zero pending mods actors in the
-file report. Current resources from all three tiers were overlaid on copied classes;
-changed companions and tests were compiled in /tmp/draco-dreams-check. Probe log:
-/tmp/draco-dreams-probe.log. The bridge socket suite was not rerun in this scope.
+   ```bash
+   cd /Users/edwardburke/IdeaProjects/nexonix && set -o pipefail && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] (Tests:|Suites:)"
+   ```
 
-Dev's October 7 full sbt run passed 701 tests / 50 suites, zero failures/aborts,
-finishing at 10:29:32 America/New_York. Pasted output matches /tmp/sbt-test.log;
-all report-only baselines match DRACO.md, including zero pending mods actors in
-the file-only Drake report. Only verification documentation changed after that run.
-The increment is ready for Dev's scoped commit/push; await those results before
-the next implementation.
-No sbt, commit or push was run by Codex. New record uses the restored HHMM convention;
-committed descriptive filenames remain historical exceptions.
+2. On green, one path-scoped commit carrying both bodies of work, message from the
+   2026-10-09 record (the 2026-10-07 record is committed alongside for the audit trail):
+   `git add -A -- <paths>` then `git commit -F draco-git-record/git-record-2026-10-09-1218 -- <paths>`.
+   The paths are every file `git status --short` lists; nothing else is pending.
 
-Journal coverage remains through chapter 89 and the original implementation request.
-Bridge implementation/full-run/push, the October 6 authoring recommendation, and
-October 7 Dreams discussion/implementation remain outside that transcript boundary.
-Current decisions and evidence are recorded here and in the timestamped git record;
-a later journal pass must retrieve original exchanges, not reconstruct quotations.
-Historical chapter statuses and source extracts remain unchanged.
+3. Next authorized work, in Dev's accepted order: compose accepted Actuals and their
+   intra-/inter-relationships into the `DomainOntology`; the endogenous initialization
+   client over existing actors/messages; then generation and activation as explicit
+   operations. Candidate rules surfaced, not filed: membership reciprocity (a supplied
+   member the domain does not name is silently dropped) and duplicate identity.
 
-## Next Increment
+### First action for the next agent
 
-Dev explicitly authorized the Dreams skeleton on October 7 before the authoring
-increment. The three empty anchors are now implemented. After their full-suite and
-commit checkpoint, resume the shared authoring/local initialization design. Editor is
-the intended application domain; Service remains the capability/configuration domain.
-The October 6 candidate-batch/atomic-acceptance proposal remains a proposal, not a
-newly implemented or implicitly approved protocol.
-
-Accepted decisions from the current task, recorded October 5:
-
-- ServiceConfiguration contains Assembly; other proposed member shapes remain open.
-- The primordial external client creates/modifies domain and type definitions and
-  creates/modifies a DomainDictionary. First implement authoring, validation and
-  dictionary composition. Generation and activation are later explicit operations.
-- An endogenous initialization client builds the initial Draco domain dictionary
-  from supplied canonical JSON definitions using existing actors/messages. It needs
-  no external transport and can be developed in parallel with ZeroMQ integration.
-- Both client paths share service operations. Bootstrap ordering remains to be
-  designed; a prebuilt dictionary is not the only intended initialization path.
-- The consuming project owns persistence. Wire format/transport details belong to
-  the ZeroMQ dependency integration, not the local initialization client's API.
-
-The authorized first bridge now implements a provisional loopback PAIR, one-frame
-UTF-8 protocol with payload-only input and source-tagged output to the same peer.
-It uses a startup dictionary snapshot, exact identity and configured endpoints; the
-JeroMQ peer test exercises Draco TypeName input/output rules. Production socket,
-reply/correlation and failure-wire choices remain open, as do custom codec declarations.
-Stage implementation in src/mods/{resources,scala}/draco and tests in src/test.
-Rule-aspect migration remains deferred pending the service/transport work.
-
-Accepted message flow, from Dev's clarification:
-
-- ZeroMQ transports text containing JSON. Incoming text enters the ZeroMQ actor's
-  working memory. Rules there parse it into the target language's JSON value.
-- Those rules extract the destination-domain information, resolve it through the
-  active domain dictionary and dispatch JSON to that domain's input actor.
-- The input actor's message type is JSON, not a transport-selected Draco type.
-  Its rules convert JSON to the domain's typed data.
-- The output domain actor converts typed results to JSON. The ZeroMQ actor's rules
-  wrap that payload with source-domain identification and send it to the ZeroMQ
-  destination. A separate adapter must not take over rule-owned parsing or routing.
-
-Inspection is complete: DomainDictionary does not contain live actor endpoints;
-AssemblySpawner keys by namePath; host Codec requires both conversion directions;
-codec-aspect selectors are not implemented. The contract proposes a bounded scenario,
-envelope, explicit live-endpoint association, codec semantics and acceptance checks.
-Those proposals are not yet Dev's decisions. A later transport question is whether
-results go to a configured output destination or the originating peer, which determines
-socket wiring and correlation requirements. Full-envelope versus payload-only forwarding
-and custom-codec declaration representation also remain explicit design choices.
-Prototype implementation belongs in src/mods/{resources,scala}/draco, with tests in
-src/test. Transport-specific fields are not automatically additions to ActorAspect.
-The earlier transport planning and Service establishment are journaled in chapters 86-87.
-The old documentation closeout added no runtime behavior; this increment adds the
-bridge and dependency, but no configuration types or codec selectors. The transcript rules are shared through DRACO.md and
-the tracked documentation skill; no private memory store was overwritten.
+Read DRACO.md, this file and the 2026-10-09 record; inspect `git status` and `git log`.
+If f54da3f is still HEAD, both bodies of work are uncommitted — preserve them. Confirm
+Dev's sbt result before claiming any baseline. Write chapter 93 when Dev asks for the
+journal; then design the ontology-composition increment with Dev before building.

@@ -87,4 +87,19 @@ class SelfDeclarationRulesTest extends AnyFunSuite {
     assert(problems.head.subject.name == "Wrong",
       s"Problem should name the misdeclaring domain; got ${problems.head.subject.name}")
   }
+
+  test("SelfDeclaration compares the whole TypeName — a type-parameter mismatch is a misdeclaration") {
+    // Same name, same package, but the domain's own identity carries a parameter
+    // its self-declaration omits. TypeName compares structurally, parameters
+    // included (GitHub #37), and since 2026-10-09 the rule compares the whole
+    // name rather than name and package alone.
+    val parameterized: DomainType = Domain[Any](
+      TypeDefinition(
+        TypeName("Generic", _namePackage = Seq("draco"), _typeParameters = Seq(io.circe.Json.fromString("T"))),
+        _domainAspect = DomainAspect(TypeName("Generic", _namePackage = Seq("draco")))))
+
+    val problems = validate(Seq(parameterized), Seq.empty)
+    assert(problems.size == 1, s"expected exactly one Problem; got ${problems.size}")
+    assert(problems.head.subject.name == "Generic")
+  }
 }

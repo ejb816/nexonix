@@ -1,0 +1,13 @@
+type Actual
+  elements
+    fix definition draco.TypeDefinition
+    fix members [draco.TypeDefinition]
+    fix problems [draco.Problem]
+    dyn accepted Boolean problems.isEmpty
+    dyn domain draco.DomainType draco.Domain(definition, members)
+  factory
+    parameters
+      par definition draco.TypeDefinition
+      par members [draco.TypeDefinition] []
+      par problems [draco.Problem] []
+domain draco dreams editor Editor

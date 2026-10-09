@@ -1,0 +1,139 @@
+{
+  "typeName": {
+    "name": "DomainOntology",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Dictionary",
+        "namePackage": [
+          "draco"
+        ],
+        "typeParameters": [
+          "DomainType",
+          "TypeDictionary"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Dynamic",
+        "name": "defines",
+        "valueType": "Boolean",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "TypeName"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Boolean",
+            "value": {
+              "()": [
+                "kvMap.exists",
+                {
+                  "\\": [
+                    "entry",
+                    {
+                      "||": [
+                        {
+                          "==": [
+                            "entry._1.typeDefinition.typeName.namePath",
+                            "typeName.namePath"
+                          ]
+                        },
+                        {
+                          "()": [
+                            "entry._2.elementTypes.exists",
+                            {
+                              "\\": [
+                                "td",
+                                {
+                                  "==": [
+                                    "td.typeName.namePath",
+                                    "typeName.namePath"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DomainOntology",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "domains",
+          "valueType": {
+            "[]": [
+              "DomainType"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "kvMap",
+          "valueType": {
+            "{}": [
+              "DomainType",
+              "TypeDictionary"
+            ]
+          },
+          "value": {
+            ".": [
+              {
+                "()": [
+                  "_domains.map",
+                  {
+                    "\\": [
+                      "domain",
+                      {
+                        "(,)": [
+                          "domain",
+                          "domain.typeDictionary"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "toMap"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

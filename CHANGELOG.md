@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+Documentation checkpoint (2026-10-07): journal chapters 90–92 preserve the bridge and
+Dreams verification/commit exchanges and the authoring ownership discussion, with a
+bounded transcript audit. Shared continuity now records f54da3f and the Claude handoff.
+
 Since alpha.6 the work has run in one direction: the rule engine draco ships is becoming the engine
 draco generates *with*. The forest scenario became a full corpus and executes; drake gained a `case`
 body element and the engine wrote its first `match` from a definition; Source and Target became
@@ -31,6 +35,16 @@ for the definition that will replace it.
 
 ### Added
 
+- **First authoring slice: Latent → Editor → Actual.** `draco.dreams.editor` gains `Latent`
+  (one domain in candidate form: its definition plus its members' definitions), `Actual`
+  (the same definitions plus the problems found, accepted iff none, with the populated
+  domain derived) and the `Editor` actor, which validates each Latent with core's own
+  rules against the ontology that would result — never the classpath — and answers through
+  a consumer of Actual. `draco.service.ServiceConfiguration` contains an `Assembly`. Core's
+  `TypeDictionary` and `Domain` factories accept supplied member definitions, and
+  `DomainOntology.defines` answers by name and package. EditorTest (13 tests) and two
+  ServiceTest tests are new. Compiled-class probe of the whole tree: 713 tests / 51 suites,
+  report-only baselines unchanged; Dev's full run pending. (2026-10-09)
 - **Dreams name skeleton.** Add empty Dreams, Editor and User domain trios in the
   staging tier, replacing the handwritten Dreams scaffold and adding 16 projection,
   loading and dictionary-composition tests. Direct probe passes 555 tests / 7 suites;
@@ -223,6 +237,15 @@ for the definition that will replace it.
 
 ### Changed
 
+- **`DomainDictionary` is `DomainOntology`.** Dev names the cross-domain structure the
+  domain ontology — an operational ontology built from domains and their intra- and
+  inter-relationships; "dictionary" now means only a domain's own `TypeDictionary`.
+  `DomainBuilder.dictionary` is `ontology`; the bridge routes over an ontology. The map
+  shape is unchanged; explicit relationships are the next increment. `DerivationResolvable`
+  now joins the `DomainOntology` fact and flags any named parent it does not define, with
+  no `draco`-package filter and no loader call; `SelfDeclaration` compares the whole
+  TypeName, type parameters included. Validation sessions insert the ontology as a fact.
+  (2026-10-09)
 - **Service plan and ZeroMQ next step.** Record agreed authoring, validation and
   dictionary composition scope, Assembly-containing configuration, independent local
   initialization and project-owned persistence. Refresh the committed checkpoint

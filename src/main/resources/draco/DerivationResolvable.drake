@@ -4,7 +4,8 @@ rule
   pattern
     variables
       var m TypeDefinition
+      var o DomainOntology
     conditions
-      con draco.DracoAspect.parents(m.dracoAspect).exists(\anc -> anc.namePackage.headOption.contains("draco") && draco.TypeLoader.isStub(anc))
+      con draco.DracoAspect.parents(m.dracoAspect).exists(\anc -> !o.defines(anc))
   action
-    mon ctx.insert(Problem(m.typeName, s"member ${m.typeName.name} derives from a draco type that does not resolve to a definition"))
+    mon ctx.insert(Problem(m.typeName, s"member ${m.typeName.name} derives from a type the ontology does not define"))

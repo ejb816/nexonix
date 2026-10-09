@@ -1,0 +1,64 @@
+Land the first authoring slice: Latent to Editor to Actual over the domain ontology
+
+Rename DomainDictionary to DomainOntology. Dev's decision of 2026-10-09: the cross-domain
+structure is an operational ontology built from domains and their intra- and
+inter-relationships, and "dictionary" was an expedient name for putting it on course to
+a formal one; the word now means only a domain's own TypeDictionary. The map shape is
+unchanged for this increment; `defines(typeName)` is added, true when any domain key or
+member matches by name and package (a reference may spell parameters, a definition is
+keyed bare). Fourteen source files and the shared documents follow the rename.
+
+Core composition: TypeDictionary and Domain factories take an optional `members`
+sequence and populate from it, name-matched within the domain's package, placeholders
+for the rest. DomainBuilder.define now only loads and delegates; its own header named
+this promotion. DomainBuilder.dictionary is DomainBuilder.ontology.
+
+Core validation: DerivationResolvable joins `var o DomainOntology` and flags any NAMED
+parent `o.defines` does not know. The `draco`-package filter is dropped — a foreign
+parent has been a type form, never a name, since 5fd801d, so DracoAspect.parents already
+returns only draco-defined names — and the TypeLoader call is gone, so a candidate is
+never judged by the classpath. SelfDeclaration compares the whole TypeName. The
+validation tests and the Draco actor test insert the ontology as a fact; the foundation
+(Draco, Base, Primes) was checked closed under derivation before the filter went.
+
+Service: ServiceConfiguration contains an Assembly, nothing more yet (accepted 2026-10-05).
+
+Editor: Latent (definition + members), Actual (definition + members + problems; `accepted`
+and the populated `domain` are dyns) and the Editor actor — actorType(ontology, actual),
+message Latent. Per message: compose the candidate through Domain(definition, members),
+build the ontology that would result, run Completeness, SelfDeclaration,
+DerivationResolvable and CollectProblems in a fresh stateful session over the candidate's
+populated members, deliver the Actual. Latent and Actual operate on DOMAINS (Dev's
+correction to my first reading of them as batch and result); the ontology is built from
+domains, and composing accepted Actuals into it is the next increment.
+
+Measured: a compiled-class probe of the WHOLE tree (main, mods and tests recompiled into
+target/scala-2.13/probe-* because the Domain factory's new parameter makes every compiled
+companion binary-stale) passed 713 tests, 0 failures, 51 suites as sbt will count them
+(the scalatest Runner reports 52 with its discovery wrapper); every report-only headline
+in DRACO.md unchanged, mods actors pending Drake authoring 0. Expected sbt arithmetic:
+701 - 5 (Editor leaves DreamsTest's per-type block) + 13 EditorTest + 2 ServiceTest
++ 1 SelfDeclarationRulesTest + 1 DerivationResolvableRulesTest = 713. Dev's full run
+is the gate.
+
+Found on the way, now in DRACO.md §6: `loc` inside an actor action is not rendered as a
+binding (use `fix`); codec eligibility is not transitive (a DomainType parameter emits
+an uncompilable codec — hence Actual's derived `domain`); sbt does not copy hidden
+resources, so the nameless-domain anchor is absent from the classpath and a probe that
+overlays `src/main/resources/.` must drop the dotfiles or MinimalTypeTest fails.
+
+Rejected: Actual carrying a populated DomainType (codec); an Editor-owned copy of the
+three rules (the meaning of consistency belongs to core); keeping the package filter as
+"draco-internal vs host" (obsolete since foreign parents became type forms); a reply
+protocol on the Draco actor (the Editor builds its own knowledge from core's rule
+patterns instead, the way the generated Draco companion does).
+
+This commit also carries Codex's 2026-10-07 documentation checkpoint (chapters 90-92,
+their transcript audit, the shared-document reconciliation and record
+git-record-2026-10-07-1105), which was still uncommitted when this increment began and
+whose shared documents this increment edits further. Two records, one commit, by that
+necessity.
+
+Not done: journal chapter 93 for this session; the endogenous initialization client;
+ontology composition from Actuals; membership reciprocity and duplicate-identity rules.
+No sbt, commit or push run by Claude.

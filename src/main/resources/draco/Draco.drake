@@ -23,7 +23,7 @@ domain draco Draco
     Dictionary
     Domain
     DomainAspect
-    DomainDictionary
+    DomainOntology
     DomainTransform
     DomainType
     DracoAspect

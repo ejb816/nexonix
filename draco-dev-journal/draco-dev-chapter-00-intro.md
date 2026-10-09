@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across eighty-nine chapters of development sessions between March 22 and October 5, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across ninety-two chapters of development sessions between March 22 and October 7, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -483,3 +483,20 @@ Dev establishes definition authoring, validation and dictionary composition, sep
 generation/activation, and assigns persistence to the consuming project. Endogenous
 initialization can proceed independently of ZeroMQ. Timestamped git records are restored;
 the next actor-bridge increment is authorized.
+
+### [Chapter 90 - ZeroMQ Bridge Verification and Commit](draco-dev-chapter-90.md)
+
+The bridge implementation closes chapter 89's open request; Dev verifies 685/49
+and commits/pushes 45cad3e. The provisional transport remains distinct from authoring.
+
+### [Chapter 91 - Authoring Plan and Dreams Name Skeleton](draco-dev-chapter-91.md)
+
+The local authoring recommendation precedes Dev's Dreams skeleton request. Three empty
+domains are implemented, verified at 701/50 and committed/pushed as f54da3f.
+
+### [Chapter 92 - Domain Ownership and Claude Handoff](draco-dev-chapter-92.md)
+
+Codex proposes ownership criteria and collaboration at architectural boundaries.
+Dev requests preservation before a Claude handoff. The [retrieval audit](sources/codex-2026-10-05-to-07-audit.md)
+preserves nine complete exchanges plus the open handoff request across chapters 90–92;
+proposed type placement has not become an accepted protocol.

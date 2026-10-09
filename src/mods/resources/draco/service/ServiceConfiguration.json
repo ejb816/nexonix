@@ -1,0 +1,39 @@
+{
+  "typeName": {
+    "name": "ServiceConfiguration",
+    "namePackage": [
+      "draco",
+      "service"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "assembly",
+        "valueType": "draco.Assembly"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ServiceConfiguration",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "assembly",
+          "valueType": "draco.Assembly",
+          "value": "draco.Assembly.Null"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Service",
+      "namePackage": [
+        "draco",
+        "service"
+      ]
+    }
+  }
+}

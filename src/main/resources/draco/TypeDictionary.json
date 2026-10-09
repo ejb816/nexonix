@@ -37,6 +37,19 @@
           "kind": "Parameter",
           "name": "domainDefinition",
           "valueType": "TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "members",
+          "valueType": {
+            "[]": [
+              "TypeDefinition"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
         }
       ],
       "body": [
@@ -45,6 +58,57 @@
           "name": "domainDefinition",
           "valueType": "TypeDefinition",
           "value": "_domainDefinition"
+        },
+        {
+          "kind": "Local",
+          "name": "supplied",
+          "valueType": {
+            "{}": [
+              "String",
+              "TypeDefinition"
+            ]
+          },
+          "value": {
+            ".": [
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "_members.filter",
+                          {
+                            "\\": [
+                              "td",
+                              {
+                                "==": [
+                                  "td.typeName.namePackage",
+                                  "domainDefinition.typeName.namePackage"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "map"
+                    ]
+                  },
+                  {
+                    "\\": [
+                      "td",
+                      {
+                        "(,)": [
+                          "td.typeName.name",
+                          "td"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "toMap"
+            ]
+          }
         },
         {
           "kind": "Fixed",
@@ -62,12 +126,18 @@
                   "name",
                   {
                     "()": [
-                      "TypeDefinition",
+                      "supplied.getOrElse",
+                      "name",
                       {
                         "()": [
-                          "TypeName",
-                          "name",
-                          "_namePackage = domainDefinition.typeName.namePackage"
+                          "TypeDefinition",
+                          {
+                            "()": [
+                              "TypeName",
+                              "name",
+                              "_namePackage = domainDefinition.typeName.namePackage"
+                            ]
+                          }
                         ]
                       }
                     ]

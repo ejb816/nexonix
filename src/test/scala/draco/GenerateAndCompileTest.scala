@@ -43,7 +43,7 @@ class GenerateAndCompileTest extends AnyFunSuite with PersistentTestLog {
     "draco/ContentSink.json",
     "draco/Dictionary.json",
     "draco/Domain.json",
-    "draco/DomainDictionary.json",
+    "draco/DomainOntology.json",
     "draco/DomainTransform.json",
     "draco/DomainType.json",
     "draco/Draco.json",

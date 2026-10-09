@@ -1,0 +1,102 @@
+{
+  "typeName": {
+    "name": "Actual",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "definition",
+        "valueType": "draco.TypeDefinition"
+      },
+      {
+        "kind": "Fixed",
+        "name": "members",
+        "valueType": {
+          "[]": [
+            "draco.TypeDefinition"
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "problems",
+        "valueType": {
+          "[]": [
+            "draco.Problem"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "accepted",
+        "valueType": "Boolean",
+        "value": "problems.isEmpty"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "domain",
+        "valueType": "draco.DomainType",
+        "value": {
+          "()": [
+            "draco.Domain",
+            "definition",
+            "members"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Actual",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "draco.TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "members",
+          "valueType": {
+            "[]": [
+              "draco.TypeDefinition"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "problems",
+          "valueType": {
+            "[]": [
+              "draco.Problem"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  }
+}

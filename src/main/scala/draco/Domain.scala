@@ -8,14 +8,17 @@ object Domain extends App with DracoType {
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
 
   def apply[T] (
-    _domainDefinition: => TypeDefinition
+    _domainDefinition: => TypeDefinition,
+    _members: => Seq[TypeDefinition] = Seq.empty
   ) : Domain[T] = new Domain[T] {
     override lazy val typeDefinition: TypeDefinition = _domainDefinition
-    override lazy val typeDictionary: TypeDictionary = TypeDictionary(typeDefinition)
+    override lazy val typeDictionary: TypeDictionary = TypeDictionary(typeDefinition, _members)
   }
 
   lazy val Null: Domain[_] = apply[Nothing](
-    _domainDefinition = null.asInstanceOf[TypeDefinition]
+    _domainDefinition = null.asInstanceOf[TypeDefinition],
+    _members = Seq.empty
   )
+
 
 }

@@ -263,7 +263,12 @@ A domain is a named collection of types. Every domain has a `TypeDefinition` who
 `domainAspect` self-loops and whose `elementTypeNames` lists its members, a `TypeDictionary`
 mapping each member name to its definition, and a `Domain` instance tying them together.
 
-Domains are **peers**, not a hierarchy — all at one level in the `DomainDictionary`.
+Domains are **peers**, not a hierarchy — all at one level in the `DomainOntology`, the
+**domain ontology**: an operational ontology built from domains and their intra- and
+inter-relationships (Dev, 2026-10-09). It was called `DomainDictionary` until then — an
+expedient name for putting it on course to a formal ontology — and *dictionary* now names
+only a domain's own `TypeDictionary`. Today the ontology holds membership and answers
+`defines(typeName)` by name and package; its explicit relationships are the next increment.
 Membership is recorded on both sides: the domain lists the member, the member names the
 domain. A domain may name a **super-domain** whose members it shares — the generator
 transforms share `draco.generator` this way — and a domain carrying both a `source` and a
@@ -497,11 +502,14 @@ support one architectural goal: transformations that preserve meaning.
 
 The early-access `draco.service.Service` domain lives under `src/mods` as the neutral
 home for future service capability and configuration definitions. Its initial trio
-loads and composes with domain dictionaries. TextOutput is now its first member,
-used by a staged ZeroMQ actor bridge with rule-owned parsing and dictionary dispatch;
-the authoring service is not implemented yet. The agreed first service supports authoring and validation of
-domain/type definitions and dictionary composition. A local actor-based initialization
-client consumes canonical JSON definitions in parallel with the external ZeroMQ path.
+loads and composes into the domain ontology. It holds TextOutput, used by a staged ZeroMQ
+actor bridge with rule-owned parsing and ontology dispatch, and `ServiceConfiguration`,
+which contains an `Assembly`. The first authoring slice landed on 2026-10-09 in
+`draco.dreams.editor`: a `Latent` (one domain in candidate form — its definition plus its
+members' definitions) goes to the `Editor` actor, which validates it with core's own rules
+against the ontology that would result and answers with an `Actual` (the same definitions
+plus the problems found, accepted iff none). Composing accepted domains into the ontology,
+the endogenous initialization client, generation and activation follow as explicit steps.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation
 and activation follow as explicit operations. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
@@ -674,13 +682,15 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 89, including the committed Service checkpoint,
-primordial authoring decisions, local initialization and restored timestamped records.
-The [new retrieval audit](draco-dev-journal/sources/codex-2026-09-30-to-10-05-audit.md)
-preserves 11 complete exchanges plus the open implementation request. Earlier audits
-and historical statuses are unchanged. The bridge probe passed 548/7; Dev's October 5
-full run then passed 685 tests / 49 suites with unchanged report-only baselines.
-The subsequent Dreams skeleton passed Dev's October 7 full run: 701 tests / 50
-suites, again with unchanged report-only baselines. Journal coverage remains 89.
+Journal coverage reaches chapter 92, including the Service plan, bridge verification
+and push (45cad3e), Dreams verification and push (f54da3f), and the proposed ownership
+criteria for the next authoring increment. The [latest retrieval audit](draco-dev-journal/sources/codex-2026-10-05-to-07-audit.md)
+preserves nine complete exchanges plus the open handoff request. Earlier extracts
+and historical chapter statuses are unchanged. The bridge's historical full run passed
+685 tests / 49 suites; the latest Dreams full run passed 701 tests / 50 suites, both
+run by Dev with unchanged report-only baselines. The first authoring slice landed on
+2026-10-09 (`Latent` → `Editor` actor → `Actual`, the `DomainOntology` rename, ontology-relative
+derivation validation and `ServiceConfiguration`), probe-verified at 713 tests / 51 suites with
+unchanged report-only baselines; Dev's full run is pending. Chapter 93 is not yet written.
 
-<!-- draco-docs-synced-through: chapter 89 -->
+<!-- draco-docs-synced-through: chapter 92 -->

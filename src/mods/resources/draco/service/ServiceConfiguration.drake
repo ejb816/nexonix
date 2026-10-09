@@ -1,0 +1,7 @@
+type ServiceConfiguration
+  elements
+    fix assembly draco.Assembly
+  factory
+    parameters
+      par assembly draco.Assembly draco.Assembly.Null
+domain draco service Service

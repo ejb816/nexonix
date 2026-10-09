@@ -14,9 +14,10 @@ from the future authoring API.
 service capabilities and configuration. Its domain now contains TextOutput; the root build carries the JeroMQ dependency
 for the bounded bridge under scala/draco/service/zeromq.
 
-[Dreams](resources/draco/dreams/README.md) now stages the empty Dreams, Editor and
-User domains. They compose as peers with Draco and Service, with no implied domain
-inheritance or membership from their package layout.
+[Dreams](resources/draco/dreams/README.md) stages the Dreams, Editor and User
+domains. They compose as peers with Draco and Service in the domain ontology, with no
+implied domain inheritance or membership from their package layout. Editor holds the
+first authoring slice: Latent, Actual and the Editor actor (2026-10-09).
 
 **Constraints:**
 - Depends on `src/main`'s artifact (via sbt's `dependsOn(root)`).

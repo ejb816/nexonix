@@ -1,0 +1,12 @@
+Preserve bridge and Dreams dialogue and prepare the Claude handoff
+
+Add journal chapters 90–92 and a bounded, hashed extract of 19 original messages:
+nine complete exchanges plus the open handoff request. Preserve historical statuses
+and earlier extracts; distinguish accepted decisions from authoring/placement proposals.
+
+Reconcile the index, DRACO.md, README.md and DEVELOPMENT_HANDOFF.md through chapter 92.
+Record f54da3f as committed/pushed and Dev's 701 tests / 50 suites as the latest full
+verification with unchanged report-only baselines. Prepare Claude's first design action.
+
+Documentation only. Verify source hashes, chapter coverage, links and Git whitespace;
+no sbt, commit or push run by Codex.

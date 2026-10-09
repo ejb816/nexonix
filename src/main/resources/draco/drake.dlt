@@ -661,7 +661,8 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           drake and json, and the Scala spelling moved to the target alone
                                           (Generator.scalaTypeExpression, applied by targetTypes at the generate
                                           entry beside TypeLoader.rooted). Six valueTypes, across Dictionary /
-                                          TypeDictionary / DomainDictionary / CLI.
+                                          TypeDictionary / DomainDictionary (DomainOntology
+                                          since 2026-10-09) / CLI.
                                           THE DERIVATION FOLLOWED (2026-08-25, GitHub #51). Dictionary now reads
                                           `from {K, V}`, one concept spelled one way in one file. `derivation`
                                           still holds TypeNames — a reference is nominal, and flattening 76

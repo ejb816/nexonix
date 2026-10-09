@@ -77,9 +77,9 @@ class DomainBuilderTest extends AnyFunSuite {
     }
   }
 
-  test("dictionary assembles a populated cross-domain registry") {
+  test("ontology assembles a populated cross-domain structure that defines every member") {
     val built = domains.map { case (n, p) => DomainBuilder.define(n, p) }
-    val registry = DomainBuilder.dictionary(built: _*)
+    val registry = DomainBuilder.ontology(built: _*)
 
     assert(registry.size == domains.size, "registry should hold every built domain")
 
@@ -87,5 +87,14 @@ class DomainBuilderTest extends AnyFunSuite {
       assert(registry.get(d).exists(_.elementTypes.nonEmpty),
         s"${d.typeDefinition.typeName.name} should map to a populated dictionary")
     }
+    // `defines` resolves a name against every domain and every member, by name
+    // and package only: a definition is keyed bare, whatever parameters a
+    // reference spells.
+    assert(registry.defines(TypeName("Primal", Seq("draco"))), "a Draco member is defined")
+    assert(registry.defines(TypeName("Draco", Seq("draco"))), "a domain key is defined")
+    assert(registry.defines(TypeName("Dictionary", Seq("draco"),
+      Seq(io.circe.Json.fromString("K"), io.circe.Json.fromString("V")))),
+      "type parameters do not change what a name resolves to")
+    assert(!registry.defines(TypeName("Nonexistent", Seq("draco"))), "an unknown name is not defined")
   }
 }

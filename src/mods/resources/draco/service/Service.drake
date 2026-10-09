@@ -1,5 +1,6 @@
 type Service
 domain draco service Service
   types [
+    ServiceConfiguration
     TextOutput
   ]

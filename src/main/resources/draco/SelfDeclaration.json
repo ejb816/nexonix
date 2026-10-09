@@ -27,19 +27,9 @@
         {
           "kind": "Condition",
           "value": {
-            "||": [
-              {
-                "!=": [
-                  "d.typeDefinition.domainAspect.typeName.name",
-                  "d.typeDefinition.typeName.name"
-                ]
-              },
-              {
-                "!=": [
-                  "d.typeDefinition.domainAspect.typeName.namePackage",
-                  "d.typeDefinition.typeName.namePackage"
-                ]
-              }
+            "!=": [
+              "d.typeDefinition.domainAspect.typeName",
+              "d.typeDefinition.typeName"
             ]
           }
         }

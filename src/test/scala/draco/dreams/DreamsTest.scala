@@ -9,11 +9,12 @@ import org.scalatest.funsuite.AnyFunSuite
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.{Files, Paths}
 
-/** Staged definitions are outside the main-corpus discovery gates. */
+/** Staged definitions are outside the main-corpus discovery gates. Dreams and User
+  * remain empty anchors; Editor gained members and an actor on 2026-10-09 and has
+  * its own suite, `draco.dreams.editor.EditorTest`. */
 class DreamsTest extends AnyFunSuite {
   private val skeletons = Seq(
     ("Dreams", Seq("draco", "dreams"), () => Dreams.typeDefinition, () => Dreams.domainType),
-    ("Editor", Seq("draco", "dreams", "editor"), () => Editor.typeDefinition, () => Editor.domainType),
     ("User", Seq("draco", "dreams", "user"), () => User.typeDefinition, () => User.domainType)
   )
   private def read(path: String): String = new String(Files.readAllBytes(Paths.get(path)), UTF_8)
@@ -64,20 +65,26 @@ class DreamsTest extends AnyFunSuite {
     }
   }
 
-  test("Dreams, Editor and User compose as peers with Draco and Service") {
+  test("Dreams, Editor and User compose as peers with Draco and Service in one ontology") {
     val anchors = skeletons.map { case (name, pkg, _, _) => DomainBuilder.define(name, pkg) }
+    val editor = DomainBuilder.define("Editor", Seq("draco", "dreams", "editor"))
     val core = DomainBuilder.define("Draco", Seq("draco"))
     val service = DomainBuilder.define("Service", Seq("draco", "service"))
-    val dictionary = DomainBuilder.dictionary((anchors ++ Seq(core, service)): _*)
-    assert(dictionary.size == 5)
-    assert(dictionary.keys.map(_.typeDefinition.typeName).toSet ==
-      (anchors ++ Seq(core, service)).map(_.typeDefinition.typeName).toSet)
+    val all = anchors ++ Seq(editor, core, service)
+    val ontology = DomainBuilder.ontology(all: _*)
+    assert(ontology.size == 5)
+    assert(ontology.keys.map(_.typeDefinition.typeName).toSet == all.map(_.typeDefinition.typeName).toSet)
     anchors.foreach { anchor =>
-      assert(dictionary.get(anchor).exists(_.isEmpty))
+      assert(ontology.get(anchor).exists(_.isEmpty))
       assert(!core.typeDictionary.contains(anchor.typeDefinition.typeName))
       assert(!service.typeDictionary.contains(anchor.typeDefinition.typeName))
     }
-    assert(dictionary.get(core).exists(_.nonEmpty))
-    assert(dictionary.get(service).exists(_.size == 1))
+    assert(ontology.get(editor).exists(_.size == 2))
+    assert(ontology.get(core).exists(_.nonEmpty))
+    assert(ontology.get(service).exists(_.size == 2))
+    // Package nesting is not membership: Dreams does not define Editor's members.
+    assert(!ontology.defines(TypeName("Latent", Seq("draco", "dreams"))))
+    assert(ontology.defines(TypeName("Latent", Seq("draco", "dreams", "editor"))))
+    assert(ontology.defines(Editor.typeDefinition.typeName))
   }
 }

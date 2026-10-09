@@ -15,7 +15,7 @@ import scala.util.control.NonFatal
   * Domain outputs obtain a callback bound to a configured domain, never a wire source claim.
   * This fixture owns its actor system; a later service assembly can supply the lifecycle.
   */
-final class ZeroMqBridge(dictionary: DomainDictionary, endpoints: Seq[BridgeRules.Endpoint],
+final class ZeroMqBridge(ontology: DomainOntology, endpoints: Seq[BridgeRules.Endpoint],
                          config: PairTextTransport.Config = PairTextTransport.Config()) extends AutoCloseable {
   private val transport = new PairTextTransport(config)
   // Fail construction on bind failure rather than returning a running actor with dead I/O.
@@ -24,7 +24,7 @@ final class ZeroMqBridge(dictionary: DomainDictionary, endpoints: Seq[BridgeRule
       try transport.close() catch { case NonFatal(closeError) => e.addSuppressed(closeError) }
       throw e
   }
-  private val routing = new BridgeRules.Routing(dictionary, endpoints)
+  private val routing = new BridgeRules.Routing(ontology, endpoints)
   private val results = new ArrayBlockingQueue[BridgeRules.Result](config.capacity)
   private val failures = new ArrayBlockingQueue[String](config.capacity)
   private val count = new AtomicLong()

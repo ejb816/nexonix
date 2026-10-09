@@ -7,6 +7,29 @@
       "editor"
     ]
   },
+  "dracoAspect": {
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ActorType",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "ontology",
+          "valueType": "draco.DomainOntology"
+        },
+        {
+          "kind": "Parameter",
+          "name": "actual",
+          "valueType": {
+            "->": [
+              "Actual",
+              "Unit"
+            ]
+          }
+        }
+      ]
+    }
+  },
   "domainAspect": {
     "typeName": {
       "name": "Editor",
@@ -14,6 +37,203 @@
         "draco",
         "dreams",
         "editor"
+      ]
+    },
+    "elementTypeNames": [
+      "Actual",
+      "Latent"
+    ]
+  },
+  "actorAspect": {
+    "message": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "candidate",
+          "valueType": "draco.DomainType",
+          "value": {
+            "()": [
+              "draco.Domain",
+              "msg.definition",
+              "msg.members"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "provisional",
+          "valueType": "draco.DomainOntology",
+          "value": {
+            "()": [
+              "draco.DomainOntology",
+              {
+                "++": [
+                  "ontology.keys.toSeq",
+                  {
+                    "[]": [
+                      "candidate"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "problems",
+          "valueType": {
+            "[]+": [
+              "draco.Problem"
+            ]
+          },
+          "value": {
+            "()": [
+              "scala.collection.mutable.ArrayBuffer"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "session",
+          "valueType": "org.evrete.api.StatefulSession",
+          "value": {
+            "()": [
+              "rules.newStatefulSession",
+              "org.evrete.api.ActivationMode.CONTINUOUS"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.set",
+              "\"problems\"",
+              "problems"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(candidate): _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "candidate.typeDictionary.elementTypes: _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(provisional): _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.fire"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.close"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "actual",
+              {
+                "()": [
+                  "Actual",
+                  "msg.definition",
+                  "msg.members",
+                  "problems.toSeq"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "messageType": {
+      "name": "Latent",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    },
+    "start": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "rules",
+          "valueType": "org.evrete.api.Knowledge",
+          "value": {
+            "()": [
+              "draco.Rule.knowledgeService.newKnowledge",
+              "\"Editor\""
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "draco.Completeness.ruleType.pattern",
+              "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "draco.SelfDeclaration.ruleType.pattern",
+              "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "draco.DerivationResolvable.ruleType.pattern",
+              "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "draco.CollectProblems.ruleType.pattern",
+              "rules"
+            ]
+          }
+        }
       ]
     }
   }

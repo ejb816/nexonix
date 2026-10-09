@@ -1,2 +1,30 @@
 type Editor
+  factory ActorType
+    parameters
+      par ontology draco.DomainOntology
+      par actual (Actual -> Unit)
 domain draco dreams editor Editor
+  types [
+    Actual
+    Latent
+  ]
+actor
+  messageType Latent
+  start
+    fix rules org.evrete.api.Knowledge draco.Rule.knowledgeService.newKnowledge("Editor")
+    mon draco.Completeness.ruleType.pattern(rules)
+    mon draco.SelfDeclaration.ruleType.pattern(rules)
+    mon draco.DerivationResolvable.ruleType.pattern(rules)
+    mon draco.CollectProblems.ruleType.pattern(rules)
+  message
+    fix candidate draco.DomainType draco.Domain(msg.definition, msg.members)
+    fix provisional draco.DomainOntology draco.DomainOntology(ontology.keys.toSeq ++ [candidate])
+    fix problems [draco.Problem]+ scala.collection.mutable.ArrayBuffer()
+    fix session org.evrete.api.StatefulSession rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+    mon session.set("problems", problems)
+    mon session.insert(Seq(candidate): _*)
+    mon session.insert(candidate.typeDictionary.elementTypes: _*)
+    mon session.insert(Seq(provisional): _*)
+    mon session.fire()
+    mon session.close()
+    mon actual(Actual(msg.definition, msg.members, problems.toSeq))

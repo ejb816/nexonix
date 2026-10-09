@@ -30,6 +30,19 @@
           "kind": "Parameter",
           "name": "domainDefinition",
           "valueType": "TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "members",
+          "valueType": {
+            "[]": [
+              "TypeDefinition"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
         }
       ],
       "body": [
@@ -46,7 +59,8 @@
           "value": {
             "()": [
               "TypeDictionary",
-              "typeDefinition"
+              "typeDefinition",
+              "_members"
             ]
           }
         }

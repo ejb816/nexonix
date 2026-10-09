@@ -12,8 +12,10 @@ import scala.collection.mutable.ListBuffer
  *
  *  The three RulesTests each proved one rule fires in isolation. This is the
  *  culmination: all three run together, as one session, over the *whole* loaded
- *  DracoDomainDictionary — every first-party domain as a `DomainType` fact and
- *  every member as a `TypeDefinition` fact. It is the inferential mirror of
+ *  foundation — every first-party domain as a `DomainType` fact, every member as
+ *  a `TypeDefinition` fact, and the composed `DomainOntology` as the fact that
+ *  `DerivationResolvable` resolves parents against (never the classpath, since
+ *  2026-10-09). It is the inferential mirror of
  *  `DomainBuilderTest`'s procedural `DomainBuilder.validate`: where that walks the
  *  dictionary and collects problem strings, this fires rules and collects `Problem`
  *  facts, and both must agree that the foundation is self-consistent (zero).
@@ -34,6 +36,7 @@ class FoundationValidationTest extends AnyFunSuite {
   /** Run the full foundation battery over the given domain-role and member facts,
    *  returning every Problem the rules produce. */
   private def validate(domains: Seq[DomainType], members: Seq[TypeDefinition]): Seq[Problem] = {
+    val ontology: DomainOntology = DomainBuilder.ontology(domains: _*)
     val service: KnowledgeService = new KnowledgeService()
     val collected = ListBuffer.empty[Problem]
     try {
@@ -56,6 +59,7 @@ class FoundationValidationTest extends AnyFunSuite {
       val session = knowledge.newStatelessSession(ActivationMode.CONTINUOUS)
       session.insert(domains: _*)
       session.insert(members: _*)
+      session.insert(Seq(ontology): _*)
       session.fire()
       collected.toList
     } finally service.shutdown()

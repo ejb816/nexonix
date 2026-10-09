@@ -17,7 +17,7 @@ import scala.concurrent.duration._
 
 class ZeroMqBridgeTest extends AnyFunSuite {
   private val domain = TypeName("Draco", Seq("draco"))
-  private def dictionary = DomainBuilder.dictionary(DomainBuilder.define("Draco", Seq("draco")))
+  private def ontology = DomainBuilder.ontology(DomainBuilder.define("Draco", Seq("draco")))
   private def request(payload: Json, name: TypeName = domain): String =
     Json.obj("destinationDomain" -> name.asJson, "payload" -> payload).noSpaces
   private def eventually(check: => Boolean): Unit = {
@@ -62,7 +62,7 @@ class ZeroMqBridgeTest extends AnyFunSuite {
     actor.terminate(); Await.result(actor.whenTerminated, 5.seconds)
   }
 
-  test("external TCP peer crosses transport rules, dictionary, typed domain input and output rules") {
+  test("external TCP peer crosses transport rules, ontology, typed domain input and output rules") {
     val returned = new ArrayBlockingQueue[Json => Boolean](1)
     val badPayloads = new AtomicInteger()
     val typedCount = new AtomicInteger()
@@ -73,7 +73,7 @@ class ZeroMqBridgeTest extends AnyFunSuite {
     val input = ruleActor(classOf[Json], "BridgeDomainInput") { value =>
       value.as[TypeName].fold(_ => badPayloads.incrementAndGet(), typed => { output ! typed; 0 })
     }
-    val bridge = new ZeroMqBridge(dictionary, Seq(BridgeRules.Endpoint(domain, input ! _)))
+    val bridge = new ZeroMqBridge(ontology, Seq(BridgeRules.Endpoint(domain, input ! _)))
     try {
       returned.add(bridge.outputFor(domain))
       peer(bridge.endpoint) { socket =>
@@ -100,7 +100,7 @@ class ZeroMqBridgeTest extends AnyFunSuite {
     val received = scala.collection.mutable.ArrayBuffer.empty[Json]
     val errors = scala.collection.mutable.ArrayBuffer.empty[String]
     val k = Rule.knowledgeService.newKnowledge()
-    BridgeRules.install(k, new BridgeRules.Routing(dictionary, Seq(BridgeRules.Endpoint(domain, received += _))),
+    BridgeRules.install(k, new BridgeRules.Routing(ontology, Seq(BridgeRules.Endpoint(domain, received += _))),
       TextOutput(_ => true), errors += _)
     val session = k.newStatefulSession()
     try {
@@ -125,21 +125,21 @@ class ZeroMqBridgeTest extends AnyFunSuite {
     }
     val first = TypeName("Generic", Seq("example"), Seq(Json.fromString("Text")))
     val second = TypeName("Generic", Seq("example"), Seq(Json.fromString("Int")))
-    val route = new BridgeRules.Routing(DomainDictionary(Seq(named(first), named(second))),
+    val route = new BridgeRules.Routing(DomainOntology(Seq(named(first), named(second))),
       Seq(BridgeRules.Endpoint(first, _ => ()), BridgeRules.Endpoint(second, _ => ())))
     assert(route.resolve(first).isRight && route.resolve(second).isRight)
     assert(route.resolve(TypeName("Generic", Seq("example"))).left.toOption.contains("unknown domain"))
-    val duplicate = new BridgeRules.Routing(DomainDictionary(Seq(named(first), named(first))), Nil)
+    val duplicate = new BridgeRules.Routing(DomainOntology(Seq(named(first), named(first))), Nil)
     assert(duplicate.resolve(first).left.toOption.contains("ambiguous domain"))
-    val missing = new BridgeRules.Routing(dictionary, Nil)
+    val missing = new BridgeRules.Routing(ontology, Nil)
     assert(missing.resolve(domain).left.toOption.contains("missing input endpoint"))
-    val ambiguous = new BridgeRules.Routing(dictionary,
+    val ambiguous = new BridgeRules.Routing(ontology,
       Seq(BridgeRules.Endpoint(domain, _ => ()), BridgeRules.Endpoint(domain, _ => ())))
     assert(ambiguous.resolve(domain).left.toOption.contains("ambiguous input endpoint"))
   }
 
   test("output callbacks reject unconfigured sources and shutdown rejects further results") {
-    val bridge = new ZeroMqBridge(dictionary, Seq(BridgeRules.Endpoint(domain, _ => ())))
+    val bridge = new ZeroMqBridge(ontology, Seq(BridgeRules.Endpoint(domain, _ => ())))
     val output = bridge.outputFor(domain)
     try {
       intercept[IllegalArgumentException](bridge.outputFor(TypeName("Ghost")))
@@ -187,7 +187,7 @@ class ZeroMqBridgeTest extends AnyFunSuite {
 
   test("fresh bridge instances can start and stop repeatedly") {
     for (_ <- 1 to 3) {
-      val bridge = new ZeroMqBridge(dictionary, Seq(BridgeRules.Endpoint(domain, _ => ())))
+      val bridge = new ZeroMqBridge(ontology, Seq(BridgeRules.Endpoint(domain, _ => ())))
       try assert(bridge.endpoint.startsWith("tcp://127.0.0.1:")) finally bridge.close()
     }
   }

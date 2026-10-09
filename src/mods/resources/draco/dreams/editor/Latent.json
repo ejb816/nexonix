@@ -1,0 +1,62 @@
+{
+  "typeName": {
+    "name": "Latent",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "definition",
+        "valueType": "draco.TypeDefinition"
+      },
+      {
+        "kind": "Fixed",
+        "name": "members",
+        "valueType": {
+          "[]": [
+            "draco.TypeDefinition"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Latent",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "draco.TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "members",
+          "valueType": {
+            "[]": [
+              "draco.TypeDefinition"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  }
+}

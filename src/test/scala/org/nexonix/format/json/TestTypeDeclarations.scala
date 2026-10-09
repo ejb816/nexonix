@@ -66,13 +66,13 @@ class TestTypeDeclarations extends AnyFunSuite with PersistentTestLog {
   }
 
 
-  test("Test DomainDictionary") {
+  test("Test DomainOntology") {
 
   }
   test("Test TransformDomain") {
 
   }
-  test("Test TransformDomainDictionary") {
+  test("Test TransformDomainOntology") {
 
   }
 }

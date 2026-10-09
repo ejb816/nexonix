@@ -49,7 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**701 tests / 50 suites**, verified by Dev's run on 2026-10-07. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+**701 tests / 50 suites**, verified by Dev's run on 2026-10-07. The 2026-10-09 authoring increment
+(§3, *Domain ontology and the first authoring slice*) passed a compiled-class PROBE of the whole tree at
+**713 tests / 51 suites** (the scalatest Runner reports 52, counting its discovery wrapper) with every
+report-only figure below unchanged; Dev's full `sbt test` is pending and sets the next baseline. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
@@ -343,14 +346,17 @@ rejection retain their existing behavior.
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `json`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
 `draco.genscala`, `draco.gendrake`, `draco.scalatarget`. Domains are
-peers in the `DomainDictionary`, not hierarchical. Example domains live in
+peers in the `DomainOntology`, not hierarchical. **The cross-domain structure is the DOMAIN
+ONTOLOGY since 2026-10-09** (Dev: an operational ontology built from domains and their intra- and
+inter-relationships; `DomainDictionary` was the expedient name); "dictionary" now means only a
+domain's own `TypeDictionary`. Say ontology for the whole, dictionary for a domain's members. Example domains live in
 `src/mods/scala/domains/` (the World / media chain).
 
 **Service staging (2026-09-30).** `draco.service.Service` is a self-declaring peer
 domain under `src/mods/{resources,scala}/draco/service`. Its initial trio was generated with
 no members. It is the intended neutral home for service capabilities and
 configuration, ahead of target-language ZeroMQ wrappers, not a running service.
-Do not add it to Draco's member list: use explicit DomainDictionary composition.
+Do not add it to Draco's member list: use explicit DomainOntology composition.
 The main-corpus gates do not scan staged draco definitions; ServiceTest provides
 five explicit projection, loading, validation and dictionary/generation checks.
 The focused ServiceTest + DomainBuilderTest probe passed 15 tests / 2 suites;
@@ -359,7 +365,7 @@ counts stay unchanged because this definition is outside those scans.
 
 **Service plan (Dev decisions, recorded 2026-10-05; not implemented).**
 ServiceConfiguration contains Assembly. The primordial service supports external
-creation/modification of domain/type definitions and DomainDictionary composition;
+creation/modification of domain/type definitions and domain-ontology composition;
 the first increment is authoring, validation and composition. Generation and activation
 are later explicit operations. An endogenous initialization client uses existing
 actors/messages and canonical JSON definitions, independently of the ZeroMQ track.
@@ -367,12 +373,13 @@ The consuming project owns persistence. Parsing remains rule-owned and dispatch
 uses the active dictionary. See src/mods/resources/draco/service/README.md for the
 shared plan and src/mods/ZEROMQ_CODEC_CONTRACT.md for the next integration proposal.
 The empty Service anchor is committed in 604aff2; proposed envelope/socket/codec
-choices are not settled. Journal coverage remains chapter 89.
+choices are not settled. Journal coverage reaches chapter 92; the first authoring slice landed
+2026-10-09 (below).
 
 **ZeroMQ bridge staging (2026-10-05).** Service now contains TextOutput, the neutral
 Text -> Boolean send capability (queue acceptance only). Root pins JeroMQ 0.6.0.
 The handwritten mods bridge uses existing Draco actors/rules, bounded queues and
-one socket-owning thread. JSON parsing, exact dictionary resolution and output wrapping
+one socket-owning thread. JSON parsing, exact ontology resolution and output wrapping
 remain rule actions. The executable loopback PAIR/single-frame fixture forwards the
 payload to a JSON-input actor and returns typed-output JSON to the same peer; those
 protocol choices are provisional. No authoring, initialization client, new codec syntax
@@ -392,6 +399,29 @@ gates. The direct probe passed 555 tests / 7 suites; Dev's October 7 full run pa
 701 tests / 50 suites with zero failures/aborts and unchanged report-only baselines.
 See the Dreams README for scope.
 
+**Domain ontology and the first authoring slice (2026-10-09; probe-verified, Dev's run pending).**
+`DomainDictionary` is renamed `DomainOntology` — the DOMAIN ONTOLOGY, Dev's operational ontology built
+from domains and their intra- and inter-relationships; today it still holds only the map and gains
+`defines(typeName)`, true when any domain key or any member matches by name and package (parameters
+ignored: a definition is keyed bare). `TypeDictionary` and `Domain` factories take an optional
+`members [TypeDefinition]` and populate from it, name-matched within the domain's package, placeholders
+for the rest — the core capability `DomainBuilder.define` used to supply from resources (it now loads and
+delegates; `DomainBuilder.dictionary` is `ontology`). `DerivationResolvable` joins `var o DomainOntology`
+and flags any NAMED parent `o.defines` does not know — no package filter (a foreign parent is a type form,
+never a name) and no classpath lookup, so the validation sessions insert the ontology as a fact.
+`SelfDeclaration` compares the whole TypeName. `draco.service.ServiceConfiguration` contains an
+`Assembly`. `draco.dreams.editor` gains `Latent` (one domain in candidate form: `definition` +
+`members`), `Actual` (the same + `problems`; `accepted` iff none; `domain` is a DYN deriving the
+populated DomainType, because a `DomainType` factory parameter would emit an uncompilable codec) and
+the `Editor` actor (`actorType(ontology, actual: Actual -> Unit)`, message `Latent`): per message it
+composes the candidate through `Domain(definition, members)`, the ontology that WOULD result, and fires
+the four core rules in a fresh stateful session over the candidate's populated members. It never
+consults the classpath and never mutates the ontology given. Latent and Actual operate on DOMAINS;
+composing accepted Actuals and their relationships into the ontology is the NEXT increment, as are the
+endogenous initialization client, a membership-reciprocity rule (a supplied member the domain does not
+name is silently dropped today), duplicate-identity rejection, generation and activation. EditorTest
+(13) and two ServiceTest tests are new; DreamsTest keeps the two empty anchors.
+
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member
 parameters` chain lines and `[ ]` argument brackets (a call is `f(a, b)` since 2026-09-16), the
@@ -402,7 +432,8 @@ data inheritance tree — actor-ness is aspect presence, and the message type li
 `actorAspect.messageType`), `TypeInstance`, `DomainInstance`, `RuleInstance`, `ActorInstance`, `typeInstance`,
 `Extensible`, `DomainDefinition`/`RuleDefinition`/`ActorDefinition`, `TypeDefinition.load`,
 `loadRuleType`/`loadActorType`, the `.rule`/`.actor` filename suffixes, YAML and the
-`from-yaml`/`to-yaml` CLI subcommands, the `draco.language` domain, the reference-frame
+`from-yaml`/`to-yaml` CLI subcommands, `DomainDictionary` (renamed `DomainOntology` on 2026-10-09; the word dictionary now names only a
+domain's `TypeDictionary`), the `draco.language` domain, the reference-frame
 `*centric` domains, `Alpha`/`Bravo`/`Charlie`/`Delta`, `PrimeOrdinal`, named
 `Cartesian`/`Polar`/`Spherical` coordinates.
 
@@ -436,12 +467,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 89 on 2026-10-05.
+Current documentation was reconciled through journal chapter 92 on 2026-10-07.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 89 on
-  2026-10-05.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 92 on
+  2026-10-07.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -516,6 +547,20 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   `DracoAspect.derivation` from `[TypeName]` to `[Json]` (2026-09-21), every `.derivation` reader was
   found and moved; every `_derivation = Seq(TypeName(...))` construction was not — `Generated.scala`
   (hand-written, no definition) and twenty-one test sites stopped the first run at compile.
+- **`loc` inside an actor action is not a binding.** `actorActionBody` renders `fix` as `lazy val` and
+  `mut` as `var`; a `loc` falls through to the bare-expression case and its name is simply lost —
+  the generated `receive` then references an undefined name. Use `fix` in `start`/`message`/`signal`
+  (the first Editor draft, 2026-10-09, rendered four dangling expressions this way).
+- **Codec eligibility is not transitive.** `hasCodec` refuses only function-like and host-external
+  parameter types; a factory parameter whose type is a DRACO type without a codec (`DomainType`, which
+  holds a `TypeDictionary`) emits a codec that cannot compile. Model a result with codec-able
+  definitions and derive the rest as a `dyn` — `Actual` carries definitions and problems and derives
+  its populated `domain` (2026-10-09).
+- **sbt does not copy hidden resources.** `src/main/resources/.json` and `.drake`, the nameless
+  domain's anchor, never reach `target/classes` (HiddenFileFilter), so `loadType(TypeName.Null)` is a
+  stub under sbt and `MinimalTypeTest` relies on that. A compiled-class probe that overlays resources
+  with `cp -R src/main/resources/.` copies them and fails that one test; delete the dotfiles from the
+  overlay.
 - **A re-canonicalization sweep de-trees what the parser cannot tree.** `DrakeCLI parse` writes
   back what it reads; an infix condition authored as a tree (`{"==": [{"*": ["i1","i2"]}, "i3"]}`)
   came back as the string `"i1 * i2 == i3"` until the parser treed infix operators (2026-09-21).
@@ -595,4 +640,4 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 89 -->
+<!-- draco-docs-synced-through: chapter 92 -->

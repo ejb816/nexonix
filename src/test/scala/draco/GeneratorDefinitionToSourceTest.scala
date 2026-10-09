@@ -121,8 +121,8 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite with PersistentTestLog
     generateAndVerify("draco/Domain.json", "Domain")
   }
 
-  test("Generate DomainDictionary") {
-    generateAndVerify("draco/DomainDictionary.json", "DomainDictionary")
+  test("Generate DomainOntology") {
+    generateAndVerify("draco/DomainOntology.json", "DomainOntology")
   }
 
   test("Generate DomainType") {

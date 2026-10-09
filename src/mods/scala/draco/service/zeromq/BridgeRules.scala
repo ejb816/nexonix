@@ -14,8 +14,8 @@ object BridgeRules {
   final case class Result(source: TypeName, payload: Json)
   final case class Endpoint(domain: TypeName, deliver: Json => Unit)
 
-  final class Routing(dictionary: DomainDictionary, endpoints: Seq[Endpoint]) {
-    private val domains = dictionary.keys.toVector
+  final class Routing(ontology: DomainOntology, endpoints: Seq[Endpoint]) {
+    private val domains = ontology.keys.toVector
     private val inputs = endpoints.toVector
     def resolve(name: TypeName): Either[String, Endpoint] = {
       val matches = domains.filter(_.typeDefinition.typeName == name)
