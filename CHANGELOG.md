@@ -43,8 +43,8 @@ for the definition that will replace it.
   a consumer of Actual. `draco.service.ServiceConfiguration` contains an `Assembly`. Core's
   `TypeDictionary` and `Domain` factories accept supplied member definitions, and
   `DomainOntology.defines` answers by name and package. EditorTest (13 tests) and two
-  ServiceTest tests are new. Compiled-class probe of the whole tree: 713 tests / 51 suites,
-  report-only baselines unchanged; Dev's full run pending. (2026-10-09)
+  ServiceTest tests are new. Compiled-class probe, then Dev's full run: 713 tests / 51 suites,
+  report-only baselines unchanged; committed as 462cde6. (2026-10-09)
 - **Dreams name skeleton.** Add empty Dreams, Editor and User domain trios in the
   staging tier, replacing the handwritten Dreams scaffold and adding 16 projection,
   loading and dictionary-composition tests. Direct probe passes 555 tests / 7 suites;

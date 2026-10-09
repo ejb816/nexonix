@@ -7,13 +7,11 @@ snapshot against the current tree before acting.
 ## Checkpoint
 
 - Updated: 2026-10-09, by Claude Code, at the end of the first authoring increment.
-- Observed branch/HEAD: main at f54da3f, matching local origin/main; no fresh remote query.
-- The tree carries TWO uncommitted bodies of work: Codex's 2026-10-07 documentation
-  checkpoint (chapters 90–92, their transcript audit, index, shared docs, record
-  `git-record-2026-10-07-1105`), which Dev had not committed when this session began,
-  and this session's authoring increment (code, definitions, tests, docs, record
-  `git-record-2026-10-09-1218`). The shared documents (CHANGELOG, DRACO.md, README,
-  this file) contain both sets of edits, so one commit is proposed; see Resumption.
+- Observed branch/HEAD: main at 462cde6, pushed; Dev's paste shows `main...origin/main`
+  clean after the push. That commit carries both Codex's 2026-10-07 documentation
+  checkpoint and this session's authoring increment, with both records.
+- Pending after that commit: only this verification note in the shared documents and
+  record `git-record-2026-10-09-1240`.
 - Destination: either agent. Dev alternates sessions; the next step is Dev's full
   `sbt test`, then the commit/push.
 - Permission: Dev authorized both agents to maintain the journal and shared documentation
@@ -76,8 +74,9 @@ and ran every suite with the scalatest Runner:
   inserts the candidate's populated `elementTypes`); the obsolete `draco`-package filter.
 - The probe directories were removed afterwards. Probe logs: scratchpad only, transient.
 
-The last Dev-verified full run remains 701 tests / 50 suites on 2026-10-07 (f54da3f).
-That result does not verify this increment.
+Dev then ran the full gate on 2026-10-09: **713 tests / 51 suites, 0 failed, 0 aborted**,
+every report-only headline matching, and committed/pushed 462cde6. That is the current
+verified baseline; DRACO.md §1 records it.
 
 ## Documentation Coverage
 
@@ -91,18 +90,9 @@ That result does not verify this increment.
 
 ## Resumption
 
-1. Dev runs the full gate (expected 713 tests / 51 suites, baselines unchanged):
+1. The gate and the commit are done (462cde6). Commit the verification note.
 
-   ```bash
-   cd /Users/edwardburke/IdeaProjects/nexonix && set -o pipefail && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] (Tests:|Suites:)"
-   ```
-
-2. On green, one path-scoped commit carrying both bodies of work, message from the
-   2026-10-09 record (the 2026-10-07 record is committed alongside for the audit trail):
-   `git add -A -- <paths>` then `git commit -F draco-git-record/git-record-2026-10-09-1218 -- <paths>`.
-   The paths are every file `git status --short` lists; nothing else is pending.
-
-3. Next authorized work, in Dev's accepted order: compose accepted Actuals and their
+2. Next authorized work, in Dev's accepted order: compose accepted Actuals and their
    intra-/inter-relationships into the `DomainOntology`; the endogenous initialization
    client over existing actors/messages; then generation and activation as explicit
    operations. Candidate rules surfaced, not filed: membership reciprocity (a supplied
@@ -111,6 +101,5 @@ That result does not verify this increment.
 ### First action for the next agent
 
 Read DRACO.md, this file and the 2026-10-09 record; inspect `git status` and `git log`.
-If f54da3f is still HEAD, both bodies of work are uncommitted — preserve them. Confirm
-Dev's sbt result before claiming any baseline. Write chapter 93 when Dev asks for the
+Expect HEAD at or after 462cde6 with a clean tree. The baseline is 713 / 51. Write chapter 93 when Dev asks for the
 journal; then design the ontology-composition increment with Dev before building.

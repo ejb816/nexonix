@@ -49,10 +49,9 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**701 tests / 50 suites**, verified by Dev's run on 2026-10-07. The 2026-10-09 authoring increment
-(§3, *Domain ontology and the first authoring slice*) passed a compiled-class PROBE of the whole tree at
-**713 tests / 51 suites** (the scalatest Runner reports 52, counting its discovery wrapper) with every
-report-only figure below unchanged; Dev's full `sbt test` is pending and sets the next baseline. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+**713 tests / 51 suites**, verified by Dev's run on 2026-10-09 at commit 462cde6 (the authoring
+increment, §3 *Domain ontology and the first authoring slice*), with every report-only figure below
+unchanged; the previous baseline was 701 / 50 at f54da3f on 2026-10-07. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
@@ -399,7 +398,7 @@ gates. The direct probe passed 555 tests / 7 suites; Dev's October 7 full run pa
 701 tests / 50 suites with zero failures/aborts and unchanged report-only baselines.
 See the Dreams README for scope.
 
-**Domain ontology and the first authoring slice (2026-10-09; probe-verified, Dev's run pending).**
+**Domain ontology and the first authoring slice (2026-10-09; 462cde6, Dev's full run 713 / 51).**
 `DomainDictionary` is renamed `DomainOntology` — the DOMAIN ONTOLOGY, Dev's operational ontology built
 from domains and their intra- and inter-relationships; today it still holds only the map and gains
 `defines(typeName)`, true when any domain key or any member matches by name and package (parameters
