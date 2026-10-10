@@ -267,8 +267,14 @@ Domains are **peers**, not a hierarchy — all at one level in the `DomainOntolo
 **domain ontology**: an operational ontology built from domains and their intra- and
 inter-relationships (Dev, 2026-10-09). It was called `DomainDictionary` until then — an
 expedient name for putting it on course to a formal ontology — and *dictionary* now names
-only a domain's own `TypeDictionary`. Today the ontology holds membership and answers
-`defines(typeName)` by name and package; its explicit relationships are the next increment.
+only a domain's own `TypeDictionary`. It holds membership, answers `defines(typeName)` by
+name and package, and since the same day carries its first explicit relationship, **derivation**:
+one `Derivation` edge (child, parent, `declared`) per named parent of every composed definition,
+projected at composition rather than re-authored, so the edges cannot drift from the aspects they
+come from. Over them `dependencies(domain)` names the other domains a domain's edges reach — Base
+depends on Draco through Cardinal deriving Primal — and `including(domain)` composes one more
+domain. `declared` is the edge's provenance: inferred derivation, a type carrying every element of
+another (classification, in description-logic terms), is a later rule and will set it false.
 Membership is recorded on both sides: the domain lists the member, the member names the
 domain. A domain may name a **super-domain** whose members it shares — the generator
 transforms share `draco.generator` this way — and a domain carrying both a `source` and a

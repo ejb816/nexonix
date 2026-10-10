@@ -51,7 +51,11 @@ suite does not mean nothing regressed.
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
 **713 tests / 51 suites**, verified by Dev's run on 2026-10-09 at commit 462cde6 (the authoring
 increment, §3 *Domain ontology and the first authoring slice*), with every report-only figure below
-unchanged; the previous baseline was 701 / 50 at f54da3f on 2026-10-07. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+unchanged; the previous baseline was 701 / 50 at f54da3f on 2026-10-07. The derivation increment that
+followed the same day (§3, *Derivation, the ontology's first explicit relationship*) adds one corpus type
+and a five-test `DomainOntologyTest`: a compiled-class PROBE of the whole tree passed **723 tests / 52
+suites** (the scalatest Runner reports 53 with its discovery wrapper), and the parse-scope and
+surface-loss rows below moved by one type, as the table now shows; Dev's full run is pending. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
@@ -84,8 +88,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 1 field across 113 types — type form 1 (ActorAspect), expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 103 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 1 field across 114 types — type form 1 (ActorAspect), expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 104 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -420,6 +424,24 @@ composing accepted Actuals and their relationships into the ontology is the NEXT
 endogenous initialization client, a membership-reciprocity rule (a supplied member the domain does not
 name is silently dropped today), duplicate-identity rejection, generation and activation. EditorTest
 (13) and two ServiceTest tests are new; DreamsTest keeps the two empty anchors.
+
+**Derivation, the ontology's first explicit relationship (2026-10-09, second increment; probe 723 / 52, Dev's run pending).**
+Dev accepted derivation as the first relationship the ontology carries, with PROVENANCE on the edge and
+declared edges first. `draco.Derivation` is `child` + `parent` (TypeNames) + `declared` (default true).
+`DomainOntology` PROJECTS `derivations` at composition — one edge per named parent of every composed
+domain's own definition and members, read through `DracoAspect.parents`, never re-authored — and answers
+`owns(domain, typeName)`, `defines(typeName)` (now `keys.exists(owns)`), `dependencies(domain)` (the other
+domains a domain's edges reach: Base → Draco through Cardinal → Primal is the first inter-domain
+relationship the ontology can state) and `including(domain)` (a new ontology with one more domain; the
+one it is called on is untouched — this is how an accepted Actual's domain will join). `DerivationResolvable`
+now reads the EDGES: a Problem when an edge whose child is the member names a parent the ontology does not
+define. Consequence: a member fact the ontology does not compose has no edges and is not judged — the
+Editor's provisional ontology includes the candidate, and the validation tests compose their danglers in
+through `including`. INFERRED derivation (OWL-style classification: B carries every element of A by name
+and value type ⇒ B derives A; Dev asked, the idea is not naive) is a LATER rule and will set `declared`
+false. The Editor is untouched. One corpus type added, so the parse-scope, surface-loss, aspect-section and
+GenDrake headlines each move by one: 104 draco + 10 mods in scope, 1 loss across 114 types, 104 sections
+in both aspect probes, GenDrake 102 of 102 (table updated in this commit). `DomainOntologyTest` (5) is new.
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member

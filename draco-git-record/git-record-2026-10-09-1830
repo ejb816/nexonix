@@ -1,0 +1,44 @@
+Make derivation the domain ontology's first explicit relationship
+
+Dev's decisions, 2026-10-09, one point at a time: derivation is the first relationship
+the ontology carries explicitly; the edge carries PROVENANCE, with declared edges first
+and inferred derivation (classification — a type carrying every element of another, as
+Dev observed in ontologies and asked about) as a later rule; the increment is the
+relationship alone, the Editor untouched.
+
+draco.Derivation: child, parent, declared (default true). DomainOntology PROJECTS
+`derivations` at composition — one edge per named parent of every composed domain's own
+definition and members, through DracoAspect.parents, never re-authored, so an edge
+cannot drift from the aspect it comes from — and answers owns(domain, typeName),
+defines(typeName) (now keys.exists(owns)), dependencies(domain) and including(domain).
+Base depends on Draco through Cardinal deriving Primal: the first inter-domain
+relationship the ontology can state. The edge keeps the parent AS AUTHORED, parameters
+and all (Cardinal(T) derives Primal(T)), so relationships are read by name and package.
+
+DerivationResolvable now reads the edges: a Problem when an edge whose child is the
+member names a parent the ontology does not define. Consequence, documented: a member
+fact the ontology does not compose has no edges and is not judged. The Editor's
+provisional ontology includes the candidate; FoundationValidationTest and
+DerivationResolvableRulesTest now compose their danglers in through `including`. A
+declared-but-unsupplied member is a placeholder its domain owns — Completeness reports
+it once; the edge into it does not report again.
+
+Measured: compiled-class probe of the whole tree, 723 tests / 0 failed, 52 suites as
+sbt counts (53 with the Runner's wrapper) — 713 + 5 corpus tests for the new type + 5
+in DomainOntologyTest. The one added corpus type moves four headlines by one: parse
+scope 104 draco + 10 mods, one surface loss across 114 types, 104 sections in both
+aspect probes, GenDrake 102 of 102; the DRACO.md table is updated in this commit. All
+other report-only figures unchanged. Dev's full run is the gate.
+
+Found on the way: a bracketed literal inside a parenthesized receiver,
+`([x] ++ xs).flatMap(...)`, stays host text through the parser and reaches Scala
+verbatim — `xs.prepended(x)` instead. Two first-draft test defects were mine, not the
+code's: structural TypeName equality against a parameterized Cardinal, and a "Root
+absent" case that had left Root declared as a placeholder.
+
+Rejected: filtering placeholders out of `owns` (double reporting is worse than a
+placeholder counting as owned); using `including` in the Editor now (out of the agreed
+scope, one line when the composition increment comes).
+
+Not done: inferred derivation; composing accepted Actuals (the Editor still returns the
+Actual, the caller composes); journal chapter 93. No sbt, commit or push run by Claude.

@@ -13,9 +13,12 @@ import scala.collection.mutable.ListBuffer
  *  The three RulesTests each proved one rule fires in isolation. This is the
  *  culmination: all three run together, as one session, over the *whole* loaded
  *  foundation — every first-party domain as a `DomainType` fact, every member as
- *  a `TypeDefinition` fact, and the composed `DomainOntology` as the fact that
- *  `DerivationResolvable` resolves parents against (never the classpath, since
- *  2026-10-09). It is the inferential mirror of
+ *  a `TypeDefinition` fact, and the composed `DomainOntology` as the fact whose
+ *  DERIVATION EDGES `DerivationResolvable` reads (never the classpath, since
+ *  2026-10-09; the edges rather than each member's aspect since the same day's
+ *  second increment — a member absent from the ontology has no edges and is not
+ *  judged, which is why the broken case composes its dangler in). It is the
+ *  inferential mirror of
  *  `DomainBuilderTest`'s procedural `DomainBuilder.validate`: where that walks the
  *  dictionary and collects problem strings, this fires rules and collects `Problem`
  *  facts, and both must agree that the foundation is self-consistent (zero).
@@ -35,8 +38,8 @@ class FoundationValidationTest extends AnyFunSuite {
 
   /** Run the full foundation battery over the given domain-role and member facts,
    *  returning every Problem the rules produce. */
-  private def validate(domains: Seq[DomainType], members: Seq[TypeDefinition]): Seq[Problem] = {
-    val ontology: DomainOntology = DomainBuilder.ontology(domains: _*)
+  private def validate(domains: Seq[DomainType], members: Seq[TypeDefinition],
+                       ontology: DomainOntology): Seq[Problem] = {
     val service: KnowledgeService = new KnowledgeService()
     val collected = ListBuffer.empty[Problem]
     try {
@@ -75,7 +78,7 @@ class FoundationValidationTest extends AnyFunSuite {
     val (domains, members) = loadFoundation()
     assert(members.nonEmpty, "the foundation dictionary should be populated")
 
-    val problems = validate(domains, members)
+    val problems = validate(domains, members, DomainBuilder.ontology(domains: _*))
     assert(problems.isEmpty,
       s"the foundation should self-validate; got:\n  - " +
         problems.map(p => s"${p.subject.name}: ${p.message}").mkString("\n  - "))
@@ -98,7 +101,14 @@ class FoundationValidationTest extends AnyFunSuite {
           TypeName("Wrong", _namePackage = Seq("draco")),
           _domainAspect = DomainAspect(TypeName("Different", _namePackage = Seq("draco")))))
 
-    val problems = validate(domains :+ misdeclaredDomain, members ++ Seq(stubMember, danglerMember))
+    // The dangler is judged by the ontology's edges, so it must be composed in — as a
+    // member of a domain the ontology includes, the way the Editor includes a candidate.
+    val broken: DomainType = Domain[Any](
+      TypeDefinition(TypeName("Broken", _namePackage = Seq("draco")),
+        _domainAspect = DomainAspect(TypeName("Broken", _namePackage = Seq("draco")), Seq("Dangler"))),
+      Seq(danglerMember))
+    val ontology = DomainBuilder.ontology(domains: _*).including(broken)
+    val problems = validate(domains :+ misdeclaredDomain, members ++ Seq(stubMember, danglerMember), ontology)
     val subjects = problems.map(_.subject.name).toSet
     assert(problems.size == 3, s"expected exactly three Problems; got ${problems.size}: $subjects")
     assert(subjects == Set("Ghost", "Dangler", "Wrong"),

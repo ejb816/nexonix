@@ -1,0 +1,57 @@
+{
+  "typeName": {
+    "name": "Derivation",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "child",
+        "valueType": "TypeName"
+      },
+      {
+        "kind": "Fixed",
+        "name": "parent",
+        "valueType": "TypeName"
+      },
+      {
+        "kind": "Fixed",
+        "name": "declared",
+        "valueType": "Boolean"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Derivation",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "child",
+          "valueType": "TypeName"
+        },
+        {
+          "kind": "Parameter",
+          "name": "parent",
+          "valueType": "TypeName"
+        },
+        {
+          "kind": "Parameter",
+          "name": "declared",
+          "valueType": "Boolean",
+          "value": "true"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

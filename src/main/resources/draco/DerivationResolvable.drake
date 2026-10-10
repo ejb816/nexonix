@@ -6,6 +6,6 @@ rule
       var m TypeDefinition
       var o DomainOntology
     conditions
-      con draco.DracoAspect.parents(m.dracoAspect).exists(\anc -> !o.defines(anc))
+      con o.derivations.exists(\edge -> edge.child == m.typeName && !o.defines(edge.parent))
   action
     mon ctx.insert(Problem(m.typeName, s"member ${m.typeName.name} derives from a type the ontology does not define"))

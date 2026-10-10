@@ -6,12 +6,13 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-10-09, by Claude Code, at the end of the first authoring increment.
-- Observed branch/HEAD: main at 462cde6, pushed; Dev's paste shows `main...origin/main`
-  clean after the push. That commit carries both Codex's 2026-10-07 documentation
-  checkpoint and this session's authoring increment, with both records.
-- Pending after that commit: only this verification note in the shared documents and
-  record `git-record-2026-10-09-1240`.
+- Updated: 2026-10-09, by Claude Code, at the end of the derivation increment (the second
+  increment of the day; the first authoring slice is 462cde6, its verification note b8d9a34).
+- Observed branch/HEAD: main at b8d9a34, pushed and clean when this increment began.
+- Pending in the tree: the derivation increment — `draco.Derivation` trio, `DomainOntology`
+  trio, `DerivationResolvable` trio, `Draco` member list, `DomainOntologyTest`, two
+  validation tests, DRACO.md (table rows moved), README, CHANGELOG, this file and record
+  `git-record-2026-10-09-1830`.
 - Destination: either agent. Dev alternates sessions; the next step is Dev's full
   `sbt test`, then the commit/push.
 - Permission: Dev authorized both agents to maintain the journal and shared documentation
@@ -25,10 +26,14 @@ snapshot against the current tree before acting.
 - The authoring types are **Latent** and **Actual**, and they operate on **domains**, not
   ontologies: a Latent is one domain in candidate form, an Actual the accepted (or
   rejected) domain. Ontologies are built from domains and their relationships.
-- Scope boundary accepted: this increment takes a Latent to an Actual one domain at a
-  time, reusing core's rules; composing Actuals into a `DomainOntology` with explicit
-  intra- and inter-relationships is the increment after. The Editor builds its own
-  knowledge from core's rule patterns (no reply protocol on the Draco actor).
+- Scope boundary accepted: the first slice takes a Latent to an Actual one domain at a
+  time, reusing core's rules; the Editor builds its own knowledge from core's rule
+  patterns (no reply protocol on the Draco actor).
+- **Derivation is the ontology's first explicit relationship**, with provenance on the
+  edge (`declared`), declared edges first; inferred derivation (classification by shared
+  elements) is a later rule. Scope of the second increment: the relationship alone —
+  `Derivation`, projected `derivations`, `dependencies`, `including`, the rule reading
+  edges — Editor untouched. Composing accepted Actuals into the ontology is still ahead.
 
 ## Completed Development
 
@@ -57,7 +62,16 @@ snapshot against the current tree before acting.
 
 ## Verification
 
-Claude did not run sbt. A compiled-class probe recompiled the WHOLE tree — main, mods
+Derivation increment (pending Dev's run): a compiled-class probe of the whole tree —
+main, mods and tests recompiled into `target/scala-2.13/probe-*`, hidden resources
+excluded — passed **723 tests / 0 failed / 52 suites** as sbt counts (53 with the
+Runner's wrapper): 713 + 5 corpus tests for `Derivation` + 5 in `DomainOntologyTest`.
+The one added corpus type moves four headlines by one — parse scope 104 draco + 10 mods,
+one surface loss across 114 types, 104 sections in both aspect probes, GenDrake 102/102;
+the DRACO.md table carries the two tabled rows. Every other figure unchanged. Two
+earlier probe iterations caught defects in the new tests only. Probe dirs removed.
+
+First authoring slice (verified): Claude did not run sbt. A compiled-class probe recompiled the WHOLE tree — main, mods
 and tests — into `target/scala-2.13/probe-{classes,test-classes}` (the `Domain` factory's
 new parameter makes every compiled companion binary-stale, so a partial overlay was not
 an option), overlaid current resources (hidden dotfiles excluded, as sbt excludes them),
@@ -90,7 +104,9 @@ verified baseline; DRACO.md §1 records it.
 
 ## Resumption
 
-1. The gate and the commit are done (462cde6). Commit the verification note.
+1. Dev runs the full gate (expected 723 tests / 52 suites; parse scope 104 + 10, losses 1
+   across 114, GenDrake 102/102, all else unchanged), then the path-scoped commit with
+   `git commit -F draco-git-record/git-record-2026-10-09-1830 -- <paths>`.
 
 2. Next authorized work, in Dev's accepted order: compose accepted Actuals and their
    intra-/inter-relationships into the `DomainOntology`; the endogenous initialization
@@ -101,5 +117,6 @@ verified baseline; DRACO.md §1 records it.
 ### First action for the next agent
 
 Read DRACO.md, this file and the 2026-10-09 record; inspect `git status` and `git log`.
-Expect HEAD at or after 462cde6 with a clean tree. The baseline is 713 / 51. Write chapter 93 when Dev asks for the
+Expect HEAD at or after b8d9a34. If the derivation increment is still uncommitted, preserve
+it and confirm Dev's sbt result (expected 723 / 52) before claiming the baseline. Write chapter 93 when Dev asks for the
 journal; then design the ontology-composition increment with Dev before building.

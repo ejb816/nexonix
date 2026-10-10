@@ -1,0 +1,11 @@
+type Derivation
+  elements
+    fix child TypeName
+    fix parent TypeName
+    fix declared Boolean
+  factory
+    parameters
+      par child TypeName
+      par parent TypeName
+      par declared Boolean true
+domain draco Draco

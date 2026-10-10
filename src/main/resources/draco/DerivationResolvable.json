@@ -33,24 +33,24 @@
           "kind": "Condition",
           "value": {
             "()": [
-              {
-                ".": [
-                  {
-                    "()": [
-                      "draco.DracoAspect.parents",
-                      "m.dracoAspect"
-                    ]
-                  },
-                  "exists"
-                ]
-              },
+              "o.derivations.exists",
               {
                 "\\": [
-                  "anc",
+                  "edge",
                   {
-                    "()": [
-                      "!o.defines",
-                      "anc"
+                    "&&": [
+                      {
+                        "==": [
+                          "edge.child",
+                          "m.typeName"
+                        ]
+                      },
+                      {
+                        "()": [
+                          "!o.defines",
+                          "edge.parent"
+                        ]
+                      }
                     ]
                   }
                 ]

@@ -20,6 +20,65 @@
     ],
     "elements": [
       {
+        "kind": "Fixed",
+        "name": "derivations",
+        "valueType": {
+          "[]": [
+            "Derivation"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "owns",
+        "valueType": "Boolean",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "domain",
+            "valueType": "DomainType"
+          },
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "TypeName"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Boolean",
+            "value": {
+              "||": [
+                {
+                  "==": [
+                    "domain.typeDefinition.typeName.namePath",
+                    "typeName.namePath"
+                  ]
+                },
+                {
+                  "()": [
+                    "domain.typeDictionary.elementTypes.exists",
+                    {
+                      "\\": [
+                        "td",
+                        {
+                          "==": [
+                            "td.typeName.namePath",
+                            "typeName.namePath"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
         "kind": "Dynamic",
         "name": "defines",
         "valueType": "Boolean",
@@ -37,34 +96,129 @@
             "valueType": "Boolean",
             "value": {
               "()": [
-                "kvMap.exists",
+                "kvMap.keys.exists",
                 {
                   "\\": [
-                    "entry",
+                    "domain",
                     {
-                      "||": [
+                      "()": [
+                        "owns",
+                        "domain",
+                        "typeName"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "dependencies",
+        "valueType": {
+          "[]": [
+            "DomainType"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "domain",
+            "valueType": "DomainType"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "DomainType"
+              ]
+            },
+            "value": {
+              ".": [
+                {
+                  "()": [
+                    "kvMap.keys.filter",
+                    {
+                      "\\": [
+                        "other",
                         {
-                          "==": [
-                            "entry._1.typeDefinition.typeName.namePath",
-                            "typeName.namePath"
-                          ]
-                        },
-                        {
-                          "()": [
-                            "entry._2.elementTypes.exists",
+                          "&&": [
                             {
-                              "\\": [
-                                "td",
+                              "!=": [
+                                "other.typeDefinition.typeName",
+                                "domain.typeDefinition.typeName"
+                              ]
+                            },
+                            {
+                              "()": [
+                                "derivations.exists",
                                 {
-                                  "==": [
-                                    "td.typeName.namePath",
-                                    "typeName.namePath"
+                                  "\\": [
+                                    "edge",
+                                    {
+                                      "&&": [
+                                        {
+                                          "()": [
+                                            "owns",
+                                            "domain",
+                                            "edge.child"
+                                          ]
+                                        },
+                                        {
+                                          "()": [
+                                            "owns",
+                                            "other",
+                                            "edge.parent"
+                                          ]
+                                        }
+                                      ]
+                                    }
                                   ]
                                 }
                               ]
                             }
                           ]
                         }
+                      ]
+                    }
+                  ]
+                },
+                "toSeq"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "including",
+        "valueType": "DomainOntology",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "domain",
+            "valueType": "DomainType"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "DomainOntology",
+            "value": {
+              "()": [
+                "DomainOntology",
+                {
+                  "++": [
+                    "kvMap.keys.toSeq",
+                    {
+                      "[]": [
+                        "domain"
                       ]
                     }
                   ]
@@ -122,6 +276,72 @@
                 ]
               },
               "toMap"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "derivations",
+          "valueType": {
+            "[]": [
+              "Derivation"
+            ]
+          },
+          "value": {
+            "()": [
+              "_domains.flatMap",
+              {
+                "\\": [
+                  "domain",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "domain.typeDictionary.elementTypes.prepended",
+                              "domain.typeDefinition"
+                            ]
+                          },
+                          "flatMap"
+                        ]
+                      },
+                      {
+                        "\\": [
+                          "td",
+                          {
+                            "()": [
+                              {
+                                ".": [
+                                  {
+                                    "()": [
+                                      "DracoAspect.parents",
+                                      "td.dracoAspect"
+                                    ]
+                                  },
+                                  "map"
+                                ]
+                              },
+                              {
+                                "\\": [
+                                  "parent",
+                                  {
+                                    "()": [
+                                      "Derivation",
+                                      "td.typeName",
+                                      "parent"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
             ]
           }
         }

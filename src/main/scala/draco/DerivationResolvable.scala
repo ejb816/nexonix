@@ -8,7 +8,7 @@ object DerivationResolvable extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("DerivationResolvable", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[DerivationResolvable] = Type[DerivationResolvable] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
-  def w0(m: TypeDefinition, o: DomainOntology): Boolean = draco.DracoAspect.parents(m.dracoAspect).exists(anc => !o.defines(anc))
+  def w0(m: TypeDefinition, o: DomainOntology): Boolean = o.derivations.exists(edge => edge.child == m.typeName && !o.defines(edge.parent))
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val m: TypeDefinition = ctx.get[TypeDefinition]("$m")
       val o: DomainOntology = ctx.get[DomainOntology]("$o")

@@ -35,6 +35,16 @@ for the definition that will replace it.
 
 ### Added
 
+- **Derivation, the ontology's first explicit relationship.** Add `draco.Derivation`
+  (child, parent, `declared` provenance). `DomainOntology` projects its `derivations` from
+  the composed domains at composition and answers `owns`, `defines`, `dependencies(domain)`
+  (the other domains a domain's edges reach — Base depends on Draco through Cardinal
+  deriving Primal) and `including(domain)`. `DerivationResolvable` reads the edges rather
+  than each member's aspect, so a member the ontology does not compose is not judged;
+  the validation tests compose their danglers in. Inferred derivation is a later rule.
+  One corpus type added: parse scope 104 draco + 10 mods, one loss across 114 types,
+  GenDrake 102/102. `DomainOntologyTest` (5 tests) is new; compiled-class probe of the
+  whole tree 723 tests / 52 suites, Dev's full run pending. (2026-10-09)
 - **First authoring slice: Latent → Editor → Actual.** `draco.dreams.editor` gains `Latent`
   (one domain in candidate form: its definition plus its members' definitions), `Actual`
   (the same definitions plus the problems found, accepted iff none, with the populated
