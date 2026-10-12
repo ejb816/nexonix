@@ -43,8 +43,8 @@ for the definition that will replace it.
   than each member's aspect, so a member the ontology does not compose is not judged;
   the validation tests compose their danglers in. Inferred derivation is a later rule.
   One corpus type added: parse scope 104 draco + 10 mods, one loss across 114 types,
-  GenDrake 102/102. `DomainOntologyTest` (5 tests) is new; compiled-class probe of the
-  whole tree 723 tests / 52 suites, Dev's full run pending. (2026-10-09)
+  GenDrake 102/102. `DomainOntologyTest` (5 tests) is new; compiled-class probe, then
+  Dev's full run: 723 tests / 52 suites; committed as d181e64. (2026-10-09)
 - **First authoring slice: Latent → Editor → Actual.** `draco.dreams.editor` gains `Latent`
   (one domain in candidate form: its definition plus its members' definitions), `Actual`
   (the same definitions plus the problems found, accepted iff none, with the populated

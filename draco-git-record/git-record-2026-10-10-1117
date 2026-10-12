@@ -1,0 +1,10 @@
+Record Dev's 723 / 52 verification of the derivation increment at d181e64
+
+Documentation only. Dev ran the full gate on 2026-10-10 after d181e64 was prepared: 723 tests,
+52 suites, 0 failed, 0 aborted, the four moved headlines (parse scope 104 draco + 10
+mods, one surface loss across 114 types, 104 aspect sections, GenDrake 102 of 102)
+matching the probe and every other figure unchanged, then committed/pushed d181e64.
+DRACO.md section 1 now names that run as the verified baseline, the section 3
+paragraph and the CHANGELOG entry drop "pending", README's status carries the commit,
+and the handoff checkpoint moves to d181e64 with only this note outstanding.
+No sbt, commit or push run by Claude.

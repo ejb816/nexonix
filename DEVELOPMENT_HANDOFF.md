@@ -6,13 +6,11 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-10-09, by Claude Code, at the end of the derivation increment (the second
+- Updated: 2026-10-10, by Claude Code, after Dev verified the derivation increment (the second
   increment of the day; the first authoring slice is 462cde6, its verification note b8d9a34).
-- Observed branch/HEAD: main at b8d9a34, pushed and clean when this increment began.
-- Pending in the tree: the derivation increment — `draco.Derivation` trio, `DomainOntology`
-  trio, `DerivationResolvable` trio, `Draco` member list, `DomainOntologyTest`, two
-  validation tests, DRACO.md (table rows moved), README, CHANGELOG, this file and record
-  `git-record-2026-10-09-1830`.
+- Observed branch/HEAD: main at d181e64, pushed; Dev's paste shows `main...origin/main`
+  clean after the push. That commit is the derivation increment.
+- Pending after it: only this verification note and record `git-record-2026-10-10-1117`.
 - Destination: either agent. Dev alternates sessions; the next step is Dev's full
   `sbt test`, then the commit/push.
 - Permission: Dev authorized both agents to maintain the journal and shared documentation
@@ -62,7 +60,9 @@ snapshot against the current tree before acting.
 
 ## Verification
 
-Derivation increment (pending Dev's run): a compiled-class probe of the whole tree —
+Derivation increment: Dev's full run on 2026-10-10 passed **723 tests / 52 suites, 0 failed,
+0 aborted**, the four moved headlines matching the probe, and committed/pushed d181e64.
+That is the current verified baseline; DRACO.md §1 records it. The probe before it —
 main, mods and tests recompiled into `target/scala-2.13/probe-*`, hidden resources
 excluded — passed **723 tests / 0 failed / 52 suites** as sbt counts (53 with the
 Runner's wrapper): 713 + 5 corpus tests for `Derivation` + 5 in `DomainOntologyTest`.
@@ -104,9 +104,7 @@ verified baseline; DRACO.md §1 records it.
 
 ## Resumption
 
-1. Dev runs the full gate (expected 723 tests / 52 suites; parse scope 104 + 10, losses 1
-   across 114, GenDrake 102/102, all else unchanged), then the path-scoped commit with
-   `git commit -F draco-git-record/git-record-2026-10-09-1830 -- <paths>`.
+1. The gate and the commit are done (d181e64). Commit the verification note.
 
 2. Next authorized work, in Dev's accepted order: compose accepted Actuals and their
    intra-/inter-relationships into the `DomainOntology`; the endogenous initialization
@@ -117,6 +115,5 @@ verified baseline; DRACO.md §1 records it.
 ### First action for the next agent
 
 Read DRACO.md, this file and the 2026-10-09 record; inspect `git status` and `git log`.
-Expect HEAD at or after b8d9a34. If the derivation increment is still uncommitted, preserve
-it and confirm Dev's sbt result (expected 723 / 52) before claiming the baseline. Write chapter 93 when Dev asks for the
+Expect HEAD at or after d181e64 with a clean tree. The baseline is 723 / 52. Write chapter 93 when Dev asks for the
 journal; then design the ontology-composition increment with Dev before building.

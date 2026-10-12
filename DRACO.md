@@ -49,13 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**713 tests / 51 suites**, verified by Dev's run on 2026-10-09 at commit 462cde6 (the authoring
-increment, §3 *Domain ontology and the first authoring slice*), with every report-only figure below
-unchanged; the previous baseline was 701 / 50 at f54da3f on 2026-10-07. The derivation increment that
-followed the same day (§3, *Derivation, the ontology's first explicit relationship*) adds one corpus type
-and a five-test `DomainOntologyTest`: a compiled-class PROBE of the whole tree passed **723 tests / 52
-suites** (the scalatest Runner reports 53 with its discovery wrapper), and the parse-scope and
-surface-loss rows below moved by one type, as the table now shows; Dev's full run is pending. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
+**723 tests / 52 suites**, verified by Dev's run on 2026-10-10 at commit d181e64 (the derivation
+increment, §3 *Derivation, the ontology's first explicit relationship*), with the parse-scope and
+surface-loss rows below moved by the one corpus type it added and every other figure unchanged. The day
+before: 713 / 51 at 462cde6 (the first authoring slice); before it 701 / 50 at f54da3f on 2026-10-07. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
 COUNTS below — 93 draco types in scope, 103 measured — and none of the loss figures; then one
@@ -425,7 +422,7 @@ endogenous initialization client, a membership-reciprocity rule (a supplied memb
 name is silently dropped today), duplicate-identity rejection, generation and activation. EditorTest
 (13) and two ServiceTest tests are new; DreamsTest keeps the two empty anchors.
 
-**Derivation, the ontology's first explicit relationship (2026-10-09, second increment; probe 723 / 52, Dev's run pending).**
+**Derivation, the ontology's first explicit relationship (2026-10-09, second increment; d181e64, Dev's full run 723 / 52).**
 Dev accepted derivation as the first relationship the ontology carries, with PROVENANCE on the edge and
 declared edges first. `draco.Derivation` is `child` + `parent` (TypeNames) + `declared` (default true).
 `DomainOntology` PROJECTS `derivations` at composition — one edge per named parent of every composed

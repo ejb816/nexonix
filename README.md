@@ -697,6 +697,7 @@ and historical chapter statuses are unchanged. The bridge's historical full run 
 run by Dev with unchanged report-only baselines. The first authoring slice landed on
 2026-10-09 (`Latent` → `Editor` actor → `Actual`, the `DomainOntology` rename, ontology-relative
 derivation validation and `ServiceConfiguration`), committed as 462cde6 after Dev's full run passed
-713 tests / 51 suites with unchanged report-only baselines. Chapter 93 is not yet written.
+713 tests / 51 suites with unchanged report-only baselines. The derivation relationship followed
+as d181e64 (built 2026-10-09, Dev's full run 723 tests / 52 suites on 2026-10-10). Chapter 93 is not yet written.
 
 <!-- draco-docs-synced-through: chapter 92 -->
