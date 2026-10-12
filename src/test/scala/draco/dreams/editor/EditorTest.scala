@@ -21,8 +21,14 @@ import scala.jdk.CollectionConverters._
   * candidate — using core's own rules (Completeness, SelfDeclaration,
   * DerivationResolvable, CollectProblems) in a fresh session per message; it
   * never consults the classpath and never mutates the ontology it was given.
-  * Composing accepted domains and their relationships into a `DomainOntology`
-  * is the next increment; this one stops at the Actual.
+  *
+  * Since 2026-10-12 the Editor HOLDS the accepted ontology (Dev: the innate, endogenous
+  * ontology of draco itself, so acceptance must not compromise the framework). Each
+  * Latent is judged against the ontology that would result — every accepted domain
+  * plus the candidate, `including` replacing a domain of the same name and package —
+  * with the whole of it in working memory, so an update cannot orphan a dependent;
+  * the state is swapped only when every rule is quiet, and `Uniqueness` refuses a
+  * name owned by more than one domain. Acceptance generates and activates nothing.
   *
   * Staged definitions are outside the main-corpus discovery gates, so the trio
   * checks live here. */
@@ -80,6 +86,15 @@ class EditorTest extends AnyFunSuite {
       _domainAspect = DomainAspect(fresh))
   private val primal = TypeName("Primal", Seq("draco"))
   private def reference: DomainOntology = DomainBuilder.ontology(DomainBuilder.define("Draco", Seq("draco")))
+  private def definitionOf(domain: TypeName, members: String*): TypeDefinition =
+    TypeDefinition(domain, _domainAspect = DomainAspect(domain, members))
+  private def memberOf(domain: TypeName, name: String, parents: TypeName*): TypeDefinition =
+    TypeDefinition(TypeName(name, domain.namePackage),
+      _dracoAspect = DracoAspect(_derivation = parents.map(TypeName.encoder(_))),
+      _domainAspect = DomainAspect(domain))
+  private val other = TypeName("Other", Seq("example", "other"))
+  private val root = TypeName("Root", pkg)
+  private val leaf = TypeName("Leaf", pkg)
 
   /** Mint one Editor over `ontology`, send every Latent, and collect the Actuals
     * it delivers to its consumer — in order, one per Latent. */
@@ -134,16 +149,42 @@ class EditorTest extends AnyFunSuite {
     assert(subjects(actual) == Set("Fresh"), s"got ${actual.problems.map(_.message)}")
   }
 
-  test("the Editor judges each Latent on its own, in order, and leaves the given ontology untouched") {
+  test("an accepted domain joins the Editor's ontology: a later Latent resolves against it; the given ontology is untouched") {
     val ontology = reference
     val before = ontology.size
-    val good = Latent(definition(Seq("Root")), Seq(member("Root", primal)))
-    val bad = Latent(definition(Seq("Leaf")), Seq(member("Leaf", TypeName("Root", pkg))))
-    val actuals = edit(ontology, Seq(good, bad, good), "editorSequence")
-    assert(actuals.map(_.accepted) == Seq(true, false, true),
-      s"a sibling accepted earlier is not part of the given ontology; got ${actuals.map(_.problems.map(_.message))}")
-    assert(ontology.size == before)
-    assert(!ontology.defines(TypeName("Root", pkg)), "acceptance does not compose; that is the next increment")
+    val first = Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal)))
+    val second = Latent(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", root)))
+    val actuals = edit(ontology, Seq(second, first, second), "editorComposes")
+    assert(actuals.map(_.accepted) == Seq(false, true, true),
+      s"Twig resolves only once Fresh is accepted; got ${actuals.map(_.problems.map(_.message))}")
+    assert(subjects(actuals.head) == Set("Twig"))
+    assert(ontology.size == before && !ontology.defines(root), "the ontology the Editor was given is never mutated")
+  }
+
+  test("a Latent owning a name an accepted domain already owns is refused by Uniqueness") {
+    val shadow = TypeName("Shadow", Seq("draco"))
+    val claim = Latent(definitionOf(shadow, "Primal"), Seq(memberOf(shadow, "Primal")))
+    val asDomain = Latent(definitionOf(primal))              // a DOMAIN named like Draco's member
+    val elsewhere = TypeName("Shadow", Seq("example", "shadow"))
+    val distinct = Latent(definitionOf(elsewhere, "Primal"), Seq(memberOf(elsewhere, "Primal")))
+    val actuals = edit(reference, Seq(claim, asDomain, distinct), "editorUniqueness")
+    assert(actuals.map(_.accepted) == Seq(false, false, true), s"got ${actuals.map(_.problems.map(_.message))}")
+    assert(subjects(actuals(0)) == Set("Primal") && subjects(actuals(1)) == Set("Primal"))
+  }
+
+  test("an update replaces the domain of the same identity in place, and cannot orphan a dependent") {
+    val steps = Seq(
+      Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),
+      Latent(definitionOf(fresh, "Root", "Leaf"), Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root))),
+      Latent(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", leaf))),
+      Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),   // drops Leaf: Twig would dangle
+      Latent(definitionOf(fresh, "Root", "Leaf", "Branch"),
+        Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root), memberOf(fresh, "Branch", leaf))))
+    val actuals = edit(reference, steps, "editorUpdates")
+    assert(actuals.map(_.accepted) == Seq(true, true, true, false, true),
+      s"got ${actuals.map(_.problems.map(p => s"${p.subject.name}: ${p.message}"))}")
+    assert(subjects(actuals(3)) == Set("Twig"), "the refused update names the dependent it would orphan, not itself")
+    assert(actuals(4).domain.typeDictionary.size == 3)
   }
 
   test("Latent and Actual round-trip through JSON; Actual's domain is derived, not carried") {

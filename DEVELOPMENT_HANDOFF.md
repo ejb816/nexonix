@@ -6,11 +6,15 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-10-10, by Claude Code, after Dev verified the derivation increment (the second
+- Updated: 2026-10-12, by Claude Code, at the end of the composition increment (the Editor
+  holds the accepted ontology; Uniqueness; update-by-identity) (the second
   increment of the day; the first authoring slice is 462cde6, its verification note b8d9a34).
-- Observed branch/HEAD: main at d181e64, pushed; Dev's paste shows `main...origin/main`
-  clean after the push. That commit is the derivation increment.
-- Pending after it: only this verification note and record `git-record-2026-10-10-1117`.
+- Observed branch/HEAD: main at 57d7096, pushed and clean when this increment began.
+- Pending in the tree: the composition increment — `draco.Uniqueness` trio, `DomainOntology`
+  trio (`including` replaces by identity), `Draco` member list, the `Editor` trio (stateful),
+  `UniquenessRulesTest`, EditorTest and DomainOntologyTest additions, DRACO.md (table rows
+  moved, one gotcha), README, Dreams README, CHANGELOG, this file and record
+  `git-record-2026-10-12-1225`.
 - Destination: either agent. Dev alternates sessions; the next step is Dev's full
   `sbt test`, then the commit/push.
 - Permission: Dev authorized both agents to maintain the journal and shared documentation
@@ -27,6 +31,14 @@ snapshot against the current tree before acting.
 - Scope boundary accepted: the first slice takes a Latent to an Actual one domain at a
   time, reusing core's rules; the Editor builds its own knowledge from core's rule
   patterns (no reply protocol on the Draco actor).
+- **The ontology is draco's innate, endogenous ontology** (Dev, 2026-10-12): the framework's
+  own domains plus the dreams definitions as they can be accepted — self-referential, to be
+  maintained with care. The Editor is accepted as its holder on condition that acceptance
+  never compromises the framework: acceptance alters nothing running (generation and
+  activation stay explicit), and `Uniqueness` — over name and package, parameters free —
+  refuses a second owner of any name. Update-by-identity: a Latent whose domain name and
+  package match an accepted domain replaces it. Delivering the grown ontology to a caller
+  waits for the initialization client.
 - **Derivation is the ontology's first explicit relationship**, with provenance on the
   edge (`declared`), declared edges first; inferred derivation (classification by shared
   elements) is a later rule. Scope of the second increment: the relationship alone —
@@ -59,6 +71,15 @@ snapshot against the current tree before acting.
   ZEROMQ contract, Service/Dreams/mods READMEs, CHANGELOG (Added + Changed), git record.
 
 ## Verification
+
+Composition increment (pending Dev's run): a compiled-class probe of the whole tree —
+main, mods and tests recompiled into `target/scala-2.13/probe-*`, hidden resources
+excluded — passed **733 tests / 0 failed / 53 suites** as sbt counts (54 with the
+Runner's wrapper): 723 + 5 corpus tests for `Uniqueness` + 2 `UniquenessRulesTest`
++ 2 net in EditorTest + 1 in DomainOntologyTest. The added corpus type moves four
+headlines by one — parse scope 105 draco + 10 mods, one loss across 115 types, 105
+aspect sections, GenDrake 103/103; the DRACO.md table carries the two tabled rows.
+Everything else unchanged. Probe dirs removed.
 
 Derivation increment: Dev's full run on 2026-10-10 passed **723 tests / 52 suites, 0 failed,
 0 aborted**, the four moved headlines matching the probe, and committed/pushed d181e64.
@@ -104,16 +125,20 @@ verified baseline; DRACO.md §1 records it.
 
 ## Resumption
 
-1. The gate and the commit are done (d181e64). Commit the verification note.
+1. Dev runs the full gate (expected 733 tests / 53 suites; parse scope 105 + 10, losses 1
+   across 115, GenDrake 103/103, all else unchanged), then the path-scoped commit with
+   `git commit -F draco-git-record/git-record-2026-10-12-1225 -- <paths>`.
 
-2. Next authorized work, in Dev's accepted order: compose accepted Actuals and their
-   intra-/inter-relationships into the `DomainOntology`; the endogenous initialization
-   client over existing actors/messages; then generation and activation as explicit
-   operations. Candidate rules surfaced, not filed: membership reciprocity (a supplied
-   member the domain does not name is silently dropped) and duplicate identity.
+2. Next authorized work, in Dev's accepted order: the endogenous initialization client
+   over existing actors/messages (it needs a way to receive the Editor's grown ontology —
+   the open design point); then generation and activation as explicit operations.
+   Later: inferred derivation (classification by shared elements). Candidate rule
+   surfaced, not filed: membership reciprocity (a supplied member the domain does not
+   name is silently dropped).
 
 ### First action for the next agent
 
 Read DRACO.md, this file and the 2026-10-09 record; inspect `git status` and `git log`.
-Expect HEAD at or after d181e64 with a clean tree. The baseline is 723 / 52. Write chapter 93 when Dev asks for the
+Expect HEAD at or after 57d7096. If the composition increment is still uncommitted,
+preserve it and confirm Dev's sbt result (expected 733 / 53) before claiming the baseline. Write chapter 93 when Dev asks for the
 journal; then design the ontology-composition increment with Dev before building.

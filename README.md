@@ -275,6 +275,9 @@ come from. Over them `dependencies(domain)` names the other domains a domain's e
 depends on Draco through Cardinal deriving Primal — and `including(domain)` composes one more
 domain. `declared` is the edge's provenance: inferred derivation, a type carrying every element of
 another (classification, in description-logic terms), is a later rule and will set it false.
+`including(domain)` composes by identity: a domain of the same name and package is replaced, which is
+what makes an update an update. `Uniqueness` (2026-10-12) is the integrity rule over that: a name owned
+by more than one composed domain is a Problem, over name and package with parameters free.
 Membership is recorded on both sides: the domain lists the member, the member names the
 domain. A domain may name a **super-domain** whose members it shares — the generator
 transforms share `draco.generator` this way — and a domain carrying both a `source` and a
@@ -514,8 +517,11 @@ which contains an `Assembly`. The first authoring slice landed on 2026-10-09 in
 `draco.dreams.editor`: a `Latent` (one domain in candidate form — its definition plus its
 members' definitions) goes to the `Editor` actor, which validates it with core's own rules
 against the ontology that would result and answers with an `Actual` (the same definitions
-plus the problems found, accepted iff none). Composing accepted domains into the ontology,
-the endogenous initialization client, generation and activation follow as explicit steps.
+plus the problems found, accepted iff none). Since 2026-10-12 the Editor holds the accepted
+ontology — draco's own innate ontology, self-referentially — judging every Latent against the whole
+ontology that would result and swapping its state only when every rule is quiet, so a sibling accepted
+earlier resolves, a collision is refused, and an update replaces in place without orphaning a dependent.
+The endogenous initialization client, generation and activation follow as explicit steps.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation
 and activation follow as explicit operations. See the
 [Service plan](src/mods/resources/draco/service/README.md) and

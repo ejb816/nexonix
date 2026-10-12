@@ -28,19 +28,24 @@ object Editor extends App with DracoType {
     draco.Completeness.ruleType.pattern(rules)
     draco.SelfDeclaration.ruleType.pattern(rules)
     draco.DerivationResolvable.ruleType.pattern(rules)
+    draco.Uniqueness.ruleType.pattern(rules)
     draco.CollectProblems.ruleType.pattern(rules)
+    var accepted: draco.DomainOntology = ontology
+    lazy val accept: draco.DomainOntology => Unit = next => accepted = next
 
     override def receive(ctx: TypedActorContext[Latent], msg: Latent): Behavior[Latent] = {
       lazy val candidate: draco.DomainType = draco.Domain(msg.definition, msg.members)
-      lazy val provisional: draco.DomainOntology = draco.DomainOntology(ontology.keys.toSeq ++ Seq(candidate))
+      lazy val provisional: draco.DomainOntology = accepted.including(candidate)
+      lazy val definitions: Seq[draco.TypeDefinition] = provisional.keys.toSeq.flatMap(domain => domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
       lazy val problems: mutable.Buffer[draco.Problem] = scala.collection.mutable.ArrayBuffer()
       lazy val session: org.evrete.api.StatefulSession = rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
       session.set("problems", problems)
-      session.insert(Seq(candidate): _*)
-      session.insert(candidate.typeDictionary.elementTypes: _*)
+      session.insert(provisional.keys.toSeq: _*)
+      session.insert(definitions.toSeq: _*)
       session.insert(Seq(provisional): _*)
       session.fire()
       session.close()
+      (if (problems.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(accept(provisional), accept(accepted))
       actual(Actual(msg.definition, msg.members, problems.toSeq))
       Behaviors.same[Latent]
     }

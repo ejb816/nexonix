@@ -42,9 +42,14 @@ it composes the candidate through core's `Domain(definition, members)` factory, 
 the ontology that would result, and fires core's own rules — Completeness,
 SelfDeclaration, DerivationResolvable, CollectProblems — over the candidate's populated
 members in a fresh stateful session. It never consults the classpath and never mutates
-the ontology it was given. Latent and Actual operate on domains; the ontology is built
-from domains and their relationships, and composing accepted Actuals into it is the
-next increment. Two core changes carry this: `DerivationResolvable` resolves every named
+the ontology it was given. Since 2026-10-12 it HOLDS the accepted ontology: each Latent
+is judged against `accepted.including(candidate)` — including replaces a domain of the
+same name and package, so a resubmission is an update — with every composed domain and
+definition in working memory and the five core rules firing (Uniqueness refuses a name
+owned by more than one domain); the state is swapped only when every rule is quiet.
+Latent and Actual operate on domains; the ontology is built from domains and their
+relationships, and the Editor's state is draco's own innate ontology, so acceptance
+never generates or activates anything. Two core changes carry this: `DerivationResolvable` resolves every named
 parent against the `DomainOntology` fact in working memory, and `SelfDeclaration`
 compares the whole TypeName.
 

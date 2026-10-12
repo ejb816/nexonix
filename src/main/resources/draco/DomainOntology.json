@@ -215,7 +215,27 @@
                 "DomainOntology",
                 {
                   "++": [
-                    "kvMap.keys.toSeq",
+                    {
+                      ".": [
+                        {
+                          "()": [
+                            "kvMap.keys.filter",
+                            {
+                              "\\": [
+                                "other",
+                                {
+                                  "!=": [
+                                    "other.typeDefinition.typeName.namePath",
+                                    "domain.typeDefinition.typeName.namePath"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "toSeq"
+                      ]
+                    },
                     {
                       "[]": [
                         "domain"

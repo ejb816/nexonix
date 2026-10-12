@@ -83,6 +83,7 @@
       "TypeLoader",
       "TypeName",
       "TypeTransform",
+      "Uniqueness",
       "Variable"
     ]
   },

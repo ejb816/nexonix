@@ -1,0 +1,11 @@
+type Uniqueness
+domain draco Draco
+rule
+  pattern
+    variables
+      var m TypeDefinition
+      var o DomainOntology
+    conditions
+      con o.keys.count(\domain -> o.owns(domain, m.typeName)) > 1
+  action
+    mon ctx.insert(Problem(m.typeName, s"name ${m.typeName.namePath} is owned by more than one domain"))

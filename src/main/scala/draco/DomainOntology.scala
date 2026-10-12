@@ -17,7 +17,7 @@ trait DomainOntology extends Dictionary[DomainType, TypeDictionary] {
   }
   def including(_domain: => DomainType): DomainOntology = {
     lazy val domain: DomainType = _domain
-    DomainOntology(kvMap.keys.toSeq ++ Seq(domain))
+    DomainOntology(kvMap.keys.filter(other => other.typeDefinition.typeName.namePath != domain.typeDefinition.typeName.namePath).toSeq ++ Seq(domain))
   }
 }
 

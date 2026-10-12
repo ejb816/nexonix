@@ -24,7 +24,7 @@ type DomainOntology from Dictionary(DomainType, TypeDictionary)
       parameters
         par domain DomainType
       body
-        fix value DomainOntology DomainOntology(kvMap.keys.toSeq ++ [domain])
+        fix value DomainOntology DomainOntology(kvMap.keys.filter(\other -> other.typeDefinition.typeName.namePath != domain.typeDefinition.typeName.namePath).toSeq ++ [domain])
     ]
   factory
     parameters

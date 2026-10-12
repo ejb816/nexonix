@@ -80,6 +80,21 @@ class DomainOntologyTest extends AnyFunSuite {
     assert(after.dependencies(core).isEmpty)
   }
 
+  test("including a domain of the same name and package replaces it — an update, not a second owner") {
+    val pkg = Seq("example", "fresh")
+    def member(name: String) = TypeDefinition(TypeName(name, pkg), _domainAspect = DomainAspect(TypeName("Fresh", pkg)))
+    def fresh(members: String*): DomainType = Domain[Any](
+      TypeDefinition(TypeName("Fresh", pkg), _domainAspect = DomainAspect(TypeName("Fresh", pkg), members)),
+      members.map(member))
+    val before = DomainBuilder.ontology(draco).including(fresh("Root", "Leaf"))
+    val after = before.including(fresh("Root"))
+    assert(before.size == 2 && after.size == 2, "the same identity is replaced, not added")
+    assert(before.defines(TypeName("Leaf", pkg)) && !after.defines(TypeName("Leaf", pkg)))
+    assert(after.defines(TypeName("Root", pkg)))
+    assert(after.keys.count(d => d.typeDefinition.typeName == TypeName("Fresh", pkg)) == 1)
+    assert(after.keys.count(d => after.owns(d, TypeName("Root", pkg))) == 1, "one owner after the update")
+  }
+
   test("owns and defines agree: a name is defined iff some composed domain owns it") {
     val ontology = DomainBuilder.ontology(draco, base)
     val names = Seq(primal, TypeName("Cardinal", Seq("draco", "base")), TypeName("Draco", Seq("draco")),

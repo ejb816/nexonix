@@ -66,13 +66,29 @@
           "valueType": "draco.DomainOntology",
           "value": {
             "()": [
-              "draco.DomainOntology",
+              "accepted.including",
+              "candidate"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "definitions",
+          "valueType": {
+            "[]": [
+              "draco.TypeDefinition"
+            ]
+          },
+          "value": {
+            "()": [
+              "provisional.keys.toSeq.flatMap",
               {
-                "++": [
-                  "ontology.keys.toSeq",
+                "\\": [
+                  "domain",
                   {
-                    "[]": [
-                      "candidate"
+                    "()": [
+                      "domain.typeDictionary.elementTypes.prepended",
+                      "domain.typeDefinition"
                     ]
                   }
                 ]
@@ -120,7 +136,7 @@
           "value": {
             "()": [
               "session.insert",
-              "Seq(candidate): _*"
+              "provisional.keys.toSeq: _*"
             ]
           }
         },
@@ -129,7 +145,7 @@
           "value": {
             "()": [
               "session.insert",
-              "candidate.typeDictionary.elementTypes: _*"
+              "definitions.toSeq: _*"
             ]
           }
         },
@@ -155,6 +171,36 @@
           "value": {
             "()": [
               "session.close"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "problems.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "()": [
+                  "accept",
+                  "provisional"
+                ]
+              },
+              {
+                "()": [
+                  "accept",
+                  "accepted"
+                ]
+              }
             ]
           }
         },
@@ -229,8 +275,39 @@
           "kind": "Monadic",
           "value": {
             "()": [
+              "draco.Uniqueness.ruleType.pattern",
+              "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
               "draco.CollectProblems.ruleType.pattern",
               "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Mutable",
+          "name": "accepted",
+          "valueType": "draco.DomainOntology",
+          "value": "ontology"
+        },
+        {
+          "kind": "Fixed",
+          "name": "accept",
+          "valueType": {
+            "->": [
+              "draco.DomainOntology",
+              "Unit"
+            ]
+          },
+          "value": {
+            "\\": [
+              "next",
+              "accepted = next"
             ]
           }
         }

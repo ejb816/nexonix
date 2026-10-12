@@ -1,0 +1,51 @@
+Let the Editor hold draco's innate ontology, guarded by Uniqueness and update-by-identity
+
+Dev's decisions, 2026-10-12, one point at a time: the ontology being built is draco's
+innate, endogenous ontology — the framework's own domains plus the dreams definitions as
+they can be accepted, "highly self-referential, and we need to be careful how it is
+maintained"; the Editor may hold the accepted ontology "as long as that acceptance
+doesn't compromise the integrity of the framework itself"; Uniqueness is accepted OVER
+NAME AND PACKAGE WITH PARAMETERS FREE (parameters compose references, not definitions);
+update-by-identity is accepted (a domain of the same name and package is replaced).
+
+draco.Uniqueness: a core rule joining `var m TypeDefinition` with `var o DomainOntology`,
+a Problem for every definition whose name is owned by more than one composed domain.
+Its home is core because identity is framework meaning, not editing workflow; the Draco
+actor's knowledge gains it as a member rule.
+
+DomainOntology.including now REPLACES a composed domain of the same name and package
+instead of adding beside it. A resubmitted domain is an update; Uniqueness then judges
+the replacement like any creation.
+
+Editor: `mut accepted` starts as the ontology it was minted with; per Latent it builds
+accepted.including(candidate), inserts EVERY composed domain and EVERY definition of that
+provisional ontology plus the ontology itself, fires the five core rules in a fresh
+session, and swaps the state through
+guard(problems.isEmpty).ifThenElse(accept(provisional), accept(accepted)) — only when
+every rule is quiet. Validating the whole resulting ontology, not just the candidate,
+is what makes an update safe: dropping a member another domain derives from is refused,
+naming the dependent. Acceptance generates and activates nothing; the Actual stays the
+report on one domain; delivering the grown ontology to a caller waits for the
+initialization client.
+
+Measured: compiled-class probe of the whole tree, 733 tests / 0 failed, 53 suites as
+sbt counts (54 with the Runner's wrapper): 723 + 5 corpus tests for the new type + 2 in
+UniquenessRulesTest + 2 net in EditorTest + 1 in DomainOntologyTest. One added corpus
+type moves four headlines by one — parse scope 105 draco + 10 mods, one surface loss
+across 115 types, 105 aspect sections, GenDrake 103 of 103 — and the DRACO.md table is
+updated in this commit. Dev's full run is the gate.
+
+Found on the way, now in DRACO.md §6: `f(definitions: _*)` with a bare name is read by
+the parser as the `name:value` call form and renders `f(definitions = _*)`; an
+expression with a dot passes through. The drift showed in `DrakeCLI check` before any
+compile.
+
+Rejected: a `mon accepted = ...` assignment line (host text — `guard` and a lambda would
+not render inside it; the state swap goes through a treed `ifThenElse` over an `accept`
+function instead); validating only the candidate's members (an update could then orphan
+a dependent unseen); a separate replace operation beside `including` (one composition
+operation with identity semantics is the smaller surface).
+
+Not done: delivering the grown ontology (the initialization client's first design
+point); inferred derivation; membership reciprocity; journal chapter 93. No sbt, commit
+or push run by Claude.

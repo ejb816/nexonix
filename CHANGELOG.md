@@ -35,6 +35,18 @@ for the definition that will replace it.
 
 ### Added
 
+- **The Editor holds draco's innate ontology; `Uniqueness` guards it.** The Editor actor
+  is stateful: each Latent is judged against the ontology that would result — every
+  accepted domain plus the candidate, with `including(domain)` now replacing a domain
+  of the same name and package so a resubmission is an update — with the whole of it in
+  working memory, and the state is swapped only when every rule is quiet. New core rule
+  `draco.Uniqueness`: a Problem for a name owned by more than one composed domain, over
+  name and package with type parameters free. A sibling accepted earlier now resolves,
+  a collision is refused, an update replaces in place and cannot orphan a dependent.
+  Acceptance generates and activates nothing. One corpus type added: parse scope 105
+  draco + 10 mods, one loss across 115 types, GenDrake 103/103. `UniquenessRulesTest`
+  (2) is new; compiled-class probe of the whole tree 733 tests / 53 suites, Dev's full
+  run pending. (2026-10-12)
 - **Derivation, the ontology's first explicit relationship.** Add `draco.Derivation`
   (child, parent, `declared` provenance). `DomainOntology` projects its `derivations` from
   the composed domains at composition and answers `owns`, `defines`, `dependencies(domain)`

@@ -1,0 +1,80 @@
+{
+  "typeName": {
+    "name": "Uniqueness",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "m",
+          "valueType": "TypeDefinition"
+        },
+        {
+          "kind": "Variable",
+          "name": "o",
+          "valueType": "DomainOntology"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "value": {
+            ">": [
+              {
+                "()": [
+                  "o.keys.count",
+                  {
+                    "\\": [
+                      "domain",
+                      {
+                        "()": [
+                          "o.owns",
+                          "domain",
+                          "m.typeName"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "1"
+            ]
+          }
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "ctx.insert",
+              {
+                "()": [
+                  "Problem",
+                  "m.typeName",
+                  "s\"name ${m.typeName.namePath} is owned by more than one domain\""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

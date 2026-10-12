@@ -51,7 +51,11 @@ suite does not mean nothing regressed.
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
 **723 tests / 52 suites**, verified by Dev's run on 2026-10-10 at commit d181e64 (the derivation
 increment, §3 *Derivation, the ontology's first explicit relationship*), with the parse-scope and
-surface-loss rows below moved by the one corpus type it added and every other figure unchanged. The day
+surface-loss rows below moved by the one corpus type it added and every other figure unchanged. The
+composition increment of 2026-10-12 (§3, *Composition: the Editor holds draco's innate ontology*) adds one
+more corpus type and five tests: a compiled-class PROBE of the whole tree passed **733 tests / 53 suites**
+(54 as the scalatest Runner counts), the two tabled rows below moved by one again, and Dev's full run is
+pending. The day
 before: 713 / 51 at 462cde6 (the first authoring slice); before it 701 / 50 at f54da3f on 2026-10-07. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -85,8 +89,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 1 field across 114 types — type form 1 (ActorAspect), expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 104 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 1 field across 115 types — type form 1 (ActorAspect), expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 105 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -440,6 +444,32 @@ false. The Editor is untouched. One corpus type added, so the parse-scope, surfa
 GenDrake headlines each move by one: 104 draco + 10 mods in scope, 1 loss across 114 types, 104 sections
 in both aspect probes, GenDrake 102 of 102 (table updated in this commit). `DomainOntologyTest` (5) is new.
 
+**Composition: the Editor holds draco's innate ontology (2026-10-12; probe 733 / 53, Dev's run pending).** Dev: the ontology
+being built is draco's INNATE, ENDOGENOUS ontology — the framework's own domains plus the dreams
+definitions as they can be accepted — "highly self-referential, and we need to be careful how it is
+maintained"; the Editor may hold it "as long as that acceptance doesn't compromise the integrity of the
+framework itself". Two guarantees carry that. (1) Acceptance never alters the running framework: the
+ontology is data, generation and activation stay explicit later operations. (2) Acceptance never redefines:
+`draco.Uniqueness`, a core rule joining `var m TypeDefinition` with `var o DomainOntology`, is a Problem for
+every definition whose name is owned by more than one composed domain — over NAME + PACKAGE, PARAMETERS
+FREE (Dev, same day: parameters compose references, not definitions; `Dictionary(K, V)` and
+`Dictionary(TypeName, TypeDefinition)` both resolve to the one `draco.Dictionary`; a dreams user gets a
+distinct definition by package arrangement, and only a second definition of the same atomic name in the
+same package is refused). UPDATE-BY-IDENTITY: `including(domain)` now REPLACES a composed domain of the same
+name and package instead of adding beside it, so a resubmitted domain is an update and Uniqueness judges
+the replacement like any creation. The Editor is STATEFUL: `mut accepted` starts as the ontology it was
+minted with; per Latent it builds `accepted.including(candidate)`, inserts EVERY composed domain and EVERY
+definition of that provisional ontology plus the ontology itself, fires the five core rules (Completeness,
+SelfDeclaration, DerivationResolvable, Uniqueness, CollectProblems) in a fresh session, and swaps the state
+through `guard(problems.isEmpty).ifThenElse(accept(provisional), accept(accepted))` — only when every rule is
+quiet. Validating the WHOLE resulting ontology is what stops an update from orphaning a dependent: dropping
+a member another domain derives from is refused, naming the dependent. The Actual stays the report on one
+domain; delivering the grown ontology to a caller waits for the initialization client. The Draco actor's
+own knowledge gains Uniqueness as a member rule. `UniquenessRulesTest` (2) is new; EditorTest pins the three
+agreed cases — a sibling accepted earlier now resolves, a collision is refused, an update replaces in place
+and cannot orphan. One corpus type added: 105 draco + 10 mods in scope, 1 loss across 115 types, 105 aspect
+sections, GenDrake 103 of 103 (table updated in this commit).
+
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member
 parameters` chain lines and `[ ]` argument brackets (a call is `f(a, b)` since 2026-09-16), the
@@ -579,6 +609,10 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   stub under sbt and `MinimalTypeTest` relies on that. A compiled-class probe that overlays resources
   with `cp -R src/main/resources/.` copies them and fails that one test; delete the dotfiles from the
   overlay.
+- **`x: _*` with a BARE name is a named argument to the parser.** `f(definitions: _*)` reads as
+  `definitions:_*` — the `name:value` call form — and renders `f(definitions = _*)`; an expression with a
+  dot (`definitions.toSeq: _*`, `msg.members: _*`) is a glued token and passes through. The drift shows in
+  `DrakeCLI check` as a surface loss on that line (2026-10-12).
 - **A re-canonicalization sweep de-trees what the parser cannot tree.** `DrakeCLI parse` writes
   back what it reads; an infix condition authored as a tree (`{"==": [{"*": ["i1","i2"]}, "i3"]}`)
   came back as the string `"i1 * i2 == i3"` until the parser treed infix operators (2026-09-21).
