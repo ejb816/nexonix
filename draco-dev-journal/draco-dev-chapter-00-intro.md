@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across ninety-two chapters of development sessions between March 22 and October 7, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across ninety-three chapters of development sessions between March 22 and October 12, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -92,6 +92,8 @@ Selected moments that shifted the framework's trajectory:
 - **Primes / PON** — combinatorial induction over Prime Ordinal Notation as "draco in draco," the proving ground for DRAKE and the disciplined Monadic register.
 
 The recurring theme across the journal is that self-description creates complexity: a type system closed over itself means every change to a foundational type can create circular dependencies, initialization-order bugs, and shadowing issues. The `lazy val` discipline, deferred factory defaults, classpath loading, the Haskell test, and finally DRAKE-as-recognizer are all engineering responses to the same mathematical property. The framework is learning to describe itself without tripping over its own reflection.
+
+**Status at Chapter 93:** the cross-domain structure is the domain ontology (`DomainOntology`), built from domains and their relationships, with derivation its first explicit relationship and `Uniqueness` its integrity rule; `Latent` and `Actual` operate on domains and the `Editor` actor holds draco's own innate ontology, validating every candidate against the whole ontology that would result; Dev verified 733 tests / 53 suites at `efa9085`, with 105 draco + 10 mods in parse scope, one surface loss across 115 types and GenDrake 103 of 103. Queued: the endogenous initialization client, then generation and activation; later, inferred derivation.
 
 **Status at Chapter 83:** shared Claude Code/Codex journal and documentation maintenance is explicitly authorized, with a bidirectional protocol in DRACO.md and a tracked DEVELOPMENT_HANDOFF.md checkpoint. Chapters 81-83 reconcile the range after chapter 80, disclosing transcript limits. This documentation increment is uncommitted at its close; no new runtime test is claimed and no next feature is authorized.
 
@@ -500,3 +502,13 @@ Codex proposes ownership criteria and collaboration at architectural boundaries.
 Dev requests preservation before a Claude handoff. The [retrieval audit](sources/codex-2026-10-05-to-07-audit.md)
 preserves nine complete exchanges plus the open handoff request across chapters 90–92;
 proposed type placement has not become an accepted protocol.
+
+### [Chapter 93 - The Domain Ontology and the Editor's First Three Increments](draco-dev-chapter-93.md)
+
+Claude receives the Codex handoff and proposes the authoring inventory; Dev renames the cross-domain
+structure the domain ontology and the authoring types Latent and Actual, which operate on domains.
+Three increments land and are verified by Dev at 713/51, 723/52 and 733/53: the first authoring
+slice, derivation as the ontology's first explicit relationship with provenance on the edge, and the
+Editor holding draco's innate ontology under Uniqueness and update-by-identity. The
+[retrieval audit](sources/claude-2026-10-07-to-12-audit.md) preserves sixteen complete exchanges
+plus the open wrap-up request.

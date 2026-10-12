@@ -1,0 +1,24 @@
+Record efa9085's verification, write chapter 93 and close the session for handoff
+
+Documentation only. Dev's full run on 2026-10-12 passed 733 tests / 53 suites with the
+four headlines moved by the one added corpus type and all else unchanged, then committed
+and pushed efa9085; DRACO.md section 1, its section 3 paragraph, the CHANGELOG entry and
+README now say so.
+
+Chapter 93 transcribes this Claude Code session from the Codex handoff (2026-10-07)
+through the composition increment (2026-10-12): 13 assertive Dev prompts verbatim, 16
+final replies near-verbatim, five responsive pastes folded into delegated-action notes.
+The bounded extract sources/claude-2026-10-07-to-12.jsonl preserves 33 original records
+with source line, UTC timestamp and SHA-256; its audit fixes the frozen prefix (945 lines)
+and lists the exclusions. The reply answering Dev's wrap-up request is outside the
+boundary and the chapter's Status is a record-backed note. The intro gains the index
+entry, the count and date range, and a Status at Chapter 93 line. Both sync markers
+advance to 93 after reviewing DRACO.md and README against the chapter: they were written
+during the session and already carry its decisions.
+
+The handoff names either agent as destination, Codex as the likely one, and states that
+every continuity fact is in tracked files — no Claude-private memory is required. The
+next authorized work is the endogenous initialization client, opened with its first
+design question; chapter 91's candidate-batch idea remains a proposal.
+
+No sbt, commit or push run by Claude.

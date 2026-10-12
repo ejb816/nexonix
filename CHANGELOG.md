@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+Documentation checkpoint (2026-10-12): journal chapter 93 preserves the Claude session from
+the Codex handoff through the composition increment, with a bounded transcript audit; both
+sync markers reach 93 and the handoff records efa9085 as the verified baseline.
+
 Documentation checkpoint (2026-10-07): journal chapters 90–92 preserve the bridge and
 Dreams verification/commit exchanges and the authoring ownership discussion, with a
 bounded transcript audit. Shared continuity now records f54da3f and the Claude handoff.
@@ -45,8 +49,8 @@ for the definition that will replace it.
   a collision is refused, an update replaces in place and cannot orphan a dependent.
   Acceptance generates and activates nothing. One corpus type added: parse scope 105
   draco + 10 mods, one loss across 115 types, GenDrake 103/103. `UniquenessRulesTest`
-  (2) is new; compiled-class probe of the whole tree 733 tests / 53 suites, Dev's full
-  run pending. (2026-10-12)
+  (2) is new; compiled-class probe, then Dev's full run: 733 tests / 53 suites; committed
+  as efa9085. (2026-10-12)
 - **Derivation, the ontology's first explicit relationship.** Add `draco.Derivation`
   (child, parent, `declared` provenance). `DomainOntology` projects its `derivations` from
   the composed domains at composition and answers `owns`, `defines`, `dependencies(domain)`

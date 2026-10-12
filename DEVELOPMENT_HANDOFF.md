@@ -6,15 +6,16 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-10-12, by Claude Code, at the end of the composition increment (the Editor
-  holds the accepted ontology; Uniqueness; update-by-identity) (the second
+- Updated: 2026-10-12, by Claude Code, closing the session for a handoff. Destination:
+  either agent; Dev named the OpenAI platform (Codex) as the likely next. Everything the
+  next agent needs is in tracked project files — DRACO.md, this file, the records, chapter
+  93 and its audit; no Claude-private memory is required or relied upon. (the second
   increment of the day; the first authoring slice is 462cde6, its verification note b8d9a34).
-- Observed branch/HEAD: main at 57d7096, pushed and clean when this increment began.
-- Pending in the tree: the composition increment — `draco.Uniqueness` trio, `DomainOntology`
-  trio (`including` replaces by identity), `Draco` member list, the `Editor` trio (stateful),
-  `UniquenessRulesTest`, EditorTest and DomainOntologyTest additions, DRACO.md (table rows
-  moved, one gotcha), README, Dreams README, CHANGELOG, this file and record
-  `git-record-2026-10-12-1225`.
+- Observed branch/HEAD: main at efa9085, pushed; Dev's paste shows `main...origin/main`
+  clean after the push. That commit is the composition increment.
+- Pending after it, documentation only: the verified-baseline note, journal chapter 93 with
+  its bounded extract and audit, the intro index, both sync markers to 93, this file and
+  record `git-record-2026-10-12-1247`.
 - Destination: either agent. Dev alternates sessions; the next step is Dev's full
   `sbt test`, then the commit/push.
 - Permission: Dev authorized both agents to maintain the journal and shared documentation
@@ -72,10 +73,12 @@ snapshot against the current tree before acting.
 
 ## Verification
 
-Composition increment (pending Dev's run): a compiled-class probe of the whole tree —
-main, mods and tests recompiled into `target/scala-2.13/probe-*`, hidden resources
-excluded — passed **733 tests / 0 failed / 53 suites** as sbt counts (54 with the
-Runner's wrapper): 723 + 5 corpus tests for `Uniqueness` + 2 `UniquenessRulesTest`
+Composition increment: Dev's full run on 2026-10-12 passed **733 tests / 53 suites, 0 failed,
+0 aborted**, headlines at 105 draco + 10 mods, one loss across 115 types, 105 aspect
+sections, GenDrake 103/103, everything else unchanged; committed/pushed efa9085. That is
+the current verified baseline; DRACO.md §1 records it. The probe before it — main, mods
+and tests recompiled into `target/scala-2.13/probe-*`, hidden resources excluded — had
+passed 733 / 0 failed / 53 suites as sbt counts (54 with the Runner's wrapper): 723 + 5 corpus tests for `Uniqueness` + 2 `UniquenessRulesTest`
 + 2 net in EditorTest + 1 in DomainOntologyTest. The added corpus type moves four
 headlines by one — parse scope 105 draco + 10 mods, one loss across 115 types, 105
 aspect sections, GenDrake 103/103; the DRACO.md table carries the two tabled rows.
@@ -115,19 +118,18 @@ verified baseline; DRACO.md §1 records it.
 
 ## Documentation Coverage
 
-- Journal coverage reaches chapter 92 (Codex, 2026-10-07, uncommitted). Both
-  `draco-docs-synced-through` markers stay at 92: DRACO.md and README are code-current
-  for this increment, but **chapter 93 — this Claude session — is not written.** Its
-  source is this session's transcript (Dev's three messages: the handoff opener, the
-  Latent/Actual/ontology naming, the "Latent and Actual operate on domains" correction
-  and acceptance). Write it per the journal conventions before advancing the markers.
-- Codex's chapters 90–92 and their audit are untouched by this session.
+- Journal coverage reaches chapter 93 (this Claude session, 2026-10-07 to 10-12): 13
+  assertive Dev prompts verbatim, 16 final replies near-verbatim, 5 delegated-action notes;
+  the bounded extract `sources/claude-2026-10-07-to-12.jsonl` (33 records with source
+  line, UTC, SHA-256) and its audit record the frozen prefix. The reply answering Dev's
+  wrap-up request is outside the boundary; chapter 93's Status says so. Both
+  `draco-docs-synced-through` markers advance to 93 after reviewing DRACO.md and README
+  against the chapter — they were written during the session and carry its decisions.
+- Codex's chapters 90–92 and their audits are untouched by this session.
 
 ## Resumption
 
-1. Dev runs the full gate (expected 733 tests / 53 suites; parse scope 105 + 10, losses 1
-   across 115, GenDrake 103/103, all else unchanged), then the path-scoped commit with
-   `git commit -F draco-git-record/git-record-2026-10-12-1225 -- <paths>`.
+1. The gate and the commit are done (efa9085). Commit this documentation pass.
 
 2. Next authorized work, in Dev's accepted order: the endogenous initialization client
    over existing actors/messages (it needs a way to receive the Editor's grown ontology —
@@ -139,6 +141,9 @@ verified baseline; DRACO.md §1 records it.
 ### First action for the next agent
 
 Read DRACO.md, this file and the 2026-10-09 record; inspect `git status` and `git log`.
-Expect HEAD at or after 57d7096. If the composition increment is still uncommitted,
-preserve it and confirm Dev's sbt result (expected 733 / 53) before claiming the baseline. Write chapter 93 when Dev asks for the
+Expect HEAD at or after efa9085 with a clean tree; the baseline is 733 / 53. Read chapter 93
+and DRACO.md §3's three 2026-10-09/12 paragraphs for the decisions. Open the initialization
+client with its first design question — how a caller receives the Editor's grown ontology —
+and settle it with Dev before building; the candidate-batch idea from chapter 91 is still
+not an accepted protocol. Write chapter 93 when Dev asks for the
 journal; then design the ontology-composition increment with Dev before building.

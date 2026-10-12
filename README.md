@@ -694,16 +694,17 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 92, including the Service plan, bridge verification
-and push (45cad3e), Dreams verification and push (f54da3f), and the proposed ownership
-criteria for the next authoring increment. The [latest retrieval audit](draco-dev-journal/sources/codex-2026-10-05-to-07-audit.md)
-preserves nine complete exchanges plus the open handoff request. Earlier extracts
+Journal coverage reaches chapter 93: the Codex handoff, the domain ontology named, Latent and
+Actual, derivation with provenance, and the Editor holding draco's innate ontology under
+Uniqueness. The [latest retrieval audit](draco-dev-journal/sources/claude-2026-10-07-to-12-audit.md)
+preserves sixteen complete exchanges plus the open wrap-up request. Earlier extracts
 and historical chapter statuses are unchanged. The bridge's historical full run passed
 685 tests / 49 suites; the latest Dreams full run passed 701 tests / 50 suites, both
 run by Dev with unchanged report-only baselines. The first authoring slice landed on
 2026-10-09 (`Latent` → `Editor` actor → `Actual`, the `DomainOntology` rename, ontology-relative
 derivation validation and `ServiceConfiguration`), committed as 462cde6 after Dev's full run passed
 713 tests / 51 suites with unchanged report-only baselines. The derivation relationship followed
-as d181e64 (built 2026-10-09, Dev's full run 723 tests / 52 suites on 2026-10-10). Chapter 93 is not yet written.
+as d181e64 (built 2026-10-09, Dev's full run 723 tests / 52 suites on 2026-10-10), and the Editor became
+the holder of the accepted ontology as efa9085 (2026-10-12, Dev's full run 733 tests / 53 suites).
 
-<!-- draco-docs-synced-through: chapter 92 -->
+<!-- draco-docs-synced-through: chapter 93 -->

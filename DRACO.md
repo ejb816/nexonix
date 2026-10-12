@@ -49,13 +49,11 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**723 tests / 52 suites**, verified by Dev's run on 2026-10-10 at commit d181e64 (the derivation
-increment, §3 *Derivation, the ontology's first explicit relationship*), with the parse-scope and
-surface-loss rows below moved by the one corpus type it added and every other figure unchanged. The
-composition increment of 2026-10-12 (§3, *Composition: the Editor holds draco's innate ontology*) adds one
-more corpus type and five tests: a compiled-class PROBE of the whole tree passed **733 tests / 53 suites**
-(54 as the scalatest Runner counts), the two tabled rows below moved by one again, and Dev's full run is
-pending. The day
+**733 tests / 53 suites**, verified by Dev's run on 2026-10-12 at commit efa9085 (the composition
+increment, §3 *Composition: the Editor holds draco's innate ontology*), with the parse-scope and
+surface-loss rows below moved by the one corpus type it added and every other figure unchanged. Before it:
+723 / 52 at d181e64 (derivation, 2026-10-10), 713 / 51 at 462cde6 (the first authoring slice, 2026-10-09),
+701 / 50 at f54da3f (2026-10-07). The day
 before: 713 / 51 at 462cde6 (the first authoring slice); before it 701 / 50 at f54da3f on 2026-10-07. Progression: 575 at `6f5a8bb`, then five per-type tests each for `gendrake.Emit`,
 `generator.EmissionReceived` (`SurfaceReceived` until 2026-09-10) and `gendrake.Emitter`, plus the two gates of `GenDrakeTest`,
 the first suite that fires a generator transform as rules — which also moves the two type
@@ -377,7 +375,7 @@ The consuming project owns persistence. Parsing remains rule-owned and dispatch
 uses the active dictionary. See src/mods/resources/draco/service/README.md for the
 shared plan and src/mods/ZEROMQ_CODEC_CONTRACT.md for the next integration proposal.
 The empty Service anchor is committed in 604aff2; proposed envelope/socket/codec
-choices are not settled. Journal coverage reaches chapter 92; the first authoring slice landed
+choices are not settled. Journal coverage reaches chapter 93; the first authoring slice landed
 2026-10-09 (below).
 
 **ZeroMQ bridge staging (2026-10-05).** Service now contains TextOutput, the neutral
@@ -444,7 +442,7 @@ false. The Editor is untouched. One corpus type added, so the parse-scope, surfa
 GenDrake headlines each move by one: 104 draco + 10 mods in scope, 1 loss across 114 types, 104 sections
 in both aspect probes, GenDrake 102 of 102 (table updated in this commit). `DomainOntologyTest` (5) is new.
 
-**Composition: the Editor holds draco's innate ontology (2026-10-12; probe 733 / 53, Dev's run pending).** Dev: the ontology
+**Composition: the Editor holds draco's innate ontology (2026-10-12; efa9085, Dev's full run 733 / 53).** Dev: the ontology
 being built is draco's INNATE, ENDOGENOUS ontology — the framework's own domains plus the dreams
 definitions as they can be accepted — "highly self-referential, and we need to be careful how it is
 maintained"; the Editor may hold it "as long as that acceptance doesn't compromise the integrity of the
@@ -515,12 +513,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 92 on 2026-10-07.
+Current documentation was reconciled through journal chapter 93 on 2026-10-12.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 92 on
-  2026-10-07.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 93 on
+  2026-10-12.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -692,4 +690,4 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 92 -->
+<!-- draco-docs-synced-through: chapter 93 -->
