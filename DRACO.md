@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**733 tests / 53 suites**, verified by Dev's run on 2026-10-12 at commit efa9085 (the composition
-increment, §3 *Composition: the Editor holds draco's innate ontology*), with the parse-scope and
+**741 tests / 54 suites**, verified by Dev's run on 2026-10-13 on the tree holding the delivery, CRUD and
+initialization increments (§3 *Delivery*, *User defines the requests*, *Initialization*; one commit, record
+`git-record-2026-10-12-1413`), with every report-only figure unchanged — no main-corpus TYPE was added
+(EditorTest +1, DreamsTest +1, `InitializationTest` 6 new, the 54th suite). Before it: **735 / 53**, Dev's run
+on 2026-10-12 on the same tree before the third increment; before that **733 / 53** at efa9085 (the composition increment, §3 *Composition: the Editor holds
+draco's innate ontology*, Dev's run earlier the same day), with the parse-scope and
 surface-loss rows below moved by the one corpus type it added and every other figure unchanged. Before it:
 723 / 52 at d181e64 (derivation, 2026-10-10), 713 / 51 at 462cde6 (the first authoring slice, 2026-10-09),
 701 / 50 at f54da3f (2026-10-07). The day
@@ -159,7 +163,11 @@ Use the record heading to describe its purpose. Dev restored this convention on
 breaks on paste and the remainder runs as shell commands. Write the message to a file and
 use `git commit -F <file>`. When a commit is meant to be path-scoped, put the pathspec on
 the *commit* (`git commit -F msg -- <paths>`) — the IDE auto-adds new files, so a scoped
-`git add` does not scope the commit.
+`git add` does not scope the commit. **A staged rename cannot be path-scoped:** its source path
+matches nothing once the index drops it (`git add -A -- old` is fatal), and a pathspec naming only
+the destination commits the add without the delete. The same holds for a never-committed file
+whose deletion is staged. When the tree holds a `git mv`, verify `git status --short` shows only
+the intended set and commit WITHOUT a pathspec (2026-10-13, after two failed blocks).
 
 **Model-authored prose is not Dev's intent.** Issues, memory notes, and review documents
 in this repo are largely model-authored and Dev-tolerated. Cite them as prior reasoning to
@@ -415,7 +423,8 @@ never a name) and no classpath lookup, so the validation sessions insert the ont
 `Assembly`. `draco.dreams.editor` gains `Latent` (one domain in candidate form: `definition` +
 `members`), `Actual` (the same + `problems`; `accepted` iff none; `domain` is a DYN deriving the
 populated DomainType, because a `DomainType` factory parameter would emit an uncompilable codec) and
-the `Editor` actor (`actorType(ontology, actual: Actual -> Unit)`, message `Latent`): per message it
+the `Editor` actor (`actorType(ontology, actual: Actual -> Unit)` then; `actorType(initial, actual, ontology)` since the
+delivery increment below; message `Latent`): per message it
 composes the candidate through `Domain(definition, members)`, the ontology that WOULD result, and fires
 the four core rules in a fresh stateful session over the candidate's populated members. It never
 consults the classpath and never mutates the ontology given. Latent and Actual operate on DOMAINS;
@@ -462,11 +471,65 @@ SelfDeclaration, DerivationResolvable, Uniqueness, CollectProblems) in a fresh s
 through `guard(problems.isEmpty).ifThenElse(accept(provisional), accept(accepted))` — only when every rule is
 quiet. Validating the WHOLE resulting ontology is what stops an update from orphaning a dependent: dropping
 a member another domain derives from is refused, naming the dependent. The Actual stays the report on one
-domain; delivering the grown ontology to a caller waits for the initialization client. The Draco actor's
+domain; delivering the grown ontology to a caller came the same afternoon (next paragraph). The Draco actor's
 own knowledge gains Uniqueness as a member rule. `UniquenessRulesTest` (2) is new; EditorTest pins the three
 agreed cases — a sibling accepted earlier now resolves, a collision is refused, an update replaces in place
 and cannot orphan. One corpus type added: 105 draco + 10 mods in scope, 1 loss across 115 types, 105 aspect
 sections, GenDrake 103 of 103 (table updated in this commit).
+
+**Delivery: the grown ontology reaches the caller through a consumer (2026-10-12, third increment; Dev's full run
+735 / 53 together with the fourth, record 1413).** The initialization client's first design point, settled before
+building. The Editor's state was readable by nobody outside it, and the ontology has NO CODEC (a domain holds a
+`TypeDictionary` of definitions), so it cannot ride a message or the JSON-codable Actual. Dev accepted "the ontology
+consumer on the Editor's factory": `actorType(initial: DomainOntology, actual: Response -> Unit, ontology: DomainOntology -> Unit)`
+(the consumer was `Actual -> Unit` for an hour, until the fourth increment typed it by User's Response) — the starting
+state is now `initial`, and per Latent, AFTER the Actual, `guard(problems.isEmpty).ifThenElse(ontology(accepted), ())`
+delivers the new state on acceptance only. A rejection delivers nothing, so a caller keeping its last delivery
+holds the current state. This is the consumer-of-M form of 2026-09-18, the one way draco actors reach anyone,
+and it holds in any target. Rejected: the ontology on the Actual (the report on one domain); a query message
+with a reply (the ontology would have to be a message). `()` is the first unit literal in the corpus: the parser
+carries it as a leaf and both renderers write it back as itself. No corpus type added, so no headline moves (the
+dreams domains are mods-staged, outside the scans).
+
+**User defines the requests, Editor the responses (2026-10-12, fourth increment; same run, 735 / 53).** Dev asked
+what the "client" is to their "User" and restated the original view: Editor and User support CRUD, User defining
+the request types and Editor the response types. Accepted reading: the initialization client IS a User — draco as
+its own first, endogenous user, not a new domain and not a Service type; Create and Update are the `Latent` (the
+ontology decides which, by identity); Read and Delete are LATER request types; the `Actual` is the response. So
+`Latent` MOVED to `draco.dreams.user`. Then the mutual dependency: Editor consumes User's request, a user consumes
+Editor's Actual — a cycle the ontology can hold but a Haskell module pair cannot. Accepted: User declares
+`Response`, the abstract reply (`problems`, `accepted`; elements, no factory — the Aspects precedent), and
+`Actual` DERIVES it: `type Actual from draco dreams user Response`, the corpus's first cross-package `from`. A
+qualified reference in a `from` header or a `messageType` line is SPACE-separated package words, like the domain
+line; the dotted form parses as one package word. The Editor's consumer is `(draco.dreams.user.Response -> Unit)`,
+so a user never names `Editor.Actual`; the dependency runs Editor → User only, and the ontology states it through
+derivation, the relationship it already projects (`dependencies(Editor)` = {User, Draco}; `dependencies(User)` =
+{Draco}). The generator carried the inherited `problems` into Actual's codec and factory and imported the parent's
+package unprompted. User holds Latent + Response; Editor holds Actual alone. EditorTest 16 (net +1 over the two
+increments), DreamsTest 12 (+1): 735 / 53, verified by Dev's full run with every headline unchanged.
+
+**Initialization: draco builds its innate ontology as its own first User (2026-10-12, fifth increment; same
+commit, Dev's full run 741 / 54 on 2026-10-13).** Dev accepted "the computed dependency order from an empty
+ontology". `draco.dreams.Initialization` is the Dreams domain's FIRST member — Dreams is the constructing layer,
+and the client must name both User (requests) and Editor (the actor), which neither may do without re-creating
+the cycle the fourth increment removed. It takes the canonical domains as Latents (SUPPLIED, never loaded: the
+consuming project owns persistence; the test supplies them through DomainBuilder) and ORDERS them from the
+definitions — `owns`, `parents` (named parents outside the Latent), `ready` (every parent some supplied domain
+owns is placed), `order` (a recursive dyn: a wave at a time, supplied order kept within a wave, a parent nobody
+supplied is no constraint, the remainder appended unchanged when no wave forms, so a cycle cannot hang it).
+Every loaded definition is rooted at DracoType, so Draco alone is the first wave. `editorType` mints the Editor
+over `DomainOntology()` with the client's own consumers `note` and `keep`; `run(editor)` sends the ordered
+Latents; `mut ontology` holds the last delivery — the first `mut` element in a plain type (trait `var`, factory
+body `override var`). Nothing is hand-listed. THE RUN FOUND A DEFECT: Format, then XML, JSON and Value, were
+refused — `Format(F)` is the corpus's one parameterized domain and self-declares bare (`domain draco format
+Format`, as its members point at it), and the 2026-10-09 SelfDeclaration compared the WHOLE TypeName. Dev's
+2026-10-12 principle decides it (parameters compose references, not definitions; a self-declaration points at
+the definition, keyed bare): `SelfDeclaration` and `DomainBuilder.validate` now compare `namePath`. This
+alignment is the model's application of Dev's principle, flagged in the handoff for Dev to correct. The
+endogenous run then accepts all 18 canonical domains, and the ontology it builds defines the client itself.
+`InitializationTest` (6) is new, the 54th suite; EditorTest's SelfDeclaration case now refuses a
+self-declaration naming ANOTHER definition and accepts the bare parameterized one. Next: Read and Delete as
+further User request types.
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member
@@ -618,6 +681,16 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   lost their trees this way on 2026-09-16; the generated Scala is identical, so no gate saw it.
   The operator layer restored all three on 2026-09-21. What the parser still cannot tree — a host
   `if`, a block — a sweep still de-trees: read the diff of every sweep.
+- **A qualified reference in a `from` header or a `messageType` line is SPACE-separated package words**
+  (`type Actual from draco dreams user Response`, `messageType draco dreams user Latent`), like the domain
+  line — not dotted. The dotted form parses silently as one package word and a mangled name; `DrakeCLI
+  parse` shows it at once (2026-10-12). Value types and expressions stay dotted (`draco.dreams.user.Latent`).
+- **`now` is a reserved word everywhere, including as a binding name.** A body binding called `now` is
+  read as the strictness marker; name the thing `wave`, `current`, anything else (2026-10-12).
+- **A self-declaration is keyed by name and package, parameters free.** `Format(F)` self-declares as
+  `domain draco format Format`, as its members point at it; a rule comparing the whole structural TypeName
+  refuses the corpus's own parameterized domain and everything deriving from it (the endogenous run found
+  it, 2026-10-12). The same principle as Uniqueness: parameters compose references, not definitions.
 
 ## 7. Claude Code / Codex handoffs
 

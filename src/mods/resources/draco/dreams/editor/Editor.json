@@ -14,7 +14,7 @@
       "parameters": [
         {
           "kind": "Parameter",
-          "name": "ontology",
+          "name": "initial",
           "valueType": "draco.DomainOntology"
         },
         {
@@ -22,7 +22,17 @@
           "name": "actual",
           "valueType": {
             "->": [
-              "Actual",
+              "draco.dreams.user.Response",
+              "Unit"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "ontology",
+          "valueType": {
+            "->": [
+              "draco.DomainOntology",
               "Unit"
             ]
           }
@@ -40,8 +50,7 @@
       ]
     },
     "elementTypeNames": [
-      "Actual",
-      "Latent"
+      "Actual"
     ]
   },
   "actorAspect": {
@@ -219,6 +228,31 @@
               }
             ]
           }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "problems.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "()": [
+                  "ontology",
+                  "accepted"
+                ]
+              },
+              "()"
+            ]
+          }
         }
       ]
     },
@@ -227,7 +261,7 @@
       "namePackage": [
         "draco",
         "dreams",
-        "editor"
+        "user"
       ]
     },
     "start": {
@@ -293,7 +327,7 @@
           "kind": "Mutable",
           "name": "accepted",
           "valueType": "draco.DomainOntology",
-          "value": "ontology"
+          "value": "initial"
         },
         {
           "kind": "Fixed",

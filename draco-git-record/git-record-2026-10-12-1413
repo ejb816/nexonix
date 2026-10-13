@@ -1,0 +1,98 @@
+Deliver the grown ontology, give User the requests, and let draco initialize its own ontology as its first User
+
+Three increments of 2026-10-12, each settled with Dev one point at a time before building,
+in one commit because the shared documents hold all three sets of edits. Dev's full run
+passed 735 tests / 53 suites on the tree holding the first two (every headline unchanged);
+the third — and the rule alignment it forced — awaits the next run, expected 741 / 54.
+
+ONE. How a caller receives the Editor's grown ontology — the initialization client's
+first design point. The accepted ontology was actor state nobody outside could read, and
+the Actual is the report on one domain. The ontology has NO CODEC (a domain holds a
+TypeDictionary of definitions), so it cannot ride a message or the JSON-codable Actual;
+and the Editor already reaches its caller the one way draco actors reach anyone, a
+consumer (the consumer-of-M form of 2026-09-18, which holds in any target). Dev accepted
+"the ontology consumer on the Editor's factory". The factory's starting state is renamed
+`initial`; per Latent, AFTER the Actual, guard(problems.isEmpty).ifThenElse(ontology(accepted), ())
+delivers the new state on acceptance only — a rejection delivers nothing, so a caller
+keeping its last delivery holds the current state. `()` is the first unit literal in the
+drake corpus: the parser carries it as a leaf and both renderers write it back as itself.
+
+TWO. Dev asked what my "client" is to their "User", and restated the original view: Editor
+and User support CRUD, User defining the request types and Editor the response types, as
+the client/server interface of editing. Accepted reading: the client IS a User — draco as
+its own first, endogenous user. Create and Update are the Latent (the ontology decides
+which, by identity); Read and Delete are later request types; the Actual is the response.
+So `Latent` MOVES to draco.dreams.user as the Create/Update request. Then the mutual
+dependency, raised at Dev's request: Editor consumes User's request, a user consumes
+Editor's Actual — a cycle the ontology can hold but a Haskell module pair cannot. Accepted:
+User declares `Response`, the abstract reply (`problems`, `accepted`; elements, no factory),
+and Editor's `Actual` DERIVES it — `type Actual from draco dreams user Response`, the
+corpus's first cross-package `from`, written with package words like the domain line. The
+Editor's consumer is typed `(draco.dreams.user.Response -> Unit)`, so a user consumes
+User.Response and never names Editor.Actual; the dependency runs Editor → User only, and
+the ontology states it through derivation, the relationship it already projects. The
+generator put the inherited `problems` into Actual's codec and factory unprompted (the
+Aspects/TypeDefinition precedent) and imported the parent's package.
+
+THREE. The client itself. Dev accepted "the computed dependency order from an empty
+ontology". `draco.dreams.Initialization`, the Dreams domain's first member — Dreams is the
+constructing layer, and the client must name both User (requests) and Editor (the actor),
+which neither of those two may do without re-creating the cycle TWO removed. It takes the
+canonical domains as Latents (supplied, not loaded: the consuming project owns persistence;
+the test supplies them through DomainBuilder from the resource tree) and ORDERS them from
+the definitions: `owns`, `parents` (named parents outside the Latent itself), `ready` (every
+parent some supplied domain owns is already placed), and `order`, a recursive dyn that
+places a wave at a time, keeps the supplied order within a wave, treats a parent nobody
+supplied as no constraint (the Editor refuses it), and appends the remainder unchanged
+when no wave forms, so a cycle cannot hang it. Every loaded definition is rooted at
+DracoType, so Draco alone is the first wave. `editorType` mints the Editor over
+`DomainOntology()` with the client's own consumers, `note` (every Response into a `[Response]+`)
+and `keep` (`mut ontology`, the last delivery); `run(editor)` sends the ordered Latents;
+`complete` and `accepted` read the state. The first `mut` element in a plain type: the
+trait declares `var`, the factory body binds `override var`. Nothing is hand-listed:
+adding a domain to the corpus never means editing the client.
+
+FOUND BY THE ENDOGENOUS RUN, and aligned in this commit: the run refused Format, then
+XML, JSON and Value dangling behind it. Format(F) is the corpus's one parameterized
+domain; its self-declaration — and every member's container pointer — is the bare
+`domain draco format Format`, and the SelfDeclaration rule of 2026-10-09 compared the
+WHOLE TypeName. Dev's later principle decides it (2026-10-12, Uniqueness): parameters
+compose references, not definitions; a self-declaration points at the definition, so it
+is keyed by name and package. `SelfDeclaration` now compares `namePath`, as does
+DomainBuilder.validate. SelfDeclarationRulesTest's parameter-mismatch test is inverted and
+checks Format(F) itself; EditorTest's case now refuses a self-declaration naming ANOTHER
+definition and accepts the bare one. This is a consequence of Dev's principle applied by
+the model, not a decision Dev took in dialogue — flagged in the handoff for correction.
+
+Measured: compiled-class probe (SelfDeclaration, DomainBuilder and the seven staged
+companions recompiled into probe dirs under target/scala-2.13 over an overlay of current
+main+mods resources, hidden dotfiles and the old editor/Latent excluded): the four changed
+suites 37 / 0 failed — InitializationTest 6 (trio ×2, computed order over the 18 canonical
+domains supplied in reverse, the cycle/dangling case, the endogenous run with all 18
+accepted and the client's own definition in the ontology it built, the JSON round trip),
+DreamsTest 12, EditorTest 16, SelfDeclarationRulesTest 3 — and seven unchanged suites
+(Foundation, DracoActor, DomainBuilder, Service, DomainOntology, Uniqueness,
+DerivationResolvable) 34 / 0 against the new rule. DrakeCLI check: dreams and user
+directories 0/0; main corpus the two authored-ahead files only. Expected sbt arithmetic
+from Dev's 733 / 53: EditorTest +1, DreamsTest +1, InitializationTest +6 = 741 / 54; no
+main-corpus TYPE added, so no report-only headline moves. Probe dirs removed. Dev's full run
+on 2026-10-13 then passed 741 tests / 54 suites, 0 failed, 0 aborted, every report-only
+headline unchanged; DRACO.md §1 records it as the baseline. (Two commit blocks failed on
+pathspecs before this one: the superseded record, then the source half of the staged
+Latent rename — a lesson now in DRACO.md §1.)
+
+Rejected: the ontology on the Actual (no codec; one domain's report); a query/reply
+message; delivering on rejections; response types in User beside the requests; accepting
+the Editor ↔ User cycle as an ontology edge; the client in User (would name Editor) or in
+Editor (a user's workflow is not the editor's); an authored bootstrap list; a report-only
+test tolerating the Format refusals (would bake the defect in); giving Format a
+parameterized self-declaration instead (the members' pointers are bare, and the principle
+says the definition is keyed bare).
+
+Found on the way: a qualified reference in a `from` header or a `messageType` line is
+SPACE-separated package words (`from draco dreams user Response`); the dotted form parses
+as one package word and a mangled name. `now` is reserved: the ordering wave is `wave`.
+
+Not done: Read and Delete request types with their responses; generation and activation;
+inferred derivation; membership reciprocity; chapter 94. No sbt, commit or push run by
+Claude.

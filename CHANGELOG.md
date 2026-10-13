@@ -39,6 +39,38 @@ for the definition that will replace it.
 
 ### Added
 
+- **The endogenous initialization client: draco as its own first User.**
+  `draco.dreams.Initialization`, the Dreams domain's first member, takes the canonical
+  domains as Latents, orders them from their definitions (a domain follows every supplied
+  domain its named parents reach; a parent nobody supplied is no constraint; a cycle keeps
+  the supplied order; Draco alone forms the first wave), mints the Editor over an empty
+  ontology with its own consumers, sends the Latents and keeps the last ontology delivered.
+  Its endogenous run accepts all 18 canonical domains and the ontology it builds defines
+  the client itself. `InitializationTest` (6) is new; Dev's full run on 2026-10-13: 741
+  tests / 54 suites, every report-only figure unchanged. (2026-10-12)
+- **`SelfDeclaration` compares name and package, parameters free** (Changed, found by that
+  run): `Format(F)`, the corpus's one parameterized domain, self-declares bare as its
+  members point at it, and the whole-TypeName comparison of 2026-10-09 refused it and
+  XML, JSON and Value behind it. A self-declaration points at the definition, which is
+  keyed bare — the Uniqueness principle. `DomainBuilder.validate` follows. (2026-10-12)
+- **User defines the requests, Editor the responses.** Dev's CRUD reading of the editing
+  interface: `Latent` moves to `draco.dreams.user` as the Create/Update request (the
+  ontology decides which, by identity; Read and Delete are later request types), and
+  User gains `Response`, the abstract reply (`problems`, `accepted`) that Editor's
+  `Actual` now derives — the corpus's first cross-package `from`, spelled with package
+  words. The Editor's message type is User's Latent and its consumer is typed by User's
+  Response, so Editor depends on User and never the reverse; the ontology states the edge
+  through derivation. The endogenous initialization client is draco as its own first
+  User. EditorTest 16, DreamsTest 12 (+1 each over Dev's baseline); mods-staged, no
+  headline moves; compiled-class probe, then Dev's full run: 735 tests / 53 suites, every
+  report-only figure unchanged. (2026-10-12)
+- **The Editor delivers its grown ontology through a consumer on its factory.** The
+  factory is now `actorType(initial, actual: Response -> Unit, ontology: DomainOntology -> Unit)`;
+  after the Actual, the new state is delivered on every acceptance and never on a
+  rejection, so a caller keeping its last delivery holds the current ontology. The
+  ontology has no codec, so it cannot ride a message or the Actual; this settles the
+  initialization client's first design point. `()` is the corpus's first unit literal.
+  Same run as the entry above. (2026-10-12)
 - **The Editor holds draco's innate ontology; `Uniqueness` guards it.** The Editor actor
   is stateful: each Latent is judged against the ontology that would result — every
   accepted domain plus the candidate, with `including(domain)` now replacing a domain

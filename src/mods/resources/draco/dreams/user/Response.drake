@@ -1,0 +1,5 @@
+type Response
+  elements
+    fix problems [draco.Problem]
+    dyn accepted Boolean problems.isEmpty
+domain draco dreams user User

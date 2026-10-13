@@ -86,8 +86,10 @@ object DomainBuilder {
   def validate(domain: DomainType): Seq[String] = {
     val td = domain.typeDefinition
 
+    // Name and package, parameters free (2026-10-12): a self-declaration points at the
+    // definition, and definitions are keyed bare — Format(F) self-declares as Format.
     val selfDeclaration: Seq[String] =
-      if (td.domainAspect.typeName == td.typeName) Nil
+      if (td.domainAspect.typeName.namePath == td.typeName.namePath) Nil
       else Seq(
         s"domain ${td.typeName.namePath} does not self-declare: " +
           s"domainAspect.typeName is ${td.domainAspect.typeName.namePath}")

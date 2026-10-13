@@ -28,8 +28,8 @@
           "kind": "Condition",
           "value": {
             "!=": [
-              "d.typeDefinition.domainAspect.typeName",
-              "d.typeDefinition.typeName"
+              "d.typeDefinition.domainAspect.typeName.namePath",
+              "d.typeDefinition.typeName.namePath"
             ]
           }
         }

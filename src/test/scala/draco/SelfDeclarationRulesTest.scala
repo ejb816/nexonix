@@ -88,18 +88,24 @@ class SelfDeclarationRulesTest extends AnyFunSuite {
       s"Problem should name the misdeclaring domain; got ${problems.head.subject.name}")
   }
 
-  test("SelfDeclaration compares the whole TypeName — a type-parameter mismatch is a misdeclaration") {
-    // Same name, same package, but the domain's own identity carries a parameter
-    // its self-declaration omits. TypeName compares structurally, parameters
-    // included (GitHub #37), and since 2026-10-09 the rule compares the whole
-    // name rather than name and package alone.
+  test("SelfDeclaration compares name and package, parameters free — a parameterized domain self-declares bare") {
+    // Same name, same package; the domain's own identity carries a parameter its
+    // self-declaration omits. From 2026-10-09 to 2026-10-12 the rule compared the whole
+    // structural TypeName (GitHub #37) and called this a misdeclaration. It is not: a
+    // self-declaration POINTS AT the definition, and definitions are keyed by name and
+    // package with parameters free (Dev, 2026-10-12, the Uniqueness principle —
+    // parameters compose references, not definitions). The corpus's one parameterized
+    // domain, Format(F), self-declares as `domain draco format Format`, exactly as its
+    // members point at it; the endogenous initialization run refused it, and XML, JSON
+    // and Value with it, until the rule was aligned.
     val parameterized: DomainType = Domain[Any](
       TypeDefinition(
         TypeName("Generic", _namePackage = Seq("draco"), _typeParameters = Seq(io.circe.Json.fromString("T"))),
         _domainAspect = DomainAspect(TypeName("Generic", _namePackage = Seq("draco")))))
 
-    val problems = validate(Seq(parameterized), Seq.empty)
-    assert(problems.size == 1, s"expected exactly one Problem; got ${problems.size}")
-    assert(problems.head.subject.name == "Generic")
+    assert(validate(Seq(parameterized), Seq.empty).isEmpty, "the bare self-declaration of a parameterized domain is not a problem")
+    val format = DomainBuilder.define("Format", Seq("draco", "format"))
+    assert(format.typeDefinition.typeName.typeParameters.nonEmpty && format.typeDefinition.domainAspect.typeName.typeParameters.isEmpty)
+    assert(validate(Seq(format), Seq.empty).isEmpty, "Format(F), the corpus's own case, passes")
   }
 }

@@ -1,15 +1,15 @@
 type Editor
   factory ActorType
     parameters
-      par ontology draco.DomainOntology
-      par actual (Actual -> Unit)
+      par initial draco.DomainOntology
+      par actual (draco.dreams.user.Response -> Unit)
+      par ontology (draco.DomainOntology -> Unit)
 domain draco dreams editor Editor
   types [
     Actual
-    Latent
   ]
 actor
-  messageType Latent
+  messageType draco dreams user Latent
   start
     fix rules org.evrete.api.Knowledge draco.Rule.knowledgeService.newKnowledge("Editor")
     mon draco.Completeness.ruleType.pattern(rules)
@@ -17,7 +17,7 @@ actor
     mon draco.DerivationResolvable.ruleType.pattern(rules)
     mon draco.Uniqueness.ruleType.pattern(rules)
     mon draco.CollectProblems.ruleType.pattern(rules)
-    mut accepted draco.DomainOntology ontology
+    mut accepted draco.DomainOntology initial
     fix accept (draco.DomainOntology -> Unit) \next -> accepted = next
   message
     fix candidate draco.DomainType draco.Domain(msg.definition, msg.members)
@@ -33,3 +33,4 @@ actor
     mon session.close()
     mon guard(problems.isEmpty).ifThenElse(accept(provisional), accept(accepted))
     mon actual(Actual(msg.definition, msg.members, problems.toSeq))
+    mon guard(problems.isEmpty).ifThenElse(ontology(accepted), ())

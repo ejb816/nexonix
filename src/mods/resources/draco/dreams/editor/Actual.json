@@ -8,6 +8,16 @@
     ]
   },
   "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Response",
+        "namePackage": [
+          "draco",
+          "dreams",
+          "user"
+        ]
+      }
+    ],
     "elements": [
       {
         "kind": "Fixed",
@@ -22,21 +32,6 @@
             "draco.TypeDefinition"
           ]
         }
-      },
-      {
-        "kind": "Fixed",
-        "name": "problems",
-        "valueType": {
-          "[]": [
-            "draco.Problem"
-          ]
-        }
-      },
-      {
-        "kind": "Dynamic",
-        "name": "accepted",
-        "valueType": "Boolean",
-        "value": "problems.isEmpty"
       },
       {
         "kind": "Dynamic",

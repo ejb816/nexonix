@@ -1,0 +1,608 @@
+{
+  "typeName": {
+    "name": "Initialization",
+    "namePackage": [
+      "draco",
+      "dreams"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "domains",
+        "valueType": {
+          "[]": [
+            "draco.dreams.user.Latent"
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "initial",
+        "valueType": "draco.DomainOntology"
+      },
+      {
+        "kind": "Fixed",
+        "name": "responses",
+        "valueType": {
+          "[]+": [
+            "draco.dreams.user.Response"
+          ]
+        }
+      },
+      {
+        "kind": "Mutable",
+        "name": "ontology",
+        "valueType": "draco.DomainOntology"
+      },
+      {
+        "kind": "Fixed",
+        "name": "note",
+        "valueType": {
+          "->": [
+            "draco.dreams.user.Response",
+            "Unit"
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "keep",
+        "valueType": {
+          "->": [
+            "draco.DomainOntology",
+            "Unit"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "owns",
+        "valueType": "Boolean",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "latent",
+            "valueType": "draco.dreams.user.Latent"
+          },
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "draco.TypeName"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Boolean",
+            "value": {
+              "||": [
+                {
+                  "==": [
+                    "latent.definition.typeName.namePath",
+                    "typeName.namePath"
+                  ]
+                },
+                {
+                  "()": [
+                    "latent.members.exists",
+                    {
+                      "\\": [
+                        "m",
+                        {
+                          "==": [
+                            "m.typeName.namePath",
+                            "typeName.namePath"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "parents",
+        "valueType": {
+          "[]": [
+            "draco.TypeName"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "latent",
+            "valueType": "draco.dreams.user.Latent"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "draco.TypeName"
+              ]
+            },
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "latent.members.prepended",
+                                "latent.definition"
+                              ]
+                            },
+                            "flatMap"
+                          ]
+                        },
+                        {
+                          "\\": [
+                            "td",
+                            {
+                              "()": [
+                                "draco.DracoAspect.parents",
+                                "td.dracoAspect"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "filter"
+                  ]
+                },
+                {
+                  "\\": [
+                    "p",
+                    {
+                      "()": [
+                        "!owns",
+                        "latent",
+                        "p"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "ready",
+        "valueType": "Boolean",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "latent",
+            "valueType": "draco.dreams.user.Latent"
+          },
+          {
+            "kind": "Parameter",
+            "name": "placed",
+            "valueType": {
+              "[]": [
+                "draco.dreams.user.Latent"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Boolean",
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "parents",
+                                "latent"
+                              ]
+                            },
+                            "filter"
+                          ]
+                        },
+                        {
+                          "\\": [
+                            "p",
+                            {
+                              "()": [
+                                "domains.exists",
+                                {
+                                  "\\": [
+                                    "l",
+                                    {
+                                      "()": [
+                                        "owns",
+                                        "l",
+                                        "p"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "forall"
+                  ]
+                },
+                {
+                  "\\": [
+                    "p",
+                    {
+                      "()": [
+                        "placed.exists",
+                        {
+                          "\\": [
+                            "l",
+                            {
+                              "()": [
+                                "owns",
+                                "l",
+                                "p"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "order",
+        "valueType": {
+          "[]": [
+            "draco.dreams.user.Latent"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "placed",
+            "valueType": {
+              "[]": [
+                "draco.dreams.user.Latent"
+              ]
+            }
+          },
+          {
+            "kind": "Parameter",
+            "name": "remaining",
+            "valueType": {
+              "[]": [
+                "draco.dreams.user.Latent"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "wave",
+            "valueType": {
+              "[]": [
+                "draco.dreams.user.Latent"
+              ]
+            },
+            "value": {
+              "()": [
+                "remaining.filter",
+                {
+                  "\\": [
+                    "l",
+                    {
+                      "()": [
+                        "ready",
+                        "l",
+                        "placed"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "rest",
+            "valueType": {
+              "[]": [
+                "draco.dreams.user.Latent"
+              ]
+            },
+            "value": {
+              "()": [
+                "remaining.filterNot",
+                {
+                  "\\": [
+                    "l",
+                    {
+                      "()": [
+                        "ready",
+                        "l",
+                        "placed"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "draco.dreams.user.Latent"
+              ]
+            },
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "guard",
+                        "wave.isEmpty"
+                      ]
+                    },
+                    "ifThenElse"
+                  ]
+                },
+                {
+                  "++": [
+                    "placed",
+                    "remaining"
+                  ]
+                },
+                {
+                  "()": [
+                    "order",
+                    {
+                      "++": [
+                        "placed",
+                        "wave"
+                      ]
+                    },
+                    "rest"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "ordered",
+        "valueType": {
+          "[]": [
+            "draco.dreams.user.Latent"
+          ]
+        },
+        "value": {
+          "()": [
+            "order",
+            {
+              "[]": [
+              ]
+            },
+            "domains"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "editorType",
+        "valueType": "draco.ActorType",
+        "value": {
+          "()": [
+            "draco.dreams.editor.Editor.actorType",
+            "initial",
+            "note",
+            "keep"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "run",
+        "valueType": "Unit",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "editor",
+            "valueType": {
+              "->": [
+                "draco.dreams.user.Latent",
+                "Unit"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Unit",
+            "value": {
+              "()": [
+                "ordered.foreach",
+                "editor"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "complete",
+        "valueType": "Boolean",
+        "value": {
+          "==": [
+            "responses.size",
+            "domains.size"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "accepted",
+        "valueType": "Boolean",
+        "value": {
+          "&&": [
+            "complete",
+            {
+              "()": [
+                "responses.forall",
+                {
+                  "\\": [
+                    "r",
+                    "r.accepted"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Initialization",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "domains",
+          "valueType": {
+            "[]": [
+              "draco.dreams.user.Latent"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "domains",
+          "valueType": {
+            "[]": [
+              "draco.dreams.user.Latent"
+            ]
+          },
+          "value": "_domains"
+        },
+        {
+          "kind": "Fixed",
+          "name": "initial",
+          "valueType": "draco.DomainOntology",
+          "value": {
+            "()": [
+              "draco.DomainOntology"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "responses",
+          "valueType": {
+            "[]+": [
+              "draco.dreams.user.Response"
+            ]
+          },
+          "value": {
+            "()": [
+              "scala.collection.mutable.ArrayBuffer"
+            ]
+          }
+        },
+        {
+          "kind": "Mutable",
+          "name": "ontology",
+          "valueType": "draco.DomainOntology",
+          "value": "initial"
+        },
+        {
+          "kind": "Fixed",
+          "name": "note",
+          "valueType": {
+            "->": [
+              "draco.dreams.user.Response",
+              "Unit"
+            ]
+          },
+          "value": {
+            "\\": [
+              "r",
+              {
+                "()": [
+                  "add",
+                  "responses",
+                  "r"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "keep",
+          "valueType": {
+            "->": [
+              "draco.DomainOntology",
+              "Unit"
+            ]
+          },
+          "value": {
+            "\\": [
+              "o",
+              "ontology = o"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Dreams",
+      "namePackage": [
+        "draco",
+        "dreams"
+      ]
+    }
+  }
+}

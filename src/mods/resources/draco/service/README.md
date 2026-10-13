@@ -14,8 +14,9 @@ The handwritten staging engine under src/mods/scala/draco/service/zeromq contain
 PairTextTransport (socket ownership and text queues), BridgeRules (JSON and dictionary
 routing rules) and ZeroMqBridge (the Draco actor membrane). This is an executable
 transport fixture, not the primordial authoring service. ServiceConfiguration now exists
-(it contains an Assembly, nothing more yet); DomainInterface, further authoring
-operations and the initialization client remain unimplemented.
+(it contains an Assembly, nothing more yet); DomainInterface and further authoring
+operations remain unimplemented. The endogenous initialization client exists since
+2026-10-12 as `draco.dreams.Initialization` (see the Dreams README), not here.
 
 ## Agreed direction (recorded October 5, 2026)
 
@@ -76,4 +77,8 @@ before authoring implementation. Editor is the intended home for editing applica
 concepts; Service retains reusable service capabilities. These domains are composed
 as ontology peers. The first authoring slice (2026-10-09) lives in Editor: Latent, Actual
 and the Editor actor; see the Dreams README. Service gained ServiceConfiguration, which
-contains an Assembly, the same day.
+contains an Assembly, the same day. Since 2026-10-12 the editing interface is Dev's CRUD
+reading: User defines the requests (Latent, the Create/Update request, moved there) and
+the abstract Response that Editor's Actual derives; the endogenous initialization client
+named in the agreed direction above is draco acting as its own first User, not a Service
+type, so Service stays free to host the external client's transport.

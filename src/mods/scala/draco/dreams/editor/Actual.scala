@@ -2,14 +2,13 @@ package draco.dreams.editor
 
 import draco.dreams._
 import draco._
+import draco.dreams.user._
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
-trait Actual extends DracoType {
+trait Actual extends Response {
   val definition: draco.TypeDefinition
   val members: Seq[draco.TypeDefinition]
-  val problems: Seq[draco.Problem]
-  def accepted: Boolean = problems.isEmpty
   def domain: draco.DomainType = draco.Domain(definition, members)
 }
 

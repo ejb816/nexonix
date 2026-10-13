@@ -6,18 +6,29 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-10-12, by Claude Code, closing the session for a handoff. Destination:
-  either agent; Dev named the OpenAI platform (Codex) as the likely next. Everything the
-  next agent needs is in tracked project files — DRACO.md, this file, the records, chapter
-  93 and its audit; no Claude-private memory is required or relied upon. (the second
-  increment of the day; the first authoring slice is 462cde6, its verification note b8d9a34).
-- Observed branch/HEAD: main at efa9085, pushed; Dev's paste shows `main...origin/main`
-  clean after the push. That commit is the composition increment.
-- Pending after it, documentation only: the verified-baseline note, journal chapter 93 with
-  its bounded extract and audit, the intro index, both sync markers to 93, this file and
-  record `git-record-2026-10-12-1247`.
-- Destination: either agent. Dev alternates sessions; the next step is Dev's full
-  `sbt test`, then the commit/push.
+- Updated: 2026-10-12 (afternoon), by Claude Code, after the delivery increment was built
+  and probe-verified. Everything the next agent needs is in tracked project files —
+  DRACO.md, this file, the records, chapter 93 and its audit; no Claude-private memory is
+  required or relied upon.
+- Observed branch/HEAD at session start: main at fcc80ba, clean — the chapter-93
+  documentation commit, one after efa9085 (the composition increment). The remote was
+  not queried.
+- In the tree, uncommitted, for ONE combined commit: the delivery, CRUD and initialization
+  increments — under `src/mods/{resources,scala}/draco/dreams/` the Editor and Actual
+  trios (editor), the User and new Response trios and the Latent trio moved from editor
+  to user (`git mv`, staged), the Dreams trio and the new Initialization trio; in core the
+  `SelfDeclaration` trio (namePath comparison) and `DomainBuilder` (mods); `EditorTest`,
+  `DreamsTest`, `SelfDeclarationRulesTest` and the new `InitializationTest`; DRACO.md §1,
+  §3 (three paragraphs) and §6 (three gotchas), README, CHANGELOG (four entries), the
+  Dreams, Service and mods READMEs, this file and record `git-record-2026-10-12-1413`. No
+  main-corpus TYPE was added, so no report-only headline moves.
+- Gate: Dev's full `sbt test` on 2026-10-13 passed **741 tests / 54 suites, 0 failed, 0
+  aborted**, every report-only headline unchanged, on the combined tree (an earlier run on
+  the first two increments had passed 735 / 53). Two commit blocks failed on pathspecs —
+  first the superseded record, then the source half of the staged Latent rename, which
+  `git add` refuses once the index no longer holds it. The index is exactly the intended
+  set and nothing else is in the tree, so the commit goes without a pathspec.
+- Destination: either agent. Dev alternates sessions.
 - Permission: Dev authorized both agents to maintain the journal and shared documentation
   on September 23. sbt, commit, push and new-issue restrictions remain in force.
 
@@ -45,6 +56,34 @@ snapshot against the current tree before acting.
   elements) is a later rule. Scope of the second increment: the relationship alone —
   `Derivation`, projected `derivations`, `dependencies`, `including`, the rule reading
   edges — Editor untouched. Composing accepted Actuals into the ontology is still ahead.
+- **The grown ontology reaches the caller through a consumer on the Editor's factory**
+  (Dev, 2026-10-12 afternoon, the initialization client's first design point): the ontology
+  has no codec, so it cannot ride a message or the Actual; the Editor's factory takes
+  `ontology: DomainOntology -> Unit` beside `actual`, invoked after the Actual on every
+  acceptance and never on a rejection. A caller keeping its last delivery holds the current
+  state. Chapter 91's candidate-batch idea remains superseded, not pending.
+- **User defines the requests, Editor the responses** (Dev, 2026-10-12 afternoon, restating
+  the original CRUD view of Editor and User; accepted as the client/server interface of
+  editing). The "client" is a User: the endogenous initialization client is draco as its own
+  first User, not a new domain and not a Service type. Create and Update are the `Latent`
+  (the ontology decides which, by identity); Read and Delete are LATER request types; the
+  `Actual` is the response. `Latent` therefore lives in `draco.dreams.user`.
+- **An abstract `Response` in User, derived by Editor's `Actual`** (Dev, same afternoon,
+  after the mutual-dependency point was raised at Dev's request): a user consumes
+  `User.Response` (`problems`, `accepted`), never `Editor.Actual`, so Editor depends on User
+  and never the reverse — a cycle the ontology could hold but a Haskell module pair cannot.
+- **The computed dependency order from an empty ontology** (Dev, same afternoon, the
+  client's bootstrap order): one Latent per canonical domain, ordered from the definitions
+  themselves, Draco first, nothing hand-listed. The client's home — `draco.dreams.Dreams`,
+  the constructing layer — is the model's placement (it must name both User and Editor,
+  which neither may do), stated, not asked; Dev may move it.
+- **SelfDeclaration over name and package, parameters free** — NOT a decision Dev took in
+  dialogue. The endogenous run refused `Format(F)` (bare self-declaration, as its members
+  point) and XML, JSON and Value behind it; the model applied Dev's 2026-10-12 principle
+  (parameters compose references, not definitions; a self-declaration points at the
+  definition) and aligned the rule, reversing the 2026-10-09 whole-TypeName comparison.
+  Flagged for Dev to confirm or correct; the alternative (a parameterized self-declaration
+  on Format) was rejected because the members' container pointers are bare.
 
 ## Completed Development
 
@@ -62,6 +101,35 @@ snapshot against the current tree before acting.
 - **Editor.** `Latent`, `Actual` and the `Editor` actor in `draco.dreams.editor`, as
   generated trios under `src/mods/{resources,scala}/draco/dreams/editor`. Actual's
   populated `domain` is a dyn, not a carried field (codec eligibility is not transitive).
+- **Delivery (2026-10-12 afternoon).** The Editor's factory is
+  `actorType(initial, actual: Actual -> Unit, ontology: DomainOntology -> Unit)`; after the
+  Actual, `guard(problems.isEmpty).ifThenElse(ontology(accepted), ())` delivers the new state
+  on acceptance only. `()` is the corpus's first unit literal; it round-trips as a leaf.
+  EditorTest's helper collects both consumers and their interleaving; two tests pin the
+  contract.
+- **CRUD reading (2026-10-12 afternoon).** `Latent` trio moved to `draco.dreams.user`
+  (`git mv`); new `draco.dreams.user.Response` (`fix problems [draco.Problem]`, `dyn accepted
+  Boolean problems.isEmpty`, no factory — abstract, the Aspects precedent); `Actual` is
+  `type Actual from draco dreams user Response` keeping definition, members and the derived
+  domain, its factory supplying `problems`, its codec carrying the inherited slot; `Editor`
+  has `messageType draco dreams user Latent`, `types [Actual]`, consumer
+  `(draco.dreams.user.Response -> Unit)`; `User` has `types [Latent, Response]`. A qualified
+  reference in `from` and `messageType` is SPACE-separated package words. EditorTest: Latent
+  trio checks gone, a dependency-direction test added (16). DreamsTest rewritten: Dreams
+  anchor folded to one test, User/Latent/Response trio checks, request-domain and
+  abstract-Response tests, the composition test pinning Latent at user and Editor → User (12).
+- **Initialization client (2026-10-12 afternoon).** `draco.dreams.Initialization`, Dreams'
+  first member (Dreams trio updated): `fix domains [Latent]`, `fix initial DomainOntology`
+  (`DomainOntology()`), `fix responses [Response]+`, `mut ontology`, consumers `note`/`keep`,
+  dyns `owns`, `parents`, `ready`, `order` (recursive, wave by wave), `ordered`,
+  `editorType` (mints the Editor with the client's consumers), `run(editor)`, `complete`,
+  `accepted`; codec over `domains` only. `SelfDeclaration` trio and `DomainBuilder.validate`
+  compare `namePath`. `InitializationTest` (6): trio ×2, computed order over the 18 canonical
+  domains supplied in reverse, cycle/dangling case, the endogenous run (all 18 accepted, the
+  client in the ontology it built), JSON round trip. `SelfDeclarationRulesTest`'s
+  parameter test inverted (checks Format(F) itself); EditorTest's SelfDeclaration case
+  refuses a self-declaration naming another definition and accepts the bare one;
+  DreamsTest's Dreams tests expect the one member.
 - **Tests.** `EditorTest` (13: six trio checks, one structural, six behavioural: acceptance
   with a populated domain, Completeness/DerivationResolvable/SelfDeclaration problems,
   ordering and non-mutation, JSON round trip). ServiceTest +2, SelfDeclarationRulesTest +1,
@@ -72,6 +140,37 @@ snapshot against the current tree before acting.
   ZEROMQ contract, Service/Dreams/mods READMEs, CHANGELOG (Added + Changed), git record.
 
 ## Verification
+
+Initialization increment + SelfDeclaration alignment (2026-10-12 afternoon): Dev's full run
+on 2026-10-13 passed **741 tests / 54 suites, 0 failed, 0 aborted**, every report-only
+headline unchanged — the current verified baseline, recorded in DRACO.md §1. Before it,
+Claude did not run sbt. A compiled-class probe recompiled `SelfDeclaration`,
+`DomainBuilder` and the seven staged companions (Dreams, Initialization, User, Latent,
+Response, Actual, Editor) into `target/scala-2.13/probe-{classes,test-classes}` over an
+overlay of current resources on Dev's efa9085 classes (hidden dotfiles and the old
+editor/Latent excluded) and ran the four changed suites — **InitializationTest 6,
+DreamsTest 12, EditorTest 16, SelfDeclarationRulesTest 3: 37 / 0 failed** — and seven
+unchanged suites against the new rule (Foundation, DracoActor, DomainBuilder, Service,
+DomainOntology, Uniqueness, DerivationResolvable: **34 / 0**). `DrakeCLI check`: dreams and
+user 0/0, main corpus the two authored-ahead files only. Expected sbt arithmetic from Dev's
+733 / 53: +1 +1 +6 = **741 / 54**, no headline moves (no main-corpus TYPE added). Probe
+dirs removed. Dev's full run is the gate. Before the Format finding, the first probe of
+this increment had the endogenous run refusing 4 of 18 domains — the finding, not a
+test defect.
+
+Delivery + CRUD increments (2026-10-12 afternoon): Dev's full run passed **735 tests / 53
+suites, 0 failed, 0 aborted**, every report-only headline unchanged — the current verified
+baseline, recorded in DRACO.md §1. Before it, Claude did not run sbt.
+A compiled-class probe recompiled the five regenerated companions (user: User, Latent,
+Response; editor: Actual, Editor) and both suites into `target/scala-2.13/probe-{classes,
+test-classes}` over an overlay of the current main and mods resources on Dev's efa9085
+classes (hidden dotfiles and the old editor/Latent excluded) and ran them with the
+scalatest Runner: **EditorTest 16 / 0 failed** (was 15), **DreamsTest 12 / 0 failed** (was
+11), **ServiceTest 9 / 0** unchanged. `DrakeCLI check` on both directories: surface drift
+0, json drift 0. Two probe iterations caught defects in the new DreamsTest assertions only
+(a loaded definition is rooted at DracoType; every dreams domain therefore depends on
+Draco). Expected sbt arithmetic from 733 / 53: +1 +1 = **735 / 53**, no headline moves.
+Probe dirs removed. Dev's full run is the gate.
 
 Composition increment: Dev's full run on 2026-10-12 passed **733 tests / 53 suites, 0 failed,
 0 aborted**, headlines at 105 draco + 10 mods, one loss across 115 types, 105 aspect
@@ -129,21 +228,28 @@ verified baseline; DRACO.md §1 records it.
 
 ## Resumption
 
-1. The gate and the commit are done (efa9085). Commit this documentation pass.
+1. Three increments are in the tree for one combined commit, gated at 741 / 54, which
+   the documents already record. Remaining: the commit with
+   `draco-git-record/git-record-2026-10-12-1413` (no pathspec: the staged rename's
+   source half cannot be named) and the push; the hash can join DRACO.md §1 with the next
+   documentation touch. Dev should also confirm or correct the SelfDeclaration alignment
+   (Decisions above).
 
-2. Next authorized work, in Dev's accepted order: the endogenous initialization client
-   over existing actors/messages (it needs a way to receive the Editor's grown ontology —
-   the open design point); then generation and activation as explicit operations.
+2. Next authorized work, in Dev's accepted order: Read and Delete as further User
+   request types with Editor responses (Read of one domain answers with an Actual;
+   Delete needs an `excluding` beside `including`, and the whole-ontology validation
+   already refuses orphaning); then generation and activation as explicit operations.
    Later: inferred derivation (classification by shared elements). Candidate rule
    surfaced, not filed: membership reciprocity (a supplied member the domain does not
-   name is silently dropped).
+   name is silently dropped). Open each with one design point before building.
 
 ### First action for the next agent
 
-Read DRACO.md, this file and the 2026-10-09 record; inspect `git status` and `git log`.
-Expect HEAD at or after efa9085 with a clean tree; the baseline is 733 / 53. Read chapter 93
-and DRACO.md §3's three 2026-10-09/12 paragraphs for the decisions. Open the initialization
-client with its first design question — how a caller receives the Editor's grown ontology —
-and settle it with Dev before building; the candidate-batch idea from chapter 91 is still
-not an accepted protocol. Write chapter 93 when Dev asks for the
-journal; then design the ontology-composition increment with Dev before building.
+Read DRACO.md, this file and the 2026-10-12-1413 record; inspect `git status` and
+`git log`. If the increments are still uncommitted, expect HEAD at fcc80ba with the files
+listed in the Checkpoint modified or staged (the Latent move as a rename) and Dev's
+741 / 54 gate still to run; if committed, expect a clean tree one commit after fcc80ba at
+that baseline. Read chapter 93 and DRACO.md §3's six 2026-10-09/12 paragraphs for the
+decisions. Chapter 94 (this session, from the initialization-client opening) is
+unwritten; write it when Dev asks for the journal. Then open Read and Delete with Dev
+before building.

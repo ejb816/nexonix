@@ -1,0 +1,58 @@
+type Initialization
+  elements
+    fix domains [draco.dreams.user.Latent]
+    fix initial draco.DomainOntology
+    fix responses [draco.dreams.user.Response]+
+    mut ontology draco.DomainOntology
+    fix note (draco.dreams.user.Response -> Unit)
+    fix keep (draco.DomainOntology -> Unit)
+    dyn owns Boolean [
+      parameters
+        par latent draco.dreams.user.Latent
+        par typeName draco.TypeName
+      body
+        fix value Boolean latent.definition.typeName.namePath == typeName.namePath || latent.members.exists(\m -> m.typeName.namePath == typeName.namePath)
+    ]
+    dyn parents [draco.TypeName] [
+      parameters
+        par latent draco.dreams.user.Latent
+      body
+        fix value [draco.TypeName] latent.members.prepended(latent.definition).flatMap(\td -> draco.DracoAspect.parents(td.dracoAspect)).filter(\p -> !owns(latent, p))
+    ]
+    dyn ready Boolean [
+      parameters
+        par latent draco.dreams.user.Latent
+        par placed [draco.dreams.user.Latent]
+      body
+        fix value Boolean parents(latent).filter(\p -> domains.exists(\l -> owns(l, p))).forall(\p -> placed.exists(\l -> owns(l, p)))
+    ]
+    dyn order [draco.dreams.user.Latent] [
+      parameters
+        par placed [draco.dreams.user.Latent]
+        par remaining [draco.dreams.user.Latent]
+      body
+        fix wave [draco.dreams.user.Latent] remaining.filter(\l -> ready(l, placed))
+        fix rest [draco.dreams.user.Latent] remaining.filterNot(\l -> ready(l, placed))
+        fix value [draco.dreams.user.Latent] guard(wave.isEmpty).ifThenElse(placed ++ remaining, order(placed ++ wave, rest))
+    ]
+    dyn ordered [draco.dreams.user.Latent] order([], domains)
+    dyn editorType draco.ActorType draco.dreams.editor.Editor.actorType(initial, note, keep)
+    dyn run Unit [
+      parameters
+        par editor (draco.dreams.user.Latent -> Unit)
+      body
+        fix value Unit ordered.foreach(editor)
+    ]
+    dyn complete Boolean responses.size == domains.size
+    dyn accepted Boolean complete && responses.forall(\r -> r.accepted)
+  factory
+    parameters
+      par domains [draco.dreams.user.Latent] []
+    body
+      fix domains [draco.dreams.user.Latent] _domains
+      fix initial draco.DomainOntology draco.DomainOntology()
+      fix responses [draco.dreams.user.Response]+ scala.collection.mutable.ArrayBuffer()
+      mut ontology draco.DomainOntology initial
+      fix note (draco.dreams.user.Response -> Unit) \r -> add(responses, r)
+      fix keep (draco.DomainOntology -> Unit) \o -> ontology = o
+domain draco dreams Dreams

@@ -17,7 +17,7 @@ for the bounded bridge under scala/draco/service/zeromq.
 [Dreams](resources/draco/dreams/README.md) stages the Dreams, Editor and User
 domains. They compose as peers with Draco and Service in the domain ontology, with no
 implied domain inheritance or membership from their package layout. Editor holds the
-first authoring slice: Latent, Actual and the Editor actor (2026-10-09).
+first authoring slice: Latent, Actual and the Editor actor (2026-10-09). Since 2026-10-12 User holds the requests — Latent, and the abstract Response that Actual derives — so Editor depends on User, never the reverse; Dreams holds Initialization, the endogenous client that builds draco's innate ontology as its own first User.
 
 **Constraints:**
 - Depends on `src/main`'s artifact (via sbt's `dependsOn(root)`).

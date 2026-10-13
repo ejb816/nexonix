@@ -1,0 +1,39 @@
+{
+  "typeName": {
+    "name": "Response",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "user"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "problems",
+        "valueType": {
+          "[]": [
+            "draco.Problem"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "accepted",
+        "valueType": "Boolean",
+        "value": "problems.isEmpty"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "User",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    }
+  }
+}

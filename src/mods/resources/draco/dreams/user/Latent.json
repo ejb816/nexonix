@@ -4,7 +4,7 @@
     "namePackage": [
       "draco",
       "dreams",
-      "editor"
+      "user"
     ]
   },
   "dracoAspect": {
@@ -51,11 +51,11 @@
   },
   "domainAspect": {
     "typeName": {
-      "name": "Editor",
+      "name": "User",
       "namePackage": [
         "draco",
         "dreams",
-        "editor"
+        "user"
       ]
     }
   }

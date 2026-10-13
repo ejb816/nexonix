@@ -6,4 +6,4 @@ type Latent
     parameters
       par definition draco.TypeDefinition
       par members [draco.TypeDefinition] []
-domain draco dreams editor Editor
+domain draco dreams user User

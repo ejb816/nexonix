@@ -521,7 +521,22 @@ plus the problems found, accepted iff none). Since 2026-10-12 the Editor holds t
 ontology — draco's own innate ontology, self-referentially — judging every Latent against the whole
 ontology that would result and swapping its state only when every rule is quiet, so a sibling accepted
 earlier resolves, a collision is refused, and an update replaces in place without orphaning a dependent.
-The endogenous initialization client, generation and activation follow as explicit steps.
+The grown ontology reaches the caller through a second consumer on the Editor's factory, after the
+Actual, on every acceptance and never on a rejection — the ontology has no codec, so it cannot ride a
+message or the Actual, and a caller keeping its last delivery holds the current state (2026-10-12,
+the initialization client's first design point). The editing interface is Dev's CRUD reading, the same
+day: User defines the requests, Editor the responses. `Latent` moved to `draco.dreams.user` as the
+Create/Update request (the ontology decides which, by identity; Read and Delete come later), and User's
+abstract `Response` (`problems`, `accepted`) is what Editor's `Actual` derives and what a user consumes,
+so Editor depends on User and never the reverse — the ontology states that edge through derivation.
+The endogenous initialization client is draco acting as its own first User: `draco.dreams.Initialization`,
+the Dreams domain's first member, takes the canonical domains as Latents, orders them from their own
+definitions (a domain follows every supplied domain its named parents reach; Draco alone forms the first
+wave), mints the Editor over an empty ontology with its own consumers, sends the Latents, and keeps the
+last ontology delivered — draco's innate ontology, which defines the client itself. Its first run found
+that the corpus's one parameterized domain, `Format(F)`, self-declares bare, so `SelfDeclaration` now
+compares name and package with parameters free, the same principle as Uniqueness. Read and Delete
+request types, generation and activation follow as explicit steps.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation
 and activation follow as explicit operations. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
@@ -706,5 +721,13 @@ derivation validation and `ServiceConfiguration`), committed as 462cde6 after De
 713 tests / 51 suites with unchanged report-only baselines. The derivation relationship followed
 as d181e64 (built 2026-10-09, Dev's full run 723 tests / 52 suites on 2026-10-10), and the Editor became
 the holder of the accepted ontology as efa9085 (2026-10-12, Dev's full run 733 tests / 53 suites).
+Two more increments were built and probe-verified the same afternoon, and Dev's full run passed
+735 tests / 53 suites with every report-only figure unchanged: the Editor's grown ontology reaching
+the caller through a consumer on its factory, and the CRUD reading — Latent moved to User as the
+request, User's abstract Response derived by Editor's Actual, the dependency running one way. A
+third followed in the same commit, and Dev's full run on 2026-10-13 passed 741 tests / 54 suites with
+every report-only figure unchanged: the initialization client, draco as its own first User, whose
+endogenous run accepts all eighteen canonical domains once SelfDeclaration compares name and package
+with parameters free.
 
 <!-- draco-docs-synced-through: chapter 93 -->

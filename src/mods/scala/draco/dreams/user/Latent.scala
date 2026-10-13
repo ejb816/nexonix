@@ -1,4 +1,4 @@
-package draco.dreams.editor
+package draco.dreams.user
 
 import draco.dreams._
 import draco._
@@ -11,9 +11,9 @@ trait Latent extends DracoType {
 }
 
 object Latent extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Latent", _namePackage = Seq ("draco", "dreams", "editor")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Latent", _namePackage = Seq ("draco", "dreams", "user")))
   lazy val dracoType: Type[Latent] = Type[Latent] (typeDefinition)
-  lazy val domainType: Domain[Editor] = Domain[Editor] (typeDefinition)
+  lazy val domainType: Domain[User] = Domain[User] (typeDefinition)
 
   implicit lazy val encoder: Encoder[Latent] = Encoder.instance { x =>
     val fields = Seq(
