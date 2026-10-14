@@ -2,5 +2,6 @@ type User
 domain draco dreams user User
   types [
     Latent
+    Request
     Response
   ]

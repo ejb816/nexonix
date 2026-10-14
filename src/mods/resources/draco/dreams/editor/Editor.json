@@ -58,206 +58,213 @@
       "kind": "Action",
       "body": [
         {
-          "kind": "Fixed",
-          "name": "candidate",
-          "valueType": "draco.DomainType",
-          "value": {
-            "()": [
-              "draco.Domain",
-              "msg.definition",
-              "msg.members"
-            ]
-          }
-        },
-        {
-          "kind": "Fixed",
-          "name": "provisional",
-          "valueType": "draco.DomainOntology",
-          "value": {
-            "()": [
-              "accepted.including",
-              "candidate"
-            ]
-          }
-        },
-        {
-          "kind": "Fixed",
-          "name": "definitions",
-          "valueType": {
-            "[]": [
-              "draco.TypeDefinition"
-            ]
-          },
-          "value": {
-            "()": [
-              "provisional.keys.toSeq.flatMap",
-              {
-                "\\": [
-                  "domain",
+          "kind": "Case",
+          "name": "latent",
+          "valueType": "draco.dreams.user.Latent",
+          "body": [
+            {
+              "kind": "Fixed",
+              "name": "candidate",
+              "valueType": "draco.DomainType",
+              "value": {
+                "()": [
+                  "draco.Domain",
+                  "latent.definition",
+                  "latent.members"
+                ]
+              }
+            },
+            {
+              "kind": "Fixed",
+              "name": "provisional",
+              "valueType": "draco.DomainOntology",
+              "value": {
+                "()": [
+                  "accepted.including",
+                  "candidate"
+                ]
+              }
+            },
+            {
+              "kind": "Fixed",
+              "name": "definitions",
+              "valueType": {
+                "[]": [
+                  "draco.TypeDefinition"
+                ]
+              },
+              "value": {
+                "()": [
+                  "provisional.keys.toSeq.flatMap",
                   {
-                    "()": [
-                      "domain.typeDictionary.elementTypes.prepended",
-                      "domain.typeDefinition"
+                    "\\": [
+                      "domain",
+                      {
+                        "()": [
+                          "domain.typeDictionary.elementTypes.prepended",
+                          "domain.typeDefinition"
+                        ]
+                      }
                     ]
                   }
                 ]
               }
-            ]
-          }
-        },
-        {
-          "kind": "Fixed",
-          "name": "problems",
-          "valueType": {
-            "[]+": [
-              "draco.Problem"
-            ]
-          },
-          "value": {
-            "()": [
-              "scala.collection.mutable.ArrayBuffer"
-            ]
-          }
-        },
-        {
-          "kind": "Fixed",
-          "name": "session",
-          "valueType": "org.evrete.api.StatefulSession",
-          "value": {
-            "()": [
-              "rules.newStatefulSession",
-              "org.evrete.api.ActivationMode.CONTINUOUS"
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              "session.set",
-              "\"problems\"",
-              "problems"
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              "session.insert",
-              "provisional.keys.toSeq: _*"
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              "session.insert",
-              "definitions.toSeq: _*"
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              "session.insert",
-              "Seq(provisional): _*"
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              "session.fire"
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              "session.close"
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              {
-                ".": [
-                  {
-                    "()": [
-                      "guard",
-                      "problems.isEmpty"
-                    ]
-                  },
-                  "ifThenElse"
+            },
+            {
+              "kind": "Fixed",
+              "name": "problems",
+              "valueType": {
+                "[]+": [
+                  "draco.Problem"
                 ]
               },
-              {
+              "value": {
                 "()": [
-                  "accept",
-                  "provisional"
-                ]
-              },
-              {
-                "()": [
-                  "accept",
-                  "accepted"
+                  "scala.collection.mutable.ArrayBuffer"
                 ]
               }
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              "actual",
-              {
+            },
+            {
+              "kind": "Fixed",
+              "name": "session",
+              "valueType": "org.evrete.api.StatefulSession",
+              "value": {
                 "()": [
-                  "Actual",
-                  "msg.definition",
-                  "msg.members",
-                  "problems.toSeq"
+                  "rules.newStatefulSession",
+                  "org.evrete.api.ActivationMode.CONTINUOUS"
                 ]
               }
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              {
-                ".": [
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "session.set",
+                  "\"problems\"",
+                  "problems"
+                ]
+              }
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "session.insert",
+                  "provisional.keys.toSeq: _*"
+                ]
+              }
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "session.insert",
+                  "definitions.toSeq: _*"
+                ]
+              }
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "session.insert",
+                  "Seq(provisional): _*"
+                ]
+              }
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "session.fire"
+                ]
+              }
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "session.close"
+                ]
+              }
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
                   {
-                    "()": [
-                      "guard",
-                      "problems.isEmpty"
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "problems.isEmpty"
+                        ]
+                      },
+                      "ifThenElse"
                     ]
                   },
-                  "ifThenElse"
+                  {
+                    "()": [
+                      "accept",
+                      "provisional"
+                    ]
+                  },
+                  {
+                    "()": [
+                      "accept",
+                      "accepted"
+                    ]
+                  }
                 ]
-              },
-              {
+              }
+            },
+            {
+              "kind": "Monadic",
+              "value": {
                 "()": [
-                  "ontology",
-                  "accepted"
+                  "actual",
+                  {
+                    "()": [
+                      "Actual",
+                      "latent.definition",
+                      "latent.members",
+                      "problems.toSeq"
+                    ]
+                  }
                 ]
-              },
-              "()"
-            ]
-          }
+              }
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "problems.isEmpty"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "()": [
+                      "ontology",
+                      "accepted"
+                    ]
+                  },
+                  "()"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     "messageType": {
-      "name": "Latent",
+      "name": "Request",
       "namePackage": [
         "draco",
         "dreams",

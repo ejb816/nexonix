@@ -1813,8 +1813,11 @@ object DracoGenerator extends App {
     val nested = methodShaped.flatMap(e => e.parameters.map(_.valueType.text) ++ e.body.map(_.valueType.text))
     // Rule and actor ACTION bodies declare locals too (a rule's `loc received [Emission]+`,
     // an actor's `fix consumed [String]+`); their types reach the import rule as well.
+    // A case-branch nests its own statements (drake.dlt CASE-BRANCH): the Editor's `[Problem]+`
+    // moved inside `case latent Latent [ ... ]` on 2026-10-13 and lost its import until the
+    // scan looked one level down.
     val actionBodies = (td.ruleAspect.action +: Seq(td.actorAspect.start, td.actorAspect.message, td.actorAspect.signal))
-      .flatMap(a => if (a == null) Seq.empty else a.body.map(_.valueType.text))
+      .flatMap(a => if (a == null) Seq.empty else a.body.flatMap(e => e.valueType.text +: e.body.map(_.valueType.text)))
     val allValueTypes = td.dracoAspect.elements.map(_.valueType.text) ++
       actionBodies ++
       td.dracoAspect.factory.parameters.map(_.valueType.text) ++

@@ -536,6 +536,37 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       fail("`now` surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
   }
 
+  test("case head: a dotted qualified branch type keeps its binder (the type slot is a value type)") {
+    // Before 2026-10-13 a case head read every lower-case-initial token as the binder, so
+    // `case latent draco.dreams.user.Latent [` lost the binder and carried the dotted
+    // type as the NAME — the Editor's first cross-package dispatch rendered
+    // `case draco.dreams.user.Latent =>`, a value pattern on the companion. The branch
+    // type is a value-type slot, dotted outside the authoring package like any other.
+    val authored =
+      """type Probe
+        |domain draco Draco
+        |actor
+        |  messageType draco dreams user Request
+        |  message
+        |    case latent draco.dreams.user.Latent [
+        |      mon println(latent)
+        |    ]
+        |    case Fixed [
+        |      mon println(msg)
+        |    ]
+        |    case other [
+        |      mon println(other)
+        |    ]
+        |""".stripMargin
+    val parsed   = Drake.parse(authored)
+    val branches = parsed.actorAspect.message.body.collect { case c: Case => c }
+    assert(branches.map(_.name) == Seq("latent", "", "other"))
+    assert(branches.map(c => TypeForm.text(c.valueType)) == Seq("draco.dreams.user.Latent", "Fixed", ""))
+    val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
+    if (handNorm != roundNorm)
+      fail("case-head surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
+  }
+
   // --- The measured tail: where the surface is not yet information-complete ---
 
   test("drake surface losses, unnormalized (report only)") {

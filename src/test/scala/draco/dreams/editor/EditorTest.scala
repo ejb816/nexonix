@@ -1,7 +1,7 @@
 package draco.dreams.editor
 
 import draco._
-import draco.dreams.user.{Latent, Response}
+import draco.dreams.user.{Latent, Request, Response}
 import io.circe.Json
 import io.circe.syntax._
 import org.apache.pekko.actor.typed.ActorSystem
@@ -74,13 +74,18 @@ class EditorTest extends AnyFunSuite {
     }
   }
 
-  test("Editor is a domain of one member and an actor whose message is User's Latent") {
+  test("Editor is a domain of one member and an actor whose message is User's Request family, dispatched by case") {
     val td = Editor.typeDefinition
     assert(td.domainAspect.typeName == td.typeName)
     assert(Editor.elementTypeNames == Seq("Actual"))
     assert(Editor.domainType.typeDictionary.size == 1)
     assert(!ActorAspect.isEmpty(td.actorAspect))
-    assert(td.actorAspect.messageType == TypeName("Latent", Seq("draco", "dreams", "user")))
+    assert(td.actorAspect.messageType == TypeName("Request", Seq("draco", "dreams", "user")))
+    val branches = td.actorAspect.message.body.collect { case c: Case => c }
+    assert(branches.map(c => (c.name, TypeForm.text(c.valueType))) == Seq(("latent", "draco.dreams.user.Latent")),
+      "one branch today: Latent; Read and Delete join the family as further branches")
+    assert(DracoAspect.parents(Latent.typeDefinition.dracoAspect) == Seq(TypeName("Request", Seq("draco", "dreams", "user"))))
+    assert(Latent(definition(Seq.empty)).isInstanceOf[Request])
     assert(RuleAspect.isEmpty(td.ruleAspect))
     val loaded = DomainBuilder.define("Editor", Seq("draco", "dreams", "editor"))
     assert(DomainBuilder.validate(loaded).isEmpty)
@@ -138,7 +143,7 @@ class EditorTest extends AnyFunSuite {
     val order = new CopyOnWriteArrayList[String]()
     val system = ActorSystem(Editor.actorType(initial,
       r => { responses.add(r); order.add("actual"); () },
-      o => { ontologies.add(o); order.add("ontology"); () }).asInstanceOf[Actor[Latent]], name)
+      o => { ontologies.add(o); order.add("ontology"); () }).asInstanceOf[Actor[Request]], name)
     try {
       latents.foreach(system ! _)
       val deadline = System.nanoTime() + 10.seconds.toNanos

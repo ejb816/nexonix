@@ -18,6 +18,7 @@
     },
     "elementTypeNames": [
       "Latent",
+      "Request",
       "Response"
     ]
   }

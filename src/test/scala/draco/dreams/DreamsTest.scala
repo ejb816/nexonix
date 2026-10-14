@@ -2,7 +2,7 @@ package draco.dreams
 
 import draco._
 import draco.dreams.editor.{Actual, Editor}
-import draco.dreams.user.{Latent, Response, User}
+import draco.dreams.user.{Latent, Request, Response, User}
 import io.circe.syntax._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -26,6 +26,7 @@ class DreamsTest extends AnyFunSuite {
     ("Dreams", Seq("draco", "dreams"), () => Dreams.typeDefinition),
     ("User", userPkg, () => User.typeDefinition),
     ("Latent", userPkg, () => Latent.typeDefinition),
+    ("Request", userPkg, () => Request.typeDefinition),
     ("Response", userPkg, () => Response.typeDefinition)
   )
 
@@ -64,20 +65,23 @@ class DreamsTest extends AnyFunSuite {
     assert(DomainBuilder.generate("Dreams", Seq("draco", "dreams")).keySet == Set(td.typeName, Initialization.typeDefinition.typeName))
   }
 
-  test("User is the request domain: Latent and Response, no rule, actor or codec of its own") {
+  test("User is the request domain: the Request family (Latent), and Response; no rule, actor or codec of its own") {
     val td = User.typeDefinition
     assert(td.typeName == TypeName("User", userPkg))
     assert(td.domainAspect.typeName == td.typeName)
-    assert(User.elementTypeNames == Seq("Latent", "Response"))
-    assert(User.domainType.typeDictionary.size == 2)
+    assert(User.elementTypeNames == Seq("Latent", "Request", "Response"))
+    assert(User.domainType.typeDictionary.size == 3)
     assert(RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect) && CodecAspect.isEmpty(td.codecAspect))
-    assert(Latent.typeDefinition.domainAspect.typeName == td.typeName)
-    assert(Response.typeDefinition.domainAspect.typeName == td.typeName)
+    Seq(Latent, Request, Response).foreach(m => assert(m.typeDefinition.domainAspect.typeName == td.typeName))
+    // Request is the abstract head of the family (2026-10-13): no elements, no factory;
+    // Latent derives it today, Read and Delete will. The Editor's message type is Request.
+    assert(Request.typeDefinition.dracoAspect.elements.isEmpty)
+    assert(DracoAspect.parents(Latent.typeDefinition.dracoAspect) == Seq(Request.typeDefinition.typeName))
     val loaded = DomainBuilder.define("User", userPkg)
     assert(loaded.typeDictionary.elementTypes.forall(m => !DomainBuilder.isStub(m)))
     assert(DomainBuilder.validate(loaded).isEmpty)
     assert(DomainBuilder.generate("User", userPkg).keySet ==
-      Set(td.typeName, Latent.typeDefinition.typeName, Response.typeDefinition.typeName))
+      Set(td.typeName, Latent.typeDefinition.typeName, Request.typeDefinition.typeName, Response.typeDefinition.typeName))
   }
 
   test("Response is the abstract reply: elements without a factory, accepted iff no problems; Actual is one") {
@@ -106,7 +110,7 @@ class DreamsTest extends AnyFunSuite {
     assert(ontology.get(dreams).exists(_.size == 1))
     assert(!core.typeDictionary.contains(dreams.typeDefinition.typeName))
     assert(!service.typeDictionary.contains(dreams.typeDefinition.typeName))
-    assert(ontology.get(user).exists(_.size == 2))
+    assert(ontology.get(user).exists(_.size == 3))
     assert(ontology.get(editor).exists(_.size == 1))
     assert(ontology.get(core).exists(_.nonEmpty))
     assert(ontology.get(service).exists(_.size == 2))

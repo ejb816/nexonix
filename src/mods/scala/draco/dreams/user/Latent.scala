@@ -5,7 +5,7 @@ import draco._
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
-trait Latent extends DracoType {
+trait Latent extends Request {
   val definition: draco.TypeDefinition
   val members: Seq[draco.TypeDefinition]
 }

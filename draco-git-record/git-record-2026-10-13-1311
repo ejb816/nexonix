@@ -1,0 +1,48 @@
+Make User's requests a family: Request, Latent deriving it, the Editor dispatching by case
+
+Dev accepted the Request family on 2026-10-13 ("I accept the Request family in User,
+proceed"), the first design point of the Read request: the Editor is one actor with one
+message type, so a second request needs a shape the requests share.
+
+draco.dreams.user.Request is the abstract head of the family — no elements, no factory,
+as ActorType is. Latent derives it (`type Latent from Request`); User holds Latent,
+Request and Response. The Editor's message type is `draco dreams user Request` and its
+message body is one branch, `case latent draco.dreams.user.Latent [ ... ]`, the whole
+validation as before with `latent` where `msg` was — the corpus's first cross-package
+case dispatch (the ash scenario's two branches are same-package). The generator writes
+`case latent: draco.dreams.user.Latent =>` and its own `case _ => ()` catch-all, so a
+Request with no branch is a no-op (drake.dlt CASE-BRANCH, effects shape). Read and
+Delete join as further branches without touching the message type again. In Haskell:
+Request is the sum type, the constructors its members, the Editor a function over it.
+
+Two engine gaps found by that one branch, both closed in src/mods:
+- Drake.parse read every lower-case-initial token of a case head as the binder, so the
+  dotted type `draco.dreams.user.Latent` LOST the binder and was carried as the branch's
+  NAME; the Scala rendered `case draco.dreams.user.Latent =>`, a value pattern on the
+  companion. The branch type is a value-type slot, dotted outside the authoring package
+  like every other: a token whose LAST segment is upper-case is now the type.
+- DracoGenerator.externalImports scanned only an action's top-level statements, so the
+  `[Problem]+` binding inside the branch lost `import scala.collection.mutable`. The
+  scan now looks one level down into a case body.
+
+Measured: compiled-class probe over overlays REBUILT from Dev's 741 / 54 classes (the
+first probe used overlays copied before that run and failed two SelfDeclaration cases
+with the pre-alignment rule — stale classes, not code; refresh the overlay after every
+Dev run). Engine (Drake, DracoGenerator) and the eight staged companions recompiled into
+probe dirs under target/scala-2.13. Changed suites: DrakeParseTest 239 (+1: the dotted
+case head keeps its binder, unbound and default heads unchanged, round trip), EditorTest
+16 (messageType Request, the one branch, Latent derives Request), DreamsTest 14 (+2: the
+Request trio), InitializationTest 6 — 275 / 0 failed. Gates against the new engine:
+DracoGenTest, DrakeGenTest, SourceContractTest, ScenarioDrakeTest, ServiceTest,
+GenDrakeTest — 307 / 0 failed, headlines unchanged (losses 1 across 115, scope 105 + 10,
+scenario 23 clean, GenDrake 103 of 103): the engine fixes change nothing in the main
+corpus. Expected sbt arithmetic from Dev's 741 / 54: +1 +2 = 744 / 54, no headline moves
+(no main-corpus TYPE added). Probe dirs removed. Dev's full run is the gate.
+
+Rejected: an unbound branch reading `msg` (the target's name, and no narrowing); a
+second actor for Read beside the Editor (the state is in one actor); widening
+`messageType` to Latent-or-Read without a family (no such form, and no Haskell sum).
+
+Not done: Read's content and its response (point two, next); Delete; generation and
+activation; inferred derivation; membership reciprocity; chapter 94. No sbt, commit or
+push run by Claude.

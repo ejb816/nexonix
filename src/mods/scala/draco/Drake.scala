@@ -1059,7 +1059,11 @@ object Drake {
         var valueType = Json.Null
         while (!c.exhausted && !c.atReserved) {
           val t = c.takeText ()
-          if (t.headOption.exists (_.isUpper)) valueType = typeForm (t) else name = parseElementName (t)
+          // The branch type is a VALUE-TYPE slot, so a reference outside the authoring
+          // package is dotted (`draco.dreams.user.Latent`, 2026-10-13): a token whose
+          // LAST segment is upper-case is the type; a bare lower-case token the binder.
+          val isType = t.split ('.').lastOption.exists (_.headOption.exists (_.isUpper))
+          if (isType) valueType = typeForm (t) else name = parseElementName (t)
         }
         c.expect ("[")
         val body = statements (c)

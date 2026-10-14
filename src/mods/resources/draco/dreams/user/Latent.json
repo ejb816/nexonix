@@ -8,6 +8,16 @@
     ]
   },
   "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Request",
+        "namePackage": [
+          "draco",
+          "dreams",
+          "user"
+        ]
+      }
+    ],
     "elements": [
       {
         "kind": "Fixed",

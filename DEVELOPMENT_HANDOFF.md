@@ -10,18 +10,27 @@ snapshot against the current tree before acting.
   and probe-verified. Everything the next agent needs is in tracked project files —
   DRACO.md, this file, the records, chapter 93 and its audit; no Claude-private memory is
   required or relied upon.
-- Observed branch/HEAD at session start: main at fcc80ba, clean — the chapter-93
-  documentation commit, one after efa9085 (the composition increment). The remote was
-  not queried.
-- In the tree, uncommitted, for ONE combined commit: the delivery, CRUD and initialization
-  increments — under `src/mods/{resources,scala}/draco/dreams/` the Editor and Actual
-  trios (editor), the User and new Response trios and the Latent trio moved from editor
-  to user (`git mv`, staged), the Dreams trio and the new Initialization trio; in core the
-  `SelfDeclaration` trio (namePath comparison) and `DomainBuilder` (mods); `EditorTest`,
-  `DreamsTest`, `SelfDeclarationRulesTest` and the new `InitializationTest`; DRACO.md §1,
-  §3 (three paragraphs) and §6 (three gotchas), README, CHANGELOG (four entries), the
-  Dreams, Service and mods READMEs, this file and record `git-record-2026-10-12-1413`. No
-  main-corpus TYPE was added, so no report-only headline moves.
+- Observed branch/HEAD: main at 6869e47, pushed (`main...origin/main`, clean tree) — the
+  combined commit of the delivery, CRUD and initialization increments, one after fcc80ba
+  (chapter 93) and efa9085 (composition). Session start was fcc80ba.
+- In the tree after it, uncommitted, the Request-family increment (2026-10-13): the new
+  `Request` trio and the Latent, User and Editor trios under `src/mods/{resources,scala}/
+  draco/dreams/{user,editor}`; the engine fixes in `src/mods/scala/draco/Drake.scala`
+  (case-head dotted type) and `DracoGenerator.scala` (import scan into case bodies);
+  `DrakeParseTest` (+1), `EditorTest`, `DreamsTest` (+2), `InitializationTest`; DRACO.md
+  §1, §3 (one paragraph) and §6, README, CHANGELOG, the Dreams README, this file and
+  record `git-record-2026-10-13-1311` — plus the confirmation of the SelfDeclaration
+  alignment and the 6869e47 hash recorded here and in DRACO.md. No main-corpus TYPE
+  added; the gates are byte-identical over the main corpus.
+- That commit carried: under `src/mods/{resources,scala}/draco/dreams/` the Editor and
+  Actual trios (editor), the User and new Response trios and the Latent trio moved from
+  editor to user (a `git mv` rename), the Dreams trio and the new Initialization trio; in
+  core the `SelfDeclaration` trio (namePath comparison) and `DomainBuilder` (mods);
+  `EditorTest`, `DreamsTest`, `SelfDeclarationRulesTest` and the new `InitializationTest`;
+  DRACO.md §1, §3 (three paragraphs) and §6 (three gotchas), README, CHANGELOG (four
+  entries), the Dreams, Service and mods READMEs, this file and record
+  `git-record-2026-10-12-1413`. No main-corpus TYPE was added, so no report-only headline
+  moves.
 - Gate: Dev's full `sbt test` on 2026-10-13 passed **741 tests / 54 suites, 0 failed, 0
   aborted**, every report-only headline unchanged, on the combined tree (an earlier run on
   the first two increments had passed 735 / 53). Two commit blocks failed on pathspecs —
@@ -82,8 +91,14 @@ snapshot against the current tree before acting.
   point) and XML, JSON and Value behind it; the model applied Dev's 2026-10-12 principle
   (parameters compose references, not definitions; a self-declaration points at the
   definition) and aligned the rule, reversing the 2026-10-09 whole-TypeName comparison.
-  Flagged for Dev to confirm or correct; the alternative (a parameterized self-declaration
-  on Format) was rejected because the members' container pointers are bare.
+  Dev CONFIRMED the alignment on 2026-10-13 ("I confirm the SelfDeclaration alignment"); the
+  alternative (a parameterized self-declaration on Format) was rejected because the
+  members' container pointers are bare.
+- **The Request family** (Dev, 2026-10-13, "I accept the Request family in User,
+  proceed" — Read's first design point): User declares abstract `Request`; Latent and
+  Read derive it; the Editor's message type becomes `Request` and its message body
+  dispatches by `case`. Read's content and its response is the NEXT point, not yet
+  raised; Delete joins the family later.
 
 ## Completed Development
 
@@ -130,6 +145,17 @@ snapshot against the current tree before acting.
   parameter test inverted (checks Format(F) itself); EditorTest's SelfDeclaration case
   refuses a self-declaration naming another definition and accepts the bare one;
   DreamsTest's Dreams tests expect the one member.
+- **Request family (2026-10-13).** `draco.dreams.user.Request` (no elements, no factory);
+  `type Latent from Request`; User `types [Latent, Request, Response]`; Editor
+  `messageType draco dreams user Request`, message body `case latent draco.dreams.user.Latent [ … ]`
+  holding the whole validation with `latent` for `msg`; the generator writes
+  `case latent: Latent =>` and `case _ => ()`. Engine: `Drake.parse` case head — a token
+  whose last segment is upper-case is the type (a dotted type had become the binder's
+  NAME); `DracoGenerator.externalImports` looks one level into case bodies (the `[Problem]+`
+  inside the branch had lost its `mutable` import). Tests: DrakeParseTest +1 (dotted case
+  head keeps its binder; unbound and default heads unchanged; round trip), DreamsTest +2
+  (Request trio; User holds three), EditorTest (messageType Request, the one branch,
+  Latent derives Request), InitializationTest (`Actor[Request]` cast).
 - **Tests.** `EditorTest` (13: six trio checks, one structural, six behavioural: acceptance
   with a populated domain, Completeness/DerivationResolvable/SelfDeclaration problems,
   ordering and non-mutation, JSON round trip). ServiceTest +2, SelfDeclarationRulesTest +1,
@@ -140,6 +166,21 @@ snapshot against the current tree before acting.
   ZEROMQ contract, Service/Dreams/mods READMEs, CHANGELOG (Added + Changed), git record.
 
 ## Verification
+
+Request-family increment (2026-10-13, NOT yet gated): Claude did not run sbt. A compiled-class
+probe over overlays REBUILT from Dev's 741 / 54 classes — the first attempt used overlays
+copied before that run and failed two SelfDeclaration cases with the pre-alignment rule:
+stale classes, not code; refresh the overlay after every Dev run — recompiled the engine
+(`Drake`, `DracoGenerator`) and the eight staged companions into
+`target/scala-2.13/probe-classes` and the four changed suites into `probe-test-classes`:
+**DrakeParseTest 239, EditorTest 16, DreamsTest 14, InitializationTest 6 — 275 / 0 failed**
+(surface losses 1 across 115, parse scope 105 + 10 unchanged). Gates against the new
+engine from the compiled tests: **DracoGenTest, DrakeGenTest, SourceContractTest,
+ScenarioDrakeTest, ServiceTest, GenDrakeTest — 307 / 0 failed**, scenario 23 clean,
+GenDrake 103 of 103: the engine fixes are byte-identical over the main corpus. `DrakeCLI
+check` on user, editor, the ash scenario and the main corpus: no drift beyond the two
+authored-ahead files. Expected sbt arithmetic from Dev's 741 / 54: +1 +2 = **744 / 54**,
+no headline moves. Probe dirs removed. Dev's full run is the gate.
 
 Initialization increment + SelfDeclaration alignment (2026-10-12 afternoon): Dev's full run
 on 2026-10-13 passed **741 tests / 54 suites, 0 failed, 0 aborted**, every report-only
@@ -228,28 +269,30 @@ verified baseline; DRACO.md §1 records it.
 
 ## Resumption
 
-1. Three increments are in the tree for one combined commit, gated at 741 / 54, which
-   the documents already record. Remaining: the commit with
-   `draco-git-record/git-record-2026-10-12-1413` (no pathspec: the staged rename's
-   source half cannot be named) and the push; the hash can join DRACO.md §1 with the next
-   documentation touch. Dev should also confirm or correct the SelfDeclaration alignment
-   (Decisions above).
+1. The Request-family increment is in the tree, uncommitted. Dev's full `sbt test`
+   (expected 744 / 54, no headline moves), then the path-scoped commit with
+   `draco-git-record/git-record-2026-10-13-1311` and the push (no rename this time, so
+   a pathspec is fine). Then record the verified baseline in DRACO.md §1 and §3,
+   CHANGELOG and this file, as the earlier notes did.
 
-2. Next authorized work, in Dev's accepted order: Read and Delete as further User
-   request types with Editor responses (Read of one domain answers with an Actual;
-   Delete needs an `excluding` beside `including`, and the whole-ontology validation
-   already refuses orphaning); then generation and activation as explicit operations.
-   Later: inferred derivation (classification by shared elements). Candidate rule
-   surfaced, not filed: membership reciprocity (a supplied member the domain does not
-   name is silently dropped). Open each with one design point before building.
+2. Next authorized work, in Dev's accepted order: Read's SECOND design point — what a
+   Read names and what it answers with (one domain by identity, answered with an Actual
+   from the accepted ontology, or a Response with a Problem when the ontology does not
+   own it, is the recommendation to raise); then Delete (an `excluding` beside
+   `including`; the whole-ontology validation already refuses orphaning); then
+   generation and activation as explicit operations. Later: inferred derivation
+   (classification by shared elements). Candidate rule surfaced, not filed: membership
+   reciprocity (a supplied member the domain does not name is silently dropped). Open
+   each with one design point before building.
 
 ### First action for the next agent
 
 Read DRACO.md, this file and the 2026-10-12-1413 record; inspect `git status` and
-`git log`. If the increments are still uncommitted, expect HEAD at fcc80ba with the files
-listed in the Checkpoint modified or staged (the Latent move as a rename) and Dev's
-741 / 54 gate still to run; if committed, expect a clean tree one commit after fcc80ba at
-that baseline. Read chapter 93 and DRACO.md §3's six 2026-10-09/12 paragraphs for the
-decisions. Chapter 94 (this session, from the initialization-client opening) is
-unwritten; write it when Dev asks for the journal. Then open Read and Delete with Dev
-before building.
+`git log`. If the Request-family increment is still uncommitted, expect HEAD at 6869e47
+(baseline 741 / 54) with the files listed in the Checkpoint modified and Dev's 744 / 54
+gate still to run; if committed, expect a clean tree one commit later at that baseline.
+Read chapter 93 and DRACO.md §3's seven 2026-10-09/13 paragraphs for the decisions.
+Chapter 94 (this session, from the initialization-client opening) is unwritten; write it
+when Dev asks for the journal. Read is open in discussion: its first point (the Request
+family) is accepted and built; raise its second (what a Read names and answers with)
+with Dev before building.

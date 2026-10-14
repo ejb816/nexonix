@@ -110,7 +110,7 @@ class InitializationTest extends AnyFunSuite {
   test("the endogenous run: from an empty ontology, every canonical domain is accepted and the client holds draco's innate ontology") {
     val client = Initialization(supplied)
     assert(client.initial.isEmpty && client.ontology.isEmpty && client.responses.isEmpty && !client.complete)
-    val system = ActorSystem(client.editorType.asInstanceOf[Actor[Latent]], "initialization")
+    val system = ActorSystem(client.editorType.asInstanceOf[Actor[draco.dreams.user.Request]], "initialization")
     try {
       client.run(system ! _)
       val deadline = System.nanoTime() + 120.seconds.toNanos

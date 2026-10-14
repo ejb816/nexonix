@@ -9,7 +9,7 @@ domain draco dreams editor Editor
     Actual
   ]
 actor
-  messageType draco dreams user Latent
+  messageType draco dreams user Request
   start
     fix rules org.evrete.api.Knowledge draco.Rule.knowledgeService.newKnowledge("Editor")
     mon draco.Completeness.ruleType.pattern(rules)
@@ -20,17 +20,19 @@ actor
     mut accepted draco.DomainOntology initial
     fix accept (draco.DomainOntology -> Unit) \next -> accepted = next
   message
-    fix candidate draco.DomainType draco.Domain(msg.definition, msg.members)
-    fix provisional draco.DomainOntology accepted.including(candidate)
-    fix definitions [draco.TypeDefinition] provisional.keys.toSeq.flatMap(\domain -> domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
-    fix problems [draco.Problem]+ scala.collection.mutable.ArrayBuffer()
-    fix session org.evrete.api.StatefulSession rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
-    mon session.set("problems", problems)
-    mon session.insert(provisional.keys.toSeq: _*)
-    mon session.insert(definitions.toSeq: _*)
-    mon session.insert(Seq(provisional): _*)
-    mon session.fire()
-    mon session.close()
-    mon guard(problems.isEmpty).ifThenElse(accept(provisional), accept(accepted))
-    mon actual(Actual(msg.definition, msg.members, problems.toSeq))
-    mon guard(problems.isEmpty).ifThenElse(ontology(accepted), ())
+    case latent draco.dreams.user.Latent [
+      fix candidate draco.DomainType draco.Domain(latent.definition, latent.members)
+      fix provisional draco.DomainOntology accepted.including(candidate)
+      fix definitions [draco.TypeDefinition] provisional.keys.toSeq.flatMap(\domain -> domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
+      fix problems [draco.Problem]+ scala.collection.mutable.ArrayBuffer()
+      fix session org.evrete.api.StatefulSession rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+      mon session.set("problems", problems)
+      mon session.insert(provisional.keys.toSeq: _*)
+      mon session.insert(definitions.toSeq: _*)
+      mon session.insert(Seq(provisional): _*)
+      mon session.fire()
+      mon session.close()
+      mon guard(problems.isEmpty).ifThenElse(accept(provisional), accept(accepted))
+      mon actual(Actual(latent.definition, latent.members, problems.toSeq))
+      mon guard(problems.isEmpty).ifThenElse(ontology(accepted), ())
+    ]

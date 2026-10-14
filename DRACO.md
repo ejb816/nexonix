@@ -50,9 +50,11 @@ suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
 **741 tests / 54 suites**, verified by Dev's run on 2026-10-13 on the tree holding the delivery, CRUD and
-initialization increments (§3 *Delivery*, *User defines the requests*, *Initialization*; one commit, record
-`git-record-2026-10-12-1413`), with every report-only figure unchanged — no main-corpus TYPE was added
-(EditorTest +1, DreamsTest +1, `InitializationTest` 6 new, the 54th suite). Before it: **735 / 53**, Dev's run
+initialization increments (§3 *Delivery*, *User defines the requests*, *Initialization*; one commit, 6869e47,
+record `git-record-2026-10-12-1413`), with every report-only figure unchanged — no main-corpus TYPE was added
+(EditorTest +1, DreamsTest +1, `InitializationTest` 6 new, the 54th suite). The Request-family increment
+(§3 *The Request family*, record `git-record-2026-10-13-1311`) expects **744 / 54** (DrakeParseTest +1,
+DreamsTest +2), no headline moves, Dev's run pending. Before it: **735 / 53**, Dev's run
 on 2026-10-12 on the same tree before the third increment; before that **733 / 53** at efa9085 (the composition increment, §3 *Composition: the Editor holds
 draco's innate ontology*, Dev's run earlier the same day), with the parse-scope and
 surface-loss rows below moved by the one corpus type it added and every other figure unchanged. Before it:
@@ -525,11 +527,24 @@ refused — `Format(F)` is the corpus's one parameterized domain and self-declar
 Format`, as its members point at it), and the 2026-10-09 SelfDeclaration compared the WHOLE TypeName. Dev's
 2026-10-12 principle decides it (parameters compose references, not definitions; a self-declaration points at
 the definition, keyed bare): `SelfDeclaration` and `DomainBuilder.validate` now compare `namePath`. This
-alignment is the model's application of Dev's principle, flagged in the handoff for Dev to correct. The
+alignment was the model's application of Dev's principle; Dev CONFIRMED it on 2026-10-13. The
 endogenous run then accepts all 18 canonical domains, and the ontology it builds defines the client itself.
 `InitializationTest` (6) is new, the 54th suite; EditorTest's SelfDeclaration case now refuses a
-self-declaration naming ANOTHER definition and accepts the bare parameterized one. Next: Read and Delete as
-further User request types.
+self-declaration naming ANOTHER definition and accepts the bare parameterized one.
+
+**The Request family (2026-10-13, Read's first design point; awaiting Dev's run, expected 744 / 54).** The Editor is
+one actor with one message type, so a second request needs a shared shape. Dev accepted "the Request family in
+User": `draco.dreams.user.Request`, abstract (no elements, no factory, as ActorType); `Latent` derives it; User
+holds Latent, Request, Response. The Editor's `messageType` is `draco dreams user Request` and its message body
+is one branch, `case latent draco.dreams.user.Latent [ … ]` — the corpus's first cross-package case dispatch —
+rendering `case latent: Latent =>` plus the generator's own `case _ => ()` catch-all (a Request with no branch
+is a no-op). Read and Delete join as further branches without touching the message type again; in Haskell,
+Request is the sum type and the Editor a function over it. Two engine gaps closed on the way: the case-head
+parser took every lower-case-initial token as the binder, so a DOTTED type lost its binder and became the
+branch's name (the type slot is a value type: a token whose last segment is upper-case is the type now); and
+`externalImports` scanned only an action's top-level statements, so a `[T]+` inside the branch lost its
+`mutable` import (the scan looks one level down). DrakeParseTest +1, DreamsTest +2; the gates are byte-identical
+over the main corpus. Read's content and response is the next point.
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member
@@ -684,7 +699,9 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
 - **A qualified reference in a `from` header or a `messageType` line is SPACE-separated package words**
   (`type Actual from draco dreams user Response`, `messageType draco dreams user Latent`), like the domain
   line — not dotted. The dotted form parses silently as one package word and a mangled name; `DrakeCLI
-  parse` shows it at once (2026-10-12). Value types and expressions stay dotted (`draco.dreams.user.Latent`).
+  parse` shows it at once (2026-10-12). Value types and expressions stay dotted (`draco.dreams.user.Latent`),
+  and so does a `case` head's branch type, which is a value-type slot: `case latent draco.dreams.user.Latent [`
+  (the parser read the dotted token as the binder's name until 2026-10-13).
 - **`now` is a reserved word everywhere, including as a binding name.** A body binding called `now` is
   read as the strictness marker; name the thing `wave`, `current`, anything else (2026-10-12).
 - **A self-declaration is keyed by name and package, parameters free.** `Format(F)` self-declares as

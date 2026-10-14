@@ -39,6 +39,15 @@ for the definition that will replace it.
 
 ### Added
 
+- **User's requests are a family.** `draco.dreams.user.Request` is the abstract head
+  (no elements, no factory); `Latent` derives it; the Editor's message type is `Request`
+  and its message body dispatches by `case` — one branch today, Latent, the corpus's first
+  cross-package case dispatch; Read and Delete join as further branches. Two engine gaps
+  closed: a `case` head's dotted branch type lost its binder (the parser took the token
+  as the binder's name), and a `[T]+` binding inside a case body lost its `mutable`
+  import. DrakeParseTest +1, DreamsTest +2; the generator and drake gates are
+  byte-identical over the main corpus; expected 744 tests / 54 suites, Dev's full run
+  pending. (2026-10-13)
 - **The endogenous initialization client: draco as its own first User.**
   `draco.dreams.Initialization`, the Dreams domain's first member, takes the canonical
   domains as Latents, orders them from their definitions (a domain follows every supplied

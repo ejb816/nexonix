@@ -535,8 +535,10 @@ definitions (a domain follows every supplied domain its named parents reach; Dra
 wave), mints the Editor over an empty ontology with its own consumers, sends the Latents, and keeps the
 last ontology delivered — draco's innate ontology, which defines the client itself. Its first run found
 that the corpus's one parameterized domain, `Format(F)`, self-declares bare, so `SelfDeclaration` now
-compares name and package with parameters free, the same principle as Uniqueness. Read and Delete
-request types, generation and activation follow as explicit steps.
+compares name and package with parameters free, the same principle as Uniqueness. The requests are a
+family since 2026-10-13: User's abstract `Request` is the Editor's message type, Latent derives it, and
+the Editor's message body dispatches by `case`, so Read and Delete join as further branches. Their
+content, generation and activation follow as explicit steps.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation
 and activation follow as explicit operations. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
@@ -728,6 +730,8 @@ request, User's abstract Response derived by Editor's Actual, the dependency run
 third followed in the same commit, and Dev's full run on 2026-10-13 passed 741 tests / 54 suites with
 every report-only figure unchanged: the initialization client, draco as its own first User, whose
 endogenous run accepts all eighteen canonical domains once SelfDeclaration compares name and package
-with parameters free.
+with parameters free. The Request family followed on 2026-10-13 (expected 744 / 54, awaiting Dev's
+run): Request abstract in User, Latent deriving it, the Editor dispatching by case, two engine gaps
+closed on the way.
 
 <!-- draco-docs-synced-through: chapter 93 -->
