@@ -39,6 +39,13 @@ for the definition that will replace it.
 
 ### Added
 
+- **Read: one domain by name, answered with an Actual.** `draco.dreams.user.Read` derives
+  Request and names one domain by TypeName; the Editor's second `case` branch answers
+  through the same Response consumer with the domain's definition and members as the
+  accepted ontology holds them, or a refused Actual naming the domain with one Problem
+  when the ontology owns none. A Read never changes the state and never delivers an
+  ontology. EditorTest +1, DreamsTest +2; expected 747 tests / 54 suites, Dev's full run
+  pending. (2026-10-13)
 - **User's requests are a family.** `draco.dreams.user.Request` is the abstract head
   (no elements, no factory); `Latent` derives it; the Editor's message type is `Request`
   and its message body dispatches by `case` — one branch today, Latent, the corpus's first
@@ -46,8 +53,8 @@ for the definition that will replace it.
   closed: a `case` head's dotted branch type lost its binder (the parser took the token
   as the binder's name), and a `[T]+` binding inside a case body lost its `mutable`
   import. DrakeParseTest +1, DreamsTest +2; the generator and drake gates are
-  byte-identical over the main corpus; expected 744 tests / 54 suites, Dev's full run
-  pending. (2026-10-13)
+  byte-identical over the main corpus; compiled-class probe, then Dev's full run: 744
+  tests / 54 suites, every report-only figure unchanged; committed as 5057a5c. (2026-10-13)
 - **The endogenous initialization client: draco as its own first User.**
   `draco.dreams.Initialization`, the Dreams domain's first member, takes the canonical
   domains as Latents, orders them from their definitions (a domain follows every supplied

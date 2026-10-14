@@ -1,0 +1,7 @@
+type Read from Request
+  elements
+    fix domain draco.TypeName
+  factory
+    parameters
+      par domain draco.TypeName
+domain draco dreams user User

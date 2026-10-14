@@ -1,7 +1,7 @@
 package draco.dreams.editor
 
 import draco._
-import draco.dreams.user.{Latent, Request, Response}
+import draco.dreams.user.{Latent, Read, Request, Response}
 import io.circe.Json
 import io.circe.syntax._
 import org.apache.pekko.actor.typed.ActorSystem
@@ -82,10 +82,13 @@ class EditorTest extends AnyFunSuite {
     assert(!ActorAspect.isEmpty(td.actorAspect))
     assert(td.actorAspect.messageType == TypeName("Request", Seq("draco", "dreams", "user")))
     val branches = td.actorAspect.message.body.collect { case c: Case => c }
-    assert(branches.map(c => (c.name, TypeForm.text(c.valueType))) == Seq(("latent", "draco.dreams.user.Latent")),
-      "one branch today: Latent; Read and Delete join the family as further branches")
-    assert(DracoAspect.parents(Latent.typeDefinition.dracoAspect) == Seq(TypeName("Request", Seq("draco", "dreams", "user"))))
-    assert(Latent(definition(Seq.empty)).isInstanceOf[Request])
+    assert(branches.map(c => (c.name, TypeForm.text(c.valueType))) ==
+      Seq(("latent", "draco.dreams.user.Latent"), ("read", "draco.dreams.user.Read")),
+      "two branches: Latent and Read; Delete joins the family as a further branch")
+    val request = TypeName("Request", Seq("draco", "dreams", "user"))
+    assert(DracoAspect.parents(Latent.typeDefinition.dracoAspect) == Seq(request))
+    assert(DracoAspect.parents(Read.typeDefinition.dracoAspect) == Seq(request))
+    assert(Latent(definition(Seq.empty)).isInstanceOf[Request] && Read(fresh).isInstanceOf[Request])
     assert(RuleAspect.isEmpty(td.ruleAspect))
     val loaded = DomainBuilder.define("Editor", Seq("draco", "dreams", "editor"))
     assert(DomainBuilder.validate(loaded).isEmpty)
@@ -137,7 +140,7 @@ class EditorTest extends AnyFunSuite {
   /** Mint one Editor over `initial`, send every Latent, and collect everything it
     * delivers. Every Latent yields an Actual, so the Actual count is the signal
     * that the Editor is done. */
-  private def deliveries(initial: DomainOntology, latents: Seq[Latent], name: String): Delivered = {
+  private def deliveries(initial: DomainOntology, latents: Seq[Request], name: String): Delivered = {
     val responses = new CopyOnWriteArrayList[Response]()
     val ontologies = new CopyOnWriteArrayList[DomainOntology]()
     val order = new CopyOnWriteArrayList[String]()
@@ -267,6 +270,24 @@ class EditorTest extends AnyFunSuite {
     assert(before.keys.size == after.keys.size, "an update replaces in place; the delivered ontology has no second Fresh")
     assert(after.keys.find(_.typeDefinition.typeName == fresh).map(_.typeDictionary.size).contains(2))
     assert(!reference.defines(root), "the initial ontology is never mutated or delivered")
+  }
+
+  test("a Read names one domain: an Actual of its definition and members from the accepted ontology, or a Problem when it owns none; no ontology is delivered") {
+    val create = Latent(definitionOf(fresh, "Root", "Leaf"), Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root)))
+    val draco = TypeName("Draco", Seq("draco"))
+    val nowhere = TypeName("Nowhere", Seq("example", "nowhere"))
+    val delivered = deliveries(reference, Seq(Read(fresh), create, Read(fresh), Read(draco), Read(nowhere)), "editorReads")
+    val Seq(before, created, after, core, missing) = delivered.actuals
+    assert(!before.accepted && subjects(before) == Set("Fresh"), "before acceptance Fresh is not owned: one Problem naming it, a stub definition, no members")
+    assert(before.definition.typeName == fresh && before.members.isEmpty)
+    assert(created.accepted)
+    assert(after.accepted && after.definition.typeName == fresh && after.members.map(_.typeName.name) == Seq("Root", "Leaf"),
+      "after acceptance the Read answers with the domain as the ontology holds it")
+    assert(core.accepted && core.definition.typeName == draco && core.members.size == Draco.elementTypeNames.size,
+      "a domain of the initial ontology reads too: draco's own definition and every member")
+    assert(!missing.accepted && subjects(missing) == Set("Nowhere"))
+    assert(delivered.ontologies.size == 1 && delivered.order == Seq("actual", "actual", "ontology", "actual", "actual", "actual"),
+      "a Read never changes the state, so only the one acceptance delivered an ontology")
   }
 
   test("Latent and Actual round-trip through JSON; Actual's domain is derived, not carried") {

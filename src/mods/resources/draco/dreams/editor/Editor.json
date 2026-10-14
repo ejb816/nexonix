@@ -260,6 +260,95 @@
               }
             }
           ]
+        },
+        {
+          "kind": "Case",
+          "name": "read",
+          "valueType": "draco.dreams.user.Read",
+          "body": [
+            {
+              "kind": "Fixed",
+              "name": "owner",
+              "valueType": {
+                "()": [
+                  "draco.drake.Presence",
+                  "draco.DomainType"
+                ]
+              },
+              "value": {
+                "()": [
+                  "presence",
+                  {
+                    "()": [
+                      "accepted.keys.find",
+                      {
+                        "\\": [
+                          "d",
+                          {
+                            "==": [
+                              "d.typeDefinition.typeName.namePath",
+                              "read.domain.namePath"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "actual",
+                  {
+                    "()": [
+                      "owner.fold",
+                      {
+                        "()": [
+                          "Actual",
+                          {
+                            "()": [
+                              "draco.TypeDefinition",
+                              "read.domain"
+                            ]
+                          },
+                          {
+                            "[]": [
+                            ]
+                          },
+                          {
+                            "[]": [
+                              {
+                                "()": [
+                                  "draco.Problem",
+                                  "read.domain",
+                                  "s\"domain ${read.domain.name} is not in the accepted ontology\""
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "\\": [
+                          "d",
+                          {
+                            "()": [
+                              "Actual",
+                              "d.typeDefinition",
+                              "d.typeDictionary.elementTypes"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
         }
       ]
     },

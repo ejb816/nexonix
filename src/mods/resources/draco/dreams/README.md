@@ -7,7 +7,7 @@ definition-backed domains name the layer surrounding the Draco core:
 |---|---|
 | draco.dreams.Dreams | Construction and evolution of Draco-defined systems. Since 2026-10-12: `Initialization`, the endogenous client (below). |
 | draco.dreams.editor.Editor | Definition-authoring operations and editing workflows. Since 2026-10-09: Latent, Actual and the Editor actor (below). |
-| draco.dreams.user.User | User-facing participation and interaction. Since 2026-10-12: the editing REQUEST vocabulary — the abstract `Request` family (2026-10-13), `Latent` (Create/Update) deriving it, and the abstract `Response` (below). |
+| draco.dreams.user.User | User-facing participation and interaction. Since 2026-10-12: the editing REQUEST vocabulary — the abstract `Request` family (2026-10-13), `Latent` (Create/Update) and `Read` deriving it, and the abstract `Response` (below). |
 
 Each domain has a canonical Drake/JSON/generated Scala trio under
 src/mods/{resources,scala}/draco/dreams. The build's existing staging paths already
@@ -59,7 +59,13 @@ by identity — and Read and Delete are later request types. Since 2026-10-13 th
 are a FAMILY: `Request`, abstract (no elements, no factory), is the Editor's message type;
 Latent derives it; the Editor's message body dispatches by `case latent draco.dreams.user.Latent [ … ]`,
 the corpus's first cross-package case dispatch, with the generator's own catch-all for a
-Request that has no branch yet. Read and Delete join as further branches. `Response` in User is the
+Request that has no branch yet. `Read` is the second branch (2026-10-13): it names one
+domain by TypeName (name and package, parameters free, as definitions are keyed) and is
+answered through the same Response consumer — an Actual of the domain's definition and
+members as the accepted ontology holds them, or an Actual with a stub definition, no
+members and one Problem naming the domain when the ontology owns none. A Read never
+touches the state and never delivers an ontology; the ontology has no codec, so a user
+reads it one domain at a time. Delete joins as a further branch. `Response` in User is the
 abstract reply, `problems` and `accepted`, elements without a factory; Editor's Actual
 derives it (`from draco dreams user Response`, the corpus's first cross-package `from`),
 so a user consumes `User.Response` and never names `Editor.Actual`, and the dependency

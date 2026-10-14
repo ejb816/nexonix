@@ -51,6 +51,9 @@ object Editor extends App with DracoType {
           (if (problems.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(accept(provisional), accept(accepted))
           actual(Actual(latent.definition, latent.members, problems.toSeq))
           (if (problems.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(ontology(accepted), ())
+        case read: draco.dreams.user.Read =>
+          lazy val owner: draco.drake.Presence[draco.DomainType] = (accepted.keys.find(d => d.typeDefinition.typeName.namePath == read.domain.namePath) match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
+          actual(owner.fold(Actual(draco.TypeDefinition(read.domain), Seq.empty, Seq(draco.Problem(read.domain, s"domain ${read.domain.name} is not in the accepted ontology"))), d => Actual(d.typeDefinition, d.typeDictionary.elementTypes)))
         case _ => ()
       }
       Behaviors.same[draco.dreams.user.Request]

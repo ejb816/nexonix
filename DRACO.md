@@ -49,12 +49,14 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**741 tests / 54 suites**, verified by Dev's run on 2026-10-13 on the tree holding the delivery, CRUD and
-initialization increments (§3 *Delivery*, *User defines the requests*, *Initialization*; one commit, 6869e47,
-record `git-record-2026-10-12-1413`), with every report-only figure unchanged — no main-corpus TYPE was added
-(EditorTest +1, DreamsTest +1, `InitializationTest` 6 new, the 54th suite). The Request-family increment
-(§3 *The Request family*, record `git-record-2026-10-13-1311`) expects **744 / 54** (DrakeParseTest +1,
-DreamsTest +2), no headline moves, Dev's run pending. Before it: **735 / 53**, Dev's run
+**744 tests / 54 suites**, verified by Dev's run on 2026-10-13 at commit 5057a5c (the Request-family
+increment, §3 *The Request family*, record `git-record-2026-10-13-1311`; DrakeParseTest +1, DreamsTest +2),
+with every report-only figure unchanged — no main-corpus TYPE was added and the two engine fixes it carries
+are byte-identical over the main corpus. The Read increment (§3 *Read*, record `git-record-2026-10-13-2158`)
+expects **747 / 54** (EditorTest +1, DreamsTest +2), no headline moves, Dev's run pending. Before it: **741 / 54** at 6869e47 (the delivery, CRUD and
+initialization increments, §3 *Delivery*, *User defines the requests*, *Initialization*, one commit, record
+`git-record-2026-10-12-1413`; EditorTest +1, DreamsTest +1, `InitializationTest` 6 new, the 54th suite),
+Dev's run earlier on 2026-10-13. Before it: **735 / 53**, Dev's run
 on 2026-10-12 on the same tree before the third increment; before that **733 / 53** at efa9085 (the composition increment, §3 *Composition: the Editor holds
 draco's innate ontology*, Dev's run earlier the same day), with the parse-scope and
 surface-loss rows below moved by the one corpus type it added and every other figure unchanged. Before it:
@@ -532,7 +534,7 @@ endogenous run then accepts all 18 canonical domains, and the ontology it builds
 `InitializationTest` (6) is new, the 54th suite; EditorTest's SelfDeclaration case now refuses a
 self-declaration naming ANOTHER definition and accepts the bare parameterized one.
 
-**The Request family (2026-10-13, Read's first design point; awaiting Dev's run, expected 744 / 54).** The Editor is
+**The Request family (2026-10-13, Read's first design point; 5057a5c, Dev's full run 744 / 54).** The Editor is
 one actor with one message type, so a second request needs a shared shape. Dev accepted "the Request family in
 User": `draco.dreams.user.Request`, abstract (no elements, no factory, as ActorType); `Latent` derives it; User
 holds Latent, Request, Response. The Editor's `messageType` is `draco dreams user Request` and its message body
@@ -544,7 +546,20 @@ parser took every lower-case-initial token as the binder, so a DOTTED type lost 
 branch's name (the type slot is a value type: a token whose last segment is upper-case is the type now); and
 `externalImports` scanned only an action's top-level statements, so a `[T]+` inside the branch lost its
 `mutable` import (the scan looks one level down). DrakeParseTest +1, DreamsTest +2; the gates are byte-identical
-over the main corpus. Read's content and response is the next point.
+over the main corpus.
+
+**Read: one domain by name, answered with an Actual (2026-10-13, Read's second design point; awaiting Dev's run,
+expected 747 / 54).** Dev accepted "Read naming one domain answered with an Actual". Two facts bounded it: a
+domain is named as definitions are keyed (name + package, parameters free), and the ontology has no codec, so a
+user reads it one domain at a time. `draco.dreams.user.Read` derives Request and carries `fix domain TypeName`;
+User holds Latent, Read, Request, Response. The Editor's second branch, `case read draco.dreams.user.Read [ … ]`,
+binds `owner` as `presence(accepted.keys.find(namePath ==))` and answers through the SAME Response consumer:
+`owner.fold(Actual(stub definition naming the domain, [], [one Problem]), \d -> Actual(d.typeDefinition,
+d.typeDictionary.elementTypes))` — the domain as the ontology holds it when owned, a refused Actual naming it
+when not. A Read never touches the state and never delivers an ontology; two consecutive cases are one
+dispatch. Nothing new on the Editor's factory or in User's response vocabulary. Rejected: a new response type
+for reads; reading a member by name; one answer carrying the whole ontology. EditorTest 17 (+1), DreamsTest 16
+(+2). Next: Delete (an `excluding` beside `including`; the whole-ontology validation already refuses orphaning).
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member

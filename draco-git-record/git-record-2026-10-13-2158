@@ -1,0 +1,45 @@
+Add Read: one domain by name, answered with an Actual from the accepted ontology
+
+Dev accepted Read's second design point on 2026-10-13 ("I accept Read naming one domain
+answered with an Actual, proceed"). Two facts bounded it: definitions are keyed by name and
+package, parameters free, so a domain is named the same way; and the ontology has no
+codec, so no answer can carry the ontology itself — a user reads it one domain at a time,
+which is what the Editor can honestly promise.
+
+draco.dreams.user.Read derives Request and carries one element, `fix domain draco.TypeName`;
+User holds Latent, Read, Request and Response. The Editor's message body gains its second
+branch, `case read draco.dreams.user.Read [ ... ]`: `fix owner Presence(DomainType)
+presence(accepted.keys.find(\d -> namePath == read.domain.namePath))`, then
+`actual(owner.fold(<absent>, \d -> Actual(d.typeDefinition, d.typeDictionary.elementTypes)))`.
+When the accepted ontology owns the domain the answer is an Actual of its definition and
+members as the ontology holds them, no problems; when it owns none the answer is an Actual
+with a stub definition naming the domain, no members and one Problem ("domain X is not in
+the accepted ontology"), so `accepted` is false and the user reads it as any other
+Response. A Read never touches the state and never delivers an ontology; the two
+consecutive cases are one dispatch (drake.dlt CASE-BRANCH). Nothing was added to the
+Editor's factory or to User's response vocabulary. In Haskell: Read is the constructor
+applied to a name, and the answer is the same Response the other constructors yield.
+
+This commit also carries the verification note for 5057a5c (Dev's full run 744 / 54 on
+2026-10-13, every headline unchanged), written before this increment; its separate record
+is withdrawn and DRACO.md §1 names 744 / 54 at 5057a5c as the baseline.
+
+Measured: compiled-class probe (the nine staged companions and three suites recompiled
+into probe dirs under target/scala-2.13 over the overlay rebuilt from Dev's 741 classes
+with the engine fixes compiled in): EditorTest 17 / 0 (+1: a Read before acceptance
+answers a stub and one Problem; after acceptance the domain as held; a domain of the
+initial ontology — Draco, every member — reads too; an unknown domain is a Problem; and
+only the one acceptance delivered an ontology), DreamsTest 16 / 0 (+2: the Read trio;
+User holds four; Read derives Request and names one domain), InitializationTest 6 / 0,
+ServiceTest 9 / 0. Both dreams directories: surface drift 0, json drift 0. Expected sbt
+arithmetic from Dev's 744 / 54: +1 +2 = 747 / 54, no headline moves (no main-corpus TYPE
+added, no engine change). Probe dirs removed. Dev's full run is the gate.
+
+Rejected: a new response type for reads (an Actual already is the codable form of one
+accepted domain); reading a single member by name (a question about a domain, until a
+user needs it); one answer carrying the whole ontology (no codec); answering a missing
+domain with silence (the user could not tell a slow Editor from an absent domain).
+
+Not done: Delete (an `excluding` beside `including`; the whole-ontology validation already
+refuses orphaning); generation and activation; inferred derivation; membership
+reciprocity; chapter 94. No sbt, commit or push run by Claude.

@@ -36,3 +36,7 @@ actor
       mon actual(Actual(latent.definition, latent.members, problems.toSeq))
       mon guard(problems.isEmpty).ifThenElse(ontology(accepted), ())
     ]
+    case read draco.dreams.user.Read [
+      fix owner draco.drake.Presence(draco.DomainType) presence(accepted.keys.find(\d -> d.typeDefinition.typeName.namePath == read.domain.namePath))
+      mon actual(owner.fold(Actual(draco.TypeDefinition(read.domain), [], [draco.Problem(read.domain, s"domain ${read.domain.name} is not in the accepted ontology")]), \d -> Actual(d.typeDefinition, d.typeDictionary.elementTypes)))
+    ]

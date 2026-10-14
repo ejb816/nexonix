@@ -537,8 +537,10 @@ last ontology delivered — draco's innate ontology, which defines the client it
 that the corpus's one parameterized domain, `Format(F)`, self-declares bare, so `SelfDeclaration` now
 compares name and package with parameters free, the same principle as Uniqueness. The requests are a
 family since 2026-10-13: User's abstract `Request` is the Editor's message type, Latent derives it, and
-the Editor's message body dispatches by `case`, so Read and Delete join as further branches. Their
-content, generation and activation follow as explicit steps.
+the Editor's message body dispatches by `case`. Read is the second branch: it names one domain and is
+answered, through the same Response consumer, with the domain's definition and members as the accepted
+ontology holds them, or a refused Actual naming it when the ontology owns none; a Read never changes the
+state. Delete, generation and activation follow as explicit steps.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation
 and activation follow as explicit operations. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
@@ -730,8 +732,10 @@ request, User's abstract Response derived by Editor's Actual, the dependency run
 third followed in the same commit, and Dev's full run on 2026-10-13 passed 741 tests / 54 suites with
 every report-only figure unchanged: the initialization client, draco as its own first User, whose
 endogenous run accepts all eighteen canonical domains once SelfDeclaration compares name and package
-with parameters free. The Request family followed on 2026-10-13 (expected 744 / 54, awaiting Dev's
-run): Request abstract in User, Latent deriving it, the Editor dispatching by case, two engine gaps
-closed on the way.
+with parameters free. The Request family followed on 2026-10-13, committed as 5057a5c after Dev's full
+run passed 744 tests / 54 suites with every report-only figure unchanged: Request abstract in User,
+Latent deriving it, the Editor dispatching by case, two engine gaps closed on the way. Read followed
+the same evening (expected 747 / 54, awaiting Dev's run): one domain by name, answered with an Actual
+from the accepted ontology.
 
 <!-- draco-docs-synced-through: chapter 93 -->
