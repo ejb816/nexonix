@@ -1,0 +1,57 @@
+Add Delete through excluding: the CRUD vocabulary complete, the judgment shared
+
+Dev accepted Delete's first design point on 2026-10-14 ("I accept Delete through
+excluding, proceed"): Delete names one domain by TypeName and is judged by the same
+whole-ontology validation as a Latent, through `excluding`.
+
+Core: `DomainOntology.excluding(typeName)`, the inverse of `including` — a new ontology
+without the domain of that name and package (parameters free, as definitions are keyed),
+the one it is called on untouched; an unknown name removes nothing. One dyn on an existing
+main-corpus type, so parse scope and the loss count do not move.
+
+User: `draco.dreams.user.Delete` derives Request and carries `fix domain draco.TypeName`;
+User holds Delete, Latent, Read, Request and Response — the CRUD vocabulary complete.
+
+Editor: a third branch, `case delete draco.dreams.user.Delete [ ... ]` — `owner` through
+`presence(accepted.keys.find(namePath ==))`, `provisional = accepted.excluding(delete.domain)`,
+`problems = owner.fold([one Problem naming the domain], \d -> judge(rules, provisional))`,
+the state swapped only when quiet, the Actual carrying the domain as the ontology held it
+(a stub when not owned), the shrunk ontology delivered through the consumer on
+acceptance. Three outcomes follow without a new rule: a domain nothing depends on is
+removed; a domain another derives from is refused, DerivationResolvable over the whole
+result naming the dependent; a domain the ontology does not own is refused with one
+Problem. Draco itself cannot be deleted while anything derives from its root, and
+acceptance alters nothing running.
+
+THE JUDGMENT IS NOW ONE GLOBAL: `dyn judge [Problem]` in the Editor's `globals` —
+parameters `rules Knowledge`, `provisional DomainOntology`; body: the definitions, the
+problems buffer, the session, set/insert ×3/fire/close, `fix value problems.toSeq` — the
+first globals section on an actor-minting type. It renders as a companion `def`, visible
+inside the minted actor by enclosure, and the Latent branch shrank to six lines calling it.
+The emitter orders `factory` before `globals`; the authored drake adopted that.
+
+Measured: compiled-class probe (DomainOntology and the ten staged companions recompiled
+into probe dirs under target/scala-2.13 over the current overlay): DomainOntologyTest 7
+(+1: excluding removes by name and package, leaves the original, ignores an unknown name,
+parameters free), EditorTest 18 (+1: the seven-step Delete sequence — not owned, two
+acceptances, Draco refused naming Root, Fresh refused naming Twig, Other removed with its
+Actual, Fresh removed; four ontologies delivered, the last Draco alone; three branches and
+the one global pinned), DreamsTest 18 (+2: the Delete trio; User holds five),
+InitializationTest 6 — 49 / 0 failed. DracoGenTest, DrakeGenTest, UniquenessRulesTest,
+DerivationResolvableRulesTest, ServiceTest, DomainBuilderTest — 316 / 0 failed: the
+regenerated DomainOntology.scala is byte-identical with its gate. Both dreams directories
+and the main corpus: no drift beyond the two authored-ahead files. Expected sbt arithmetic
+from Dev's 747 / 54: +1 +1 +2 = 751 / 54, no headline moves. Probe dirs removed. Dev's full
+run is the gate.
+
+This commit also carries the verification note for 799e9ae (Dev's full run 747 / 54 on
+2026-10-14); its separate record is withdrawn and DRACO.md §1 names 747 / 54 at 799e9ae
+as the baseline.
+
+Rejected: repeating the session lines in the Delete branch (one judgment, two callers);
+a Delete that silently succeeds on a domain the ontology does not own (the user could not
+tell it from a slow Editor); deleting a member rather than a domain (Latent already
+updates a domain's members, judged the same way).
+
+Not done: generation and activation as explicit operations; inferred derivation;
+membership reciprocity; chapter 94. No sbt, commit or push run by Claude.

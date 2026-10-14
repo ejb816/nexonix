@@ -4,6 +4,23 @@ type Editor
       par initial draco.DomainOntology
       par actual (draco.dreams.user.Response -> Unit)
       par ontology (draco.DomainOntology -> Unit)
+  globals
+    dyn judge [draco.Problem] [
+      parameters
+        par rules org.evrete.api.Knowledge
+        par provisional draco.DomainOntology
+      body
+        fix definitions [draco.TypeDefinition] provisional.keys.toSeq.flatMap(\domain -> domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
+        fix problems [draco.Problem]+ scala.collection.mutable.ArrayBuffer()
+        fix session org.evrete.api.StatefulSession rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+        mon session.set("problems", problems)
+        mon session.insert(provisional.keys.toSeq: _*)
+        mon session.insert(definitions.toSeq: _*)
+        mon session.insert(Seq(provisional): _*)
+        mon session.fire()
+        mon session.close()
+        fix value [draco.Problem] problems.toSeq
+    ]
 domain draco dreams editor Editor
   types [
     Actual
@@ -23,20 +40,20 @@ actor
     case latent draco.dreams.user.Latent [
       fix candidate draco.DomainType draco.Domain(latent.definition, latent.members)
       fix provisional draco.DomainOntology accepted.including(candidate)
-      fix definitions [draco.TypeDefinition] provisional.keys.toSeq.flatMap(\domain -> domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
-      fix problems [draco.Problem]+ scala.collection.mutable.ArrayBuffer()
-      fix session org.evrete.api.StatefulSession rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
-      mon session.set("problems", problems)
-      mon session.insert(provisional.keys.toSeq: _*)
-      mon session.insert(definitions.toSeq: _*)
-      mon session.insert(Seq(provisional): _*)
-      mon session.fire()
-      mon session.close()
+      fix problems [draco.Problem] judge(rules, provisional)
       mon guard(problems.isEmpty).ifThenElse(accept(provisional), accept(accepted))
-      mon actual(Actual(latent.definition, latent.members, problems.toSeq))
+      mon actual(Actual(latent.definition, latent.members, problems))
       mon guard(problems.isEmpty).ifThenElse(ontology(accepted), ())
     ]
     case read draco.dreams.user.Read [
       fix owner draco.drake.Presence(draco.DomainType) presence(accepted.keys.find(\d -> d.typeDefinition.typeName.namePath == read.domain.namePath))
       mon actual(owner.fold(Actual(draco.TypeDefinition(read.domain), [], [draco.Problem(read.domain, s"domain ${read.domain.name} is not in the accepted ontology")]), \d -> Actual(d.typeDefinition, d.typeDictionary.elementTypes)))
+    ]
+    case delete draco.dreams.user.Delete [
+      fix owner draco.drake.Presence(draco.DomainType) presence(accepted.keys.find(\d -> d.typeDefinition.typeName.namePath == delete.domain.namePath))
+      fix provisional draco.DomainOntology accepted.excluding(delete.domain)
+      fix problems [draco.Problem] owner.fold([draco.Problem(delete.domain, s"domain ${delete.domain.name} is not in the accepted ontology")], \d -> judge(rules, provisional))
+      mon guard(problems.isEmpty).ifThenElse(accept(provisional), accept(accepted))
+      mon actual(owner.fold(Actual(draco.TypeDefinition(delete.domain), [], problems), \d -> Actual(d.typeDefinition, d.typeDictionary.elementTypes, problems)))
+      mon guard(problems.isEmpty).ifThenElse(ontology(accepted), ())
     ]

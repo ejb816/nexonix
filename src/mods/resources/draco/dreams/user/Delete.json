@@ -1,0 +1,50 @@
+{
+  "typeName": {
+    "name": "Delete",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "user"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Request",
+        "namePackage": [
+          "draco",
+          "dreams",
+          "user"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "domain",
+        "valueType": "draco.TypeName"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Delete",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "domain",
+          "valueType": "draco.TypeName"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "User",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    }
+  }
+}

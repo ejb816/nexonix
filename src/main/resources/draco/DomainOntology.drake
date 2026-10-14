@@ -26,6 +26,12 @@ type DomainOntology from Dictionary(DomainType, TypeDictionary)
       body
         fix value DomainOntology DomainOntology(kvMap.keys.filter(\other -> other.typeDefinition.typeName.namePath != domain.typeDefinition.typeName.namePath).toSeq ++ [domain])
     ]
+    dyn excluding DomainOntology [
+      parameters
+        par typeName TypeName
+      body
+        fix value DomainOntology DomainOntology(kvMap.keys.filter(\other -> other.typeDefinition.typeName.namePath != typeName.namePath).toSeq)
+    ]
   factory
     parameters
       par domains [DomainType] []

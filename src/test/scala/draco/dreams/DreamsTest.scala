@@ -2,7 +2,7 @@ package draco.dreams
 
 import draco._
 import draco.dreams.editor.{Actual, Editor}
-import draco.dreams.user.{Latent, Read, Request, Response, User}
+import draco.dreams.user.{Delete, Latent, Read, Request, Response, User}
 import io.circe.syntax._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -25,6 +25,7 @@ class DreamsTest extends AnyFunSuite {
   private val trios = Seq(
     ("Dreams", Seq("draco", "dreams"), () => Dreams.typeDefinition),
     ("User", userPkg, () => User.typeDefinition),
+    ("Delete", userPkg, () => Delete.typeDefinition),
     ("Latent", userPkg, () => Latent.typeDefinition),
     ("Read", userPkg, () => Read.typeDefinition),
     ("Request", userPkg, () => Request.typeDefinition),
@@ -66,25 +67,26 @@ class DreamsTest extends AnyFunSuite {
     assert(DomainBuilder.generate("Dreams", Seq("draco", "dreams")).keySet == Set(td.typeName, Initialization.typeDefinition.typeName))
   }
 
-  test("User is the request domain: the Request family (Latent, Read), and Response; no rule, actor or codec of its own") {
+  test("User is the request domain: the Request family (Latent, Read, Delete), and Response; no rule, actor or codec of its own") {
     val td = User.typeDefinition
     assert(td.typeName == TypeName("User", userPkg))
     assert(td.domainAspect.typeName == td.typeName)
-    assert(User.elementTypeNames == Seq("Latent", "Read", "Request", "Response"))
-    assert(User.domainType.typeDictionary.size == 4)
+    assert(User.elementTypeNames == Seq("Delete", "Latent", "Read", "Request", "Response"))
+    assert(User.domainType.typeDictionary.size == 5)
     assert(RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect) && CodecAspect.isEmpty(td.codecAspect))
-    Seq(Latent, Read, Request, Response).foreach(m => assert(m.typeDefinition.domainAspect.typeName == td.typeName))
+    Seq(Delete, Latent, Read, Request, Response).foreach(m => assert(m.typeDefinition.domainAspect.typeName == td.typeName))
     // Request is the abstract head of the family (2026-10-13): no elements, no factory;
-    // Latent (Create/Update) and Read derive it, Delete will. The Editor's message type is Request.
+    // Latent (Create/Update), Read and Delete (2026-10-14) derive it — the CRUD vocabulary
+    // complete. The Editor's message type is Request.
     assert(Request.typeDefinition.dracoAspect.elements.isEmpty)
-    assert(DracoAspect.parents(Latent.typeDefinition.dracoAspect) == Seq(Request.typeDefinition.typeName))
-    assert(DracoAspect.parents(Read.typeDefinition.dracoAspect) == Seq(Request.typeDefinition.typeName))
+    Seq(Latent, Read, Delete).foreach(m => assert(DracoAspect.parents(m.typeDefinition.dracoAspect) == Seq(Request.typeDefinition.typeName)))
     assert(Read.typeDefinition.dracoAspect.elements.map(_.name) == Seq("domain"), "a Read names one domain")
+    assert(Delete.typeDefinition.dracoAspect.elements.map(_.name) == Seq("domain"), "a Delete names one domain")
     val loaded = DomainBuilder.define("User", userPkg)
     assert(loaded.typeDictionary.elementTypes.forall(m => !DomainBuilder.isStub(m)))
     assert(DomainBuilder.validate(loaded).isEmpty)
     assert(DomainBuilder.generate("User", userPkg).keySet ==
-      Set(td.typeName, Latent.typeDefinition.typeName, Read.typeDefinition.typeName, Request.typeDefinition.typeName, Response.typeDefinition.typeName))
+      Set(td.typeName, Delete.typeDefinition.typeName, Latent.typeDefinition.typeName, Read.typeDefinition.typeName, Request.typeDefinition.typeName, Response.typeDefinition.typeName))
   }
 
   test("Response is the abstract reply: elements without a factory, accepted iff no problems; Actual is one") {
@@ -113,7 +115,7 @@ class DreamsTest extends AnyFunSuite {
     assert(ontology.get(dreams).exists(_.size == 1))
     assert(!core.typeDictionary.contains(dreams.typeDefinition.typeName))
     assert(!service.typeDictionary.contains(dreams.typeDefinition.typeName))
-    assert(ontology.get(user).exists(_.size == 4))
+    assert(ontology.get(user).exists(_.size == 5))
     assert(ontology.get(editor).exists(_.size == 1))
     assert(ontology.get(core).exists(_.nonEmpty))
     assert(ontology.get(service).exists(_.size == 2))

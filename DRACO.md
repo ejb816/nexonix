@@ -49,11 +49,13 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**744 tests / 54 suites**, verified by Dev's run on 2026-10-13 at commit 5057a5c (the Request-family
-increment, §3 *The Request family*, record `git-record-2026-10-13-1311`; DrakeParseTest +1, DreamsTest +2),
-with every report-only figure unchanged — no main-corpus TYPE was added and the two engine fixes it carries
-are byte-identical over the main corpus. The Read increment (§3 *Read*, record `git-record-2026-10-13-2158`)
-expects **747 / 54** (EditorTest +1, DreamsTest +2), no headline moves, Dev's run pending. Before it: **741 / 54** at 6869e47 (the delivery, CRUD and
+**747 tests / 54 suites**, verified by Dev's run on 2026-10-14 at commit 799e9ae (the Read increment, §3
+*Read*, record `git-record-2026-10-13-2158`; EditorTest +1, DreamsTest +2), with every report-only figure
+unchanged — no main-corpus TYPE was added. The Delete increment (§3 *Delete*, record
+`git-record-2026-10-14-1136`) expects **751 / 54** (DomainOntologyTest +1, EditorTest +1, DreamsTest +2), no
+headline moves, Dev's run pending. Before it: **744 / 54** at 5057a5c (the Request-family
+increment, §3 *The Request family*, record `git-record-2026-10-13-1311`; DrakeParseTest +1, DreamsTest +2;
+its two engine fixes byte-identical over the main corpus), Dev's run on 2026-10-13. Before it: **741 / 54** at 6869e47 (the delivery, CRUD and
 initialization increments, §3 *Delivery*, *User defines the requests*, *Initialization*, one commit, record
 `git-record-2026-10-12-1413`; EditorTest +1, DreamsTest +1, `InitializationTest` 6 new, the 54th suite),
 Dev's run earlier on 2026-10-13. Before it: **735 / 53**, Dev's run
@@ -548,8 +550,8 @@ branch's name (the type slot is a value type: a token whose last segment is uppe
 `mutable` import (the scan looks one level down). DrakeParseTest +1, DreamsTest +2; the gates are byte-identical
 over the main corpus.
 
-**Read: one domain by name, answered with an Actual (2026-10-13, Read's second design point; awaiting Dev's run,
-expected 747 / 54).** Dev accepted "Read naming one domain answered with an Actual". Two facts bounded it: a
+**Read: one domain by name, answered with an Actual (2026-10-13, Read's second design point; 799e9ae, Dev's full
+run 747 / 54).** Dev accepted "Read naming one domain answered with an Actual". Two facts bounded it: a
 domain is named as definitions are keyed (name + package, parameters free), and the ontology has no codec, so a
 user reads it one domain at a time. `draco.dreams.user.Read` derives Request and carries `fix domain TypeName`;
 User holds Latent, Read, Request, Response. The Editor's second branch, `case read draco.dreams.user.Read [ … ]`,
@@ -559,7 +561,23 @@ d.typeDictionary.elementTypes))` — the domain as the ontology holds it when ow
 when not. A Read never touches the state and never delivers an ontology; two consecutive cases are one
 dispatch. Nothing new on the Editor's factory or in User's response vocabulary. Rejected: a new response type
 for reads; reading a member by name; one answer carrying the whole ontology. EditorTest 17 (+1), DreamsTest 16
-(+2). Next: Delete (an `excluding` beside `including`; the whole-ontology validation already refuses orphaning).
+(+2).
+
+**Delete through `excluding`, the judgment shared (2026-10-14; awaiting Dev's run, expected 751 / 54).** Dev
+accepted "Delete through excluding". Core gains `DomainOntology.excluding(typeName)`, the inverse of `including`
+(by name and package, parameters free; the original untouched; an unknown name removes nothing).
+`draco.dreams.user.Delete` derives Request with `fix domain TypeName`; User holds Delete, Latent, Read, Request,
+Response — the CRUD vocabulary complete. The Editor's third branch builds `accepted.excluding(delete.domain)`,
+judges it by the same five rules, swaps the state only when quiet, answers with the domain as the ontology held
+it (a stub naming it when not owned) and delivers the shrunk ontology on acceptance. Three outcomes without a
+new rule: removed when nothing depends on it; refused naming the DEPENDENT when something derives from it
+(DerivationResolvable over the whole result); refused with one Problem when not owned. Draco itself cannot be
+deleted while anything derives from its root. THE JUDGMENT IS ONE GLOBAL: `dyn judge [Problem]` in the
+Editor's `globals` (parameters `rules`, `provisional`; the session lines; `fix value problems.toSeq`) — the
+first `globals` on an actor-minting type, rendered as a companion `def` visible inside the minted actor — called
+by the Latent and Delete branches. The emitter orders `factory` before `globals`. DomainOntologyTest +1,
+EditorTest +1, DreamsTest +2; DracoGenTest confirms the regenerated core type byte-identical. Next, in Dev's
+accepted order: generation and activation as explicit operations.
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member

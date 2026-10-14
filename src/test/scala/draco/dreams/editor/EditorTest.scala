@@ -1,7 +1,7 @@
 package draco.dreams.editor
 
 import draco._
-import draco.dreams.user.{Latent, Read, Request, Response}
+import draco.dreams.user.{Delete, Latent, Read, Request, Response}
 import io.circe.Json
 import io.circe.syntax._
 import org.apache.pekko.actor.typed.ActorSystem
@@ -83,12 +83,14 @@ class EditorTest extends AnyFunSuite {
     assert(td.actorAspect.messageType == TypeName("Request", Seq("draco", "dreams", "user")))
     val branches = td.actorAspect.message.body.collect { case c: Case => c }
     assert(branches.map(c => (c.name, TypeForm.text(c.valueType))) ==
-      Seq(("latent", "draco.dreams.user.Latent"), ("read", "draco.dreams.user.Read")),
-      "two branches: Latent and Read; Delete joins the family as a further branch")
+      Seq(("latent", "draco.dreams.user.Latent"), ("read", "draco.dreams.user.Read"), ("delete", "draco.dreams.user.Delete")),
+      "three branches, the CRUD vocabulary: Latent (Create/Update), Read, Delete")
     val request = TypeName("Request", Seq("draco", "dreams", "user"))
-    assert(DracoAspect.parents(Latent.typeDefinition.dracoAspect) == Seq(request))
-    assert(DracoAspect.parents(Read.typeDefinition.dracoAspect) == Seq(request))
-    assert(Latent(definition(Seq.empty)).isInstanceOf[Request] && Read(fresh).isInstanceOf[Request])
+    Seq(Latent, Read, Delete).foreach(m => assert(DracoAspect.parents(m.typeDefinition.dracoAspect) == Seq(request)))
+    assert(Latent(definition(Seq.empty)).isInstanceOf[Request] && Read(fresh).isInstanceOf[Request] && Delete(fresh).isInstanceOf[Request])
+    // The judgment is one global dyn, `judge(rules, provisional)`, shared by the Latent and
+    // Delete branches (2026-10-14): the same five rules over the whole ontology that would result.
+    assert(td.dracoAspect.globalElements.map(_.name) == Seq("judge"))
     assert(RuleAspect.isEmpty(td.ruleAspect))
     val loaded = DomainBuilder.define("Editor", Seq("draco", "dreams", "editor"))
     assert(DomainBuilder.validate(loaded).isEmpty)
@@ -288,6 +290,32 @@ class EditorTest extends AnyFunSuite {
     assert(!missing.accepted && subjects(missing) == Set("Nowhere"))
     assert(delivered.ontologies.size == 1 && delivered.order == Seq("actual", "actual", "ontology", "actual", "actual", "actual"),
       "a Read never changes the state, so only the one acceptance delivered an ontology")
+  }
+
+  test("a Delete names one domain: removed when nothing depends on it, refused naming the dependent when something does, refused when not owned") {
+    val draco = TypeName("Draco", Seq("draco"))
+    val nowhere = TypeName("Nowhere", Seq("example", "nowhere"))
+    val steps = Seq(
+      Delete(nowhere),                                                                   // not owned
+      Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),       // accepted
+      Latent(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", root))),         // accepted; Twig derives Root
+      Delete(draco),                                                                     // Root derives Primal: refused naming Root
+      Delete(fresh),                                                                     // Twig derives Root: refused naming Twig
+      Delete(other),                                                                     // nothing depends on Other: removed
+      Delete(fresh))                                                                     // now nothing depends on Fresh: removed
+    val delivered = deliveries(reference, steps, "editorDeletes")
+    val actuals = delivered.actuals
+    assert(actuals.map(_.accepted) == Seq(false, true, true, false, false, true, true),
+      s"got ${actuals.map(a => a.problems.map(p => s"${p.subject.name}: ${p.message}"))}")
+    assert(subjects(actuals(0)) == Set("Nowhere") && actuals(0).members.isEmpty)
+    assert(subjects(actuals(3)) == Set("Root"), "the framework's own core cannot be deleted while anything derives from it")
+    assert(subjects(actuals(4)) == Set("Twig"), "a refused deletion names the dependent it would orphan")
+    assert(actuals(5).definition.typeName == other && actuals(5).members.map(_.typeName.name) == Seq("Twig"),
+      "the Actual of an accepted deletion carries the domain as the ontology held it")
+    assert(delivered.ontologies.size == 4, "two acceptances and two deletions delivered an ontology; the refusals did not")
+    val last = delivered.ontologies.last
+    assert(last.size == reference.size && !last.defines(root) && last.defines(primal), "the shrunk ontology is Draco alone again")
+    assert(reference.defines(primal) && reference.size == last.size, "the initial ontology was never mutated")
   }
 
   test("Latent and Actual round-trip through JSON; Actual's domain is derived, not carried") {

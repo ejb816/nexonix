@@ -540,7 +540,10 @@ family since 2026-10-13: User's abstract `Request` is the Editor's message type,
 the Editor's message body dispatches by `case`. Read is the second branch: it names one domain and is
 answered, through the same Response consumer, with the domain's definition and members as the accepted
 ontology holds them, or a refused Actual naming it when the ontology owns none; a Read never changes the
-state. Delete, generation and activation follow as explicit steps.
+state. Delete is the third branch (2026-10-14): it names one domain, the ontology that would result comes
+through `excluding`, and the same five rules judge it, so a domain nothing depends on is removed, one
+another derives from is refused naming the dependent, and an unowned one is refused; the judgment is one
+global on the Editor shared with Latent. Generation and activation follow as explicit steps.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation
 and activation follow as explicit operations. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
@@ -735,7 +738,9 @@ endogenous run accepts all eighteen canonical domains once SelfDeclaration compa
 with parameters free. The Request family followed on 2026-10-13, committed as 5057a5c after Dev's full
 run passed 744 tests / 54 suites with every report-only figure unchanged: Request abstract in User,
 Latent deriving it, the Editor dispatching by case, two engine gaps closed on the way. Read followed
-the same evening (expected 747 / 54, awaiting Dev's run): one domain by name, answered with an Actual
-from the accepted ontology.
+the same evening, committed as 799e9ae after Dev's full run passed 747 tests / 54 suites with every
+report-only figure unchanged: one domain by name, answered with an Actual from the accepted ontology.
+Delete followed on 2026-10-14 (expected 751 / 54, awaiting Dev's run): `excluding` in core, the third
+branch, and the judgment shared as one global on the Editor.
 
 <!-- draco-docs-synced-through: chapter 93 -->

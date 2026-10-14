@@ -39,13 +39,22 @@ for the definition that will replace it.
 
 ### Added
 
+- **Delete through `excluding`; the CRUD vocabulary complete.** `DomainOntology.excluding`
+  (core) is the inverse of `including`; `draco.dreams.user.Delete` derives Request and
+  names one domain; the Editor's third `case` branch judges the ontology that would
+  result by the same five rules, so a domain nothing depends on is removed, a domain
+  another derives from is refused naming the dependent, and an unowned domain is refused
+  with one Problem; the shrunk ontology is delivered on acceptance. The judgment is now
+  one global `judge(rules, provisional)` on the Editor, shared by the Latent and Delete
+  branches. DomainOntologyTest +1, EditorTest +1, DreamsTest +2; expected 751 tests / 54
+  suites, Dev's full run pending. (2026-10-14)
 - **Read: one domain by name, answered with an Actual.** `draco.dreams.user.Read` derives
   Request and names one domain by TypeName; the Editor's second `case` branch answers
   through the same Response consumer with the domain's definition and members as the
   accepted ontology holds them, or a refused Actual naming the domain with one Problem
   when the ontology owns none. A Read never changes the state and never delivers an
-  ontology. EditorTest +1, DreamsTest +2; expected 747 tests / 54 suites, Dev's full run
-  pending. (2026-10-13)
+  ontology. EditorTest +1, DreamsTest +2; compiled-class probe, then Dev's full run: 747
+  tests / 54 suites, every report-only figure unchanged; committed as 799e9ae. (2026-10-13)
 - **User's requests are a family.** `draco.dreams.user.Request` is the abstract head
   (no elements, no factory); `Latent` derives it; the Editor's message type is `Request`
   and its message body dispatches by `case` — one branch today, Latent, the corpus's first

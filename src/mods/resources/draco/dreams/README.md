@@ -7,7 +7,7 @@ definition-backed domains name the layer surrounding the Draco core:
 |---|---|
 | draco.dreams.Dreams | Construction and evolution of Draco-defined systems. Since 2026-10-12: `Initialization`, the endogenous client (below). |
 | draco.dreams.editor.Editor | Definition-authoring operations and editing workflows. Since 2026-10-09: Latent, Actual and the Editor actor (below). |
-| draco.dreams.user.User | User-facing participation and interaction. Since 2026-10-12: the editing REQUEST vocabulary — the abstract `Request` family (2026-10-13), `Latent` (Create/Update) and `Read` deriving it, and the abstract `Response` (below). |
+| draco.dreams.user.User | User-facing participation and interaction. Since 2026-10-12: the editing REQUEST vocabulary — the abstract `Request` family (2026-10-13), `Latent` (Create/Update), `Read` and `Delete` deriving it, and the abstract `Response` (below). |
 
 Each domain has a canonical Drake/JSON/generated Scala trio under
 src/mods/{resources,scala}/draco/dreams. The build's existing staging paths already
@@ -65,7 +65,15 @@ answered through the same Response consumer — an Actual of the domain's defini
 members as the accepted ontology holds them, or an Actual with a stub definition, no
 members and one Problem naming the domain when the ontology owns none. A Read never
 touches the state and never delivers an ontology; the ontology has no codec, so a user
-reads it one domain at a time. Delete joins as a further branch. `Response` in User is the
+reads it one domain at a time. `Delete` is the third branch (2026-10-14): it names one
+domain, the ontology that would result comes through core's `excluding` (the inverse of
+`including`), and the same five rules judge the whole of it — a domain nothing depends on
+is removed and the shrunk ontology delivered, a domain another derives from is refused
+naming the dependent, an unowned domain is refused with one Problem; the Actual carries
+the domain as the ontology held it. Draco itself cannot be deleted while anything derives
+from its root. The judgment is one global on the Editor, `judge(rules, provisional)`,
+shared by the Latent and Delete branches — the first `globals` section on an
+actor-minting type. `Response` in User is the
 abstract reply, `problems` and `accepted`, elements without a factory; Editor's Actual
 derives it (`from draco dreams user Response`, the corpus's first cross-package `from`),
 so a user consumes `User.Response` and never names `Editor.Actual`, and the dependency

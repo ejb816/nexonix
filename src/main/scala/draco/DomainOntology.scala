@@ -19,6 +19,10 @@ trait DomainOntology extends Dictionary[DomainType, TypeDictionary] {
     lazy val domain: DomainType = _domain
     DomainOntology(kvMap.keys.filter(other => other.typeDefinition.typeName.namePath != domain.typeDefinition.typeName.namePath).toSeq ++ Seq(domain))
   }
+  def excluding(_typeName: => TypeName): DomainOntology = {
+    lazy val typeName: TypeName = _typeName
+    DomainOntology(kvMap.keys.filter(other => other.typeDefinition.typeName.namePath != typeName.namePath).toSeq)
+  }
 }
 
 object DomainOntology extends App with DracoType {

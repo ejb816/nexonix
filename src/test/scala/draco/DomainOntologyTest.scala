@@ -95,6 +95,20 @@ class DomainOntologyTest extends AnyFunSuite {
     assert(after.keys.count(d => after.owns(d, TypeName("Root", pkg))) == 1, "one owner after the update")
   }
 
+  test("excluding removes the domain of that name and package, leaves the ontology untouched, and ignores an unknown name") {
+    // The inverse of including (2026-10-14, Delete's first point): a new ontology without
+    // the named domain; the one it is called on keeps everything.
+    val both = DomainBuilder.ontology(draco, base)
+    val baseName = base.typeDefinition.typeName
+    val without = both.excluding(baseName)
+    assert(both.size == 2 && without.size == 1)
+    assert(both.defines(TypeName("Cardinal", Seq("draco", "base"))) && !without.defines(TypeName("Cardinal", Seq("draco", "base"))))
+    assert(without.derivations.forall(e => e.child.namePackage != Seq("draco", "base")), "the removed domain's edges go with it")
+    assert(both.excluding(TypeName("Nowhere", Seq("nowhere"))).size == 2, "an unknown name removes nothing")
+    assert(both.excluding(TypeName(baseName.name, baseName.namePackage, Seq(io.circe.Json.fromString("T")))).size == 1,
+      "name and package, parameters free — as definitions are keyed")
+  }
+
   test("owns and defines agree: a name is defined iff some composed domain owns it") {
     val ontology = DomainBuilder.ontology(draco, base)
     val names = Seq(primal, TypeName("Cardinal", Seq("draco", "base")), TypeName("Draco", Seq("draco")),

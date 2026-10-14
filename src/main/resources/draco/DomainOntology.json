@@ -247,6 +247,51 @@
             }
           }
         ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "excluding",
+        "valueType": "DomainOntology",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "TypeName"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "DomainOntology",
+            "value": {
+              "()": [
+                "DomainOntology",
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "kvMap.keys.filter",
+                        {
+                          "\\": [
+                            "other",
+                            {
+                              "!=": [
+                                "other.typeDefinition.typeName.namePath",
+                                "typeName.namePath"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "toSeq"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
       }
     ],
     "factory": {
