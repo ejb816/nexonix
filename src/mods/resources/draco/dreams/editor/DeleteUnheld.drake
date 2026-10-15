@@ -1,0 +1,11 @@
+type DeleteUnheld
+domain draco dreams editor Editor
+rule
+  pattern
+    variables
+      var d draco.dreams.user.Delete
+      var a Accepted
+    conditions
+      con !a.ontology.holds(d.domain)
+  action
+    mon ctx.insert(draco.Problem(d.domain, s"domain ${d.domain.name} is not in the accepted ontology"))

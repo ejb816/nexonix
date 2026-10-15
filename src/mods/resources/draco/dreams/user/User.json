@@ -17,11 +17,13 @@
       ]
     },
     "elementTypeNames": [
+      "Create",
       "Delete",
       "Latent",
       "Read",
       "Request",
-      "Response"
+      "Response",
+      "Update"
     ]
   }
 }

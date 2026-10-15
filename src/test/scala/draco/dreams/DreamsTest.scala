@@ -2,7 +2,7 @@ package draco.dreams
 
 import draco._
 import draco.dreams.editor.{Actual, Editor}
-import draco.dreams.user.{Delete, Latent, Read, Request, Response, User}
+import draco.dreams.user.{Create, Delete, Latent, Read, Request, Response, Update, User}
 import io.circe.syntax._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -25,11 +25,13 @@ class DreamsTest extends AnyFunSuite {
   private val trios = Seq(
     ("Dreams", Seq("draco", "dreams"), () => Dreams.typeDefinition),
     ("User", userPkg, () => User.typeDefinition),
+    ("Create", userPkg, () => Create.typeDefinition),
     ("Delete", userPkg, () => Delete.typeDefinition),
     ("Latent", userPkg, () => Latent.typeDefinition),
     ("Read", userPkg, () => Read.typeDefinition),
     ("Request", userPkg, () => Request.typeDefinition),
-    ("Response", userPkg, () => Response.typeDefinition)
+    ("Response", userPkg, () => Response.typeDefinition),
+    ("Update", userPkg, () => Update.typeDefinition)
   )
 
   trios.foreach { case (name, pkg, companion) =>
@@ -67,26 +69,34 @@ class DreamsTest extends AnyFunSuite {
     assert(DomainBuilder.generate("Dreams", Seq("draco", "dreams")).keySet == Set(td.typeName, Initialization.typeDefinition.typeName))
   }
 
-  test("User is the request domain: the Request family (Latent, Read, Delete), and Response; no rule, actor or codec of its own") {
+  test("User is the request domain: the Request family as verbs (Create, Update, Read, Delete) over the Latent shape, and Response") {
     val td = User.typeDefinition
     assert(td.typeName == TypeName("User", userPkg))
     assert(td.domainAspect.typeName == td.typeName)
-    assert(User.elementTypeNames == Seq("Delete", "Latent", "Read", "Request", "Response"))
-    assert(User.domainType.typeDictionary.size == 5)
+    assert(User.elementTypeNames == Seq("Create", "Delete", "Latent", "Read", "Request", "Response", "Update"))
+    assert(User.domainType.typeDictionary.size == 7)
     assert(RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect) && CodecAspect.isEmpty(td.codecAspect))
-    Seq(Delete, Latent, Read, Request, Response).foreach(m => assert(m.typeDefinition.domainAspect.typeName == td.typeName))
-    // Request is the abstract head of the family (2026-10-13): no elements, no factory;
-    // Latent (Create/Update), Read and Delete (2026-10-14) derive it — the CRUD vocabulary
-    // complete. The Editor's message type is Request.
-    assert(Request.typeDefinition.dracoAspect.elements.isEmpty)
+    Seq(Create, Delete, Latent, Read, Request, Response, Update).foreach(m => assert(m.typeDefinition.domainAspect.typeName == td.typeName))
+    // Request is the abstract head of the family (2026-10-13): no elements, no factory.
+    // Latent is the candidate SHAPE (definition + members), abstract since 2026-10-14, and
+    // Create and Update derive it — distinct intents, each refusing the other's case; Read
+    // and Delete derive Request directly. The Editor's message type is Request.
+    // Since 2026-10-15 a request knows what it PROPOSES and what it REPORTS ON: three bodiless
+    // dyns on Request — proposal, subject, contents, each over the accepted ontology — that
+    // every verb implements, so the Editor actor needs no dispatch of its own.
+    assert(Request.typeDefinition.dracoAspect.elements.map(_.name) == Seq("proposal", "subject", "contents"))
+    assert(Request.typeDefinition.dracoAspect.factory.parameters.isEmpty)
     Seq(Latent, Read, Delete).foreach(m => assert(DracoAspect.parents(m.typeDefinition.dracoAspect) == Seq(Request.typeDefinition.typeName)))
-    assert(Read.typeDefinition.dracoAspect.elements.map(_.name) == Seq("domain"), "a Read names one domain")
-    assert(Delete.typeDefinition.dracoAspect.elements.map(_.name) == Seq("domain"), "a Delete names one domain")
+    Seq(Create, Update).foreach(m => assert(DracoAspect.parents(m.typeDefinition.dracoAspect) == Seq(Latent.typeDefinition.typeName)))
+    assert(Latent.typeDefinition.dracoAspect.elements.map(_.name) == Seq("definition", "members") && Latent.typeDefinition.dracoAspect.factory.parameters.isEmpty)
+    Seq(Read, Delete).foreach(m => assert(m.typeDefinition.dracoAspect.elements.map(_.name) == Seq("domain", "proposal", "subject", "contents"),
+      "a Read or Delete names one domain and knows what it proposes and reports on"))
     val loaded = DomainBuilder.define("User", userPkg)
     assert(loaded.typeDictionary.elementTypes.forall(m => !DomainBuilder.isStub(m)))
     assert(DomainBuilder.validate(loaded).isEmpty)
     assert(DomainBuilder.generate("User", userPkg).keySet ==
-      Set(td.typeName, Delete.typeDefinition.typeName, Latent.typeDefinition.typeName, Read.typeDefinition.typeName, Request.typeDefinition.typeName, Response.typeDefinition.typeName))
+      Set(td.typeName, Create.typeDefinition.typeName, Delete.typeDefinition.typeName, Latent.typeDefinition.typeName,
+        Read.typeDefinition.typeName, Request.typeDefinition.typeName, Response.typeDefinition.typeName, Update.typeDefinition.typeName))
   }
 
   test("Response is the abstract reply: elements without a factory, accepted iff no problems; Actual is one") {
@@ -115,8 +125,8 @@ class DreamsTest extends AnyFunSuite {
     assert(ontology.get(dreams).exists(_.size == 1))
     assert(!core.typeDictionary.contains(dreams.typeDefinition.typeName))
     assert(!service.typeDictionary.contains(dreams.typeDefinition.typeName))
-    assert(ontology.get(user).exists(_.size == 5))
-    assert(ontology.get(editor).exists(_.size == 1))
+    assert(ontology.get(user).exists(_.size == 7))
+    assert(ontology.get(editor).exists(_.size == 6))
     assert(ontology.get(core).exists(_.nonEmpty))
     assert(ontology.get(service).exists(_.size == 2))
     // Package nesting is not membership: Dreams does not define User's members, and

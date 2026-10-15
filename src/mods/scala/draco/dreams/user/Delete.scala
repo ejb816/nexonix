@@ -7,6 +7,18 @@ import io.circe.syntax.EncoderOps
 
 trait Delete extends Request {
   val domain: draco.TypeName
+  def proposal(_accepted: => draco.DomainOntology): draco.DomainOntology = {
+    lazy val accepted: draco.DomainOntology = _accepted
+    accepted.excluding(domain)
+  }
+  def subject(_accepted: => draco.DomainOntology): draco.TypeDefinition = {
+    lazy val accepted: draco.DomainOntology = _accepted
+    accepted.holding(domain).fold(draco.TypeDefinition(domain), d => d.typeDefinition)
+  }
+  def contents(_accepted: => draco.DomainOntology): Seq[draco.TypeDefinition] = {
+    lazy val accepted: draco.DomainOntology = _accepted
+    accepted.holding(domain).fold(Seq.empty, d => d.typeDictionary.elementTypes)
+  }
 }
 
 object Delete extends App with DracoType {

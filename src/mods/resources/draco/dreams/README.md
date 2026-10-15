@@ -6,8 +6,8 @@ definition-backed domains name the layer surrounding the Draco core:
 | Domain | Intended direction; no members implemented yet |
 |---|---|
 | draco.dreams.Dreams | Construction and evolution of Draco-defined systems. Since 2026-10-12: `Initialization`, the endogenous client (below). |
-| draco.dreams.editor.Editor | Definition-authoring operations and editing workflows. Since 2026-10-09: Latent, Actual and the Editor actor (below). |
-| draco.dreams.user.User | User-facing participation and interaction. Since 2026-10-12: the editing REQUEST vocabulary — the abstract `Request` family (2026-10-13), `Latent` (Create/Update), `Read` and `Delete` deriving it, and the abstract `Response` (below). |
+| draco.dreams.editor.Editor | Definition-authoring operations and editing workflows. Since 2026-10-09: Actual and the Editor actor; since 2026-10-15: `Accepted` and four intent RULES — `CreateHeld`, `UpdateUnheld`, `ReadUnheld`, `DeleteUnheld` (below). |
+| draco.dreams.user.User | User-facing participation and interaction. Since 2026-10-12: the editing REQUEST vocabulary — the abstract `Request` family (2026-10-13): `Create` and `Update` over the abstract `Latent` shape, `Read` and `Delete`; and the abstract `Response` (below). |
 
 Each domain has a canonical Drake/JSON/generated Scala trio under
 src/mods/{resources,scala}/draco/dreams. The build's existing staging paths already
@@ -73,7 +73,40 @@ naming the dependent, an unowned domain is refused with one Problem; the Actual 
 the domain as the ontology held it. Draco itself cannot be deleted while anything derives
 from its root. The judgment is one global on the Editor, `judge(rules, provisional)`,
 shared by the Latent and Delete branches — the first `globals` section on an
-actor-minting type. `Response` in User is the
+actor-minting type.
+
+Since 2026-10-14 the family reads as four verbs. Dev asked why User had Read and Delete
+but not Create and Update; the only reason was history (Latent was named for its content
+before the CRUD view), and it hid a real difference: a Create of an existing name was a
+silent update, an Update of a misspelled name a silent creation. `Latent` is now the
+abstract candidate SHAPE — `definition` and `members`, no factory — and `Create` and
+`Update` derive it, each with a factory. The Editor's Latent branch became two: a Create
+is refused when the accepted ontology already owns the identity, an Update when it does
+not, and both are otherwise judged through `including` by the shared `judge`. A second
+global, `holder(ontology, typeName)`, is the Presence lookup all four branches share. The
+initialization client sends Creates; Latent has no codec, so the client's `domains` are
+typed by `Create`.
+
+## Editor-domain rules, the actor thinned (2026-10-15)
+
+Dev observed that the dreams domains carried no rule aspects — only an actor firing core's
+five rules — while the Editor had grown judgment of its own in actor code. Now the editing
+knowledge is RULES. Core's `DomainOntology` gains `holds(typeName)` and `holding(typeName)`,
+a domain by identity as a Boolean and as a Presence. User's `Request` declares three
+bodiless dyns every verb implements: `proposal(accepted)`, the ontology the request asks
+for (Create/Update: `including` the candidate; Delete: `excluding`; Read: the accepted
+ontology itself), and `subject(accepted)` / `contents(accepted)`, what the Actual reports
+on. Editor gains `Accepted` — the accepted ontology as a fact, distinct from the raw
+provisional `DomainOntology` the core rules join, so exactly one DomainOntology fact is in
+working memory — and four rules, `CreateHeld`, `UpdateUnheld`, `ReadUnheld` and
+`DeleteUnheld`, each joining its verb with the Accepted fact on `holds(identity)` and
+inserting the Problem. The Editor actor is the membrane: nine patterns build its
+knowledge; per message it binds the proposal, subject, contents and whether anything
+changes (strictly, before the swap), inserts the request, the Accepted fact and the
+proposed ontology with its domains and definitions, fires, swaps the state only when
+quiet, and delivers the Actual and — on an accepted change — the ontology. No case
+branches, no globals: which rule matches is the dispatch. Carrying the ontology as a fact
+needed the generator's codec eligibility to become transitive (DRACO.md §6). `Response` in User is the
 abstract reply, `problems` and `accepted`, elements without a factory; Editor's Actual
 derives it (`from draco dreams user Response`, the corpus's first cross-package `from`),
 so a user consumes `User.Response` and never names `Editor.Actual`, and the dependency

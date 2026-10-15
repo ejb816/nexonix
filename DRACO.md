@@ -49,11 +49,14 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**747 tests / 54 suites**, verified by Dev's run on 2026-10-14 at commit 799e9ae (the Read increment, §3
-*Read*, record `git-record-2026-10-13-2158`; EditorTest +1, DreamsTest +2), with every report-only figure
-unchanged — no main-corpus TYPE was added. The Delete increment (§3 *Delete*, record
-`git-record-2026-10-14-1136`) expects **751 / 54** (DomainOntologyTest +1, EditorTest +1, DreamsTest +2), no
-headline moves, Dev's run pending. Before it: **744 / 54** at 5057a5c (the Request-family
+**751 tests / 54 suites** at commit f4336a4 (the Delete increment, §3 *Delete*, record
+`git-record-2026-10-14-1136`; DomainOntologyTest +1, EditorTest +1, DreamsTest +2) — Dev committed and pushed
+it on 2026-10-14 after the gate, but the run's grep output was not pasted, so that figure is inferred from the
+commit, not read. The Create/Update and Editor-rules increments (§3 *Create and Update* and *Editor-domain
+rules*, one commit, record `git-record-2026-10-14-1217`) expect **768 / 54** (EditorTest +12, DreamsTest +4,
+DomainOntologyTest +1), no headline moves, Dev's run pending. Before it:
+**747 / 54** at 799e9ae (the Read increment, §3 *Read*, record `git-record-2026-10-13-2158`; EditorTest +1,
+DreamsTest +2), Dev's run on 2026-10-14, every report-only figure unchanged. Before it: **744 / 54** at 5057a5c (the Request-family
 increment, §3 *The Request family*, record `git-record-2026-10-13-1311`; DrakeParseTest +1, DreamsTest +2;
 its two engine fixes byte-identical over the main corpus), Dev's run on 2026-10-13. Before it: **741 / 54** at 6869e47 (the delivery, CRUD and
 initialization increments, §3 *Delivery*, *User defines the requests*, *Initialization*, one commit, record
@@ -563,7 +566,8 @@ dispatch. Nothing new on the Editor's factory or in User's response vocabulary. 
 for reads; reading a member by name; one answer carrying the whole ontology. EditorTest 17 (+1), DreamsTest 16
 (+2).
 
-**Delete through `excluding`, the judgment shared (2026-10-14; awaiting Dev's run, expected 751 / 54).** Dev
+**Delete through `excluding`, the judgment shared (2026-10-14; f4336a4, committed by Dev after the gate — the
+run's output was not pasted, 751 / 54 inferred).** Dev
 accepted "Delete through excluding". Core gains `DomainOntology.excluding(typeName)`, the inverse of `including`
 (by name and package, parameters free; the original untouched; an unknown name removes nothing).
 `draco.dreams.user.Delete` derives Request with `fix domain TypeName`; User holds Delete, Latent, Read, Request,
@@ -576,8 +580,42 @@ deleted while anything derives from its root. THE JUDGMENT IS ONE GLOBAL: `dyn j
 Editor's `globals` (parameters `rules`, `provisional`; the session lines; `fix value problems.toSeq`) — the
 first `globals` on an actor-minting type, rendered as a companion `def` visible inside the minted actor — called
 by the Latent and Delete branches. The emitter orders `factory` before `globals`. DomainOntologyTest +1,
-EditorTest +1, DreamsTest +2; DracoGenTest confirms the regenerated core type byte-identical. Next, in Dev's
-accepted order: generation and activation as explicit operations.
+EditorTest +1, DreamsTest +2; DracoGenTest confirms the regenerated core type byte-identical.
+
+**Create and Update, the verbs over the Latent shape (2026-10-14; awaiting Dev's run, expected 756 / 54).** Dev
+asked why User had Read and Delete but not Create and Update. Only history: Latent was named for its content
+before the CRUD view, and Create/Update had been mapped onto it with the ontology deciding by identity — so a
+Create of an existing name was a silent update and an Update of a misspelled name a silent creation. Dev
+accepted "Create and Update deriving Latent". `Latent` is now the candidate SHAPE: elements `definition` and
+`members`, NO factory, abstract as Response is, deriving Request; `Create` and `Update` derive it, each with a
+factory. The Editor's Latent branch became two: Create is refused when `holder(accepted, identity)` is present
+("already in the accepted ontology"), Update when it is absent ("not in the accepted ontology"), and both are
+otherwise judged through `including` by the shared `judge`. `holder(ontology, typeName)` is the Editor's second
+global, the Presence lookup all four branches share. Latent has no codec now, so the client's `domains`,
+`order`, `ordered` and `run` are typed by `Create` (it builds from an empty ontology); `owns`, `parents` and
+`ready` keep the shape. User holds Create, Delete, Latent, Read, Request, Response, Update — in Haskell four
+constructors over one shared shape. EditorTest +1 (the intents test), DreamsTest +4.
+
+**Editor-domain rules, the actor thinned (2026-10-15; same pending run).** Dev observed that the dreams domains
+carried no rule aspects, only an actor firing core's five rules — and the Editor had meanwhile grown judgment of
+its own in actor code (the intent lookups folded inside four case branches, the whole-ontology judgment as a
+global). Dev accepted "Editor-domain rules with the actor thinned". Core: `DomainOntology.holds(typeName)` and
+`holding(typeName)` — a domain by identity, as a Boolean and as a Presence. User: `Request` declares three
+bodiless dyns every verb implements — `proposal(accepted)` (the ontology the request asks for: `including` the
+candidate, `excluding` the named domain, or the accepted ontology itself for a Read), `subject(accepted)` and
+`contents(accepted)` (what the Actual reports on) — so a request knows what it asks for. Editor: `Accepted`
+(the accepted ontology as a FACT, distinct from the raw provisional `DomainOntology` the core rules join — ONE
+DomainOntology fact in working memory, never two, or every `var o DomainOntology` rule fires twice) and four
+RULES, `CreateHeld`, `UpdateUnheld`, `ReadUnheld`, `DeleteUnheld`, each `var x <verb>` joined with `var a
+Accepted` on `a.ontology.holds(identity)`, inserting the Problem. The actor is the MEMBRANE: nine patterns
+build the knowledge; per message it binds `provisional`, `subject`, `contents` and `changing` STRICTLY (`now
+fix`, before the swap), inserts the request, the Accepted fact, the provisional with its domains and
+definitions, fires, swaps only when quiet, delivers the Actual and the ontology only on an accepted change.
+No case, no globals: which rule matches is the dispatch. ENGINE: codec eligibility is TRANSITIVE —
+`namesCodecless` loads a parameter's draco type and asks `hasCodec` with its loaded parent chain as family
+context (§6 entry closed); DracoGenTest byte-identical. EditorTest +11 (trios ×5, the rules in a bare
+session), DomainOntologyTest +1. Next, in Dev's accepted order: generation and activation as explicit
+operations.
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member
@@ -708,11 +746,16 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   `mut` as `var`; a `loc` falls through to the bare-expression case and its name is simply lost —
   the generated `receive` then references an undefined name. Use `fix` in `start`/`message`/`signal`
   (the first Editor draft, 2026-10-09, rendered four dangling expressions this way).
-- **Codec eligibility is not transitive.** `hasCodec` refuses only function-like and host-external
-  parameter types; a factory parameter whose type is a DRACO type without a codec (`DomainType`, which
-  holds a `TypeDictionary`) emits a codec that cannot compile. Model a result with codec-able
-  definitions and derive the rest as a `dyn` — `Actual` carries definitions and problems and derives
-  its populated `domain` (2026-10-09).
+- **Codec eligibility is transitive since 2026-10-15** (it was not: `hasCodec` refused only function-like
+  and host-external parameter types, so a factory parameter typed by a codec-less DRACO type —
+  `DomainType`, `DomainOntology` — emitted a codec that could not compile, and `Actual` derived its
+  populated `domain` as a `dyn` to dodge it, 2026-10-09). `namesCodecless` now loads the parameter's
+  draco type and asks `hasCodec` of it with its loaded parent chain as family context; the Editor's
+  `Accepted(ontology)` fact was the first type to need it. The `dyn` on Actual stays, for a different
+  reason: the domain is derived from the definitions, not carried.
+- **A lambda inside a splat argument is host text.** `insert(xs.flatMap(\d -> …): _*)` is one glued
+  token to the parser (the dot rule), and `\d ->` reaches the target verbatim; bind the collection
+  first (`fix definitions … flatMap(\d -> …)`, then `insert(definitions.toSeq: _*)`), 2026-10-15.
 - **sbt does not copy hidden resources.** `src/main/resources/.json` and `.drake`, the nameless
   domain's anchor, never reach `target/classes` (HiddenFileFilter), so `loadType(TypeName.Null)` is a
   stub under sbt and `MinimalTypeTest` relies on that. A compiled-class probe that overlays resources

@@ -1,0 +1,68 @@
+{
+  "typeName": {
+    "name": "UpdateUnheld",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "u",
+          "valueType": "draco.dreams.user.Update"
+        },
+        {
+          "kind": "Variable",
+          "name": "a",
+          "valueType": "Accepted"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "value": {
+            "()": [
+              "!a.ontology.holds",
+              "u.definition.typeName"
+            ]
+          }
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "ctx.insert",
+              {
+                "()": [
+                  "draco.Problem",
+                  "u.definition.typeName",
+                  "s\"domain ${u.definition.typeName.name} is not in the accepted ontology\""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+type ReadUnheld
+domain draco dreams editor Editor
+rule
+  pattern
+    variables
+      var r draco.dreams.user.Read
+      var a Accepted
+    conditions
+      con !a.ontology.holds(r.domain)
+  action
+    mon ctx.insert(draco.Problem(r.domain, s"domain ${r.domain.name} is not in the accepted ontology"))

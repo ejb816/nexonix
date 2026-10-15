@@ -1,0 +1,68 @@
+{
+  "typeName": {
+    "name": "ReadUnheld",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "r",
+          "valueType": "draco.dreams.user.Read"
+        },
+        {
+          "kind": "Variable",
+          "name": "a",
+          "valueType": "Accepted"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "value": {
+            "()": [
+              "!a.ontology.holds",
+              "r.domain"
+            ]
+          }
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "ctx.insert",
+              {
+                "()": [
+                  "draco.Problem",
+                  "r.domain",
+                  "s\"domain ${r.domain.name} is not in the accepted ontology\""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

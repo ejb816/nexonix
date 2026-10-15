@@ -33,31 +33,7 @@
           ]
         }
       }
-    ],
-    "factory": {
-      "kind": "Factory",
-      "valueType": "Latent",
-      "parameters": [
-        {
-          "kind": "Parameter",
-          "name": "definition",
-          "valueType": "draco.TypeDefinition"
-        },
-        {
-          "kind": "Parameter",
-          "name": "members",
-          "valueType": {
-            "[]": [
-              "draco.TypeDefinition"
-            ]
-          },
-          "value": {
-            "[]": [
-            ]
-          }
-        }
-      ]
-    }
+    ]
   },
   "domainAspect": {
     "typeName": {

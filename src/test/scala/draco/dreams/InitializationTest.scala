@@ -1,7 +1,7 @@
 package draco.dreams
 
 import draco._
-import draco.dreams.user.Latent
+import draco.dreams.user.{Create, Latent}
 import io.circe.syntax._
 import org.apache.pekko.actor.typed.ActorSystem
 import org.scalatest.funsuite.AnyFunSuite
@@ -67,9 +67,9 @@ class InitializationTest extends AnyFunSuite {
     ("Base", Seq("draco", "base")),
     ("Draco", Seq("draco"))
   )
-  private def supplied: Seq[Latent] = canonical.map { case (name, pkg) =>
+  private def supplied: Seq[Create] = canonical.map { case (name, pkg) =>
     val domain = DomainBuilder.define(name, pkg)
-    Latent(domain.typeDefinition, domain.typeDictionary.elementTypes)
+    Create(domain.typeDefinition, domain.typeDictionary.elementTypes)
   }
   private def name(latent: Latent): String = latent.definition.typeName.name
 
@@ -90,7 +90,7 @@ class InitializationTest extends AnyFunSuite {
   }
 
   test("a parent no supplied domain owns is not a constraint, and a cycle cannot hang: the remainder keeps its supplied order") {
-    def domainOf(domain: TypeName, member: String, parent: TypeName): Latent = Latent(
+    def domainOf(domain: TypeName, member: String, parent: TypeName): Create = Create(
       TypeDefinition(domain, _domainAspect = DomainAspect(domain, Seq(member))),
       Seq(TypeDefinition(TypeName(member, domain.namePackage),
         _dracoAspect = DracoAspect(_derivation = Seq(TypeName.encoder(parent))),

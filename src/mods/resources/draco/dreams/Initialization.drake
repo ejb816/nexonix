@@ -1,6 +1,6 @@
 type Initialization
   elements
-    fix domains [draco.dreams.user.Latent]
+    fix domains [draco.dreams.user.Create]
     fix initial draco.DomainOntology
     fix responses [draco.dreams.user.Response]+
     mut ontology draco.DomainOntology
@@ -22,24 +22,24 @@ type Initialization
     dyn ready Boolean [
       parameters
         par latent draco.dreams.user.Latent
-        par placed [draco.dreams.user.Latent]
+        par placed [draco.dreams.user.Create]
       body
         fix value Boolean parents(latent).filter(\p -> domains.exists(\l -> owns(l, p))).forall(\p -> placed.exists(\l -> owns(l, p)))
     ]
-    dyn order [draco.dreams.user.Latent] [
+    dyn order [draco.dreams.user.Create] [
       parameters
-        par placed [draco.dreams.user.Latent]
-        par remaining [draco.dreams.user.Latent]
+        par placed [draco.dreams.user.Create]
+        par remaining [draco.dreams.user.Create]
       body
-        fix wave [draco.dreams.user.Latent] remaining.filter(\l -> ready(l, placed))
-        fix rest [draco.dreams.user.Latent] remaining.filterNot(\l -> ready(l, placed))
-        fix value [draco.dreams.user.Latent] guard(wave.isEmpty).ifThenElse(placed ++ remaining, order(placed ++ wave, rest))
+        fix wave [draco.dreams.user.Create] remaining.filter(\l -> ready(l, placed))
+        fix rest [draco.dreams.user.Create] remaining.filterNot(\l -> ready(l, placed))
+        fix value [draco.dreams.user.Create] guard(wave.isEmpty).ifThenElse(placed ++ remaining, order(placed ++ wave, rest))
     ]
-    dyn ordered [draco.dreams.user.Latent] order([], domains)
+    dyn ordered [draco.dreams.user.Create] order([], domains)
     dyn editorType draco.ActorType draco.dreams.editor.Editor.actorType(initial, note, keep)
     dyn run Unit [
       parameters
-        par editor (draco.dreams.user.Latent -> Unit)
+        par editor (draco.dreams.user.Create -> Unit)
       body
         fix value Unit ordered.foreach(editor)
     ]
@@ -47,9 +47,9 @@ type Initialization
     dyn accepted Boolean complete && responses.forall(\r -> r.accepted)
   factory
     parameters
-      par domains [draco.dreams.user.Latent] []
+      par domains [draco.dreams.user.Create] []
     body
-      fix domains [draco.dreams.user.Latent] _domains
+      fix domains [draco.dreams.user.Create] _domains
       fix initial draco.DomainOntology draco.DomainOntology()
       fix responses [draco.dreams.user.Response]+ scala.collection.mutable.ArrayBuffer()
       mut ontology draco.DomainOntology initial

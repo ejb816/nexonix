@@ -292,6 +292,91 @@
             }
           }
         ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "holds",
+        "valueType": "Boolean",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "TypeName"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Boolean",
+            "value": {
+              "()": [
+                "kvMap.keys.exists",
+                {
+                  "\\": [
+                    "domain",
+                    {
+                      "==": [
+                        "domain.typeDefinition.typeName.namePath",
+                        "typeName.namePath"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "holding",
+        "valueType": {
+          "()": [
+            "draco.drake.Presence",
+            "DomainType"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "TypeName"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "()": [
+                "draco.drake.Presence",
+                "DomainType"
+              ]
+            },
+            "value": {
+              "()": [
+                "presence",
+                {
+                  "()": [
+                    "kvMap.keys.find",
+                    {
+                      "\\": [
+                        "domain",
+                        {
+                          "==": [
+                            "domain.typeDefinition.typeName.namePath",
+                            "typeName.namePath"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
       }
     ],
     "factory": {

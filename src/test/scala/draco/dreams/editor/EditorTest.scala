@@ -1,7 +1,7 @@
 package draco.dreams.editor
 
 import draco._
-import draco.dreams.user.{Delete, Latent, Read, Request, Response}
+import draco.dreams.user.{Create, Delete, Latent, Read, Request, Response, Update}
 import io.circe.Json
 import io.circe.syntax._
 import org.apache.pekko.actor.typed.ActorSystem
@@ -49,7 +49,12 @@ import scala.jdk.CollectionConverters._
 class EditorTest extends AnyFunSuite {
   private def read(path: String): String = new String(Files.readAllBytes(Paths.get(path)), UTF_8)
   private val trios = Seq(
+    ("Accepted", () => Accepted.typeDefinition),
     ("Actual", () => Actual.typeDefinition),
+    ("CreateHeld", () => CreateHeld.typeDefinition),
+    ("UpdateUnheld", () => UpdateUnheld.typeDefinition),
+    ("ReadUnheld", () => ReadUnheld.typeDefinition),
+    ("DeleteUnheld", () => DeleteUnheld.typeDefinition),
     ("Editor", () => Editor.typeDefinition)
   )
 
@@ -74,23 +79,35 @@ class EditorTest extends AnyFunSuite {
     }
   }
 
-  test("Editor is a domain of one member and an actor whose message is User's Request family, dispatched by case") {
+  test("Editor is a domain of six members — Accepted, Actual and four intent rules — and a thin actor over User's Request family") {
     val td = Editor.typeDefinition
     assert(td.domainAspect.typeName == td.typeName)
-    assert(Editor.elementTypeNames == Seq("Actual"))
-    assert(Editor.domainType.typeDictionary.size == 1)
+    assert(Editor.elementTypeNames == Seq("Accepted", "Actual", "CreateHeld", "DeleteUnheld", "ReadUnheld", "UpdateUnheld"))
+    assert(Editor.domainType.typeDictionary.size == 6)
     assert(!ActorAspect.isEmpty(td.actorAspect))
     assert(td.actorAspect.messageType == TypeName("Request", Seq("draco", "dreams", "user")))
-    val branches = td.actorAspect.message.body.collect { case c: Case => c }
-    assert(branches.map(c => (c.name, TypeForm.text(c.valueType))) ==
-      Seq(("latent", "draco.dreams.user.Latent"), ("read", "draco.dreams.user.Read"), ("delete", "draco.dreams.user.Delete")),
-      "three branches, the CRUD vocabulary: Latent (Create/Update), Read, Delete")
+    // Since 2026-10-15 the actor is the membrane and the knowledge is RULES: no case branches,
+    // no globals; the message body inserts the request, the Accepted fact and the proposed
+    // ontology with its definitions, fires, and reads the Actual back out of the problems.
+    assert(!td.actorAspect.message.body.exists(_.isInstanceOf[Case]), "no dispatch in the actor: which rule matches is the dispatch")
+    assert(td.dracoAspect.globalElements.isEmpty, "no judgment in the actor: the rules judge")
+    val fired = td.actorAspect.start.body.map(e => TypeForm.text(e.valueType) + " " + e.value.noSpaces).count(_.contains("ruleType.pattern"))
+    assert(fired == 9, s"five core rules and four Editor rules build the knowledge; got $fired")
+    Seq(CreateHeld, UpdateUnheld, ReadUnheld, DeleteUnheld).foreach(r => assert(!RuleAspect.isEmpty(r.typeDefinition.ruleAspect)))
+    assert(RuleAspect.isEmpty(Accepted.typeDefinition.ruleAspect) && Accepted.typeDefinition.dracoAspect.elements.map(_.name) == Seq("ontology"))
     val request = TypeName("Request", Seq("draco", "dreams", "user"))
+    val latent = TypeName("Latent", Seq("draco", "dreams", "user"))
     Seq(Latent, Read, Delete).foreach(m => assert(DracoAspect.parents(m.typeDefinition.dracoAspect) == Seq(request)))
-    assert(Latent(definition(Seq.empty)).isInstanceOf[Request] && Read(fresh).isInstanceOf[Request] && Delete(fresh).isInstanceOf[Request])
-    // The judgment is one global dyn, `judge(rules, provisional)`, shared by the Latent and
-    // Delete branches (2026-10-14): the same five rules over the whole ontology that would result.
-    assert(td.dracoAspect.globalElements.map(_.name) == Seq("judge"))
+    // Latent is the candidate SHAPE two verbs share (Dev, 2026-10-14): abstract, no factory.
+    Seq(Create, Update).foreach(m => assert(DracoAspect.parents(m.typeDefinition.dracoAspect) == Seq(latent)))
+    assert(Latent.typeDefinition.dracoAspect.factory.parameters.isEmpty)
+    val shape: Latent = Create(definition(Seq.empty))
+    assert(shape.isInstanceOf[Request] && Update(definition(Seq.empty)).isInstanceOf[Latent] && Read(fresh).isInstanceOf[Request] && Delete(fresh).isInstanceOf[Request])
+    // A request knows what it proposes and what it reports on (User dyns, 2026-10-15).
+    val held = reference
+    assert(Read(fresh).proposal(held) eq held, "a Read proposes the ontology as it is — the same one, so the actor sees nothing changing")
+    assert(Delete(fresh).proposal(held).size == held.size, "deleting what is not held proposes the same contents")
+    assert(Read(fresh).subject(held).typeName == fresh && Read(fresh).contents(held).isEmpty)
     assert(RuleAspect.isEmpty(td.ruleAspect))
     val loaded = DomainBuilder.define("Editor", Seq("draco", "dreams", "editor"))
     assert(DomainBuilder.validate(loaded).isEmpty)
@@ -170,7 +187,7 @@ class EditorTest extends AnyFunSuite {
   private def subjects(actual: Actual): Set[String] = actual.problems.map(_.subject.name).toSet
 
   test("a well-formed Latent is accepted and its Actual domain is populated from the supplied members") {
-    val latent = Latent(definition(Seq("Root", "Leaf")), Seq(member("Root", primal), member("Leaf", TypeName("Root", pkg))))
+    val latent = Create(definition(Seq("Root", "Leaf")), Seq(member("Root", primal), member("Leaf", TypeName("Root", pkg))))
     val Seq(actual) = edit(reference, Seq(latent), "editorAccepts")
     assert(actual.accepted, s"expected acceptance; got ${actual.problems.map(_.message)}")
     assert(actual.definition.typeName == fresh)
@@ -182,7 +199,7 @@ class EditorTest extends AnyFunSuite {
   }
 
   test("a member named but not supplied is a placeholder in the candidate, and a Completeness problem — not accepted") {
-    val latent = Latent(definition(Seq("Root", "Ghost")), Seq(member("Root", primal)))
+    val latent = Create(definition(Seq("Root", "Ghost")), Seq(member("Root", primal)))
     val Seq(actual) = edit(reference, Seq(latent), "editorIncomplete")
     assert(!actual.accepted)
     assert(subjects(actual) == Set("Ghost"), s"got ${actual.problems.map(_.message)}")
@@ -190,16 +207,16 @@ class EditorTest extends AnyFunSuite {
   }
 
   test("a member deriving from a type the ontology does not define is a DerivationResolvable problem") {
-    val latent = Latent(definition(Seq("Leaf")), Seq(member("Leaf", TypeName("Nonexistent", Seq("draco")))))
+    val latent = Create(definition(Seq("Leaf")), Seq(member("Leaf", TypeName("Nonexistent", Seq("draco")))))
     val Seq(actual) = edit(reference, Seq(latent), "editorDangling")
     assert(!actual.accepted)
     assert(subjects(actual) == Set("Leaf"), s"got ${actual.problems.map(_.message)}")
   }
 
   test("a domain whose self-declaration names another definition is a SelfDeclaration problem; omitting its type parameter is not") {
-    val elsewhere = Latent(definition(Seq("Root"), self = TypeName("Elsewhere", pkg)), Seq(member("Root", primal)))
+    val elsewhere = Create(definition(Seq("Root"), self = TypeName("Elsewhere", pkg)), Seq(member("Root", primal)))
     val generic = TypeName("Fresh", pkg, Seq(Json.fromString("T")))
-    val parameterized = Latent(definition(Seq("Root"), self = fresh, identity = generic), Seq(member("Root", primal)))
+    val parameterized = Create(definition(Seq("Root"), self = fresh, identity = generic), Seq(member("Root", primal)))
     val Seq(misdeclared, bare) = edit(reference, Seq(elsewhere, parameterized), "editorMisdeclared")
     assert(!misdeclared.accepted)
     assert(subjects(misdeclared) == Set("Fresh"), s"got ${misdeclared.problems.map(_.message)}")
@@ -211,8 +228,8 @@ class EditorTest extends AnyFunSuite {
   test("an accepted domain joins the Editor's ontology: a later Latent resolves against it; the given ontology is untouched") {
     val ontology = reference
     val before = ontology.size
-    val first = Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal)))
-    val second = Latent(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", root)))
+    val first = Create(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal)))
+    val second = Create(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", root)))
     val actuals = edit(ontology, Seq(second, first, second), "editorComposes")
     assert(actuals.map(_.accepted) == Seq(false, true, true),
       s"Twig resolves only once Fresh is accepted; got ${actuals.map(_.problems.map(_.message))}")
@@ -222,10 +239,10 @@ class EditorTest extends AnyFunSuite {
 
   test("a Latent owning a name an accepted domain already owns is refused by Uniqueness") {
     val shadow = TypeName("Shadow", Seq("draco"))
-    val claim = Latent(definitionOf(shadow, "Primal"), Seq(memberOf(shadow, "Primal")))
-    val asDomain = Latent(definitionOf(primal))              // a DOMAIN named like Draco's member
+    val claim = Create(definitionOf(shadow, "Primal"), Seq(memberOf(shadow, "Primal")))
+    val asDomain = Create(definitionOf(primal))              // a DOMAIN named like Draco's member
     val elsewhere = TypeName("Shadow", Seq("example", "shadow"))
-    val distinct = Latent(definitionOf(elsewhere, "Primal"), Seq(memberOf(elsewhere, "Primal")))
+    val distinct = Create(definitionOf(elsewhere, "Primal"), Seq(memberOf(elsewhere, "Primal")))
     val actuals = edit(reference, Seq(claim, asDomain, distinct), "editorUniqueness")
     assert(actuals.map(_.accepted) == Seq(false, false, true), s"got ${actuals.map(_.problems.map(_.message))}")
     assert(subjects(actuals(0)) == Set("Primal") && subjects(actuals(1)) == Set("Primal"))
@@ -233,11 +250,11 @@ class EditorTest extends AnyFunSuite {
 
   test("an update replaces the domain of the same identity in place, and cannot orphan a dependent") {
     val steps = Seq(
-      Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),
-      Latent(definitionOf(fresh, "Root", "Leaf"), Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root))),
-      Latent(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", leaf))),
-      Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),   // drops Leaf: Twig would dangle
-      Latent(definitionOf(fresh, "Root", "Leaf", "Branch"),
+      Create(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),
+      Update(definitionOf(fresh, "Root", "Leaf"), Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root))),
+      Create(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", leaf))),
+      Update(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),   // drops Leaf: Twig would dangle
+      Update(definitionOf(fresh, "Root", "Leaf", "Branch"),
         Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root), memberOf(fresh, "Branch", leaf))))
     val actuals = edit(reference, steps, "editorUpdates")
     assert(actuals.map(_.accepted) == Seq(true, true, true, false, true),
@@ -247,8 +264,8 @@ class EditorTest extends AnyFunSuite {
   }
 
   test("the grown ontology reaches the caller through the Editor's ontology consumer: once per acceptance, after the Actual, never on a rejection") {
-    val first = Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal)))
-    val second = Latent(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", root)))
+    val first = Create(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal)))
+    val second = Create(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", root)))
     val delivered = deliveries(reference, Seq(second, first, second), "editorDelivers")
     assert(delivered.actuals.map(_.accepted) == Seq(false, true, true))
     assert(delivered.ontologies.size == 2, "one ontology per acceptance; the rejection delivers none")
@@ -263,8 +280,8 @@ class EditorTest extends AnyFunSuite {
 
   test("a delivered ontology is the composed state, not a copy of the initial one: an update's delivery carries the replacement") {
     val steps = Seq(
-      Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),
-      Latent(definitionOf(fresh, "Root", "Leaf"), Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root))))
+      Create(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),
+      Update(definitionOf(fresh, "Root", "Leaf"), Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root))))
     val delivered = deliveries(reference, steps, "editorDeliversUpdate")
     assert(delivered.actuals.forall(_.accepted))
     val Seq(before, after) = delivered.ontologies
@@ -275,7 +292,7 @@ class EditorTest extends AnyFunSuite {
   }
 
   test("a Read names one domain: an Actual of its definition and members from the accepted ontology, or a Problem when it owns none; no ontology is delivered") {
-    val create = Latent(definitionOf(fresh, "Root", "Leaf"), Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root)))
+    val create = Create(definitionOf(fresh, "Root", "Leaf"), Seq(memberOf(fresh, "Root", primal), memberOf(fresh, "Leaf", root)))
     val draco = TypeName("Draco", Seq("draco"))
     val nowhere = TypeName("Nowhere", Seq("example", "nowhere"))
     val delivered = deliveries(reference, Seq(Read(fresh), create, Read(fresh), Read(draco), Read(nowhere)), "editorReads")
@@ -297,8 +314,8 @@ class EditorTest extends AnyFunSuite {
     val nowhere = TypeName("Nowhere", Seq("example", "nowhere"))
     val steps = Seq(
       Delete(nowhere),                                                                   // not owned
-      Latent(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),       // accepted
-      Latent(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", root))),         // accepted; Twig derives Root
+      Create(definitionOf(fresh, "Root"), Seq(memberOf(fresh, "Root", primal))),       // accepted
+      Create(definitionOf(other, "Twig"), Seq(memberOf(other, "Twig", root))),         // accepted; Twig derives Root
       Delete(draco),                                                                     // Root derives Primal: refused naming Root
       Delete(fresh),                                                                     // Twig derives Root: refused naming Twig
       Delete(other),                                                                     // nothing depends on Other: removed
@@ -318,9 +335,48 @@ class EditorTest extends AnyFunSuite {
     assert(reference.defines(primal) && reference.size == last.size, "the initial ontology was never mutated")
   }
 
+  test("Create and Update are distinct intents: a Create of an owned identity is refused, an Update of an unowned one is refused") {
+    val root = Seq(memberOf(fresh, "Root", primal))
+    val steps = Seq(
+      Update(definitionOf(fresh, "Root"), root),    // nothing to update yet
+      Create(definitionOf(fresh, "Root"), root),    // created
+      Create(definitionOf(fresh, "Root"), root),    // already owned: refused, not silently updated
+      Update(definitionOf(fresh, "Root"), root))    // now an update
+    val delivered = deliveries(reference, steps, "editorIntents")
+    assert(delivered.actuals.map(_.accepted) == Seq(false, true, false, true),
+      s"got ${delivered.actuals.map(_.problems.map(_.message))}")
+    assert(delivered.actuals(0).problems.map(_.message) == Seq("domain Fresh is not in the accepted ontology"))
+    assert(delivered.actuals(2).problems.map(_.message) == Seq("domain Fresh is already in the accepted ontology"))
+    assert(delivered.ontologies.size == 2, "the two refusals delivered nothing")
+  }
+
+  test("the intent rules are Editor-domain rules: they fire over the request and the Accepted fact in a bare session, no actor needed") {
+    val knowledge = Rule.knowledgeService.newKnowledge("EditorRulesProbe")
+    Seq(CreateHeld.ruleType, UpdateUnheld.ruleType, ReadUnheld.ruleType, DeleteUnheld.ruleType, CollectProblems.ruleType).foreach(_.pattern(knowledge))
+    def judged(request: Request): Seq[String] = {
+      val problems = scala.collection.mutable.ArrayBuffer.empty[Problem]
+      val session = knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+      session.set("problems", problems)
+      session.insert(Seq(request): _*)
+      session.insert(Seq(Accepted(reference)): _*)
+      session.fire()
+      session.close()
+      problems.map(_.message).toSeq
+    }
+    val draco = TypeName("Draco", Seq("draco"))
+    assert(judged(Create(definitionOf(draco))) == Seq("domain Draco is already in the accepted ontology"), "CreateHeld")
+    assert(judged(Create(definitionOf(fresh))).isEmpty)
+    assert(judged(Update(definitionOf(fresh))) == Seq("domain Fresh is not in the accepted ontology"), "UpdateUnheld")
+    assert(judged(Update(definitionOf(draco))).isEmpty)
+    assert(judged(Read(fresh)) == Seq("domain Fresh is not in the accepted ontology"), "ReadUnheld")
+    assert(judged(Read(draco)).isEmpty)
+    assert(judged(Delete(fresh)) == Seq("domain Fresh is not in the accepted ontology"), "DeleteUnheld")
+    assert(judged(Delete(draco)).isEmpty, "DeleteUnheld is silent on a held domain; whether it may go is the core rules' judgment")
+  }
+
   test("Latent and Actual round-trip through JSON; Actual's domain is derived, not carried") {
-    val latent = Latent(definition(Seq("Root")), Seq(member("Root", primal)))
-    val decodedLatent = latent.asJson.as[Latent].fold(error => fail(error.toString), identity)
+    val latent = Create(definition(Seq("Root")), Seq(member("Root", primal)))
+    val decodedLatent = latent.asJson.as[Create].fold(error => fail(error.toString), identity)
     assert(decodedLatent.definition.typeName == fresh)
     assert(decodedLatent.members.map(_.typeName) == Seq(TypeName("Root", pkg)))
     val problem = Problem(TypeName("Root", pkg), "example")

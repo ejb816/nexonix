@@ -1,0 +1,81 @@
+Make Create and Update verbs over the Latent shape, then move the Editor's judgment into Editor-domain rules
+
+Two increments, 2026-10-14 and 2026-10-15, in one commit because the shared documents hold
+both sets of edits and Dev's run on the first had not been pasted when the second began.
+
+ONE (2026-10-14). Dev asked why User had Read and Delete but not Create and Update. The
+honest answer was history: Latent was named for what it carries before the CRUD view, and
+Create/Update were mapped onto it with the ontology deciding by identity — so a Create of an
+existing name was a silent update and an Update of a misspelled name a silent creation. Dev
+accepted "Create and Update deriving Latent". `Latent` is the abstract candidate SHAPE
+(definition, members; no factory; from Request); `Create` and `Update` derive it with
+factories; User holds Create, Delete, Latent, Read, Request, Response, Update. Latent has no
+codec now, so the initialization client's `domains`, `order`, `ordered` and `run` are typed
+by Create (it builds from an empty ontology).
+
+TWO (2026-10-15). Dev observed that the dreams domains carried no rule aspects, only an
+actor firing rules — all five of them core's. True, and the Editor had meanwhile grown
+judgment of its own in actor code: the intent checks as `holder` lookups folded inside four
+case branches, and the whole-ontology judgment as a global building a session. That
+contradicts the framework's own rule that an actor is a thin membrane. Dev accepted
+"Editor-domain rules with the actor thinned".
+
+- draco.DomainOntology gains `holds(typeName)` (a domain of that identity, name and
+  package, parameters free) and `holding(typeName)` (the same as a Presence) — the lookup
+  the Editor's `holder` global had, now the ontology's.
+- User's `Request` declares three bodiless dyns every verb implements: `proposal(accepted)`,
+  the ontology the request asks for (Create/Update: `including` the candidate; Delete:
+  `excluding`; Read: the accepted ontology itself); `subject(accepted)` and
+  `contents(accepted)`, the definition and members the Actual reports on (Create/Update:
+  their own; Read/Delete: the held domain, or a stub and nothing). A request knows what it
+  proposes; the Editor needs no dispatch of its own.
+- Editor gains `Accepted` (the accepted ontology as a FACT, distinct from the raw
+  provisional `DomainOntology` the core rules join — one DomainOntology fact in working
+  memory, never two) and four RULES: `CreateHeld` (var c Create, var a Accepted; con
+  a.ontology.holds(identity) → Problem "already in the accepted ontology"),
+  `UpdateUnheld`, `ReadUnheld`, `DeleteUnheld` (the negation, "not in the accepted
+  ontology"). The dreams layer now states its editing knowledge as definitions.
+- The Editor actor is the membrane: nine patterns build its knowledge (five core, four
+  Editor); per message it binds `provisional = msg.proposal(accepted)`, `subject`,
+  `contents` and `changing = provisional != accepted` STRICTLY (`now fix`, before the state
+  swap — a lazy binding would read the swapped state), inserts the request, `Accepted(accepted)`,
+  the provisional's domains and definitions and the provisional itself, fires, closes, swaps
+  the state only when quiet, delivers `Actual(subject, contents, problems)` and the ontology
+  only on acceptance of a change. No case branches, no globals, no judgment: which rule
+  matches is the dispatch.
+- ENGINE: codec eligibility is TRANSITIVE. `Accepted(ontology: DomainOntology)` would have
+  emitted an uncompilable codec (DRACO.md §6, "codec eligibility is not transitive").
+  `DracoGenerator.namesCodecless` now loads a factory parameter's draco type and asks
+  `hasCodec` of it with its LOADED parent chain as family context, so a family member still
+  finds its discriminated parent and a child its inherited elements; a stub (host primitive,
+  scenario type) stays with the text rule; a cycle is broken optimistically. DracoGenTest is
+  byte-identical over the main corpus (319 / 0 with the gates and rule suites), so no existing
+  type changed its codec — as expected, since an uncompilable codec could not have been there.
+
+Found on the way: a lambda inside a splat argument (`insert(xs.flatMap(\d -> …): _*)`) is a
+glued token the parser passes through as host text — `\d ->` reached Scala; bind the
+collection first (now in DRACO.md §6). `TypeLoader.isStub` takes a TypeName.
+
+Measured: compiled-class probe over overlays rebuilt from Dev's post-Delete classes, the
+engine and all seventeen dreams companions and the core ontology recompiled into probe dirs
+under target/scala-2.13: DomainOntologyTest 8 (+1: holds/holding), EditorTest 30 (+1 intents
+test from ONE; +10 trio checks for Accepted and the four rules; +1 the rules firing in a bare
+session over the request and the Accepted fact, no actor), DreamsTest 22 (+4 from ONE; the
+User test now pins Request's three dyns and the Editor's six members), InitializationTest 6 —
+66 / 0 failed; DracoGenTest, DrakeGenTest, SourceContractTest, UniquenessRulesTest,
+DerivationResolvableRulesTest, ServiceTest, DomainBuilderTest against the new engine —
+319 / 0 failed. DrakeCLI check: user, editor and dreams 0 drift, main corpus the two
+authored-ahead files only. Expected sbt arithmetic from 751 / 54 (Delete, f4336a4, inferred
+from Dev's commit — its run was not pasted): +1 +4 (ONE) +1 +11 (TWO) = 768 / 54, no headline
+moves (one core type gained two dyns; no TYPE added). Probe dirs removed. Dev's full run is
+the gate.
+
+Rejected: retiring Latent; keeping one upsert request; wrapping the accepted ontology's
+lookup as a function to dodge the codec gap (closing the gap is the fix); a second raw
+DomainOntology fact (every `var o DomainOntology` rule would fire twice); computing the
+proposal in the actor (the request knows what it asks for); rules that deliver through the
+session runtime (the swap and the delivery need the WHOLE fired session to be quiet, which
+is the one post-fire step a membrane keeps).
+
+Not done: generation and activation as explicit operations; inferred derivation;
+membership reciprocity; chapter 94. No sbt, commit or push run by Claude.

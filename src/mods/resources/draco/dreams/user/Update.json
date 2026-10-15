@@ -1,0 +1,151 @@
+{
+  "typeName": {
+    "name": "Update",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "user"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Latent",
+        "namePackage": [
+          "draco",
+          "dreams",
+          "user"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "definition",
+        "valueType": "draco.TypeDefinition"
+      },
+      {
+        "kind": "Fixed",
+        "name": "members",
+        "valueType": {
+          "[]": [
+            "draco.TypeDefinition"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "proposal",
+        "valueType": "draco.DomainOntology",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "draco.DomainOntology",
+            "value": {
+              "()": [
+                "accepted.including",
+                {
+                  "()": [
+                    "draco.Domain",
+                    "definition",
+                    "members"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "subject",
+        "valueType": "draco.TypeDefinition",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "draco.TypeDefinition",
+            "value": "definition"
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "contents",
+        "valueType": {
+          "[]": [
+            "draco.TypeDefinition"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "draco.TypeDefinition"
+              ]
+            },
+            "value": "members"
+          }
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Update",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "draco.TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "members",
+          "valueType": {
+            "[]": [
+              "draco.TypeDefinition"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "User",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "typeName": {
+    "name": "CreateHeld",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "c",
+          "valueType": "draco.dreams.user.Create"
+        },
+        {
+          "kind": "Variable",
+          "name": "a",
+          "valueType": "Accepted"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "value": {
+            "()": [
+              "a.ontology.holds",
+              "c.definition.typeName"
+            ]
+          }
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "ctx.insert",
+              {
+                "()": [
+                  "draco.Problem",
+                  "c.definition.typeName",
+                  "s\"domain ${c.definition.typeName.name} is already in the accepted ontology\""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

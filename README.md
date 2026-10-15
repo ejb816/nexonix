@@ -543,7 +543,14 @@ ontology holds them, or a refused Actual naming it when the ontology owns none; 
 state. Delete is the third branch (2026-10-14): it names one domain, the ontology that would result comes
 through `excluding`, and the same five rules judge it, so a domain nothing depends on is removed, one
 another derives from is refused naming the dependent, and an unowned one is refused; the judgment is one
-global on the Editor shared with Latent. Generation and activation follow as explicit steps.
+global on the Editor shared with Latent. Since 2026-10-14 the family reads as four verbs: Latent is the
+abstract candidate shape, Create and Update derive it, and each refuses the other's case — a Create of an
+owned identity and an Update of an unowned one — so a user says which they meant. Since 2026-10-15 the
+Editor's judgment is rules of its own: `Accepted` carries the accepted ontology as a fact, four rules
+join each verb with it on whether the ontology holds the identity, and every request knows what it
+proposes and reports on, so the actor is a membrane — insert, fire, read the Actual back. Codec
+eligibility became transitive to carry the ontology as a fact. Generation and activation follow as
+explicit steps.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation
 and activation follow as explicit operations. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
@@ -740,7 +747,10 @@ run passed 744 tests / 54 suites with every report-only figure unchanged: Reques
 Latent deriving it, the Editor dispatching by case, two engine gaps closed on the way. Read followed
 the same evening, committed as 799e9ae after Dev's full run passed 747 tests / 54 suites with every
 report-only figure unchanged: one domain by name, answered with an Actual from the accepted ontology.
-Delete followed on 2026-10-14 (expected 751 / 54, awaiting Dev's run): `excluding` in core, the third
-branch, and the judgment shared as one global on the Editor.
+Delete followed on 2026-10-14, committed as f4336a4 (751 / 54 expected; the run's output was not
+pasted): `excluding` in core, the third branch, and the judgment shared as one global on the Editor.
+Then, in one commit awaiting Dev's run (expected 768 / 54): Create and Update as verbs over the
+abstract Latent shape, and the Editor's judgment moved into four Editor-domain rules over an
+Accepted fact, the actor thinned to a membrane and codec eligibility made transitive.
 
 <!-- draco-docs-synced-through: chapter 93 -->

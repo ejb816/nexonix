@@ -32,6 +32,18 @@ type DomainOntology from Dictionary(DomainType, TypeDictionary)
       body
         fix value DomainOntology DomainOntology(kvMap.keys.filter(\other -> other.typeDefinition.typeName.namePath != typeName.namePath).toSeq)
     ]
+    dyn holds Boolean [
+      parameters
+        par typeName TypeName
+      body
+        fix value Boolean kvMap.keys.exists(\domain -> domain.typeDefinition.typeName.namePath == typeName.namePath)
+    ]
+    dyn holding draco.drake.Presence(DomainType) [
+      parameters
+        par typeName TypeName
+      body
+        fix value draco.drake.Presence(DomainType) presence(kvMap.keys.find(\domain -> domain.typeDefinition.typeName.namePath == typeName.namePath))
+    ]
   factory
     parameters
       par domains [DomainType] []

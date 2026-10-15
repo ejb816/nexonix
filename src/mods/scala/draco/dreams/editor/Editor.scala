@@ -13,25 +13,18 @@ object Editor extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Editor", _namePackage = Seq ("draco", "dreams", "editor")))
   lazy val dracoType: Type[Editor] = Type[Editor] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ("Actual")
+  lazy val elementTypeNames: Seq[String] = Seq ("Accepted", "Actual", "CreateHeld", "DeleteUnheld", "ReadUnheld", "UpdateUnheld")
 
   lazy val domainType: Domain[Editor] = Domain[Editor] (typeDefinition)
-  def judge(_rules: => org.evrete.api.Knowledge, _provisional: => draco.DomainOntology): Seq[draco.Problem] = {
-    lazy val rules: org.evrete.api.Knowledge = _rules
-    lazy val provisional: draco.DomainOntology = _provisional
-    lazy val definitions: Seq[draco.TypeDefinition] = provisional.keys.toSeq.flatMap(domain => domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
-    lazy val problems: mutable.Buffer[draco.Problem] = scala.collection.mutable.ArrayBuffer()
-    lazy val session: org.evrete.api.StatefulSession = rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
-    session.set("problems", problems)
-    session.insert(provisional.keys.toSeq: _*)
-    session.insert(definitions.toSeq: _*)
-    session.insert(Seq(provisional): _*)
-    session.fire()
-    session.close()
-    problems.toSeq
-  }
 
-  private lazy val knowledge: Knowledge = Rule.knowledgeService.newKnowledge("Editor")
+  private lazy val knowledge: Knowledge = {
+    val k = Rule.knowledgeService.newKnowledge("Editor")
+    CreateHeld.ruleType.pattern(k)
+    DeleteUnheld.ruleType.pattern(k)
+    ReadUnheld.ruleType.pattern(k)
+    UpdateUnheld.ruleType.pattern(k)
+    k
+  }
 
   def actorType(_initial: => draco.DomainOntology, _actual: => draco.dreams.user.Response => Unit, _ontology: => draco.DomainOntology => Unit): ActorType = new Actor[draco.dreams.user.Request] {
     override lazy val typeDefinition: TypeDefinition = Editor.typeDefinition
@@ -45,30 +38,32 @@ object Editor extends App with DracoType {
     draco.DerivationResolvable.ruleType.pattern(rules)
     draco.Uniqueness.ruleType.pattern(rules)
     draco.CollectProblems.ruleType.pattern(rules)
+    CreateHeld.ruleType.pattern(rules)
+    UpdateUnheld.ruleType.pattern(rules)
+    ReadUnheld.ruleType.pattern(rules)
+    DeleteUnheld.ruleType.pattern(rules)
     var accepted: draco.DomainOntology = initial
     lazy val accept: draco.DomainOntology => Unit = next => accepted = next
 
     override def receive(ctx: TypedActorContext[draco.dreams.user.Request], msg: draco.dreams.user.Request): Behavior[draco.dreams.user.Request] = {
-      msg match {
-        case latent: draco.dreams.user.Latent =>
-          lazy val candidate: draco.DomainType = draco.Domain(latent.definition, latent.members)
-          lazy val provisional: draco.DomainOntology = accepted.including(candidate)
-          lazy val problems: Seq[draco.Problem] = judge(rules, provisional)
-          (if (problems.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(accept(provisional), accept(accepted))
-          actual(Actual(latent.definition, latent.members, problems))
-          (if (problems.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(ontology(accepted), ())
-        case read: draco.dreams.user.Read =>
-          lazy val owner: draco.drake.Presence[draco.DomainType] = (accepted.keys.find(d => d.typeDefinition.typeName.namePath == read.domain.namePath) match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
-          actual(owner.fold(Actual(draco.TypeDefinition(read.domain), Seq.empty, Seq(draco.Problem(read.domain, s"domain ${read.domain.name} is not in the accepted ontology"))), d => Actual(d.typeDefinition, d.typeDictionary.elementTypes)))
-        case delete: draco.dreams.user.Delete =>
-          lazy val owner: draco.drake.Presence[draco.DomainType] = (accepted.keys.find(d => d.typeDefinition.typeName.namePath == delete.domain.namePath) match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
-          lazy val provisional: draco.DomainOntology = accepted.excluding(delete.domain)
-          lazy val problems: Seq[draco.Problem] = owner.fold(Seq(draco.Problem(delete.domain, s"domain ${delete.domain.name} is not in the accepted ontology")), d => judge(rules, provisional))
-          (if (problems.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(accept(provisional), accept(accepted))
-          actual(owner.fold(Actual(draco.TypeDefinition(delete.domain), Seq.empty, problems), d => Actual(d.typeDefinition, d.typeDictionary.elementTypes, problems)))
-          (if (problems.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(ontology(accepted), ())
-        case _ => ()
-      }
+      val provisional: draco.DomainOntology = msg.proposal(accepted)
+      val subject: draco.TypeDefinition = msg.subject(accepted)
+      val contents: Seq[draco.TypeDefinition] = msg.contents(accepted)
+      val changing: Boolean = provisional != accepted
+      lazy val definitions: Seq[draco.TypeDefinition] = provisional.keys.toSeq.flatMap(domain => domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
+      lazy val problems: mutable.Buffer[draco.Problem] = scala.collection.mutable.ArrayBuffer()
+      lazy val session: org.evrete.api.StatefulSession = rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+      session.set("problems", problems)
+      session.insert(Seq(msg): _*)
+      session.insert(Seq(Accepted(accepted)): _*)
+      session.insert(provisional.keys.toSeq: _*)
+      session.insert(definitions.toSeq: _*)
+      session.insert(Seq(provisional): _*)
+      session.fire()
+      session.close()
+      (if (problems.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(accept(provisional), accept(accepted))
+      actual(Actual(subject, contents, problems.toSeq))
+      (if (problems.isEmpty && changing) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(ontology(accepted), ())
       Behaviors.same[draco.dreams.user.Request]
     }
 

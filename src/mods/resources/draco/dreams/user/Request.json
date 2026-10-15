@@ -7,6 +7,50 @@
       "user"
     ]
   },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Dynamic",
+        "name": "proposal",
+        "valueType": "draco.DomainOntology",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "subject",
+        "valueType": "draco.TypeDefinition",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "contents",
+        "valueType": {
+          "[]": [
+            "draco.TypeDefinition"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ]
+      }
+    ]
+  },
   "domainAspect": {
     "typeName": {
       "name": "User",

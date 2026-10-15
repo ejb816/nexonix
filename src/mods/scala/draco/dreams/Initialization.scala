@@ -6,7 +6,7 @@ import io.circe.syntax.EncoderOps
 import scala.collection.mutable
 
 trait Initialization extends DracoType {
-  val domains: Seq[draco.dreams.user.Latent]
+  val domains: Seq[draco.dreams.user.Create]
   val initial: draco.DomainOntology
   val responses: mutable.Buffer[draco.dreams.user.Response]
   var ontology: draco.DomainOntology
@@ -21,22 +21,22 @@ trait Initialization extends DracoType {
     lazy val latent: draco.dreams.user.Latent = _latent
     latent.members.prepended(latent.definition).flatMap(td => draco.DracoAspect.parents(td.dracoAspect)).filter(p => !owns(latent, p))
   }
-  def ready(_latent: => draco.dreams.user.Latent, _placed: => Seq[draco.dreams.user.Latent]): Boolean = {
+  def ready(_latent: => draco.dreams.user.Latent, _placed: => Seq[draco.dreams.user.Create]): Boolean = {
     lazy val latent: draco.dreams.user.Latent = _latent
-    lazy val placed: Seq[draco.dreams.user.Latent] = _placed
+    lazy val placed: Seq[draco.dreams.user.Create] = _placed
     parents(latent).filter(p => domains.exists(l => owns(l, p))).forall(p => placed.exists(l => owns(l, p)))
   }
-  def order(_placed: => Seq[draco.dreams.user.Latent], _remaining: => Seq[draco.dreams.user.Latent]): Seq[draco.dreams.user.Latent] = {
-    lazy val placed: Seq[draco.dreams.user.Latent] = _placed
-    lazy val remaining: Seq[draco.dreams.user.Latent] = _remaining
-    lazy val wave: Seq[draco.dreams.user.Latent] = remaining.filter(l => ready(l, placed))
-    lazy val rest: Seq[draco.dreams.user.Latent] = remaining.filterNot(l => ready(l, placed))
+  def order(_placed: => Seq[draco.dreams.user.Create], _remaining: => Seq[draco.dreams.user.Create]): Seq[draco.dreams.user.Create] = {
+    lazy val placed: Seq[draco.dreams.user.Create] = _placed
+    lazy val remaining: Seq[draco.dreams.user.Create] = _remaining
+    lazy val wave: Seq[draco.dreams.user.Create] = remaining.filter(l => ready(l, placed))
+    lazy val rest: Seq[draco.dreams.user.Create] = remaining.filterNot(l => ready(l, placed))
     (if (wave.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(placed ++ remaining, order(placed ++ wave, rest))
   }
-  def ordered: Seq[draco.dreams.user.Latent] = order(Seq.empty, domains)
+  def ordered: Seq[draco.dreams.user.Create] = order(Seq.empty, domains)
   def editorType: draco.ActorType = draco.dreams.editor.Editor.actorType(initial, note, keep)
-  def run(_editor: => draco.dreams.user.Latent => Unit): Unit = {
-    lazy val editor: draco.dreams.user.Latent => Unit = _editor
+  def run(_editor: => draco.dreams.user.Create => Unit): Unit = {
+    lazy val editor: draco.dreams.user.Create => Unit = _editor
     ordered.foreach(editor)
   }
   def complete: Boolean = responses.size == domains.size
@@ -56,14 +56,14 @@ object Initialization extends App with DracoType {
   }
   implicit lazy val decoder: Decoder[Initialization] = Decoder.instance { cursor =>
     for {
-      _domains <- cursor.downField("domains").as[Option[Seq[draco.dreams.user.Latent]]].map(_.getOrElse(Seq.empty))
+      _domains <- cursor.downField("domains").as[Option[Seq[draco.dreams.user.Create]]].map(_.getOrElse(Seq.empty))
     } yield Initialization (_domains)
   }
 
   def apply (
-    _domains: => Seq[draco.dreams.user.Latent] = Seq.empty
+    _domains: => Seq[draco.dreams.user.Create] = Seq.empty
   ) : Initialization = new Initialization {
-    override lazy val domains: Seq[draco.dreams.user.Latent] = _domains
+    override lazy val domains: Seq[draco.dreams.user.Create] = _domains
     override lazy val initial: draco.DomainOntology = draco.DomainOntology()
     override lazy val responses: mutable.Buffer[draco.dreams.user.Response] = scala.collection.mutable.ArrayBuffer()
     override var ontology: draco.DomainOntology = initial

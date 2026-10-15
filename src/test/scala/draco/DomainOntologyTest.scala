@@ -109,6 +109,18 @@ class DomainOntologyTest extends AnyFunSuite {
       "name and package, parameters free — as definitions are keyed")
   }
 
+  test("holds and holding: a domain by its identity, name and package, parameters free — a Presence, never an option") {
+    // 2026-10-15: the lookup the Editor's intent rules and the requests share, moved into
+    // the ontology from the Editor's `holder` global.
+    val both = DomainBuilder.ontology(draco, base)
+    val baseName = base.typeDefinition.typeName
+    assert(both.holds(baseName) && both.holds(TypeName("Draco", Seq("draco"))))
+    assert(!both.holds(TypeName("Nowhere", Seq("nowhere"))) && !both.holds(primal), "a member is owned, not held: holds is about domains")
+    assert(both.holds(TypeName(baseName.name, baseName.namePackage, Seq(io.circe.Json.fromString("T")))), "parameters free")
+    assert(both.holding(baseName).fold(false, d => d.typeDefinition.typeName == baseName))
+    assert(both.holding(TypeName("Nowhere", Seq("nowhere"))).fold(true, _ => false))
+  }
+
   test("owns and defines agree: a name is defined iff some composed domain owns it") {
     val ontology = DomainBuilder.ontology(draco, base)
     val names = Seq(primal, TypeName("Cardinal", Seq("draco", "base")), TypeName("Draco", Seq("draco")),

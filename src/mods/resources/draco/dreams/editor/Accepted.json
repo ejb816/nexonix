@@ -1,0 +1,40 @@
+{
+  "typeName": {
+    "name": "Accepted",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "ontology",
+        "valueType": "draco.DomainOntology"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Accepted",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "ontology",
+          "valueType": "draco.DomainOntology"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  }
+}

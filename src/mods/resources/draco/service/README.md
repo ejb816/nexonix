@@ -78,7 +78,8 @@ concepts; Service retains reusable service capabilities. These domains are compo
 as ontology peers. The first authoring slice (2026-10-09) lives in Editor: Latent, Actual
 and the Editor actor; see the Dreams README. Service gained ServiceConfiguration, which
 contains an Assembly, the same day. Since 2026-10-12 the editing interface is Dev's CRUD
-reading: User defines the requests (Latent, the Create/Update request, moved there) and
-the abstract Response that Editor's Actual derives; the endogenous initialization client
+reading: User defines the requests (Create and Update over the abstract Latent shape,
+Read and Delete, all deriving Request) and the abstract Response that Editor's Actual
+derives; the endogenous initialization client
 named in the agreed direction above is draco acting as its own first User, not a Service
 type, so Service stays free to host the external client's transport.

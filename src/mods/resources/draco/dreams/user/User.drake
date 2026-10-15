@@ -1,9 +1,11 @@
 type User
 domain draco dreams user User
   types [
+    Create
     Delete
     Latent
     Read
     Request
     Response
+    Update
   ]

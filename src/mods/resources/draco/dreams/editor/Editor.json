@@ -38,145 +38,7 @@
           }
         }
       ]
-    },
-    "globalElements": [
-      {
-        "kind": "Dynamic",
-        "name": "judge",
-        "valueType": {
-          "[]": [
-            "draco.Problem"
-          ]
-        },
-        "parameters": [
-          {
-            "kind": "Parameter",
-            "name": "rules",
-            "valueType": "org.evrete.api.Knowledge"
-          },
-          {
-            "kind": "Parameter",
-            "name": "provisional",
-            "valueType": "draco.DomainOntology"
-          }
-        ],
-        "body": [
-          {
-            "kind": "Fixed",
-            "name": "definitions",
-            "valueType": {
-              "[]": [
-                "draco.TypeDefinition"
-              ]
-            },
-            "value": {
-              "()": [
-                "provisional.keys.toSeq.flatMap",
-                {
-                  "\\": [
-                    "domain",
-                    {
-                      "()": [
-                        "domain.typeDictionary.elementTypes.prepended",
-                        "domain.typeDefinition"
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "kind": "Fixed",
-            "name": "problems",
-            "valueType": {
-              "[]+": [
-                "draco.Problem"
-              ]
-            },
-            "value": {
-              "()": [
-                "scala.collection.mutable.ArrayBuffer"
-              ]
-            }
-          },
-          {
-            "kind": "Fixed",
-            "name": "session",
-            "valueType": "org.evrete.api.StatefulSession",
-            "value": {
-              "()": [
-                "rules.newStatefulSession",
-                "org.evrete.api.ActivationMode.CONTINUOUS"
-              ]
-            }
-          },
-          {
-            "kind": "Monadic",
-            "value": {
-              "()": [
-                "session.set",
-                "\"problems\"",
-                "problems"
-              ]
-            }
-          },
-          {
-            "kind": "Monadic",
-            "value": {
-              "()": [
-                "session.insert",
-                "provisional.keys.toSeq: _*"
-              ]
-            }
-          },
-          {
-            "kind": "Monadic",
-            "value": {
-              "()": [
-                "session.insert",
-                "definitions.toSeq: _*"
-              ]
-            }
-          },
-          {
-            "kind": "Monadic",
-            "value": {
-              "()": [
-                "session.insert",
-                "Seq(provisional): _*"
-              ]
-            }
-          },
-          {
-            "kind": "Monadic",
-            "value": {
-              "()": [
-                "session.fire"
-              ]
-            }
-          },
-          {
-            "kind": "Monadic",
-            "value": {
-              "()": [
-                "session.close"
-              ]
-            }
-          },
-          {
-            "kind": "Fixed",
-            "name": "value",
-            "valueType": {
-              "[]": [
-                "draco.Problem"
-              ]
-            },
-            "value": "problems.toSeq"
-          }
-        ]
-      }
-    ]
+    }
   },
   "domainAspect": {
     "typeName": {
@@ -188,7 +50,12 @@
       ]
     },
     "elementTypeNames": [
-      "Actual"
+      "Accepted",
+      "Actual",
+      "CreateHeld",
+      "DeleteUnheld",
+      "ReadUnheld",
+      "UpdateUnheld"
     ]
   },
   "actorAspect": {
@@ -196,393 +63,253 @@
       "kind": "Action",
       "body": [
         {
-          "kind": "Case",
-          "name": "latent",
-          "valueType": "draco.dreams.user.Latent",
-          "body": [
-            {
-              "kind": "Fixed",
-              "name": "candidate",
-              "valueType": "draco.DomainType",
-              "value": {
-                "()": [
-                  "draco.Domain",
-                  "latent.definition",
-                  "latent.members"
+          "kind": "Fixed",
+          "name": "provisional",
+          "valueType": "draco.DomainOntology",
+          "value": {
+            "()": [
+              "msg.proposal",
+              "accepted"
+            ]
+          },
+          "now": true
+        },
+        {
+          "kind": "Fixed",
+          "name": "subject",
+          "valueType": "draco.TypeDefinition",
+          "value": {
+            "()": [
+              "msg.subject",
+              "accepted"
+            ]
+          },
+          "now": true
+        },
+        {
+          "kind": "Fixed",
+          "name": "contents",
+          "valueType": {
+            "[]": [
+              "draco.TypeDefinition"
+            ]
+          },
+          "value": {
+            "()": [
+              "msg.contents",
+              "accepted"
+            ]
+          },
+          "now": true
+        },
+        {
+          "kind": "Fixed",
+          "name": "changing",
+          "valueType": "Boolean",
+          "value": {
+            "!=": [
+              "provisional",
+              "accepted"
+            ]
+          },
+          "now": true
+        },
+        {
+          "kind": "Fixed",
+          "name": "definitions",
+          "valueType": {
+            "[]": [
+              "draco.TypeDefinition"
+            ]
+          },
+          "value": {
+            "()": [
+              "provisional.keys.toSeq.flatMap",
+              {
+                "\\": [
+                  "domain",
+                  {
+                    "()": [
+                      "domain.typeDictionary.elementTypes.prepended",
+                      "domain.typeDefinition"
+                    ]
+                  }
                 ]
               }
-            },
-            {
-              "kind": "Fixed",
-              "name": "provisional",
-              "valueType": "draco.DomainOntology",
-              "value": {
-                "()": [
-                  "accepted.including",
-                  "candidate"
-                ]
-              }
-            },
-            {
-              "kind": "Fixed",
-              "name": "problems",
-              "valueType": {
-                "[]": [
-                  "draco.Problem"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "problems",
+          "valueType": {
+            "[]+": [
+              "draco.Problem"
+            ]
+          },
+          "value": {
+            "()": [
+              "scala.collection.mutable.ArrayBuffer"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "session",
+          "valueType": "org.evrete.api.StatefulSession",
+          "value": {
+            "()": [
+              "rules.newStatefulSession",
+              "org.evrete.api.ActivationMode.CONTINUOUS"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.set",
+              "\"problems\"",
+              "problems"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(msg): _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(Accepted(accepted)): _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "provisional.keys.toSeq: _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "definitions.toSeq: _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.insert",
+              "Seq(provisional): _*"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.fire"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.close"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "problems.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
                 ]
               },
-              "value": {
+              {
                 "()": [
-                  "judge",
-                  "rules",
+                  "accept",
                   "provisional"
                 ]
-              }
-            },
-            {
-              "kind": "Monadic",
-              "value": {
+              },
+              {
                 "()": [
-                  {
-                    ".": [
-                      {
-                        "()": [
-                          "guard",
-                          "problems.isEmpty"
-                        ]
-                      },
-                      "ifThenElse"
-                    ]
-                  },
-                  {
-                    "()": [
-                      "accept",
-                      "provisional"
-                    ]
-                  },
-                  {
-                    "()": [
-                      "accept",
-                      "accepted"
-                    ]
-                  }
+                  "accept",
+                  "accepted"
                 ]
               }
-            },
-            {
-              "kind": "Monadic",
-              "value": {
-                "()": [
-                  "actual",
-                  {
-                    "()": [
-                      "Actual",
-                      "latent.definition",
-                      "latent.members",
-                      "problems"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "kind": "Monadic",
-              "value": {
-                "()": [
-                  {
-                    ".": [
-                      {
-                        "()": [
-                          "guard",
-                          "problems.isEmpty"
-                        ]
-                      },
-                      "ifThenElse"
-                    ]
-                  },
-                  {
-                    "()": [
-                      "ontology",
-                      "accepted"
-                    ]
-                  },
-                  "()"
-                ]
-              }
-            }
-          ]
+            ]
+          }
         },
         {
-          "kind": "Case",
-          "name": "read",
-          "valueType": "draco.dreams.user.Read",
-          "body": [
-            {
-              "kind": "Fixed",
-              "name": "owner",
-              "valueType": {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "actual",
+              {
                 "()": [
-                  "draco.drake.Presence",
-                  "draco.DomainType"
-                ]
-              },
-              "value": {
-                "()": [
-                  "presence",
-                  {
-                    "()": [
-                      "accepted.keys.find",
-                      {
-                        "\\": [
-                          "d",
-                          {
-                            "==": [
-                              "d.typeDefinition.typeName.namePath",
-                              "read.domain.namePath"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
+                  "Actual",
+                  "subject",
+                  "contents",
+                  "problems.toSeq"
                 ]
               }
-            },
-            {
-              "kind": "Monadic",
-              "value": {
-                "()": [
-                  "actual",
-                  {
-                    "()": [
-                      "owner.fold",
-                      {
-                        "()": [
-                          "Actual",
-                          {
-                            "()": [
-                              "draco.TypeDefinition",
-                              "read.domain"
-                            ]
-                          },
-                          {
-                            "[]": [
-                            ]
-                          },
-                          {
-                            "[]": [
-                              {
-                                "()": [
-                                  "draco.Problem",
-                                  "read.domain",
-                                  "s\"domain ${read.domain.name} is not in the accepted ontology\""
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "\\": [
-                          "d",
-                          {
-                            "()": [
-                              "Actual",
-                              "d.typeDefinition",
-                              "d.typeDictionary.elementTypes"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
+            ]
+          }
         },
         {
-          "kind": "Case",
-          "name": "delete",
-          "valueType": "draco.dreams.user.Delete",
-          "body": [
-            {
-              "kind": "Fixed",
-              "name": "owner",
-              "valueType": {
-                "()": [
-                  "draco.drake.Presence",
-                  "draco.DomainType"
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "&&": [
+                          "problems.isEmpty",
+                          "changing"
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
                 ]
               },
-              "value": {
+              {
                 "()": [
-                  "presence",
-                  {
-                    "()": [
-                      "accepted.keys.find",
-                      {
-                        "\\": [
-                          "d",
-                          {
-                            "==": [
-                              "d.typeDefinition.typeName.namePath",
-                              "delete.domain.namePath"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "kind": "Fixed",
-              "name": "provisional",
-              "valueType": "draco.DomainOntology",
-              "value": {
-                "()": [
-                  "accepted.excluding",
-                  "delete.domain"
-                ]
-              }
-            },
-            {
-              "kind": "Fixed",
-              "name": "problems",
-              "valueType": {
-                "[]": [
-                  "draco.Problem"
+                  "ontology",
+                  "accepted"
                 ]
               },
-              "value": {
-                "()": [
-                  "owner.fold",
-                  {
-                    "[]": [
-                      {
-                        "()": [
-                          "draco.Problem",
-                          "delete.domain",
-                          "s\"domain ${delete.domain.name} is not in the accepted ontology\""
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "\\": [
-                      "d",
-                      {
-                        "()": [
-                          "judge",
-                          "rules",
-                          "provisional"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "kind": "Monadic",
-              "value": {
-                "()": [
-                  {
-                    ".": [
-                      {
-                        "()": [
-                          "guard",
-                          "problems.isEmpty"
-                        ]
-                      },
-                      "ifThenElse"
-                    ]
-                  },
-                  {
-                    "()": [
-                      "accept",
-                      "provisional"
-                    ]
-                  },
-                  {
-                    "()": [
-                      "accept",
-                      "accepted"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "kind": "Monadic",
-              "value": {
-                "()": [
-                  "actual",
-                  {
-                    "()": [
-                      "owner.fold",
-                      {
-                        "()": [
-                          "Actual",
-                          {
-                            "()": [
-                              "draco.TypeDefinition",
-                              "delete.domain"
-                            ]
-                          },
-                          {
-                            "[]": [
-                            ]
-                          },
-                          "problems"
-                        ]
-                      },
-                      {
-                        "\\": [
-                          "d",
-                          {
-                            "()": [
-                              "Actual",
-                              "d.typeDefinition",
-                              "d.typeDictionary.elementTypes",
-                              "problems"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "kind": "Monadic",
-              "value": {
-                "()": [
-                  {
-                    ".": [
-                      {
-                        "()": [
-                          "guard",
-                          "problems.isEmpty"
-                        ]
-                      },
-                      "ifThenElse"
-                    ]
-                  },
-                  {
-                    "()": [
-                      "ontology",
-                      "accepted"
-                    ]
-                  },
-                  "()"
-                ]
-              }
-            }
-          ]
+              "()"
+            ]
+          }
         }
       ]
     },
@@ -649,6 +376,42 @@
           "value": {
             "()": [
               "draco.CollectProblems.ruleType.pattern",
+              "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "CreateHeld.ruleType.pattern",
+              "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "UpdateUnheld.ruleType.pattern",
+              "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "ReadUnheld.ruleType.pattern",
+              "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "DeleteUnheld.ruleType.pattern",
               "rules"
             ]
           }

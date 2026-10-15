@@ -1,0 +1,7 @@
+type Accepted
+  elements
+    fix ontology draco.DomainOntology
+  factory
+    parameters
+      par ontology draco.DomainOntology
+domain draco dreams editor Editor

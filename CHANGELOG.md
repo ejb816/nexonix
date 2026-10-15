@@ -39,6 +39,27 @@ for the definition that will replace it.
 
 ### Added
 
+- **The Editor's judgment is Editor-domain rules; the actor is a membrane.** `draco.dreams.editor`
+  gains `Accepted` (the accepted ontology as a fact) and four rules — `CreateHeld`,
+  `UpdateUnheld`, `ReadUnheld`, `DeleteUnheld` — each joining a request with the Accepted
+  fact; User's `Request` declares `proposal`, `subject` and `contents` over the accepted
+  ontology, which every verb implements; core's `DomainOntology` gains `holds` and
+  `holding`. The Editor actor inserts the request, the Accepted fact and the proposed
+  ontology with its definitions, fires nine rules, and reads the Actual back: no case
+  branches, no globals. EditorTest +11, DomainOntologyTest +1; same pending run as the
+  entry below. (2026-10-15)
+- **Codec eligibility is transitive** (Changed): a factory parameter typed by a draco type
+  that itself has no codec makes the type codec-less, judged with the loaded parent chain
+  as family context. The generator and drake gates are byte-identical over the main
+  corpus. (2026-10-15)
+- **Create and Update, the verbs over the Latent shape.** `Latent` is now the abstract
+  candidate shape (definition and members, no factory) deriving Request; `Create` and
+  `Update` derive it. The Editor's Latent branch became two: a Create of an identity the
+  ontology already owns is refused, an Update of one it does not own is refused, and both
+  are otherwise judged as before. A second Editor global, `holder`, is the domain lookup
+  all four branches share. The initialization client sends Creates. EditorTest +1,
+  DreamsTest +4; one commit with the two entries above, expected 768 tests / 54 suites,
+  Dev's full run pending. (2026-10-14)
 - **Delete through `excluding`; the CRUD vocabulary complete.** `DomainOntology.excluding`
   (core) is the inverse of `including`; `draco.dreams.user.Delete` derives Request and
   names one domain; the Editor's third `case` branch judges the ontology that would
@@ -46,8 +67,9 @@ for the definition that will replace it.
   another derives from is refused naming the dependent, and an unowned domain is refused
   with one Problem; the shrunk ontology is delivered on acceptance. The judgment is now
   one global `judge(rules, provisional)` on the Editor, shared by the Latent and Delete
-  branches. DomainOntologyTest +1, EditorTest +1, DreamsTest +2; expected 751 tests / 54
-  suites, Dev's full run pending. (2026-10-14)
+  branches. DomainOntologyTest +1, EditorTest +1, DreamsTest +2; committed by Dev as
+  f4336a4 after the gate (751 tests / 54 suites expected; the run's output was not
+  pasted). (2026-10-14)
 - **Read: one domain by name, answered with an Actual.** `draco.dreams.user.Read` derives
   Request and names one domain by TypeName; the Editor's second `case` branch answers
   through the same Response consumer with the domain's definition and members as the

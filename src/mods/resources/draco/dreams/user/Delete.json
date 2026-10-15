@@ -23,6 +23,129 @@
         "kind": "Fixed",
         "name": "domain",
         "valueType": "draco.TypeName"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "proposal",
+        "valueType": "draco.DomainOntology",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "draco.DomainOntology",
+            "value": {
+              "()": [
+                "accepted.excluding",
+                "domain"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "subject",
+        "valueType": "draco.TypeDefinition",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "draco.TypeDefinition",
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "accepted.holding",
+                        "domain"
+                      ]
+                    },
+                    "fold"
+                  ]
+                },
+                {
+                  "()": [
+                    "draco.TypeDefinition",
+                    "domain"
+                  ]
+                },
+                {
+                  "\\": [
+                    "d",
+                    "d.typeDefinition"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "contents",
+        "valueType": {
+          "[]": [
+            "draco.TypeDefinition"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "draco.TypeDefinition"
+              ]
+            },
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "accepted.holding",
+                        "domain"
+                      ]
+                    },
+                    "fold"
+                  ]
+                },
+                {
+                  "[]": [
+                  ]
+                },
+                {
+                  "\\": [
+                    "d",
+                    "d.typeDictionary.elementTypes"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
       }
     ],
     "factory": {

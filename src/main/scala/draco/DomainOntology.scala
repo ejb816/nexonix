@@ -23,6 +23,14 @@ trait DomainOntology extends Dictionary[DomainType, TypeDictionary] {
     lazy val typeName: TypeName = _typeName
     DomainOntology(kvMap.keys.filter(other => other.typeDefinition.typeName.namePath != typeName.namePath).toSeq)
   }
+  def holds(_typeName: => TypeName): Boolean = {
+    lazy val typeName: TypeName = _typeName
+    kvMap.keys.exists(domain => domain.typeDefinition.typeName.namePath == typeName.namePath)
+  }
+  def holding(_typeName: => TypeName): draco.drake.Presence[DomainType] = {
+    lazy val typeName: TypeName = _typeName
+    (kvMap.keys.find(domain => domain.typeDefinition.typeName.namePath == typeName.namePath) match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
+  }
 }
 
 object DomainOntology extends App with DracoType {

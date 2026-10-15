@@ -817,6 +817,35 @@ object DracoGenerator extends App {
   private def isUncodecable (valueType: String) : Boolean =
     isFunctionLikeType(valueType) || extractTypeNames(valueType).exists(uncodecableTypes.contains)
 
+  /** Codec eligibility is TRANSITIVE since 2026-10-15 (it stopped at the parameter's text before —
+    * DRACO.md §6, "codec eligibility is not transitive"): a factory parameter whose type names a
+    * DRACO definition that itself has no codec makes the type codec-less, because the circe
+    * instance the field would need does not exist — `DomainOntology` holds a TypeDictionary of
+    * definitions, and the Editor's `Accepted(ontology)` fact was the first type to carry one as
+    * a parameter. Bounded on purpose: a name the loader cannot resolve (a host primitive, a
+    * scenario type) is a stub and stays with the text rule above; the referenced definition is
+    * judged with its LOADED parent chain as family context, so a family member still finds its
+    * discriminated parent (`Codec.sub`) and a child still sees its inherited elements; a cycle
+    * is broken optimistically. */
+  private lazy val codecVisiting: scala.collection.mutable.Set[String] = scala.collection.mutable.Set.empty
+  private def parentChain (td: TypeDefinition, seen: Set[String] = Set.empty) : Seq[TypeDefinition] =
+    DracoAspect.parents(td.dracoAspect).filterNot(_.name == "DracoType").flatMap { tn =>
+      if (seen.contains(tn.namePath) || TypeLoader.isStub(tn)) Seq.empty
+      else { val parent = loadType(tn); parent +: parentChain(parent, seen + tn.namePath) }
+    }
+  private def namesCodecless (valueType: String, td: TypeDefinition) : Boolean =
+    extractTypeNames(valueType).exists { name =>
+      val parts      = name.split('.').toSeq
+      val referenced = if (parts.size > 1) TypeName(parts.last, parts.init) else TypeName(name, td.typeName.namePackage)
+      val key        = referenced.namePath
+      if (key == td.typeName.namePath || codecVisiting.contains(key) || TypeLoader.isStub(referenced)) false
+      else {
+        val loaded = loadType(referenced)
+        codecVisiting += key
+        try !hasCodec(loaded, parentChain(loaded)) finally codecVisiting -= key
+      }
+    }
+
   private def isFunctionLikeType (valueType: String) : Boolean = {
     val t = valueType.trim
     t.contains("=>") ||
@@ -1185,7 +1214,7 @@ object DracoGenerator extends App {
           val ownElementNames = td.dracoAspect.elements.map(_.name).toSet
           val elementNames = ownElementNames ++ inheritedElementNames(td, familyMap)
           val paramNames = td.dracoAspect.factory.parameters.map(_.name).toSet
-          val anyUncodecable = td.dracoAspect.factory.parameters.exists(p => isUncodecable(p.valueType.text))
+          val anyUncodecable = td.dracoAspect.factory.parameters.exists(p => isUncodecable(p.valueType.text) || namesCodecless(p.valueType.text, td))
           if (paramNames.subsetOf(elementNames) && !anyUncodecable) simpleCodecDeclaration(td)
           else ""
         } else {

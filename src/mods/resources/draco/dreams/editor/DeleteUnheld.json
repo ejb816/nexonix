@@ -1,0 +1,68 @@
+{
+  "typeName": {
+    "name": "DeleteUnheld",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "d",
+          "valueType": "draco.dreams.user.Delete"
+        },
+        {
+          "kind": "Variable",
+          "name": "a",
+          "valueType": "Accepted"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "value": {
+            "()": [
+              "!a.ontology.holds",
+              "d.domain"
+            ]
+          }
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "ctx.insert",
+              {
+                "()": [
+                  "draco.Problem",
+                  "d.domain",
+                  "s\"domain ${d.domain.name} is not in the accepted ontology\""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
