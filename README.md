@@ -723,10 +723,12 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 93: the Codex handoff, the domain ontology named, Latent and
-Actual, derivation with provenance, and the Editor holding draco's innate ontology under
-Uniqueness. The [latest retrieval audit](draco-dev-journal/sources/claude-2026-10-07-to-12-audit.md)
-preserves sixteen complete exchanges plus the open wrap-up request. Earlier extracts
+Journal coverage reaches chapter 94: the grown ontology's consumer, Dev's CRUD reading of User and
+Editor, the Request family of four verbs over the Latent shape, the endogenous initialization
+client and the SelfDeclaration alignment, and the Editor's judgment moved into Editor-domain rules
+with the actor thinned. The [latest retrieval audit](draco-dev-journal/sources/claude-2026-10-12-to-15-audit.md)
+preserves nineteen complete exchanges plus the open wrap-up request; chapter 93's audit preserved
+sixteen. Earlier extracts
 and historical chapter statuses are unchanged. The bridge's historical full run passed
 685 tests / 49 suites; the latest Dreams full run passed 701 tests / 50 suites, both
 run by Dev with unchanged report-only baselines. The first authoring slice landed on
@@ -749,8 +751,9 @@ the same evening, committed as 799e9ae after Dev's full run passed 747 tests / 5
 report-only figure unchanged: one domain by name, answered with an Actual from the accepted ontology.
 Delete followed on 2026-10-14, committed as f4336a4 (751 / 54 expected; the run's output was not
 pasted): `excluding` in core, the third branch, and the judgment shared as one global on the Editor.
-Then, in one commit awaiting Dev's run (expected 768 / 54): Create and Update as verbs over the
-abstract Latent shape, and the Editor's judgment moved into four Editor-domain rules over an
-Accepted fact, the actor thinned to a membrane and codec eligibility made transitive.
+Then, in one commit (78bff9d) after Dev's full run passed 768 tests / 54 suites with every report-only
+figure unchanged: Create and Update as verbs over the abstract Latent shape, and the Editor's judgment
+moved into four Editor-domain rules over an Accepted fact, the actor thinned to a membrane and codec
+eligibility made transitive.
 
-<!-- draco-docs-synced-through: chapter 93 -->
+<!-- draco-docs-synced-through: chapter 94 -->

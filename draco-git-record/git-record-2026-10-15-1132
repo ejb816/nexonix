@@ -1,0 +1,28 @@
+Record Dev's 768 / 54 verification at 78bff9d, write chapter 94 and close the session for the Codex handoff
+
+Documentation only. Dev's full run on 2026-10-15 passed 768 tests / 54 suites, 0 failed,
+0 aborted, every report-only headline unchanged, then committed and pushed the combined
+Create/Update and Editor-rules increment as 78bff9d. 768 = 751 + 17 as predicted, so the
+751 / 54 figure for f4336a4 (Delete) — inferred from Dev's commit, its output never pasted —
+is corroborated by this run. DRACO.md section 1 names 768 / 54 at 78bff9d as the baseline;
+its section 3 paragraphs, the CHANGELOG entries, README and the handoff say so.
+
+Chapter 94 transcribes this Claude Code session from the chapter-93 handoff (2026-10-12)
+through Dev's wrap-up request (2026-10-15): 16 assertive Dev prompts verbatim, 19 final
+replies near-verbatim, five pasted results folded into delegated-action notes. The bounded
+extract sources/claude-2026-10-12-to-15.jsonl preserves 39 original records with source
+line, UTC timestamp and SHA-256; its audit fixes the frozen prefix (3381 lines) and lists
+the exclusions. No compaction was observed in the record. The reply answering the wrap-up
+request — this documentation pass — is outside the boundary and the chapter's Status is a
+record-backed note; the one evidence gap (the Delete gate run not pasted) is disclosed in
+the chapter. The intro gains the index entry, the count and date range, and a Status at
+Chapter 94 line. Both sync markers advance to 94 after reviewing DRACO.md and README against
+the chapter: they were written during the session and already carry its decisions.
+
+The handoff names Codex as the destination and states that every continuity fact is in
+tracked files — no Claude-private memory is required. The next authorized work is
+generation as an explicit operation; its first design point (a Generate request naming a
+held domain and a transform domain, answered with a Generated response of Emissions) is
+raised and not yet accepted, and the handoff says so.
+
+No sbt, commit or push run by Claude.

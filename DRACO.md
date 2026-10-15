@@ -49,12 +49,14 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**751 tests / 54 suites** at commit f4336a4 (the Delete increment, §3 *Delete*, record
-`git-record-2026-10-14-1136`; DomainOntologyTest +1, EditorTest +1, DreamsTest +2) — Dev committed and pushed
-it on 2026-10-14 after the gate, but the run's grep output was not pasted, so that figure is inferred from the
-commit, not read. The Create/Update and Editor-rules increments (§3 *Create and Update* and *Editor-domain
-rules*, one commit, record `git-record-2026-10-14-1217`) expect **768 / 54** (EditorTest +12, DreamsTest +4,
-DomainOntologyTest +1), no headline moves, Dev's run pending. Before it:
+**768 tests / 54 suites**, verified by Dev's run on 2026-10-15 at commit 78bff9d (the Create/Update and
+Editor-rules increments, §3 *Create and Update* and *Editor-domain rules*, one commit, record
+`git-record-2026-10-14-1217`; EditorTest +12, DreamsTest +4, DomainOntologyTest +1), with every report-only
+figure unchanged — no main-corpus TYPE was added, and the transitive codec eligibility it carries is
+byte-identical over the main corpus. Before it: **751 / 54** at f4336a4 (the Delete increment, §3 *Delete*,
+record `git-record-2026-10-14-1136`; DomainOntologyTest +1, EditorTest +1, DreamsTest +2), committed by Dev on
+2026-10-14 after the gate — its grep output was not pasted, but 768 = 751 + 17 as predicted, so the figure is
+corroborated, not read. Before it:
 **747 / 54** at 799e9ae (the Read increment, §3 *Read*, record `git-record-2026-10-13-2158`; EditorTest +1,
 DreamsTest +2), Dev's run on 2026-10-14, every report-only figure unchanged. Before it: **744 / 54** at 5057a5c (the Request-family
 increment, §3 *The Request family*, record `git-record-2026-10-13-1311`; DrakeParseTest +1, DreamsTest +2;
@@ -392,7 +394,7 @@ The consuming project owns persistence. Parsing remains rule-owned and dispatch
 uses the active dictionary. See src/mods/resources/draco/service/README.md for the
 shared plan and src/mods/ZEROMQ_CODEC_CONTRACT.md for the next integration proposal.
 The empty Service anchor is committed in 604aff2; proposed envelope/socket/codec
-choices are not settled. Journal coverage reaches chapter 93; the first authoring slice landed
+choices are not settled. Journal coverage reaches chapter 94; the first authoring slice landed
 2026-10-09 (below).
 
 **ZeroMQ bridge staging (2026-10-05).** Service now contains TextOutput, the neutral
@@ -582,7 +584,8 @@ first `globals` on an actor-minting type, rendered as a companion `def` visible 
 by the Latent and Delete branches. The emitter orders `factory` before `globals`. DomainOntologyTest +1,
 EditorTest +1, DreamsTest +2; DracoGenTest confirms the regenerated core type byte-identical.
 
-**Create and Update, the verbs over the Latent shape (2026-10-14; awaiting Dev's run, expected 756 / 54).** Dev
+**Create and Update, the verbs over the Latent shape (2026-10-14; 78bff9d, Dev's full run 768 / 54 together with the
+next paragraph).** Dev
 asked why User had Read and Delete but not Create and Update. Only history: Latent was named for its content
 before the CRUD view, and Create/Update had been mapped onto it with the ontology deciding by identity — so a
 Create of an existing name was a silent update and an Update of a misspelled name a silent creation. Dev
@@ -596,7 +599,7 @@ global, the Presence lookup all four branches share. Latent has no codec now, so
 `ready` keep the shape. User holds Create, Delete, Latent, Read, Request, Response, Update — in Haskell four
 constructors over one shared shape. EditorTest +1 (the intents test), DreamsTest +4.
 
-**Editor-domain rules, the actor thinned (2026-10-15; same pending run).** Dev observed that the dreams domains
+**Editor-domain rules, the actor thinned (2026-10-15; same run, 768 / 54 at 78bff9d).** Dev observed that the dreams domains
 carried no rule aspects, only an actor firing core's five rules — and the Editor had meanwhile grown judgment of
 its own in actor code (the intent lookups folded inside four case branches, the whole-ontology judgment as a
 global). Dev accepted "Editor-domain rules with the actor thinned". Core: `DomainOntology.holds(typeName)` and
@@ -662,12 +665,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 93 on 2026-10-12.
+Current documentation was reconciled through journal chapter 94 on 2026-10-15.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 93 on
-  2026-10-12.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 94 on
+  2026-10-15.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -856,4 +859,4 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 93 -->
+<!-- draco-docs-synced-through: chapter 94 -->

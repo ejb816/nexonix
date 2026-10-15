@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across ninety-three chapters of development sessions between March 22 and October 12, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across ninety-four chapters of development sessions between March 22 and October 15, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -92,6 +92,8 @@ Selected moments that shifted the framework's trajectory:
 - **Primes / PON** — combinatorial induction over Prime Ordinal Notation as "draco in draco," the proving ground for DRAKE and the disciplined Monadic register.
 
 The recurring theme across the journal is that self-description creates complexity: a type system closed over itself means every change to a foundational type can create circular dependencies, initialization-order bugs, and shadowing issues. The `lazy val` discipline, deferred factory defaults, classpath loading, the Haskell test, and finally DRAKE-as-recognizer are all engineering responses to the same mathematical property. The framework is learning to describe itself without tripping over its own reflection.
+
+**Status at Chapter 94:** the editing interface is Dev's CRUD reading — User defines the requests, Editor the responses — as a `Request` family of four verbs over the abstract `Latent` shape (Create, Update, Read, Delete), each refusing the other's case, answered through the abstract `Response` that `Actual` derives so the dependency runs Editor → User only; the grown ontology reaches a caller through a consumer on the Editor's factory; `draco.dreams.Initialization` is draco acting as its own first User, ordering the canonical domains from their own definitions from an empty ontology, and its first run aligned `SelfDeclaration` to name and package; the Editor's judgment is four Editor-domain rules over an `Accepted` fact, every request knowing what it proposes, the actor a membrane, and codec eligibility transitive. Dev verified 768 tests / 54 suites at `78bff9d` with every headline unchanged. Open in discussion: generation's first design point (`Generate` naming a held domain and a transform domain, answered with Emissions); queued after it, activation; later, inferred derivation.
 
 **Status at Chapter 93:** the cross-domain structure is the domain ontology (`DomainOntology`), built from domains and their relationships, with derivation its first explicit relationship and `Uniqueness` its integrity rule; `Latent` and `Actual` operate on domains and the `Editor` actor holds draco's own innate ontology, validating every candidate against the whole ontology that would result; Dev verified 733 tests / 53 suites at `efa9085`, with 105 draco + 10 mods in parse scope, one surface loss across 115 types and GenDrake 103 of 103. Queued: the endogenous initialization client, then generation and activation; later, inferred derivation.
 
@@ -511,4 +513,18 @@ Three increments land and are verified by Dev at 713/51, 723/52 and 733/53: the 
 slice, derivation as the ontology's first explicit relationship with provenance on the edge, and the
 Editor holding draco's innate ontology under Uniqueness and update-by-identity. The
 [retrieval audit](sources/claude-2026-10-07-to-12-audit.md) preserves sixteen complete exchanges
+plus the open wrap-up request.
+
+### [Chapter 94 - The CRUD Family, the Initialization Client and Editor-Domain Rules](draco-dev-chapter-94.md)
+
+Claude opens the initialization client with its first design point and Dev accepts the ontology
+consumer on the Editor's factory; Dev restates the CRUD view of User and Editor, and the client is
+recognised as draco acting as its own first User. Five commits land in Dev's accepted order, one
+point at a time: the consumer, the CRUD reading with the abstract Response, and the endogenous
+initialization client whose first run aligned SelfDeclaration (6869e47, 741/54); the Request family
+(5057a5c, 744/54); Read (799e9ae, 747/54); Delete through excluding (f4336a4, 751/54 — the one run
+not pasted); and Create and Update as verbs over the Latent shape together with the Editor's
+judgment moved into Editor-domain rules, the actor thinned and codec eligibility made transitive
+(78bff9d, 768/54). Generation's first design point is raised at the close. The
+[retrieval audit](sources/claude-2026-10-12-to-15-audit.md) preserves nineteen complete exchanges
 plus the open wrap-up request.

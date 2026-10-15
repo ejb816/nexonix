@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+Documentation checkpoint (2026-10-15): journal chapter 94 preserves the Claude session from the
+chapter-93 handoff through the Editor-rules increment, with a bounded transcript audit; both sync
+markers reach 94 and the handoff names Codex as the destination, with generation's first design
+point raised and not yet accepted.
+
 Documentation checkpoint (2026-10-12): journal chapter 93 preserves the Claude session from
 the Codex handoff through the composition increment, with a bounded transcript audit; both
 sync markers reach 93 and the handoff records efa9085 as the verified baseline.
@@ -46,8 +51,9 @@ for the definition that will replace it.
   ontology, which every verb implements; core's `DomainOntology` gains `holds` and
   `holding`. The Editor actor inserts the request, the Accepted fact and the proposed
   ontology with its definitions, fires nine rules, and reads the Actual back: no case
-  branches, no globals. EditorTest +11, DomainOntologyTest +1; same pending run as the
-  entry below. (2026-10-15)
+  branches, no globals. EditorTest +11, DomainOntologyTest +1; compiled-class probe, then
+  Dev's full run: 768 tests / 54 suites, every report-only figure unchanged; committed as
+  78bff9d with the entry below. (2026-10-15)
 - **Codec eligibility is transitive** (Changed): a factory parameter typed by a draco type
   that itself has no codec makes the type codec-less, judged with the loaded parent chain
   as family context. The generator and drake gates are byte-identical over the main
@@ -58,8 +64,8 @@ for the definition that will replace it.
   ontology already owns is refused, an Update of one it does not own is refused, and both
   are otherwise judged as before. A second Editor global, `holder`, is the domain lookup
   all four branches share. The initialization client sends Creates. EditorTest +1,
-  DreamsTest +4; one commit with the two entries above, expected 768 tests / 54 suites,
-  Dev's full run pending. (2026-10-14)
+  DreamsTest +4; one commit with the two entries above, Dev's full run 768 tests / 54
+  suites, committed as 78bff9d. (2026-10-14)
 - **Delete through `excluding`; the CRUD vocabulary complete.** `DomainOntology.excluding`
   (core) is the inverse of `including`; `draco.dreams.user.Delete` derives Request and
   names one domain; the Editor's third `case` branch judges the ontology that would

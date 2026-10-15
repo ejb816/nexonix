@@ -6,14 +6,15 @@ snapshot against the current tree before acting.
 
 ## Checkpoint
 
-- Updated: 2026-10-12 (afternoon), by Claude Code, after the delivery increment was built
-  and probe-verified. Everything the next agent needs is in tracked project files —
-  DRACO.md, this file, the records, chapter 93 and its audit; no Claude-private memory is
-  required or relied upon.
-- Observed branch/HEAD: main at f4336a4 (the Delete increment; the tree was clean when
-  observed, the remote not queried), one after 799e9ae (Read), 5057a5c (the Request
-  family), 6869e47 (the combined delivery, CRUD and initialization commit), fcc80ba
-  (chapter 93) and efa9085 (composition). Session start was fcc80ba.
+- Updated: 2026-10-15, by Claude Code, closing the session for a handoff. Destination:
+  **Codex** (Dev named the OpenAI platform as the next task-session, continuing Generate).
+  Everything the next agent needs is in tracked project files — DRACO.md, this file, the
+  records, chapters 93 and 94 with their audits; no Claude-private memory is required or
+  relied upon.
+- Observed branch/HEAD: main at 78bff9d, pushed (`main...origin/main`) — the combined
+  Create/Update and Editor-rules commit, one after f4336a4 (Delete), 799e9ae (Read),
+  5057a5c (the Request family), 6869e47 (the combined delivery, CRUD and initialization
+  commit), fcc80ba (chapter 93) and efa9085 (composition). Session start was fcc80ba.
 - That commit (5057a5c) carried the Request-family increment: the new `Request` trio and
   the Latent, User and Editor trios under `src/mods/{resources,scala}/draco/dreams/
   {user,editor}`; the engine fixes in `src/mods/scala/draco/Drake.scala` (case-head
@@ -31,8 +32,10 @@ snapshot against the current tree before acting.
   (`excluding`); the new `Delete` trio and the User and Editor trios; `DomainOntologyTest`
   (+1), `EditorTest` (+1), `DreamsTest` (+2); the documents and record
   `git-record-2026-10-14-1136`, plus the 747 / 54 verification note for 799e9ae.
-- In the tree after it, uncommitted, for ONE combined commit: the Create/Update increment
-  (2026-10-14) and the Editor-rules increment (2026-10-15) — under
+- In the tree after it, documentation only: this verification note (DRACO.md §1 and §3,
+  CHANGELOG, README, this file, record `git-record-2026-10-15-1132`).
+- That commit (78bff9d) carried the Create/Update increment (2026-10-14) and the
+  Editor-rules increment (2026-10-15) — under
   `src/mods/{resources,scala}/draco/dreams` the new `Create`, `Update`, `Accepted`,
   `CreateHeld`, `UpdateUnheld`, `ReadUnheld` and `DeleteUnheld` trios, the Latent (abstract),
   Request (three dyns), Read, Delete, User, Editor (thin actor) and Initialization (typed by
@@ -51,12 +54,11 @@ snapshot against the current tree before acting.
   entries), the Dreams, Service and mods READMEs, this file and record
   `git-record-2026-10-12-1413`. No main-corpus TYPE was added, so no report-only headline
   moves.
-- Gate: the Delete increment was committed by Dev as f4336a4 after the gate block, but
-  the run's grep output was NOT pasted, so its 751 / 54 is inferred from the commit, not
-  read — DRACO.md §1 says so; Dev can confirm in passing. Last READ run: 2026-10-14,
-  **747 tests / 54 suites, 0 failed, 0 aborted**, every headline unchanged, on the Read
-  tree (799e9ae). Before it on 2026-10-13: 744 / 54 (5057a5c) and 741 / 54 (6869e47,
-  after two commit blocks had failed on pathspecs — lesson in DRACO.md §1).
+- Gate: Dev's full `sbt test` on 2026-10-15 passed **768 tests / 54 suites, 0 failed, 0
+  aborted**, every report-only headline unchanged, then the commit and push went through
+  (78bff9d). 768 = 751 + 17 as predicted, which corroborates the Delete figure (f4336a4,
+  committed after its gate but with the output not pasted). Earlier read runs: 747 / 54
+  (799e9ae, 2026-10-14), 744 / 54 (5057a5c) and 741 / 54 (6869e47) on 2026-10-13.
 - Destination: either agent. Dev alternates sessions.
 - Permission: Dev authorized both agents to maintain the journal and shared documentation
   on September 23. sbt, commit, push and new-issue restrictions remain in force.
@@ -277,8 +279,10 @@ snapshot against the current tree before acting.
 
 ## Verification
 
-Editor-rules increment (2026-10-15, NOT yet gated, one commit with the Create/Update
-increment below): Claude did not run sbt. A compiled-class probe recompiled the engine
+Editor-rules increment (2026-10-15, one commit with the Create/Update increment below):
+Dev's full run passed **768 tests / 54 suites, 0 failed, 0 aborted**, every report-only
+headline unchanged — the current verified baseline, recorded in DRACO.md §1; committed and
+pushed as 78bff9d. Before it, Claude did not run sbt. A compiled-class probe recompiled the engine
 (`DracoGenerator`), the core `DomainOntology` and all seventeen dreams companions into
 `target/scala-2.13/probe-classes` and DomainOntologyTest, EditorTest, DreamsTest and
 InitializationTest into `probe-test-classes` over the current overlay: **DomainOntologyTest
@@ -294,7 +298,8 @@ chain is the family context now); and three test expectations of mine. Expected 
 arithmetic from 751 / 54 (inferred, see Gate): +1 +4 (Create/Update) +1 +11 (rules) =
 **768 / 54**, no headline moves. Probe dirs removed. Dev's full run is the gate.
 
-Create/Update increment (2026-10-14, NOT yet gated): Claude did not run sbt. A compiled-class
+Create/Update increment (2026-10-14; gated with the increment above, 768 / 54 at 78bff9d):
+before Dev's run, Claude did not run sbt. A compiled-class
 probe over overlays REBUILT from Dev's post-Delete classes (the first attempt used overlays
 from before that run: `excluding` missing at compile, then stale test classes ran — refresh
 the overlay after EVERY Dev run) recompiled the twelve staged companions into
@@ -422,23 +427,25 @@ verified baseline; DRACO.md §1 records it.
 
 ## Documentation Coverage
 
-- Journal coverage reaches chapter 93 (this Claude session, 2026-10-07 to 10-12): 13
-  assertive Dev prompts verbatim, 16 final replies near-verbatim, 5 delegated-action notes;
-  the bounded extract `sources/claude-2026-10-07-to-12.jsonl` (33 records with source
-  line, UTC, SHA-256) and its audit record the frozen prefix. The reply answering Dev's
-  wrap-up request is outside the boundary; chapter 93's Status says so. Both
-  `draco-docs-synced-through` markers advance to 93 after reviewing DRACO.md and README
+- Journal coverage reaches chapter 94 (this Claude session, 2026-10-12 to 10-15): 16
+  assertive Dev prompts verbatim, 19 final replies near-verbatim, 5 delegated-action notes;
+  the bounded extract `sources/claude-2026-10-12-to-15.jsonl` (39 records with source
+  line, UTC, SHA-256) and its audit record the frozen prefix (3381 lines). The reply
+  answering Dev's wrap-up request — this documentation pass — is outside the boundary;
+  chapter 94's Status says so. One evidence gap is disclosed in the chapter: the gate run
+  for f4336a4 (Delete) was never pasted; its 751 / 54 is corroborated by the next run. Both
+  `draco-docs-synced-through` markers advance to 94 after reviewing DRACO.md and README
   against the chapter — they were written during the session and carry its decisions.
+- Chapter 93 (2026-10-07 to 10-12) and Codex's chapters 90–92 with their audits are
+  untouched by this pass.
 - Codex's chapters 90–92 and their audits are untouched by this session.
 
 ## Resumption
 
-1. The Create/Update and Editor-rules increments are in the tree, uncommitted, for one
-   commit. Dev's full `sbt test` (expected 768 / 54, no headline moves), then the
-   path-scoped commit with `draco-git-record/git-record-2026-10-14-1217` and the push.
-   Then record the verified baseline in DRACO.md §1 and §3, CHANGELOG and this file; that
-   note should also settle the Delete figure (751 / 54), which Dev's commit implied but
-   whose output was not pasted.
+1. The Create/Update and Editor-rules increments are committed and pushed as 78bff9d at
+   the verified 768 / 54 baseline, which also corroborates the Delete figure. Only this
+   verification note is pending: a documentation-only commit with
+   `draco-git-record/git-record-2026-10-15-1132`, no sbt run needed.
 
 2. Next authorized work, in Dev's accepted order: generation and activation as explicit
    operations — open with one design point before building (what a generation request
@@ -449,11 +456,20 @@ verified baseline; DRACO.md §1 records it.
 
 ### First action for the next agent
 
-Read DRACO.md, this file and the 2026-10-12-1413 record; inspect `git status` and
-`git log`. If the two increments are still uncommitted, expect HEAD at f4336a4 (751 / 54
-inferred) with the files listed in the Checkpoint modified and Dev's 768 / 54 gate still
-to run; if committed, expect a clean tree one commit later at that baseline. Read chapter
-93 and DRACO.md §3's eleven 2026-10-09/15 paragraphs for the decisions. Chapter
-94 (this session, from the initialization-client opening) is unwritten; write it when Dev
-asks for the journal. Then open generation and activation with one design point before
-building.
+Read DRACO.md, this file and the 2026-10-15-1132 record; inspect `git status` and `git log`.
+Expect HEAD at or after 78bff9d (baseline 768 / 54) with a clean tree once Dev has committed
+the documentation note. Read chapter 94's Status and DRACO.md §3's eleven 2026-10-09/15
+paragraphs for the decisions; chapter 94 and its audit cover this Claude session completely
+up to Dev's wrap-up request, so nothing from it needs re-importing. The next authorized work
+is GENERATION as an explicit operation. Its first design point is RAISED and NOT YET ACCEPTED
+(Claude's recommendation, 2026-10-15): a fifth User request, `Generate`, naming a held domain
+and a transform domain by TypeName; answered through the same Response consumer with a new
+Editor response, `Generated`, deriving Response and carrying one `generator.Emission` per
+definition of the domain, produced by inserting the domain's definition and members into a
+fresh session built from the transform domain's rules exactly as `GenDrakeTest` runs it; a
+domain or transform the ontology does not hold is a Problem by a fifth Editor rule in the
+shape of the four; nothing is written anywhere and nothing is activated (the consuming project
+owns persistence); the state is untouched, so no ontology is delivered; GenDrake is the first
+transform a Generate can name (GenScala is not yet migrated). Open that with Dev — accept or
+correct — before building; then activation as an explicit operation, with its own first point.
+Later: inferred derivation. Surfaced, not filed: membership reciprocity.
