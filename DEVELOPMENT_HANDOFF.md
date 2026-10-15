@@ -4,6 +4,46 @@ This is the shared resumption checkpoint for Claude Code and Codex, not an addit
 architecture specification or a transcript. Follow DRACO.md section 7 and verify this
 snapshot against the current tree before acting.
 
+## Current Codex increment — 2026-10-15
+
+Observed main at a3d2d35, the chapter-94 documentation commit after 78bff9d; clean on
+receipt. Dev's full run on 2026-10-15 verified **782 / 55**, zero failures or aborted
+suites, every report-only headline unchanged. Codex read the file-only log directly:
+mods actors pending Drake authoring 0 (Dev's rg command was unavailable). This increment
+is tested and uncommitted. Previous full baseline: 768 / 54 at 78bff9d.
+
+Dev accepted Generate → Generated, then accepted factory-supplied executable transform
+bindings in this Codex conversation. Those supersede the earlier "raised, not accepted"
+resumption notes retained below as the incoming Claude checkpoint. Implemented: Generate,
+Generated, TransformBinding and GenerateRequested trios; User/Editor trios updated; optional
+fourth Editor factory parameter defaults to empty. Five Editor rules and five core rules;
+the new rule checks bindings and queues the response, invoked after validation has collected
+all Problems. A matching binding runs in a fresh session; failure/count mismatch refuses
+without partial output. Generation neither changes/delivers the ontology nor writes/activates
+anything. Bindings carry domain/super-domain snapshots plus concrete definition/executable
+RuleType pairs, explicitly associated by the trusted caller, not inferred through reflection.
+GenDrake is the first executable chain. GenScala migration and activation remain ahead.
+
+Engine change: normalize referenced definitions and parent context through targetTypes in
+namesCodecless; otherwise neutral Text incorrectly makes the already-codable Emission appear
+codec-less, suppressing Generated's codec. No main-corpus definitions changed.
+
+Verification so far: compiled the modified engine and all dreams companions against current
+resources over Dev's compiled classes; compiled all dreams tests. Four-suite probe:
+GenerationTest 6, EditorTest 36, DreamsTest 24, InitializationTest 6 — **72 passed, 0 failed**.
+Initial probes caught local generation/name-resolution and codec defects, and a fixture
+missing DrakeTarget. Dev's full gate confirmed **782 / 55**: 768 + eight new trio gates
++ six GenerationTest tests, with every report-only headline unchanged.
+
+Journal coverage remains through chapter 94; the current Codex exchanges have not yet been
+journaled or transcript-audited. No markers advanced. Six-suite engine-gate probe passed **537 / 0 failed**: DracoGenTest, DrakeGenTest,
+DrakeParseTest, SourceContractTest, GenDrakeTest and ExampleDomainsGenTest. Main-corpus
+Scala projections remain pinned; losses 1 across 115, parse scope 105 + 10, GenDrake
+103/103 and example gen map 28/20/0/0 unchanged. The file-only pending mods-actor
+headline remains 0. Next action: Dev runs the path-scoped commit and push commands, then
+supplies final status. Only verification prose changed after the full run; no second gate
+is needed. After the commit is confirmed, open activation with its first design point. After a verified commit, open activation with its own first design point.
+
 ## Checkpoint
 
 - Updated: 2026-10-15, by Claude Code, closing the session for a handoff. Destination:

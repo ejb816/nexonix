@@ -1,0 +1,27 @@
+type Generate from Request
+  elements
+    fix domain draco.TypeName
+    fix transform draco.TypeName
+    dyn proposal draco.DomainOntology [
+      parameters
+        par accepted draco.DomainOntology
+      body
+        fix value draco.DomainOntology accepted
+    ]
+    dyn subject draco.TypeDefinition [
+      parameters
+        par accepted draco.DomainOntology
+      body
+        fix value draco.TypeDefinition accepted.holding(domain).fold(draco.TypeDefinition(domain), \d -> d.typeDefinition)
+    ]
+    dyn contents [draco.TypeDefinition] [
+      parameters
+        par accepted draco.DomainOntology
+      body
+        fix value [draco.TypeDefinition] accepted.holding(domain).fold([], \d -> d.typeDictionary.elementTypes)
+    ]
+  factory
+    parameters
+      par domain draco.TypeName
+      par transform draco.TypeName
+domain draco dreams user User

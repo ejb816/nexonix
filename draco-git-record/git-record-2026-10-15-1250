@@ -1,0 +1,62 @@
+Add explicit Generate requests and Generated responses using factory-supplied executable transform bindings
+
+Dev accepted Generate -> Generated, then factory-supplied executable transform bindings
+in the 2026-10-15 Codex session after the chapter-94 handoff at a3d2d35. User.Generate
+names a held domain and transform by TypeName. Editor.Generated derives User.Response,
+carrying those names, Emissions and inherited Problems through the existing consumer.
+Generate proposes the accepted ontology unchanged; acceptance never triggers generation.
+
+TransformBinding is a definition-backed, codec-less capability supplied as the optional
+fourth Editor factory parameter (empty by default). It contains the transform domain,
+its super-domain snapshots and pairs of concrete rule definition/executable RuleType.
+RuleType reports the generic Rule definition, so the association is explicitly supplied
+by the trusted caller; no reflection, compilation or activation is inferred. Matching
+checks all held domain/member snapshots, super-domain coverage and the complete rule
+set, plus a TypeDefinition source and named target. The first binding is GenDrake:
+Emit and inherited EmissionReceived, exactly the GenDrakeTest chain. GenScala is not
+migrated. Bindings are executable capabilities, not serialized user requests.
+
+GenerateRequested is the fifth Editor rule. It refuses unheld names, absent/duplicate
+bindings and snapshot mismatches by Problems, and queues a response function. The
+actor invokes it after validation has collected all Problems and closed its session;
+only a quiet result executes the binding in a fresh default-mode session. The input
+is the domain definition plus held members. Emission count must equal definition count;
+execution exceptions/count mismatch produce a refused Generated with no partial output,
+and finally closes the session. Repeated requests start fresh. No ontology changes or
+deliveries, file writes or activation. The actor gains no case dispatch. User now holds
+eight members and Editor nine; ten patterns build the Editor validation knowledge.
+
+The Generated codec exposed a transitive eligibility defect: namesCodecless inspected
+Emission before target normalization, mistaking neutral Text for a codec-less type even
+though normal Emission generation spells it String and emits a codec. Apply targetTypes
+to the referenced definition and parent context before hasCodec, matching generate's
+entry contract. The corpus gates pass without projection changes. A core legacy type
+also uses the name Generated; fully qualified references in these new definitions avoid
+its wildcard import shadowing the Editor response.
+
+Verification: no sbt, commit or push run by Codex. Direct scalac probe rebuilt the engine,
+all dreams companions and all dreams tests over an overlay of Dev's current compiled
+classes and current main/mods/test resources, hidden dotfiles excluded. Four suites:
+GenerationTest 6, EditorTest 36, DreamsTest 24, InitializationTest 6 — 72 passed, 0 failed.
+Six engine/corpus suites: DracoGenTest, DrakeGenTest, DrakeParseTest, SourceContractTest,
+GenDrakeTest, ExampleDomainsGenTest — 537 passed, 0 failed. Headline observations:
+1 surface loss across 115; parse scope 105 + 10; GenDrake 103/103; example gen map
+28 match / 20 differ / 0 error / 0 missing of 48; file-only pending mods actors 0.
+Main-corpus Scala remains pinned by DracoGenTest. Dev's full sbt gate on 2026-10-15
+passed 782 tests / 55 suites, zero failures or aborted suites, every report-only figure
+unchanged: 768 + eight staged trio gates + six GenerationTest tests. Codex checked the
+file-only log directly after Dev's shell reported rg unavailable: pending mods actors 0.
+DRACO.md section 1 now records 782 / 55 on this uncommitted increment above a3d2d35.
+Only verification prose changed after the gate; no second run is needed.
+
+Probe corrections: the CLI's emit takes a directory; a resource overlay must replace,
+not duplicate, the original classpath root; compiled probes for root-relative corpus
+suites belong under target/scala-2.13, not /tmp. Compilation caught the legacy Generated
+name collision and suppressed codec; behavior tests caught a fixture missing DrakeTarget,
+so core derivation validation correctly refused it. Those were corrected before the
+passing probes. Fault-injection tests cover executable failure and missing emissions.
+
+Updated DRACO.md, README, CHANGELOG, Dreams/Service READMEs and the shared handoff.
+Journal coverage remains chapter 94; this Codex conversation is not yet journaled or
+transcript-audited, and no coverage marker advances. Activation is the next explicit
+operation, to open with its own design point after Dev's gate and commit.

@@ -36,6 +36,19 @@
               "Unit"
             ]
           }
+        },
+        {
+          "kind": "Parameter",
+          "name": "transforms",
+          "valueType": {
+            "[]": [
+              "TransformBinding"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
         }
       ]
     }
@@ -54,6 +67,9 @@
       "Actual",
       "CreateHeld",
       "DeleteUnheld",
+      "Generated",
+      "GenerateRequested",
+      "TransformBinding",
       "ReadUnheld",
       "UpdateUnheld"
     ]
@@ -155,6 +171,29 @@
         },
         {
           "kind": "Fixed",
+          "name": "responses",
+          "valueType": {
+            "[]+": [
+              {
+                "->": [
+                  {
+                    "[]": [
+                      "draco.Problem"
+                    ]
+                  },
+                  "draco.dreams.user.Response"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "()": [
+              "scala.collection.mutable.ArrayBuffer"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
           "name": "session",
           "valueType": "org.evrete.api.StatefulSession",
           "value": {
@@ -171,6 +210,26 @@
               "session.set",
               "\"problems\"",
               "problems"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.set",
+              "\"transforms\"",
+              "transforms"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "session.set",
+              "\"responses\"",
+              "responses"
             ]
           }
         },
@@ -272,10 +331,30 @@
               "actual",
               {
                 "()": [
-                  "Actual",
-                  "subject",
-                  "contents",
-                  "problems.toSeq"
+                  {
+                    "()": [
+                      "responses.headOption.fold[draco.dreams.user.Response]",
+                      {
+                        "()": [
+                          "Actual",
+                          "subject",
+                          "contents",
+                          "problems.toSeq"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "\\": [
+                      "respond",
+                      {
+                        "()": [
+                          "respond",
+                          "problems.toSeq"
+                        ]
+                      }
+                    ]
+                  }
                 ]
               }
             ]
@@ -412,6 +491,15 @@
           "value": {
             "()": [
               "DeleteUnheld.ruleType.pattern",
+              "rules"
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "GenerateRequested.ruleType.pattern",
               "rules"
             ]
           }

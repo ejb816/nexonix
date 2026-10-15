@@ -4,12 +4,16 @@ type Editor
       par initial draco.DomainOntology
       par actual (draco.dreams.user.Response -> Unit)
       par ontology (draco.DomainOntology -> Unit)
+      par transforms [TransformBinding] []
 domain draco dreams editor Editor
   types [
     Accepted
     Actual
     CreateHeld
     DeleteUnheld
+    Generated
+    GenerateRequested
+    TransformBinding
     ReadUnheld
     UpdateUnheld
   ]
@@ -26,6 +30,7 @@ actor
     mon UpdateUnheld.ruleType.pattern(rules)
     mon ReadUnheld.ruleType.pattern(rules)
     mon DeleteUnheld.ruleType.pattern(rules)
+    mon GenerateRequested.ruleType.pattern(rules)
     mut accepted draco.DomainOntology initial
     fix accept (draco.DomainOntology -> Unit) \next -> accepted = next
   message
@@ -35,8 +40,11 @@ actor
     now fix changing Boolean provisional != accepted
     fix definitions [draco.TypeDefinition] provisional.keys.toSeq.flatMap(\domain -> domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
     fix problems [draco.Problem]+ scala.collection.mutable.ArrayBuffer()
+    fix responses [[draco.Problem] -> draco.dreams.user.Response]+ scala.collection.mutable.ArrayBuffer()
     fix session org.evrete.api.StatefulSession rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
     mon session.set("problems", problems)
+    mon session.set("transforms", transforms)
+    mon session.set("responses", responses)
     mon session.insert(Seq(msg): _*)
     mon session.insert(Seq(Accepted(accepted)): _*)
     mon session.insert(provisional.keys.toSeq: _*)
@@ -45,5 +53,5 @@ actor
     mon session.fire()
     mon session.close()
     mon guard(problems.isEmpty).ifThenElse(accept(provisional), accept(accepted))
-    mon actual(Actual(subject, contents, problems.toSeq))
+    mon actual(responses.headOption.fold[draco.dreams.user.Response](Actual(subject, contents, problems.toSeq))(\respond -> respond(problems.toSeq)))
     mon guard(problems.isEmpty && changing).ifThenElse(ontology(accepted), ())

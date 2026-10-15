@@ -2,7 +2,7 @@ package draco.dreams
 
 import draco._
 import draco.dreams.editor.{Actual, Editor}
-import draco.dreams.user.{Create, Delete, Latent, Read, Request, Response, Update, User}
+import draco.dreams.user.{Create, Delete, Generate, Latent, Read, Request, Response, Update, User}
 import io.circe.syntax._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -27,6 +27,7 @@ class DreamsTest extends AnyFunSuite {
     ("User", userPkg, () => User.typeDefinition),
     ("Create", userPkg, () => Create.typeDefinition),
     ("Delete", userPkg, () => Delete.typeDefinition),
+    ("Generate", userPkg, () => Generate.typeDefinition),
     ("Latent", userPkg, () => Latent.typeDefinition),
     ("Read", userPkg, () => Read.typeDefinition),
     ("Request", userPkg, () => Request.typeDefinition),
@@ -73,10 +74,10 @@ class DreamsTest extends AnyFunSuite {
     val td = User.typeDefinition
     assert(td.typeName == TypeName("User", userPkg))
     assert(td.domainAspect.typeName == td.typeName)
-    assert(User.elementTypeNames == Seq("Create", "Delete", "Latent", "Read", "Request", "Response", "Update"))
-    assert(User.domainType.typeDictionary.size == 7)
+    assert(User.elementTypeNames == Seq("Create", "Delete", "Generate", "Latent", "Read", "Request", "Response", "Update"))
+    assert(User.domainType.typeDictionary.size == 8)
     assert(RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect) && CodecAspect.isEmpty(td.codecAspect))
-    Seq(Create, Delete, Latent, Read, Request, Response, Update).foreach(m => assert(m.typeDefinition.domainAspect.typeName == td.typeName))
+    Seq(Create, Delete, Generate, Latent, Read, Request, Response, Update).foreach(m => assert(m.typeDefinition.domainAspect.typeName == td.typeName))
     // Request is the abstract head of the family (2026-10-13): no elements, no factory.
     // Latent is the candidate SHAPE (definition + members), abstract since 2026-10-14, and
     // Create and Update derive it — distinct intents, each refusing the other's case; Read
@@ -86,7 +87,7 @@ class DreamsTest extends AnyFunSuite {
     // every verb implements, so the Editor actor needs no dispatch of its own.
     assert(Request.typeDefinition.dracoAspect.elements.map(_.name) == Seq("proposal", "subject", "contents"))
     assert(Request.typeDefinition.dracoAspect.factory.parameters.isEmpty)
-    Seq(Latent, Read, Delete).foreach(m => assert(DracoAspect.parents(m.typeDefinition.dracoAspect) == Seq(Request.typeDefinition.typeName)))
+    Seq(Latent, Read, Delete, Generate).foreach(m => assert(DracoAspect.parents(m.typeDefinition.dracoAspect) == Seq(Request.typeDefinition.typeName)))
     Seq(Create, Update).foreach(m => assert(DracoAspect.parents(m.typeDefinition.dracoAspect) == Seq(Latent.typeDefinition.typeName)))
     assert(Latent.typeDefinition.dracoAspect.elements.map(_.name) == Seq("definition", "members") && Latent.typeDefinition.dracoAspect.factory.parameters.isEmpty)
     Seq(Read, Delete).foreach(m => assert(m.typeDefinition.dracoAspect.elements.map(_.name) == Seq("domain", "proposal", "subject", "contents"),
@@ -95,7 +96,7 @@ class DreamsTest extends AnyFunSuite {
     assert(loaded.typeDictionary.elementTypes.forall(m => !DomainBuilder.isStub(m)))
     assert(DomainBuilder.validate(loaded).isEmpty)
     assert(DomainBuilder.generate("User", userPkg).keySet ==
-      Set(td.typeName, Create.typeDefinition.typeName, Delete.typeDefinition.typeName, Latent.typeDefinition.typeName,
+      Set(td.typeName, Create.typeDefinition.typeName, Delete.typeDefinition.typeName, Generate.typeDefinition.typeName, Latent.typeDefinition.typeName,
         Read.typeDefinition.typeName, Request.typeDefinition.typeName, Response.typeDefinition.typeName, Update.typeDefinition.typeName))
   }
 
@@ -125,8 +126,8 @@ class DreamsTest extends AnyFunSuite {
     assert(ontology.get(dreams).exists(_.size == 1))
     assert(!core.typeDictionary.contains(dreams.typeDefinition.typeName))
     assert(!service.typeDictionary.contains(dreams.typeDefinition.typeName))
-    assert(ontology.get(user).exists(_.size == 7))
-    assert(ontology.get(editor).exists(_.size == 6))
+    assert(ontology.get(user).exists(_.size == 8))
+    assert(ontology.get(editor).exists(_.size == 9))
     assert(ontology.get(core).exists(_.nonEmpty))
     assert(ontology.get(service).exists(_.size == 2))
     // Package nesting is not membership: Dreams does not define User's members, and

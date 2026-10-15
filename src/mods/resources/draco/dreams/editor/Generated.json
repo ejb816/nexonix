@@ -1,0 +1,95 @@
+{
+  "typeName": {
+    "name": "Generated",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Response",
+        "namePackage": [
+          "draco",
+          "dreams",
+          "user"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "domain",
+        "valueType": "draco.TypeName"
+      },
+      {
+        "kind": "Fixed",
+        "name": "transform",
+        "valueType": "draco.TypeName"
+      },
+      {
+        "kind": "Fixed",
+        "name": "emissions",
+        "valueType": {
+          "[]": [
+            "draco.generator.Emission"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Generated",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "domain",
+          "valueType": "draco.TypeName"
+        },
+        {
+          "kind": "Parameter",
+          "name": "transform",
+          "valueType": "draco.TypeName"
+        },
+        {
+          "kind": "Parameter",
+          "name": "emissions",
+          "valueType": {
+            "[]": [
+              "draco.generator.Emission"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "problems",
+          "valueType": {
+            "[]": [
+              "draco.Problem"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  }
+}

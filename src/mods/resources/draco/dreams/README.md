@@ -150,3 +150,35 @@ means editing the client. Its first run refused Format, XML, JSON and Value: `Fo
 self-declares bare, as its members point at it, so `SelfDeclaration` now compares name and
 package with parameters free (the Uniqueness principle). The run then accepts all 18
 canonical domains, and the ontology it builds defines the client itself.
+
+## Explicit generation (2026-10-15)
+
+Dev accepted Generate → Generated, then factory-supplied executable transform bindings.
+User gains Generate (`domain`, `transform`: TypeNames); Editor gains Generated (those names,
+Emissions, inherited Problems), TransformBinding and the fifth rule GenerateRequested.
+Editor now has nine members and ten validation patterns. Its fourth factory argument,
+`transforms`, defaults to empty; existing initialization deliberately supplies no bindings.
+
+A binding holds the transform domain, its super-domain snapshots and explicit pairs of each
+rule's concrete definition and executable RuleType. The caller supplies that association:
+RuleType itself reports the generic Rule definition, and no reflection or runtime compilation
+is used. The binding must match all held domain/member definitions and contain every rule
+from its domain chain. Missing/duplicate bindings, unheld names, a non-transform and changed
+snapshots yield Problems. Supplied executable code remains trusted caller input.
+
+For GenDrake, supply the GenDrake and generator.Generator domain snapshots, and pairs
+`(Emit.typeDefinition, Emit.ruleType)` and `(EmissionReceived.typeDefinition,
+EmissionReceived.ruleType)`. Both snapshots must be held in the Editor's ontology; its
+other dependencies, including DrakeTarget, must also be present for core validation.
+GenScala is not yet migrated and has no supplied binding.
+
+GenerateRequested queues a response function. After core and Editor validation finish and
+the validation session closes, the actor invokes it with the collected Problems. A quiet
+result runs the supplied rules in a fresh default-mode session over the requested domain's
+own definition and members, collecting one Emission per definition. Failed execution or an
+emission-count mismatch returns a refused Generated without partial output; finally closes
+the session. Repeated requests start fresh. Generate/Generated codecs round-trip; the
+transitive codec check normalizes neutral Text to its target spelling when inspecting
+Emission. No files are written, no ontology is changed or delivered, and nothing is activated.
+Acceptance alone never executes a binding. GenerationTest covers this operation alongside
+the staged trio gates in DreamsTest and EditorTest. Dev's full gate passed 782 / 55, every report-only headline unchanged.

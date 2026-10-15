@@ -1,0 +1,178 @@
+{
+  "typeName": {
+    "name": "Generate",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "user"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Request",
+        "namePackage": [
+          "draco",
+          "dreams",
+          "user"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "domain",
+        "valueType": "draco.TypeName"
+      },
+      {
+        "kind": "Fixed",
+        "name": "transform",
+        "valueType": "draco.TypeName"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "proposal",
+        "valueType": "draco.DomainOntology",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "draco.DomainOntology",
+            "value": "accepted"
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "subject",
+        "valueType": "draco.TypeDefinition",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "draco.TypeDefinition",
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "accepted.holding",
+                        "domain"
+                      ]
+                    },
+                    "fold"
+                  ]
+                },
+                {
+                  "()": [
+                    "draco.TypeDefinition",
+                    "domain"
+                  ]
+                },
+                {
+                  "\\": [
+                    "d",
+                    "d.typeDefinition"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "contents",
+        "valueType": {
+          "[]": [
+            "draco.TypeDefinition"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "draco.TypeDefinition"
+              ]
+            },
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "accepted.holding",
+                        "domain"
+                      ]
+                    },
+                    "fold"
+                  ]
+                },
+                {
+                  "[]": [
+                  ]
+                },
+                {
+                  "\\": [
+                    "d",
+                    "d.typeDictionary.elementTypes"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Generate",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "domain",
+          "valueType": "draco.TypeName"
+        },
+        {
+          "kind": "Parameter",
+          "name": "transform",
+          "valueType": "draco.TypeName"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "User",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    }
+  }
+}

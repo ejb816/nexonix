@@ -19,6 +19,7 @@
     "elementTypeNames": [
       "Create",
       "Delete",
+      "Generate",
       "Latent",
       "Read",
       "Request",

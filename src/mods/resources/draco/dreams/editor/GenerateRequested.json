@@ -1,0 +1,446 @@
+{
+  "typeName": {
+    "name": "GenerateRequested",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "g",
+          "valueType": "draco.dreams.user.Generate"
+        },
+        {
+          "kind": "Variable",
+          "name": "a",
+          "valueType": "Accepted"
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "request",
+          "valueType": "draco.dreams.user.Generate",
+          "value": "g",
+          "now": true
+        },
+        {
+          "kind": "Fixed",
+          "name": "held",
+          "valueType": "draco.DomainOntology",
+          "value": "a.ontology",
+          "now": true
+        },
+        {
+          "kind": "Fixed",
+          "name": "bindings",
+          "valueType": {
+            "[]": [
+              "TransformBinding"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ctx.getRuntime"
+                    ]
+                  },
+                  "get"
+                ]
+              },
+              "\"transforms\""
+            ]
+          },
+          "now": true
+        },
+        {
+          "kind": "Fixed",
+          "name": "candidates",
+          "valueType": {
+            "[]": [
+              "TransformBinding"
+            ]
+          },
+          "value": {
+            "()": [
+              "bindings.filter",
+              {
+                "\\": [
+                  "b",
+                  {
+                    "==": [
+                      "b.domain.typeDefinition.typeName.namePath",
+                      "request.transform.namePath"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "now": true
+        },
+        {
+          "kind": "Fixed",
+          "name": "binding",
+          "valueType": {
+            "()": [
+              "draco.drake.Presence",
+              "TransformBinding"
+            ]
+          },
+          "value": {
+            "()": [
+              "presence",
+              "candidates.headOption"
+            ]
+          },
+          "now": true
+        },
+        {
+          "kind": "Fixed",
+          "name": "issues",
+          "valueType": {
+            "[]": [
+              "draco.Problem"
+            ]
+          },
+          "value": {
+            "++": [
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "()": [
+                              "held.holds",
+                              "request.domain"
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "[]": [
+                      {
+                        "()": [
+                          "draco.Problem",
+                          "request.domain",
+                          "\"domain is not in the accepted ontology\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "()": [
+                              "held.holds",
+                              "request.transform"
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "[]": [
+                      {
+                        "()": [
+                          "draco.Problem",
+                          "request.transform",
+                          "\"transform is not in the accepted ontology\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "==": [
+                              "candidates.size",
+                              "1"
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "[]": [
+                      {
+                        "()": [
+                          "draco.Problem",
+                          "request.transform",
+                          "\"transform requires exactly one executable binding\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "()": [
+                              "binding.fold",
+                              "true",
+                              {
+                                "\\": [
+                                  "b",
+                                  {
+                                    "()": [
+                                      "b.matches",
+                                      "held"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "[]": [
+                      {
+                        "()": [
+                          "draco.Problem",
+                          "request.transform",
+                          "\"executable binding does not match the held transform definitions\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "issues.foreach",
+              {
+                "\\": [
+                  "p",
+                  {
+                    "()": [
+                      "ctx.insert",
+                      "p"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "responses",
+          "valueType": {
+            "[]+": [
+              {
+                "->": [
+                  {
+                    "[]": [
+                      "draco.Problem"
+                    ]
+                  },
+                  "draco.dreams.user.Response"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ctx.getRuntime"
+                    ]
+                  },
+                  "get"
+                ]
+              },
+              "\"responses\""
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "respond",
+          "valueType": {
+            "->": [
+              {
+                "[]": [
+                  "draco.Problem"
+                ]
+              },
+              "draco.dreams.user.Response"
+            ]
+          },
+          "value": {
+            "\\": [
+              "problems",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "problems.isEmpty"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "()": [
+                      "binding.fold",
+                      {
+                        "()": [
+                          "draco.dreams.editor.Generated",
+                          "request.domain",
+                          "request.transform",
+                          {
+                            "[]": [
+                            ]
+                          },
+                          "problems"
+                        ]
+                      },
+                      {
+                        "\\": [
+                          "b",
+                          {
+                            "()": [
+                              "b.generate",
+                              "request.domain",
+                              "request.transform",
+                              {
+                                "()": [
+                                  {
+                                    ".": [
+                                      {
+                                        "()": [
+                                          "request.contents",
+                                          "held"
+                                        ]
+                                      },
+                                      "prepended"
+                                    ]
+                                  },
+                                  {
+                                    "()": [
+                                      "request.subject",
+                                      "held"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "()": [
+                      "draco.dreams.editor.Generated",
+                      "request.domain",
+                      "request.transform",
+                      {
+                        "[]": [
+                        ]
+                      },
+                      "problems"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "add",
+              "responses",
+              "respond"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

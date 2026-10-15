@@ -3,6 +3,7 @@ domain draco dreams user User
   types [
     Create
     Delete
+    Generate
     Latent
     Read
     Request

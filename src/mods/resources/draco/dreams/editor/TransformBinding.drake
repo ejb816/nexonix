@@ -1,0 +1,40 @@
+type TransformBinding
+  elements
+    fix domain draco.DomainType
+    fix supers [draco.DomainType]
+    fix rules [(draco.TypeDefinition, draco.RuleType)]
+    dyn domains [draco.DomainType] supers.prepended(domain)
+    dyn definitions [draco.TypeDefinition] domains.flatMap(\d -> d.typeDictionary.elementTypes.prepended(d.typeDefinition))
+    dyn matches Boolean [
+      parameters
+        par accepted draco.DomainOntology
+      body
+        fix aspect draco.DomainAspect domain.typeDefinition.domainAspect
+        fix expected [io.circe.Json] definitions.filter(\td -> !draco.RuleAspect.isEmpty(td.ruleAspect)).map(\td -> draco.TypeDefinition.encoder(td))
+        fix actual [io.circe.Json] rules.map(\r -> draco.TypeDefinition.encoder(r._1))
+        fix value Boolean aspect.source.namePath == draco.TypeDefinition.typeDefinition.typeName.namePath && aspect.target.name.nonEmpty && domains.map(\d -> d.typeDefinition.typeName.namePath).distinct.size == domains.size && domains.forall(\d -> accepted.holding(d.typeDefinition.typeName).fold(false, \held -> draco.TypeDefinition.encoder(held.typeDefinition) == draco.TypeDefinition.encoder(d.typeDefinition) && held.typeDictionary.elementTypes.map(\td -> draco.TypeDefinition.encoder(td)).toSet == d.typeDictionary.elementTypes.map(\td -> draco.TypeDefinition.encoder(td)).toSet)) && domains.forall(\d -> d.typeDefinition.dracoAspect.superDomain.name.isEmpty || domains.exists(\s -> s.typeDefinition.typeName.namePath == d.typeDefinition.dracoAspect.superDomain.namePath)) && actual.distinct.size == actual.size && actual.toSet == expected.toSet
+    ]
+    dyn generate draco.dreams.editor.Generated [
+      parameters
+        par subject draco.TypeName
+        par transform draco.TypeName
+        par definitions [draco.TypeDefinition]
+      body
+        fix value draco.dreams.editor.Generated try { val emissions = run(definitions); draco.dreams.editor.Generated(subject, transform, emissions) } catch { case scala.util.control.NonFatal(error) => draco.dreams.editor.Generated(subject, transform, Seq.empty, Seq(draco.Problem(transform, "generation failed: " + error.getClass.getSimpleName + ": " + Option(error.getMessage).getOrElse("")))) }
+    ]
+    dyn run [draco.generator.Emission] [
+      parameters
+        par definitions [draco.TypeDefinition]
+      body
+        fix knowledge org.evrete.api.Knowledge draco.Rule.knowledgeService.newKnowledge("Generate")
+        mon rules.foreach(\r -> r._2.pattern(knowledge))
+        fix received [draco.generator.Emission]+ scala.collection.mutable.ArrayBuffer()
+        fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
+        fix value [draco.generator.Emission] try { session.set("received", received); session.insert(definitions.toSeq: _*); session.fire(); require(received.size == definitions.size, "transform did not emit once per definition"); received.toSeq } finally session.close()
+    ]
+  factory
+    parameters
+      par domain draco.DomainType
+      par supers [draco.DomainType]
+      par rules [(draco.TypeDefinition, draco.RuleType)]
+domain draco dreams editor Editor

@@ -842,7 +842,9 @@ object DracoGenerator extends App {
       else {
         val loaded = loadType(referenced)
         codecVisiting += key
-        try !hasCodec(loaded, parentChain(loaded)) finally codecVisiting -= key
+        // Judge the same target-normalized types as generate: Emission's neutral
+        // Text parameter is String here, so its existing codec stays visible to holders.
+        try !hasCodec(targetTypes(loaded), parentChain(loaded).map(targetTypes)) finally codecVisiting -= key
       }
     }
 

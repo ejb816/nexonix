@@ -549,10 +549,15 @@ owned identity and an Update of an unowned one — so a user says which they mea
 Editor's judgment is rules of its own: `Accepted` carries the accepted ontology as a fact, four rules
 join each verb with it on whether the ontology holds the identity, and every request knows what it
 proposes and reports on, so the actor is a membrane — insert, fire, read the Actual back. Codec
-eligibility became transitive to carry the ontology as a fact. Generation and activation follow as
-explicit steps.
-ServiceConfiguration contains Assembly; consuming projects own persistence. Generation
-and activation follow as explicit operations. See the
+eligibility became transitive to carry the ontology as a fact. Generate now names a held domain and a
+transform domain, answered through the same Response consumer with Generated carrying Emissions and
+Problems. The Editor factory accepts explicit executable transform bindings; their definition snapshots
+must match the held transform and its super-domains. The fifth Editor rule refuses unavailable or stale
+bindings, then generation runs only after validation, in a fresh session. GenDrake is the first binding;
+GenScala awaits migration. Generation changes no ontology, writes nothing and activates nothing.
+Activation remains a later explicit operation. Dev's full run passed 782 tests / 55 suites with
+every report-only headline unchanged.
+ServiceConfiguration contains Assembly; consuming projects own persistence. Generation is explicit; activation remains ahead. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
 [ZeroMQ integration proposal](src/mods/ZEROMQ_CODEC_CONTRACT.md).
 

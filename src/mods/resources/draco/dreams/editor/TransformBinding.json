@@ -1,0 +1,514 @@
+{
+  "typeName": {
+    "name": "TransformBinding",
+    "namePackage": [
+      "draco",
+      "dreams",
+      "editor"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "domain",
+        "valueType": "draco.DomainType"
+      },
+      {
+        "kind": "Fixed",
+        "name": "supers",
+        "valueType": {
+          "[]": [
+            "draco.DomainType"
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "rules",
+        "valueType": {
+          "[]": [
+            {
+              "(,)": [
+                "draco.TypeDefinition",
+                "draco.RuleType"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "domains",
+        "valueType": {
+          "[]": [
+            "draco.DomainType"
+          ]
+        },
+        "value": {
+          "()": [
+            "supers.prepended",
+            "domain"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "definitions",
+        "valueType": {
+          "[]": [
+            "draco.TypeDefinition"
+          ]
+        },
+        "value": {
+          "()": [
+            "domains.flatMap",
+            {
+              "\\": [
+                "d",
+                {
+                  "()": [
+                    "d.typeDictionary.elementTypes.prepended",
+                    "d.typeDefinition"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "matches",
+        "valueType": "Boolean",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "accepted",
+            "valueType": "draco.DomainOntology"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "aspect",
+            "valueType": "draco.DomainAspect",
+            "value": "domain.typeDefinition.domainAspect"
+          },
+          {
+            "kind": "Fixed",
+            "name": "expected",
+            "valueType": {
+              "[]": [
+                "io.circe.Json"
+              ]
+            },
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "definitions.filter",
+                        {
+                          "\\": [
+                            "td",
+                            {
+                              "()": [
+                                "!draco.RuleAspect.isEmpty",
+                                "td.ruleAspect"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "map"
+                  ]
+                },
+                {
+                  "\\": [
+                    "td",
+                    {
+                      "()": [
+                        "draco.TypeDefinition.encoder",
+                        "td"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "actual",
+            "valueType": {
+              "[]": [
+                "io.circe.Json"
+              ]
+            },
+            "value": {
+              "()": [
+                "rules.map",
+                {
+                  "\\": [
+                    "r",
+                    {
+                      "()": [
+                        "draco.TypeDefinition.encoder",
+                        "r._1"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Boolean",
+            "value": {
+              "&&": [
+                {
+                  "==": [
+                    "aspect.source.namePath",
+                    "draco.TypeDefinition.typeDefinition.typeName.namePath"
+                  ]
+                },
+                "aspect.target.name.nonEmpty",
+                {
+                  "==": [
+                    {
+                      ".": [
+                        {
+                          "()": [
+                            "domains.map",
+                            {
+                              "\\": [
+                                "d",
+                                "d.typeDefinition.typeName.namePath"
+                              ]
+                            }
+                          ]
+                        },
+                        "distinct",
+                        "size"
+                      ]
+                    },
+                    "domains.size"
+                  ]
+                },
+                {
+                  "()": [
+                    "domains.forall",
+                    {
+                      "\\": [
+                        "d",
+                        {
+                          "()": [
+                            {
+                              ".": [
+                                {
+                                  "()": [
+                                    "accepted.holding",
+                                    "d.typeDefinition.typeName"
+                                  ]
+                                },
+                                "fold"
+                              ]
+                            },
+                            "false",
+                            {
+                              "\\": [
+                                "held",
+                                {
+                                  "&&": [
+                                    {
+                                      "==": [
+                                        {
+                                          "()": [
+                                            "draco.TypeDefinition.encoder",
+                                            "held.typeDefinition"
+                                          ]
+                                        },
+                                        {
+                                          "()": [
+                                            "draco.TypeDefinition.encoder",
+                                            "d.typeDefinition"
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "==": [
+                                        {
+                                          ".": [
+                                            {
+                                              "()": [
+                                                "held.typeDictionary.elementTypes.map",
+                                                {
+                                                  "\\": [
+                                                    "td",
+                                                    {
+                                                      "()": [
+                                                        "draco.TypeDefinition.encoder",
+                                                        "td"
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            "toSet"
+                                          ]
+                                        },
+                                        {
+                                          ".": [
+                                            {
+                                              "()": [
+                                                "d.typeDictionary.elementTypes.map",
+                                                {
+                                                  "\\": [
+                                                    "td",
+                                                    {
+                                                      "()": [
+                                                        "draco.TypeDefinition.encoder",
+                                                        "td"
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            "toSet"
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "()": [
+                    "domains.forall",
+                    {
+                      "\\": [
+                        "d",
+                        {
+                          "||": [
+                            "d.typeDefinition.dracoAspect.superDomain.name.isEmpty",
+                            {
+                              "()": [
+                                "domains.exists",
+                                {
+                                  "\\": [
+                                    "s",
+                                    {
+                                      "==": [
+                                        "s.typeDefinition.typeName.namePath",
+                                        "d.typeDefinition.dracoAspect.superDomain.namePath"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "==": [
+                    "actual.distinct.size",
+                    "actual.size"
+                  ]
+                },
+                {
+                  "==": [
+                    "actual.toSet",
+                    "expected.toSet"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "generate",
+        "valueType": "draco.dreams.editor.Generated",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "subject",
+            "valueType": "draco.TypeName"
+          },
+          {
+            "kind": "Parameter",
+            "name": "transform",
+            "valueType": "draco.TypeName"
+          },
+          {
+            "kind": "Parameter",
+            "name": "definitions",
+            "valueType": {
+              "[]": [
+                "draco.TypeDefinition"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "draco.dreams.editor.Generated",
+            "value": "try { val emissions = run(definitions); draco.dreams.editor.Generated(subject, transform, emissions) } catch { case scala.util.control.NonFatal(error) => draco.dreams.editor.Generated(subject, transform, Seq.empty, Seq(draco.Problem(transform, \"generation failed: \" + error.getClass.getSimpleName + \": \" + Option(error.getMessage).getOrElse(\"\")))) }"
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "run",
+        "valueType": {
+          "[]": [
+            "draco.generator.Emission"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "definitions",
+            "valueType": {
+              "[]": [
+                "draco.TypeDefinition"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "knowledge",
+            "valueType": "org.evrete.api.Knowledge",
+            "value": {
+              "()": [
+                "draco.Rule.knowledgeService.newKnowledge",
+                "\"Generate\""
+              ]
+            }
+          },
+          {
+            "kind": "Monadic",
+            "value": {
+              "()": [
+                "rules.foreach",
+                {
+                  "\\": [
+                    "r",
+                    {
+                      "()": [
+                        "r._2.pattern",
+                        "knowledge"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "received",
+            "valueType": {
+              "[]+": [
+                "draco.generator.Emission"
+              ]
+            },
+            "value": {
+              "()": [
+                "scala.collection.mutable.ArrayBuffer"
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "session",
+            "valueType": "org.evrete.api.StatefulSession",
+            "value": {
+              "()": [
+                "knowledge.newStatefulSession"
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "draco.generator.Emission"
+              ]
+            },
+            "value": "try { session.set(\"received\", received); session.insert(definitions.toSeq: _*); session.fire(); require(received.size == definitions.size, \"transform did not emit once per definition\"); received.toSeq } finally session.close()"
+          }
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "TransformBinding",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "domain",
+          "valueType": "draco.DomainType"
+        },
+        {
+          "kind": "Parameter",
+          "name": "supers",
+          "valueType": {
+            "[]": [
+              "draco.DomainType"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "rules",
+          "valueType": {
+            "[]": [
+              {
+                "(,)": [
+                  "draco.TypeDefinition",
+                  "draco.RuleType"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    }
+  }
+}

@@ -49,6 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**782 tests / 55 suites**, verified by Dev's full run on 2026-10-15 on the Generate increment
+above a3d2d35 (not yet committed; record `git-record-2026-10-15-1250`): eight new staged
+trio tests and six GenerationTest tests, every report-only headline unchanged, including
+zero pending mods actors in the file-only log checked by Codex. Before it:
 **768 tests / 54 suites**, verified by Dev's run on 2026-10-15 at commit 78bff9d (the Create/Update and
 Editor-rules increments, §3 *Create and Update* and *Editor-domain rules*, one commit, record
 `git-record-2026-10-14-1217`; EditorTest +12, DreamsTest +4, DomainOntologyTest +1), with every report-only
@@ -620,6 +624,30 @@ context (§6 entry closed); DracoGenTest byte-identical. EditorTest +11 (trios �
 session), DomainOntologyTest +1. Next, in Dev's accepted order: generation and activation as explicit
 operations.
 
+**Explicit generation (2026-10-15, Codex; Dev verified 782 / 55).** Dev accepted Generate → Generated,
+then factory-supplied executable transform bindings. `user.Generate` derives Request and carries `domain`
+and `transform` TypeNames; its proposal is the accepted ontology unchanged. `editor.Generated` derives
+User's Response and carries those names, Emissions and inherited Problems. Editor's optional fourth
+factory argument is `[TransformBinding]` (empty by default, so initialization still supplies none).
+A binding supplies a transform domain, its super-domain snapshots and `(TypeDefinition, RuleType)` pairs:
+RuleType's own definition identifies the generic Rule, so the concrete definition is explicitly supplied
+by the caller as its association with the executable. This is a trusted executable binding, not proof
+that arbitrary code implements a definition. `matches` checks source TypeDefinition, a named target,
+held domain/member snapshots, super-domain coverage and the complete rule-definition set, including
+inherited rules. GenerateRequested is the fifth Editor rule; it refuses missing names, absent/ambiguous
+bindings or mismatched snapshots with Problems and queues a response function. The actor invokes that
+function after the validation session has closed and Problems are collected; no case dispatch is added.
+Only a quiet result runs the binding's rules in a fresh default-mode session with a received buffer,
+exactly the GenDrakeTest chain; one Emission per domain/member definition is required. Exceptions and
+count mismatches become a refused Generated with no partial emissions; the transform session closes in
+finally. GenDrake is the first supplied binding; GenScala still awaits migration. Acceptance never runs
+it; generation writes nothing, activates nothing, changes no ontology and delivers none. The transitive
+codec check now normalizes referenced definitions and parent types before judging them, so a codable
+Emission carrying neutral Text remains codable inside Generated. No main-corpus definition changed. Probes: 72 tests / four dreams suites and 537 tests / six
+engine/corpus suites passed, measured headlines unchanged; Dev's full gate then passed 782 / 55 (768 + 14), zero failed or aborted suites, with every
+report-only headline unchanged. The file-only pending-actor count is 0, read directly by Codex
+after Dev's shell lacked rg. §1 records the verified baseline; the increment awaits commit.
+
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member
 parameters` chain lines and `[ ]` argument brackets (a call is `f(a, b)` since 2026-09-16), the
@@ -753,7 +781,8 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   and host-external parameter types, so a factory parameter typed by a codec-less DRACO type —
   `DomainType`, `DomainOntology` — emitted a codec that could not compile, and `Actual` derived its
   populated `domain` as a `dyn` to dodge it, 2026-10-09). `namesCodecless` now loads the parameter's
-  draco type and asks `hasCodec` of it with its loaded parent chain as family context; the Editor's
+  draco type and asks `hasCodec` of it with its loaded parent chain as family context; both are normalized
+  through `targetTypes` before the check (otherwise Emission's neutral Text is wrongly judged codec-less). The Editor's
   `Accepted(ontology)` fact was the first type to need it. The `dyn` on Actual stays, for a different
   reason: the domain is derived from the definitions, not carried.
 - **A lambda inside a splat argument is host text.** `insert(xs.flatMap(\d -> …): _*)` is one glued

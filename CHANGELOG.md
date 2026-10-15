@@ -44,6 +44,12 @@ for the definition that will replace it.
 
 ### Added
 
+- **Explicit Generate → Generated operation.** User names a held domain and transform;
+  Editor executes a matching factory-supplied rule binding in a fresh session and returns
+  Emissions or Problems through the existing Response consumer, without persistence or activation.
+  Referenced codec checks now apply target normalization, preserving Emission's codec inside Generated.
+  Dev's full run passed 782 tests / 55 suites, with every report-only headline unchanged.
+
 - **The Editor's judgment is Editor-domain rules; the actor is a membrane.** `draco.dreams.editor`
   gains `Accepted` (the accepted ontology as a fact) and four rules — `CreateHeld`,
   `UpdateUnheld`, `ReadUnheld`, `DeleteUnheld` — each joining a request with the Accepted

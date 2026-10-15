@@ -83,3 +83,8 @@ Read and Delete, all deriving Request) and the abstract Response that Editor's A
 derives; the endogenous initialization client
 named in the agreed direction above is draco acting as its own first User, not a Service
 type, so Service stays free to host the external client's transport.
+
+Generation is implemented in the dreams Editor as an explicit Generate request (2026-10-15,
+verified by Dev at 782 tests / 55 suites), with factory-supplied executable transform bindings and Generated
+responses carrying Emissions. It performs no persistence or activation. See the Dreams README;
+this does not add generation to the provisional ZeroMQ protocol. Activation remains ahead.

@@ -1,6 +1,7 @@
 package draco.dreams.editor
 
 import draco._
+import draco.dreams.editor.{Generated => GenerationResponse}
 import draco.dreams.user.{Create, Delete, Latent, Read, Request, Response, Update}
 import io.circe.Json
 import io.circe.syntax._
@@ -55,6 +56,9 @@ class EditorTest extends AnyFunSuite {
     ("UpdateUnheld", () => UpdateUnheld.typeDefinition),
     ("ReadUnheld", () => ReadUnheld.typeDefinition),
     ("DeleteUnheld", () => DeleteUnheld.typeDefinition),
+    ("Generated", () => GenerationResponse.typeDefinition),
+    ("GenerateRequested", () => GenerateRequested.typeDefinition),
+    ("TransformBinding", () => TransformBinding.typeDefinition),
     ("Editor", () => Editor.typeDefinition)
   )
 
@@ -79,11 +83,11 @@ class EditorTest extends AnyFunSuite {
     }
   }
 
-  test("Editor is a domain of six members — Accepted, Actual and four intent rules — and a thin actor over User's Request family") {
+  test("Editor is a domain of nine members — response types, binding and five intent rules — and a thin actor over User's Request family") {
     val td = Editor.typeDefinition
     assert(td.domainAspect.typeName == td.typeName)
-    assert(Editor.elementTypeNames == Seq("Accepted", "Actual", "CreateHeld", "DeleteUnheld", "ReadUnheld", "UpdateUnheld"))
-    assert(Editor.domainType.typeDictionary.size == 6)
+    assert(Editor.elementTypeNames == Seq("Accepted", "Actual", "CreateHeld", "DeleteUnheld", "Generated", "GenerateRequested", "TransformBinding", "ReadUnheld", "UpdateUnheld"))
+    assert(Editor.domainType.typeDictionary.size == 9)
     assert(!ActorAspect.isEmpty(td.actorAspect))
     assert(td.actorAspect.messageType == TypeName("Request", Seq("draco", "dreams", "user")))
     // Since 2026-10-15 the actor is the membrane and the knowledge is RULES: no case branches,
@@ -92,8 +96,8 @@ class EditorTest extends AnyFunSuite {
     assert(!td.actorAspect.message.body.exists(_.isInstanceOf[Case]), "no dispatch in the actor: which rule matches is the dispatch")
     assert(td.dracoAspect.globalElements.isEmpty, "no judgment in the actor: the rules judge")
     val fired = td.actorAspect.start.body.map(e => TypeForm.text(e.valueType) + " " + e.value.noSpaces).count(_.contains("ruleType.pattern"))
-    assert(fired == 9, s"five core rules and four Editor rules build the knowledge; got $fired")
-    Seq(CreateHeld, UpdateUnheld, ReadUnheld, DeleteUnheld).foreach(r => assert(!RuleAspect.isEmpty(r.typeDefinition.ruleAspect)))
+    assert(fired == 10, s"five core rules and five Editor rules build the knowledge; got $fired")
+    Seq(CreateHeld, UpdateUnheld, ReadUnheld, DeleteUnheld, GenerateRequested).foreach(r => assert(!RuleAspect.isEmpty(r.typeDefinition.ruleAspect)))
     assert(RuleAspect.isEmpty(Accepted.typeDefinition.ruleAspect) && Accepted.typeDefinition.dracoAspect.elements.map(_.name) == Seq("ontology"))
     val request = TypeName("Request", Seq("draco", "dreams", "user"))
     val latent = TypeName("Latent", Seq("draco", "dreams", "user"))
