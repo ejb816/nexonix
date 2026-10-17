@@ -771,3 +771,10 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           definitions carry a compound or bounded parameter (DomainTransform,
                                           TypeTransform, Holon, base/Coordinate); their JSON re-canonicalizes
                                           with the compiled parser next, as the value types' did.
+
+2026-10-15 — Dracon wrapper/capability increment: draco.format.dracon.Dracon replaces
+  draco.format.json.JSON; Encoder(T) carries T -> Dracon, Decoder(T) carries
+  Dracon -> Presence(T). CirceCodecs in ScalaTarget supplies explicit target adapters.
+  Generic Format.Value(F) selects Presence(F), without a host decoder constraint;
+  Dracon.Value adds decode(T)(source, decoder). This uses existing type/function forms,
+  not new surface syntax or codec-field selectors. .json remains; .dcon is deferred.

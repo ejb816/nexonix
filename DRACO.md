@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**804 tests / 56 suites**, verified by Dev's full run reported on 2026-10-16 for the
+Dracon increment over 9185f1a (record `git-record-2026-10-15-1703`), not yet committed:
+zero failed or aborted, all report-only headlines matching the updated table, including
+zero pending mods actors. Three net-new corpus types add fifteen tests; DraconTest adds seven. Before it:
 **782 tests / 55 suites**, verified by Dev's full run on 2026-10-15 on the Generate increment
-above a3d2d35 (not yet committed; record `git-record-2026-10-15-1250`): eight new staged
+committed and pushed by Dev as 9185f1a (record `git-record-2026-10-15-1250`): eight new staged
 trio tests and six GenerationTest tests, every report-only headline unchanged, including
 zero pending mods actors in the file-only log checked by Codex. Before it:
 **768 tests / 54 suites**, verified by Dev's run on 2026-10-15 at commit 78bff9d (the Create/Update and
@@ -106,8 +110,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 1 field across 115 types — type form 1 (ActorAspect), expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 105 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 1 field across 118 types — type form 1 (ActorAspect), expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 108 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -368,7 +372,7 @@ in the domain section and owned by DracoAspect. This is Drake output only: the
 Scala generator and GenScala have not been migrated. Rule/actor rendering and codec
 rejection retain their existing behavior.
 
-**Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `json`,
+**Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `dracon`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
 `draco.genscala`, `draco.gendrake`, `draco.scalatarget`. Domains are
 peers in the `DomainOntology`, not hierarchical. **The cross-domain structure is the DOMAIN
@@ -646,7 +650,33 @@ codec check now normalizes referenced definitions and parent types before judgin
 Emission carrying neutral Text remains codable inside Generated. No main-corpus definition changed. Probes: 72 tests / four dreams suites and 537 tests / six
 engine/corpus suites passed, measured headlines unchanged; Dev's full gate then passed 782 / 55 (768 + 14), zero failed or aborted suites, with every
 report-only headline unchanged. The file-only pending-actor count is 0, read directly by Codex
-after Dev's shell lacked rg. §1 records the verified baseline; the increment awaits commit.
+after Dev's shell lacked rg. §1 records the verified baseline; Dev committed and pushed the increment as 9185f1a.
+
+**Dracon wrapper and explicit codec capabilities (2026-10-15, Codex; Dev verified 804 / 56, reported 2026-10-16).** Dev accepted
+Dracon's ownership of neutral value/codec vocabulary, target-domain implementation bindings, replacement
+of `draco.format.json.JSON` by `draco.format.dracon.Dracon` as the combined wrapper/format domain,
+explicit capabilities and their signatures: Encoder(T) supplies T -> Dracon; Decoder(T) supplies
+Dracon -> Presence(T). The six-form family proposal was not accepted. Dracon and Value trios move to
+format/dracon; Encoder and Decoder are two new function-valued capabilities there; ScalaTarget gains
+CirceCodecs to bind explicit Circe instances to them. Dracon's raw Json field and cursor selection
+stay inside the wrapper seam; its select returns Presence(Dracon), with invalid indices/missing paths
+Absent and JSON null Present. **Implementation choice:** generic Format.Value(F) selects Presence(F),
+removing its host Decoder bound without importing a child-domain capability into Format; Dracon.Value
+adds decode(T)(source, decoder). A missing path never evaluates the decoder. Example message/actor
+trios and initialization now name Dracon. JSON wire syntax and .json carrier paths remain; .dcon is
+deferred until the wrappers work. Core definition trees and codec generation still contain host Json
+operations, and declarative codec-field vocabulary/target lexeme tables remain later design points.
+The complete direct probe ran 804 tests: 797 passed, seven ZeroMQ socket-bind failures in the sandbox;
+the nine-test loopback suite then passed with local TCP access, including all seven failures. Dev subsequently reported a passing full sbt
+gate on 2026-10-16: **804 / 56**, zero failed or aborted (three net-new corpus types ×5 + seven DraconTest tests); direct Runner counts 57
+with its discovery wrapper. Parse scope moves to 108 + 10, one loss across 118, aspect sections 108,
+GenDrake 106/106; all other report-only headlines unchanged. The table above carries the new measured
+counts, all confirmed by Dev's full run, including zero pending mods actors in the file-only log.
+
+**Deferred activation (Dev, 2026-10-15).** Dev asked to preserve Codex's unaccepted recommendation:
+start an explicitly supplied Assembly of held actor definitions, using factory-supplied executable
+constructor bindings matched to those definitions. Activation remains deferred while Dracon is developed;
+do not treat the recommendation as authorization. See the current handoff.
 
 **Retired — do not reintroduce, and treat any doc mentioning these as stale:**
 the `parameters`/`par` CALL form (`f parameters par a`), `par = name` named arguments, `.member

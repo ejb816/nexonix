@@ -14,25 +14,30 @@
       {
         "kind": "Fixed",
         "name": "name",
-        "valueType": "String"
+        "valueType": "draco.drake.Text"
       },
       {
         "kind": "Fixed",
         "name": "pathElements",
         "valueType": {
           "[]": [
-            "String"
+            "draco.drake.Text"
           ]
         }
       },
       {
         "kind": "Dynamic",
-        "name": "value[T: Decoder]",
-        "valueType": "T",
+        "name": "value",
+        "valueType": {
+          "()": [
+            "draco.drake.Presence",
+            "F"
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
-            "name": "_source",
+            "name": "source",
             "valueType": "F"
           }
         ]

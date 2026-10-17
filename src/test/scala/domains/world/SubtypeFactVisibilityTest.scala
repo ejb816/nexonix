@@ -10,7 +10,7 @@ import scala.collection.mutable.ListBuffer
 /** PROBE — disposable. Does the rete layer honour draco's inheritance?
  *
  *  `WorldHierarchyTest` establishes the type level: `FixReport <: Marine <: World`, and
- *  `FixReport <: JSON` besides. This asks the question one level down: when ONE fact is
+ *  `FixReport <: Dracon` besides. This asks the question one level down: when ONE fact is
  *  inserted, which declared types can see it?
  *
  *  Every rule in both corpora declares its fact at exactly one level, so the corpus has
@@ -51,7 +51,7 @@ class SubtypeFactVisibilityTest extends AnyFunSuite with draco.PersistentTestLog
     "World"     -> classOf[World],
     "Marine"    -> classOf[domains.marine.Marine],
     "FixReport" -> classOf[domains.marine.FixReport],
-    "JSON"      -> classOf[draco.format.json.JSON]
+    "Dracon"    -> classOf[draco.format.dracon.Dracon]
   )
 
   /** Insert one FixReport into a session whose knowledge declares exactly `declared`,
@@ -85,7 +85,7 @@ class SubtypeFactVisibilityTest extends AnyFunSuite with draco.PersistentTestLog
     }
     val combined = try run(levels) catch { case e: Throwable => Seq(s"<error: ${e.getMessage}>") }
 
-    log.info("inserted: one anonymous domains.marine.FixReport (FixReport <: Marine <: World, and <: JSON)")
+    log.info("inserted: one anonymous domains.marine.FixReport (FixReport <: Marine <: World, and <: Dracon)")
     log.info("SOLO — one knowledge, one rule:")
     solo.foreach { case (label, fired) =>
       log.info(f"    declared at $label%-10s -> ${if (fired.contains(label)) "FIRED" else s"silent ($fired)"}")

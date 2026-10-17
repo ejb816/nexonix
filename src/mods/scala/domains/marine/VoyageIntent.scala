@@ -2,9 +2,9 @@ package domains.marine
 
 import draco._
 import domains._
-import draco.format.json._
+import draco.format.dracon._
 
-trait VoyageIntent extends Marine with JSON
+trait VoyageIntent extends Marine with Dracon
 
 object VoyageIntent extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("VoyageIntent", _namePackage = Seq ("domains", "marine")))

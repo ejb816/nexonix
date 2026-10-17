@@ -53,7 +53,7 @@ object DracoGenerator extends App {
     * actually reaches the trait that declares those abstract members). */
   private def chainHits (td: TypeDefinition, targetName: String, seen: Set[String] = Set.empty) : Boolean = {
     // Cycle guard keys on the package-qualified path: a parent may share the
-    // type's simple name (draco.format.json.Value extends draco.format.Value).
+    // type's simple name (draco.format.dracon.Value extends draco.format.Value).
     if (seen.contains(td.typeName.namePath)) return false
     if (td.typeName.name == targetName) return true
     val nextSeen = seen + td.typeName.namePath
@@ -504,7 +504,7 @@ object DracoGenerator extends App {
 
   /** A derivation reference on the extends clause. Package-qualified when a bare
     * reference would not reach the parent: either the parent shares the declaring
-    * type's own simple name (draco.format.json.Value extends draco.format.Value[JSON],
+    * type's own simple name (draco.format.dracon.Value extends draco.format.Value[Dracon],
     * where bare Value resolves to the type being declared), or another package in
     * scope holds that name too (isAmbiguousBare). */
   private def derivationRef (td: TypeDefinition, tn: TypeName) : String = {
@@ -1400,7 +1400,7 @@ object DracoGenerator extends App {
     val dtLiteral = domainTypeLiteral(wName)
     val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.dracoAspect.globalElements)}" else ""
     // A domain type may also be constructible (aspect co-presence): emit its
-    // factory apply + Null exactly as typeGlobal would (draco.format.json.JSON) —
+    // factory apply + Null exactly as typeGlobal would (draco.format.dracon.Dracon) —
     // unless the factory is the actor-minting spec (isActorMintingFactory).
     val factory = td.dracoAspect.factory
     val factoryBlock =
@@ -1505,7 +1505,7 @@ object DracoGenerator extends App {
 
   /** The actor's message type — the `T` substituted into the generated
     * `ExtensibleBehavior[T]` / `Behavior[T]` and the `receive`/`receiveSignal`
-    * signatures (e.g. `draco.format.json.JSON`).
+    * signatures (e.g. `draco.format.dracon.Dracon`).
     *
     * The actor ASPECT is the source of truth: actor-ness is carried by aspect
     * presence (`hasActorBehavior`), so the message type belongs there too rather

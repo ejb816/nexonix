@@ -30,8 +30,8 @@ object OriginateReport extends App {
 
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val intent: MarchIntent = ctx.get[MarchIntent]("$intent")
-      val consumer: draco.format.json.JSON => Unit =
-        ctx.getRuntime().get[draco.format.json.JSON => Unit]("consumer")
+      val consumer: draco.format.dracon.Dracon => Unit =
+        ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
       consumer(originate(intent))
   }
 

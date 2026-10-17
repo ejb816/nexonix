@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+Development checkpoint (2026-10-15): Generate is committed as 9185f1a at the verified 782 / 55
+baseline. Dev deferred activation; its Assembly-startup recommendation is retained as unaccepted.
+The Dracon wrapper/capability increment below passed Dev's full gate, reported 2026-10-16:
+804 tests / 56 suites, zero failed or aborted, with all report-only figures matching the updated baselines.
+
 Documentation checkpoint (2026-10-15): journal chapter 94 preserves the Claude session from the
 chapter-93 handoff through the Editor-rules increment, with a bounded transcript audit; both sync
 markers reach 94 and the handoff names Codex as the destination, with generation's first design
@@ -43,6 +48,10 @@ as its own `.drake`, byte for byte. The hand-written engine was renamed `DracoGe
 for the definition that will replace it.
 
 ### Added
+
+- **Explicit dracon codecs.** Encoder(T) supplies T -> Dracon and Decoder(T) supplies
+  Dracon -> Presence(T), with CirceCodecs adapters in ScalaTarget. The new DraconTest covers
+  explicit capabilities, target bindings, safe path selection, lazy decoding and JSON wire codecs.
 
 - **Explicit Generate → Generated operation.** User names a held domain and transform;
   Editor executes a matching factory-supplied rule binding in a fresh session and returns
@@ -353,6 +362,12 @@ for the definition that will replace it.
   Recorded in DRACO.md's gotchas, since nothing throws and no test fails when it happens.
 
 ### Changed
+
+- **Dracon replaces the JSON format domain.** Dracon and Value move to draco.format.dracon;
+  generic Format.Value selects Presence(F), and Dracon.Value decodes with an explicit capability,
+  replacing the Circe-bound, null-returning extractor. Example chains and endogenous initialization
+  use Dracon; .json remains the carrier extension and .dcon is deferred. The three net-new corpus
+  types move parse scope to 108 + 10 and measured types to 118, retaining one surface loss.
 
 - **`DomainDictionary` is `DomainOntology`.** Dev names the cross-domain structure the
   domain ontology — an operational ontology built from domains and their intra- and

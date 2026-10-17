@@ -7,7 +7,7 @@ import org.scalatest.funsuite.AnyFunSuite
 /** Sub-step 6a — the Aerial domain + its message-shell layer, in isolation.
   *
   * A `PositionReport` is a *strong handle* (an Aerial domain member, and a
-  * `draco.format.json.JSON` format) wrapped around a *loose* `io.circe.Json`
+  * `draco.format.dracon.Dracon` format) wrapped around a *loose* `io.circe.Json`
   * payload. This proves the Format link compiles and that the shell carries the
   * payload without strongly typing the message's fields — the actor pipeline and
   * rules (sub-step 6b) build on top of this. No Generator actor-emission is
@@ -33,7 +33,7 @@ class AerialShellTest extends AnyFunSuite {
 
     // strong identity: an Aerial member and a Json format
     assert(report.isInstanceOf[Aerial])
-    assert(report.isInstanceOf[draco.format.json.JSON])
+    assert(report.isInstanceOf[draco.format.dracon.Dracon])
   }
 
   test("Aerial declares PositionReport as a member") {

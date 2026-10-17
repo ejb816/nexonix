@@ -16,7 +16,7 @@
           "name": "consumer",
           "valueType": {
             "->": [
-              "draco.format.json.JSON",
+              "draco.format.dracon.Dracon",
               "Unit"
             ]
           }
@@ -85,11 +85,11 @@
       ]
     },
     "messageType": {
-      "name": "JSON",
+      "name": "Dracon",
       "namePackage": [
         "draco",
         "format",
-        "json"
+        "dracon"
       ]
     }
   }

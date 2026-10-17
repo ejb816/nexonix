@@ -23,6 +23,9 @@
         "draco",
         "scalatarget"
       ]
-    }
+    },
+    "elementTypeNames": [
+      "CirceCodecs"
+    ]
   }
 }

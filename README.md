@@ -555,8 +555,16 @@ Problems. The Editor factory accepts explicit executable transform bindings; the
 must match the held transform and its super-domains. The fifth Editor rule refuses unavailable or stale
 bindings, then generation runs only after validation, in a fresh session. GenDrake is the first binding;
 GenScala awaits migration. Generation changes no ontology, writes nothing and activates nothing.
-Activation remains a later explicit operation. Dev's full run passed 782 tests / 55 suites with
-every report-only headline unchanged.
+Activation is deferred while Dracon is developed. `draco.format.dracon.Dracon` now replaces
+`draco.format.json.JSON` as the combined JSON-value wrapper and format domain. Its Encoder(T) exposes
+`T -> Dracon`, and Decoder(T) exposes `Dracon -> Presence(T)`; operations receive these capabilities
+explicitly. ScalaTarget's CirceCodecs adapts supplied Circe instances to the neutral functions. Generic
+Format.Value selects a wrapped value through Presence; Dracon.Value decodes a selection with the
+supplied decoder. Missing paths skip decoding; incompatible input returns Absent. The raw Circe value
+and cursor code remain in the wrapper seam. Migrating core Json expression trees and declaring custom
+codec-field operators remain later steps; no six-form value family was introduced. `.json` remains the
+carrier extension, with `.dcon` deferred. Dev reported the full gate on 2026-10-16: **804 tests / 56 suites**,
+zero failed or aborted, with all report-only figures matching the updated baselines.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation is explicit; activation remains ahead. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
 [ZeroMQ integration proposal](src/mods/ZEROMQ_CODEC_CONTRACT.md).

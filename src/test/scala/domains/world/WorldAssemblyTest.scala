@@ -45,7 +45,7 @@ class WorldAssemblyTest extends AnyFunSuite {
     _entry = Input
   )
 
-  private type J = draco.format.json.JSON
+  private type J = draco.format.dracon.Dracon
   private val constructors: Map[String, AssemblySpawner.Constructor] = Map(
     Input.namePath ->
       ((refs: Seq[ActorRef[Any]]) =>

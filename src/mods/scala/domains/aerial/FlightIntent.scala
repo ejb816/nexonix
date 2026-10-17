@@ -2,9 +2,9 @@ package domains.aerial
 
 import draco._
 import domains._
-import draco.format.json._
+import draco.format.dracon._
 
-trait FlightIntent extends Aerial with JSON
+trait FlightIntent extends Aerial with Dracon
 
 object FlightIntent extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("FlightIntent", _namePackage = Seq ("domains", "aerial")))

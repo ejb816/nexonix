@@ -1,0 +1,137 @@
+{
+  "typeName": {
+    "name": "CirceCodecs",
+    "namePackage": [
+      "draco",
+      "scalatarget"
+    ]
+  },
+  "dracoAspect": {
+    "globalElements": [
+      {
+        "kind": "Dynamic",
+        "name": "encoder[T]",
+        "valueType": {
+          "()": [
+            "draco.format.dracon.Encoder",
+            "T"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "host",
+            "valueType": {
+              "()": [
+                "io.circe.Encoder",
+                "T"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "()": [
+                "draco.format.dracon.Encoder",
+                "T"
+              ]
+            },
+            "value": {
+              "()": [
+                "draco.format.dracon.Encoder",
+                {
+                  "\\": [
+                    "value",
+                    {
+                      "()": [
+                        "draco.format.dracon.Dracon",
+                        {
+                          "()": [
+                            "host",
+                            "value"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "decoder[T]",
+        "valueType": {
+          "()": [
+            "draco.format.dracon.Decoder",
+            "T"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "host",
+            "valueType": {
+              "()": [
+                "io.circe.Decoder",
+                "T"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "()": [
+                "draco.format.dracon.Decoder",
+                "T"
+              ]
+            },
+            "value": {
+              "()": [
+                "draco.format.dracon.Decoder",
+                {
+                  "\\": [
+                    "source",
+                    {
+                      "()": [
+                        "presence",
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "host.decodeJson",
+                                "source.json"
+                              ]
+                            },
+                            "toOption"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "ScalaTarget",
+      "namePackage": [
+        "draco",
+        "scalatarget"
+      ]
+    }
+  }
+}

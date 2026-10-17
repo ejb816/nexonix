@@ -39,11 +39,11 @@
       ]
     },
     "messageType": {
-      "name": "JSON",
+      "name": "Dracon",
       "namePackage": [
         "draco",
         "format",
-        "json"
+        "dracon"
       ]
     },
     "signal": {
@@ -100,7 +100,8 @@
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         },
         {

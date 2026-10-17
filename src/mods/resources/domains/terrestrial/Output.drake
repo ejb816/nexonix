@@ -1,7 +1,7 @@
 type Output
   factory ActorType
     parameters
-      par consumer (draco.format.json.JSON -> Unit)
+      par consumer (draco.format.dracon.Dracon -> Unit)
 domain domains terrestrial Terrestrial
 actor
   messageType domains world World

@@ -1,0 +1,233 @@
+{
+  "typeName": {
+    "name": "Dracon",
+    "namePackage": [
+      "draco",
+      "format",
+      "dracon"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Format",
+        "namePackage": [
+          "draco",
+          "format"
+        ],
+        "typeParameters": [
+          "Dracon"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "json",
+        "valueType": "Json"
+      },
+      {
+        "kind": "Fixed",
+        "name": "value",
+        "valueType": "Dracon",
+        "value": "this"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "select",
+        "valueType": {
+          "()": [
+            "draco.drake.Presence",
+            "Dracon"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "pathElements",
+            "valueType": {
+              "[]": [
+                "draco.drake.Text"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "selected",
+            "valueType": {
+              "()": [
+                "Option",
+                "Json"
+              ]
+            },
+            "value": {
+              "()": [
+                {
+                  "()": [
+                    "pathElements.foldLeft",
+                    {
+                      "()": [
+                        "Option",
+                        "json"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "\\": [
+                    "current",
+                    "key",
+                    {
+                      "()": [
+                        "current.flatMap",
+                        {
+                          "\\": [
+                            "node",
+                            {
+                              "()": [
+                                {
+                                  ".": [
+                                    {
+                                      "()": [
+                                        "guard",
+                                        "node.isArray"
+                                      ]
+                                    },
+                                    "ifThenElse"
+                                  ]
+                                },
+                                {
+                                  "()": [
+                                    {
+                                      ".": [
+                                        {
+                                          "()": [
+                                            "key.toIntOption.filter",
+                                            {
+                                              "\\": [
+                                                "index",
+                                                {
+                                                  ">=": [
+                                                    "index",
+                                                    "0"
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        "flatMap"
+                                      ]
+                                    },
+                                    {
+                                      "\\": [
+                                        "index",
+                                        {
+                                          ".": [
+                                            {
+                                              "()": [
+                                                "node.hcursor.downN",
+                                                "index"
+                                              ]
+                                            },
+                                            "focus"
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  ".": [
+                                    {
+                                      "()": [
+                                        "node.hcursor.downField",
+                                        "key"
+                                      ]
+                                    },
+                                    "focus"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "()": [
+                "draco.drake.Presence",
+                "Dracon"
+              ]
+            },
+            "value": {
+              "()": [
+                "presence",
+                {
+                  "()": [
+                    "selected.map",
+                    {
+                      "\\": [
+                        "node",
+                        {
+                          "()": [
+                            "Dracon",
+                            "node"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Dracon",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "json",
+          "valueType": "Json"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "json",
+          "valueType": "Json",
+          "value": "_json"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    },
+    "elementTypeNames": [
+      "Decoder",
+      "Encoder",
+      "Value"
+    ]
+  }
+}

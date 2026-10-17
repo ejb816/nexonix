@@ -1,0 +1,68 @@
+{
+  "typeName": {
+    "name": "Decoder",
+    "namePackage": [
+      "draco",
+      "format",
+      "dracon"
+    ],
+    "typeParameters": [
+      "T"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "decode",
+        "valueType": {
+          "->": [
+            "Dracon",
+            {
+              "()": [
+                "draco.drake.Presence",
+                "T"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": {
+        "()": [
+          "Decoder",
+          "T"
+        ]
+      },
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "decode",
+          "valueType": {
+            "->": [
+              "Dracon",
+              {
+                "()": [
+                  "draco.drake.Presence",
+                  "T"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  }
+}

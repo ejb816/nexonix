@@ -4,7 +4,79 @@ This is the shared resumption checkpoint for Claude Code and Codex, not an addit
 architecture specification or a transcript. Follow DRACO.md section 7 and verify this
 snapshot against the current tree before acting.
 
-## Current Codex increment — 2026-10-15
+## Current Dracon increment — updated 2026-10-16, Codex
+
+Observed main at **9185f1a**, Generate committed and pushed by Dev with a clean tree
+before this increment. Its verified baseline is **782 tests / 55 suites**. The Dracon
+increment is generated, compiled and verified by Dev's full sbt gate reported on
+2026-10-16: **804 tests / 56 suites**, zero failed or aborted. It remains uncommitted. The earlier pending documentation note is folded into record
+`git-record-2026-10-15-1703`, now describing this whole increment.
+
+Dev accepted, one design point at a time: dracon owns the neutral value/codec vocabulary,
+target-language domains own implementation bindings; `draco.format.dracon.Dracon`
+replaces `draco.format.json.JSON` as the combined wrapper and format domain; explicit
+codec capabilities passed to operations needing them; and the signatures Encoder(T):
+T -> Dracon, Decoder(T): Dracon -> Presence(T). The six-form value-family proposal was
+not accepted. **.dcon remains deferred**; every definition carrier still uses .json.
+
+Implemented trios: Dracon and its Value moved from format/json to format/dracon;
+Encoder(T) and Decoder(T) added there; ScalaTarget gains CirceCodecs, its explicit
+Circe Encoder/Decoder adapters. Dracon keeps the raw Json payload at its wrapper
+boundary and provides selection returning Presence(Dracon). Invalid/negative/oversize
+array indices and absent paths return Absent; a selected JSON null is Present. The
+neutral capabilities carry encode/decode function values, not inferred host instances.
+
+Implementation choice to avoid a module cycle: generic Format.Value(F) now selects
+Presence(F), with no `T: Decoder` and no dependency on Dracon. Dracon.Value implements
+selection and adds decode(T)(source, decoder), returning Presence(T). A missing path
+does not evaluate the supplied decoder. This replaces the old null-returning decode.
+Example actor/message definitions, authored actor Drake/JSON, Scala and their tests
+now name Dracon; the endogenous initialization's domain list replaces JSON with Dracon.
+Codec metadata selection still round-trips through JSON. No engine behavior changed;
+DracoGenerator's example comments follow the renamed type. The remaining core Json,
+cursor and codec-generator host references await later neutral-operation design, as
+do declarative codec-field operators and broader target lexeme bindings.
+
+Verification: direct scalac rebuilt the entire main/mods tree and every test over a
+fresh copy of Dev's compiled classes, with current resources overlaid, hidden resources
+excluded and the removed format/json classes/resources purged. 804 tests discovered:
+797 passed, seven failed exclusively on ZeroMQ loopback socket binds in the sandbox,
+zero aborted suites. The unchanged ZeroMqBridgeTest rerun with local TCP socket access
+passed all nine tests, including all seven failures. This is a complete probe with a
+separate loopback rerun, not a clean full sbt run. DraconTest's seven cases passed.
+One compile correction: the old TestValue logger expected String, now logs a Presence
+through fold; its extraction checks now assert rather than only log. DrakeCLI check over
+format and ScalaTarget reports surface drift 0 / JSON drift 0. The whole main corpus
+retains only ActorAspect/BodyElement authored-ahead drift; the example scan additionally
+reports five untouched sentient JSON discrepancies. The example gen map is unchanged.
+Probe directories were removed after checks; logs are transient under /tmp.
+
+Dev-verified full gate (reported 2026-10-16): **804 tests / 56 suites** (782 + 15 corpus tests for three net-new
+main types + seven DraconTest tests; the direct Runner counts its discovery wrapper as
+a 57th suite). Observed report-only moves: parse scope **108 draco + 10 mods**, one
+surface loss across **118** types; aspect probes **108** complete sections; GenDrake
+**106/106**. Everything else unchanged: example map 28/20/0/0 of 48, PON 80/550/42,
+canonical 7, scenario 23 clean, forest 1/2, categorical subtype visibility, pending mods
+actors 0 (read from its file-only log). DRACO.md's headline table is updated for these
+legitimate corpus moves; its full-suite baseline is now 804 / 56. Dev's pasted output
+confirms every headline listed here and the file-only pending-actor count of zero.
+
+Next action: Dev commits and pushes the verified increment using the supplied commands,
+then supplies final status. Only verification prose changed after his gate; no repeat run is needed. Definition paths have moved: follow DRACO.md's
+rename exception if the index shows renames, verify only intended changes, and commit
+without a pathspec in that case. No sbt, commit, push or new GitHub issues by Codex.
+
+Activation remains **deferred and unaccepted** at Dev's request. Preserve Codex's
+recommendation: start an explicitly supplied Assembly whose actor definitions are held
+in the accepted ontology, using factory-supplied executable constructor bindings matched
+to those definitions. Generation and activation remain separately requested operations.
+Do not build it without Dev's acceptance. After the wrapper gate, resume Dracon with
+one neutral-operation design point, not automatic activation or extension migration.
+
+Journal coverage remains chapter 94; this Codex conversation has not yet been journaled
+or transcript-audited. No markers advanced.
+
+## Generate increment checkpoint — 2026-10-15 (historical pre-commit note)
 
 Observed main at a3d2d35, the chapter-94 documentation commit after 78bff9d; clean on
 receipt. Dev's full run on 2026-10-15 verified **782 / 55**, zero failures or aborted

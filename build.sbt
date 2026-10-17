@@ -70,7 +70,7 @@ lazy val root = (project in file("."))
      // are root-compiled so the test suite can build and exercise them directly.
      //   - scala/domains : generated example Scala (domains.* — no FQN clash with draco.*)
      //   - resources     : the example + format-subdomain JSON, on root's classpath so
-     //                     Generator.loadType resolves draco.format.json.Json, domains.air.*, etc.
+     //                     TypeLoader.loadType resolves draco.format.dracon.Dracon, domains.aerial.*, etc.
      Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "mods" / "scala" / "domains",
      Compile / unmanagedResourceDirectories += baseDirectory.value / "src" / "mods" / "resources",
 

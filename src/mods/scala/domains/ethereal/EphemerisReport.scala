@@ -2,9 +2,9 @@ package domains.ethereal
 
 import draco._
 import domains._
-import draco.format.json._
+import draco.format.dracon._
 
-trait EphemerisReport extends Ethereal with JSON
+trait EphemerisReport extends Ethereal with Dracon
 
 object EphemerisReport extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("EphemerisReport", _namePackage = Seq ("domains", "ethereal")))

@@ -2,7 +2,8 @@ package org.nexonix.format.json
 import draco.PersistentTestLog
 
 import draco.{DracoGenerator, SourceContent, TypeDefinition, TypeName}
-import draco.format.json.{JSON, Value}
+import draco.format.dracon.{Dracon, Value}
+import draco.scalatarget.CirceCodecs
 import io.circe.syntax.EncoderOps
 import io.circe.{Json, parser}
 import org.scalatest.funsuite.AnyFunSuite
@@ -32,9 +33,11 @@ class TestValue extends AnyFunSuite with PersistentTestLog {
   }
 }
 """).getOrElse(Json.Null)
-    val phoneNumber = Value("phoneNumber", Seq[String]("order", "customer", "contactDetails", "phone")).value[String](JSON(json))
-    log.info(phoneNumber)
-    val itemID = Value("itemID", Seq[String]("order", "items", "0", "id")).value[Int](JSON(json))
+    val phoneNumber = Value("phoneNumber", Seq[String]("order", "customer", "contactDetails", "phone")).decode[String](Dracon(json), CirceCodecs.decoder(io.circe.Decoder.decodeString))
+    assert(phoneNumber.fold(false, _ == "0123-456-789"))
+    log.info(phoneNumber.fold("<absent>", identity))
+    val itemID = Value("itemID", Seq[String]("order", "items", "0", "id")).decode[Int](Dracon(json), CirceCodecs.decoder(io.circe.Decoder.decodeInt))
+    assert(itemID.fold(false, _ == 123))
     log.info(s"$itemID")
   }
   test ("test rule json") {

@@ -11,9 +11,9 @@ object Output extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Output", _namePackage = Seq ("domains", "terrestrial")))
   lazy val dracoType: Type[Output] = Type[Output] (typeDefinition)
 
-  def actorType(_consumer: => draco.format.json.JSON => Unit): ActorType = new Actor[domains.world.World] {
+  def actorType(_consumer: => draco.format.dracon.Dracon => Unit): ActorType = new Actor[domains.world.World] {
     override lazy val typeDefinition: TypeDefinition = Output.typeDefinition
-    lazy val consumer: draco.format.json.JSON => Unit = _consumer
+    lazy val consumer: draco.format.dracon.Dracon => Unit = _consumer
 
     override def receive(ctx: TypedActorContext[domains.world.World], msg: domains.world.World): Behavior[domains.world.World] = {
       msg match {

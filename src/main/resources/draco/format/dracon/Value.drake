@@ -1,0 +1,23 @@
+type Value from draco format Value(Dracon)
+  elements
+    dyn decode(T) draco.drake.Presence(T) [
+      parameters
+        par source Dracon
+        par decoder draco.format.dracon.Decoder(T)
+      body
+        fix value draco.drake.Presence(T) value(source).fold(draco.drake.Absent(), \selected -> decoder.decode(selected))
+    ]
+  factory
+    parameters
+      par name draco.drake.Text
+      par pathElements [draco.drake.Text]
+    body
+      fix name draco.drake.Text _name
+      fix pathElements [draco.drake.Text] _pathElements
+      dyn value draco.drake.Presence(Dracon) [
+        parameters
+          par source Dracon
+        body
+          fix value draco.drake.Presence(Dracon) source.select(pathElements)
+      ]
+domain draco format dracon Dracon

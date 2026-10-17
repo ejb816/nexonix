@@ -1,0 +1,15 @@
+type CirceCodecs
+  globals
+    dyn encoder(T) draco.format.dracon.Encoder(T) [
+      parameters
+        par host io.circe.Encoder(T)
+      body
+        fix value draco.format.dracon.Encoder(T) draco.format.dracon.Encoder(\value -> draco.format.dracon.Dracon(host(value)))
+    ]
+    dyn decoder(T) draco.format.dracon.Decoder(T) [
+      parameters
+        par host io.circe.Decoder(T)
+      body
+        fix value draco.format.dracon.Decoder(T) draco.format.dracon.Decoder(\source -> presence(host.decodeJson(source.json).toOption))
+    ]
+domain draco scalatarget ScalaTarget

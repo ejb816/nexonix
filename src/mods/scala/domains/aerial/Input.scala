@@ -10,11 +10,11 @@ object Input extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Input", _namePackage = Seq ("domains", "aerial")))
   lazy val dracoType: Type[Input] = Type[Input] (typeDefinition)
 
-  def actorType(_worldConsumer: => domains.world.World => Unit): ActorType = new Actor[draco.format.json.JSON] {
+  def actorType(_worldConsumer: => domains.world.World => Unit): ActorType = new Actor[draco.format.dracon.Dracon] {
     override lazy val typeDefinition: TypeDefinition = Input.typeDefinition
     lazy val worldConsumer: domains.world.World => Unit = _worldConsumer
 
-    override def receive(ctx: TypedActorContext[draco.format.json.JSON], msg: draco.format.json.JSON): Behavior[draco.format.json.JSON] = {
+    override def receive(ctx: TypedActorContext[draco.format.dracon.Dracon], msg: draco.format.dracon.Dracon): Behavior[draco.format.dracon.Dracon] = {
       val cursor   = msg.json.hcursor
       val position = Position(
         _latitude     = cursor.get[Double]("latitude").getOrElse(0.0),
@@ -22,11 +22,11 @@ object Input extends App with DracoType {
         _altitudeFeet = cursor.get[Int]("altitudeFeet").getOrElse(0)
       )
       worldConsumer(position)
-      Behaviors.same[draco.format.json.JSON]
+      Behaviors.same[draco.format.dracon.Dracon]
     }
 
-    override def receiveSignal(ctx: TypedActorContext[draco.format.json.JSON], signal: Signal): Behavior[draco.format.json.JSON] = {
-      Behaviors.same[draco.format.json.JSON]
+    override def receiveSignal(ctx: TypedActorContext[draco.format.dracon.Dracon], signal: Signal): Behavior[draco.format.dracon.Dracon] = {
+      Behaviors.same[draco.format.dracon.Dracon]
     }
   }
 }

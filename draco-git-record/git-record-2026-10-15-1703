@@ -1,0 +1,66 @@
+Replace the JSON format domain with Dracon and add explicit neutral Encoder and Decoder capabilities
+
+Dev accepted, one point at a time in the 2026-10-15 Codex session: dracon ownership of
+neutral value/codec vocabulary with target-domain implementation bindings; replacing
+draco.format.json.JSON by draco.format.dracon.Dracon as the combined wrapper/format
+domain; explicit codec capabilities passed to operations that need them; Encoder(T):
+T -> Dracon and Decoder(T): Dracon -> Presence(T). The six-form family proposal was
+not accepted; .dcon is deferred until wrappers work. No extension or wire-syntax change.
+
+Move the Dracon and Value trios from format/json to format/dracon. Dracon retains raw
+Json at its wrapper boundary and selects paths as Presence(Dracon); invalid, negative,
+oversize or absent array indices return Absent, while a selected JSON null is Present.
+Encoder and Decoder are function-valued neutral capabilities, with no host codec bound.
+ScalaTarget gains CirceCodecs to adapt explicitly supplied Circe Encoder/Decoder values.
+Those three net-new main definitions join the existing corpus gates.
+
+Implementation choice to avoid a parent/child module cycle: generic Format.Value(F)
+selects Presence(F), rather than importing a Dracon Decoder. The Dracon-specific Value
+adds decode(T)(source, decoder); selection composes with the explicit capability and
+returns Presence(T), never null. Missing paths do not evaluate the decoder. Update the
+existing TestValue caller to pass adapters and assert the extracted values, and update
+example message/actor definitions, authored Drake/JSON/Scala and tests to name Dracon.
+Initialization still accepts eighteen canonical domains, with Dracon replacing JSON.
+
+No engine behavior changed. Update its example comments and the build's source-root
+comment to the renamed type. Core Json expression trees, cursor operations elsewhere,
+existing inferred-codec generation, declarative codec-field vocabulary and broader
+lexeme binding remain later work; this increment establishes the accepted wrappers
+and capability signatures, not complete host-name elimination across the corpus.
+
+Verification: no sbt, commit or push by Codex. Direct scalac rebuilt all main/mods and
+all tests over a fresh overlay of Dev's 9185f1a classes, current resources with hidden
+files excluded, and removed format/json classes/resources purged. Full direct probe:
+804 tests, 797 passed, seven failed solely at ZeroMQ loopback socket binding in the
+sandbox, zero aborted suites. The unchanged nine-test ZeroMqBridgeTest rerun with local
+TCP access passed all nine, including every failure. This is a full probe plus scoped
+loopback rerun, not a clean full sbt gate. DraconTest's seven cases and all corpus gates
+passed; compilation caught only a logger expecting String after the extractor became
+Presence. Full sbt arithmetic: 782 + 15 corpus tests + 7 DraconTest = 804 / 56.
+Runner counted its discovery wrapper as a 57th suite. Dev subsequently reported the
+full sbt gate on 2026-10-16: 804 tests / 56 suites, zero failed, canceled, ignored or
+pending tests, zero aborted suites. All headlines below were confirmed in his output.
+
+Observed headline changes: Drake.parse scope 108 draco + 10 mods; one surface loss
+across 118 types; DomainAspect and DracoAspect reproduce 108 complete sections each;
+GenDrake 106 of 106. Unchanged: example map 28 match / 20 differ / 0 error / 0 missing
+of 48; PON 80 numbers / 550 expressions / 42 discrepancies; canonical 7; scenario 23
+clean; forest 1 of 2; categorical subtype visibility; file-only pending mods actors 0.
+DRACO.md's report-only table moves with the legitimate three-type increase; its last
+verified full baseline is now 804 / 56 for this increment over 9185f1a.
+
+This record folds in the pending documentation checkpoint: Dev committed and pushed
+Generate as 9185f1a at 782 / 55; he deferred activation and asked to preserve Codex's
+unaccepted recommendation to start an explicit Assembly of held actor definitions
+using factory-supplied constructors matched to them. Do not build activation from
+that recommendation. DRACO.md, README, CHANGELOG and the handoff carry the accepted
+Dracon decisions, implemented versus tested state and remaining work. Journal coverage
+still stops at chapter 94; this conversation awaits transcript-backed journaling, and
+no coverage markers advance. No new GitHub issues created.
+
+DrakeCLI checks: format and ScalaTarget each report surface drift 0 / JSON drift 0.
+Whole-main check retains only ActorAspect/BodyElement authored-ahead differences;
+example check reports the five untouched sentient definitions (Direction, Ego, Lean,
+Percept, Waypoint). No sentient input or emitter behavior changed, and the generation
+map remains the known 28/20 split. Link checker and git diff --check passed; the probe
+directories were removed. No runtime changes followed the passing functional probes.

@@ -1,7 +1,7 @@
 type Consumer
 domain domains marine Marine
 actor
-  messageType draco format json JSON
+  messageType draco format dracon Dracon
   message
     fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
     mon session.insert(Seq(msg): _*)

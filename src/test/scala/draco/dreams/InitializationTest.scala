@@ -61,7 +61,7 @@ class InitializationTest extends AnyFunSuite {
     ("Drake", Seq("draco", "drake")),
     ("Rete", Seq("draco", "rete")),
     ("XML", Seq("draco", "format", "xml")),
-    ("JSON", Seq("draco", "format", "json")),
+    ("Dracon", Seq("draco", "format", "dracon")),
     ("Format", Seq("draco", "format")),
     ("Primes", Seq("draco", "primes")),
     ("Base", Seq("draco", "base")),

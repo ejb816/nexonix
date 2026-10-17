@@ -21,21 +21,21 @@ object Creator extends App with DracoType {
     k
   }
 
-  def actorType(_consumer: => draco.format.json.JSON => Unit): ActorType = new Actor[draco.format.json.JSON] {
+  def actorType(_consumer: => draco.format.dracon.Dracon => Unit): ActorType = new Actor[draco.format.dracon.Dracon] {
     override lazy val typeDefinition: TypeDefinition = Creator.typeDefinition
-    lazy val consumer: draco.format.json.JSON => Unit = _consumer
+    lazy val consumer: draco.format.dracon.Dracon => Unit = _consumer
 
-    override def receive(ctx: TypedActorContext[draco.format.json.JSON], msg: draco.format.json.JSON): Behavior[draco.format.json.JSON] = {
+    override def receive(ctx: TypedActorContext[draco.format.dracon.Dracon], msg: draco.format.dracon.Dracon): Behavior[draco.format.dracon.Dracon] = {
       lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
       session.set("consumer", consumer)
       session.insert(Seq(msg): _*)
       session.fire()
       session.close()
-      Behaviors.same[draco.format.json.JSON]
+      Behaviors.same[draco.format.dracon.Dracon]
     }
 
-    override def receiveSignal(ctx: TypedActorContext[draco.format.json.JSON], signal: Signal): Behavior[draco.format.json.JSON] = {
-      Behaviors.same[draco.format.json.JSON]
+    override def receiveSignal(ctx: TypedActorContext[draco.format.dracon.Dracon], signal: Signal): Behavior[draco.format.dracon.Dracon] = {
+      Behaviors.same[draco.format.dracon.Dracon]
     }
   }
 }

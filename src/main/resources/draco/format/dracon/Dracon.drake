@@ -1,0 +1,22 @@
+type Dracon from draco format Format(Dracon)
+  elements
+    fix json Json
+    fix value Dracon this
+    dyn select draco.drake.Presence(Dracon) [
+      parameters
+        par pathElements [draco.drake.Text]
+      body
+        fix selected Option(Json) pathElements.foldLeft(Option(json))(\current key -> current.flatMap(\node -> guard(node.isArray).ifThenElse(key.toIntOption.filter(\index -> index >= 0).flatMap(\index -> node.hcursor.downN(index).focus), node.hcursor.downField(key).focus)))
+        fix value draco.drake.Presence(Dracon) presence(selected.map(\node -> Dracon(node)))
+    ]
+  factory
+    parameters
+      par json Json
+    body
+      fix json Json _json
+domain draco format dracon Dracon
+  types [
+    Decoder
+    Encoder
+    Value
+  ]

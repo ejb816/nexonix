@@ -25,11 +25,11 @@
           "name": "consumer",
           "valueType": {
             "->": [
-              "draco.format.json.JSON",
+              "draco.format.dracon.Dracon",
               "Unit"
             ]
           },
-          "value": "ctx.getRuntime().get[draco.format.json.JSON => Unit](\"consumer\")"
+          "value": "ctx.getRuntime().get[draco.format.dracon.Dracon => Unit](\"consumer\")"
         },
         {
           "kind": "Monadic",

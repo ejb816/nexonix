@@ -1,0 +1,7 @@
+type Decoder(T)
+  elements
+    fix decode (Dracon -> draco.drake.Presence(T))
+  factory
+    parameters
+      par decode (Dracon -> draco.drake.Presence(T))
+domain draco format dracon Dracon

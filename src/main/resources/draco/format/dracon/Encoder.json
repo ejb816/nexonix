@@ -1,0 +1,58 @@
+{
+  "typeName": {
+    "name": "Encoder",
+    "namePackage": [
+      "draco",
+      "format",
+      "dracon"
+    ],
+    "typeParameters": [
+      "T"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "encode",
+        "valueType": {
+          "->": [
+            "T",
+            "Dracon"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": {
+        "()": [
+          "Encoder",
+          "T"
+        ]
+      },
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "encode",
+          "valueType": {
+            "->": [
+              "T",
+              "Dracon"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  }
+}

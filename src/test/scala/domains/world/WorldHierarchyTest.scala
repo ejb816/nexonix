@@ -42,7 +42,7 @@ class WorldHierarchyTest extends AnyFunSuite {
 
     // still a direct subtype of its own medium, and a Format shell
     assert(aerial.isInstanceOf[domains.aerial.Aerial])
-    assert(aerial.isInstanceOf[draco.format.json.JSON])
+    assert(aerial.isInstanceOf[draco.format.dracon.Dracon])
   }
 
   test("Sentient is a subdomain of World") {

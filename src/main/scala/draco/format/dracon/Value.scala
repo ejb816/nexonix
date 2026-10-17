@@ -1,16 +1,22 @@
-package draco.format.json
+package draco.format.dracon
 
 import draco.format._
 import draco._
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
-trait Value extends draco.format.Value[JSON]
+trait Value extends draco.format.Value[Dracon] {
+  def decode[T](_source: => Dracon, _decoder: => draco.format.dracon.Decoder[T]): draco.drake.Presence[T] = {
+    lazy val source: Dracon = _source
+    lazy val decoder: draco.format.dracon.Decoder[T] = _decoder
+    value(source).fold(draco.drake.Absent(), selected => decoder.decode(selected))
+  }
+}
 
 object Value extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Value", _namePackage = Seq ("draco", "format", "json")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Value", _namePackage = Seq ("draco", "format", "dracon")))
   lazy val dracoType: Type[Value] = Type[Value] (typeDefinition)
-  lazy val domainType: Domain[JSON] = Domain[JSON] (typeDefinition)
+  lazy val domainType: Domain[Dracon] = Domain[Dracon] (typeDefinition)
 
   implicit lazy val encoder: Encoder[Value] = Encoder.instance { x =>
     val fields = Seq(
@@ -32,10 +38,9 @@ object Value extends App with DracoType {
   ) : Value = new Value {
     override lazy val name: String = _name
     override lazy val pathElements: Seq[String] = _pathElements
-    override def value[T: Decoder](__source: => JSON): T = {
-      lazy val _source: JSON = __source
-      lazy val pathValue: Json = pathElements.foldLeft(Option(_source.json))((e, a) => e.flatMap(j => (if (j.isArray) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(j.hcursor.downN(a.toInt).focus, j.hcursor.downField(a).focus))).orNull
-      (if (pathValue != null) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(pathValue.as[T].getOrElse(null.asInstanceOf[T]), null.asInstanceOf[T])
+    override def value(_source: => Dracon): draco.drake.Presence[Dracon] = {
+      lazy val source: Dracon = _source
+      source.select(pathElements)
     }
     override lazy val typeDefinition: TypeDefinition = Value.typeDefinition
   }

@@ -1,0 +1,179 @@
+{
+  "typeName": {
+    "name": "Value",
+    "namePackage": [
+      "draco",
+      "format",
+      "dracon"
+    ]
+  },
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Value",
+        "namePackage": [
+          "draco",
+          "format"
+        ],
+        "typeParameters": [
+          "Dracon"
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "kind": "Dynamic",
+        "name": "decode[T]",
+        "valueType": {
+          "()": [
+            "draco.drake.Presence",
+            "T"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "source",
+            "valueType": "Dracon"
+          },
+          {
+            "kind": "Parameter",
+            "name": "decoder",
+            "valueType": {
+              "()": [
+                "draco.format.dracon.Decoder",
+                "T"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "()": [
+                "draco.drake.Presence",
+                "T"
+              ]
+            },
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "value",
+                        "source"
+                      ]
+                    },
+                    "fold"
+                  ]
+                },
+                {
+                  "()": [
+                    "draco.drake.Absent"
+                  ]
+                },
+                {
+                  "\\": [
+                    "selected",
+                    {
+                      "()": [
+                        "decoder.decode",
+                        "selected"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Value",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "name",
+          "valueType": "draco.drake.Text"
+        },
+        {
+          "kind": "Parameter",
+          "name": "pathElements",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "name",
+          "valueType": "draco.drake.Text",
+          "value": "_name"
+        },
+        {
+          "kind": "Fixed",
+          "name": "pathElements",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": "_pathElements"
+        },
+        {
+          "kind": "Dynamic",
+          "name": "value",
+          "valueType": {
+            "()": [
+              "draco.drake.Presence",
+              "Dracon"
+            ]
+          },
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "source",
+              "valueType": "Dracon"
+            }
+          ],
+          "body": [
+            {
+              "kind": "Fixed",
+              "name": "value",
+              "valueType": {
+                "()": [
+                  "draco.drake.Presence",
+                  "Dracon"
+                ]
+              },
+              "value": {
+                "()": [
+                  "source.select",
+                  "pathElements"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  }
+}

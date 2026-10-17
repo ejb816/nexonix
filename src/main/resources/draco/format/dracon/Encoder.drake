@@ -1,0 +1,7 @@
+type Encoder(T)
+  elements
+    fix encode (T -> Dracon)
+  factory
+    parameters
+      par encode (T -> Dracon)
+domain draco format dracon Dracon

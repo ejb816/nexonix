@@ -16,7 +16,7 @@
           "name": "consumer",
           "valueType": {
             "->": [
-              "draco.format.json.JSON",
+              "draco.format.dracon.Dracon",
               "Unit"
             ]
           }

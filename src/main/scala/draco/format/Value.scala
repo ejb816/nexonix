@@ -1,12 +1,11 @@
 package draco.format
 
 import draco._
-import io.circe.Decoder
 
 trait Value[F] extends DracoType {
   val name: String
   val pathElements: Seq[String]
-  def value[T: Decoder](__source: => F): T
+  def value(_source: => F): draco.drake.Presence[F]
 }
 
 object Value extends App with DracoType {

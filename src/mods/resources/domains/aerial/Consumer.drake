@@ -1,7 +1,7 @@
 type Consumer
 domain domains aerial Aerial
 actor
-  messageType draco format json JSON
+  messageType draco format dracon Dracon
   start
     fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
     fix consumed [String]+ []
