@@ -1,5 +1,7 @@
 package draco.drake
 
+import draco.scalatarget.DefinitionTrees._
+
 import draco.{DracoAspect, DracoGenerator, TypeLoader, TypeName}
 import io.circe.Json
 import org.scalatest.funsuite.AnyFunSuite
@@ -29,7 +31,7 @@ class TextTest extends AnyFunSuite {
   test("Nominal retains its Scala representation but names Text in its definition") {
     val td = TypeLoader.loadType(TypeName("Nominal", Seq("draco", "base")))
     val primal = DracoAspect.parents(td.dracoAspect).find(_.name == "Primal").get
-    assert(primal.typeParameters == Seq(text))
+    assert(primal.typeParameters.map(_.json) == Seq(text))
     assert(DracoGenerator.generate(td).contains("trait Nominal extends Unit with Primal[String]"))
     assert(draco.Drake.emit(td).contains("Primal(draco.drake.Text)"))
   }

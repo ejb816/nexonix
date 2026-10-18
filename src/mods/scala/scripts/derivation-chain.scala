@@ -13,7 +13,7 @@
 package scripts
 
 import draco._
-import draco.TypeForm.ValueTypeText
+import draco.TypeForm.{ValueTypeText, DraconValueTypeText}
 import scala.collection.mutable
 
 object DerivationChain {

@@ -2,7 +2,7 @@ type Case from BodyElement
   factory
     parameters
       par name String ""
-      par valueType Json Json.Null
+      par valueType draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
       par body [BodyElement] []
-      par value Json Json.Null
+      par value draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
 domain draco Draco

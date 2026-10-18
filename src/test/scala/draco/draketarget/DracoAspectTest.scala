@@ -1,5 +1,7 @@
 package draco.draketarget
 
+import draco.scalatarget.DefinitionTrees._
+
 import draco._
 import io.circe.Json
 import io.circe.syntax._

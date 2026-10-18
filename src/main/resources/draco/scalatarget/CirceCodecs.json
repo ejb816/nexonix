@@ -9,6 +9,85 @@
   "dracoAspect": {
     "globalElements": [
       {
+        "kind": "Fixed",
+        "name": "payloadEncoder",
+        "valueType": {
+          "()": [
+            "draco.format.dracon.Encoder",
+            "draco.format.dracon.Dracon"
+          ]
+        },
+        "value": {
+          "()": [
+            "draco.format.dracon.Encoder",
+            {
+              "\\": [
+                "value",
+                "value"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "payloadDecoder",
+        "valueType": {
+          "()": [
+            "draco.format.dracon.Decoder",
+            "draco.format.dracon.Dracon"
+          ]
+        },
+        "value": {
+          "()": [
+            "draco.format.dracon.Decoder",
+            {
+              "\\": [
+                "value",
+                {
+                  "()": [
+                    "draco.drake.Present",
+                    "value"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "encodePayload",
+        "valueType": {
+          "()": [
+            "io.circe.Encoder",
+            "draco.format.dracon.Dracon"
+          ]
+        },
+        "value": {
+          "()": [
+            "io.circe.Encoder.instance",
+            "value => payloadEncoder.encode(value).json"
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "decodePayload",
+        "valueType": {
+          "()": [
+            "io.circe.Decoder",
+            "draco.format.dracon.Dracon"
+          ]
+        },
+        "value": {
+          "()": [
+            "io.circe.Decoder.instance",
+            "cursor => payloadDecoder.decode(draco.format.dracon.Dracon(cursor.value)).fold(Left(io.circe.DecodingFailure(\"Absent payload\", cursor.history)), value => Right(value))"
+          ]
+        }
+      },
+      {
         "kind": "Dynamic",
         "name": "encoder[T]",
         "valueType": {

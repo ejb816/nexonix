@@ -1,7 +1,9 @@
 package draco
 
+import draco.scalatarget.DefinitionTrees._
+
 import io.circe.Json
-import draco.TypeForm.ValueTypeText
+import draco.TypeForm.{ValueTypeText, DraconValueTypeText}
 
 /** The DRAKE projection: the emitter that renders a TypeDefinition to .drake
   * surface, and the parser that reads it back. They are mutual inverses, and the
@@ -241,7 +243,7 @@ object Drake {
     * ( ) type-application form — Map[K, V]'s TypeName -> Map(K, V). */
   private def typeRef (tn: TypeName) : String =
     if (tn.typeParameters.isEmpty) tn.name
-    else s"${tn.name}(${tn.typeParameters.map(typeParameterSurface).mkString(", ")})"
+    else s"${tn.name}(${tn.typeParameters.map(value => typeParameterSurface(value)).mkString(", ")})"
 
   /** A dyn-with-body opens its own sub-block; its container needs [ ]. */
   private def opensBlock (element: TypeElement) : Boolean = element match {

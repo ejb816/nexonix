@@ -2,6 +2,23 @@ type Dracon from draco format Format(Dracon)
   elements
     fix json Json
     fix value Dracon this
+    dyn isNull Boolean json.isNull
+    dyn isObject Boolean json.isObject
+    dyn textOrEmpty draco.drake.Presence(draco.drake.Text) presence(guard(json.isNull).ifThenElse(Some(""), json.asString))
+    dyn itemsOrEmpty draco.drake.Presence([Dracon]) presence(guard(json.isNull).ifThenElse(Some(Seq.empty[Dracon]), json.asArray.map(_.map(Dracon(_)).toSeq)))
+    dyn textsOrEmpty draco.drake.Presence([draco.drake.Text]) presence(guard(json.isNull).ifThenElse(Some(Seq.empty[String]), json.asArray.flatMap(values => if (values.forall(_.isString)) Some(values.flatMap(_.asString).toSeq) else None)))
+    dyn has Boolean [
+      parameters
+        par name draco.drake.Text
+      body
+        fix value Boolean json.asObject.exists(_.contains(name))
+    ]
+    dyn field Dracon [
+      parameters
+        par name draco.drake.Text
+      body
+        fix value Dracon select([name]).fold(Dracon.Null, \value -> value)
+    ]
     dyn select draco.drake.Presence(Dracon) [
       parameters
         par pathElements [draco.drake.Text]
@@ -14,6 +31,37 @@ type Dracon from draco format Format(Dracon)
       par json Json
     body
       fix json Json _json
+      dyn equals Boolean [
+        parameters
+          now par other Any
+        body
+          case value Dracon [
+            fix value Boolean json == value.json
+          ]
+          case [
+            fix value Boolean false
+          ]
+      ]
+      dyn hashCode Int json.hashCode
+  globals
+    dyn string Dracon [
+      parameters
+        now par text draco.drake.Text
+      body
+        fix value Dracon Dracon(Json.fromString(text))
+    ]
+    dyn array Dracon [
+      parameters
+        par values [Dracon]
+      body
+        fix value Dracon Dracon(Json.fromValues(values.map(_.json)))
+    ]
+    dyn record Dracon [
+      parameters
+        par fields [(draco.drake.Text, Dracon)]
+      body
+        fix value Dracon Dracon(Json.obj(fields.map { case (name, value) => name -> value.json }: _*))
+    ]
 domain draco format dracon Dracon
   types [
     Decoder

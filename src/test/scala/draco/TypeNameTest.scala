@@ -1,5 +1,7 @@
 package draco
 
+import draco.scalatarget.DefinitionTrees._
+
 import io.circe.Json
 import org.scalatest.funsuite.AnyFunSuite
 

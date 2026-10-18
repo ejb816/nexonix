@@ -31,7 +31,7 @@
         "name": "derivation",
         "valueType": {
           "[]": [
-            "Json"
+            "draco.format.dracon.Dracon"
           ]
         }
       },
@@ -78,7 +78,8 @@
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         },
         {
@@ -92,11 +93,12 @@
           "name": "derivation",
           "valueType": {
             "[]": [
-              "Json"
+              "draco.format.dracon.Dracon"
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         },
         {
@@ -108,7 +110,8 @@
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         },
         {
@@ -126,7 +129,8 @@
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         }
       ]
@@ -182,14 +186,14 @@
                       "()": [
                         "da.derivation.filter",
                         {
-                          ".": [
+                          "\\": [
+                            "parent",
                             {
                               "()": [
-                                "_.hcursor.downField",
+                                "parent.has",
                                 "\"name\""
                               ]
-                            },
-                            "succeeded"
+                            }
                           ]
                         }
                       ]
@@ -197,7 +201,40 @@
                     "flatMap"
                   ]
                 },
-                "_.as[TypeName].toOption"
+                {
+                  "\\": [
+                    "parent",
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "TypeName.read",
+                                "parent"
+                              ]
+                            },
+                            "fold"
+                          ]
+                        },
+                        {
+                          "[]": [
+                          ]
+                        },
+                        {
+                          "\\": [
+                            "name",
+                            {
+                              "[]": [
+                                "name"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
               ]
             }
           ]
@@ -211,7 +248,7 @@
             "DracoAspect",
             {
               "[]": [
-                "Json"
+                "draco.format.dracon.Dracon"
               ]
             }
           ]
@@ -223,14 +260,14 @@
               "()": [
                 "da.derivation.filterNot",
                 {
-                  ".": [
+                  "\\": [
+                    "parent",
                     {
                       "()": [
-                        "_.hcursor.downField",
+                        "parent.has",
                         "\"name\""
                       ]
-                    },
-                    "succeeded"
+                    }
                   ]
                 }
               ]

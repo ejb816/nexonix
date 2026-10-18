@@ -363,6 +363,11 @@ for the definition that will replace it.
 
 ### Changed
 
+- **Core definition trees use Dracon.** TypeElement values/types, TypeName parameters and
+  DracoAspect derivations now use the neutral wrapper. Explicit payload codec bindings
+  preserve definition JSON while ordinary Dracon values retain their wrapper encoding.
+  Dev's full gate passed 809 tests / 56 suites on 2026-10-17, with every report-only figure unchanged.
+
 - **Dracon replaces the JSON format domain.** Dracon and Value move to draco.format.dracon;
   generic Format.Value selects Presence(F), and Dracon.Value decodes with an explicit capability,
   replacing the Circe-bound, null-returning extractor. Example chains and endogenous initialization

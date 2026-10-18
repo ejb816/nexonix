@@ -4,12 +4,48 @@ This is the shared resumption checkpoint for Claude Code and Codex, not an addit
 architecture specification or a transcript. Follow DRACO.md section 7 and verify this
 snapshot against the current tree before acting.
 
-## Current Dracon increment — updated 2026-10-16, Codex
+## Current core-tree migration — 2026-10-17, Codex
+
+Observed main at db7e7a8; Dev's pasted output confirms the previous wrapper increment was
+committed and pushed with a clean tree. Dev reported the current migration's full sbt
+gate on 2026-10-17: **809 / 56**, zero failed, canceled, ignored or pending tests,
+zero aborted suites. Every headline matches the figures below. The migration is uncommitted. Dev accepted both the
+core-tree scope and explicit payload codec bindings; .dcon and activation stay deferred.
+
+TypeElement.value/valueType, TypeName.typeParameters and DracoAspect.derivation use Dracon.
+Their factory definitions and generated aspect consumers follow. Neutral wrapper operations,
+TypeName.read/write and Dracon structural equality preserve shape interpretation and identity.
+Explicit CirceCodecs payload capabilities are selected by a scoped bootstrap binding table in
+DracoGenerator. Ordinary wrapper codecs retain {"json": ...}. No new codec-aspect syntax.
+The handwritten Scala parser/generator still uses Circe behind an opt-in DefinitionTrees
+bridge in mods/scalatarget; the migrated field/factory and aspect-renderer definitions
+no longer name Json/cursor operations.
+The legacy Generated.scala bootstrap lacks a trio and was migrated directly to neutral values.
+
+All main/mods and tests compiled directly. Final full probe: **809 tests, 802 passed, seven
+sandbox ZeroMQ socket-bind failures, zero aborted**; unchanged ZeroMqBridgeTest rerun with
+local TCP access **9 / 9 passed**. Five new DraconTest cases; Dev subsequently verified **809 / 56**
+(the direct Runner adds a discovery suite). Old/new compiled codecs reserialized the same
+182 current definition inputs identically. All corpus gates and headlines pass unchanged:
+108+10 parse scope, one loss across 118, 108 aspect sections, GenDrake 106/106, example map
+28/20/0/0 of 48, PON 80/550/42, canonical 7, scenario 23 clean, forest 1/2, categorical
+subtype visibility, pending mods actors 0. DrakeCLI check: only ActorAspect/BodyElement's
+known authored-ahead drift (surface 2, JSON 1). Earlier compile/projection/test corrections
+are recorded in `git-record-2026-10-17-1457`. No sbt, commit, push or new issues by Codex.
+
+Next action: Dev runs the path-scoped commit/push commands and supplies final status.
+Only verification prose changed after his gate; no repeat test run is needed. No additional design or .dcon migration authorized.
+Journal remains through chapter 94; current Codex dialogue has not been transcript-audited
+or journaled, and no markers advance. Probe logs and the wire comparison are transient /tmp
+artifacts; temporary target probe directories were removed. The prior checkpoints below are historical and superseded by this section.
+
+## Prior Dracon wrapper increment — verified and committed as db7e7a8
 
 Observed main at **9185f1a**, Generate committed and pushed by Dev with a clean tree
 before this increment. Its verified baseline is **782 tests / 55 suites**. The Dracon
 increment is generated, compiled and verified by Dev's full sbt gate reported on
-2026-10-16: **804 tests / 56 suites**, zero failed or aborted. It remains uncommitted. The earlier pending documentation note is folded into record
+2026-10-16: **804 tests / 56 suites**, zero failed or aborted. Dev subsequently committed
+and pushed it as db7e7a8; the following paragraphs preserve that checkpoint's evidence. The earlier pending documentation note is folded into record
 `git-record-2026-10-15-1703`, now describing this whole increment.
 
 Dev accepted, one design point at a time: dracon owns the neutral value/codec vocabulary,
@@ -61,8 +97,8 @@ actors 0 (read from its file-only log). DRACO.md's headline table is updated for
 legitimate corpus moves; its full-suite baseline is now 804 / 56. Dev's pasted output
 confirms every headline listed here and the file-only pending-actor count of zero.
 
-Next action: Dev commits and pushes the verified increment using the supplied commands,
-then supplies final status. Only verification prose changed after his gate; no repeat run is needed. Definition paths have moved: follow DRACO.md's
+Completed next action from this checkpoint: Dev committed and pushed as db7e7a8,
+then supplied clean final status. Only verification prose changed after his gate. Definition paths have moved: follow DRACO.md's
 rename exception if the index shows renames, verify only intended changes, and commit
 without a pathspec in that case. No sbt, commit, push or new GitHub issues by Codex.
 

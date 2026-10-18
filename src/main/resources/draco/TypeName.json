@@ -26,7 +26,7 @@
         "name": "typeParameters",
         "valueType": {
           "[]": [
-            "Json"
+            "draco.format.dracon.Dracon"
           ]
         }
       },
@@ -59,7 +59,8 @@
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         },
         {
@@ -67,11 +68,12 @@
           "name": "typeParameters",
           "valueType": {
             "[]": [
-              "Json"
+              "draco.format.dracon.Dracon"
             ]
           },
           "value": {
-            "[]": []
+            "[]": [
+            ]
           }
         }
       ],
@@ -97,7 +99,7 @@
           "name": "typeParameters",
           "valueType": {
             "[]": [
-              "Json"
+              "draco.format.dracon.Dracon"
             ]
           },
           "value": "_typeParameters"
@@ -221,7 +223,271 @@
           "value": "(name, namePackage, typeParameters).hashCode"
         }
       ]
-    }
+    },
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "read",
+        "valueType": {
+          "->": [
+            "draco.format.dracon.Dracon",
+            {
+              "()": [
+                "draco.drake.Presence",
+                "TypeName"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "\\": [
+            "source",
+            {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "guard",
+                        "source.isObject"
+                      ]
+                    },
+                    "ifThenElse"
+                  ]
+                },
+                {
+                  "()": [
+                    {
+                      ".": [
+                        {
+                          "()": [
+                            "source.field",
+                            "\"name\""
+                          ]
+                        },
+                        "textOrEmpty",
+                        "fold"
+                      ]
+                    },
+                    {
+                      "()": [
+                        "draco.drake.Absent"
+                      ]
+                    },
+                    {
+                      "\\": [
+                        "name",
+                        {
+                          "()": [
+                            {
+                              ".": [
+                                {
+                                  "()": [
+                                    "source.field",
+                                    "\"namePackage\""
+                                  ]
+                                },
+                                "textsOrEmpty",
+                                "fold"
+                              ]
+                            },
+                            {
+                              "()": [
+                                "draco.drake.Absent"
+                              ]
+                            },
+                            {
+                              "\\": [
+                                "parts",
+                                {
+                                  "()": [
+                                    {
+                                      ".": [
+                                        {
+                                          "()": [
+                                            "source.field",
+                                            "\"typeParameters\""
+                                          ]
+                                        },
+                                        "itemsOrEmpty",
+                                        "fold"
+                                      ]
+                                    },
+                                    {
+                                      "()": [
+                                        "draco.drake.Absent"
+                                      ]
+                                    },
+                                    {
+                                      "\\": [
+                                        "arguments",
+                                        {
+                                          "()": [
+                                            "draco.drake.Present",
+                                            {
+                                              "()": [
+                                                "TypeName",
+                                                "name",
+                                                "parts",
+                                                "arguments"
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "()": [
+                    "draco.drake.Absent"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "write",
+        "valueType": {
+          "->": [
+            "TypeName",
+            "draco.format.dracon.Dracon"
+          ]
+        },
+        "value": {
+          "\\": [
+            "name",
+            {
+              "()": [
+                "draco.format.dracon.Dracon.record",
+                {
+                  "++": [
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "guard",
+                                "name.name.nonEmpty"
+                              ]
+                            },
+                            "ifThenElse"
+                          ]
+                        },
+                        {
+                          "[]": [
+                            {
+                              "(,)": [
+                                "\"name\"",
+                                {
+                                  "()": [
+                                    "draco.format.dracon.Dracon.string",
+                                    "name.name"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "[]": [
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "guard",
+                                "name.namePackage.nonEmpty"
+                              ]
+                            },
+                            "ifThenElse"
+                          ]
+                        },
+                        {
+                          "[]": [
+                            {
+                              "(,)": [
+                                "\"namePackage\"",
+                                {
+                                  "()": [
+                                    "draco.format.dracon.Dracon.array",
+                                    {
+                                      "()": [
+                                        "name.namePackage.map",
+                                        "draco.format.dracon.Dracon.string"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "[]": [
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "guard",
+                                "name.typeParameters.nonEmpty"
+                              ]
+                            },
+                            "ifThenElse"
+                          ]
+                        },
+                        {
+                          "[]": [
+                            {
+                              "(,)": [
+                                "\"typeParameters\"",
+                                {
+                                  "()": [
+                                    "draco.format.dracon.Dracon.array",
+                                    "name.typeParameters"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "[]": [
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
   },
   "domainAspect": {
     "typeName": {

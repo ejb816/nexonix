@@ -3,12 +3,12 @@ package draco
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
-sealed trait TypeElement extends Primal[Json] {
+sealed trait TypeElement extends Primal[draco.format.dracon.Dracon] {
   lazy val name: String = ""
-  lazy val valueType: Json = Json.Null
+  lazy val valueType: draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null
   lazy val parameters: Seq[Parameter] = Seq.empty
   lazy val body: Seq[BodyElement] = Seq.empty
-  lazy val value: Json = Json.Null
+  lazy val value: draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null
   lazy val now: Boolean = false
 }
 
@@ -35,10 +35,10 @@ object TypeElement extends App with DracoType {
     val fields = Seq(
       Some("kind" -> Json.fromString(kind)),
       if (x.name.nonEmpty) Some("name" -> x.name.asJson) else None,
-      if (!x.valueType.isNull && x.valueType.asString.forall(_.nonEmpty)) Some("valueType" -> x.valueType.asJson) else None,
+      if (!x.valueType.isNull && x.valueType.textOrEmpty.fold(true, _.nonEmpty)) Some("valueType" -> draco.scalatarget.CirceCodecs.encodePayload(x.valueType)) else None,
       if (x.parameters.nonEmpty) Some("parameters" -> x.parameters.asJson) else None,
       if (x.body.nonEmpty) Some("body" -> x.body.asJson) else None,
-      if (!x.value.isNull && x.value.asString.forall(_.nonEmpty)) Some("value" -> x.value.asJson) else None,
+      if (!x.value.isNull && x.value.textOrEmpty.fold(true, _.nonEmpty)) Some("value" -> draco.scalatarget.CirceCodecs.encodePayload(x.value)) else None,
       if (x.now) Some("now" -> x.now.asJson) else None
     ).flatten ++ (x match {
       case x: Pattern => Seq(
@@ -57,40 +57,40 @@ object TypeElement extends App with DracoType {
       case "Fixed" =>
         for {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
-          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
-          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
+          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
           _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
         } yield Fixed (_name, _valueType, _value, _now)
 
       case "Mutable" =>
         for {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
-          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
-          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
+          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
           _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
         } yield Mutable (_name, _valueType, _value, _now)
 
       case "Dynamic" =>
         for {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
-          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
           _parameters <- cursor.downField("parameters").as[Option[Seq[Parameter]]].map(_.getOrElse(Seq.empty))
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
-          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
           _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
         } yield Dynamic (_name, _valueType, _parameters, _body, _value, _now)
 
       case "Parameter" =>
         for {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
-          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
-          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
+          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
           _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
         } yield Parameter (_name, _valueType, _value, _now)
 
       case "Monadic" =>
         for {
-          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
         } yield Monadic (_value)
 
       case "Pattern" =>
@@ -107,18 +107,18 @@ object TypeElement extends App with DracoType {
 
       case "Condition" =>
         for {
-          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
         } yield Condition (_value)
 
       case "Variable" =>
         for {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
-          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
         } yield Variable (_name, _valueType)
 
       case "Factory" =>
         for {
-          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
           _parameters <- cursor.downField("parameters").as[Option[Seq[Parameter]]].map(_.getOrElse(Seq.empty))
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
         } yield Factory (_valueType, _parameters, _body)
@@ -126,17 +126,17 @@ object TypeElement extends App with DracoType {
       case "Local" =>
         for {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
-          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
-          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
+          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
           _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
         } yield Local (_name, _valueType, _value, _now)
 
       case "Case" =>
         for {
           _name <- cursor.downField("name").as[Option[String]].map(_.getOrElse(""))
-          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _valueType <- cursor.downField("valueType").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
-          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null))
+          _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
         } yield Case (_name, _valueType, _body, _value)
 
       case other =>
@@ -170,21 +170,21 @@ object Fixed extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => Json,
-    _value: => Json = Json.Null,
+    _valueType: => draco.format.dracon.Dracon,
+    _value: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
     _now: => Boolean = false
   ) : Fixed = new Fixed {
     override lazy val name: String = _name
-    override lazy val valueType: Json = _valueType
-    override lazy val value: Json = _value
+    override lazy val valueType: draco.format.dracon.Dracon = _valueType
+    override lazy val value: draco.format.dracon.Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Fixed.typeDefinition
   }
 
   lazy val Null: Fixed = apply(
     _name = "",
-    _valueType = Json.Null,
-    _value = Json.Null,
+    _valueType = draco.format.dracon.Dracon.Null,
+    _value = draco.format.dracon.Dracon.Null,
     _now = false
   )
 
@@ -204,21 +204,21 @@ object Mutable extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => Json,
-    _value: => Json = Json.Null,
+    _valueType: => draco.format.dracon.Dracon,
+    _value: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
     _now: => Boolean = false
   ) : Mutable = new Mutable {
     override lazy val name: String = _name
-    override lazy val valueType: Json = _valueType
-    override lazy val value: Json = _value
+    override lazy val valueType: draco.format.dracon.Dracon = _valueType
+    override lazy val value: draco.format.dracon.Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Mutable.typeDefinition
   }
 
   lazy val Null: Mutable = apply(
     _name = "",
-    _valueType = Json.Null,
-    _value = Json.Null,
+    _valueType = draco.format.dracon.Dracon.Null,
+    _value = draco.format.dracon.Dracon.Null,
     _now = false
   )
 
@@ -238,27 +238,27 @@ object Dynamic extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => Json,
+    _valueType: => draco.format.dracon.Dracon,
     _parameters: => Seq[Parameter] = Seq.empty,
     _body: => Seq[BodyElement] = Seq.empty,
-    _value: => Json = Json.Null,
+    _value: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
     _now: => Boolean = false
   ) : Dynamic = new Dynamic {
     override lazy val name: String = _name
-    override lazy val valueType: Json = _valueType
+    override lazy val valueType: draco.format.dracon.Dracon = _valueType
     override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val body: Seq[BodyElement] = _body
-    override lazy val value: Json = _value
+    override lazy val value: draco.format.dracon.Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Dynamic.typeDefinition
   }
 
   lazy val Null: Dynamic = apply(
     _name = "",
-    _valueType = Json.Null,
+    _valueType = draco.format.dracon.Dracon.Null,
     _parameters = Seq.empty,
     _body = Seq.empty,
-    _value = Json.Null,
+    _value = draco.format.dracon.Dracon.Null,
     _now = false
   )
 
@@ -278,21 +278,21 @@ object Parameter extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => Json,
-    _value: => Json,
+    _valueType: => draco.format.dracon.Dracon,
+    _value: => draco.format.dracon.Dracon,
     _now: => Boolean = false
   ) : Parameter = new Parameter {
     override lazy val name: String = _name
-    override lazy val valueType: Json = _valueType
-    override lazy val value: Json = _value
+    override lazy val valueType: draco.format.dracon.Dracon = _valueType
+    override lazy val value: draco.format.dracon.Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Parameter.typeDefinition
   }
 
   lazy val Null: Parameter = apply(
     _name = "",
-    _valueType = Json.Null,
-    _value = Json.Null,
+    _valueType = draco.format.dracon.Dracon.Null,
+    _value = draco.format.dracon.Dracon.Null,
     _now = false
   )
 
@@ -311,14 +311,14 @@ object Monadic extends App with DracoType {
   implicit def decoder: Decoder[Monadic] = codec.decoder
 
   def apply (
-    _value: => Json
+    _value: => draco.format.dracon.Dracon
   ) : Monadic = new Monadic {
-    override lazy val value: Json = _value
+    override lazy val value: draco.format.dracon.Dracon = _value
     override lazy val typeDefinition: TypeDefinition = Monadic.typeDefinition
   }
 
   lazy val Null: Monadic = apply(
-    _value = Json.Null
+    _value = draco.format.dracon.Dracon.Null
   )
 
 
@@ -391,14 +391,14 @@ object Condition extends App with DracoType {
   implicit def decoder: Decoder[Condition] = codec.decoder
 
   def apply (
-    _value: => Json
+    _value: => draco.format.dracon.Dracon
   ) : Condition = new Condition {
-    override lazy val value: Json = _value
+    override lazy val value: draco.format.dracon.Dracon = _value
     override lazy val typeDefinition: TypeDefinition = Condition.typeDefinition
   }
 
   lazy val Null: Condition = apply(
-    _value = Json.Null
+    _value = draco.format.dracon.Dracon.Null
   )
 
 
@@ -417,16 +417,16 @@ object Variable extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => Json
+    _valueType: => draco.format.dracon.Dracon
   ) : Variable = new Variable {
     override lazy val name: String = _name
-    override lazy val valueType: Json = _valueType
+    override lazy val valueType: draco.format.dracon.Dracon = _valueType
     override lazy val typeDefinition: TypeDefinition = Variable.typeDefinition
   }
 
   lazy val Null: Variable = apply(
     _name = "",
-    _valueType = Json.Null
+    _valueType = draco.format.dracon.Dracon.Null
   )
 
 
@@ -444,18 +444,18 @@ object Factory extends App with DracoType {
   implicit def decoder: Decoder[Factory] = codec.decoder
 
   def apply (
-    _valueType: => Json,
+    _valueType: => draco.format.dracon.Dracon,
     _parameters: => Seq[Parameter] = Seq.empty,
     _body: => Seq[BodyElement] = Seq.empty
   ) : Factory = new Factory {
-    override lazy val valueType: Json = _valueType
+    override lazy val valueType: draco.format.dracon.Dracon = _valueType
     override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val body: Seq[BodyElement] = _body
     override lazy val typeDefinition: TypeDefinition = Factory.typeDefinition
   }
 
   lazy val Null: Factory = apply(
-    _valueType = Json.Null,
+    _valueType = draco.format.dracon.Dracon.Null,
     _parameters = Seq.empty,
     _body = Seq.empty
   )
@@ -476,21 +476,21 @@ object Local extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => Json,
-    _value: => Json,
+    _valueType: => draco.format.dracon.Dracon,
+    _value: => draco.format.dracon.Dracon,
     _now: => Boolean = false
   ) : Local = new Local {
     override lazy val name: String = _name
-    override lazy val valueType: Json = _valueType
-    override lazy val value: Json = _value
+    override lazy val valueType: draco.format.dracon.Dracon = _valueType
+    override lazy val value: draco.format.dracon.Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Local.typeDefinition
   }
 
   lazy val Null: Local = apply(
     _name = "",
-    _valueType = Json.Null,
-    _value = Json.Null,
+    _valueType = draco.format.dracon.Dracon.Null,
+    _value = draco.format.dracon.Dracon.Null,
     _now = false
   )
 
@@ -510,14 +510,14 @@ object Case extends App with DracoType {
 
   def apply (
     _name: => String = "",
-    _valueType: => Json = Json.Null,
+    _valueType: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
     _body: => Seq[BodyElement] = Seq.empty,
-    _value: => Json = Json.Null
+    _value: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null
   ) : Case = new Case {
     override lazy val name: String = _name
-    override lazy val valueType: Json = _valueType
+    override lazy val valueType: draco.format.dracon.Dracon = _valueType
     override lazy val body: Seq[BodyElement] = _body
-    override lazy val value: Json = _value
+    override lazy val value: draco.format.dracon.Dracon = _value
     override lazy val typeDefinition: TypeDefinition = Case.typeDefinition
   }
 

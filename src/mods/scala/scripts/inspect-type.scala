@@ -12,7 +12,7 @@
 package scripts
 
 import draco._
-import draco.TypeForm.ValueTypeText
+import draco.TypeForm.{ValueTypeText, DraconValueTypeText}
 
 object InspectType {
   def main(args: Array[String]): Unit = {

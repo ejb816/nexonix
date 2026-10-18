@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**809 tests / 56 suites**, verified by Dev's full run reported on 2026-10-17 for the
+core-tree migration over db7e7a8 (record `git-record-2026-10-17-1457`), not yet committed:
+five new DraconTest cases, zero failed or aborted, every report-only headline unchanged,
+including zero pending mods actors in Dev's pasted file-only log. Before it:
 **804 tests / 56 suites**, verified by Dev's full run reported on 2026-10-16 for the
-Dracon increment over 9185f1a (record `git-record-2026-10-15-1703`), not yet committed:
+Dracon increment committed and pushed by Dev as db7e7a8 (record `git-record-2026-10-15-1703`):
 zero failed or aborted, all report-only headlines matching the updated table, including
 zero pending mods actors. Three net-new corpus types add fifteen tests; DraconTest adds seven. Before it:
 **782 tests / 55 suites**, verified by Dev's full run on 2026-10-15 on the Generate increment
@@ -225,7 +229,7 @@ Compact by intent. Architecture detail belongs in `README.md` once that file is 
 `TypeDefinition extends Aspects { val typeName }`, and `Aspects` is **five** slots:
 
 - `dracoAspect` — superDomain, modules, extensible, derivation, elements, factory, globalElements
-  (`derivation` is `[Json]` since 2026-09-20: a TypeName object for a draco parent, a type-form node
+  (`derivation` is `[draco.format.dracon.Dracon]` since 2026-10-17, previously `[Json]`: a TypeName object for a draco parent, a type-form node
   for a FOREIGN one — Dictionary's `{"{}": ["K", "V"]}`; read names through `DracoAspect.parents`)
 - `domainAspect` — typeName (self-loop for a domain, container pointer otherwise), elementTypeNames,
   source, target (both present = a **transform domain**; role is presence, as everywhere else)
@@ -239,9 +243,9 @@ no `Rule` or `Actor` suffix, and no `.rule`/`.actor` filename suffix.
 
 **`TypeElement`** is a sealed family of **twelve** kinds — Fixed, Mutable, Dynamic, Local,
 Parameter, Monadic, Condition, Action, Pattern, Variable, Factory, Case — all extending
-`Primal[Json]`. So `value` is a JSON node: either a host-opaque source string or a
-single-key `{op: [operands]}` expression tree. **`valueType` is a JSON node on the same terms
-since 2026-09-16** — a string is the type's authored text (all of the corpus today), an object
+`Primal[draco.format.dracon.Dracon]` since 2026-10-17. Its payload is still a JSON node: either a host-opaque source string or a
+single-key `{op: [operands]}` expression tree. **`valueType` holds Dracon on the same terms since 2026-10-17**
+(the JSON-node representation dates to 2026-09-16) — a string is the type's authored text (all of the corpus today), an object
 is a type-form tree (the parser trees the four forms since 2026-09-17); every consumer reads it through
 `TypeForm.text` (`e.valueType.text`), and the engine spells it for the target once, in
 `targetTypes`. Every element also carries `now: Boolean` (default false, elided), the strictness
@@ -249,8 +253,8 @@ override of drake.dlt EVALUATION. JSON uses a `"kind"` discriminator;
 `Codec.sub` narrows the parent codec.
 
 **`TypeName`** is `name` + `namePackage` + `typeParameters`, with derived `namePath` and
-`resourcePath`. It compares **structurally** (GitHub #37). Each type parameter is a JSON node on the
-value-type terms since 2026-09-17 — a string is the authored text, a tree a type form, and the parser
+`resourcePath`. It compares **structurally** (GitHub #37). Each type parameter is Dracon holding a JSON node on the
+value-type terms (wrapped since 2026-10-17; tree syntax since 2026-09-17) — a string is the authored text, a tree a type form, and the parser
 builds the tree for every header parameter and reference argument (`S <: DomainType` is a bound leaf,
 `(S, T)` an Objective) — read as text through
 `TypeForm.text` and spelled for Scala at each render site, because identity is not rewritten in place. Type parameters are part of the
@@ -664,14 +668,34 @@ Absent and JSON null Present. **Implementation choice:** generic Format.Value(F)
 removing its host Decoder bound without importing a child-domain capability into Format; Dracon.Value
 adds decode(T)(source, decoder). A missing path never evaluates the decoder. Example message/actor
 trios and initialization now name Dracon. JSON wire syntax and .json carrier paths remain; .dcon is
-deferred until the wrappers work. Core definition trees and codec generation still contain host Json
-operations, and declarative codec-field vocabulary/target lexeme tables remain later design points.
+deferred. The core-tree migration below supersedes the remaining raw Json field types;
+declarative codec-field vocabulary and target lexeme tables remain later design points.
 The complete direct probe ran 804 tests: 797 passed, seven ZeroMQ socket-bind failures in the sandbox;
 the nine-test loopback suite then passed with local TCP access, including all seven failures. Dev subsequently reported a passing full sbt
 gate on 2026-10-16: **804 / 56**, zero failed or aborted (three net-new corpus types ×5 + seven DraconTest tests); direct Runner counts 57
 with its discovery wrapper. Parse scope moves to 108 + 10, one loss across 118, aspect sections 108,
 GenDrake 106/106; all other report-only headlines unchanged. The table above carries the new measured
 counts, all confirmed by Dev's full run, including zero pending mods actors in the file-only log.
+
+**Core trees and payload bindings (2026-10-17, Codex; Dev verified 809 / 56).** Dev accepted
+migrating TypeElement.value/valueType, TypeName.typeParameters and DracoAspect.derivation to
+Dracon while preserving definition JSON, then explicitly accepted payload codec bindings.
+The TypeElement factories and both aspect renderers move with their consumers. Dracon provides
+neutral string/array/record construction, null/object/field inspection and nullable text/list
+inspection; structural equality preserves TypeName identity. TypeName.read/write carry its
+shape without Circe names; DracoAspect parent inspection and TypeLoader rooting use them.
+CirceCodecs supplies explicit payload capabilities and host bindings. The handwritten generator
+binds the scoped core fields to them; its bootstrap binding table is not new codec-aspect syntax.
+Ordinary Dracon codecs still encode the wrapper object. The host parser/generator and fixtures
+opt into scalatarget.DefinitionTrees conversions at their boundary; no implicit payload codec
+is installed. The legacy hand-written Generated.scala bootstrap (no definition trio) also uses
+neutral constructors. Generated definition-backed Scala remains pinned by the corpus gates.
+Direct full probe: 802 of 809 passed, seven sandbox socket-bind failures; the unchanged nine-test
+loopback suite then passed with local TCP access. Five new DraconTest cases, no new corpus types:
+Dev's full gate then passed **809 / 56**, zero failed or aborted. Old/new codecs reserialize all 182 current main/mods definition
+inputs identically. Every report-only headline stays unchanged; DrakeCLI retains only the known
+ActorAspect/BodyElement authored-ahead drift. Dev's pasted full-run headlines confirm every
+figure, including zero pending mods actors; **809 / 56** is the new verified baseline. Record: `git-record-2026-10-17-1457`.
 
 **Deferred activation (Dev, 2026-10-15).** Dev asked to preserve Codex's unaccepted recommendation:
 start an explicitly supplied Assembly of held actor definitions, using factory-supplied executable

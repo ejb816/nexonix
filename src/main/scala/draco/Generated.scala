@@ -1,6 +1,6 @@
 package draco
 
-import io.circe.Json
+import draco.format.dracon.Dracon
 
 import java.net.URI
 
@@ -13,12 +13,12 @@ object Generated extends App {
       _namePackage = Seq ("draco")
     ),
     _dracoAspect = DracoAspect (
-      _derivation = Seq (TypeName.encoder (TypeName ("Main", _namePackage = Seq ("draco")))),
+      _derivation = Seq (TypeName.write (TypeName ("Main", _namePackage = Seq ("draco")))),
       _factory = Factory (
-        Json.fromString ("Generated"),
+        Dracon.string ("Generated"),
         _parameters = Seq (
-          Parameter ("sourceName", Json.fromString ("String"), Json.Null),
-          Parameter ("sinkName", Json.fromString ("String"), Json.Null)
+          Parameter ("sourceName", Dracon.string ("String"), Dracon.Null),
+          Parameter ("sinkName", Dracon.string ("String"), Dracon.Null)
         )
       )
     )

@@ -1,5 +1,9 @@
 type CirceCodecs
   globals
+    fix payloadEncoder draco.format.dracon.Encoder(draco.format.dracon.Dracon) draco.format.dracon.Encoder(\value -> value)
+    fix payloadDecoder draco.format.dracon.Decoder(draco.format.dracon.Dracon) draco.format.dracon.Decoder(\value -> draco.drake.Present(value))
+    fix encodePayload io.circe.Encoder(draco.format.dracon.Dracon) io.circe.Encoder.instance(value => payloadEncoder.encode(value).json)
+    fix decodePayload io.circe.Decoder(draco.format.dracon.Dracon) io.circe.Decoder.instance(cursor => payloadDecoder.decode(draco.format.dracon.Dracon(cursor.value)).fold(Left(io.circe.DecodingFailure("Absent payload", cursor.history)), value => Right(value)))
     dyn encoder(T) draco.format.dracon.Encoder(T) [
       parameters
         par host io.circe.Encoder(T)

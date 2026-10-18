@@ -1,0 +1,58 @@
+Migrate core definition trees to Dracon with explicit payload codec bindings
+
+Dev accepted the core-tree migration scope and explicit payload codec bindings in
+this Codex conversation on 2026-10-17. Starting point: db7e7a8, committed and pushed
+by Dev with a clean tree, verified full baseline 804 tests / 56 suites.
+
+TypeElement.value and valueType, TypeName.typeParameters and DracoAspect.derivation
+now hold Dracon. Move the TypeElement factory signatures and both generated aspect
+renderers with them. Dracon owns neutral construction (string, array, record), null
+and object inspection, field selection, nullable text/list inspection, and structural
+equality/hashCode. TypeName.read/write express its object shape with those operations;
+DracoAspect parents and TypeLoader rooting use them. No Circe Json or cursor names
+remain in the migrated core definitions or the two aspect renderer definitions.
+
+CirceCodecs supplies explicit neutral payload Encoder/Decoder capabilities and host
+adapters. DracoGenerator explicitly binds the four core field names on the scoped
+core owners to those adapters; ordinary Dracon fields keep the existing {"json": ...}
+wrapper codec. Null/empty-string elision and missing-field defaults remain compatible.
+This is a bootstrap binding table in the handwritten generator, not a new codec-aspect
+syntax or a completed target-lexeme declaration language. Those remain future design.
+
+The handwritten Scala parser/generator still operates on Circe trees behind an opt-in
+scalatarget.DefinitionTrees conversion bridge; this does not install implicit payload
+codecs. TypeForm has a Dracon text accessor. Existing host fixtures use that same
+boundary; structural assertions explicitly compare wrapped payloads. The legacy
+Generated.scala bootstrap has no definition trio and now constructs neutral values.
+Definition-backed Scala was regenerated, including the sealed TypeElement family as
+one compilation unit. ActorAspect and BodyElement authored-ahead sources stay intact.
+
+Verification: all main/mods and tests compiled directly with scalac over a fresh copy
+of Dev's compiled classes. Full direct probe: 809 tests, 802 passed, seven failures
+solely from sandbox ZeroMQ socket binds, zero aborted suites. Rerunning the unchanged
+nine-test ZeroMqBridgeTest with local TCP access passed all nine. Direct Runner counts
+its discovery wrapper as a 57th suite; Dev subsequently reported the full sbt gate
+on 2026-10-17: 809 / 56, zero failures or aborted suites, five new tests
+in DraconTest, no new corpus types. This is a full probe plus scoped loopback rerun,
+distinct from Dev's later passing full sbt result. His output confirmed all headlines
+below and zero pending mods actors. No sbt, commit or push run by Codex.
+
+Old and new compiled codecs processed the same 182 current main/mods definition
+JSON documents: every reserialized JSON value was equal. Five focused tests cover
+payload versus wrapper encoding, nested/null payloads, structural identity, named and
+foreign parents, malformed TypeName shapes and binding confinement. All corpus gates
+passed. Report-only figures unchanged: example gen 28/20/0/0 of 48; losses 1 across
+118; parse scope 108+10; aspect sections 108; GenDrake 106/106; PON 80/550/42; canonical
+7; scenario 23 clean; forest 1/2; categorical subtype visibility; file-only pending
+mods actors 0. DrakeCLI check retains only the two known authored-ahead sources
+(surface 2, JSON 1). Initial probes caught incorrect family projection, a null factory
+sentinel, noncanonical indentation, unnecessary boundary imports and old test payload
+comparisons; corrected before the final probe. Unused-import cleanup compiled afterward.
+
+DRACO.md, README, CHANGELOG and DEVELOPMENT_HANDOFF record the implementation and
+Dev's verified gate. .json stays the carrier; .dcon and activation remain deferred.
+Journal coverage still stops at chapter 94; no transcript audit or coverage-marker
+advance claimed for this conversation. No new issues created.
+
+Temporary target probe directories removed after verification. Whitespace and shared
+agent-symlink checks passed. No functional changes followed the final probe.

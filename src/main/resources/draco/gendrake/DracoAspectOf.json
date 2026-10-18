@@ -30,7 +30,7 @@
           "name": "parameterText",
           "valueType": {
             "->": [
-              "Json",
+              "draco.format.dracon.Dracon",
               "draco.drake.Text"
             ]
           }
@@ -40,7 +40,7 @@
           "name": "formText",
           "valueType": {
             "->": [
-              "Json",
+              "draco.format.dracon.Dracon",
               "draco.drake.Text"
             ]
           }
@@ -50,7 +50,7 @@
           "name": "slotText",
           "valueType": {
             "->": [
-              "Json",
+              "draco.format.dracon.Dracon",
               "draco.drake.Text"
             ]
           }
@@ -87,7 +87,7 @@
           "name": "parameterText",
           "valueType": {
             "->": [
-              "Json",
+              "draco.format.dracon.Dracon",
               "draco.drake.Text"
             ]
           },
@@ -98,7 +98,7 @@
           "name": "formText",
           "valueType": {
             "->": [
-              "Json",
+              "draco.format.dracon.Dracon",
               "draco.drake.Text"
             ]
           },
@@ -109,7 +109,7 @@
           "name": "slotText",
           "valueType": {
             "->": [
-              "Json",
+              "draco.format.dracon.Dracon",
               "draco.drake.Text"
             ]
           },
@@ -340,14 +340,9 @@
                             "()": [
                               "guard",
                               {
-                                ".": [
-                                  {
-                                    "()": [
-                                      "parent.hcursor.downField",
-                                      "\"name\""
-                                    ]
-                                  },
-                                  "succeeded"
+                                "()": [
+                                  "parent.has",
+                                  "\"name\""
                                 ]
                               }
                             ]
@@ -356,17 +351,32 @@
                         ]
                       },
                       {
-                        ".": [
+                        "()": [
                           {
-                            "()": [
+                            ".": [
                               {
-                                ".": [
+                                "()": [
+                                  "TypeName.read",
+                                  "parent"
+                                ]
+                              },
+                              "fold"
+                            ]
+                          },
+                          {
+                            "[]": [
+                            ]
+                          },
+                          {
+                            "\\": [
+                              "name",
+                              {
+                                "()": [
                                   {
-                                    "()": [
-                                      "parent.as[TypeName].toOption.filterNot",
+                                    ".": [
                                       {
-                                        "\\": [
-                                          "name",
+                                        "()": [
+                                          "guard",
                                           {
                                             "&&": [
                                               "rootRestored",
@@ -379,16 +389,28 @@
                                             ]
                                           }
                                         ]
-                                      }
+                                      },
+                                      "ifThenElse"
                                     ]
                                   },
-                                  "map"
+                                  {
+                                    "[]": [
+                                    ]
+                                  },
+                                  {
+                                    "[]": [
+                                      {
+                                        "()": [
+                                          "reference",
+                                          "name"
+                                        ]
+                                      }
+                                    ]
+                                  }
                                 ]
-                              },
-                              "reference"
+                              }
                             ]
-                          },
-                          "toSeq"
+                          }
                         ]
                       },
                       {
@@ -480,7 +502,7 @@
         {
           "kind": "Local",
           "name": "factoryType",
-          "valueType": "Json",
+          "valueType": "draco.format.dracon.Dracon",
           "value": {
             "()": [
               {
@@ -496,32 +518,36 @@
               },
               {
                 "()": [
-                  "Json.fromString",
+                  "draco.format.dracon.Dracon.string",
                   "definition.typeName.name"
                 ]
               },
               {
                 "()": [
-                  "Json.obj",
+                  "draco.format.dracon.Dracon.record",
                   {
-                    "(,)": [
-                      "\"()\"",
+                    "[]": [
                       {
-                        "()": [
-                          "Json.fromValues",
+                        "(,)": [
+                          "\"()\"",
                           {
-                            "++": [
+                            "()": [
+                              "draco.format.dracon.Dracon.array",
                               {
-                                "[]": [
+                                "++": [
                                   {
-                                    "()": [
-                                      "Json.fromString",
-                                      "definition.typeName.name"
+                                    "[]": [
+                                      {
+                                        "()": [
+                                          "draco.format.dracon.Dracon.string",
+                                          "definition.typeName.name"
+                                        ]
+                                      }
                                     ]
-                                  }
+                                  },
+                                  "definition.typeName.typeParameters"
                                 ]
-                              },
-                              "definition.typeName.typeParameters"
+                              }
                             ]
                           }
                         ]

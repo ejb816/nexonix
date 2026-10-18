@@ -53,7 +53,7 @@ class DerivationResolvableRulesTest extends AnyFunSuite {
 
   private def dangler(parent: TypeName): TypeDefinition = TypeDefinition(
     TypeName("Dangler", _namePackage = Seq("draco")),
-    _dracoAspect = DracoAspect(_derivation = Seq(TypeName.encoder(parent))))
+    _dracoAspect = DracoAspect(_derivation = Seq(TypeName.write(parent))))
 
   test("DerivationResolvable fires zero Problems on the real Draco dictionary against its own ontology") {
     val domain = draco
@@ -88,7 +88,7 @@ class DerivationResolvableRulesTest extends AnyFunSuite {
     val root = TypeDefinition(TypeName("Root", _namePackage = pkg),
       _domainAspect = DomainAspect(TypeName("Candidate", _namePackage = pkg)))
     val leaf = TypeDefinition(TypeName("Leaf", _namePackage = pkg),
-      _dracoAspect = DracoAspect(_derivation = Seq(TypeName.encoder(root.typeName))),
+      _dracoAspect = DracoAspect(_derivation = Seq(TypeName.write(root.typeName))),
       _domainAspect = DomainAspect(TypeName("Candidate", _namePackage = pkg)))
     val candidate: DomainType = Domain[Any](
       TypeDefinition(TypeName("Candidate", _namePackage = pkg),

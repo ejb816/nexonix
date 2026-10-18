@@ -1,6 +1,8 @@
 package draco
 
-import draco.TypeForm.ValueTypeText
+import draco.scalatarget.DefinitionTrees._
+
+import draco.TypeForm.{ValueTypeText, DraconValueTypeText}
 import io.circe.Json
 
 /** Validates an [[Assembly]] purely from type definitions — no Pekko, no

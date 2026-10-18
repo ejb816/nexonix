@@ -21,7 +21,7 @@
           "draco"
         ],
         "typeParameters": [
-          "Json"
+          "draco.format.dracon.Dracon"
         ]
       }
     ],
@@ -35,8 +35,8 @@
       {
         "kind": "Fixed",
         "name": "valueType",
-        "valueType": "Json",
-        "value": "Json.Null"
+        "valueType": "draco.format.dracon.Dracon",
+        "value": "draco.format.dracon.Dracon.Null"
       },
       {
         "kind": "Fixed",
@@ -47,7 +47,8 @@
           ]
         },
         "value": {
-          "[]": []
+          "[]": [
+          ]
         }
       },
       {
@@ -59,14 +60,15 @@
           ]
         },
         "value": {
-          "[]": []
+          "[]": [
+          ]
         }
       },
       {
         "kind": "Fixed",
         "name": "value",
-        "valueType": "Json",
-        "value": "Json.Null"
+        "valueType": "draco.format.dracon.Dracon",
+        "value": "draco.format.dracon.Dracon.Null"
       },
       {
         "kind": "Fixed",

@@ -1,4 +1,6 @@
 package org.nexonix.format.json
+
+import draco.scalatarget.DefinitionTrees._
 import draco.PersistentTestLog
 
 import draco.{DomainAspect, DracoAspect, Factory, Fixed, DracoGenerator, Parameter, TypeDefinition, TypeElement, TypeName}

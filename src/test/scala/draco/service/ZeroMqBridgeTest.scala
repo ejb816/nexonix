@@ -1,5 +1,7 @@
 package draco.service
 
+import draco.scalatarget.DefinitionTrees._
+
 import draco._
 import draco.service.zeromq.{BridgeRules, PairTextTransport, ZeroMqBridge}
 import io.circe.Json

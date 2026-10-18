@@ -30,7 +30,7 @@
           "name": "parameterText",
           "valueType": {
             "->": [
-              "Json",
+              "draco.format.dracon.Dracon",
               "draco.drake.Text"
             ]
           }
@@ -48,7 +48,7 @@
           "name": "parameterText",
           "valueType": {
             "->": [
-              "Json",
+              "draco.format.dracon.Dracon",
               "draco.drake.Text"
             ]
           },

@@ -65,6 +65,10 @@ object TypeForm {
   }
 
   /** `e.valueType.text` at every consumer that reads the type as text. */
+  implicit class DraconValueTypeText(private val valueType: draco.format.dracon.Dracon) extends AnyVal {
+    def text: String = TypeForm.text(valueType.json)
+  }
+
   implicit class ValueTypeText (private val valueType: Json) extends AnyVal {
     def text: String = TypeForm.text (valueType)
   }

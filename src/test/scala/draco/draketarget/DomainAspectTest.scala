@@ -1,5 +1,7 @@
 package draco.draketarget
 
+import draco.scalatarget.DefinitionTrees._
+
 import draco._
 import draco.gendrake.DomainAspectOf
 import io.circe.Json

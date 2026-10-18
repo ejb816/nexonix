@@ -34,6 +34,237 @@
       },
       {
         "kind": "Dynamic",
+        "name": "isNull",
+        "valueType": "Boolean",
+        "value": "json.isNull"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "isObject",
+        "valueType": "Boolean",
+        "value": "json.isObject"
+      },
+      {
+        "kind": "Dynamic",
+        "name": "textOrEmpty",
+        "valueType": {
+          "()": [
+            "draco.drake.Presence",
+            "draco.drake.Text"
+          ]
+        },
+        "value": {
+          "()": [
+            "presence",
+            {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "guard",
+                        "json.isNull"
+                      ]
+                    },
+                    "ifThenElse"
+                  ]
+                },
+                {
+                  "()": [
+                    "Some",
+                    "\"\""
+                  ]
+                },
+                "json.asString"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "itemsOrEmpty",
+        "valueType": {
+          "()": [
+            "draco.drake.Presence",
+            {
+              "[]": [
+                "Dracon"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "()": [
+            "presence",
+            {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "guard",
+                        "json.isNull"
+                      ]
+                    },
+                    "ifThenElse"
+                  ]
+                },
+                {
+                  "()": [
+                    "Some",
+                    "Seq.empty[Dracon]"
+                  ]
+                },
+                {
+                  "()": [
+                    "json.asArray.map",
+                    {
+                      ".": [
+                        {
+                          "()": [
+                            "_.map",
+                            {
+                              "()": [
+                                "Dracon",
+                                "_"
+                              ]
+                            }
+                          ]
+                        },
+                        "toSeq"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "textsOrEmpty",
+        "valueType": {
+          "()": [
+            "draco.drake.Presence",
+            {
+              "[]": [
+                "draco.drake.Text"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "()": [
+            "presence",
+            {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "guard",
+                        "json.isNull"
+                      ]
+                    },
+                    "ifThenElse"
+                  ]
+                },
+                {
+                  "()": [
+                    "Some",
+                    "Seq.empty[String]"
+                  ]
+                },
+                {
+                  "()": [
+                    "json.asArray.flatMap",
+                    "values => if (values.forall(_.isString)) Some(values.flatMap(_.asString).toSeq) else None"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "has",
+        "valueType": "Boolean",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "name",
+            "valueType": "draco.drake.Text"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Boolean",
+            "value": {
+              "()": [
+                "json.asObject.exists",
+                {
+                  "()": [
+                    "_.contains",
+                    "name"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "field",
+        "valueType": "Dracon",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "name",
+            "valueType": "draco.drake.Text"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Dracon",
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "select",
+                        {
+                          "[]": [
+                            "name"
+                          ]
+                        }
+                      ]
+                    },
+                    "fold"
+                  ]
+                },
+                "Dracon.Null",
+                {
+                  "\\": [
+                    "value",
+                    "value"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
         "name": "select",
         "valueType": {
           "()": [
@@ -211,9 +442,170 @@
           "name": "json",
           "valueType": "Json",
           "value": "_json"
+        },
+        {
+          "kind": "Dynamic",
+          "name": "equals",
+          "valueType": "Boolean",
+          "parameters": [
+            {
+              "kind": "Parameter",
+              "name": "other",
+              "valueType": "Any",
+              "now": true
+            }
+          ],
+          "body": [
+            {
+              "kind": "Case",
+              "name": "value",
+              "valueType": "Dracon",
+              "body": [
+                {
+                  "kind": "Fixed",
+                  "name": "value",
+                  "valueType": "Boolean",
+                  "value": {
+                    "==": [
+                      "json",
+                      "value.json"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Case",
+              "body": [
+                {
+                  "kind": "Fixed",
+                  "name": "value",
+                  "valueType": "Boolean",
+                  "value": "false"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Dynamic",
+          "name": "hashCode",
+          "valueType": "Int",
+          "value": "json.hashCode"
         }
       ]
-    }
+    },
+    "globalElements": [
+      {
+        "kind": "Dynamic",
+        "name": "string",
+        "valueType": "Dracon",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "text",
+            "valueType": "draco.drake.Text",
+            "now": true
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Dracon",
+            "value": {
+              "()": [
+                "Dracon",
+                {
+                  "()": [
+                    "Json.fromString",
+                    "text"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "array",
+        "valueType": "Dracon",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "values",
+            "valueType": {
+              "[]": [
+                "Dracon"
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Dracon",
+            "value": {
+              "()": [
+                "Dracon",
+                {
+                  "()": [
+                    "Json.fromValues",
+                    {
+                      "()": [
+                        "values.map",
+                        "_.json"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "record",
+        "valueType": "Dracon",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "fields",
+            "valueType": {
+              "[]": [
+                {
+                  "(,)": [
+                    "draco.drake.Text",
+                    "Dracon"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Dracon",
+            "value": {
+              "()": [
+                "Dracon",
+                {
+                  "()": [
+                    "Json.obj",
+                    "fields.map { case (name, value) => name -> value.json }: _*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
   },
   "domainAspect": {
     "typeName": {

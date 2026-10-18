@@ -1,12 +1,12 @@
-type TypeElement from Primal(Json)
+type TypeElement from Primal(draco.format.dracon.Dracon)
   modules [
     BodyElement
   ]
   elements
     fix name String ""
-    fix valueType Json Json.Null
+    fix valueType draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
     fix parameters [Parameter] []
     fix body [BodyElement] []
-    fix value Json Json.Null
+    fix value draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
     fix now Boolean false
 domain draco Draco

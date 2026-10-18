@@ -7,7 +7,7 @@ trait DracoAspect extends DracoType {
   val superDomain: TypeName
   val modules: Seq[TypeName]
   val extensible: TypeName
-  val derivation: Seq[Json]
+  val derivation: Seq[draco.format.dracon.Dracon]
   val elements: Seq[TypeElement]
   val factory: Factory
   val globalElements: Seq[BodyElement]
@@ -23,7 +23,7 @@ object DracoAspect extends App with DracoType {
       if (x.superDomain.name.nonEmpty) Some("superDomain" -> x.superDomain.asJson) else None,
       if (x.modules.nonEmpty) Some("modules" -> x.modules.asJson) else None,
       if (x.extensible.name.nonEmpty) Some("extensible" -> x.extensible.asJson) else None,
-      if (x.derivation.nonEmpty) Some("derivation" -> x.derivation.asJson) else None,
+      if (x.derivation.nonEmpty) Some("derivation" -> Json.fromValues(x.derivation.map(draco.scalatarget.CirceCodecs.encodePayload.apply))) else None,
       if (x.elements.nonEmpty) Some("elements" -> x.elements.asJson) else None,
       if (!x.factory.valueType.isNull) Some("factory" -> x.factory.asJson) else None,
       if (x.globalElements.nonEmpty) Some("globalElements" -> x.globalElements.asJson) else None
@@ -35,7 +35,7 @@ object DracoAspect extends App with DracoType {
       _superDomain <- cursor.downField("superDomain").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
       _modules <- cursor.downField("modules").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
       _extensible <- cursor.downField("extensible").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
-      _derivation <- cursor.downField("derivation").as[Option[Seq[Json]]].map(_.getOrElse(Seq.empty))
+      _derivation <- cursor.downField("derivation").as[Option[Seq[Json]]].map(_.getOrElse(Seq.empty)).flatMap(value => io.circe.Decoder.decodeSeq(draco.scalatarget.CirceCodecs.decodePayload).decodeJson(value.asJson))
       _elements <- cursor.downField("elements").as[Option[Seq[TypeElement]]].map(_.getOrElse(Seq.empty))
       _factory <- cursor.downField("factory").as[Option[Factory]].map(_.getOrElse(Factory.Null))
       _globalElements <- cursor.downField("globalElements").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
@@ -46,7 +46,7 @@ object DracoAspect extends App with DracoType {
     _superDomain: => TypeName = TypeName.Null,
     _modules: => Seq[TypeName] = Seq.empty,
     _extensible: => TypeName = TypeName.Null,
-    _derivation: => Seq[Json] = Seq.empty,
+    _derivation: => Seq[draco.format.dracon.Dracon] = Seq.empty,
     _elements: => Seq[TypeElement] = Seq.empty,
     _factory: => Factory = Factory.Null,
     _globalElements: => Seq[BodyElement] = Seq.empty
@@ -54,7 +54,7 @@ object DracoAspect extends App with DracoType {
     override lazy val superDomain: TypeName = _superDomain
     override lazy val modules: Seq[TypeName] = _modules
     override lazy val extensible: TypeName = _extensible
-    override lazy val derivation: Seq[Json] = _derivation
+    override lazy val derivation: Seq[draco.format.dracon.Dracon] = _derivation
     override lazy val elements: Seq[TypeElement] = _elements
     override lazy val factory: Factory = _factory
     override lazy val globalElements: Seq[BodyElement] = _globalElements
@@ -64,6 +64,6 @@ object DracoAspect extends App with DracoType {
   lazy val Null: DracoAspect = apply()
 
   lazy val isEmpty: DracoAspect => Boolean = da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty
-  lazy val parents: DracoAspect => Seq[TypeName] = da => da.derivation.filter(_.hcursor.downField("name").succeeded).flatMap(_.as[TypeName].toOption)
-  lazy val foreignParents: DracoAspect => Seq[Json] = da => da.derivation.filterNot(_.hcursor.downField("name").succeeded)
+  lazy val parents: DracoAspect => Seq[TypeName] = da => da.derivation.filter(parent => parent.has("name")).flatMap(parent => TypeName.read(parent).fold(Seq.empty, name => Seq(name)))
+  lazy val foreignParents: DracoAspect => Seq[draco.format.dracon.Dracon] = da => da.derivation.filterNot(parent => parent.has("name"))
 }

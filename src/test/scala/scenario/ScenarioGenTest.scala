@@ -1,7 +1,9 @@
 package scenario
 
+import draco.scalatarget.DefinitionTrees._
+
 import draco._
-import draco.TypeForm.ValueTypeText
+import draco.TypeForm.{ValueTypeText, DraconValueTypeText}
 import io.circe.Printer
 import org.scalatest.funsuite.AnyFunSuite
 

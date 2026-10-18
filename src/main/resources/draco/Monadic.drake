@@ -1,7 +1,7 @@
 type Monadic from BodyElement
   factory
     parameters
-      par value Json
+      par value draco.format.dracon.Dracon
     body
-      fix value Json _value
+      fix value draco.format.dracon.Dracon _value
 domain draco Draco

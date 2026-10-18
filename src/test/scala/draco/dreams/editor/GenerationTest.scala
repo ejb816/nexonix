@@ -1,5 +1,7 @@
 package draco.dreams.editor
 
+import draco.scalatarget.DefinitionTrees._
+
 import draco._
 import draco.dreams.editor.{Generated => GenerationResponse}
 import draco.dreams.user.{Create, Generate, Read, Request, Response, Update}

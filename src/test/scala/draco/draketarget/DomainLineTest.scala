@@ -1,5 +1,7 @@
 package draco.draketarget
 
+import draco.scalatarget.DefinitionTrees._
+
 import draco._
 import io.circe.Json
 import org.scalatest.funsuite.AnyFunSuite
@@ -43,12 +45,12 @@ class DomainLineTest extends AnyFunSuite with PersistentTestLog {
     val surface = TypeLoader.loadType(TypeName("Surface", Seq("draco", "draketarget")))
     val line = TypeLoader.loadType(TypeName("DomainLine", Seq("draco", "draketarget")))
     val mapped = TypeLoader.loadType(TypeName("DomainLineOf", Seq("draco", "gendrake")))
-    assert(DracoAspect.parents(surface.dracoAspect).find(_.name == "Primal").get.typeParameters == Seq(text))
-    assert(surface.dracoAspect.factory.parameters.map(_.valueType) == Seq(text))
-    assert(line.dracoAspect.factory.parameters.map(_.valueType) ==
+    assert(DracoAspect.parents(surface.dracoAspect).find(_.name == "Primal").get.typeParameters.map(_.json) == Seq(text))
+    assert(surface.dracoAspect.factory.parameters.map(_.valueType.json) == Seq(text))
+    assert(line.dracoAspect.factory.parameters.map(_.valueType.json) ==
       Seq(Json.obj("[]" -> Json.arr(text)), text))
     Seq(line, mapped).foreach { td =>
-      assert(td.dracoAspect.factory.body.find(_.name == "value").get.valueType == text)
+      assert(td.dracoAspect.factory.body.find(_.name == "value").get.valueType.json == text)
     }
     assert(Surface("\u00e9").value == "\u00e9")
     assert(DomainLine(Seq("draco", "draketarget"), "DrakeTarget").value == "domain draco draketarget DrakeTarget")

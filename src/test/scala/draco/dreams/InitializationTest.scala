@@ -1,5 +1,7 @@
 package draco.dreams
 
+import draco.scalatarget.DefinitionTrees._
+
 import draco._
 import draco.dreams.user.{Create, Latent}
 import io.circe.syntax._

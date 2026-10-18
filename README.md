@@ -561,10 +561,15 @@ Activation is deferred while Dracon is developed. `draco.format.dracon.Dracon` n
 explicitly. ScalaTarget's CirceCodecs adapts supplied Circe instances to the neutral functions. Generic
 Format.Value selects a wrapped value through Presence; Dracon.Value decodes a selection with the
 supplied decoder. Missing paths skip decoding; incompatible input returns Absent. The raw Circe value
-and cursor code remain in the wrapper seam. Migrating core Json expression trees and declaring custom
-codec-field operators remain later steps; no six-form value family was introduced. `.json` remains the
+and cursor code remain in the wrapper seam. Core definition-tree fields now hold Dracon, with explicit
+payload bindings preserving their existing JSON representation. TypeName and derivation inspection
+use neutral operations; the handwritten parser/generator retains a Scala boundary bridge to Circe.
+Declarative codec-field operators remain a later step; no six-form value family was introduced. `.json` remains the
 carrier extension, with `.dcon` deferred. Dev reported the full gate on 2026-10-16: **804 tests / 56 suites**,
-zero failed or aborted, with all report-only figures matching the updated baselines.
+zero failed or aborted, with all report-only figures matching the updated baselines, committed as db7e7a8.
+Dev's full gate for the subsequent core-tree migration passed **809 / 56**, reported 2026-10-17,
+with zero failures or aborts and all report-only figures unchanged. The old/new codec comparison
+also preserved all 182 definition wire values.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation is explicit; activation remains ahead. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
 [ZeroMQ integration proposal](src/mods/ZEROMQ_CODEC_CONTRACT.md).

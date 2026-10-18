@@ -1,5 +1,7 @@
 package draco
 
+import draco.scalatarget.DefinitionTrees._
+
 import org.scalatest.funsuite.AnyFunSuite
 
 /** Exercises [[DomainBuilder]] against the canonical first-party draco domains.

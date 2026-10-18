@@ -88,4 +88,60 @@ class DraconTest extends AnyFunSuite {
     assert(TypeLoader.tryLoad(TypeName("JSON", Seq("draco", "format", "json"))).fold(true, _ => false))
     assert(draco.scalatarget.ScalaTarget.elementTypeNames == Seq("CirceCodecs"))
   }
+
+  test("definition tree payload codecs preserve nested JSON without wrapper envelopes") {
+    val wire = io.circe.parser.parse("""{"kind":"Fixed","name":"x","valueType":{"[]":["Text"]},"value":{"call":["f",null,{"json":42}]}}""").toOption.get
+    val value = wire.as[draco.TypeElement].toOption.get
+    assert(value.value.json == wire.hcursor.downField("value").focus.get)
+    assert(value.asJson == wire)
+    assert(draco.scalatarget.CirceCodecs.encodePayload(value.value) == value.value.json)
+    assert(draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value.value.json).toOption.contains(value.value))
+    assert(value.value.asJson == Json.obj("json" -> value.value.json))
+  }
+
+  test("wrapped type parameters keep structural identity and bare parameter wire values") {
+    val argument = Json.obj("[]" -> Json.arr(Json.fromString("Text")))
+    val first = TypeName("F", Seq("example"), Seq(Dracon(argument)))
+    val second = TypeName("F", Seq("example"), Seq(Dracon(argument)))
+    assert(first == second)
+    assert(first.hashCode == second.hashCode)
+    assert(Set(first, second).size == 1)
+    assert(first.asJson.hcursor.downField("typeParameters").focus.contains(Json.arr(argument)))
+    assert(first.asJson.as[TypeName].toOption.contains(first))
+    assert(TypeName.write(first).json == first.asJson)
+    assert(TypeName.read(TypeName.write(first)).fold(false, _ == first))
+  }
+
+  test("neutral parent inspection distinguishes named and foreign derivations") {
+    val named = TypeName("Parent", Seq("example"), Seq(Dracon.string("T")))
+    val foreign = Dracon.record(Seq("{}" -> Dracon.array(Seq(Dracon.string("K"), Dracon.string("V")))))
+    val aspect = draco.DracoAspect(_derivation = Seq(TypeName.write(named), foreign))
+    assert(draco.DracoAspect.parents(aspect) == Seq(named))
+    assert(draco.DracoAspect.foreignParents(aspect) == Seq(foreign))
+    assert(aspect.asJson.hcursor.downField("derivation").focus.contains(Json.arr(named.asJson, foreign.json)))
+    assert(aspect.asJson.as[draco.DracoAspect].toOption.get.derivation == aspect.derivation)
+  }
+
+  test("neutral TypeName reading matches the existing codec on missing and malformed fields") {
+    val cases = Seq("{}", "null", "[]", "42", "{\"name\":null}", "{\"name\":42}",
+      "{\"namePackage\":[\"draco\",null]}", "{\"typeParameters\":42}",
+      "{\"typeParameters\":[null,{\"json\":1}]}")
+    cases.foreach { text =>
+      val json = io.circe.parser.parse(text).toOption.get
+      val expected = json.as[TypeName].toOption
+      val actual = TypeName.read(Dracon(json)).fold(Option.empty[TypeName], value => Some(value))
+      assert(actual == expected, text)
+    }
+  }
+
+  test("payload binding is limited to core definition fields") {
+    val td = draco.TypeDefinition(TypeName("External", Seq("example")),
+      _dracoAspect = draco.DracoAspect(
+        _elements = Seq(draco.Fixed("value", Dracon.string("draco.format.dracon.Dracon"))),
+        _factory = draco.Factory(Dracon.string("External"), Seq(draco.Parameter("value", Dracon.string("draco.format.dracon.Dracon"), Dracon.Null)))))
+    val generated = draco.DracoGenerator.generate(td)
+    assert(!generated.contains("CirceCodecs.encodePayload"))
+    assert(!generated.contains("CirceCodecs.decodePayload"))
+    assert(generated.contains("x.value.asJson"))
+  }
 }

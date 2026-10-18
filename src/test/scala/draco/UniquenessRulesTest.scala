@@ -1,5 +1,7 @@
 package draco
 
+import draco.scalatarget.DefinitionTrees._
+
 import org.evrete.KnowledgeService
 import org.evrete.api.{ActivationMode, Knowledge, RhsContext}
 import org.scalatest.funsuite.AnyFunSuite

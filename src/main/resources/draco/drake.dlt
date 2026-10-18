@@ -778,3 +778,8 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
   Generic Format.Value(F) selects Presence(F), without a host decoder constraint;
   Dracon.Value adds decode(T)(source, decoder). This uses existing type/function forms,
   not new surface syntax or codec-field selectors. .json remains; .dcon is deferred.
+
+2026-10-17 — Core definition-tree fields now hold draco.format.dracon.Dracon. Explicit
+payload codec bindings preserve their JSON carrier shape; ordinary wrapper serialization
+is unchanged. Neutral construction and inspection replace Json/cursor references in the
+migrated definitions. No grammar change, codec-aspect syntax or .dcon extension migration.

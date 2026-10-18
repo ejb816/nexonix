@@ -1,5 +1,7 @@
 package draco
 
+import draco.scalatarget.DefinitionTrees._
+
 import io.circe.{Json, JsonObject, parser}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -254,7 +256,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
-    val value  = parsed.dracoAspect.elements.head.value
+    val value  = parsed.dracoAspect.elements.head.value.json
     val expected = Json.obj("()" -> Json.arr(
       Json.fromString("Position"),
       Json.fromString("cursor"),
@@ -305,7 +307,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |domain draco draketarget DrakeTarget
         |""".stripMargin
     val parsed   = Drake.parse(authored)
-    val value    = parsed.dracoAspect.factory.body.head.value
+    val value    = parsed.dracoAspect.factory.body.head.value.json
     val expected = Json.obj("++" -> Json.arr(
       Json.fromString("\"domain \""),
       Json.obj("()" -> Json.arr(Json.fromString("packagePart"), Json.fromString("package"))),
@@ -343,7 +345,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
-    val values = parsed.dracoAspect.elements.map(e => e.name -> e.value).toMap
+    val values = parsed.dracoAspect.elements.map(e => e.name -> e.value.json).toMap
     def leaf(s: String) = Json.fromString(s)
     assert(values("product") == Json.obj("==" -> Json.arr(Json.obj("*" -> Json.arr(leaf("i1"), leaf("i2"))), leaf("i3"))),
       s"product: ${values("product").noSpaces}")
@@ -388,7 +390,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
-    val values = parsed.dracoAspect.elements.map(e => e.name -> e.value).toMap
+    val values = parsed.dracoAspect.elements.map(e => e.name -> e.value.json).toMap
     def leaf(s: String) = Json.fromString(s)
     def node(op: String, xs: Json*) = Json.obj(op -> Json.arr(xs: _*))
     assert(values("redundant") == node("||", leaf("a"), node("&&", leaf("b"), leaf("c"))), values("redundant").noSpaces)
@@ -406,7 +408,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     val once  = TypeDefinition.encoder(parsed).spaces2
     val twice = TypeDefinition.encoder(Drake.parse(emitted)).spaces2
     if (once != twice) fail("parse(emit(parse(text))) drifted from parse(text)." + diffReport(once, twice, "once", "twice"))
-    val scala = values.view.mapValues(DracoGenerator.expression).toMap
+    val scala = values.view.mapValues(value => DracoGenerator.expression(value)).toMap
     assert(scala("redundant") == "a || b && c", scala("redundant"))
     assert(scala("needed") == "(a || b) && c", scala("needed"))
     assert(scala("sum") == "xs ++ (n + 1)", scala("sum"))
@@ -430,7 +432,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
-    val values = parsed.dracoAspect.elements.map(e => e.name -> e.value).toMap
+    val values = parsed.dracoAspect.elements.map(e => e.name -> e.value.json).toMap
     def leaf(s: String) = Json.fromString(s)
     def node(op: String, xs: Json*) = Json.obj(op -> Json.arr(xs: _*))
     assert(values("text") == node("()", leaf("bracket"), node("()", leaf("open"), leaf("path")),
@@ -462,9 +464,9 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
-    val Seq(names, handlers, curried, buffer, _) = parsed.dracoAspect.elements.map(_.valueType)
+    val Seq(names, handlers, curried, buffer, _) = parsed.dracoAspect.elements.map(_.valueType.json)
     // A collection LITERAL in value position is the `[]` node with its members (2026-09-20).
-    val tail = parsed.dracoAspect.elements.last.value
+    val tail = parsed.dracoAspect.elements.last.value.json
     assert(tail == Json.obj("[]" -> Json.arr(Json.fromString("x"), Json.fromString("y"))), tail.noSpaces)
     assert(DracoGenerator.expression(tail) == "Seq(x, y)", DracoGenerator.expression(tail))
     // The collection sugar is carried NEUTRALLY: the bracket is the node key, and no
@@ -498,11 +500,11 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
-    assert(parsed.typeName.typeParameters == Seq(
+    assert(parsed.typeName.typeParameters.map(_.json) == Seq(
       Json.obj("<:" -> Json.arr(Json.fromString("S"), Json.fromString("DomainType"))),
       Json.fromString("T")), parsed.typeName.typeParameters.map(_.noSpaces).mkString(", "))
     val holon = DracoAspect.parents(parsed.dracoAspect).find(_.name == "Holon").getOrElse(fail("Holon not derived"))
-    assert(holon.typeParameters == Seq(Json.obj("(,)" -> Json.arr(Json.fromString("S"), Json.fromString("T")))),
+    assert(holon.typeParameters.map(_.json) == Seq(Json.obj("(,)" -> Json.arr(Json.fromString("S"), Json.fromString("T")))),
       holon.typeParameters.map(_.noSpaces).mkString(", "))
     val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))
     if (handNorm != roundNorm)
