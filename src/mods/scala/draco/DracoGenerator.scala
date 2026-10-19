@@ -337,6 +337,15 @@ object DracoGenerator extends App {
     * rewritten in place by targetTypes; they are spelled at each render site instead. */
   private def typeParameterScala (parameter: Json) : String = targetType(parameter).text
 
+  private def methodName(d: Dynamic): String = {
+    MethodTypeParameters.validate(d)
+    if (d.typeParameters.isEmpty) d.name
+    else d.name + d.typeParameters.map { p =>
+      p.name + (if (p.lowerBound.isNull) "" else " >: " + typeParameterScala(p.lowerBound.json)) +
+        (if (p.upperBound.isNull) "" else " <: " + typeParameterScala(p.upperBound.json))
+    }.mkString("[", ", ", "]")
+  }
+
   /** Parameterized name from TypeName: "Primal[T]" or "Primal" if no typeParameters. */
   private def parameterizedName (tn: TypeName) : String = {
     val base = tn.name
@@ -447,7 +456,7 @@ object DracoGenerator extends App {
         if (m.name.nonEmpty) s"      var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
         else s"      ${expression(m.value)}"
       case d: Dynamic =>
-        if (d.name.nonEmpty) s"      def ${d.name}: ${d.valueType.text} = ${initializer(d.valueType.text, d.value)}"
+        if (d.name.nonEmpty) s"      def ${methodName(d)}: ${d.valueType.text} = ${initializer(d.valueType.text, d.value)}"
         else s"      ${expression(d.value)}"
       case l: Local =>
         // A construction-local intermediate. Every other body renderer
@@ -699,8 +708,8 @@ object DracoGenerator extends App {
           else s"  var ${m.name}: ${m.valueType.text}"
         case d: Dynamic =>
           val result = expression(d.value)
-          if (d.body.nonEmpty || result.nonEmpty) s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, result, scrutinee = dynScrutinee(d), parameters = d.parameters)}"
-          else s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text}"
+          if (d.body.nonEmpty || result.nonEmpty) s"  def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, result, scrutinee = dynScrutinee(d), parameters = d.parameters)}"
+          else s"  def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text}"
         case mo: Monadic =>
           // Verbatim Scala source — for declarations that exceed the
           // Fixed/Mutable/Dynamic vocabulary (method type params, implicit
@@ -752,7 +761,7 @@ object DracoGenerator extends App {
       if (factory.body.nonEmpty) factory.body.map {
         case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
         case m: Mutable => s"    override var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
-        case d: Dynamic => s"    override def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), methodIndent = 4, scrutinee = dynScrutinee(d), parameters = d.parameters)}"
+        case d: Dynamic => s"    override def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), methodIndent = 4, scrutinee = dynScrutinee(d), parameters = d.parameters)}"
         case mo: Monadic => s"    ${expression(mo.value)}"
         case l: Local   => s"    ${binding(l)} ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
         case _: Case    => sys.error("draco: a case-branch is not admitted in a factory body (drake.dlt CASE-BRANCH: an actor's message, or a dyn-with-body)")
@@ -784,7 +793,7 @@ object DracoGenerator extends App {
           val init = if (rendered.isEmpty) s"null.asInstanceOf[${m.valueType.text}]" else rendered
           s"  var ${m.name}: ${m.valueType.text} = $init"
         case d: Dynamic =>
-          s"  def ${d.name}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), scrutinee = dynScrutinee(d), parameters = d.parameters)}"
+          s"  def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, expression(d.value), scrutinee = dynScrutinee(d), parameters = d.parameters)}"
         case mo: Monadic =>
           // Indent every line so multi-line global blocks (encoder/decoder/etc.)
           // emit at the correct object-body indent level.
@@ -1334,7 +1343,7 @@ object DracoGenerator extends App {
       val nullMembers = elements.map {
         case f: Fixed => s"    override val ${f.name}: ${f.valueType.text} = null.asInstanceOf[${f.valueType.text}]"
         case m: Mutable => s"    override var ${m.name}: ${m.valueType.text} = null.asInstanceOf[${m.valueType.text}]"
-        case d: Dynamic => s"    override def ${d.name}: ${d.valueType.text} = null.asInstanceOf[${d.valueType.text}]"
+        case d: Dynamic => s"    override def ${methodName(d)}: ${d.valueType.text} = null.asInstanceOf[${d.valueType.text}]"
         case p: Parameter => s"    override val ${p.name}: ${p.valueType.text} = null.asInstanceOf[${p.valueType.text}]"
         case te: TypeElement => s"    override val ${te.name}: ${te.valueType.text} = null.asInstanceOf[${te.valueType.text}]"
       }
@@ -1917,7 +1926,15 @@ object DracoGenerator extends App {
     // scan looked one level down.
     val actionBodies = (td.ruleAspect.action +: Seq(td.actorAspect.start, td.actorAspect.message, td.actorAspect.signal))
       .flatMap(a => if (a == null) Seq.empty else a.body.flatMap(e => e.valueType.text +: e.body.map(_.valueType.text)))
-    val allValueTypes = td.dracoAspect.elements.map(_.valueType.text) ++
+    def formalBounds(e: TypeElement): Seq[String] = {
+      val own = e match {
+        case d: Dynamic => d.typeParameters.flatMap(p =>
+          Seq(p.lowerBound, p.upperBound).filterNot(_.isNull).map(b => typeParameterScala(b.json)))
+        case _ => Seq.empty
+      }
+      own ++ e.body.flatMap(formalBounds)
+    }
+    val allValueTypes = methodShaped.flatMap(formalBounds) ++ td.dracoAspect.elements.map(_.valueType.text) ++
       actionBodies ++
       td.dracoAspect.factory.parameters.map(_.valueType.text) ++
       td.dracoAspect.factory.body.map(_.valueType.text) ++
@@ -2123,7 +2140,7 @@ object DracoGenerator extends App {
     case x: Parameter => targetParameter(x)
     case x: Variable  => targetVariable(x)
     case x: Dynamic   => Dynamic(x.name, targetType(x.valueType),
-                                 x.parameters.map(targetParameter), x.body.map(targetBody), x.value, _now = x.now)
+                                 x.parameters.map(targetParameter), x.body.map(targetBody), x.value, _now = x.now, _typeParameters = x.typeParameters)
     case x: Factory   => Factory(targetType(x.valueType),
                                  x.parameters.map(targetParameter), x.body.map(targetBody))
     case x: Pattern   => Pattern(x.variables.map(targetVariable), x.conditions)

@@ -574,6 +574,16 @@ zero failed or aborted, with all report-only figures matching the updated baseli
 Dev's full gate for the subsequent core-tree migration passed **809 / 56**, reported 2026-10-17,
 with zero failures or aborts and all report-only figures unchanged. The old/new codec comparison
 also preserved all 182 definition wire values; that increment is committed as d169b0e.
+Method formal parameters now have their own TypeParameter records: a name plus optional
+upper/lower bounds represented as Dracon type forms. Dynamic.typeParameters defaults empty;
+the method name contains no target syntax. For example, Drake's updated(V1 >: V) has JSON
+name "updated" and typeParameters [{"name":"V1","lowerBound":"V"}]. Its Scala spelling stays
+updated[V1 >: V]. TypeName's existing actual/header argument representation is unchanged.
+The ten existing generic method declarations have migrated. The direct full compiled probe
+passed 825 tests with zero failures or aborts. Dev's full sbt gate confirmed **825 / 57** on 2026-10-19, zero failures or aborts.
+One new corpus type moves scope to 109+10, surface measurement to 119 (still one loss),
+aspect sections to 109 and GenDrake to 107/107; all other report figures are unchanged.
+
 The payload-declaration increment passed a direct 815-test probe with local TCP access. Dev's
 full sbt gate on 2026-10-19 confirmed **815 / 56**, zero failures or aborts, with all report-only
 figures unchanged, including zero pending mods actors. Its metadata adds only the

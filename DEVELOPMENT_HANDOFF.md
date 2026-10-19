@@ -4,12 +4,49 @@ This is the shared resumption checkpoint for Claude Code and Codex, not an addit
 architecture specification or a transcript. Follow DRACO.md section 7 and verify this
 snapshot against the current tree before acting.
 
-## Current payload declarations — 2026-10-18, Codex
+## Current method-formal increment — 2026-10-19, Codex
+
+Started from clean main at f97c913; Dev confirmed commit/push and 815 / 56 with all
+headlines matching. The payload increment below is now historical.
+
+Dev accepted returning to #51, separating method names from formal declarations, then
+the TypeParameter record with name and optional upperBound/lowerBound as Dracon type forms.
+Implemented Dynamic.typeParameters (empty default), TypeParameter trio and Draco membership,
+parser/emitter/Scala projection and migration of ten declarations across six JSON definitions.
+Their authored Drake remains unchanged; regenerated Scala is unchanged except the new record,
+Dynamic's family codec and root domain membership. Missing fields decode to empty/null;
+payload-bound upper/lower fields carry raw type forms. No TypeName actual/header migration.
+Legacy Dynamic names embedding brackets are rejected by projection; migrate using Drake.parse.
+Context-bound syntax is not introduced. Five focused tests plus five new corpus tests:
+Dev confirmed **825 / 57** on 2026-10-19, zero failed/canceled/ignored/pending tests,
+zero aborted suites and all headlines matching. Work remains uncommitted. Final full direct compiled probe: 825 passed, zero failed,
+canceled, ignored or pending tests, zero aborted suites; Runner counts 58 with discovery.
+Local TCP access included all loopback fixtures. Parse scope 109+10, one loss across 119,
+109 aspect sections, GenDrake 107/107; every other report unchanged and file-only pending
+mods actors zero. DrakeCLI check retains only ActorAspect/BodyElement authored-ahead drift
+(surface 2, JSON 1). Temporary probe directories removed after verification.
+
+The first full probe exposed the test helper's assumption that every typeParameters list
+contains type forms. Dynamic now contains records; the helper compares those records exactly.
+A preliminary test assumed nested method grammar; that unrelated grammar extension was
+removed from this increment. No sbt, commit, push or issue changes by Codex.
+
+Next authorized action: Dev runs the scoped commit/push commands. Only verification prose
+changed after his passing gate; no retest is required. After commit, continue #51 with one remaining design point,
+not another stopping point at commit confirmation. The old priority-next label covered the
+already-completed August derivation edge. TypeName formal/actual representation and remaining
+neutral vocabulary need reconciliation with current code before proposing their next increment.
+.dcon and activation remain deferred. Journal remains chapter 94; this conversation is not
+transcript-audited/journaled and no coverage markers advance.
+Record: `git-record-2026-10-19-1254`.
+
+## Prior payload declarations — verified and committed as f97c913
 
 Observed main at d169b0e, locally clean before this increment; Dev's pasted output confirms
 commit and push. Dev's full sbt gate on 2026-10-19 verifies the new baseline **815 / 56**,
 zero failed, canceled, ignored or pending tests and zero aborted suites. All report-only
-headlines match, including zero pending mods actors. The new work remains uncommitted.
+headlines match, including zero pending mods actors. Dev committed and pushed this payload
+increment as f97c913; the remaining paragraphs preserve its pre-commit checkpoint.
 
 Dev accepted codec-aspect ownership, then `codec payload [field, otherField]` and its
 canonical `codecAspect.payload` list. CodecAspect adds payload [Text], default empty,

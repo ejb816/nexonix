@@ -14,6 +14,17 @@
         ]
       }
     ],
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "typeParameters",
+        "valueType": {
+          "[]": [
+            "TypeParameter"
+          ]
+        }
+      }
+    ],
     "factory": {
       "kind": "Factory",
       "valueType": "Dynamic",
@@ -65,6 +76,19 @@
           "name": "now",
           "valueType": "Boolean",
           "value": "false"
+        },
+        {
+          "kind": "Parameter",
+          "name": "typeParameters",
+          "valueType": {
+            "[]": [
+              "TypeParameter"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
         }
       ],
       "body": [
@@ -111,6 +135,16 @@
           "name": "now",
           "valueType": "Boolean",
           "value": "_now"
+        },
+        {
+          "kind": "Fixed",
+          "name": "typeParameters",
+          "valueType": {
+            "[]": [
+              "TypeParameter"
+            ]
+          },
+          "value": "_typeParameters"
         }
       ]
     }

@@ -29,7 +29,7 @@
     "elements": [
       {
         "kind": "Dynamic",
-        "name": "fold[R]",
+        "name": "fold",
         "valueType": "R",
         "parameters": [
           {
@@ -47,11 +47,16 @@
               ]
             }
           }
+        ],
+        "typeParameters": [
+          {
+            "name": "R"
+          }
         ]
       },
       {
         "kind": "Dynamic",
-        "name": "ifThenElse[R]",
+        "name": "ifThenElse",
         "valueType": "R",
         "parameters": [
           {
@@ -63,6 +68,11 @@
             "kind": "Parameter",
             "name": "elseBranch",
             "valueType": "R"
+          }
+        ],
+        "typeParameters": [
+          {
+            "name": "R"
           }
         ]
       }

@@ -67,7 +67,7 @@
       },
       {
         "kind": "Dynamic",
-        "name": "updated[V1 >: V]",
+        "name": "updated",
         "valueType": {
           "{}": [
             "K",
@@ -105,6 +105,12 @@
                 "value"
               ]
             }
+          }
+        ],
+        "typeParameters": [
+          {
+            "name": "V1",
+            "lowerBound": "V"
           }
         ]
       },

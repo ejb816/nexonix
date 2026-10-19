@@ -1,0 +1,39 @@
+Separate method names from structured TypeParameter declarations
+
+Dev accepted the #51 scope and TypeParameter(name, upperBound, lowerBound) shape.
+Bounds use Dracon type forms; absent bounds are Null and elide through owner-declared
+payload codecs. Dynamic adds typeParameters defaulting empty. TypeName arguments remain
+unchanged; the older issue's flat-atomic proposal is not silently implemented.
+
+Parse and emit the same Drake method syntax, but carry plain names and formal records
+in canonical JSON. Generate target signatures only at Scala render sites; preserve
+formals through strictness and target-type normalization, and scan bounds for imports.
+Reject duplicate/invalid formals, malformed bounds and legacy name-embedded generics.
+No Scala context-bound syntax; capability requirements stay explicit parameters.
+
+Migrate ten methods across Dictionary, Dracon Value, Presence/Present/Absent and
+CirceCodecs. Their Drake surfaces and generated Scala signatures stay unchanged.
+Generate the TypeParameter trio, Dynamic trio/sealed family and root domain membership.
+All changed generated sources come from GeneratorCLI, not manual edits.
+
+Five new focused tests cover structured bounds/codec round-trip, missing-field defaults,
+compiled/executed generic methods, strictness, and rejection. One new corpus definition
+adds five more tests. Dev's full sbt gate on 2026-10-19 confirmed 825 / 57, from 815 / 56 at f97c913,
+zero failed/canceled/ignored/pending tests and zero aborted suites.
+Final full direct ScalaTest probe: 825 passed, zero failed/canceled/ignored/pending,
+zero aborted suites; Runner counts 58 including discovery. All main/mods/test sources
+compiled directly. Local TCP fixtures pass. Parse scope 109+10, surface loss still one
+across 119 types, aspect sections 109, GenDrake 107/107. Example map 28/20/0/0 of 48,
+PON 80/550/42, canonical 7, scenario 23 clean, forest 1/2, subtype categorical report
+unchanged, file-only pending mods actors 0. DrakeCLI check keeps only the two known
+authored-ahead surfaces and one JSON difference. Dev's pasted headlines confirm every figure above, including the file-only zero.
+Whitespace and shared symlink checks pass; temporary probe directories removed.
+Initial full probe exposed the round-trip helper assuming
+all typeParameters arrays contain expressions; Dynamic's formal records now compare
+exactly. A preliminary nested-method test assumed unsupported grammar and was scoped
+back to strict methods; no unrelated grammar expansion remains.
+
+Update the spec, README, DRACO, handoff and changelog together. After gate/commit return
+to #51's remaining representation/vocabulary questions one design point at a time.
+No sbt, commit, push or issue changes by Codex. Journal remains chapter 94; this
+conversation has no transcript audit and no coverage markers advance.

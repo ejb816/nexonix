@@ -23,7 +23,7 @@
     "elements": [
       {
         "kind": "Dynamic",
-        "name": "decode[T]",
+        "name": "decode",
         "valueType": {
           "()": [
             "draco.drake.Presence",
@@ -88,6 +88,11 @@
                 }
               ]
             }
+          }
+        ],
+        "typeParameters": [
+          {
+            "name": "T"
           }
         ]
       }

@@ -55,6 +55,7 @@ domain draco Draco
     TypeDictionary
     TypeElement
     TypeLoader
+    TypeParameter
     TypeName
     TypeTransform
     Uniqueness

@@ -49,6 +49,11 @@ for the definition that will replace it.
 
 ### Added
 
+- **Structured method formals.** Dynamic now carries TypeParameter records with a name and
+  optional Dracon upper/lower bounds, replacing parameter syntax embedded in method names.
+  Ten declarations retain their Drake surface and generated Scala signatures.
+
+
 - **Declared Dracon payload fields.** `codec payload [field, otherField]` now carries
   `codecAspect.payload` in canonical JSON. Generation uses the owning definitions' lists
   instead of a core-type allowlist, while preserving existing payload and wrapper wire formats.

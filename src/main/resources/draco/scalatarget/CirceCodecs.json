@@ -89,7 +89,7 @@
       },
       {
         "kind": "Dynamic",
-        "name": "encoder[T]",
+        "name": "encoder",
         "valueType": {
           "()": [
             "draco.format.dracon.Encoder",
@@ -140,11 +140,16 @@
               ]
             }
           }
+        ],
+        "typeParameters": [
+          {
+            "name": "T"
+          }
         ]
       },
       {
         "kind": "Dynamic",
-        "name": "decoder[T]",
+        "name": "decoder",
         "valueType": {
           "()": [
             "draco.format.dracon.Decoder",
@@ -199,6 +204,11 @@
                 }
               ]
             }
+          }
+        ],
+        "typeParameters": [
+          {
+            "name": "T"
           }
         ]
       }

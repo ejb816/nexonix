@@ -147,6 +147,9 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         // A valueType is a string or a type-form tree and the surface spells both one
         // way; the JSON round-trip compares that spelling until the corpus is trees.
         case ("valueType", v) => "valueType" -> Json.fromString(Drake.typeSurface(v))
+        // Dynamic formals are records, not TypeName's type-form arguments.
+        case ("typeParameters", v) if obj("kind").flatMap(_.asString).contains("Dynamic") =>
+          "typeParameters" -> v
         case ("typeParameters", v) => "typeParameters" -> Json.fromValues(v.asArray.getOrElse(Vector.empty).map(p => Json.fromString(Drake.typeSurface(p))))
         case (key, v) => key -> surfaceCarried(v)
       })))

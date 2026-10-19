@@ -358,7 +358,17 @@ DYN-WITH-BODY  (a Dynamic element/global carrying parameters and a body — i.e.
   meant to add polymorphism (an overridable member), never a different body syntax. The body syntax is
   now the same for a factory and a dyn; that fix/mut may take parameters and a body on the same terms
   is agreed and deferred.
-  A method type-parameter rides the name via the ( ) convention: `dyn updated(V1 >: V) ...` -> name "updated[V1 >: V]".
+  METHOD FORMALS (2026-10-19): `dyn updated(V1 >: V) ...` keeps name "updated" and
+  carries typeParameters [{"name": "V1", "lowerBound": "V"}] on Dynamic.
+  TypeParameter has name: Text and optional upperBound/lowerBound: Dracon type forms;
+  absent bounds default to Dracon.Null and elide. Missing typeParameters defaults to [].
+  Surface: name(T, U >: Lower <: Upper), with lower before upper when both occur.
+  Bounds use the existing structural type forms, including applications/collections/arrows.
+  Names must be identifiers, formals unique; empty/repeated bounds and context bounds fail.
+  Scala projection alone writes updated[V1 >: V]. Legacy Dynamic names containing parameter
+  syntax are rejected by projection; reparse their unchanged Drake source to migrate.
+  TypeName.typeParameters still carries its existing Dracon actual/header arguments.
+  This method-formal change does not impose the old flat-atomic representation on those slots.
   Valid wherever an element list is: elements, factory body, globalElements.
 
 CASE-BRANCH  (a Case element: an ordered branch on which SIBLING SUBTYPE of a scrutinee arrived)

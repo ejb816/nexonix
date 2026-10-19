@@ -224,8 +224,16 @@ object Drake {
     * so DrakeParseTest can compare the two eras by their one surface. */
   def typeSurface (valueType: Json) : String = typeExpressionSlot(valueType)
 
-  /** Element name to drake surface: a method type-parameter rides the name via
-    * the ( ) convention — JSON "updated[V1 >: V]" -> drake updated(V1 >: V). */
+  /** Method formals are records; only the surface appends their declarations to the name. */
+  private def methodName(d: Dynamic): String = {
+    MethodTypeParameters.validate(d)
+    if (d.typeParameters.isEmpty) d.name
+    else d.name + d.typeParameters.map { p =>
+      p.name + (if (p.lowerBound.isNull) "" else " >: " + TypeForm.text(p.lowerBound.json)) +
+        (if (p.upperBound.isNull) "" else " <: " + TypeForm.text(p.upperBound.json))
+    }.mkString("(", ", ", ")")
+  }
+
   private def elementName (name: String) : String = {
     val idx = name.indexOf('[')
     if (idx < 0 || !name.endsWith("]")) name
@@ -271,7 +279,7 @@ object Drake {
   private def leafLines (indent: String, keyword: String, element: TypeElement) : Seq[String] =
     element match {
       case _: Monadic | _: Condition => Seq(valueLine(s"$indent$keyword", element.value))
-      case e => Seq(valueLine(s"$indent$keyword ${elementName(e.name)} ${typeExpressionSlot(e.valueType)}", e.value))
+      case e => Seq(valueLine(s"$indent$keyword ${(e match { case d: Dynamic => methodName(d); case _ => elementName(e.name) })} ${typeExpressionSlot(e.valueType)}", e.value))
     }
 
   /** The element's keyword, prefixed `now ` when it is marked strict (drake.dlt
@@ -307,7 +315,7 @@ object Drake {
     else element match {
       case c: Case => caseLines(c, indent, level)
       case d: Dynamic =>
-      val header = s"$indent${keyword(d)} ${elementName(d.name)} ${typeExpressionSlot(d.valueType)} ["
+      val header = s"$indent${keyword(d)} ${methodName(d)} ${typeExpressionSlot(d.valueType)} ["
       val parameters =
         if (d.parameters.isEmpty) Seq.empty
         else sectionLines("parameters", d.parameters, level + 1)
@@ -825,6 +833,26 @@ object Drake {
     else (token.substring (0, idx), splitTypeArguments (token.substring (idx + 1, token.length - 1)))
   }
 
+  private def checkedDynamic(d: Dynamic): Dynamic = { MethodTypeParameters.validate(d); d }
+
+  private def parseMethodFormal(text: String): TypeParameter = {
+    val upper = splitTopArrow(text, " <: ")
+    require(upper.size <= 2, s"Drake.parse: repeated upper bound in '$text'")
+    val lower = splitTopArrow(upper.head, " >: ")
+    require(lower.size <= 2, s"Drake.parse: repeated lower bound in '$text'")
+    val name = lower.head.trim
+    require(name.matches("[A-Za-z_][A-Za-z0-9_]*"), s"Drake.parse: invalid formal '$text'")
+    def bound(parts: Seq[String]): Json =
+      if (parts.size == 1) Json.Null else {
+        require(parts(1).trim.nonEmpty, s"Drake.parse: empty bound in '$text'")
+        val tree = typeForm(parts(1))
+        require(!TypeForm.text(tree).contains("<:") && !TypeForm.text(tree).contains(">:"),
+          s"Drake.parse: malformed bound in '$text'")
+        tree
+      }
+    TypeParameter(name, bound(upper), bound(lower))
+  }
+
   /** Invert elementName: a method type-parameter rides the name via ( ) on the
     * drake surface — `updated(V1 >: V)` -> JSON "updated[V1 >: V]". */
   private def parseElementName (token: String) : String = {
@@ -1042,10 +1070,11 @@ object Drake {
         val valueType = takeValueType (c)
         Variable (name, valueType)
       case "dyn" =>
-        val name      = parseElementName (c.takeText ())
+        val (name, formalTexts) = splitApplied(c.takeText())
+        val formals = formalTexts.map(parseMethodFormal)
         val valueType = takeValueType (c)
         // A dyn-with-body opens with `[`; a leaf dyn carries its result inline.
-        if (!c.at ("[")) { val value = parseValue (c); Dynamic (name, valueType, Seq.empty, Seq.empty, value) }
+        if (!c.at ("[")) { val value = parseValue (c); checkedDynamic(Dynamic (name, valueType, Seq.empty, Seq.empty, value, _typeParameters = formals)) }
         else {
           c.take ()
           val parameters = parseSection (c, "parameters", Set ("par", "now")).map (_.asInstanceOf[Parameter])
@@ -1053,7 +1082,7 @@ object Drake {
           // result (drake.dlt DYN-WITH-BODY); a block dyn has no value of its own.
           val body       = if (!c.at ("body")) Seq.empty else { c.take (); statements (c) }
           c.expect ("]")
-          Dynamic (name, valueType, parameters, body, Json.Null)
+          checkedDynamic(Dynamic (name, valueType, parameters, body, Json.Null, _typeParameters = formals))
         }
       case "case" =>
         // A case-branch (drake.dlt CASE-BRANCH): up to two tokens before its `[` — a
@@ -1096,7 +1125,7 @@ object Drake {
     case e: Mutable   => Mutable (e.name, e.valueType, e.value, _now = true)
     case e: Local     => Local (e.name, e.valueType, e.value, _now = true)
     case e: Parameter => Parameter (e.name, e.valueType, e.value, _now = true)
-    case e: Dynamic   => Dynamic (e.name, e.valueType, e.parameters, e.body, e.value, _now = true)
+    case e: Dynamic   => Dynamic (e.name, e.valueType, e.parameters, e.body, e.value, _now = true, _typeParameters = e.typeParameters)
     case e            => sys.error (s"Drake.parse: `now` applies to a binding, a parameter or a method, not to '${e.getClass.getSimpleName}'")
   }
 

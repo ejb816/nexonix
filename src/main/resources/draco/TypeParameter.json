@@ -1,0 +1,64 @@
+{
+  "typeName": {
+    "name": "TypeParameter",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "name",
+        "valueType": "draco.drake.Text"
+      },
+      {
+        "kind": "Fixed",
+        "name": "upperBound",
+        "valueType": "draco.format.dracon.Dracon"
+      },
+      {
+        "kind": "Fixed",
+        "name": "lowerBound",
+        "valueType": "draco.format.dracon.Dracon"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "TypeParameter",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "name",
+          "valueType": "draco.drake.Text"
+        },
+        {
+          "kind": "Parameter",
+          "name": "upperBound",
+          "valueType": "draco.format.dracon.Dracon",
+          "value": "draco.format.dracon.Dracon.Null"
+        },
+        {
+          "kind": "Parameter",
+          "name": "lowerBound",
+          "valueType": "draco.format.dracon.Dracon",
+          "value": "draco.format.dracon.Dracon.Null"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  },
+  "codecAspect": {
+    "payload": [
+      "upperBound",
+      "lowerBound"
+    ]
+  }
+}

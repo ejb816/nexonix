@@ -41,6 +41,9 @@ object TypeElement extends App with DracoType {
       if (!x.value.isNull && x.value.textOrEmpty.fold(true, _.nonEmpty)) Some("value" -> draco.scalatarget.CirceCodecs.encodePayload(x.value)) else None,
       if (x.now) Some("now" -> x.now.asJson) else None
     ).flatten ++ (x match {
+      case x: Dynamic => Seq(
+        if (x.typeParameters.nonEmpty) Some("typeParameters" -> x.typeParameters.asJson) else None
+      ).flatten
       case x: Pattern => Seq(
         if (x.variables.nonEmpty) Some("variables" -> x.variables.asJson) else None,
         if (x.conditions.nonEmpty) Some("conditions" -> x.conditions.asJson) else None
@@ -78,7 +81,8 @@ object TypeElement extends App with DracoType {
           _body <- cursor.downField("body").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
           _value <- cursor.downField("value").as[Option[Json]].map(_.getOrElse(Json.Null)).flatMap(value => draco.scalatarget.CirceCodecs.decodePayload.decodeJson(value))
           _now <- cursor.downField("now").as[Option[Boolean]].map(_.getOrElse(false))
-        } yield Dynamic (_name, _valueType, _parameters, _body, _value, _now)
+          _typeParameters <- cursor.downField("typeParameters").as[Option[Seq[TypeParameter]]].map(_.getOrElse(Seq.empty))
+        } yield Dynamic (_name, _valueType, _parameters, _body, _value, _now, _typeParameters)
 
       case "Parameter" =>
         for {
@@ -225,7 +229,9 @@ object Mutable extends App with DracoType {
 
 }
 
-trait Dynamic extends BodyElement
+trait Dynamic extends BodyElement {
+  val typeParameters: Seq[TypeParameter]
+}
 
 object Dynamic extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Dynamic", _namePackage = Seq ("draco")))
@@ -242,7 +248,8 @@ object Dynamic extends App with DracoType {
     _parameters: => Seq[Parameter] = Seq.empty,
     _body: => Seq[BodyElement] = Seq.empty,
     _value: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
-    _now: => Boolean = false
+    _now: => Boolean = false,
+    _typeParameters: => Seq[TypeParameter] = Seq.empty
   ) : Dynamic = new Dynamic {
     override lazy val name: String = _name
     override lazy val valueType: draco.format.dracon.Dracon = _valueType
@@ -250,6 +257,7 @@ object Dynamic extends App with DracoType {
     override lazy val body: Seq[BodyElement] = _body
     override lazy val value: draco.format.dracon.Dracon = _value
     override lazy val now: Boolean = _now
+    override lazy val typeParameters: Seq[TypeParameter] = _typeParameters
     override lazy val typeDefinition: TypeDefinition = Dynamic.typeDefinition
   }
 
@@ -259,7 +267,8 @@ object Dynamic extends App with DracoType {
     _parameters = Seq.empty,
     _body = Seq.empty,
     _value = draco.format.dracon.Dracon.Null,
-    _now = false
+    _now = false,
+    _typeParameters = Seq.empty
   )
 
 

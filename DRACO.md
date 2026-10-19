@@ -49,8 +49,11 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**825 tests / 57 suites**, verified by Dev on 2026-10-19 for structured method formals
+(record `git-record-2026-10-19-1254`), uncommitted: ten added tests, zero failures or aborts,
+all headlines matching the updated table, including zero pending mods actors. Before it:
 **815 tests / 56 suites**, verified by Dev on 2026-10-19 for the payload-declaration
-increment (record `git-record-2026-10-18-1731`), still uncommitted: six new tests, zero
+increment committed and pushed as f97c913 (record `git-record-2026-10-18-1731`): six new tests, zero
 failed, canceled, ignored or pending tests, zero aborted suites, every report-only
 headline unchanged, including zero pending mods actors in the file-only log. Before it:
 **809 tests / 56 suites**, verified by Dev's full run reported on 2026-10-17 for the
@@ -118,8 +121,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 1 field across 118 types — type form 1 (ActorAspect), expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 108 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 1 field across 119 types — type form 1 (ActorAspect), expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 109 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -719,6 +722,31 @@ including the Runner's discovery wrapper); Dev's full sbt gate on 2026-10-19 con
 no new corpus types. All report-only figures unchanged. Of 182 reserialized definition inputs,
 only the three owners gain payload metadata; existing wire fields are unchanged. Main DrakeCLI
 check retains only the known authored-ahead drift. The verified full baseline is now 815 / 56. Record: `git-record-2026-10-18-1731`.
+
+**Method formal parameters (2026-10-19, Codex; Dev verified 825 / 57).** Dev accepted separating
+method names from formal declarations, then TypeParameter(name: Text, upperBound: Dracon,
+lowerBound: Dracon), bounds absent as Dracon.Null. Dynamic adds typeParameters [TypeParameter],
+default empty. Bounds carry existing type-form trees, not host parameter text. Drake retains
+updated(V1 >: V), while JSON carries name "updated" and a formal record. Scala alone assembles
+its bracketed signature. All ten name-embedded method declarations migrated; their Drake
+surfaces and Scala signatures stay unchanged. TypeName's header/actual arguments remain
+[Dracon]; this does not implement the older flat-atomic proposal for that field.
+Parser/projection reject duplicate/invalid formals, malformed bounds and legacy generic
+Dynamic names. Context bounds are not introduced; codecs remain explicit capabilities.
+A new corpus type adds five corpus tests; MethodTypeParameterTest adds five focused tests.
+Direct full probe: 825 passed, zero failed or aborted (58 suites including discovery);
+Dev confirmed the full sbt gate **825 / 57** on 2026-10-19, zero failures or aborts. Parse scope 109+10; one loss across 119; aspect sections
+109, GenDrake 107/107, zero pending mods actors, every other report headline unchanged.
+The table reflects this verified corpus growth; the full baseline is now 825 / 57. DrakeCLI retains only the two known authored-ahead surfaces.
+Record: `git-record-2026-10-19-1254`.
+
+**#51 continuation.** The issue's priority-next label was scoped to the derivation edge
+completed in August; it is not evidence that every proposal in its older comments remains
+current. Type-form trees, neutral collection operators, Presence/Text and Dracon supersede
+parts of that discussion. Structured method formals close its name-overflow gap. After this
+increment's gate and commit, return to #51's remaining formal/actual representation and
+neutral vocabulary questions with one design point for Dev; do not end at commit confirmation
+or silently adopt the old flat TypeParameter migration. Activation and .dcon remain deferred.
 
 **Deferred activation (Dev, 2026-10-15).** Dev asked to preserve Codex's unaccepted recommendation:
 start an explicitly supplied Assembly of held actor definitions, using factory-supplied executable
