@@ -19,9 +19,8 @@ import scala.util.Using
  *
  *  Plain types and rules are covered; every type maps to its base-name `.drake`
  *  (AddNaturalSequence.json -> AddNaturalSequence.drake). Rule-/actor-ness is
- *  carried by the aspect, not a name suffix. A file that grows a codec aspect will
- *  fail its test loudly (Drake.emit rejects it) — the signal to build that
- *  increment. */
+ *  carried by the aspect, not a name suffix. Codec payload lists are covered;
+ *  unsupported discriminator syntax still fails loudly rather than being dropped. */
 class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
 
   /** Excluded from comparison — hand-authored surface deliberately AHEAD of the

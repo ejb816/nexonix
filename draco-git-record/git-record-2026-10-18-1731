@@ -1,0 +1,56 @@
+Declare Dracon payload bindings in the owning type's codec aspect
+
+Dev accepted moving payload-binding declarations into the owning type's codec aspect,
+then accepted `codec payload [field, otherField]` and canonical codecAspect.payload
+on 2026-10-18. Started from d169b0e, confirmed committed/pushed by Dev and locally
+clean, at the verified full sbt baseline 809 tests / 56 suites.
+
+CodecAspect gains payload [Text], default empty, included in isEmpty. Drake parses
+compact/multiline field-name lists and emits the canonical codec section. Duplicate
+sections/names, malformed lists and invalid identifiers fail at parse. Empty lists
+elide. Discriminator/encoder/decoder Drake clauses remain unsupported and fail loudly;
+the broader selector design in drake.dlt is explicitly labeled future syntax.
+
+Declare typeParameters on TypeName, derivation on DracoAspect, and valueType/value on
+TypeElement, which owns those fields for its family. Regenerate each trio and the
+sealed family: TypeName, DracoAspect and TypeElement Scala stay byte-identical. Only
+CodecAspect's generated Scala changes. DracoGenerator reads owner declarations and
+ancestor bindings, including in-memory family definitions, replacing its core-name
+allowlist. Unknown fields, duplicates, non-Dracon/non-sequence field types, and a
+sealed subtype attempting to rebind a shared field away from its owner fail during
+generation. Payload declarations select representation within existing codec
+eligibility; they do not yet implement codec selectors or arbitrary custom codecs.
+ScalaTarget/CirceCodecs continues to own the executable payload bindings.
+
+Six tests added: two DrakeParseTest syntax/JSON round-trip and rejection tests; four
+DraconTest generation/validation tests. Compiled, executed fixtures outside the core
+package cover scalar and sequence payloads, null/empty/Boolean/number/array/object
+values, an unlisted wrapped field, and a sealed family. Removing TypeName's declaration
+removes its payload binding, so the former core-name behavior cannot silently survive.
+Payload-only codec aspects stay inside all corpus parse gates; no exclusions added.
+
+Verification: all main/mods and tests compiled directly with scalac over a fresh copy
+of Dev's compiled classes. Final full ScalaTest probe with local TCP access: 815 tests
+passed, zero failed/canceled/ignored/pending, zero aborted suites. Runner counts its
+discovery wrapper as suite 57. Dev confirmed the full sbt gate on 2026-10-19:
+815 tests / 56 suites (809 + 6), zero failed/canceled/ignored/pending tests and zero
+aborted suites; every report-only headline unchanged, file-only pending mods actors 0. No sbt,
+commit or push run by Codex. Earlier probes caught the compact-list lexer distinction
+and fixture-only missing domain/typeDefinition members; corrected. The intermediate
+sandbox run also had seven socket-bind failures; final TCP-enabled full probe passed
+all tests together, including ZeroMQ. Temporary probe class directories removed;
+whitespace and documentation symlink checks pass.
+
+Old/new compiled codecs processed the same 182 current main/mods definition JSON
+inputs. Exactly three acquire codecAspect.payload metadata; every existing field wire
+value remains identical. Main DrakeCLI check retains only the known ActorAspect and
+BodyElement authored-ahead differences (surface 2, JSON 1). All report-only figures
+unchanged: example gen 28/20/0/0 of 48; losses 1 across 118; parse scope 108+10 with
+zero held back; aspect sections 108; GenDrake 106/106; PON 80/550/42; canonical 7;
+scenario 23 clean; forest 1/2; categorical subtype visibility; file-only pending mods
+actors 0. The table needs no number changes.
+
+Update DRACO.md, README, CHANGELOG, handoff and drake.dlt. The verified Dev full baseline
+is now 815 / 56. .dcon and activation remain deferred.
+Journal coverage remains chapter 94; this Codex conversation has not been journaled
+or transcript-audited, and no coverage markers advance. No new issues created.

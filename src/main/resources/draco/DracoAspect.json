@@ -284,5 +284,10 @@
         "draco"
       ]
     }
+  },
+  "codecAspect": {
+    "payload": [
+      "derivation"
+    ]
   }
 }

@@ -10,3 +10,5 @@ type TypeElement from Primal(draco.format.dracon.Dracon)
     fix value draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
     fix now Boolean false
 domain draco Draco
+codec
+  payload [valueType, value]

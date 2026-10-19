@@ -49,6 +49,10 @@ for the definition that will replace it.
 
 ### Added
 
+- **Declared Dracon payload fields.** `codec payload [field, otherField]` now carries
+  `codecAspect.payload` in canonical JSON. Generation uses the owning definitions' lists
+  instead of a core-type allowlist, while preserving existing payload and wrapper wire formats.
+
 - **Explicit dracon codecs.** Encoder(T) supplies T -> Dracon and Decoder(T) supplies
   Dracon -> Presence(T), with CirceCodecs adapters in ScalaTarget. The new DraconTest covers
   explicit capabilities, target bindings, safe path selection, lazy decoding and JSON wire codecs.

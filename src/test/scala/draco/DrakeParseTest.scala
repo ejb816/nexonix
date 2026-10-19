@@ -45,8 +45,8 @@ import scala.util.Using
  *     than a note.
  *
  *  Covered: the plain-type template plus the rule and actor aspects, over TWO corpora
- *  — the draco types and the mods actors. Only the codec aspect is held back —
- *  `Drake.parse` rejects it loudly — and the held-back types are listed by the report
+ *  — the draco types and the mods actors. Only unsupported codec clauses are held back —
+ *  `Drake.parse` rejects them loudly — and the held-back types are listed by the report
  *  test so the next increment's worklist stays visible. */
 class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
 
@@ -98,16 +98,16 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     f"\n        $leftLabel%-60s | $rightLabel\n" + rows.mkString("\n")
   }
 
-  // --- Scope: everything but the codec aspect ---
+  // --- Scope: includes codec payload lists; discriminator syntax remains unsupported ---
 
-  private def carriesCodecAspect(td: TypeDefinition): Boolean =
-    !CodecAspect.isEmpty(td.codecAspect)
+  private def carriesUnsupportedCodecAspect(td: TypeDefinition): Boolean =
+    td.codecAspect.discriminator.nonEmpty
 
   private val allPaths: Seq[String] = discoverResourcePaths()
 
-  /** A path is in scope when its JSON carries no codec aspect and it has a .drake. */
+  /** A path is in scope when its JSON carries no unsupported codec fields and it has a .drake. */
   private val parsedPaths: Seq[String] =
-    allPaths.filterNot(rp => carriesCodecAspect(loadTypeDefinition(rp)))
+    allPaths.filterNot(rp => carriesUnsupportedCodecAspect(loadTypeDefinition(rp)))
       .filter(rp => readDrake(deriveDrakePath(rp)).isDefined)
 
   /** DrakeGenTest's own exclusions: hand-authored surface deliberately AHEAD of the
@@ -185,7 +185,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     if (Files.isRegularFile(path)) Some(new String(Files.readAllBytes(path))) else None
   }
 
-  /** Every mods definition with an authored .drake and no codec aspect — the same
+  /** Every mods definition with an authored .drake and no unsupported codec clause — the same
    *  scope rule the draco walk uses. */
   private val modsPaths: Seq[String] = {
     val domainsDir = modsResourceRoot.resolve("domains")
@@ -198,7 +198,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         .toList
         .sorted
     }.filter(rp => readModsDrake(deriveDrakePath(rp)).isDefined)
-      .filterNot(rp => carriesCodecAspect(loadModsTypeDefinition(rp)))
+      .filterNot(rp => carriesUnsupportedCodecAspect(loadModsTypeDefinition(rp)))
   }
 
   /** Held out of gate 2 only. A TUPLE argument carrying an application inside it —
@@ -616,14 +616,37 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
   }
 
   test("types held back from Drake.parse (report only)") {
-    val codecAspect = allPaths.filter(rp => carriesCodecAspect(loadTypeDefinition(rp)))
+    val codecAspect = allPaths.filter(rp => carriesUnsupportedCodecAspect(loadTypeDefinition(rp)))
     val noDrake     = allPaths.filter(rp => readDrake(deriveDrakePath(rp)).isEmpty)
-    log.info(s"carrying a codec aspect (${codecAspect.size}): ${codecAspect.mkString(", ")}")
+    log.info(s"carrying an unsupported codec aspect (${codecAspect.size}): ${codecAspect.mkString(", ")}")
     log.info(s"lacking a .drake (${noDrake.size}): ${noDrake.mkString(", ")}")
     log.info(s"mods in scope (${modsPaths.size}): ${modsPaths.mkString(", ")}")
     log.info(s"mods held out of the JSON gate (${inlineTupleArgument.size}): ${inlineTupleArgument.mkString(", ")}")
     console.info(s"Drake.parse scope: ${parsedPaths.size} draco + ${modsPaths.size} mods types in, " +
       s"${codecAspect.size} codec-aspect + ${noDrake.size} drake-less held back")
     succeed
+  }
+
+  test("codec payload field lists round-trip in Drake and canonical JSON") {
+    val source = "type Probe domain example Example codec payload [atom, many]"
+    val parsed = Drake.parse(source)
+    assert(parsed.codecAspect.payload == Seq("atom", "many"))
+    val wire = TypeDefinition.encoder(parsed)
+    assert(wire.hcursor.downField("codecAspect").downField("payload").as[Seq[String]].toOption.contains(Seq("atom", "many")))
+    assert(TypeDefinition.encoder(Drake.parse(Drake.emit(parsed))) == wire)
+    assert(Drake.parse(source.replace("[atom, many]", "[ atom,\n many ]")).codecAspect.payload == parsed.codecAspect.payload)
+    assert(Drake.parse(source.replace("[atom, many]", "[atom]")).codecAspect.payload == Seq("atom"))
+    assert(CodecAspect.isEmpty(Drake.parse(source.replace("[atom, many]", "[]")).codecAspect))
+    assert(CodecAspect.decoder.decodeJson(io.circe.Json.obj()).toOption.get.payload.isEmpty)
+  }
+
+  test("codec payload syntax rejects duplicate sections, duplicate names and unsupported clauses") {
+    val prefix = "type Probe domain example Example "
+    Seq("codec payload [atom, atom]", "codec payload [atom] codec payload [many]",
+      "codec payload atom", "codec payload [a.b]", "codec discriminator kind",
+      "payload [atom]", "codec", "codec payload [atom", "codec payload [atom,,many]", "codec payload [,atom]", "codec payload [atom,]").foreach { suffix =>
+      intercept[RuntimeException](Drake.parse(prefix + suffix))
+    }
+    intercept[RuntimeException](Drake.emit(TypeDefinition(TypeName("Probe"), _codecAspect = CodecAspect("tag"))))
   }
 }

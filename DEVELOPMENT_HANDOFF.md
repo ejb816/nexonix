@@ -4,12 +4,49 @@ This is the shared resumption checkpoint for Claude Code and Codex, not an addit
 architecture specification or a transcript. Follow DRACO.md section 7 and verify this
 snapshot against the current tree before acting.
 
-## Current core-tree migration — 2026-10-17, Codex
+## Current payload declarations — 2026-10-18, Codex
+
+Observed main at d169b0e, locally clean before this increment; Dev's pasted output confirms
+commit and push. Dev's full sbt gate on 2026-10-19 verifies the new baseline **815 / 56**,
+zero failed, canceled, ignored or pending tests and zero aborted suites. All report-only
+headlines match, including zero pending mods actors. The new work remains uncommitted.
+
+Dev accepted codec-aspect ownership, then `codec payload [field, otherField]` and its
+canonical `codecAspect.payload` list. CodecAspect adds payload [Text], default empty,
+and isEmpty includes it. Drake handles compact/multiline lists, emits the canonical section,
+and rejects duplicates/malformed declarations. Generator validation rejects unknown fields,
+incompatible types and sealed-family representation conflicts. The three owners declare
+TypeName.typeParameters, DracoAspect.derivation and TypeElement.valueType/value. Their Scala
+projections stay byte-identical. Inherited fields retain owner bindings; no core-name list
+remains. CirceCodecs still supplies the target bindings. Other codec Drake clauses and broader
+selector semantics remain unimplemented; existing codec eligibility is unchanged.
+
+All main/mods and tests compiled directly. Final full ScalaTest probe with local TCP access:
+**815 passed, zero failed or aborted**, 57 suites including discovery; Dev subsequently confirmed
+**815 / 56** with sbt, six tests added (DrakeParseTest +2, DraconTest +4), no new corpus types.
+Earlier probes caught compact-list tokenization and missing fixture domain/typeDefinition
+members; the final full run includes all TCP tests passing together. All headlines unchanged:
+108+10 scope, one loss across 118, 108 aspect sections, GenDrake 106/106, example map 28/20/0/0,
+PON 80/550/42, canonical 7, scenario 23 clean, forest 1/2, categorical subtype visibility,
+file-only pending mods actors 0. Comparing 182 wire documents found only the intended three
+codecAspect.payload additions; existing field values remain identical. DrakeCLI check keeps
+only ActorAspect/BodyElement's known authored-ahead drift (surface 2, JSON 1).
+
+Next action: Dev commits and pushes using the path-scoped commands. Only verification
+prose changed after his passing gate; no further test run is needed. Temporary probe class
+directories have been removed; whitespace and documentation symlink checks pass. Record: `git-record-2026-10-18-1731`. No sbt, commit,
+push or new issues by Codex. .dcon and activation stay deferred. Journal remains chapter 94;
+this conversation has not been transcript-audited/journaled, and no markers advance.
+Probe logs and compatibility comparisons are transient /tmp artifacts. Prior checkpoints
+below are historical and superseded by this section.
+
+## Prior core-tree migration — verified and committed as d169b0e
 
 Observed main at db7e7a8; Dev's pasted output confirms the previous wrapper increment was
 committed and pushed with a clean tree. Dev reported the current migration's full sbt
 gate on 2026-10-17: **809 / 56**, zero failed, canceled, ignored or pending tests,
-zero aborted suites. Every headline matches the figures below. The migration is uncommitted. Dev accepted both the
+zero aborted suites. Every headline matches the figures below. Dev then committed and
+pushed the migration as d169b0e with clean final status; this section preserves the earlier evidence. Dev accepted both the
 core-tree scope and explicit payload codec bindings; .dcon and activation stay deferred.
 
 TypeElement.value/valueType, TypeName.typeParameters and DracoAspect.derivation use Dracon.

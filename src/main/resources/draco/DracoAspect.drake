@@ -21,3 +21,5 @@ type DracoAspect
     fix parents (DracoAspect -> [TypeName]) \da -> da.derivation.filter(\parent -> parent.has("name")).flatMap(\parent -> TypeName.read(parent).fold([], \name -> [name]))
     fix foreignParents (DracoAspect -> [draco.format.dracon.Dracon]) \da -> da.derivation.filterNot(\parent -> parent.has("name"))
 domain draco Draco
+codec
+  payload [derivation]

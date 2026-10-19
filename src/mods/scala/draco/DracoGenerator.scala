@@ -878,14 +878,14 @@ object DracoGenerator extends App {
 
   // --- Codec generation helpers ---
 
-  private def elisionCheck (p: Parameter, bound: Boolean = false) : Option[String] = {
+  private def elisionCheck (p: Parameter, bound: Set[String] = Set.empty) : Option[String] = {
     if (expression(p.value).isEmpty) None  // required field — always encode
     else p.valueType.text match {
       case "String"                    => Some(s"x.${p.name}.nonEmpty")
       case s if s.startsWith("Seq[")   => Some(s"x.${p.name}.nonEmpty")
       case s if s.startsWith("Map[")   => Some(s"x.${p.name}.nonEmpty")
       case "Json"                      => Some(jsonNonEmpty(p.name))
-      case "draco.format.dracon.Dracon" if payloadField(p, bound) => Some(s"!x.${p.name}.isNull && x.${p.name}.textOrEmpty.fold(true, _.nonEmpty)")
+      case "draco.format.dracon.Dracon" | "Dracon" if payloadField(p, bound) => Some(s"!x.${p.name}.isNull && x.${p.name}.textOrEmpty.fold(true, _.nonEmpty)")
       // A Boolean's natural emptiness is false: `now` (TypeElement) elides unless set.
       case "Boolean"                   => Some(s"x.${p.name}")
       case "Factory"                   => Some(s"!x.${p.name}.valueType.isNull")
@@ -906,12 +906,12 @@ object DracoGenerator extends App {
   /** Default wire-elision test for a field with a natural emptiness, used in
     * discriminated unions when `elisionCheck` (default-bearing params) does
     * not apply. */
-  private def defaultElision (p: Parameter, bound: Boolean = false) : Option[String] = p.valueType.text match {
+  private def defaultElision (p: Parameter, bound: Set[String] = Set.empty) : Option[String] = p.valueType.text match {
     case "String"                  => Some(s"x.${p.name}.nonEmpty")
     case s if s.startsWith("Seq[") => Some(s"x.${p.name}.nonEmpty")
     case s if s.startsWith("Map[") => Some(s"x.${p.name}.nonEmpty")
     case "Json"                    => Some(jsonNonEmpty(p.name))
-    case "draco.format.dracon.Dracon" if payloadField(p, bound) => Some(s"!x.${p.name}.isNull && x.${p.name}.textOrEmpty.fold(true, _.nonEmpty)")
+    case "draco.format.dracon.Dracon" | "Dracon" if payloadField(p, bound) => Some(s"!x.${p.name}.isNull && x.${p.name}.textOrEmpty.fold(true, _.nonEmpty)")
     case "Boolean"                 => Some(s"x.${p.name}")
     case _                         => None
   }
@@ -974,17 +974,55 @@ object DracoGenerator extends App {
     }.toSet
   }
 
-  // Explicit payload bindings for definition trees. Other Dracon-valued fields
-  // continue to use the wrapper codec, including application message payloads.
-  private def payloadOwner(td: TypeDefinition): Boolean =
-    td.typeName.namePackage == Seq("draco") && Set("TypeName", "DracoAspect", "TypeElement", "BodyElement",
-      "Fixed", "Mutable", "Local", "Parameter", "Factory", "Variable", "Case", "Dynamic", "Monadic", "Condition").contains(baseName(td.typeName.name))
+  // Payload representation is declared by the field owner. A subtype retains
+  // the representation of its inherited fields; no core-name allowlist is involved.
+  private def payloadBindings(td: TypeDefinition, familyMap: Map[String, TypeDefinition] = Map.empty,
+                              seen: Set[String] = Set.empty): Set[String] =
+    if (seen(td.typeName.namePath)) Set.empty
+    else td.codecAspect.payload.toSet ++ DracoAspect.parents(td.dracoAspect).filterNot(_.name == "DracoType").flatMap { parent =>
+      payloadBindings(familyMap.getOrElse(baseName(parent.name), loadType(parent)), familyMap, seen + td.typeName.namePath)
+    }
 
-  private def payloadField(p: Parameter, bound: Boolean): Boolean =
-    bound && Set("value", "valueType", "typeParameters", "derivation").contains(p.name) &&
-      p.valueType.text.contains("draco.format.dracon.Dracon")
+  private def payloadField(p: Parameter, bound: Set[String]): Boolean = bound.contains(p.name)
 
-  private def encodedField(p: Parameter, bound: Boolean): String = {
+  private def validatePayload(td: TypeDefinition, familyMap: Map[String, TypeDefinition]): Unit = {
+    val declared = td.codecAspect.payload
+    require(declared.distinct.size == declared.size, s"Duplicate codec payload field in ${td.typeName.namePath}")
+    def fields(current: TypeDefinition, seen: Set[String]): Map[String, String] = {
+      if (seen(current.typeName.namePath)) Map.empty
+      else {
+        val inherited = DracoAspect.parents(current.dracoAspect).filterNot(_.name == "DracoType").flatMap { parent =>
+          val definition = familyMap.getOrElse(baseName(parent.name), loadType(parent))
+          fields(definition, seen + current.typeName.namePath)
+        }.toMap
+        inherited ++ (current.dracoAspect.elements ++ current.dracoAspect.factory.parameters).map { field =>
+          field.name -> TypeForm.text(targetType(field.valueType))
+        }
+      }
+    }
+    val effective = payloadBindings(td, familyMap)
+    if (effective.nonEmpty) {
+      val parents = DracoAspect.parents(td.dracoAspect).filterNot(_.name == "DracoType").map { parent =>
+        familyMap.getOrElse(baseName(parent.name), loadType(parent))
+      }
+      val inherited = parents.filter(_.dracoAspect.modules.nonEmpty).flatMap(parent => fields(parent, Set.empty).keys).toSet
+      val inheritedBindings = parents.flatMap(parent => payloadBindings(parent, familyMap)).toSet
+      declared.foreach { name =>
+        require(!inherited(name) || inheritedBindings(name),
+          s"Codec payload field '$name' must be declared by its field owner in ${td.typeName.namePath}")
+      }
+      val available = fields(td, Set.empty)
+      val full = "draco.format.dracon.Dracon"
+      val allowed = Set(full, s"Seq[$full]") ++
+        (if (td.typeName.namePackage == Seq("draco", "format", "dracon")) Set("Dracon", "Seq[Dracon]") else Set.empty[String])
+      effective.foreach { name =>
+        require(available.contains(name), s"Unknown codec payload field '$name' in ${td.typeName.namePath}")
+        require(allowed(available(name)), s"Codec payload field '$name' must be Dracon or a sequence of Dracon in ${td.typeName.namePath}")
+      }
+    }
+  }
+
+  private def encodedField(p: Parameter, bound: Set[String]): String = {
     val value = s"x.${p.name}"
     if (!payloadField(p, bound)) s"$value.asJson"
     else if (p.valueType.text.startsWith("Seq["))
@@ -992,7 +1030,7 @@ object DracoGenerator extends App {
     else s"draco.scalatarget.CirceCodecs.encodePayload($value)"
   }
 
-  private def fieldElisionEncoder (params: Seq[Parameter], bound: Boolean) : String = {
+  private def fieldElisionEncoder (params: Seq[Parameter], bound: Set[String]) : String = {
     val fields = params.map { p =>
       elisionCheck(p, bound) match {
         case Some(check) =>
@@ -1013,7 +1051,7 @@ object DracoGenerator extends App {
     * rules: String/Seq/Map fields are always tolerated when missing (encoder
     * elides them when empty), defaulting to the type's "zero". Non-elidable
     * types use the parameter's explicit default if present, else strict-require. */
-  private def decoderForLine (p: Parameter, indent: String, bound: Boolean) : String = {
+  private def decoderForLine (p: Parameter, indent: String, bound: Set[String]) : String = {
     if (payloadField(p, bound)) {
       val sequence = p.valueType.text.startsWith("Seq[")
       val wireType = if (sequence) "Seq[Json]" else "Json"
@@ -1037,7 +1075,7 @@ object DracoGenerator extends App {
     }
   }
 
-  private def fieldElisionDecoder (params: Seq[Parameter], typeName: String, bound: Boolean) : String = {
+  private def fieldElisionDecoder (params: Seq[Parameter], typeName: String, bound: Set[String]) : String = {
     val objName = baseName(typeName)
     val forLines = params.map(p => decoderForLine(p, "      ", bound))
     val yieldArgs = params.map(p => s"_${p.name}").mkString(", ")
@@ -1048,12 +1086,12 @@ object DracoGenerator extends App {
        |  }""".stripMargin
   }
 
-  private def simpleCodecDeclaration (td: TypeDefinition) : String = {
+  private def simpleCodecDeclaration (td: TypeDefinition, familyMap: Map[String, TypeDefinition]) : String = {
     val name = td.typeName.name
     val wName = wildcardTypeName(td.typeName)
     val params = td.dracoAspect.factory.parameters
-    s"""  implicit lazy val encoder: Encoder[$wName] = ${fieldElisionEncoder(params, payloadOwner(td))}
-       |  implicit lazy val decoder: Decoder[$wName] = ${fieldElisionDecoder(params, name, payloadOwner(td))}""".stripMargin
+    s"""  implicit lazy val encoder: Encoder[$wName] = ${fieldElisionEncoder(params, payloadBindings(td, familyMap))}
+       |  implicit lazy val decoder: Decoder[$wName] = ${fieldElisionDecoder(params, name, payloadBindings(td, familyMap))}""".stripMargin
   }
 
   private def discriminatedCodecDeclaration (
@@ -1092,7 +1130,7 @@ object DracoGenerator extends App {
     val decoderCases = leaves.map { leaf =>
       val leafTd = familyMap.get(leaf)
       val params = leafTd.map(_.dracoAspect.factory.parameters).getOrElse(Seq.empty)
-      val forLines = params.map(p => decoderForLine(p, "          ", payloadOwner(td)))
+      val forLines = params.map(p => decoderForLine(p, "          ", payloadBindings(td, familyMap) ++ leafTd.toSeq.flatMap(leaf => payloadBindings(leaf, familyMap))))
       val yieldArgs = params.map(p => s"_${p.name}").mkString(", ")
       if (params.isEmpty) {
         s"""      case "$leaf" =>
@@ -1107,7 +1145,7 @@ object DracoGenerator extends App {
 
     // Fallback case: decode as parent type with base fields
     val fallbackParams = td.dracoAspect.factory.parameters
-    val fallbackForLines = fallbackParams.map(p => decoderForLine(p, "          ", payloadOwner(td)))
+    val fallbackForLines = fallbackParams.map(p => decoderForLine(p, "          ", payloadBindings(td, familyMap)))
     val fallbackYieldArgs = fallbackParams.map(p => s"_${p.name}").mkString(", ")
     val fallbackCase = if (fallbackParams.isEmpty) {
       s"""      case other =>
@@ -1157,11 +1195,11 @@ object DracoGenerator extends App {
       // For discriminated union fields, defaultElision supplies the natural
       // emptiness test (String/Seq/Map .nonEmpty, Json null-or-empty-string)
       // when elisionCheck (default-bearing params) does not apply.
-      elisionCheck(p, payloadOwner(parentTd)).orElse(defaultElision(p, payloadOwner(parentTd))) match {
+      elisionCheck(p, payloadBindings(parentTd, familyMap)).orElse(defaultElision(p, payloadBindings(parentTd, familyMap))) match {
         case Some(check) =>
-          s"""      if ($check) Some("${p.name}" -> ${encodedField(p, payloadOwner(parentTd))}) else None"""
+          s"""      if ($check) Some("${p.name}" -> ${encodedField(p, payloadBindings(parentTd, familyMap))}) else None"""
         case None =>
-          s"""      Some("${p.name}" -> ${encodedField(p, payloadOwner(parentTd))})"""
+          s"""      Some("${p.name}" -> ${encodedField(p, payloadBindings(parentTd, familyMap))})"""
       }
     }.mkString(",\n")
   }
@@ -1183,9 +1221,9 @@ object DracoGenerator extends App {
       if (extras.isEmpty) None
       else {
         val lines = extras.map { p =>
-          elisionCheck(p, payloadOwner(td)).orElse(defaultElision(p, payloadOwner(td))) match {
-            case Some(check) => s"""        if ($check) Some("${p.name}" -> ${encodedField(p, payloadOwner(td))}) else None"""
-            case None        => s"""        Some("${p.name}" -> ${encodedField(p, payloadOwner(td))})"""
+          elisionCheck(p, payloadBindings(td, familyMap) ++ familyMap.get(leaf).toSeq.flatMap(member => payloadBindings(member, familyMap))).orElse(defaultElision(p, payloadBindings(td, familyMap) ++ familyMap.get(leaf).toSeq.flatMap(member => payloadBindings(member, familyMap)))) match {
+            case Some(check) => s"""        if ($check) Some("${p.name}" -> ${encodedField(p, payloadBindings(td, familyMap) ++ familyMap.get(leaf).toSeq.flatMap(member => payloadBindings(member, familyMap)))}) else None"""
+            case None        => s"""        Some("${p.name}" -> ${encodedField(p, payloadBindings(td, familyMap) ++ familyMap.get(leaf).toSeq.flatMap(member => payloadBindings(member, familyMap)))})"""
           }
         }.mkString(",\n")
         Some(s"      case x: $leaf => Seq(\n$lines\n      ).flatten")
@@ -1205,6 +1243,7 @@ object DracoGenerator extends App {
 
   private def codecDeclaration (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty) : String = {
     val familyMap = familyContext.map(t => baseName(t.typeName.name) -> t).toMap
+    validatePayload(td, familyMap)
 
     // Check for discriminated parent first — intermediate sealed traits (like BodyElement)
     // that derive from a discriminated parent get Codec.sub, not their own discriminated union
@@ -1246,7 +1285,7 @@ object DracoGenerator extends App {
           val elementNames = ownElementNames ++ inheritedElementNames(td, familyMap)
           val paramNames = td.dracoAspect.factory.parameters.map(_.name).toSet
           val anyUncodecable = td.dracoAspect.factory.parameters.exists(p => isUncodecable(p.valueType.text) || namesCodecless(p.valueType.text, td))
-          if (paramNames.subsetOf(elementNames) && !anyUncodecable) simpleCodecDeclaration(td)
+          if (paramNames.subsetOf(elementNames) && !anyUncodecable) simpleCodecDeclaration(td, familyMap)
           else ""
         } else {
           // No codec (abstract type)

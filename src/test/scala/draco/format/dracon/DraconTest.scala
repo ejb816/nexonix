@@ -134,7 +134,7 @@ class DraconTest extends AnyFunSuite {
     }
   }
 
-  test("payload binding is limited to core definition fields") {
+  test("undeclared Dracon fields retain wrapper encoding") {
     val td = draco.TypeDefinition(TypeName("External", Seq("example")),
       _dracoAspect = draco.DracoAspect(
         _elements = Seq(draco.Fixed("value", Dracon.string("draco.format.dracon.Dracon"))),
@@ -143,5 +143,120 @@ class DraconTest extends AnyFunSuite {
     assert(!generated.contains("CirceCodecs.encodePayload"))
     assert(!generated.contains("CirceCodecs.decodePayload"))
     assert(generated.contains("x.value.asJson"))
+  }
+
+  private def payloadRecord: TypeDefinition = draco.Drake.parse("""type PayloadRecord
+    |  elements
+    |    fix atom draco.format.dracon.Dracon
+    |    fix many [draco.format.dracon.Dracon]
+    |    fix wrapped draco.format.dracon.Dracon
+    |  factory
+    |    parameters
+    |      par atom draco.format.dracon.Dracon
+    |      par many [draco.format.dracon.Dracon]
+    |      par wrapped draco.format.dracon.Dracon
+    |domain payload fixture Fixture
+    |codec
+    |  payload [atom, many]
+    |""".stripMargin)
+
+  test("declared payload fields on a non-core owner compile and preserve scalar and sequence wire values") {
+    val generated = draco.DracoGenerator.generate(payloadRecord)
+    val probe = """
+      |trait Fixture extends draco.DracoType
+      |object PayloadProbe {
+      |  def verify(): Boolean = {
+      |    val nodes = Seq(Json.Null, Json.fromString(""), Json.fromBoolean(false), Json.fromInt(0),
+      |      Json.arr(Json.Null), Json.obj("json" -> Json.fromInt(7)))
+      |    nodes.forall { raw =>
+      |      val value = draco.format.dracon.Dracon(raw)
+      |      val record = PayloadRecord(value, nodes.map(draco.format.dracon.Dracon(_)), value)
+      |      val wire = PayloadRecord.encoder(record)
+      |      val expected = Json.obj("atom" -> raw, "many" -> Json.fromValues(nodes), "wrapped" -> Json.obj("json" -> raw))
+      |      val decoded = PayloadRecord.decoder.decodeJson(wire).toOption.get
+      |      wire == expected && decoded.atom == value && decoded.many.map(_.json) == nodes && decoded.wrapped == value
+      |    }
+      |  }
+      |}
+      |""".stripMargin
+    val compiled = draco.DracoGenerator.compile(generated + probe, "PayloadRecord.scala")
+    assert(compiled.isRight, compiled.left.toOption.getOrElse(Seq.empty).mkString("\n"))
+    val clazz = draco.DracoGenerator.loadClass(compiled.toOption.get, "payload.fixture.PayloadProbe$")
+    assert(clazz.getMethod("verify").invoke(clazz.getField("MODULE$").get(null)) == java.lang.Boolean.TRUE)
+  }
+
+  test("payload declarations reject duplicates, unknown fields and incompatible field types") {
+    def withCodec(names: Seq[String]): TypeDefinition = TypeDefinition(payloadRecord.typeName,
+      _dracoAspect = payloadRecord.dracoAspect, _domainAspect = payloadRecord.domainAspect,
+      _codecAspect = CodecAspect(_payload = names))
+    Seq(Seq("atom", "atom"), Seq("missing")).foreach { names =>
+      intercept[IllegalArgumentException](draco.DracoGenerator.generate(withCodec(names)))
+    }
+    val wrong = draco.Drake.parse("""type Wrong
+      |  elements
+      |    fix atom draco.drake.Text
+      |  factory
+      |    parameters
+      |      par atom draco.drake.Text
+      |domain payload fixture Fixture
+      |codec
+      |  payload [atom]
+      |""".stripMargin)
+    assert(intercept[IllegalArgumentException](draco.DracoGenerator.generate(wrong)).getMessage.contains("must be Dracon"))
+  }
+
+  test("core payload representation comes from owner declarations and survives the TypeElement family") {
+    assert(TypeName.typeDefinition.codecAspect.payload == Seq("typeParameters"))
+    assert(draco.DracoAspect.typeDefinition.codecAspect.payload == Seq("derivation"))
+    assert(draco.TypeElement.typeDefinition.codecAspect.payload == Seq("valueType", "value"))
+    val original = TypeName.typeDefinition
+    val undeclared = TypeDefinition(original.typeName, _dracoAspect = original.dracoAspect, _domainAspect = original.domainAspect)
+    val generated = draco.DracoGenerator.generate(undeclared)
+    assert(!generated.contains("CirceCodecs.encodePayload"))
+    assert(generated.contains("x.typeParameters.asJson"))
+    val value = draco.Fixed("x", Dracon.string("Text"), Dracon.string("body"))
+    val wire = draco.TypeElement.encoder(value)
+    assert(wire.hcursor.downField("value").focus.contains(Json.fromString("body")))
+    assert(draco.TypeElement.decoder.decodeJson(wire).toOption.get.value == value.value)
+  }
+
+  test("a non-core sealed family inherits payload representation from the field owner") {
+    val root = draco.Drake.parse("""type PayloadRoot
+      |  modules [ PayloadLeaf ]
+      |  elements
+      |    fix atom draco.format.dracon.Dracon
+      |domain payload family Family
+      |codec
+      |  payload [atom]
+      |""".stripMargin)
+    val leaf = draco.Drake.parse("""type PayloadLeaf from PayloadRoot
+      |  factory
+      |    parameters
+      |      par atom draco.format.dracon.Dracon
+      |    body
+      |      fix atom draco.format.dracon.Dracon _atom
+      |      fix typeDefinition TypeDefinition PayloadLeaf.typeDefinition
+      |domain payload family Family
+      |""".stripMargin)
+    val generated = draco.DracoGenerator.generate(Seq(root, leaf))
+    val probe = """
+      |trait Family extends draco.DracoType
+      |object FamilyProbe {
+      |  def verify(): Boolean = {
+      |    val raw = Json.obj("json" -> Json.fromInt(7))
+      |    val wire = PayloadLeaf.encoder(PayloadLeaf(draco.format.dracon.Dracon(raw)))
+      |    wire.hcursor.downField("atom").focus.contains(raw) &&
+      |      PayloadLeaf.decoder.decodeJson(wire).toOption.get.atom.json == raw
+      |  }
+      |}
+      |""".stripMargin
+    val compiled = draco.DracoGenerator.compile(generated + probe, "PayloadFamily.scala")
+    assert(compiled.isRight, compiled.left.toOption.getOrElse(Seq.empty).mkString("\n"))
+    val clazz = draco.DracoGenerator.loadClass(compiled.toOption.get, "payload.family.FamilyProbe$")
+    assert(clazz.getMethod("verify").invoke(clazz.getField("MODULE$").get(null)) == java.lang.Boolean.TRUE)
+    val unboundRoot = TypeDefinition(root.typeName, _dracoAspect = root.dracoAspect, _domainAspect = root.domainAspect)
+    val reboundLeaf = TypeDefinition(leaf.typeName, _dracoAspect = leaf.dracoAspect,
+      _domainAspect = leaf.domainAspect, _codecAspect = CodecAspect(_payload = Seq("atom")))
+    assert(intercept[IllegalArgumentException](draco.DracoGenerator.generate(Seq(unboundRoot, reboundLeaf))).getMessage.contains("field owner"))
   }
 }

@@ -11,6 +11,15 @@
         "kind": "Fixed",
         "name": "discriminator",
         "valueType": "String"
+      },
+      {
+        "kind": "Fixed",
+        "name": "payload",
+        "valueType": {
+          "[]": [
+            "draco.drake.Text"
+          ]
+        }
       }
     ],
     "factory": {
@@ -22,6 +31,19 @@
           "name": "discriminator",
           "valueType": "String",
           "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "payload",
+          "valueType": {
+            "[]": [
+              "draco.drake.Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
         }
       ]
     },
@@ -38,7 +60,12 @@
         "value": {
           "\\": [
             "ca",
-            "ca.discriminator.isEmpty"
+            {
+              "&&": [
+                "ca.discriminator.isEmpty",
+                "ca.payload.isEmpty"
+              ]
+            }
           ]
         }
       }

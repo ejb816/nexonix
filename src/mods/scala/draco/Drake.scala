@@ -26,7 +26,7 @@ object Drake {
   // `factory`, `globals` keyword, keyword blocks unbracketed with brackets on the
   // OPENER (a dyn-with-body delimits its own body), `from` omitted when the
   // derivation is DracoType alone. Covers the plain-type template + the rule and
-  // actor aspects; the codec aspect is a later increment and is rejected loudly.
+  // actor aspects; codec payload declarations; other codec syntax is rejected loudly.
 
   /** Render a TypeElement `value` to its drake surface form. Same tree contract
     * as DracoGenerator.expression: a string is host-opaque source text passed through
@@ -352,11 +352,11 @@ object Drake {
       typeSurface(_), elementLines(_, _)).value
 
   /** Emit the .drake surface for a TypeDefinition (the drake.dlt TEMPLATE:
-    * plain-type sections + domain + rule + actor). The codec aspect is the next
-    * increment and is rejected loudly rather than silently dropped. */
+    * plain-type sections + domain + rule + actor + codec payload). Codec discriminator
+    * syntax remains unsupported and is rejected rather than dropped. */
   def emit (td: TypeDefinition) : String = {
-    if (!CodecAspect.isEmpty(td.codecAspect))
-      sys.error(s"Drake.emit: codec aspect not yet emitted (next increment): ${td.typeName.name}")
+    if (td.codecAspect.discriminator.nonEmpty)
+      sys.error(s"Drake.emit: codec discriminator not yet emitted: ${td.typeName.name}")
 
     val dracoText = dracoAspectText(td)
     val typeSection = if (dracoText.isEmpty) Seq.empty else Seq(dracoText)
@@ -414,7 +414,11 @@ object Drake {
         "actor" +: (messageType ++ block("start", aa.start) ++ block("message", aa.message) ++ block("signal", aa.signal))
       }
 
-    (typeSection ++ domain ++ rule ++ actor).mkString("", "\n", "\n")
+    val payload = td.codecAspect.payload
+    require(payload.distinct.size == payload.size, s"Drake.emit: duplicate payload field in ${td.typeName.name}")
+    require(payload.forall(_.matches("[A-Za-z_][A-Za-z0-9_]*")), s"Drake.emit: invalid payload field in ${td.typeName.name}")
+    val codec = if (payload.isEmpty) Seq.empty else Seq("codec", s"  payload [${payload.mkString(", ")}]")
+    (typeSection ++ domain ++ rule ++ actor ++ codec).mkString("", "\n", "\n")
   }
 
   // --- Parsing (.drake surface -> JSON TypeDefinition) ---
@@ -429,7 +433,7 @@ object Drake {
   // factory / globals / domain), the rule aspect (pattern / variables / conditions /
   // action) and the actor aspect (messageType / start / message / signal), plus
   // value-position calls `f(a, b)` with positional then named arguments, tuples, and
-  // `++` runs. The codec aspect is the remaining increment and is rejected loudly
+  // `++` runs. Codec payload lists are supported; other codec syntax is rejected loudly
   // rather than silently dropped — the same convention emit() uses for it.
 
   // Plain vals: unlike the App companions in the model, `Drake` is a bare object, so
@@ -1103,8 +1107,8 @@ object Drake {
     else Json.obj ("()" -> Json.fromValues (Json.fromString (name) +: typeParameters))
 
   /** Parse a .drake source into its TypeDefinition — the inverse of emit().
-    * The plain-type template plus the rule and actor aspects; codec is the remaining
-    * increment and is rejected loudly rather than silently dropped. */
+    * The plain-type template plus rule, actor and codec payload declarations.
+    * Other codec syntax remains unsupported and is rejected rather than dropped. */
   def parse (source: String) : TypeDefinition = {
     val c = new Cursor (source, lex (source))
     // A definition whose first word is `domain` is the NAMELESS domain's anchor (draco's
@@ -1154,6 +1158,8 @@ object Drake {
     var start            = Action.Null
     var message          = Action.Null
     var signal           = Action.Null
+    var payload          = Seq.empty[String]
+    var hasCodec         = false
 
     def actionBody (admits: Set[String] = actionKeywords) : Action = {
       val body = parseBlock (c, admits).map (_.asInstanceOf[BodyElement])   // sequenced: by-name parameter
@@ -1196,7 +1202,21 @@ object Drake {
         case "message"     => message = actionBody (actionKeywords + "case")
         case "signal"      => signal = actionBody ()
 
-        case "codec"       => sys.error (s"Drake.parse: 'codec' aspect not yet parsed (next increment): $name")
+        case "codec"       =>
+          require(!hasCodec, s"Drake.parse: duplicate codec section in $name")
+          hasCodec = true
+          c.expect("payload")
+          val names = if (c.at("[")) parseNameList(c).mkString(" ") else {
+            val token = c.takeText()
+            require(token.startsWith("[") && token.endsWith("]") && closesWhole(token),
+              s"Drake.parse: expected payload name list in $name")
+            token.substring(1, token.length - 1)
+          }
+          require(!names.trim.startsWith(",") && !names.trim.endsWith(",") && !names.matches("(?s).*[,][\\s]*[,].*"),
+            s"Drake.parse: empty payload field in $name")
+          payload = names.split("[,\\s]+").filter(_.nonEmpty).toSeq
+          require(payload.forall(_.matches("[A-Za-z_][A-Za-z0-9_]*")), s"Drake.parse: invalid payload field in $name")
+          require(payload.distinct.size == payload.size, s"Drake.parse: duplicate payload field in $name")
         case other         => sys.error (s"Drake.parse: unexpected section '$other' in $name")
       }
     }
@@ -1222,6 +1242,7 @@ object Drake {
         _globalElements = globalElements),
       _domainAspect = DomainAspect (domainName, elementTypeNames, resolved (domainSource), resolved (domainTarget)),
       _ruleAspect   = if (!isRule) RuleAspect.Null else RuleAspect (Pattern (variables, conditions), action),
-      _actorAspect  = if (!isActor) ActorAspect.Null else ActorAspect (message, resolved (messageType), signal, start))
+      _actorAspect  = if (!isActor) ActorAspect.Null else ActorAspect (message, resolved (messageType), signal, start),
+      _codecAspect  = CodecAspect(_payload = payload))
   }
 }

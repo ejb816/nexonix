@@ -568,13 +568,33 @@ domain <pkg-seq> <name>                    -> domainAspect.typeName { namePackag
 *actor                                     -> actorAspect                   (presence-significant, FACET-CREATING: present = is an actor, every action defaults & is overridable; absent = not an actor)
   *~messageType *<pkg-seq> <name> *(<T>, ...) -> actorAspect.messageType    ( the actor's T, carried by the ASPECT rather than by an Actor(T) derivation.
                                                                              A REFERENCE like from/modules: bare in the actor's own package, qualified
-                                                                             elsewhere — `messageType draco format json JSON`. The target spells it
+                                                                             elsewhere — `messageType draco format dracon Dracon`. The target spells it
                                                                              package-relative again, so the definition carries the package and the
                                                                              projection decides whether to write it. )
   *~start                                  -> actorAspect.start             ( default behaviour generated regardless of presence; content overrides )
   *~message                                -> actorAspect.message           ( default behaviour generated regardless of presence; content overrides )
     *~case *<name> <value-type> [ ... ]     -> message.body[] { kind=Case }   ( OPTIONAL — absent = no dispatch; see CASE-BRANCH )
   *~signal                                 -> actorAspect.signal            ( default behaviour generated regardless of presence; content overrides )
+CODEC PAYLOAD — IMPLEMENTED 2026-10-18 (Dev accepted)
+  codec
+    payload [field, otherField]
+  -> codecAspect.payload: [Text], default []. A listed Dracon field encodes its
+     payload directly; a listed sequence encodes each Dracon element directly.
+     Unlisted fields retain their existing encoding. The field owner declares the
+     representation; a sealed-family member retains its owner's shared codec.
+     TypeName declares typeParameters, DracoAspect declares derivation, and
+     TypeElement declares valueType and value for its family. There is no core-name
+     allowlist in the generator. Target bindings remain in ScalaTarget/CirceCodecs.
+  Compact and multiline lists parse; canonical emission uses a comma-separated list.
+  Empty lists elide. Duplicate sections/names, malformed lists and non-identifier
+  names fail at parse; unknown fields and types other than Dracon/[Dracon] fail at
+  generation. A subtype cannot rebind a shared field away from its sealed owner.
+  This declaration selects field representation within the existing codec generator.
+  It does not yet replace inferred codec eligibility with the selector design below.
+  The discriminator/encoder/decoder Drake clauses below remain FUTURE, unsupported
+  syntax; they are not silently accepted or dropped by this implemented subset.
+
+FUTURE CODEC SELECTOR TEMPLATE (not the implemented payload grammar):
 *~codec                                    -> codecAspect                   (absent = NO codec for this type. present = a codec is needed; its fields are SELECTORS, so a present codec must carry >=1 of encoder/decoder — never both absent. present-empty == absent)
   *~discriminator <value>                  -> codecAspect.discriminator     ( OPEN: carried from the earlier increment as a String field driving the union tag ("kind"). Field vs derived is unsettled — see NOTES )
   *encoder                                 -> codecAspect.encoder   { kind=Encoder }   ( SELECTOR — present generates the encoder (default or custom); absent SUPPRESSES it )

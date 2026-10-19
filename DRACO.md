@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**815 tests / 56 suites**, verified by Dev on 2026-10-19 for the payload-declaration
+increment (record `git-record-2026-10-18-1731`), still uncommitted: six new tests, zero
+failed, canceled, ignored or pending tests, zero aborted suites, every report-only
+headline unchanged, including zero pending mods actors in the file-only log. Before it:
 **809 tests / 56 suites**, verified by Dev's full run reported on 2026-10-17 for the
-core-tree migration over db7e7a8 (record `git-record-2026-10-17-1457`), not yet committed:
+core-tree migration committed and pushed by Dev as d169b0e (record `git-record-2026-10-17-1457`):
 five new DraconTest cases, zero failed or aborted, every report-only headline unchanged,
 including zero pending mods actors in Dev's pasted file-only log. Before it:
 **804 tests / 56 suites**, verified by Dev's full run reported on 2026-10-16 for the
@@ -235,7 +239,7 @@ Compact by intent. Architecture detail belongs in `README.md` once that file is 
   source, target (both present = a **transform domain**; role is presence, as everywhere else)
 - `ruleAspect` — pattern, action
 - `actorAspect` — messageType, start, message, signal
-- `codecAspect` — discriminator
+- `codecAspect` — discriminator, payload (field names selecting direct Dracon payloads; 2026-10-18)
 
 **Role is presence, not name.** A type is a rule because it carries a `ruleAspect`, an
 actor because it carries an `actorAspect`. Generated objects take the bare authored name —
@@ -669,7 +673,7 @@ removing its host Decoder bound without importing a child-domain capability into
 adds decode(T)(source, decoder). A missing path never evaluates the decoder. Example message/actor
 trios and initialization now name Dracon. JSON wire syntax and .json carrier paths remain; .dcon is
 deferred. The core-tree migration below supersedes the remaining raw Json field types;
-declarative codec-field vocabulary and target lexeme tables remain later design points.
+the payload declaration below is implemented; broader codec-field vocabulary and target lexeme tables remain later design points.
 The complete direct probe ran 804 tests: 797 passed, seven ZeroMQ socket-bind failures in the sandbox;
 the nine-test loopback suite then passed with local TCP access, including all seven failures. Dev subsequently reported a passing full sbt
 gate on 2026-10-16: **804 / 56**, zero failed or aborted (three net-new corpus types ×5 + seven DraconTest tests); direct Runner counts 57
@@ -685,7 +689,7 @@ neutral string/array/record construction, null/object/field inspection and nulla
 inspection; structural equality preserves TypeName identity. TypeName.read/write carry its
 shape without Circe names; DracoAspect parent inspection and TypeLoader rooting use them.
 CirceCodecs supplies explicit payload capabilities and host bindings. The handwritten generator
-binds the scoped core fields to them; its bootstrap binding table is not new codec-aspect syntax.
+initially bound the scoped core fields through a bootstrap table; the next increment below replaces that table with declarations.
 Ordinary Dracon codecs still encode the wrapper object. The host parser/generator and fixtures
 opt into scalatarget.DefinitionTrees conversions at their boundary; no implicit payload codec
 is installed. The legacy hand-written Generated.scala bootstrap (no definition trio) also uses
@@ -696,6 +700,25 @@ Dev's full gate then passed **809 / 56**, zero failed or aborted. Old/new codecs
 inputs identically. Every report-only headline stays unchanged; DrakeCLI retains only the known
 ActorAspect/BodyElement authored-ahead drift. Dev's pasted full-run headlines confirm every
 figure, including zero pending mods actors; **809 / 56** is the new verified baseline. Record: `git-record-2026-10-17-1457`.
+
+**Declared payload fields (2026-10-18, Codex; Dev verified 815 / 56 on 2026-10-19).** Dev accepted ownership
+in the codec aspect and the syntax `codec payload [field, otherField]`, mapped to
+`codecAspect.payload: [Text]`. The default is empty; a nonempty list makes CodecAspect
+nonempty. TypeName declares typeParameters, DracoAspect declares derivation, and TypeElement
+declares valueType/value. Their Scala projections remain byte-identical; only CodecAspect's
+generated Scala changes. The generator reads the lists and inherited owner bindings instead
+of a core-name allowlist. Target execution still binds through ScalaTarget/CirceCodecs.
+A listed scalar Dracon encodes its payload; a listed sequence encodes each payload; unlisted
+fields keep their encoding. Duplicate/malformed lists fail at parse; unknown/incompatible
+fields fail at generation. Shared sealed-family fields retain their owner's representation.
+Payload-only aspects remain in every corpus gate; discriminator/encoder/decoder Drake syntax
+is still unsupported. Existing inferred codec eligibility is not replaced by selector semantics.
+Final direct full probe with TCP access: **815 passed, zero failed or aborted** (57 suites
+including the Runner's discovery wrapper); Dev's full sbt gate on 2026-10-19 confirmed
+**815 / 56**, zero failed, canceled, ignored or pending tests and zero aborted suites; six new tests and
+no new corpus types. All report-only figures unchanged. Of 182 reserialized definition inputs,
+only the three owners gain payload metadata; existing wire fields are unchanged. Main DrakeCLI
+check retains only the known authored-ahead drift. The verified full baseline is now 815 / 56. Record: `git-record-2026-10-18-1731`.
 
 **Deferred activation (Dev, 2026-10-15).** Dev asked to preserve Codex's unaccepted recommendation:
 start an explicitly supplied Assembly of held actor definitions, using factory-supplied executable

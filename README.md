@@ -101,7 +101,7 @@ TypeDefinition  (derives Aspects)
   +-- domainAspect : DomainAspect   -- domain membership
   +-- ruleAspect   : RuleAspect     -- rule pattern and action
   +-- actorAspect  : ActorAspect    -- actor handlers
-  +-- codecAspect  : CodecAspect    -- serialization discriminator
+  +-- codecAspect  : CodecAspect    -- serialization discriminator and payload-field names
 ```
 
 **`DracoAspect`** — the structure every type shares:
@@ -127,7 +127,9 @@ domain).
 **`ActorAspect`** — `messageType`, and the `start` / `message` / `signal` actions.
 
 **`CodecAspect`** — `discriminator`, the field name a closed family encodes its variant
-under.
+under, and `payload`, the field-name list selecting direct Dracon payload representation.
+Drake expresses the latter as `codec payload [field, otherField]`; the discriminator
+Drake clause remains unsupported.
 
 **Role is presence, not name.** A type is a domain, a rule, or an actor because the
 corresponding aspect is populated — never because of a name suffix, a filename, or a
@@ -293,7 +295,7 @@ examples, the canonical material is what ships:
 | `draco` | self-description — the meta-domain whose members *are* the type system |
 | `draco.base` | value types and measurement families |
 | `draco.primes` | the rule engine and stateful working memory |
-| `draco.format` (+ `json`, `xml`) | payload formats and path extraction over them |
+| `draco.format` (+ `dracon`, `xml`) | payload formats and path extraction over them |
 | `draco.drake` | the definition surface as a domain — **a Source** — and the runtime: `Presence(T)`, `Present`, `Absent`, with `fold` as dispatch |
 | `draco.generator` (+ `carrier`) | the super-domain of every generator transform; `carrier` is the input seam — where definitions are found and read |
 | `draco.genscala`, `draco.gendrake` | the transforms `Draco → ScalaTarget` and `Draco → DrakeTarget`, each `from Generator(<target>)` |
@@ -324,7 +326,8 @@ derivation, modules, extensibility, elements, factory and globals. Reference qua
 root elision and factory-result elision live in the definition; parameter/type-form/slot
 spelling and element-body rendering remain explicit callbacks to Drake. This is a Drake
 output migration, not a migration of Scala source generation. Rule and actor sections
-remain hand-written, and codec-aspect emission remains unsupported.
+remain hand-written. Codec payload lists now parse and emit; other codec-aspect clauses
+remain unsupported.
 `DomainLineOf` and `DomainLine` are retained as
 compatibility helpers, not the complete domain-aspect API. `GenScala` holds nothing yet,
 and the six-way dispatch in `DracoGenerator` is its transform types, unwritten. `DrakeTarget` exists beside `Drake` so that what
@@ -445,7 +448,7 @@ that becomes feasible; this list exists so the leaks are visible rather than ass
 |---|---|---|
 | **[scala]** Strictness forced by the host | evaluation is lazy by default in the definition, but a method that meets a host signature or is passed as a function value must be marked `now` | a projection that can defer everything, so `now` is only ever the author's choice |
 | **[scala]** Host-opaque value strings | a lambda's typed binder `(x: T)` and the host names at the leaves of a value are still target source text | trees for the forms drake has no surface for yet — a conditional is `ifThenElse` on a Presence, a block is still to be designed (GitHub #61) |
-| **[scala]** Codec realization | `CodecAspect` is neutral (a discriminator), but codec derivation is expressed in one host library's encoder/decoder pair | a serialization capability domain, projected per target |
+| **[scala]** Codec realization | `CodecAspect` is neutral (discriminator and payload-field names), but codec derivation is expressed in one host library's encoder/decoder pair | a serialization capability domain, projected per target |
 | **[scala]** Rule-evaluation binding | conditions are compiled by the host rule engine at runtime, requiring fully qualified names, and working memory boxes primitives | `draco.rete` as a capability domain expressing evaluation *discipline*, not one engine's configuration |
 | **[scala]** Actor behaviour binding | an actor's parameters are neutral (`(M -> Unit)`) and the assembly holds the host's references, but the minted actor's template is a host actor library's behaviour | an actor capability domain — the host library integrated through drake definitions with implementations in the Scala target |
 | **[scala]** The leaves | `String`, `Int`, `Json`, `URI` and the evrete and pekko types are the host's names wherever a value type names them | draco-owned names for the primitives and wrap types for the libraries, spelled per target |
@@ -564,12 +567,17 @@ supplied decoder. Missing paths skip decoding; incompatible input returns Absent
 and cursor code remain in the wrapper seam. Core definition-tree fields now hold Dracon, with explicit
 payload bindings preserving their existing JSON representation. TypeName and derivation inspection
 use neutral operations; the handwritten parser/generator retains a Scala boundary bridge to Circe.
-Declarative codec-field operators remain a later step; no six-form value family was introduced. `.json` remains the
+Owning definitions now declare `codec payload [field, otherField]`, replacing the generator's
+core-name binding table. Broader codec operators remain a later step; no six-form value family was introduced. `.json` remains the
 carrier extension, with `.dcon` deferred. Dev reported the full gate on 2026-10-16: **804 tests / 56 suites**,
 zero failed or aborted, with all report-only figures matching the updated baselines, committed as db7e7a8.
 Dev's full gate for the subsequent core-tree migration passed **809 / 56**, reported 2026-10-17,
 with zero failures or aborts and all report-only figures unchanged. The old/new codec comparison
-also preserved all 182 definition wire values.
+also preserved all 182 definition wire values; that increment is committed as d169b0e.
+The payload-declaration increment passed a direct 815-test probe with local TCP access. Dev's
+full sbt gate on 2026-10-19 confirmed **815 / 56**, zero failures or aborts, with all report-only
+figures unchanged, including zero pending mods actors. Its metadata adds only the
+three owning definitions' payload lists to those wire documents.
 ServiceConfiguration contains Assembly; consuming projects own persistence. Generation is explicit; activation remains ahead. See the
 [Service plan](src/mods/resources/draco/service/README.md) and
 [ZeroMQ integration proposal](src/mods/ZEROMQ_CODEC_CONTRACT.md).
