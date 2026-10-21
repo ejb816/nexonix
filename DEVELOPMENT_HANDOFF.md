@@ -6,16 +6,18 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **b17ddb8**, initially clean and aligned with local
-  `origin/main`. Dev's pasted October 21 output confirms commit and push; this is stronger
-  evidence than local remote-tracking state alone. No remote query was needed.
-- Latest verified code baseline: **835 tests / 58 suites**, Dev's October 20 full sbt gate,
-  zero failed/canceled/ignored/pending tests, zero aborted suites. No runtime changes since.
-- This handoff adds documentation only, still uncommitted when written: journal chapters
-  95–99, source extracts/audit, chapter-94 continuity note and introduction, DRACO.md,
-  README.md, CHANGELOG.md, this file, DEVELOPMENT_RESUME_PROMPT.md and record
-  `git-record-2026-10-21-0930`. If Dev commits it, expect HEAD after b17ddb8. Inspect status;
-  do not assume a clean tree or discard pending documentation.
+- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **c7799b9** (Codex's
+  documentation handoff over the b17ddb8 code baseline) when the two-stage loading increment was
+  built; the increment — `src/mods/scala/draco/{DomainBuilder,NameResolution}.scala`,
+  `src/test/scala/draco/{DomainLoadingTest,NameResolutionTest}.scala`, DRACO.md, README.md,
+  CHANGELOG.md, this file and record `git-record-2026-10-21-1700` — was handed to Dev for a
+  path-scoped commit after the gate. Inspect status: if it is still in the tree, do not discard it.
+- Latest verified code baseline: **839 tests / 59 suites**, Dev's October 21 full sbt gate on this
+  increment, zero failed/canceled/ignored/pending tests, zero aborted suites, every report-only
+  headline unchanged, pending mods actors 0. Before it, 835 / 58 on October 20.
+- Dev ACCEPTED on October 21 the two-stage loader as Claude restated it: a DomainBuilder operation
+  over explicit domain declarations and bindings, identity stage from placeholders, body stage
+  through NameResolution, bootstrap files untouched in this increment. Built as accepted.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used, but do not replace Dev's full gate.
 - One design point per reply; one recommendation with accept-or-correct; build only what
@@ -24,38 +26,14 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 - Shared project documentation is the cross-agent memory. No private Claude/Codex memory
   is required or overwritten. The copyable prompt is in DEVELOPMENT_RESUME_PROMPT.md.
 
-## First action in the new session
+## Next action
 
-Read DRACO.md, the shared documentation skill, this checkpoint, chapter 99 and its audit.
-Inspect git status/log and the relevant loader/resolver code. Restate the **unaccepted**
-bootstrap proposal below with your own reading and ask Dev to accept or correct it before
-building. Do not treat the request for this handoff as acceptance.
-
-Codex's October 21 proposal: two-stage loading from an explicitly supplied set of domain
-declarations. First establish domain/member identities from qualified anchors and membership
-lists; then resolve definitions using that identity-only DomainOntology plus the explicit
-binding vocabulary. This is intended to avoid requiring a completed ontology to load the
-very definitions from which it is built. It would enable repository bodies to say Dracon.
-The proposal has not settled implementation placement or an API and is not implemented.
-
-Code to inspect:
-
-- `src/main/scala/draco/TypeLoader.scala` and its resource trio: current unscoped loading,
-  root insertion, missing-resource stubs; generated companions call loadType.
-- `src/mods/scala/draco/DomainBuilder.scala`: reads domain definitions and members before
-  composing the ontology. Its resource loading still uses unscoped APIs.
-- `src/mods/scala/draco/NameResolution.scala`: explicit ontology/bindings, scoped JSON
-  read/compact, symbolic leaves, target import projection.
-- `src/main/scala/draco/{DomainOntology,TypeDictionary,Domain}.scala`: membership and
-  derivations, supplied member definitions with placeholders for absent members.
-- `src/mods/scala/draco/{Drake,DracoGenerator}.scala`: scoped overloads and bootstrap paths.
-- `src/mods/scala/draco/dreams/Initialization.scala` and editor/TransformBinding.scala:
-  endogenous initialization and the held-ontology generation path.
-- `src/test/scala/draco/NameResolutionTest.scala` and dreams/editor/GenerationTest.scala.
-
-Respect main/mods layering: TypeLoader is generated main code; NameResolution is handwritten
-mods code. Main must not depend on mods. Check bootstrap initialization cycles and trio gates
-before proposing implementation. No global ontology or classpath discovery was accepted.
+After Dev's commit, bring the next #51 design point; journal chapter 100 is written from this
+session's record at its closing handoff. The next design point, already measured and not yet put to Dev: the two
+captures the ontology-first rule produces over today's bootstrap files — the host `Unit` (drake.dlt's
+leaf in every consumer arrow) resolving to `draco.base.Unit`, and CLI's bare `Drake.emit` resolving to
+the Drake domain's definition instead of the hand-written engine — together with the 42-name host
+vocabulary the canonical corpus needs, before any bootstrap file is shortened. One recommendation.
 
 ## Completed in this session
 

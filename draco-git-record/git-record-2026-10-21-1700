@@ -1,0 +1,37 @@
+Load declared domains in two stages: identities from their anchors, bodies through the ontology scope
+
+Dev accepted, on 2026-10-21, the two-stage loader restated from Codex's October 21 proposal:
+a DomainBuilder operation over explicit domain declarations and bindings, identity stage from
+placeholders, body stage through NameResolution, bootstrap files untouched in this increment.
+
+DomainBuilder.identities reads the declared domains' own definitions as authored and composes
+them with no members, so core's TypeDictionary places a name-only placeholder for every listed
+member: the anchors are qualified by construction, and a NameResolution reads identities only,
+so this ontology is, as a scope, the populated one. A declaration nothing defines, or one that
+does not self-declare as a domain, is refused. DomainBuilder.load resolves every body, the
+domain definition's and each member's, through NameResolution over that identity ontology and
+the explicit vocabulary, strictly, and composes the populated ontology; the path is an explicit
+DefinitionPath, the host roots by default. Nothing is discovered; main's TypeLoader and the
+generated companions are untouched and still load unscoped.
+
+Measured before building, with a read-only probe over the 18 canonical domains: identity-only
+and populated scopes resolve all 132 definitions identically; the corpus needs a 42-name host
+vocabulary; ActorAspect's authored-ahead `ActorAspect => Boolean` is unreadable by resolution,
+so NameResolution.form now preserves a string leaf that is not a name as host-opaque type text,
+the one engine adjustment; resolution rewrites 93 definitions, mostly same-package qualification,
+and captures two meanings — the host unit type `Unit` as draco.base.Unit, and CLI's bare
+`Drake.emit` as the Drake domain's definition. Those captures and the bootstrap vocabulary are
+the next design point before any file is shortened. Local, absent from Draco's types list, was
+observed, not filed.
+
+The first run of the fixture exposed the by-name factory argument deferring resolution past the
+call; the operation binds resolved definitions to values before the factories. DomainLoadingTest
+(3) is the 59th suite; NameResolutionTest +1. No corpus type changed; no headline moves.
+
+Gate: Dev's full sbt run on 2026-10-21, pasted: 839 tests / 59 suites, zero failed, canceled,
+ignored or pending tests, zero aborted suites; every report-only headline unchanged (109 + 10 in
+scope, 1 loss across 119, 109 aspect sections, GenDrake 107 of 107, gen map 28/20/0/0, PON 42 and 7,
+scenario 23 clean, forest 1 of 2, co-declaration drops the fact); pending mods actors 0 in the
+file-only log. Committed and pushed by Dev.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

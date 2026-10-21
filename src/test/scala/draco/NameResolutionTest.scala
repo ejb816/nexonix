@@ -146,4 +146,14 @@ class NameResolutionTest extends AnyFunSuite {
     assert(scope.projectScala(shadowed) == shadowed)
   }
 
+  test("a host-opaque type span is preserved, as a host-opaque expression span is") {
+    val opaque = Json.fromString("ActorAspect => Boolean")
+    val td = TypeDefinition(TypeName("Residue", Seq("sample")),
+      _dracoAspect = DracoAspect(_elements = Seq(Fixed("test", opaque, Json.fromString("predicate")))),
+      _domainAspect = DomainAspect(TypeName("Test", Seq("sample"))))
+    assert(scope.resolve(td).dracoAspect.elements.head.valueType.json == opaque)
+    assert(scope.compact(td).dracoAspect.elements.head.valueType.json == opaque)
+    intercept[IllegalArgumentException](scope.resolveName("ActorAspect => Boolean"))
+  }
+
 }

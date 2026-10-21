@@ -70,6 +70,9 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
     def form(j: Json, local: Map[String, String]): Json = {
       if (j.isNull || j.asString.contains("")) j
       else j.asString match {
+        // A string leaf that is not a name is host-opaque type text (the ActorAspect residue
+        // the surface-loss headline counts); it is preserved, as host-opaque expression spans are.
+        case Some(text) if !text.matches("[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*") => j
         case Some(text) => Json.fromString(name(text, local))
         case None => TypeForm.node(j) match {
           case Some((op, args)) if Set("()", "(,)", "[]", "[]+", "{}", "{}+", "->", "<:", ">:")(op) =>

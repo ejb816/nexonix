@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+Two-stage loading (2026-10-21; Dev verified 839 tests / 59 suites, every headline unchanged): `DomainBuilder.identities` composes the identity-only ontology
+of an explicitly declared set of domains from their anchors alone, and `DomainBuilder.load` resolves every
+body through `NameResolution` over it and an explicit binding vocabulary, from an explicit `DefinitionPath`.
+`NameResolution` preserves a string type leaf that is not a name as host-opaque text. Bootstrap files and
+the generated companions are untouched; `DomainLoadingTest` is the 59th suite.
+
 Documentation checkpoint (2026-10-21): journal chapters 95–99 preserve the Codex session through
 the b17ddb8 checkpoint with a bounded transcript audit; the prior Claude closing reply is also
 recovered. Shared documentation, handoff and a reusable resumption prompt now record the verified

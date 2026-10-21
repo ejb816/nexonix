@@ -49,6 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**839 tests / 59 suites**, verified by Dev on 2026-10-21 for two-stage loading from explicit domain
+declarations (record `git-record-2026-10-21-1700`): four added tests and one added suite
+(`DomainLoadingTest`), zero failed, canceled, ignored or pending tests, zero aborted suites, every
+report-only headline unchanged, including zero pending mods actors in the file-only log. Before it:
 **835 tests / 58 suites**, verified by Dev on 2026-10-20 for ontology-scoped names
 (record `git-record-2026-10-20-1503`), committed and pushed by Dev as b17ddb8 on October 21:
 ten added tests, zero failed, canceled,
@@ -768,13 +772,46 @@ pending tests and zero aborted suites, with every headline unchanged.
 Dev committed and pushed b17ddb8 on October 21.
 Record: `git-record-2026-10-20-1503`.
 
+**Two-stage loading from explicit domain declarations (2026-10-21, Claude Code; Dev verified 839 / 59).** Dev accepted
+the loader as restated from Codex's October 21 proposal: "a DomainBuilder operation over explicit domain
+declarations and bindings, identity stage from placeholders, body stage through NameResolution, bootstrap
+files untouched in this increment." `DomainBuilder.identities(declarations, path)` is STAGE ONE: the
+declared domains' own definitions are read as authored and composed as `Domain(definition)` with no
+members, so core's `TypeDictionary` places a name-only placeholder for every listed member; a declaration
+nothing defines, or one that does not self-declare as a domain, is refused outright. The anchors need no
+scope because they are qualified by construction — a listed member's identity is the domain's package plus
+its bare name. `DomainBuilder.load(declarations, bindings, path)` is STAGE TWO: a `NameResolution` over
+that identity-only ontology and the explicit vocabulary resolves every body, the domain definition's and
+each member's, and the populated ontology is composed from the resolved definitions, strictly (a factory
+argument is by-name, so an unknown name must fail in `load`, not on the first read of a dictionary — §6).
+`path` is an explicit `DefinitionPath`, default the host roots; nothing is discovered, and the generated
+companions keep loading unscoped through `TypeLoader`, which main's tier never changes. MEASURED before
+building, with a read-only probe over the 18 canonical domains (132 definitions, no stubs): the
+identity-only ontology is, as a resolution scope, identical to the populated one over every definition
+(NameResolution reads identities only); the corpus needs a 42-name host vocabulary to resolve, converging
+in five rounds; one field no resolution can read — ActorAspect's authored-ahead `ActorAspect => Boolean`,
+the surface-loss headline's one type form — so `NameResolution.form` now PRESERVES a string leaf that is
+not a name as host-opaque type text, as it already preserved host-opaque expression spans (the one engine
+adjustment the corpus forced); and resolution rewrites 93 of 132 definitions, 316 leaves by same-package
+qualification (today's JSON carries value types as authored: bare in the own package chain, qualified
+elsewhere) and 60 bare cross-package names given their unique identity — among them TWO CAPTURES that
+change meaning, the host unit type `Unit` (drake.dlt's leaf in every consumer arrow) resolving to
+`draco.base.Unit` in Editor and Initialization, and CLI's bare `Drake.emit` resolving to the Drake
+domain's definition instead of the hand-written engine. Those two captures and the bootstrap vocabulary
+are the NEXT design point, before any bootstrap file is shortened; `Local` being the one TypeElement kind
+absent from Draco's `types` list was observed in passing, not filed. `DomainLoadingTest` (3) is new, the
+59th suite — stage one against the populated ontology, stage two order-independent and equal to the
+resolution of the unscoped load, and a fixture root whose body says `Dracon` loading qualified while an
+undeclared domain stays unknown; `NameResolutionTest` +1. No corpus type changed, so no headline moves.
+
 **Handoff checkpoint (2026-10-21).** Chapters 95–99 preserve this Codex session with a
 bounded original-message extract: 35 complete exchanges plus the open handoff request.
 The prior Claude closing reply is recovered separately; chapter 94's historical Status stays
 unchanged. See DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md for either agent.
 The next proposal — two-stage loading from explicit domain declarations, establishing member
-identities before resolving bodies with an ontology and binding vocabulary — is **unaccepted**.
-No bootstrap migration is authorized by this documentation handoff. The type-level formal/actual
+identities before resolving bodies with an ontology and binding vocabulary — was unaccepted at that
+handoff and ACCEPTED by Dev later on 2026-10-21 as restated above; Dev verified its gate at 839 / 59.
+No bootstrap migration is authorized. The type-level formal/actual
 split, activation and .dcon migration also remain unaccepted or deferred.
 
 **#51 continuation.** The issue's priority-next label was scoped to the derivation edge

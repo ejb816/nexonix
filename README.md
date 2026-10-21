@@ -259,6 +259,17 @@ whose identity is the empty path; it has no name and no companion, nothing perma
 and `.drake` (the one line `domain`) and `.json` at the resource root anchor it for the parser and
 emitter.
 
+**Two-stage loading from explicit declarations** (2026-10-21) is the scoped counterpart, in the
+mods tier: `DomainBuilder.identities(declarations, path)` composes the identity-only ontology of a
+declared set of domains from their anchors alone — each domain definition read as authored and
+composed with no members, so the dictionary holds a name-only placeholder per listed member — and
+`DomainBuilder.load(declarations, bindings, path)` resolves every body through a `NameResolution`
+over that ontology and an explicit binding vocabulary, then composes the populated ontology. The
+anchors need no scope because they are qualified by construction; the identity-only ontology is,
+as a scope, identical to the populated one. Nothing is discovered: which domains exist is the
+caller's declaration, and a declaration nothing defines is refused. The companions above keep
+loading unscoped, and the bootstrap files are unchanged.
+
 ### Domains
 
 A domain is a named collection of types. Every domain has a `TypeDefinition` whose
@@ -594,6 +605,14 @@ they have not been bulk-migrated to an implicit global scope. Haskell imports re
 target realization. The full direct compiled probe passed 835 tests, zero failures or aborts,
 with all report-only figures unchanged. Dev's October 20 sbt gate confirmed 835 / 58,
 zero failures or aborts, and all headlines unchanged, including zero pending mods actors.
+
+The loader side followed on 2026-10-21 (Dev's full gate: 839 tests / 59 suites, every headline unchanged): `DomainBuilder.identities` and
+`DomainBuilder.load` load an explicitly declared set of domains in two stages, identities from
+anchors and bodies through the ontology scope (see *Loading*). A probe over the 18 canonical
+domains measured a 42-name host vocabulary, one unreadable authored-ahead field (ActorAspect's,
+which `NameResolution` now preserves as host-opaque text) and two captures that change meaning
+under the ontology-first rule — the host `Unit` as `draco.base.Unit`, and a bare `Drake.emit` as
+the Drake domain — which are the next design point before any bootstrap file is shortened.
 
 Method formal parameters now have their own TypeParameter records: a name plus optional
 upper/lower bounds represented as Dracon type forms. Dynamic.typeParameters defaults empty;

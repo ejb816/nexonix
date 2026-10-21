@@ -1,5 +1,7 @@
 package draco
 
+import draco.generator.carrier.DefinitionPath
+
 /** DomainBuilder — the resource-backed convenience for standing up a populated
   * domain: load a domain's own definition and every member it names from the
   * definition resources, hand them to core's `Domain` factory, and return the
@@ -51,6 +53,63 @@ object DomainBuilder {
     val members: Seq[TypeDefinition] =
       domainDef.domainAspect.elementTypeNames.map(m => loadMember(m, namePackage))
     Domain[Any](domainDef, members)
+  }
+
+  /** Load one definition from an explicit path: the file the name points at, rooted
+    * as `TypeLoader.loadType` roots it; a name with no file is a stub. Only the path
+    * differs from the companions' unscoped loading, which always reads the default. */
+  private def loadFrom(path: DefinitionPath, typeName: TypeName): TypeDefinition =
+    path.source(typeName.resourcePath).fold(draco.drake.Absent[TypeDefinition](), TypeLoader.readDefinition)
+      .fold(TypeDefinition(typeName), TypeLoader.rooted)
+
+  /** The declared domains' own definitions, read as authored. A declaration is an
+    * error when nothing at the roots defines it, or when what it names does not
+    * self-declare as a domain: the set is explicit, so neither is tolerated. */
+  private def declared(declarations: Seq[TypeName], path: DefinitionPath): Seq[TypeDefinition] =
+    declarations.map { d =>
+      val td = loadFrom(path, d)
+      require(!isStub(td), s"draco: declared domain ${d.namePath} has no definition at the supplied roots")
+      require(td.domainAspect.typeName.namePath == td.typeName.namePath,
+        s"draco: ${d.namePath} is not a domain: it declares ${td.domainAspect.typeName.namePath}")
+      td
+    }
+
+  /** STAGE ONE of two-stage loading (Dev accepted 2026-10-21): the identity-only
+    * ontology of an explicitly declared set of domains. A domain definition's own name,
+    * its self-declaration and its `types` list are qualified by construction — a listed
+    * member's identity is the domain's package plus its bare name — so identity needs no
+    * resolution scope. `Domain(definition)` with no members gives core's name-only
+    * placeholders for every listed member, and an ontology of those placeholders is, as a
+    * resolution scope, identical to the populated one: `NameResolution` reads identities
+    * only. Nothing is discovered: which domains exist is the caller's declaration. */
+  def identities(declarations: Seq[TypeName], path: DefinitionPath = DefinitionPath.default): DomainOntology = {
+    // Factory arguments are by-name: every effect is bound to a value before the call (§6).
+    val domains: Seq[DomainType] = declared(declarations, path).map(td => Domain[Any](td))
+    DomainOntology(domains)
+  }
+
+  /** STAGE TWO: load the declared domains with their members and resolve every body —
+    * the domain definition's and each member's — through `NameResolution` over the
+    * identity-only ontology and the explicit binding vocabulary, then compose the
+    * populated ontology. A body may name a type held by any declared domain by its
+    * short name; a name no declared domain holds and no binding supplies fails, as it
+    * does in every scoped operation. The result does not depend on the declarations'
+    * order. The generated companions keep loading unscoped through `TypeLoader`; the
+    * bootstrap files are untouched by this operation. */
+  def load(declarations: Seq[TypeName], bindings: Map[String, TypeName],
+           path: DefinitionPath = DefinitionPath.default): DomainOntology = {
+    val definitions = declared(declarations, path)
+    val placeholders: Seq[DomainType] = definitions.map(td => Domain[Any](td))
+    val scope = new NameResolution(DomainOntology(placeholders), bindings)
+    // Resolution is strict here, so an unknown name fails in `load`, not on the first read of a
+    // dictionary: factory arguments are by-name and would defer it (§6).
+    val domains: Seq[DomainType] = definitions.map { td =>
+      val definition = scope.resolve(td)
+      val members = td.domainAspect.elementTypeNames
+        .map(m => loadFrom(path, TypeName(m, td.typeName.namePackage))).map(scope.resolve)
+      Domain[Any](definition, members)
+    }
+    DomainOntology(domains)
   }
 
   /** Compose the `DomainOntology` from one or more already-defined domains.
