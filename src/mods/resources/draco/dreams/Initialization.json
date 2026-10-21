@@ -42,7 +42,10 @@
         "valueType": {
           "->": [
             "draco.dreams.user.Response",
-            "Unit"
+            {
+              "(,)": [
+              ]
+            }
           ]
         }
       },
@@ -52,7 +55,10 @@
         "valueType": {
           "->": [
             "draco.DomainOntology",
-            "Unit"
+            {
+              "(,)": [
+              ]
+            }
           ]
         }
       },
@@ -436,7 +442,10 @@
       {
         "kind": "Dynamic",
         "name": "run",
-        "valueType": "Unit",
+        "valueType": {
+          "(,)": [
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -444,7 +453,10 @@
             "valueType": {
               "->": [
                 "draco.dreams.user.Create",
-                "Unit"
+                {
+                  "(,)": [
+                  ]
+                }
               ]
             }
           }
@@ -453,7 +465,10 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Unit",
+            "valueType": {
+              "(,)": [
+              ]
+            },
             "value": {
               "()": [
                 "ordered.foreach",
@@ -561,7 +576,10 @@
           "valueType": {
             "->": [
               "draco.dreams.user.Response",
-              "Unit"
+              {
+                "(,)": [
+                ]
+              }
             ]
           },
           "value": {
@@ -583,7 +601,10 @@
           "valueType": {
             "->": [
               "draco.DomainOntology",
-              "Unit"
+              {
+                "(,)": [
+                ]
+              }
             ]
           },
           "value": {

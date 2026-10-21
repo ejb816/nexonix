@@ -1,6 +1,6 @@
 type ContentSink
   elements
-    dyn write Unit [
+    dyn write () [
       parameters
         par content String
     ]
@@ -10,7 +10,7 @@ type ContentSink
       par logicalPath String
     body
       loc sinkPath java.nio.file.Path java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))
-      dyn write Unit [
+      dyn write () [
         parameters
           par content String
         body

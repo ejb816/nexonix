@@ -1,7 +1,7 @@
 type Input
   factory ActorType
     parameters
-      par worldConsumer (domains.world.World -> Unit)
+      par worldConsumer (domains.world.World -> ())
 domain domains aerial Aerial
 actor
   messageType draco format dracon Dracon

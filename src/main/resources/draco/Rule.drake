@@ -1,11 +1,11 @@
 type Rule(T) from RuleType
   elements
-    fix pattern (Knowledge -> Unit)
-    fix action (RhsContext -> Unit)
+    fix pattern (Knowledge -> ())
+    fix action (RhsContext -> ())
   factory
     parameters
-      par pattern (Knowledge -> Unit)
-      par action (RhsContext -> Unit)
+      par pattern (Knowledge -> ())
+      par action (RhsContext -> ())
   globals
     fix knowledgeService KnowledgeService new KnowledgeService ()
 domain draco Draco

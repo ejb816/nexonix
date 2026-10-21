@@ -1,5 +1,5 @@
 type RuleType
   elements
-    fix action (RhsContext -> Unit)
-    fix pattern (Knowledge -> Unit)
+    fix action (RhsContext -> ())
+    fix pattern (Knowledge -> ())
 domain draco Draco

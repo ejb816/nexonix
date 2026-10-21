@@ -49,6 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**840 tests / 59 suites**, verified by Dev on 2026-10-21 for the unit type as the empty Objective
+(record `git-record-2026-10-21-1830`): one added test, zero failed, canceled, ignored or pending tests,
+zero aborted suites, every report-only headline unchanged, including zero pending mods actors; Dev's
+first run of that gate failed the two assembly suites, fixed before the second. Before it:
 **839 tests / 59 suites**, verified by Dev on 2026-10-21 for two-stage loading from explicit domain
 declarations (record `git-record-2026-10-21-1700`): four added tests and one added suite
 (`DomainLoadingTest`), zero failed, canceled, ignored or pending tests, zero aborted suites, every
@@ -344,7 +348,7 @@ are bare in the referring type's own package, qualified elsewhere, and written a
 expression when the referent is outside every draco domain (`Dictionary` derives `{K, V}`).
 Value types are
 `[T]` Seq, `{T}` Set, `{K,V}` Map, their mutable versions `[T]+`, `{T}+`, `{K,V}+` (2026-09-20; `mut {T}` retired),
-`F(A,B)`, `A -> B`, tuples. The full spec is
+`F(A,B)`, `A -> B`, tuples, and `()` the unit type — the empty Objective (2026-10-21). The full spec is
 `src/main/resources/draco/drake.dlt`, which is current and authoritative.
 
 **Caveat, and it matters if you author drake:** `Drake.parse` trees every VALUE TYPE as one of
@@ -803,6 +807,24 @@ absent from Draco's `types` list was observed in passing, not filed. `DomainLoad
 59th suite — stage one against the populated ontology, stage two order-independent and equal to the
 resolution of the unscoped load, and a fixture root whose body says `Dracon` loading qualified while an
 undeclared domain stays unknown; `NameResolutionTest` +1. No corpus type changed, so no headline moves.
+
+**The unit type is the empty Objective (2026-10-21, Claude Code; Dev verified 840 / 59).** The loader's measurement
+became the next design point: under the accepted ontology-first rule, every consumer arrow `(M -> Unit)` in
+a scope declaring Base resolved to the Base marker `draco.base.Unit` (Cardinal, Nominal and Ordinal derive
+it). Dev accepted "the unit type as the empty Objective, written (), rendering Unit in Scala, with the
+corpus re-authored and Base's Unit kept." `Drake.parse` reads `()` alone in a type slot as `{"(,)": []}` —
+the empty product, Haskell's unit type, and already drake's unit VALUE — and the ScalaTarget spells the
+empty Objective `Unit`, so every generated Scala file is byte-identical; `Unit` is no host leaf and no
+vocabulary binding. Thirty sites in twelve drake sources were re-authored and re-canonicalized, seven
+JSON-only example definitions carry the tree by hand; the one `Unit` left is inside a host-opaque
+expression on the rete seam of the OriginateReports, which resolution never reads. CLI's bare `Drake.emit`
+is qualified `draco.Drake.emit`, the engine as Emit spells it, and CLI.scala regenerated on that one line.
+DrakeParseTest +1 (the form), DomainLoadingTest pins the Editor's resolved arrow as `Response -> ()`. The
+first full gate failed the two ASSEMBLY suites: `AssemblyValidator` recognised a consumer parameter by the
+string `Unit` as its arrow's result — the third consumer of the type vocabulary beside the two renderers
+(§6, again) — and now recognises the empty Objective.
+The remaining bootstrap-vocabulary point before shortening any file: the 41 host names the corpus still
+spells as leaves.
 
 **Handoff checkpoint (2026-10-21).** Chapters 95–99 preserve this Codex session with a
 bounded original-message extract: 35 complete exchanges plus the open handoff request.

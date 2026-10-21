@@ -4,8 +4,8 @@ type Initialization
     fix initial draco.DomainOntology
     fix responses [draco.dreams.user.Response]+
     mut ontology draco.DomainOntology
-    fix note (draco.dreams.user.Response -> Unit)
-    fix keep (draco.DomainOntology -> Unit)
+    fix note (draco.dreams.user.Response -> ())
+    fix keep (draco.DomainOntology -> ())
     dyn owns Boolean [
       parameters
         par latent draco.dreams.user.Latent
@@ -37,11 +37,11 @@ type Initialization
     ]
     dyn ordered [draco.dreams.user.Create] order([], domains)
     dyn editorType draco.ActorType draco.dreams.editor.Editor.actorType(initial, note, keep)
-    dyn run Unit [
+    dyn run () [
       parameters
-        par editor (draco.dreams.user.Create -> Unit)
+        par editor (draco.dreams.user.Create -> ())
       body
-        fix value Unit ordered.foreach(editor)
+        fix value () ordered.foreach(editor)
     ]
     dyn complete Boolean responses.size == domains.size
     dyn accepted Boolean complete && responses.forall(\r -> r.accepted)
@@ -53,6 +53,6 @@ type Initialization
       fix initial draco.DomainOntology draco.DomainOntology()
       fix responses [draco.dreams.user.Response]+ scala.collection.mutable.ArrayBuffer()
       mut ontology draco.DomainOntology initial
-      fix note (draco.dreams.user.Response -> Unit) \r -> add(responses, r)
-      fix keep (draco.DomainOntology -> Unit) \o -> ontology = o
+      fix note (draco.dreams.user.Response -> ()) \r -> add(responses, r)
+      fix keep (draco.DomainOntology -> ()) \o -> ontology = o
 domain draco dreams Dreams

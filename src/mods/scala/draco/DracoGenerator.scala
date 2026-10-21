@@ -244,6 +244,8 @@ object DracoGenerator extends App {
     case Some(("->", Vector(s, t)))    =>
       val left = scalaType(s)
       s"${if (TypeForm.node(s).exists(_._1 == "->")) s"($left)" else left} => ${scalaType(t)}"
+    // The empty Objective is the unit type (2026-10-21); the ScalaTarget spells it `Unit`.
+    case Some(("(,)", Vector()))       => "Unit"
     case Some(("(,)", members))        => members.map(scalaType).mkString("(", ", ", ")")
     // The bracket nodes carry the collection sugar with no host head; this is the one
     // place `Seq`, `Set` and `Map` are named for a tree (2026-09-18).
@@ -1518,8 +1520,8 @@ object DracoGenerator extends App {
   // --- Rule companion generation ---
 
   /** The rule aspect's object-body contribution: condition functions + action +
-    * pattern + ruleType. `pattern` and `action` are FUNCTIONS (drake: `(Knowledge -> Unit)`,
-    * `(RhsContext -> Unit)`, 2026-09-20); Java's Consumer is named nowhere in the definition.
+    * pattern + ruleType. `pattern` and `action` are FUNCTIONS (drake: `(Knowledge -> ())`,
+    * `(RhsContext -> ())`, 2026-09-20, the unit type `()` since 2026-10-21); Java's Consumer is named nowhere in the definition.
     * The ONE boundary is Evrete's `execute`, which takes java.util.function.Consumer: a
     * lambda LITERAL converts there, a function value does not, so the template writes
     * `execute (action(_))`. Shared by `ruleGlobal` (single-aspect emission) and

@@ -75,7 +75,10 @@
       {
         "kind": "Dynamic",
         "name": "version",
-        "valueType": "Unit",
+        "valueType": {
+          "(,)": [
+          ]
+        },
         "body": [
           {
             "kind": "Monadic",
@@ -91,7 +94,10 @@
       {
         "kind": "Dynamic",
         "name": "inspect",
-        "valueType": "Unit",
+        "valueType": {
+          "(,)": [
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -129,7 +135,10 @@
       {
         "kind": "Dynamic",
         "name": "generate",
-        "valueType": "Unit",
+        "valueType": {
+          "(,)": [
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -162,7 +171,10 @@
       {
         "kind": "Dynamic",
         "name": "drake",
-        "valueType": "Unit",
+        "valueType": {
+          "(,)": [
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -178,7 +190,7 @@
                 "println",
                 {
                   "()": [
-                    "Drake.emit",
+                    "draco.Drake.emit",
                     {
                       "()": [
                         "load",
@@ -205,7 +217,10 @@
                     "String"
                   ]
                 },
-                "Unit"
+                {
+                  "(,)": [
+                  ]
+                }
               ]
             }
           ]
@@ -278,7 +293,10 @@
       {
         "kind": "Dynamic",
         "name": "main",
-        "valueType": "Unit",
+        "valueType": {
+          "(,)": [
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -296,7 +314,10 @@
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "Unit",
+            "valueType": {
+              "(,)": [
+              ]
+            },
             "value": {
               "()": [
                 {

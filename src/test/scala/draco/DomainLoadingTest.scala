@@ -29,11 +29,10 @@ class DomainLoadingTest extends AnyFunSuite {
 
   /** The host names the canonical corpus still spells as leaves, each bound to itself: the
    *  vocabulary is explicit, and realizing these names is a target's concern, not this test's.
-   *  `Unit` is the host unit type drake.dlt specifies for every consumer arrow; with Base declared,
-   *  the ontology's `draco.base.Unit` takes precedence over this binding (measured 2026-10-21,
-   *  the next design point before any bootstrap file is shortened). */
+   *  The unit type is not among them: it is the empty Objective `()` since 2026-10-21, so the Base
+   *  domain's `draco.base.Unit` captures nothing. */
   private val hostVocabulary: Map[String, TypeName] = Seq(
-    "Any", "Array", "Boolean", "BufferedSource", "Double", "DracoGenerator", "Enumeration", "Int", "Integer", "Unit",
+    "Any", "Array", "Boolean", "BufferedSource", "Double", "DracoGenerator", "Enumeration", "Int", "Integer",
     "Iterator", "Json", "KnowledgeService", "Long", "Map", "Option", "Product", "Seq", "Some", "String", "System",
     "URI", "URL", "draco.Drake", "draco.Local", "draco.NameResolution", "io.circe.Decoder", "io.circe.Encoder",
     "io.circe.Json", "java.io.File", "java.net.URI", "java.nio.charset.StandardCharsets", "java.nio.file.Files",
@@ -75,6 +74,12 @@ class DomainLoadingTest extends AnyFunSuite {
     val element = definitionsOf(loaded).find(_.typeName.namePath == "draco.TypeName").get
       .dracoAspect.elements.find(_.name == "typeParameters").get
     assert(TypeForm.text(element.valueType) == "[draco.format.dracon.Dracon]", "a qualified reference stays qualified")
+    // The unit type is the empty Objective, so a consumer arrow resolves to it, never to Base's Unit.
+    val editor = definitionsOf(loaded).find(_.typeName.namePath == "draco.dreams.editor.Editor").get
+    val actual = editor.dracoAspect.factory.parameters.find(_.name == "actual").get
+    assert(actual.valueType.json == io.circe.Json.obj("->" -> io.circe.Json.arr(
+      io.circe.Json.fromString("draco.dreams.user.Response"), io.circe.Json.obj("(,)" -> io.circe.Json.arr()))))
+    assert(loaded.defines(typeName("draco.base.Unit")), "Base's marker is held and untouched")
   }
 
   test("a body saying Dracon loads with its full identity from an explicit root; nothing undeclared is discovered") {

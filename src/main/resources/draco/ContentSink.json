@@ -10,7 +10,10 @@
       {
         "kind": "Dynamic",
         "name": "write",
-        "valueType": "Unit",
+        "valueType": {
+          "(,)": [
+          ]
+        },
         "parameters": [
           {
             "kind": "Parameter",
@@ -55,7 +58,10 @@
         {
           "kind": "Dynamic",
           "name": "write",
-          "valueType": "Unit",
+          "valueType": {
+            "(,)": [
+            ]
+          },
           "parameters": [
             {
               "kind": "Parameter",

@@ -612,7 +612,10 @@ anchors and bodies through the ontology scope (see *Loading*). A probe over the 
 domains measured a 42-name host vocabulary, one unreadable authored-ahead field (ActorAspect's,
 which `NameResolution` now preserves as host-opaque text) and two captures that change meaning
 under the ontology-first rule — the host `Unit` as `draco.base.Unit`, and a bare `Drake.emit` as
-the Drake domain — which are the next design point before any bootstrap file is shortened.
+the Drake domain — which were the next design point before any bootstrap file is shortened. The unit capture is
+closed (2026-10-21): the unit type is the empty Objective `()`, read by drake as `{"(,)": []}` and
+spelled `Unit` by the Scala target, so no host leaf names it and Base's marker captures nothing;
+the corpus is re-authored and CLI's engine reference qualified. The host vocabulary remains open.
 
 Method formal parameters now have their own TypeParameter records: a name plus optional
 upper/lower bounds represented as Dracon type forms. Dynamic.typeParameters defaults empty;

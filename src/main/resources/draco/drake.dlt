@@ -49,7 +49,8 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
 
   THE FIELD IS A JSON NODE (2026-09-16), on the same terms as a TypeElement's `value`: a STRING is the
   type's authored text, host-opaque, and is everything the corpus holds today; an OBJECT will be a
-  TYPE-FORM TREE — Atomic (a string leaf), Objective `{"(,)": [...]}`, Parametric `{"()": [F, A ...]}`,
+  TYPE-FORM TREE — Atomic (a string leaf), Objective `{"(,)": [...]}` (EMPTY, `()`, is the UNIT TYPE —
+  the empty product, Haskell's unit, drake's own; no host leaf names it, 2026-10-21), Parametric `{"()": [F, A ...]}`,
   Morphic `{"->": [S, T]}` binary and RIGHT-associative (Haskell's: A -> B -> C is A -> (B -> C)), the
   bounds `{"<:": [parameter, bound]}` / `{">:": [parameter, bound]}` parameter first. THE PARSER TREES
   THE FOUR FORMS (2026-09-17): every value-type slot parses to a tree, read outside-in — a top-level
@@ -105,13 +106,15 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   the two ways a definition BUILDS a sequence lazily, `progression` and `cons` (SYMBOLS), spelled with
   LazyList, whose values are Seqs, so head / tail / filter / take on a `[T]` stay lazy at run time.
   CONSUMER WENT THIRD (2026-09-20, Dev: "I would prefer that Consumer not appear in drake or json as part
-  of the type definition"): Rule / RuleType declare `pattern (Knowledge -> Unit)` and `action (RhsContext
-  -> Unit)` — both arguments draco.rete wrap types, so the slot is fully draco-spelled — and a rule's
+  of the type definition"): Rule / RuleType declare `pattern (Knowledge -> ())` and `action (RhsContext
+  -> ())` — both arguments draco.rete wrap types and the result the unit type `()` (the host leaf `Unit`
+  until 2026-10-21, when Base's `Unit` marker captured it under ontology-scoped resolution), so the slot is
+  fully draco-spelled — and a rule's
   pattern is APPLIED, `pattern(knowledge)`. Java's Consumer was there because Evrete is Java and its
   `execute` takes java.util.function.Consumer; a Scala function VALUE is refused at that call and a lambda
   LITERAL converts, so the ScalaTarget writes `execute (action(_))` at that one call and names the
   interface nowhere else. ACTORREF WENT SECOND (2026-09-18, Dev: "a consumer of M, the assembly keeps identity"): a parameter
-  typed by the host's `ActorRef(M)` is `(M -> Unit)` — drake's own arrow, parenthesized in the
+  typed by the host's `ActorRef(M)` is `(M -> ())` — drake's own arrow and unit, parenthesized in the
   name-type-value slot — and sending is APPLICATION, `consumer(report)`. The ASSEMBLY keeps the host's refs
   and converts each at its boundary (`ref ! _`) when it hands a member its arguments; a member only ever
   applies a function. The term "ActorRef" is provisional — Pekko's name for the address of a typed actor's

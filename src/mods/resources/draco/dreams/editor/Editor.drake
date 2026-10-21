@@ -2,8 +2,8 @@ type Editor
   factory ActorType
     parameters
       par initial draco.DomainOntology
-      par actual (draco.dreams.user.Response -> Unit)
-      par ontology (draco.DomainOntology -> Unit)
+      par actual (draco.dreams.user.Response -> ())
+      par ontology (draco.DomainOntology -> ())
       par transforms [TransformBinding] []
 domain draco dreams editor Editor
   types [
@@ -32,7 +32,7 @@ actor
     mon DeleteUnheld.ruleType.pattern(rules)
     mon GenerateRequested.ruleType.pattern(rules)
     mut accepted draco.DomainOntology initial
-    fix accept (draco.DomainOntology -> Unit) \next -> accepted = next
+    fix accept (draco.DomainOntology -> ()) \next -> accepted = next
   message
     now fix provisional draco.DomainOntology msg.proposal(accepted)
     now fix subject draco.TypeDefinition msg.subject(accepted)

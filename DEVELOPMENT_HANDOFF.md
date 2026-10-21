@@ -6,18 +6,21 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **c7799b9** (Codex's
-  documentation handoff over the b17ddb8 code baseline) when the two-stage loading increment was
-  built; the increment — `src/mods/scala/draco/{DomainBuilder,NameResolution}.scala`,
-  `src/test/scala/draco/{DomainLoadingTest,NameResolutionTest}.scala`, DRACO.md, README.md,
-  CHANGELOG.md, this file and record `git-record-2026-10-21-1700` — was handed to Dev for a
-  path-scoped commit after the gate. Inspect status: if it is still in the tree, do not discard it.
-- Latest verified code baseline: **839 tests / 59 suites**, Dev's October 21 full sbt gate on this
-  increment, zero failed/canceled/ignored/pending tests, zero aborted suites, every report-only
-  headline unchanged, pending mods actors 0. Before it, 835 / 58 on October 20.
-- Dev ACCEPTED on October 21 the two-stage loader as Claude restated it: a DomainBuilder operation
-  over explicit domain declarations and bindings, identity stage from placeholders, body stage
-  through NameResolution, bootstrap files untouched in this increment. Built as accepted.
+- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **b95419c** (two-stage
+  loading, committed and pushed by Dev at the verified 839 / 59 gate). The tree now carries the
+  UNCOMMITTED unit-type increment: `src/mods/scala/draco/{Drake,DracoGenerator,AssemblyValidator}.scala`,
+  `src/main/scala/draco/CLI.scala` (regenerated), twelve re-authored drake sources with their JSON
+  and seven JSON-only example definitions (36 files in status), `src/main/resources/draco/drake.dlt`,
+  `src/test/scala/draco/{DrakeParseTest,DomainLoadingTest}.scala`, DRACO.md, README.md,
+  CHANGELOG.md, this file and record `git-record-2026-10-21-1830` (gate line a placeholder until
+  Dev's run). Do not discard it.
+- Latest verified code baseline: **840 tests / 59 suites**, Dev's October 21 second full gate on the
+  unit-type increment, zero failed/canceled/ignored/pending tests, zero aborted suites, every
+  report-only headline unchanged, pending mods actors 0. The first run had failed the two assembly
+  suites (AssemblyValidator read the consumer arrow's result as the string `Unit`); fixed before the
+  second. Before it, 839 / 59 at b95419c and 835 / 58 at b17ddb8.
+- Dev ACCEPTED on October 21, after the loader landed, the unit type as the empty Objective `()`,
+  rendering `Unit` in Scala, the corpus re-authored and Base's `Unit` kept. Built as accepted.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used, but do not replace Dev's full gate.
 - One design point per reply; one recommendation with accept-or-correct; build only what
@@ -28,12 +31,12 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Next action
 
-After Dev's commit, bring the next #51 design point; journal chapter 100 is written from this
-session's record at its closing handoff. The next design point, already measured and not yet put to Dev: the two
-captures the ontology-first rule produces over today's bootstrap files — the host `Unit` (drake.dlt's
-leaf in every consumer arrow) resolving to `draco.base.Unit`, and CLI's bare `Drake.emit` resolving to
-the Drake domain's definition instead of the hand-written engine — together with the 42-name host
-vocabulary the canonical corpus needs, before any bootstrap file is shortened. One recommendation.
+After Dev's commit of the unit-type increment: bring the next design point. Both captures the loader measured are now closed: the
+unit type by this increment, CLI's `Drake.emit` by qualification. The next #51 design point, not yet
+put to Dev: the bootstrap host vocabulary — the 41 host names the canonical corpus still spells as
+leaves (String, Int, Boolean, Json, URI, URL, the evrete and pekko types, the hand-written engine
+objects) — who supplies it and in what form, before any bootstrap file is shortened. Journal chapter
+100 is written from this session's record at its closing handoff. One recommendation.
 
 ## Completed in this session
 

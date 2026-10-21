@@ -22,11 +22,12 @@ import io.circe.Json
   */
 object AssemblyValidator {
 
-  /** The message type a CONSUMER parameter accepts — `M -> Unit`, drake's own arrow
+  /** The message type a CONSUMER parameter accepts — `M -> ()`, drake's own arrow whose
+    * result is the unit type, the empty Objective (2026-10-21; the host leaf `Unit` before)
     * (2026-09-18; the host's `ActorRef[M]` before) — or None if the type is not one. The
     * assembly keeps the refs; a member sees only a function it applies. */
   private def actorRefInner(valueType: Json): Option[String] =
-    TypeForm.node(valueType).collect { case ("->", Vector(m, u)) if u.asString.contains("Unit") => m.text }
+    TypeForm.node(valueType).collect { case ("->", Vector(m, u)) if TypeForm.node(u).contains(("(,)", Vector.empty)) => m.text }
 
   /** Message type a member receives. The actor ASPECT is the source of truth —
     * actor-ness is aspect presence, so an `Actor[M]` derivation would put a role's
@@ -67,7 +68,7 @@ object AssemblyValidator {
         case Some(param) =>
           actorRefInner(param.valueType) match {
             case None =>
-              errors += s"parameter '${b.param}' of '${b.from.namePath}' is '${param.valueType.text}', not a consumer (M -> Unit)"
+              errors += s"parameter '${b.param}' of '${b.from.namePath}' is '${param.valueType.text}', not a consumer (M -> ())"
             case Some(refInner) =>
               messageType(toTd) match {
                 case None =>

@@ -652,4 +652,16 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     }
     intercept[RuntimeException](Drake.emit(TypeDefinition(TypeName("Probe"), _codecAspect = CodecAspect("tag"))))
   }
+  test("the unit type is the empty Objective: `()` trees to an empty tuple, emits as itself, and the ScalaTarget spells Unit") {
+    val authored = "type Sink\n  elements\n    fix consumer (draco.drake.Text -> ())\n    dyn run () [\n      parameters\n        par input draco.drake.Text\n      body\n        fix value () consumer(input)\n    ]\ndomain draco drake Drake\n"
+    val parsed = Drake.parse(authored)
+    val unit = Json.obj("(,)" -> Json.arr())
+    assert(parsed.dracoAspect.elements.head.valueType.json == Json.obj("->" -> Json.arr(Json.fromString("draco.drake.Text"), unit)))
+    assert(parsed.dracoAspect.elements(1).valueType.json == unit)
+    assert(Drake.emit(parsed) == authored)
+    val scala = DracoGenerator.generate(parsed)
+    assert(scala.contains("val consumer: String => Unit"), scala)
+    assert(scala.contains("def run(_input: => String): Unit"), scala)
+  }
+
 }

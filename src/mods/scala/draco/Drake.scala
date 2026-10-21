@@ -913,7 +913,8 @@ object Drake {
     * RIGHT (`A -> B -> C` is A -> (B -> C), Haskell's); a top-level bound is its leaf;
     * `[T]` / `{T}` / `{K, V}` are the bracket nodes `[]` / `{}` (neutral, no host head); a parenthesized
     * list is Objective, a parenthesized single member the arrow slot's wrapper;
-    * `F(A, B)` applies; a bare name is Atomic and stays the string it is. The one
+    * `F(A, B)` applies; `()` alone is the empty Objective, the unit type (2026-10-21);
+    * a bare name is Atomic and stays the string it is. The one
     * form still carried as HOST TEXT is `mut {T}` — `mut` belongs to the element,
     * not the type (agreed 2026-09-13, not yet built), so its spelling is the
     * host's until then, exactly as parseTypeExpression wrote it. */
@@ -934,6 +935,9 @@ object Drake {
         val members = splitTypeArguments (s.substring (1, s.length - 1))
         Json.obj ("{}" -> Json.fromValues (members.map (typeForm)))
       }
+      // The UNIT TYPE is the empty Objective `()` (Dev, 2026-10-21): the empty product, Haskell's
+      // unit, drake's own spelling in every consumer arrow `(M -> ())`; no host leaf names it.
+      else if (s == "()") Json.obj ("(,)" -> Json.arr ())
       else if (s.startsWith ("(") && s.endsWith (")")) {
         val members = splitTypeArguments (s.substring (1, s.length - 1))
         if (members.size == 1) typeForm (members.head)

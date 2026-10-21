@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+Unit type (2026-10-21; Dev verified 840 tests / 59 suites, every headline unchanged): the unit type is the empty Objective `()` — drake reads `()` in a
+type slot as `{"(,)": []}`, the ScalaTarget spells it `Unit`, and the thirty `Unit` leaves across the
+corpus are re-authored, so the Base domain's `Unit` marker no longer captures consumer arrows under
+ontology-scoped resolution. CLI's engine reference is qualified `draco.Drake.emit`.
+
 Two-stage loading (2026-10-21; Dev verified 839 tests / 59 suites, every headline unchanged): `DomainBuilder.identities` composes the identity-only ontology
 of an explicitly declared set of domains from their anchors alone, and `DomainBuilder.load` resolves every
 body through `NameResolution` over it and an explicit binding vocabulary, from an explicit `DefinitionPath`.

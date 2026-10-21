@@ -21,7 +21,10 @@
           "draco"
         ],
         "typeParameters": [
-          "Unit"
+          {
+            "(,)": [
+            ]
+          }
         ]
       }
     ]

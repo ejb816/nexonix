@@ -26,7 +26,10 @@
           "valueType": {
             "->": [
               "draco.format.dracon.Dracon",
-              "Unit"
+              {
+                "(,)": [
+                ]
+              }
             ]
           },
           "value": "ctx.getRuntime().get[draco.format.dracon.Dracon => Unit](\"consumer\")"

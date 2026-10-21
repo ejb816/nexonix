@@ -28,7 +28,10 @@
           "valueType": {
             "->": [
               "domains.world.World",
-              "Unit"
+              {
+                "(,)": [
+                ]
+              }
             ]
           }
         }

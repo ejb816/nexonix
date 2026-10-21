@@ -8,33 +8,33 @@ type CLI(L)
         loc text String try source.mkString finally source.close()
         fix value TypeDefinition io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
     ]
-    dyn version Unit [
+    dyn version () [
       body
         mon println("Draco 2.0.0-alpha.1")
     ]
-    dyn inspect Unit [
+    dyn inspect () [
       parameters
         par path String
       body
         mon println(TypeDefinition.encoder(load(path)).spaces2)
     ]
-    dyn generate Unit [
+    dyn generate () [
       parameters
         par path String
       body
         mon println(DracoGenerator.generate(load(path)))
     ]
-    dyn drake Unit [
+    dyn drake () [
       parameters
         par path String
       body
-        mon println(Drake.emit(load(path)))
+        mon println(draco.Drake.emit(load(path)))
     ]
-    fix commands {String, [String] -> Unit} Map(("version", \_ -> version), ("inspect", \as -> inspect(as.head)), ("generate", \as -> generate(as.head)), ("drake", \as -> drake(as.head)))
-    dyn main Unit [
+    fix commands {String, [String] -> ()} Map(("version", \_ -> version), ("inspect", \as -> inspect(as.head)), ("generate", \as -> generate(as.head)), ("drake", \as -> drake(as.head)))
+    dyn main () [
       parameters
         now par args Array(String)
       body
-        fix value Unit commands.getOrElse(args.headOption.getOrElse("version"), \(_: Seq[String]) -> version)(args.drop(1).toSeq)
+        fix value () commands.getOrElse(args.headOption.getOrElse("version"), \(_: Seq[String]) -> version)(args.drop(1).toSeq)
     ]
 domain draco Draco

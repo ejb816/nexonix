@@ -24,7 +24,10 @@
         "valueType": {
           "->": [
             "Knowledge",
-            "Unit"
+            {
+              "(,)": [
+              ]
+            }
           ]
         }
       },
@@ -34,7 +37,10 @@
         "valueType": {
           "->": [
             "RhsContext",
-            "Unit"
+            {
+              "(,)": [
+              ]
+            }
           ]
         }
       }
@@ -54,7 +60,10 @@
           "valueType": {
             "->": [
               "Knowledge",
-              "Unit"
+              {
+                "(,)": [
+                ]
+              }
             ]
           }
         },
@@ -64,7 +73,10 @@
           "valueType": {
             "->": [
               "RhsContext",
-              "Unit"
+              {
+                "(,)": [
+                ]
+              }
             ]
           }
         }

@@ -1,0 +1,39 @@
+The unit type is the empty Objective: () replaces the host leaf Unit across the corpus
+
+Dev accepted, on 2026-10-21, "the unit type as the empty Objective, written (), rendering Unit in
+Scala, with the corpus re-authored and Base's Unit kept." The two-stage loader had measured the
+defect: under the accepted ontology-first rule, every consumer arrow `(M -> Unit)` in a scope that
+declares Base resolved to the Base domain's marker `draco.base.Unit`, the parent of Cardinal,
+Nominal and Ordinal. The host leaf was the problem, as String and Option were before it.
+
+Drake.parse reads `()` alone in a type slot as the empty Objective, `{"(,)": []}`, the empty
+product, Haskell's unit type and drake's own unit value; Drake.emit and TypeForm.neutral already
+write an empty tuple as `()`. The ScalaTarget spells the empty Objective `Unit`, so every
+generated Scala file is byte-identical. Twelve drake sources (Rule, RuleType, ContentSink, CLI,
+Initialization, Editor, five example Creators/Input/Output) are re-authored at thirty sites and
+re-canonicalized with the compiled parser; seven JSON-only example definitions carry the tree
+by hand in the writer's layout. One `Unit` token remains, inside a host-opaque expression on the
+rete seam of the four OriginateReports, which resolution never reads. CLI's bare `Drake.emit` is
+qualified `draco.Drake.emit`, the hand-written engine as Emit already spells it; CLI.scala is
+regenerated with that one line. `Unit` leaves the loading vocabulary, and DomainLoadingTest pins
+the Editor's resolved consumer arrow as `Response -> ()` with Base's marker held untouched.
+DrakeParseTest gains one structural test for the form.
+
+Probe on the compiled engine over a resource overlay: DracoGenTest, DrakeGenTest, DrakeParseTest,
+ExampleDomainsGenTest, SourceContractTest, GenDrakeTest, the two aspect suites, ScenarioDrakeTest,
+DomainLoadingTest, NameResolutionTest, DomainBuilderTest, InitializationTest, EditorTest,
+DreamsTest and GenerationTest: 670 passed, zero failed or aborted, every headline unchanged
+(109 + 10 in scope, 1 loss across 119, gen map 28/20/0/0, GenDrake 107 of 107, aspect sections
+109, scenario 23 clean, pending mods actors 0). The two example-domain differences
+(Input, Output) regenerate identically from HEAD's JSON: known drift, not this change.
+
+Dev's first full gate failed two tests, WorldAssemblyTest and AerialAssemblyTest (838 of 840):
+AssemblyValidator, a third consumer of the type vocabulary beside the two renderers (§6), recognised
+a consumer parameter by the string `Unit` as the arrow's result. It now recognises the empty
+Objective; both suites pass on the compiled classes, and no other engine code reads the old leaf.
+
+Gate: Dev's second full sbt run on 2026-10-21, pasted: 840 tests / 59 suites, zero failed, canceled,
+ignored or pending tests, zero aborted suites; every report-only headline unchanged; pending mods
+actors 0 in the file-only log. Committed and pushed by Dev.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
