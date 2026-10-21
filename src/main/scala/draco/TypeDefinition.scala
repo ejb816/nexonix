@@ -60,4 +60,5 @@ object TypeDefinition extends App with DracoType {
     _codecAspect = CodecAspect.Null
   )
 
+
 }

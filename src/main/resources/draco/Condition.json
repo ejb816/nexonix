@@ -21,14 +21,14 @@
         {
           "kind": "Parameter",
           "name": "value",
-          "valueType": "draco.format.dracon.Dracon"
+          "valueType": "Dracon"
         }
       ],
       "body": [
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "draco.format.dracon.Dracon",
+          "valueType": "Dracon",
           "value": "_value"
         }
       ]

@@ -10,17 +10,17 @@
       {
         "kind": "Fixed",
         "name": "name",
-        "valueType": "draco.drake.Text"
+        "valueType": "Text"
       },
       {
         "kind": "Fixed",
         "name": "upperBound",
-        "valueType": "draco.format.dracon.Dracon"
+        "valueType": "Dracon"
       },
       {
         "kind": "Fixed",
         "name": "lowerBound",
-        "valueType": "draco.format.dracon.Dracon"
+        "valueType": "Dracon"
       }
     ],
     "factory": {
@@ -30,19 +30,19 @@
         {
           "kind": "Parameter",
           "name": "name",
-          "valueType": "draco.drake.Text"
+          "valueType": "Text"
         },
         {
           "kind": "Parameter",
           "name": "upperBound",
-          "valueType": "draco.format.dracon.Dracon",
-          "value": "draco.format.dracon.Dracon.Null"
+          "valueType": "Dracon",
+          "value": "Dracon.Null"
         },
         {
           "kind": "Parameter",
           "name": "lowerBound",
-          "valueType": "draco.format.dracon.Dracon",
-          "value": "draco.format.dracon.Dracon.Null"
+          "valueType": "Dracon",
+          "value": "Dracon.Null"
         }
       ]
     }

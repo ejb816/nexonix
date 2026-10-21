@@ -1,15 +1,18 @@
 package draco.format.dracon
 
+import draco.drake.Absent
+import draco.drake.Presence
+
 import draco.format._
 import draco._
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
 trait Value extends draco.format.Value[Dracon] {
-  def decode[T](_source: => Dracon, _decoder: => draco.format.dracon.Decoder[T]): draco.drake.Presence[T] = {
+  def decode[T](_source: => Dracon, _decoder: => draco.format.dracon.Decoder[T]): Presence[T] = {
     lazy val source: Dracon = _source
     lazy val decoder: draco.format.dracon.Decoder[T] = _decoder
-    value(source).fold(draco.drake.Absent(), selected => decoder.decode(selected))
+    value(source).fold(Absent(), selected => decoder.decode(selected))
   }
 }
 
@@ -38,7 +41,7 @@ object Value extends App with DracoType {
   ) : Value = new Value {
     override lazy val name: String = _name
     override lazy val pathElements: Seq[String] = _pathElements
-    override def value(_source: => Dracon): draco.drake.Presence[Dracon] = {
+    override def value(_source: => Dracon): Presence[Dracon] = {
       lazy val source: Dracon = _source
       source.select(pathElements)
     }

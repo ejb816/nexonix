@@ -78,7 +78,7 @@ class EditorTest extends AnyFunSuite {
     }
 
     test(s"$name Scala is generated from its staged definition") {
-      assert(DracoGenerator.generate(definition) == read(s"src/mods/scala/$stem.scala"))
+      assert(DracoGenerator.generate(definition, CanonicalScope.scope) == read(s"src/mods/scala/$stem.scala"))
       assert(!Files.exists(Paths.get(s"src/main/scala/$stem.scala")), "duplicate main-tier scaffold")
       assert(companion().typeName == definition.typeName)
       assert(companion().domainAspect.typeName == Editor.typeDefinition.typeName)

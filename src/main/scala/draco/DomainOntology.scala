@@ -1,5 +1,7 @@
 package draco
 
+import draco.drake.Presence
+
 trait DomainOntology extends Dictionary[DomainType, TypeDictionary] {
   val derivations: Seq[Derivation]
   def owns(_domain: => DomainType, _typeName: => TypeName): Boolean = {
@@ -27,7 +29,7 @@ trait DomainOntology extends Dictionary[DomainType, TypeDictionary] {
     lazy val typeName: TypeName = _typeName
     kvMap.keys.exists(domain => domain.typeDefinition.typeName.namePath == typeName.namePath)
   }
-  def holding(_typeName: => TypeName): draco.drake.Presence[DomainType] = {
+  def holding(_typeName: => TypeName): Presence[DomainType] = {
     lazy val typeName: TypeName = _typeName
     (kvMap.keys.find(domain => domain.typeDefinition.typeName.namePath == typeName.namePath) match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
   }

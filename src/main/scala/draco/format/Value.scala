@@ -1,11 +1,13 @@
 package draco.format
 
+import draco.drake.Presence
+
 import draco._
 
 trait Value[F] extends DracoType {
   val name: String
   val pathElements: Seq[String]
-  def value(_source: => F): draco.drake.Presence[F]
+  def value(_source: => F): Presence[F]
 }
 
 object Value extends App with DracoType {

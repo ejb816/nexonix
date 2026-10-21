@@ -36,6 +36,10 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
     )
     service.shutdown()
   }
+  // These tests WRITE their generation into src/main/scala (a pre-existing practice): since
+  // 2026-10-21 they generate through the canonical scope, as DracoGenTest compares, or the
+  // write would undo the regenerated file before the gate reads it — which Dev's first full
+  // run of the bootstrap-shortening increment showed.
   test("Generate PrimesFromNaturalSequence") {
     val resourcePath = "draco/primes/PrimesFromNaturalSequence.json"
     val sourceContent = SourceContent(DracoGenerator.main.sourceRoot, resourcePath)
@@ -43,7 +47,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
     log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
-    val ruleSource = DracoGenerator.generate (rule)
+    val ruleSource = DracoGenerator.generate (rule, draco.CanonicalScope.scope)
     val contentSink: ContentSink = ContentSink(DracoGenerator.main.sinkRoot, "draco/primes/PrimesFromNaturalSequence.scala")
     contentSink.write(ruleSource)
     log.info(ruleSource)
@@ -56,7 +60,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
     log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
-    val ruleSource = DracoGenerator.generate (rule)
+    val ruleSource = DracoGenerator.generate (rule, draco.CanonicalScope.scope)
     val contentSink: ContentSink = ContentSink(DracoGenerator.main.sinkRoot, "draco/primes/AddNaturalSequence.scala")
     contentSink.write(ruleSource)
     log.info(ruleSource)
@@ -69,7 +73,7 @@ class PrimesRulesTest extends AnyFunSuite with PersistentTestLog {
     log.info(jsonContent.spaces2)
 
     val rule: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(null)
-    val ruleSource = DracoGenerator.generate (rule)
+    val ruleSource = DracoGenerator.generate (rule, draco.CanonicalScope.scope)
     val contentSink: ContentSink = ContentSink(DracoGenerator.main.sinkRoot, "draco/primes/RemoveCompositeNumbers.scala")
     contentSink.write(ruleSource)
     log.info(ruleSource)

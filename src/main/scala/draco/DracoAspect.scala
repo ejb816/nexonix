@@ -1,5 +1,7 @@
 package draco
 
+import draco.format.dracon.Dracon
+
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
@@ -7,7 +9,7 @@ trait DracoAspect extends DracoType {
   val superDomain: TypeName
   val modules: Seq[TypeName]
   val extensible: TypeName
-  val derivation: Seq[draco.format.dracon.Dracon]
+  val derivation: Seq[Dracon]
   val elements: Seq[TypeElement]
   val factory: Factory
   val globalElements: Seq[BodyElement]
@@ -46,7 +48,7 @@ object DracoAspect extends App with DracoType {
     _superDomain: => TypeName = TypeName.Null,
     _modules: => Seq[TypeName] = Seq.empty,
     _extensible: => TypeName = TypeName.Null,
-    _derivation: => Seq[draco.format.dracon.Dracon] = Seq.empty,
+    _derivation: => Seq[Dracon] = Seq.empty,
     _elements: => Seq[TypeElement] = Seq.empty,
     _factory: => Factory = Factory.Null,
     _globalElements: => Seq[BodyElement] = Seq.empty
@@ -54,7 +56,7 @@ object DracoAspect extends App with DracoType {
     override lazy val superDomain: TypeName = _superDomain
     override lazy val modules: Seq[TypeName] = _modules
     override lazy val extensible: TypeName = _extensible
-    override lazy val derivation: Seq[draco.format.dracon.Dracon] = _derivation
+    override lazy val derivation: Seq[Dracon] = _derivation
     override lazy val elements: Seq[TypeElement] = _elements
     override lazy val factory: Factory = _factory
     override lazy val globalElements: Seq[BodyElement] = _globalElements
@@ -65,5 +67,5 @@ object DracoAspect extends App with DracoType {
 
   lazy val isEmpty: DracoAspect => Boolean = da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty
   lazy val parents: DracoAspect => Seq[TypeName] = da => da.derivation.filter(parent => parent.has("name")).flatMap(parent => TypeName.read(parent).fold(Seq.empty, name => Seq(name)))
-  lazy val foreignParents: DracoAspect => Seq[draco.format.dracon.Dracon] = da => da.derivation.filterNot(parent => parent.has("name"))
+  lazy val foreignParents: DracoAspect => Seq[Dracon] = da => da.derivation.filterNot(parent => parent.has("name"))
 }

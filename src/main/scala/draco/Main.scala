@@ -16,8 +16,8 @@ object Main extends App with DracoType {
     _sourceName: => String,
     _sinkName: => String
   ) : Main = new Main {
-    override lazy val sourceRoot: URI = classOf[Main].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/main/${_sourceName}/"))
-    override lazy val sinkRoot: URI = classOf[Test].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/main/${_sinkName}/"))
+    override lazy val sourceRoot: URI = classOf[Main].getResource("/").toURI.resolve(URI.create(s"../../../src/main/${_sourceName}/"))
+    override lazy val sinkRoot: URI = classOf[Test].getResource("/").toURI.resolve(URI.create(s"../../../src/main/${_sinkName}/"))
     override lazy val typeDefinition: TypeDefinition = Main.typeDefinition
   }
 

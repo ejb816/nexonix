@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+Bootstrap shortening (2026-10-21; Dev verified 845 tests / 59 suites, every headline unchanged): the seventeen main definitions that spelled the Dracon path
+now carry compact bodies with qualified anchors; scoped generation canonicalizes a definition (compact, then
+qualified only where the engine cannot read a bare name) and shortens by selective import, so every
+definition-backed Scala file is regenerated through it and every corpus-generating suite supplies the
+canonical scope explicitly. The actor-minting factory accepts `draco.ActorType` by identity.
+
 Host vocabulary (2026-10-21; Dev verified 845 tests / 59 suites): `draco.scalatarget.HostBindings` declares, as a definition, the
 `[(Text, TypeName)]` pairs binding every host name the canonical corpus still spells to the identity the Scala
 target realizes; it is supplied explicitly to `DomainBuilder.load` and, through TransformBinding, to Generate.

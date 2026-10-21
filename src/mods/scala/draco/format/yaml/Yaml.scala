@@ -1,12 +1,12 @@
 package draco.format.yaml
 
-import draco._
 import draco.format._
+import draco._
 
 trait Yaml extends Format[String]
 
 object Yaml extends App with DracoType {
-  override lazy val typeDefinition: TypeDefinition = DracoGenerator.loadType(TypeName ("Yaml", _namePackage = Seq ("draco", "format", "yaml")))
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Yaml", _namePackage = Seq ("draco", "format", "yaml")))
   lazy val dracoType: Type[Yaml] = Type[Yaml] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ()

@@ -2,18 +2,18 @@ type TypeName
   elements
     fix name String
     fix namePackage [String]
-    fix typeParameters [draco.format.dracon.Dracon]
+    fix typeParameters [Dracon]
     fix namePath String
     fix resourcePath String
   factory
     parameters
       par name String
       par namePackage [String] []
-      par typeParameters [draco.format.dracon.Dracon] []
+      par typeParameters [Dracon] []
     body
       fix name String _name
       fix namePackage [String] _namePackage
-      fix typeParameters [draco.format.dracon.Dracon] _typeParameters
+      fix typeParameters [Dracon] _typeParameters
       fix namePath String join(".", namePackage ++ [name])
       fix resourcePath String "/" ++ join("/", namePackage ++ [name ++ ".json"])
       dyn equals Boolean [
@@ -29,8 +29,8 @@ type TypeName
       ]
       dyn hashCode Int (name, namePackage, typeParameters).hashCode
   globals
-    fix read (draco.format.dracon.Dracon -> draco.drake.Presence(TypeName)) \source -> guard(source.isObject).ifThenElse(source.field("name").textOrEmpty.fold(draco.drake.Absent(), \name -> source.field("namePackage").textsOrEmpty.fold(draco.drake.Absent(), \parts -> source.field("typeParameters").itemsOrEmpty.fold(draco.drake.Absent(), \arguments -> draco.drake.Present(TypeName(name, parts, arguments))))), draco.drake.Absent())
-    fix write (TypeName -> draco.format.dracon.Dracon) \name -> draco.format.dracon.Dracon.record(guard(name.name.nonEmpty).ifThenElse([("name", draco.format.dracon.Dracon.string(name.name))], []) ++ guard(name.namePackage.nonEmpty).ifThenElse([("namePackage", draco.format.dracon.Dracon.array(name.namePackage.map(draco.format.dracon.Dracon.string)))], []) ++ guard(name.typeParameters.nonEmpty).ifThenElse([("typeParameters", draco.format.dracon.Dracon.array(name.typeParameters))], []))
+    fix read (Dracon -> Presence(TypeName)) \source -> guard(source.isObject).ifThenElse(source.field("name").textOrEmpty.fold(Absent(), \name -> source.field("namePackage").textsOrEmpty.fold(Absent(), \parts -> source.field("typeParameters").itemsOrEmpty.fold(Absent(), \arguments -> Present(TypeName(name, parts, arguments))))), Absent())
+    fix write (TypeName -> Dracon) \name -> Dracon.record(guard(name.name.nonEmpty).ifThenElse([("name", Dracon.string(name.name))], []) ++ guard(name.namePackage.nonEmpty).ifThenElse([("namePackage", Dracon.array(name.namePackage.map(Dracon.string)))], []) ++ guard(name.typeParameters.nonEmpty).ifThenElse([("typeParameters", Dracon.array(name.typeParameters))], []))
 domain draco Draco
 codec
   payload [typeParameters]

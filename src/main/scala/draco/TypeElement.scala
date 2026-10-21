@@ -1,14 +1,16 @@
 package draco
 
+import draco.format.dracon.Dracon
+
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
-sealed trait TypeElement extends Primal[draco.format.dracon.Dracon] {
+sealed trait TypeElement extends Primal[Dracon] {
   lazy val name: String = ""
-  lazy val valueType: draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null
+  lazy val valueType: Dracon = Dracon.Null
   lazy val parameters: Seq[Parameter] = Seq.empty
   lazy val body: Seq[BodyElement] = Seq.empty
-  lazy val value: draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null
+  lazy val value: Dracon = Dracon.Null
   lazy val now: Boolean = false
 }
 
@@ -174,21 +176,21 @@ object Fixed extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => draco.format.dracon.Dracon,
-    _value: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
+    _valueType: => Dracon,
+    _value: => Dracon = Dracon.Null,
     _now: => Boolean = false
   ) : Fixed = new Fixed {
     override lazy val name: String = _name
-    override lazy val valueType: draco.format.dracon.Dracon = _valueType
-    override lazy val value: draco.format.dracon.Dracon = _value
+    override lazy val valueType: Dracon = _valueType
+    override lazy val value: Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Fixed.typeDefinition
   }
 
   lazy val Null: Fixed = apply(
     _name = "",
-    _valueType = draco.format.dracon.Dracon.Null,
-    _value = draco.format.dracon.Dracon.Null,
+    _valueType = Dracon.Null,
+    _value = Dracon.Null,
     _now = false
   )
 
@@ -208,21 +210,21 @@ object Mutable extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => draco.format.dracon.Dracon,
-    _value: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
+    _valueType: => Dracon,
+    _value: => Dracon = Dracon.Null,
     _now: => Boolean = false
   ) : Mutable = new Mutable {
     override lazy val name: String = _name
-    override lazy val valueType: draco.format.dracon.Dracon = _valueType
-    override lazy val value: draco.format.dracon.Dracon = _value
+    override lazy val valueType: Dracon = _valueType
+    override lazy val value: Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Mutable.typeDefinition
   }
 
   lazy val Null: Mutable = apply(
     _name = "",
-    _valueType = draco.format.dracon.Dracon.Null,
-    _value = draco.format.dracon.Dracon.Null,
+    _valueType = Dracon.Null,
+    _value = Dracon.Null,
     _now = false
   )
 
@@ -244,18 +246,18 @@ object Dynamic extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => draco.format.dracon.Dracon,
+    _valueType: => Dracon,
     _parameters: => Seq[Parameter] = Seq.empty,
     _body: => Seq[BodyElement] = Seq.empty,
-    _value: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
+    _value: => Dracon = Dracon.Null,
     _now: => Boolean = false,
     _typeParameters: => Seq[TypeParameter] = Seq.empty
   ) : Dynamic = new Dynamic {
     override lazy val name: String = _name
-    override lazy val valueType: draco.format.dracon.Dracon = _valueType
+    override lazy val valueType: Dracon = _valueType
     override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val body: Seq[BodyElement] = _body
-    override lazy val value: draco.format.dracon.Dracon = _value
+    override lazy val value: Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeParameters: Seq[TypeParameter] = _typeParameters
     override lazy val typeDefinition: TypeDefinition = Dynamic.typeDefinition
@@ -263,10 +265,10 @@ object Dynamic extends App with DracoType {
 
   lazy val Null: Dynamic = apply(
     _name = "",
-    _valueType = draco.format.dracon.Dracon.Null,
+    _valueType = Dracon.Null,
     _parameters = Seq.empty,
     _body = Seq.empty,
-    _value = draco.format.dracon.Dracon.Null,
+    _value = Dracon.Null,
     _now = false,
     _typeParameters = Seq.empty
   )
@@ -287,21 +289,21 @@ object Parameter extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => draco.format.dracon.Dracon,
-    _value: => draco.format.dracon.Dracon,
+    _valueType: => Dracon,
+    _value: => Dracon,
     _now: => Boolean = false
   ) : Parameter = new Parameter {
     override lazy val name: String = _name
-    override lazy val valueType: draco.format.dracon.Dracon = _valueType
-    override lazy val value: draco.format.dracon.Dracon = _value
+    override lazy val valueType: Dracon = _valueType
+    override lazy val value: Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Parameter.typeDefinition
   }
 
   lazy val Null: Parameter = apply(
     _name = "",
-    _valueType = draco.format.dracon.Dracon.Null,
-    _value = draco.format.dracon.Dracon.Null,
+    _valueType = Dracon.Null,
+    _value = Dracon.Null,
     _now = false
   )
 
@@ -320,14 +322,14 @@ object Monadic extends App with DracoType {
   implicit def decoder: Decoder[Monadic] = codec.decoder
 
   def apply (
-    _value: => draco.format.dracon.Dracon
+    _value: => Dracon
   ) : Monadic = new Monadic {
-    override lazy val value: draco.format.dracon.Dracon = _value
+    override lazy val value: Dracon = _value
     override lazy val typeDefinition: TypeDefinition = Monadic.typeDefinition
   }
 
   lazy val Null: Monadic = apply(
-    _value = draco.format.dracon.Dracon.Null
+    _value = Dracon.Null
   )
 
 
@@ -400,14 +402,14 @@ object Condition extends App with DracoType {
   implicit def decoder: Decoder[Condition] = codec.decoder
 
   def apply (
-    _value: => draco.format.dracon.Dracon
+    _value: => Dracon
   ) : Condition = new Condition {
-    override lazy val value: draco.format.dracon.Dracon = _value
+    override lazy val value: Dracon = _value
     override lazy val typeDefinition: TypeDefinition = Condition.typeDefinition
   }
 
   lazy val Null: Condition = apply(
-    _value = draco.format.dracon.Dracon.Null
+    _value = Dracon.Null
   )
 
 
@@ -426,16 +428,16 @@ object Variable extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => draco.format.dracon.Dracon
+    _valueType: => Dracon
   ) : Variable = new Variable {
     override lazy val name: String = _name
-    override lazy val valueType: draco.format.dracon.Dracon = _valueType
+    override lazy val valueType: Dracon = _valueType
     override lazy val typeDefinition: TypeDefinition = Variable.typeDefinition
   }
 
   lazy val Null: Variable = apply(
     _name = "",
-    _valueType = draco.format.dracon.Dracon.Null
+    _valueType = Dracon.Null
   )
 
 
@@ -453,18 +455,18 @@ object Factory extends App with DracoType {
   implicit def decoder: Decoder[Factory] = codec.decoder
 
   def apply (
-    _valueType: => draco.format.dracon.Dracon,
+    _valueType: => Dracon,
     _parameters: => Seq[Parameter] = Seq.empty,
     _body: => Seq[BodyElement] = Seq.empty
   ) : Factory = new Factory {
-    override lazy val valueType: draco.format.dracon.Dracon = _valueType
+    override lazy val valueType: Dracon = _valueType
     override lazy val parameters: Seq[Parameter] = _parameters
     override lazy val body: Seq[BodyElement] = _body
     override lazy val typeDefinition: TypeDefinition = Factory.typeDefinition
   }
 
   lazy val Null: Factory = apply(
-    _valueType = draco.format.dracon.Dracon.Null,
+    _valueType = Dracon.Null,
     _parameters = Seq.empty,
     _body = Seq.empty
   )
@@ -485,21 +487,21 @@ object Local extends App with DracoType {
 
   def apply (
     _name: => String,
-    _valueType: => draco.format.dracon.Dracon,
-    _value: => draco.format.dracon.Dracon,
+    _valueType: => Dracon,
+    _value: => Dracon,
     _now: => Boolean = false
   ) : Local = new Local {
     override lazy val name: String = _name
-    override lazy val valueType: draco.format.dracon.Dracon = _valueType
-    override lazy val value: draco.format.dracon.Dracon = _value
+    override lazy val valueType: Dracon = _valueType
+    override lazy val value: Dracon = _value
     override lazy val now: Boolean = _now
     override lazy val typeDefinition: TypeDefinition = Local.typeDefinition
   }
 
   lazy val Null: Local = apply(
     _name = "",
-    _valueType = draco.format.dracon.Dracon.Null,
-    _value = draco.format.dracon.Dracon.Null,
+    _valueType = Dracon.Null,
+    _value = Dracon.Null,
     _now = false
   )
 
@@ -519,14 +521,14 @@ object Case extends App with DracoType {
 
   def apply (
     _name: => String = "",
-    _valueType: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
+    _valueType: => Dracon = Dracon.Null,
     _body: => Seq[BodyElement] = Seq.empty,
-    _value: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null
+    _value: => Dracon = Dracon.Null
   ) : Case = new Case {
     override lazy val name: String = _name
-    override lazy val valueType: draco.format.dracon.Dracon = _valueType
+    override lazy val valueType: Dracon = _valueType
     override lazy val body: Seq[BodyElement] = _body
-    override lazy val value: draco.format.dracon.Dracon = _value
+    override lazy val value: Dracon = _value
     override lazy val typeDefinition: TypeDefinition = Case.typeDefinition
   }
 

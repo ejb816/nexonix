@@ -1,0 +1,61 @@
+Shorten the bootstrap bodies that spell Dracon, anchors qualified, through canonical scoped generation
+
+Dev accepted, on 2026-10-21, "shortening the bootstrap files' bodies against the canonical identity
+ontology and HostBindings, with nominal anchors kept qualified, the Scala regenerated through the
+scoped generator with selective imports, DracoGenTest made scoped, starting with the definitions
+that spell the Dracon path."
+
+The seventeen main definitions that spelled draco.format.dracon.Dracon — the TypeElement family's
+eleven kinds, TypeName, TypeParameter, DracoAspect, DomainAspectOf, DracoAspectOf, CirceCodecs — are
+swept: their JSON bodies are the compact form against the canonical identity ontology and the
+ScalaTarget's HostBindings, their drake is re-emitted, their anchors (typeName, domain pointer,
+derivation records) stay qualified, so the companions, the engine's parent chains and the ontology's
+edges read them unscoped as before. The compact form itself now keeps every nominal anchor in full.
+
+Scoped generation had to change to carry this. The engine reads a definition under its own
+conventions — a bare name is looked up in the file's own package for codec eligibility, realized
+through its host import table, or qualified — and several decisions key on those spellings (the
+codec's optional-field elision, the payload check, the actor-minting factory). Resolving a definition
+in full before generating broke them. The scoped generator therefore spells a definition
+CANONICALLY: the compact form, re-qualified only where the engine cannot read a bare name
+(DracoGenerator.readable: a host primitive; a table name the host realizes — not a draco type that
+shares its simple name, Decoder and Encoder, and not in the file's own package, where the standard
+circe import outranks a member; an own-package name no sibling package or host class shadows,
+draco.Generated being the hand-written case), generates it, and shortens exactly those identities
+back by selective import where Scala's own scoping allows (an exact import, a wildcard, the own
+package) and never into a host-shadowed name. The output no longer depends on how an author spelled
+a resolvable name, so a resolved definition and its compact form generate identically. Every
+definition the engine loads during a scoped generation is spelled the same way, through a
+thread-local scope in effect; an unknown name in a loaded definition leaves it as loaded. The
+actor-minting factory accepts draco.ActorType by identity.
+
+Because the engine now canonicalizes, every definition-backed Scala file was regenerated through the
+scoped generator: 35 changed — 25 under src/main/scala and the ten staged dreams and service files —
+gaining selective imports for cross-package names (`import draco.format.dracon.Dracon`,
+`import draco.drake.Presence`, `import org.evrete.api.ActivationMode`) and short spellings; the rest
+were byte-identical. DracoGenTest generates every type through the canonical scope, as do
+GenerateAndCompileTest, GeneratorDefinitionToSourceTest, TypeDefinitionTest, DreamsTest,
+InitializationTest, EditorTest and ServiceTest, all through the new CanonicalScope test helper (the
+canonical declarations plus HostBindings.vocabulary, supplied explicitly); the unscoped engine
+cannot read a swept body's referrers correctly, which these suites showed at their first run.
+NameResolutionTest now expects a nominal anchor to stay qualified in the compact surface.
+
+Probe on the compiled engine over a resource overlay: 29 suites, 770 passed, zero failed or aborted,
+every headline unchanged, pending mods actors 0; the whole main and mods tree compiles against the
+regenerated classes (the one error outside sbt's build, scripts/inspect-type.scala, predates this
+change). No test was added; no corpus type changed. The rest of the corpus's bodies follow in a later
+sweep.
+
+Dev's first full gate failed the three primes rules in DracoGenTest (842 of 845): PrimesRulesTest
+writes its generation into src/main/scala, unscoped, and overwrote the regenerated files before the
+gate compared them. It now generates through the canonical scope. The regenerated rules had also
+gained `import java.lang.Integer` and `import java.lang.System`, because HostBindings gave those
+names java.lang identities while the Scala target reads them bare; Integer, System and Enumeration
+are now bound bare, as Seq and Map are, so the primes rules regenerate byte-identically to before.
+
+Gate: Dev's third full sbt run on 2026-10-21, pasted (the second failed to compile on an unqualified
+helper reference in the primes test): 845 tests / 59 suites, zero failed, canceled, ignored or pending
+tests, zero aborted suites; every report-only headline unchanged; pending mods actors 0 in the file-only
+log. Committed and pushed by Dev.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

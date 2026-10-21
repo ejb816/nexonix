@@ -26,13 +26,13 @@
         {
           "kind": "Parameter",
           "name": "valueType",
-          "valueType": "draco.format.dracon.Dracon"
+          "valueType": "Dracon"
         },
         {
           "kind": "Parameter",
           "name": "value",
-          "valueType": "draco.format.dracon.Dracon",
-          "value": "draco.format.dracon.Dracon.Null"
+          "valueType": "Dracon",
+          "value": "Dracon.Null"
         },
         {
           "kind": "Parameter",

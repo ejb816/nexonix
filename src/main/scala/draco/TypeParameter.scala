@@ -1,12 +1,14 @@
 package draco
 
+import draco.format.dracon.Dracon
+
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
 trait TypeParameter extends DracoType {
   val name: String
-  val upperBound: draco.format.dracon.Dracon
-  val lowerBound: draco.format.dracon.Dracon
+  val upperBound: Dracon
+  val lowerBound: Dracon
 }
 
 object TypeParameter extends App with DracoType {
@@ -32,19 +34,19 @@ object TypeParameter extends App with DracoType {
 
   def apply (
     _name: => String,
-    _upperBound: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null,
-    _lowerBound: => draco.format.dracon.Dracon = draco.format.dracon.Dracon.Null
+    _upperBound: => Dracon = Dracon.Null,
+    _lowerBound: => Dracon = Dracon.Null
   ) : TypeParameter = new TypeParameter {
     override lazy val name: String = _name
-    override lazy val upperBound: draco.format.dracon.Dracon = _upperBound
-    override lazy val lowerBound: draco.format.dracon.Dracon = _lowerBound
+    override lazy val upperBound: Dracon = _upperBound
+    override lazy val lowerBound: Dracon = _lowerBound
     override lazy val typeDefinition: TypeDefinition = TypeParameter.typeDefinition
   }
 
   lazy val Null: TypeParameter = apply(
     _name = "",
-    _upperBound = draco.format.dracon.Dracon.Null,
-    _lowerBound = draco.format.dracon.Dracon.Null
+    _upperBound = Dracon.Null,
+    _lowerBound = Dracon.Null
   )
 
 

@@ -21,7 +21,7 @@
         {
           "kind": "Parameter",
           "name": "valueType",
-          "valueType": "draco.format.dracon.Dracon"
+          "valueType": "Dracon"
         },
         {
           "kind": "Parameter",
@@ -54,7 +54,7 @@
         {
           "kind": "Fixed",
           "name": "valueType",
-          "valueType": "draco.format.dracon.Dracon",
+          "valueType": "Dracon",
           "value": "_valueType"
         },
         {

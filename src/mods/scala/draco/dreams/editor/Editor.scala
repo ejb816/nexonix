@@ -1,5 +1,9 @@
 package draco.dreams.editor
 
+import draco.dreams.user.Response
+import org.evrete.api.ActivationMode
+import scala.collection.mutable.ArrayBuffer
+
 import draco.dreams._
 import draco._
 import scala.collection.mutable
@@ -27,10 +31,10 @@ object Editor extends App with DracoType {
     k
   }
 
-  def actorType(_initial: => draco.DomainOntology, _actual: => draco.dreams.user.Response => Unit, _ontology: => draco.DomainOntology => Unit, _transforms: => Seq[TransformBinding] = Seq.empty): ActorType = new Actor[draco.dreams.user.Request] {
+  def actorType(_initial: => draco.DomainOntology, _actual: => Response => Unit, _ontology: => draco.DomainOntology => Unit, _transforms: => Seq[TransformBinding] = Seq.empty): ActorType = new Actor[draco.dreams.user.Request] {
     override lazy val typeDefinition: TypeDefinition = Editor.typeDefinition
     lazy val initial: draco.DomainOntology = _initial
-    lazy val actual: draco.dreams.user.Response => Unit = _actual
+    lazy val actual: Response => Unit = _actual
     lazy val ontology: draco.DomainOntology => Unit = _ontology
     lazy val transforms: Seq[TransformBinding] = _transforms
 
@@ -54,9 +58,9 @@ object Editor extends App with DracoType {
       val contents: Seq[draco.TypeDefinition] = msg.contents(accepted)
       val changing: Boolean = provisional != accepted
       lazy val definitions: Seq[draco.TypeDefinition] = provisional.keys.toSeq.flatMap(domain => domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
-      lazy val problems: mutable.Buffer[draco.Problem] = scala.collection.mutable.ArrayBuffer()
-      lazy val responses: mutable.Buffer[Seq[draco.Problem] => draco.dreams.user.Response] = scala.collection.mutable.ArrayBuffer()
-      lazy val session: org.evrete.api.StatefulSession = rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+      lazy val problems: mutable.Buffer[draco.Problem] = ArrayBuffer()
+      lazy val responses: mutable.Buffer[Seq[draco.Problem] => Response] = ArrayBuffer()
+      lazy val session: org.evrete.api.StatefulSession = rules.newStatefulSession(ActivationMode.CONTINUOUS)
       session.set("problems", problems)
       session.set("transforms", transforms)
       session.set("responses", responses)
@@ -68,7 +72,7 @@ object Editor extends App with DracoType {
       session.fire()
       session.close()
       (if (problems.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(accept(provisional), accept(accepted))
-      actual(responses.headOption.fold[draco.dreams.user.Response](Actual(subject, contents, problems.toSeq))(respond => respond(problems.toSeq)))
+      actual(responses.headOption.fold[Response](Actual(subject, contents, problems.toSeq))(respond => respond(problems.toSeq)))
       (if (problems.isEmpty && changing) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(ontology(accepted), ())
       Behaviors.same[draco.dreams.user.Request]
     }

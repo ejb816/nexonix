@@ -1,5 +1,7 @@
 package draco.gendrake
 
+import draco.generator.Emission
+
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 
@@ -11,8 +13,8 @@ object Emit extends App with DracoType {
   lazy val domainType: Domain[GenDrake] = Domain[GenDrake] (typeDefinition)
 
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
-      val definition: TypeDefinition = ctx.get[TypeDefinition]("$definition")
-      lazy val emission: draco.generator.Emission = draco.generator.Emission(draco.Drake.emitFromSession(definition, ctx.getRuntime().get("nameResolution")))
+      val definition: draco.TypeDefinition = ctx.get[draco.TypeDefinition]("$definition")
+      lazy val emission: Emission = Emission(draco.Drake.emitFromSession(definition, ctx.getRuntime().get("nameResolution")))
       ctx.insert(emission)
   }
 
@@ -21,7 +23,7 @@ object Emit extends App with DracoType {
     .builder()
     .newRule ("draco.gendrake.Emit")
     .forEach (
-      "$definition", classOf[TypeDefinition]
+      "$definition", classOf[draco.TypeDefinition]
     )
 
     .execute (action(_))

@@ -74,7 +74,7 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite with PersistentTestLog
     log.info(jsonContent.spaces2)
 
     val td: TypeDefinition = jsonContent.as[TypeDefinition].getOrElse(TypeDefinition.Null)
-    val generatedSource = DracoGenerator.generate(td)
+    val generatedSource = DracoGenerator.generate(td, CanonicalScope.scope)
     val output = appendDiff(generatedSource, td)
     log.info(output)
 
@@ -91,7 +91,7 @@ class GeneratorDefinitionToSourceTest extends AnyFunSuite with PersistentTestLog
     }
     typeDefinitions.foreach(td => log.info(td.typeName.name))
 
-    val generatedSource = DracoGenerator.generate(typeDefinitions)
+    val generatedSource = DracoGenerator.generate(typeDefinitions, CanonicalScope.scope)
     // Use first type for diff comparison (the root of the hierarchy)
     val output = appendDiff(generatedSource, typeDefinitions.head)
     log.info(output)

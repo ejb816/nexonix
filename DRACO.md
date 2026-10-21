@@ -49,7 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**845 tests / 59 suites**, verified by Dev on 2026-10-21 for the Scala target's host vocabulary as a
+**845 tests / 59 suites**, verified by Dev on 2026-10-21 for the bootstrap shortening of the Dracon referrers
+through canonical scoped generation (record `git-record-2026-10-21-2000`): no test or corpus type added,
+zero failed, canceled, ignored or pending tests, zero aborted suites, every report-only headline unchanged,
+including zero pending mods actors; Dev's first run of that gate failed three primes rules overwritten by an
+unscoped test, its second failed to compile on a helper reference, both fixed before the third. Before it,
+the same **845 / 59**, verified by Dev on 2026-10-21 for the Scala target's host vocabulary as a
 definition (record `git-record-2026-10-21-1915`): five per-type tests for the one added corpus type,
 zero failed, canceled, ignored or pending tests, zero aborted suites, the parse-scope, surface-loss,
 aspect-section and GenDrake headlines each moved by one (table updated in that commit), every other
@@ -848,6 +853,36 @@ TypeElement kind absent from Draco's `types` list, is listed, so `draco.Local` r
 DomainLoadingTest reads the vocabulary from the definition and pins that neither Unit nor Local is a binding.
 One corpus type added: parse scope 110 + 10, one loss across 120 types, 110 aspect sections, GenDrake 108 of
 108 (table updated in this commit). Shortening the bootstrap files is still a later step.
+
+**Bootstrap bodies shortened, anchors qualified, through canonical scoped generation (2026-10-21, Claude
+Code; Dev verified 845 / 59).** Dev accepted "shortening the bootstrap files' bodies against the canonical identity
+ontology and HostBindings, with nominal anchors kept qualified, the Scala regenerated through the scoped
+generator with selective imports, DracoGenTest made scoped, starting with the definitions that spell the
+Dracon path." The SEVENTEEN main definitions that spelled `draco.format.dracon.Dracon` (the TypeElement
+family's eleven kinds, TypeName, TypeParameter, DracoAspect, DomainAspectOf, DracoAspectOf, CirceCodecs) carry
+the COMPACT form in their bodies — `fix typeParameters [Dracon]`, `Presence(TypeName)`, `Absent()` — with
+every nominal anchor (own name, domain pointer, derivation record) still qualified, so the companions, the
+engine's parent chains and the ontology's edges read them unscoped as before; `NameResolution.compact` now
+keeps anchors in full under every policy. SCOPED GENERATION CANONICALIZES (the point this increment settled):
+the engine reads a definition under its own conventions and keys several decisions on bare spellings (codec
+elision, the payload check, the actor-minting factory), so resolving a definition in full before generating
+broke them; `generate(td, scope)` instead spells the COMPACT form re-qualified only where the engine cannot
+read a bare name (`DracoGenerator.readable`: a host primitive; a host-table name the host realizes — not a
+draco type sharing the simple name, Decoder/Encoder, and never in the file's own package, where the standard
+circe import outranks a member; an own-package name no sibling package or host class shadows, `draco.Generated`
+being the hand-written case), generates it, and shortens exactly those identities back by selective import
+where Scala's scoping allows. Output no longer depends on how an author spelled a resolvable name. Every
+definition loaded during a scoped generation is spelled the same way through a thread-local scope in effect.
+CONSEQUENCE: every definition-backed Scala file regenerated through the scoped generator — 35 changed, 25
+main and the ten staged dreams/service files, gaining imports such as `import draco.format.dracon.Dracon` —
+and every suite that generates corpus Scala (DracoGenTest, GenerateAndCompileTest,
+GeneratorDefinitionToSourceTest, TypeDefinitionTest, DreamsTest, InitializationTest, EditorTest, ServiceTest)
+supplies the scope explicitly through the `CanonicalScope` test helper, because the UNSCOPED engine misreads a
+swept body's referrers (their first run failed twelve per-type gates); PrimesRulesTest, which WRITES its
+generation into src/main, joined them after Dev's first full gate (842 / 845) showed it overwriting three
+regenerated rules. Integer, System and Enumeration are bound BARE in HostBindings, the Scala target reading them
+so, which keeps `import java.lang.Integer` out of the regenerated rules. No test added, no corpus type changed.
+The remaining bodies of the corpus follow in a later sweep; the companions still load unscoped.
 
 **Handoff checkpoint (2026-10-21).** Chapters 95–99 preserve this Codex session with a
 bounded original-message extract: 35 complete exchanges plus the open handoff request.

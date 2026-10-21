@@ -26,7 +26,7 @@ class ServiceTest extends AnyFunSuite {
 
   test("Service Scala is generated from its staged definition") {
     val scalaPath = Paths.get("src/mods/scala/draco/service/Service.scala")
-    assert(DracoGenerator.generate(definition) == new String(Files.readAllBytes(scalaPath), UTF_8))
+    assert(DracoGenerator.generate(definition, CanonicalScope.scope) == new String(Files.readAllBytes(scalaPath), UTF_8))
   }
 
   test("the compiled companion loads the self-declaring Service domain") {
@@ -59,7 +59,7 @@ class ServiceTest extends AnyFunSuite {
     val generated = DomainBuilder.generate("Service", Seq("draco", "service"))
     assert(generated.keySet == Set(definition.typeName, ServiceConfiguration.typeDefinition.typeName,
       TextOutput.typeDefinition.typeName))
-    assert(generated(definition.typeName) == DracoGenerator.generate(definition))
+    assert(generated(definition.typeName) == DracoGenerator.generate(definition, CanonicalScope.scope))
     assert(!generated(definition.typeName).contains("stub skeleton"))
   }
 
@@ -69,7 +69,7 @@ class ServiceTest extends AnyFunSuite {
     val td = io.circe.parser.parse(content(".json")).flatMap(_.as[TypeDefinition]).toOption.get
     assert(Drake.parse(content(".drake")).asJson == td.asJson)
     assert(Drake.emit(td) == content(".drake"))
-    assert(DracoGenerator.generate(td) == new String(Files.readAllBytes(
+    assert(DracoGenerator.generate(td, CanonicalScope.scope) == new String(Files.readAllBytes(
       Paths.get("src/mods/scala/draco/service/TextOutput.scala")), UTF_8))
     assert(TextOutput.typeDefinition.typeName == td.typeName)
   }
@@ -88,7 +88,7 @@ class ServiceTest extends AnyFunSuite {
     val td = io.circe.parser.parse(content(".json")).flatMap(_.as[TypeDefinition]).toOption.get
     assert(Drake.parse(content(".drake")).asJson == td.asJson)
     assert(Drake.emit(td) == content(".drake"))
-    assert(DracoGenerator.generate(td) == new String(Files.readAllBytes(
+    assert(DracoGenerator.generate(td, CanonicalScope.scope) == new String(Files.readAllBytes(
       Paths.get("src/mods/scala/draco/service/ServiceConfiguration.scala")), UTF_8))
     assert(ServiceConfiguration.typeDefinition.typeName == td.typeName)
     assert(td.domainAspect.typeName == Service.typeDefinition.typeName)

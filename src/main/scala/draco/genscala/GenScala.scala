@@ -4,7 +4,7 @@ import draco._
 import draco.generator._
 import draco.scalatarget._
 
-trait GenScala extends draco.Generator[ScalaTarget]
+trait GenScala extends draco.Generator[draco.scalatarget.ScalaTarget]
 
 object GenScala extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("GenScala", _namePackage = Seq ("draco", "genscala")))

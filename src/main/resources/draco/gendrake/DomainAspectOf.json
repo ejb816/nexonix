@@ -30,8 +30,8 @@
           "name": "parameterText",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
-              "draco.drake.Text"
+              "Dracon",
+              "Text"
             ]
           }
         }
@@ -48,8 +48,8 @@
           "name": "parameterText",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
-              "draco.drake.Text"
+              "Dracon",
+              "Text"
             ]
           },
           "value": "_parameterText"
@@ -60,7 +60,7 @@
           "valueType": {
             "->": [
               "TypeName",
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -184,7 +184,7 @@
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": "rendered.value"
         }
       ]

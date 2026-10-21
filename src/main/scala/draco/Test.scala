@@ -13,8 +13,8 @@ object Test extends App with DracoType {
     _sourceName: => String,
     _sinkName: => String
   ) : Test = new Test {
-    override lazy val sourceRoot: URI = classOf[Test].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/test/${_sourceName}/"))
-    override lazy val sinkRoot: URI = classOf[Test].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/test/${_sinkName}/"))
+    override lazy val sourceRoot: URI = classOf[Test].getResource("/").toURI.resolve(URI.create(s"../../../src/test/${_sourceName}/"))
+    override lazy val sinkRoot: URI = classOf[Test].getResource("/").toURI.resolve(URI.create(s"../../../src/test/${_sinkName}/"))
     override lazy val typeDefinition: TypeDefinition = Test.typeDefinition
   }
 

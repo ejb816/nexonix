@@ -76,9 +76,13 @@ class GenerateAndCompileTest extends AnyFunSuite with PersistentTestLog {
     }
   }
 
+  /** Scoped generation (2026-10-21): the groups carry members whose bodies say short names, so
+   *  they are generated through the canonical scope; a conventional definition resolves to itself. */
+  private def scope: NameResolution = CanonicalScope.scope
+
   private def generateSourceMulti(tds: Seq[TypeDefinition]): Either[String, String] = {
     try {
-      val source = DracoGenerator.generate(tds)
+      val source = DracoGenerator.generate(tds, scope)
       if (source == null || source.isEmpty) Left("Generator produced empty source")
       else Right(source)
     } catch {

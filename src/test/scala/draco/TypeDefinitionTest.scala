@@ -66,7 +66,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
 
   test("TypeDefinition generates Scala code") {
     log.info("Generated Scala code:")
-    log.info(DracoGenerator.generate(typeDefinitionTypeDefinition))
+    log.info(DracoGenerator.generate(typeDefinitionTypeDefinition, CanonicalScope.scope))
   }
 
   test("Minimal TypeDefinition (no factory)") {
@@ -131,7 +131,7 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
       Variable.typeDefinition,
       Factory.typeDefinition
     )
-    val output = DracoGenerator.generate(types)
+    val output = DracoGenerator.generate(types, CanonicalScope.scope)
     log.info("Multi-type generation (TypeElement hierarchy):")
     log.info(output)
 

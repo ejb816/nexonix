@@ -4,18 +4,18 @@ type Dynamic from BodyElement
   factory
     parameters
       par name String
-      par valueType draco.format.dracon.Dracon
+      par valueType Dracon
       par parameters [Parameter] []
       par body [BodyElement] []
-      par value draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
+      par value Dracon Dracon.Null
       par now Boolean false
       par typeParameters [TypeParameter] []
     body
       fix name String _name
-      fix valueType draco.format.dracon.Dracon _valueType
+      fix valueType Dracon _valueType
       fix parameters [Parameter] _parameters
       fix body [BodyElement] _body
-      fix value draco.format.dracon.Dracon _value
+      fix value Dracon _value
       fix now Boolean _now
       fix typeParameters [TypeParameter] _typeParameters
 domain draco Draco

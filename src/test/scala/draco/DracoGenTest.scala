@@ -87,6 +87,14 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
    *        burden disproportionate to the value. */
   private val comparisonOnlyExcluded: Map[String, String] = Map.empty
 
+  /** Every definition is generated through the canonical scope (Dev accepted 2026-10-21): the
+   *  identity-only ontology of the canonical domains plus the ScalaTarget's host vocabulary,
+   *  supplied explicitly. Scoped generation qualifies only the leaves the engine cannot read
+   *  as authored — a short cross-package name such as `Dracon` — and shortens exactly those back
+   *  by selective import, so a definition spelled conventionally generates byte-identically and a
+   *  swept one gains its imports. Anchors stay qualified in every file. */
+  private def generated(ty: Ty, td: TypeDefinition): String = DracoGenerator.generate(td, CanonicalScope.scope)
+
   /** TypeElement sealed-trait family — generated as one Scala source file
    *  (TypeElement.scala) by `DracoGenerator.generate(Seq[TypeDefinition])`.
    *  Order matters: parent first, then BodyElement, then leaves. */
@@ -176,7 +184,7 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
   perTypeTypes.filterNot(ty => comparisonOnlyExcluded.contains(ty.resourcePath)).foreach { ty =>
     test(s"${ty.resourcePath}: Generator output matches ${ty.scalaPath} (whitespace-normalized)") {
       val td       = loadTypeDefinition(ty.resourcePath)
-      val genNorm  = normalize(DracoGenerator.generate(td))
+      val genNorm  = normalize(generated(ty, td))
       val handNorm = normalize(readHandWritten(ty.scalaPath))
 
       if (genNorm != handNorm) {
@@ -197,7 +205,7 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
 
   test("Presence family: multi-type Generator output matches draco/drake/Presence.scala (whitespace-normalized)") {
     val tds      = presenceFamily.map(loadTypeDefinition)
-    val genNorm  = normalize(DracoGenerator.generate(tds))
+    val genNorm  = normalize(DracoGenerator.generate(tds, CanonicalScope.scope))
     val handNorm = normalize(readHandWritten("draco/drake/Presence.scala"))
     if (genNorm != handNorm) {
       log.info(s"\n--- Presence family: generated (normalized) ---\n$genNorm")
@@ -208,7 +216,7 @@ class DracoGenTest extends AnyFunSuite with PersistentTestLog {
 
   test("TypeElement family: multi-type Generator output matches draco/TypeElement.scala (whitespace-normalized)") {
     val tds      = typeElementFamily.map(loadTypeDefinition)
-    val genNorm  = normalize(DracoGenerator.generate(tds))
+    val genNorm  = normalize(DracoGenerator.generate(tds, CanonicalScope.scope))
     val handNorm = normalize(readHandWritten("draco/TypeElement.scala"))
 
     if (genNorm != handNorm) {

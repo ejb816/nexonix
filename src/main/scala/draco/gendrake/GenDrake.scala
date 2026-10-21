@@ -4,7 +4,7 @@ import draco._
 import draco.generator._
 import draco.draketarget._
 
-trait GenDrake extends draco.Generator[DrakeTarget]
+trait GenDrake extends draco.Generator[draco.draketarget.DrakeTarget]
 
 object GenDrake extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("GenDrake", _namePackage = Seq ("draco", "gendrake")))

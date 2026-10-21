@@ -40,7 +40,7 @@ class InitializationTest extends AnyFunSuite {
   }
 
   test("Initialization Scala is generated from its staged definition; it is the Dreams domain's first member") {
-    assert(DracoGenerator.generate(definition) == read(s"src/mods/scala/$stem.scala"))
+    assert(DracoGenerator.generate(definition, CanonicalScope.scope) == read(s"src/mods/scala/$stem.scala"))
     assert(!Files.exists(Paths.get(s"src/main/scala/$stem.scala")), "duplicate main-tier scaffold")
     assert(Initialization.typeDefinition.typeName == definition.typeName)
     assert(Initialization.typeDefinition.domainAspect.typeName == Dreams.typeDefinition.typeName)

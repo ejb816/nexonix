@@ -106,13 +106,7 @@
                 {
                   "()": [
                     "draco.TypeName",
-                    "\"Integer\"",
-                    {
-                      "[]": [
-                        "\"java\"",
-                        "\"lang\""
-                      ]
-                    }
+                    "\"Integer\""
                   ]
                 }
               ]
@@ -123,13 +117,7 @@
                 {
                   "()": [
                     "draco.TypeName",
-                    "\"System\"",
-                    {
-                      "[]": [
-                        "\"java\"",
-                        "\"lang\""
-                      ]
-                    }
+                    "\"System\""
                   ]
                 }
               ]
@@ -140,12 +128,7 @@
                 {
                   "()": [
                     "draco.TypeName",
-                    "\"Enumeration\"",
-                    {
-                      "[]": [
-                        "\"scala\""
-                      ]
-                    }
+                    "\"Enumeration\""
                   ]
                 }
               ]

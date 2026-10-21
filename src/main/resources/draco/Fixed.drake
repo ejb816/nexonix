@@ -2,7 +2,7 @@ type Fixed from BodyElement
   factory
     parameters
       par name String
-      par valueType draco.format.dracon.Dracon
-      par value draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
+      par valueType Dracon
+      par value Dracon Dracon.Null
       par now Boolean false
 domain draco Draco

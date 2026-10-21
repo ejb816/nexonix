@@ -49,7 +49,7 @@ class DreamsTest extends AnyFunSuite {
 
     test(s"$name Scala is generated from its staged definition") {
       val definition = definitionAt(stem)
-      assert(DracoGenerator.generate(definition) == read(s"src/mods/scala/$stem.scala"))
+      assert(DracoGenerator.generate(definition, CanonicalScope.scope) == read(s"src/mods/scala/$stem.scala"))
       assert(!Files.exists(Paths.get(s"src/main/scala/$stem.scala")), "duplicate main-tier scaffold")
       assert(companion().typeName == definition.typeName)
     }

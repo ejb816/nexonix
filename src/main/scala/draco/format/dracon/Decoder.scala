@@ -1,10 +1,12 @@
 package draco.format.dracon
 
+import draco.drake.Presence
+
 import draco.format._
 import draco._
 
 trait Decoder[T] extends DracoType {
-  val decode: Dracon => draco.drake.Presence[T]
+  val decode: Dracon => Presence[T]
 }
 
 object Decoder extends App with DracoType {
@@ -13,14 +15,14 @@ object Decoder extends App with DracoType {
   lazy val domainType: Domain[Dracon] = Domain[Dracon] (typeDefinition)
 
   def apply[T] (
-    _decode: => Dracon => draco.drake.Presence[T]
+    _decode: => Dracon => Presence[T]
   ) : Decoder[T] = new Decoder[T] {
-    override lazy val decode: Dracon => draco.drake.Presence[T] = _decode
+    override lazy val decode: Dracon => Presence[T] = _decode
     override lazy val typeDefinition: TypeDefinition = Decoder.typeDefinition
   }
 
   lazy val Null: Decoder[_] = apply[Any](
-    _decode = null.asInstanceOf[Dracon => draco.drake.Presence[Any]]
+    _decode = null.asInstanceOf[Dracon => Presence[Any]]
   )
 
 

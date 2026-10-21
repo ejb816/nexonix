@@ -1,13 +1,13 @@
 type TypeParameter
   elements
-    fix name draco.drake.Text
-    fix upperBound draco.format.dracon.Dracon
-    fix lowerBound draco.format.dracon.Dracon
+    fix name Text
+    fix upperBound Dracon
+    fix lowerBound Dracon
   factory
     parameters
-      par name draco.drake.Text
-      par upperBound draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
-      par lowerBound draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
+      par name Text
+      par upperBound Dracon Dracon.Null
+      par lowerBound Dracon Dracon.Null
 domain draco Draco
 codec
   payload [upperBound, lowerBound]

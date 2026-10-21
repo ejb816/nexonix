@@ -1,13 +1,13 @@
-type TypeElement from Primal(draco.format.dracon.Dracon)
+type TypeElement from Primal(Dracon)
   modules [
     BodyElement
   ]
   elements
     fix name String ""
-    fix valueType draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
+    fix valueType Dracon Dracon.Null
     fix parameters [Parameter] []
     fix body [BodyElement] []
-    fix value draco.format.dracon.Dracon draco.format.dracon.Dracon.Null
+    fix value Dracon Dracon.Null
     fix now Boolean false
 domain draco Draco
 codec

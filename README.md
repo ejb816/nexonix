@@ -619,7 +619,11 @@ the corpus is re-authored and CLI's engine reference qualified. The host vocabul
 same day: `draco.scalatarget.HostBindings` declares, as a definition beside CirceCodecs, the
 `[(Text, TypeName)]` pairs that bind every host name the canonical corpus still spells to the
 identity the Scala target realizes, supplied explicitly to `DomainBuilder.load` and to Generate;
-Local is listed as a Draco member. Shortening the bootstrap files is still a later step.
+Local is listed as a Draco member. The first sweep followed: the seventeen main definitions that
+spelled the Dracon path carry compact bodies — `[Dracon]`, `Presence(TypeName)` — with their nominal
+anchors still qualified, and scoped generation canonicalizes a definition before generating it, so
+every definition-backed Scala file now carries selective imports and the corpus gates supply the
+canonical scope explicitly. The remaining bodies follow in a later sweep.
 
 Method formal parameters now have their own TypeParameter records: a name plus optional
 upper/lower bounds represented as Dracon type forms. Dynamic.typeParameters defaults empty;

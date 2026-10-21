@@ -1,5 +1,7 @@
 package draco.dreams.editor
 
+import draco.dreams.user.Update
+
 import draco.dreams._
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
@@ -10,9 +12,9 @@ object UpdateUnheld extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("UpdateUnheld", _namePackage = Seq ("draco", "dreams", "editor")))
   lazy val dracoType: Type[UpdateUnheld] = Type[UpdateUnheld] (typeDefinition)
   lazy val domainType: Domain[Editor] = Domain[Editor] (typeDefinition)
-  def w0(u: draco.dreams.user.Update, a: Accepted): Boolean = !a.ontology.holds(u.definition.typeName)
+  def w0(u: Update, a: Accepted): Boolean = !a.ontology.holds(u.definition.typeName)
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
-      val u: draco.dreams.user.Update = ctx.get[draco.dreams.user.Update]("$u")
+      val u: Update = ctx.get[Update]("$u")
       val a: Accepted = ctx.get[Accepted]("$a")
       ctx.insert(draco.Problem(u.definition.typeName, s"domain ${u.definition.typeName.name} is not in the accepted ontology"))
   }
@@ -22,7 +24,7 @@ object UpdateUnheld extends App with DracoType {
     .builder()
     .newRule ("draco.dreams.editor.UpdateUnheld")
     .forEach (
-      "$u", classOf[draco.dreams.user.Update],
+      "$u", classOf[Update],
       "$a", classOf[Accepted]
     )
     .where("draco.dreams.editor.UpdateUnheld.w0($u, $a)")

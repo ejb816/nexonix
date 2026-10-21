@@ -47,7 +47,63 @@ object DracoGenerator extends App {
     * mean?" is a semantic question and must have one answer, or the answer depends on
     * which caller happened to ask — which is the same reason resolution no longer
     * takes whichever copy the classloader finds first. */
-  def loadType (typeName: TypeName) : TypeDefinition = TypeLoader.loadType(typeName)
+  def loadType (typeName: TypeName) : TypeDefinition = {
+    val td = TypeLoader.loadType(typeName)
+    // A loaded definition is read under the engine's own conventions; the scope in effect
+    // only qualifies what those cannot read. A name the scope does not know leaves the
+    // definition as loaded, which is what the unscoped engine always read.
+    scopeInEffect.value.fold(td)(s => try canonical(s, td)._1 catch { case _: IllegalArgumentException => td })
+  }
+
+  /** The CANONICAL spelling of a definition for this engine (2026-10-21): its compact form —
+    * every resolvable name short, whatever the author wrote — re-qualified only where the
+    * engine cannot read a bare name. The identities so qualified come back with it. */
+  private def canonical (scope: NameResolution, td: TypeDefinition) : (TypeDefinition, Set[String]) =
+    scope.minimal(scope.compact(td), readable(td, scope))
+
+  /** What the engine reads unaided (2026-10-21): a bare identity (a host primitive); a bare name
+    * it realizes through its own import table (`Knowledge`, `URI`, `Json`); or a bare name of the
+    * definition's OWN package, which is where the engine looks a bare name up when it loads a
+    * referenced definition to judge its codec. Everything else is spelled in full for the engine —
+    * and shortened back for the Scala text wherever Scala's own scoping allows, a wildcard
+    * `import draco._` say, so the text need not change. The two are decoupled on purpose: the
+    * engine judges on identities, the target spells by its imports. */
+  private def readable (td: TypeDefinition, scope: NameResolution) (authored: String, full: String) : Boolean = {
+    val cut = full.lastIndexOf('.')
+    cut < 0 || {
+      val pkg = full.take(cut).split('.').toSeq
+      val simple = full.drop(cut + 1)
+      // The host table realizes a bare name — a host type the ontology does not define, or a
+      // draco.rete wrap type, whose Scala realization IS the evrete class. A draco type that merely
+      // shares a simple name with a table key (format.dracon's Decoder, Encoder) is not read bare.
+      val realized = externalTypeImports.contains(simple) && (!scope.ontological(full) || pkg == Seq("draco", "rete"))
+      // An own-package bare name is read only when no table key captures it: the generated file's
+      // standard imports (`io.circe.{Decoder, Encoder, Json}`) outrank a same-package member.
+      authored == simple && (realized ||
+        !externalTypeImports.contains(simple) &&
+          pkg == td.typeName.namePackage && !isAmbiguousBare(td, TypeName(simple, _namePackage = pkg)) &&
+          !shadowedByHost(td, simple))
+    }
+  }
+
+  /** A bare own-package name is also unreadable when a package the file wildcards holds a HOST
+    * class of that simple name with no definition behind it — `draco.Generated`, the hand-written
+    * bootstrap, outranks `draco.dreams.editor.Generated` through `import draco._`, since Scala
+    * ranks a wildcard import above a same-package member from another file. `isAmbiguousBare`
+    * probes definitions; this probes the compiled host, which is what the target compiles against. */
+  private def shadowedByHost (td: TypeDefinition, simple: String) : Boolean =
+    unqualifiedScope(td).filter(_ != td.typeName.namePackage).exists { p =>
+      try { Class.forName((p :+ simple).mkString("."), false, getClass.getClassLoader); true }
+      catch { case _: Throwable => false }
+    }
+
+  /** The resolution scope of a SCOPED generation (2026-10-21), thread-local: while
+    * `generate(td, scope)` runs, every definition the engine loads on the way — a parent
+    * chain, a sealed family, a referenced type judged for its codec — is resolved through
+    * the same scope, so a bootstrap file whose body says `Dracon` is read as its parent's
+    * body is. Unscoped generation leaves it None and loads as before. A DynamicVariable
+    * because sbt runs suites in parallel threads; a lazy val because this object is an App. */
+  private lazy val scopeInEffect = new scala.util.DynamicVariable[Option[NameResolution]](None)
 
   /** True iff `td` itself, or any transitive ancestor via `draco.derivation`, has a
     * typeName matching `targetName`. Used to decide whether emitted factory bodies
@@ -1359,7 +1415,7 @@ object DracoGenerator extends App {
     * convention — its parameters thread into `def actorType(...)` via
     * actorBehavior), never a type/domain constructor: no `apply`, no `Null`. */
   private def isActorMintingFactory (factory: Factory) : Boolean =
-    factory.valueType.text == "ActorType"
+    Set("ActorType", "draco.ActorType").contains(factory.valueType.text)
 
   private def typeGlobal (td: TypeDefinition, familyContext: Seq[TypeDefinition] = Seq.empty, nameSuffix: String = "") : String = {
     val factory = td.dracoAspect.factory
@@ -2190,11 +2246,25 @@ object DracoGenerator extends App {
     )
   }
 
-  def generate(td: TypeDefinition, scope: NameResolution): String =
-    scope.projectScala(generate(scope.resolve(td)))
+  /** SCOPED generation (2026-10-21): the definition is spelled canonically — compact, then
+    * qualified only where the engine cannot read a bare name, a cross-package `Dracon` say —
+    * generated as the engine generates any conventional definition, and exactly those identities
+    * are shortened back by selective import. The output does not depend on how the author spelled
+    * a resolvable name, so a resolved definition and its compact form generate identically. */
+  def generate(td: TypeDefinition, scope: NameResolution): String = scopeInEffect.withValue(Some(scope)) {
+    val (spelled, qualified) = canonical(scope, td)
+    scope.projectScala(generate(spelled), shortenable(td, qualified))
+  }
 
-  def generate(definitions: Seq[TypeDefinition], scope: NameResolution): String =
-    scope.projectScala(generate(definitions.map(scope.resolve)))
+  def generate(definitions: Seq[TypeDefinition], scope: NameResolution): String = scopeInEffect.withValue(Some(scope)) {
+    val spelled = definitions.map(td => (td, canonical(scope, td)))
+    scope.projectScala(generate(spelled.map(_._2._1)), spelled.flatMap { case (td, (_, q)) => shortenable(td, q) }.toSet)
+  }
+
+  /** The qualified identities the Scala text may shorten: not one whose bare name a host class
+    * in a wildcarded package would capture — that one stays in full in the text as well. */
+  private def shortenable (td: TypeDefinition, qualified: Set[String]) : Set[String] =
+    qualified.filterNot(full => shadowedByHost(td, full.drop(full.lastIndexOf('.') + 1)))
 
   def generate (_td: TypeDefinition) : String = {
     // Uniform root meaning: an absent derivation on a loaded definition MEANS

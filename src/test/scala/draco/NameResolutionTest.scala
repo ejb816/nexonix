@@ -108,7 +108,7 @@ class NameResolutionTest extends AnyFunSuite {
     val resolver = new NameResolution(DomainOntology(Seq(domain("Test", "sample"), domain("Other", "other", Seq("Parent")))), Map.empty)
     val td = Drake.parse("type Child from Parent domain sample Test", resolver)
     assert(DracoAspect.parents(td.dracoAspect).head.namePath == "other.Parent")
-    assert(Drake.emit(td, resolver).contains("from Parent"))
+    assert(Drake.emit(td, resolver).contains("from other Parent"), "a nominal anchor stays qualified in the compact surface (2026-10-21)")
     assert(TypeDefinition.encoder(Drake.parse(Drake.emit(td, resolver), resolver)) == TypeDefinition.encoder(td))
   }
 

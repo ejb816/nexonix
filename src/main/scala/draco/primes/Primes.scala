@@ -3,7 +3,7 @@ package draco.primes
 import draco._
 
 trait Primes extends DracoType {
-  lazy val knowledge: org.evrete.api.Knowledge = Rule.knowledgeService.newKnowledge("Primes")
+  lazy val knowledge: org.evrete.api.Knowledge = draco.Rule.knowledgeService.newKnowledge("Primes")
 }
 
 object Primes extends App with DracoType {

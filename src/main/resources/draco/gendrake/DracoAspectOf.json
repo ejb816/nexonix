@@ -30,8 +30,8 @@
           "name": "parameterText",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
-              "draco.drake.Text"
+              "Dracon",
+              "Text"
             ]
           }
         },
@@ -40,8 +40,8 @@
           "name": "formText",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
-              "draco.drake.Text"
+              "Dracon",
+              "Text"
             ]
           }
         },
@@ -50,8 +50,8 @@
           "name": "slotText",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
-              "draco.drake.Text"
+              "Dracon",
+              "Text"
             ]
           }
         },
@@ -68,7 +68,7 @@
               },
               {
                 "[]": [
-                  "draco.drake.Text"
+                  "Text"
                 ]
               }
             ]
@@ -87,8 +87,8 @@
           "name": "parameterText",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
-              "draco.drake.Text"
+              "Dracon",
+              "Text"
             ]
           },
           "value": "_parameterText"
@@ -98,8 +98,8 @@
           "name": "formText",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
-              "draco.drake.Text"
+              "Dracon",
+              "Text"
             ]
           },
           "value": "_formText"
@@ -109,8 +109,8 @@
           "name": "slotText",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
-              "draco.drake.Text"
+              "Dracon",
+              "Text"
             ]
           },
           "value": "_slotText"
@@ -128,7 +128,7 @@
               },
               {
                 "[]": [
-                  "draco.drake.Text"
+                  "Text"
                 ]
               }
             ]
@@ -147,7 +147,7 @@
           "valueType": {
             "->": [
               "TypeName",
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -201,7 +201,7 @@
           "valueType": {
             "->": [
               "TypeName",
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -323,7 +323,7 @@
           "name": "parents",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -433,7 +433,7 @@
         {
           "kind": "Local",
           "name": "name",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": {
             "()": [
               {
@@ -460,7 +460,7 @@
         {
           "kind": "Local",
           "name": "extensible",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": {
             "()": [
               {
@@ -502,7 +502,7 @@
         {
           "kind": "Local",
           "name": "factoryType",
-          "valueType": "draco.format.dracon.Dracon",
+          "valueType": "Dracon",
           "value": {
             "()": [
               {
@@ -518,13 +518,13 @@
               },
               {
                 "()": [
-                  "draco.format.dracon.Dracon.string",
+                  "Dracon.string",
                   "definition.typeName.name"
                 ]
               },
               {
                 "()": [
-                  "draco.format.dracon.Dracon.record",
+                  "Dracon.record",
                   {
                     "[]": [
                       {
@@ -532,14 +532,14 @@
                           "\"()\"",
                           {
                             "()": [
-                              "draco.format.dracon.Dracon.array",
+                              "Dracon.array",
                               {
                                 "++": [
                                   {
                                     "[]": [
                                       {
                                         "()": [
-                                          "draco.format.dracon.Dracon.string",
+                                          "Dracon.string",
                                           "definition.typeName.name"
                                         ]
                                       }
@@ -578,7 +578,7 @@
         {
           "kind": "Local",
           "name": "factoryResult",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": {
             "()": [
               {
@@ -725,7 +725,7 @@
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": "rendered.value"
         }
       ]

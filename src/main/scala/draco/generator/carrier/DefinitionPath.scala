@@ -1,5 +1,9 @@
 package draco.generator.carrier
 
+import draco.drake.Presence
+import java.io.File
+import scala.util.Try
+
 import draco.generator._
 import draco._
 import java.net.URI
@@ -9,9 +13,9 @@ trait DefinitionPath extends DracoType {
   val roots: Seq[URI]
   def sources(_resourcePath: => String): Seq[URL] = {
     lazy val resourcePath: String = _resourcePath
-    roots.map(root => new URL(root.toString + resourcePath.stripPrefix("/"))).filter(url => scala.util.Try(url.openStream().close()).isSuccess)
+    roots.map(root => new URL(root.toString + resourcePath.stripPrefix("/"))).filter(url => Try(url.openStream().close()).isSuccess)
   }
-  def source(_resourcePath: => String): draco.drake.Presence[URL] = {
+  def source(_resourcePath: => String): Presence[URL] = {
     lazy val resourcePath: String = _resourcePath
     lazy val found: Seq[URL] = sources(resourcePath)
     require(found.size <= 1, s"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: " + found.mkString(", "))
@@ -33,6 +37,6 @@ object DefinitionPath extends App with DracoType {
 
   lazy val Null: DefinitionPath = apply()
 
-  lazy val hostRoots: Seq[URI] = System.getProperty("java.class.path", "").split(java.io.File.pathSeparatorChar).filter(_.nonEmpty).map(entry => new java.io.File(entry)).map(file => (if (file.getName.endsWith(".jar")) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(URI.create("jar:" ++ file.toURI.toString ++ "!/"), URI.create((if (file.toURI.toString.endsWith("/")) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(file.toURI.toString, file.toURI.toString ++ "/")))).toSeq
+  lazy val hostRoots: Seq[URI] = System.getProperty("java.class.path", "").split(File.pathSeparatorChar).filter(_.nonEmpty).map(entry => new File(entry)).map(file => (if (file.getName.endsWith(".jar")) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(URI.create("jar:" ++ file.toURI.toString ++ "!/"), URI.create((if (file.toURI.toString.endsWith("/")) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(file.toURI.toString, file.toURI.toString ++ "/")))).toSeq
   lazy val default: DefinitionPath = DefinitionPath(hostRoots)
 }

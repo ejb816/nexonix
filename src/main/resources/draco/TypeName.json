@@ -26,7 +26,7 @@
         "name": "typeParameters",
         "valueType": {
           "[]": [
-            "draco.format.dracon.Dracon"
+            "Dracon"
           ]
         }
       },
@@ -68,7 +68,7 @@
           "name": "typeParameters",
           "valueType": {
             "[]": [
-              "draco.format.dracon.Dracon"
+              "Dracon"
             ]
           },
           "value": {
@@ -99,7 +99,7 @@
           "name": "typeParameters",
           "valueType": {
             "[]": [
-              "draco.format.dracon.Dracon"
+              "Dracon"
             ]
           },
           "value": "_typeParameters"
@@ -230,10 +230,10 @@
         "name": "read",
         "valueType": {
           "->": [
-            "draco.format.dracon.Dracon",
+            "Dracon",
             {
               "()": [
-                "draco.drake.Presence",
+                "Presence",
                 "TypeName"
               ]
             }
@@ -271,7 +271,7 @@
                     },
                     {
                       "()": [
-                        "draco.drake.Absent"
+                        "Absent"
                       ]
                     },
                     {
@@ -293,7 +293,7 @@
                             },
                             {
                               "()": [
-                                "draco.drake.Absent"
+                                "Absent"
                               ]
                             },
                             {
@@ -315,7 +315,7 @@
                                     },
                                     {
                                       "()": [
-                                        "draco.drake.Absent"
+                                        "Absent"
                                       ]
                                     },
                                     {
@@ -323,7 +323,7 @@
                                         "arguments",
                                         {
                                           "()": [
-                                            "draco.drake.Present",
+                                            "Present",
                                             {
                                               "()": [
                                                 "TypeName",
@@ -348,7 +348,7 @@
                 },
                 {
                   "()": [
-                    "draco.drake.Absent"
+                    "Absent"
                   ]
                 }
               ]
@@ -362,7 +362,7 @@
         "valueType": {
           "->": [
             "TypeName",
-            "draco.format.dracon.Dracon"
+            "Dracon"
           ]
         },
         "value": {
@@ -370,7 +370,7 @@
             "name",
             {
               "()": [
-                "draco.format.dracon.Dracon.record",
+                "Dracon.record",
                 {
                   "++": [
                     {
@@ -393,7 +393,7 @@
                                 "\"name\"",
                                 {
                                   "()": [
-                                    "draco.format.dracon.Dracon.string",
+                                    "Dracon.string",
                                     "name.name"
                                   ]
                                 }
@@ -427,11 +427,11 @@
                                 "\"namePackage\"",
                                 {
                                   "()": [
-                                    "draco.format.dracon.Dracon.array",
+                                    "Dracon.array",
                                     {
                                       "()": [
                                         "name.namePackage.map",
-                                        "draco.format.dracon.Dracon.string"
+                                        "Dracon.string"
                                       ]
                                     }
                                   ]
@@ -466,7 +466,7 @@
                                 "\"typeParameters\"",
                                 {
                                   "()": [
-                                    "draco.format.dracon.Dracon.array",
+                                    "Dracon.array",
                                     "name.typeParameters"
                                   ]
                                 }

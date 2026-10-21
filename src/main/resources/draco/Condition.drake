@@ -1,7 +1,7 @@
 type Condition from BodyElement
   factory
     parameters
-      par value draco.format.dracon.Dracon
+      par value Dracon
     body
-      fix value draco.format.dracon.Dracon _value
+      fix value Dracon _value
 domain draco Draco

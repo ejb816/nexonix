@@ -6,9 +6,21 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **7d5de4f** (the unit type,
-  committed and pushed by Dev at the verified 840 / 59 gate). The tree now carries the UNCOMMITTED
-  host-vocabulary increment: `src/main/resources/draco/scalatarget/HostBindings.{drake,json}` and
+- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **44a5005** (the host
+  vocabulary, committed and pushed by Dev at the verified 845 / 59 gate). The tree now carries the
+  UNCOMMITTED bootstrap-shortening increment, 88 files: seventeen swept trios under
+  `src/main/resources/draco` (JSON bodies compact, drake re-emitted, Scala regenerated), 35 regenerated
+  Scala files in all (25 main, the ten staged dreams/service files), `src/mods/scala/draco/{NameResolution,
+  DracoGenerator}.scala`, `src/main/resources/draco/drake.dlt`, the new `src/test/scala/draco/CanonicalScope.scala`,
+  ten scoped test suites (PrimesRulesTest writes its generation into src/main and overwrote three
+  regenerated files on Dev's first gate, 842 / 845; now scoped), HostBindings with Integer, System and
+  Enumeration bound bare, DRACO.md, README.md, CHANGELOG.md, this file and record
+  `git-record-2026-10-21-2000`. Do not discard it until committed. Dev's third full gate on it (October
+  21) passed **845 / 59**, zero failed/canceled/ignored/pending tests, zero aborted suites, every
+  headline unchanged, pending mods actors 0 (the first failed three primes rules overwritten by the
+  unscoped PrimesRulesTest, the second failed to compile on a helper reference); a 29-suite
+  compiled-class probe had passed 770 / 770 and the whole main and mods tree compiles.
+  The previous increment, as committed, was: `src/main/resources/draco/scalatarget/HostBindings.{drake,json}` and
   `src/main/scala/draco/scalatarget/HostBindings.scala` (new trio), Draco and ScalaTarget trios
   (member lists), `src/test/scala/draco/DomainLoadingTest.scala`, `src/test/scala/draco/format/dracon/DraconTest.scala`
   (its pinned ScalaTarget member list now names HostBindings; Dev's first gate failed on it, 844 / 845),
@@ -40,11 +52,12 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Next action
 
-After Dev's commit of the host-vocabulary increment: with the loader, the unit type and the vocabulary landed, the next #51 design point is the
-one Dev asked for on October 20: shortening the bootstrap files themselves — which files, through
-which operation (the loader's scope now exists; the trio gates read JSON unscoped and the companions
-load unscoped), and what the gates compare. Journal chapter 100 is written from this session's record
-at its closing handoff. One recommendation.
+After Dev's commit of the bootstrap-shortening increment: the next #51 design point is the
+REST of the sweep — the remaining main and mods bodies (the companions and the example domains still
+load and generate unscoped; the engine now canonicalizes, so the sweep is mechanical and gate-pinned)
+— or, before it, the per-file question the sweep raised: whether a shortened file should carry its own
+resolution record, as Haskell and Scala files carry imports, so an unscoped reader could resolve it.
+Journal chapter 100 is written from this session's record at its closing handoff. One recommendation.
 
 ## Completed in this session
 

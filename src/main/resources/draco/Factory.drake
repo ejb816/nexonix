@@ -1,11 +1,11 @@
 type Factory from BodyElement
   factory
     parameters
-      par valueType draco.format.dracon.Dracon
+      par valueType Dracon
       par parameters [Parameter] []
       par body [BodyElement] []
     body
-      fix valueType draco.format.dracon.Dracon _valueType
+      fix valueType Dracon _valueType
       fix parameters [Parameter] _parameters
       fix body [BodyElement] _body
 domain draco Draco

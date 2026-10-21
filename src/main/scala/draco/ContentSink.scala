@@ -1,5 +1,10 @@
 package draco
 
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 import java.net.URI
 
 trait ContentSink extends DracoType {
@@ -15,11 +20,11 @@ object ContentSink extends App with DracoType {
     _sinkRoot: => URI,
     _logicalPath: => String
   ) : ContentSink = new ContentSink {
-    lazy val sinkPath: java.nio.file.Path = java.nio.file.Paths.get(_sinkRoot.resolve(_logicalPath))
+    lazy val sinkPath: Path = Paths.get(_sinkRoot.resolve(_logicalPath))
     override def write(_content: => String): Unit = {
       lazy val content: String = _content
-      java.nio.file.Files.createDirectories(sinkPath.getParent)
-      java.nio.file.Files.write(sinkPath, content.getBytes(java.nio.charset.StandardCharsets.UTF_8))
+      Files.createDirectories(sinkPath.getParent)
+      Files.write(sinkPath, content.getBytes(StandardCharsets.UTF_8))
     }
     override lazy val typeDefinition: TypeDefinition = ContentSink.typeDefinition
   }

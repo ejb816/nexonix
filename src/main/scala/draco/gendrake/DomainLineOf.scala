@@ -11,16 +11,17 @@ object DomainLineOf extends App with DracoType {
   lazy val domainType: Domain[GenDrake] = Domain[GenDrake] (typeDefinition)
 
   def apply (
-    _definition: => TypeDefinition
+    _definition: => draco.TypeDefinition
   ) : DomainLineOf = new DomainLineOf {
-    lazy val definition: TypeDefinition = _definition
-    lazy val line: DomainLine = DomainLine(definition.domainAspect.typeName.namePackage, definition.domainAspect.typeName.name)
+    lazy val definition: draco.TypeDefinition = _definition
+    lazy val line: draco.draketarget.DomainLine = draco.draketarget.DomainLine(definition.domainAspect.typeName.namePackage, definition.domainAspect.typeName.name)
     override lazy val value: String = line.value
     override lazy val typeDefinition: TypeDefinition = DomainLineOf.typeDefinition
   }
 
   lazy val Null: DomainLineOf = apply(
-    _definition = null.asInstanceOf[TypeDefinition]
+    _definition = null.asInstanceOf[draco.TypeDefinition]
   )
+
 
 }

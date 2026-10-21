@@ -2,7 +2,7 @@ type Local from BodyElement
   factory
     parameters
       par name String
-      par valueType draco.format.dracon.Dracon
-      par value draco.format.dracon.Dracon
+      par valueType Dracon
+      par value Dracon
       par now Boolean false
 domain draco Draco
