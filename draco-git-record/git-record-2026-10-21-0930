@@ -1,0 +1,38 @@
+Preserve chapters 95–99 and prepare a shared Codex or Claude Code handoff
+
+Dev requested a new task-session handoff with journal updates and persistent continuity
+information. Observe clean main at b17ddb8; Dev's pasted output confirms commit and push.
+Preserve the verified 835 tests / 58 suites baseline from his October 20 full gate, with
+all report-only figures unchanged and pending mods actors zero. No runtime files change.
+
+Recover original Codex session records through the October 21 handoff request, not
+compaction replacement histories: 71 messages, 36 user and 35 final replies, 35 complete
+exchanges plus the open request. Preserve source session, physical line, UTC time and
+text hash in a bounded extract; document prefix hash, exclusion rules, twelve responsive
+results and recoverability on both sides of three compactions. Chapters 95–99 preserve
+assertive prompts and final replies, folding delegated results into sourced notes.
+Retain failures, corrections, unaccepted proposals and the limits of the transcript.
+
+Recheck chapter 94's 39 original records and quotation edits against the Claude session.
+Recover its previously out-of-bound final handoff reply separately. Keep the chapter's
+historical Status and old audit boundary; append a continuity note pointing forward.
+Update the introduction and index to 99 chapters, then reconcile DRACO and README and
+advance both documentation-sync markers to 99. Historical commit records stay unchanged.
+
+Replace the accumulated handoff checkpoints with one current cross-agent checkpoint:
+committed increments, source paths, gate headlines, probe lessons, dependencies and
+permissions. Add a reusable DEVELOPMENT_RESUME_PROMPT.md for either Codex or Claude Code.
+Shared project records hold durable memory; no private agent memory is overwritten.
+
+The two-stage loader bootstrap proposal remains unaccepted: establish identities from
+explicit domain declarations, then resolve bodies with the ontology and bindings. The
+next session must restate it for acceptance/correction before building. Type-level
+formal/actual separation, activation and .dcon remain unaccepted or deferred. No hidden
+global scope or bulk shortening is authorized. Keep #51 follow-through visible after
+verified commits. Main TypeLoader must not depend on mods NameResolution.
+
+Validation: original source records, timestamps and hashes checked; dialogue and delegated
+results checked against the extract; chapter links/index and sync markers checked;
+git diff --check and shared symlink checker pass. Documentation only; no sbt rerun is
+needed. No sbt, commit, push, issue mutation or new task creation by Codex. This handoff's
+final reply is outside the frozen extract and remains for a later documentation pass.

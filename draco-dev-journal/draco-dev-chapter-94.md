@@ -714,3 +714,11 @@ generation's first design point — a `Generate` request naming a held domain an
 domain, answered with a `Generated` response of Emissions — raised, not yet accepted. Queued
 after it: activation as an explicit operation; later, inferred derivation. Surfaced, not filed:
 a membership-reciprocity rule.
+
+## Later retrieval note — October 21, 2026
+
+The historical Status above is unchanged. Its previously out-of-bound Claude closing reply
+has now been [recovered](sources/claude-2026-10-15-handoff-close.jsonl) and checked against the
+original record. The [new audit](sources/codex-2026-10-15-to-21-audit.md) documents that bridge
+and rechecks this chapter's source quotations. Commit a3d2d35 carried the documentation
+handoff; [chapter 95](draco-dev-chapter-95.md) resumes with Codex receiving it.

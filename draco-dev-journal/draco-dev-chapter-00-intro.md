@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across ninety-four chapters of development sessions between March 22 and October 15, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across ninety-nine chapters of development sessions between March 22 and October 21, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -92,6 +92,8 @@ Selected moments that shifted the framework's trajectory:
 - **Primes / PON** — combinatorial induction over Prime Ordinal Notation as "draco in draco," the proving ground for DRAKE and the disciplined Monadic register.
 
 The recurring theme across the journal is that self-description creates complexity: a type system closed over itself means every change to a foundational type can create circular dependencies, initialization-order bugs, and shadowing issues. The `lazy val` discipline, deferred factory defaults, classpath loading, the Haskell test, and finally DRAKE-as-recognizer are all engineering responses to the same mathematical property. The framework is learning to describe itself without tripping over its own reflection.
+
+**Status at Chapter 99:** Dev has committed and pushed b17ddb8 after a verified **835 tests / 58 suites**. Explicit Generate, Dracon capabilities and core trees, owner-declared payload codecs, structured method formals, and ontology-scoped resolution have landed. Bootstrap files remain qualified. The two-stage bootstrap-loader proposal is unaccepted; type-level formal/actual separation, activation and .dcon migration remain unaccepted or deferred. The [retrieval audit](sources/codex-2026-10-15-to-21-audit.md) preserves 35 complete exchanges plus the open handoff request, checks originals on both sides of three compactions, and separately recovers the prior Claude closing reply. This documentation pass is prepared for either Codex or Claude Code; its final reply lies outside the frozen transcript boundary.
 
 **Status at Chapter 94:** the editing interface is Dev's CRUD reading — User defines the requests, Editor the responses — as a `Request` family of four verbs over the abstract `Latent` shape (Create, Update, Read, Delete), each refusing the other's case, answered through the abstract `Response` that `Actual` derives so the dependency runs Editor → User only; the grown ontology reaches a caller through a consumer on the Editor's factory; `draco.dreams.Initialization` is draco acting as its own first User, ordering the canonical domains from their own definitions from an empty ontology, and its first run aligned `SelfDeclaration` to name and package; the Editor's judgment is four Editor-domain rules over an `Accepted` fact, every request knowing what it proposes, the actor a membrane, and codec eligibility transitive. Dev verified 768 tests / 54 suites at `78bff9d` with every headline unchanged. Open in discussion: generation's first design point (`Generate` naming a held domain and a transform domain, answered with Emissions); queued after it, activation; later, inferred derivation.
 
@@ -528,3 +530,23 @@ judgment moved into Editor-domain rules, the actor thinned and codec eligibility
 (78bff9d, 768/54). Generation's first design point is raised at the close. The
 [retrieval audit](sources/claude-2026-10-12-to-15-audit.md) preserves nineteen complete exchanges
 plus the open wrap-up request.
+
+### [Chapter 95 - Explicit Generation and Executable Transform Bindings](draco-dev-chapter-95.md)
+
+The Generate contract becomes executable through factory-supplied bindings, with stale or missing bindings refused. Dev verifies 782/55 and pushes 9185f1a; activation is proposed, then deferred.
+
+### [Chapter 96 - Dracon as Wrapper and Format Domain](draco-dev-chapter-96.md)
+
+Dev replaces the JSON format domain with Dracon and accepts explicit Encoder/Decoder capabilities, correcting the proposed separate six-form family. Dev verifies 804/56 and pushes db7e7a8; .dcon remains deferred.
+
+### [Chapter 97 - Core Dracon Trees and Owner-Declared Payload Codecs](draco-dev-chapter-97.md)
+
+Core definition trees migrate without payload-format changes, then codec aspects replace the generator’s field allowlist. Dev verifies 809/56 and 815/56, pushing d169b0e and f97c913.
+
+### [Chapter 98 - Returning to #51 and Structured Method Formals](draco-dev-chapter-98.md)
+
+Dev challenges the lack of follow-through. The priority-label reading is corrected; ten generic methods gain structured TypeParameter declarations. Dev verifies 825/57 and pushes a13ad38. Type-level formal/actual separation remains proposed.
+
+### [Chapter 99 - Ontology-Scoped Names and the Next Handoff](draco-dev-chapter-99.md)
+
+Dev prioritizes short names and accepts explicit ontology scope, local binding precedence and primitive/host vocabulary. Scoped parsing and generation land at b17ddb8, verified 835/58. Two-stage bootstrap loading is proposed but not accepted before the handoff request.

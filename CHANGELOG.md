@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+Documentation checkpoint (2026-10-21): journal chapters 95–99 preserve the Codex session through
+the b17ddb8 checkpoint with a bounded transcript audit; the prior Claude closing reply is also
+recovered. Shared documentation, handoff and a reusable resumption prompt now record the verified
+835 / 58 baseline and the unaccepted bootstrap-loading proposal for either agent.
+
 Development checkpoint (2026-10-15): Generate is committed as 9185f1a at the verified 782 / 55
 baseline. Dev deferred activation; its Assembly-startup recommendation is retained as unaccepted.
 The Dracon wrapper/capability increment below passed Dev's full gate, reported 2026-10-16:

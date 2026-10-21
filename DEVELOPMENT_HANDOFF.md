@@ -1,742 +1,160 @@
 # Development Handoff
 
-This is the shared resumption checkpoint for Claude Code and Codex, not an additional
-architecture specification or a transcript. Follow DRACO.md section 7 and verify this
-snapshot against the current tree before acting.
+Updated October 21, 2026 by Codex for a new task in **either Codex or Claude Code**.
+This is the current checkpoint; the journal and git records preserve historical checkpoints.
+Follow DRACO.md section 7 and verify the actual tree on arrival.
 
-## Current ontology-scoped resolution — 2026-10-20, Codex
+## Checkpoint and permissions
 
-Started clean at a13ad38, Dev-confirmed commit/push after 825 / 57 with all headlines matching.
-Dev then prioritized ontology-scoped names over the proposed type-level formal/actual split.
-Accepted: explicit DomainOntology per operation; self/type/method formals bind first, unique
-ontology names second; explicit primitive/host binding vocabulary last. Unknown/ambiguous
-names fail; qualification requires an exact known identity, with no classpath fallback.
+- Observed branch: `main`, HEAD **b17ddb8**, initially clean and aligned with local
+  `origin/main`. Dev's pasted October 21 output confirms commit and push; this is stronger
+  evidence than local remote-tracking state alone. No remote query was needed.
+- Latest verified code baseline: **835 tests / 58 suites**, Dev's October 20 full sbt gate,
+  zero failed/canceled/ignored/pending tests, zero aborted suites. No runtime changes since.
+- This handoff adds documentation only, still uncommitted when written: journal chapters
+  95–99, source extracts/audit, chapter-94 continuity note and introduction, DRACO.md,
+  README.md, CHANGELOG.md, this file, DEVELOPMENT_RESUME_PROMPT.md and record
+  `git-record-2026-10-21-0930`. If Dev commits it, expect HEAD after b17ddb8. Inspect status;
+  do not assume a clean tree or discard pending documentation.
+- Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
+  compiler/projection probes have been used, but do not replace Dev's full gate.
+- One design point per reply; one recommendation with accept-or-correct; build only what
+  Dev accepts. After each completed increment, reconnect to the next existing priority.
+- New GitHub issues require explicit approval every time. None created or modified here.
+- Shared project documentation is the cross-agent memory. No private Claude/Codex memory
+  is required or overwritten. The copyable prompt is in DEVELOPMENT_RESUME_PROMPT.md.
 
-Implemented NameResolution in the engine, scoped Drake.parse/emit, scoped JSON read/compact,
-and scoped Scala generate with selective imports. Structural type forms, formal bounds and
-nominal references resolve; structured symbolic expression leaves honor local binders.
-Quoted values and host-opaque spans are not searched as source code. Definition identity and
-containing-domain anchors remain qualified. Bootstrap resource loading and unscoped APIs stay
-as-is; bulk shortening repository bootstrap files needs an explicit loader context next.
-No Haskell target added. Example usage is in README and drake.dlt.
+## First action in the new session
 
-TransformBinding adds nameBindings [(Text, TypeName)] default empty, rejecting duplicate
-aliases. GenerateRequested passes the held ontology; definitions resolve before rules run.
-The fresh session supplies its scope to GenDrake Emit; legacy standalone sessions still emit
-without a scope. Resolution failures return Generated Problems and no emissions. All three
-changed definition trios regenerated using the compiled CLI. Nine new NameResolutionTest
-cases plus one GenerationTest case: Dev confirmed 835 / 58 on October 20, zero failed,
-canceled, ignored or pending tests and zero aborted suites; no corpus count changes.
-Every report-only headline matched, including file-only pending mods actors 0. Awaiting commit.
-Final full direct probe passed 835 tests, zero failed/canceled/ignored/pending tests and
-zero aborted suites; Runner counts 59 with discovery, versus 58 in Dev's sbt gate.
-Every headline unchanged: scope 109+10, one loss across 119, aspect sections 109,
-GenDrake 107/107, example map 28/20/0/0, PON 80/550/42, canonical 7, scenario 23 clean,
-forest 1/2, categorical subtype visibility, file-only pending mods actors 0. Main DrakeCLI
-check keeps the known ActorAspect/BodyElement drift (surface 2, JSON 1); Editor check 0/0.
-An earlier full probe omitted test resources and had three scenario failures/two PON
-cancellations; corrected harness and final complete run passed everything together.
-A final local-value collision guard was included in that final passing full run.
-Temporary probe directories removed; whitespace and shared symlink checks pass.
-The focused integration fixture initially omitted Dracon's parent
-Format domain; it now supplies both, preserving existing derivation validation.
+Read DRACO.md, the shared documentation skill, this checkpoint, chapter 99 and its audit.
+Inspect git status/log and the relevant loader/resolver code. Restate the **unaccepted**
+bootstrap proposal below with your own reading and ask Dev to accept or correct it before
+building. Do not treat the request for this handoff as acceptance.
 
-Next action: Dev runs the scoped commit/push commands. Only verification prose changed
-after his passing gate; no retest is required. After commit, bring the loader/bootstrap scope design point before bulk migration;
-the type-level formal/actual split remains proposed, not accepted. .dcon and activation remain
-deferred. Do not stop at commit confirmation without returning to the #51 work.
-No sbt, commit, push or GitHub issue mutations by Codex. Journal coverage remains chapter 94;
-this conversation has not been transcript-audited/journaled, and no markers advance.
-Record: `git-record-2026-10-20-1503`.
+Codex's October 21 proposal: two-stage loading from an explicitly supplied set of domain
+declarations. First establish domain/member identities from qualified anchors and membership
+lists; then resolve definitions using that identity-only DomainOntology plus the explicit
+binding vocabulary. This is intended to avoid requiring a completed ontology to load the
+very definitions from which it is built. It would enable repository bodies to say Dracon.
+The proposal has not settled implementation placement or an API and is not implemented.
 
-## Prior method-formal increment — committed and pushed as a13ad38
+Code to inspect:
 
-Started from clean main at f97c913; Dev confirmed commit/push and 815 / 56 with all
-headlines matching. The payload increment below is now historical.
+- `src/main/scala/draco/TypeLoader.scala` and its resource trio: current unscoped loading,
+  root insertion, missing-resource stubs; generated companions call loadType.
+- `src/mods/scala/draco/DomainBuilder.scala`: reads domain definitions and members before
+  composing the ontology. Its resource loading still uses unscoped APIs.
+- `src/mods/scala/draco/NameResolution.scala`: explicit ontology/bindings, scoped JSON
+  read/compact, symbolic leaves, target import projection.
+- `src/main/scala/draco/{DomainOntology,TypeDictionary,Domain}.scala`: membership and
+  derivations, supplied member definitions with placeholders for absent members.
+- `src/mods/scala/draco/{Drake,DracoGenerator}.scala`: scoped overloads and bootstrap paths.
+- `src/mods/scala/draco/dreams/Initialization.scala` and editor/TransformBinding.scala:
+  endogenous initialization and the held-ontology generation path.
+- `src/test/scala/draco/NameResolutionTest.scala` and dreams/editor/GenerationTest.scala.
 
-Dev accepted returning to #51, separating method names from formal declarations, then
-the TypeParameter record with name and optional upperBound/lowerBound as Dracon type forms.
-Implemented Dynamic.typeParameters (empty default), TypeParameter trio and Draco membership,
-parser/emitter/Scala projection and migration of ten declarations across six JSON definitions.
-Their authored Drake remains unchanged; regenerated Scala is unchanged except the new record,
-Dynamic's family codec and root domain membership. Missing fields decode to empty/null;
-payload-bound upper/lower fields carry raw type forms. No TypeName actual/header migration.
-Legacy Dynamic names embedding brackets are rejected by projection; migrate using Drake.parse.
-Context-bound syntax is not introduced. Five focused tests plus five new corpus tests:
-Dev confirmed **825 / 57** on 2026-10-19, zero failed/canceled/ignored/pending tests,
-zero aborted suites and all headlines matching. Subsequently committed/pushed as a13ad38. Final full direct compiled probe: 825 passed, zero failed,
-canceled, ignored or pending tests, zero aborted suites; Runner counts 58 with discovery.
-Local TCP access included all loopback fixtures. Parse scope 109+10, one loss across 119,
-109 aspect sections, GenDrake 107/107; every other report unchanged and file-only pending
-mods actors zero. DrakeCLI check retains only ActorAspect/BodyElement authored-ahead drift
-(surface 2, JSON 1). Temporary probe directories removed after verification.
+Respect main/mods layering: TypeLoader is generated main code; NameResolution is handwritten
+mods code. Main must not depend on mods. Check bootstrap initialization cycles and trio gates
+before proposing implementation. No global ontology or classpath discovery was accepted.
 
-The first full probe exposed the test helper's assumption that every typeParameters list
-contains type forms. Dynamic now contains records; the helper compares those records exactly.
-A preliminary test assumed nested method grammar; that unrelated grammar extension was
-removed from this increment. No sbt, commit, push or issue changes by Codex.
+## Completed in this session
 
-Next authorized action: Dev runs the scoped commit/push commands. Only verification prose
-changed after his passing gate; no retest is required. After commit, continue #51 with one remaining design point,
-not another stopping point at commit confirmation. The old priority-next label covered the
-already-completed August derivation edge. TypeName formal/actual representation and remaining
-neutral vocabulary need reconciliation with current code before proposing their next increment.
-.dcon and activation remain deferred. Journal remains chapter 94; this conversation is not
-transcript-audited/journaled and no coverage markers advance.
-Record: `git-record-2026-10-19-1254`.
+| Commit | Increment | Dev's full gate |
+|---|---|---|
+| 9185f1a | Generate/Generated and executable transform bindings | 782 / 55 |
+| db7e7a8 | Dracon wrapper/format, Encoder and Decoder, Circe adapters | 804 / 56 |
+| d169b0e | Core definition trees use Dracon; explicit payload codecs | 809 / 56 |
+| f97c913 | Payload declarations belong to the owning CodecAspect | 815 / 56 |
+| a13ad38 | Structured method TypeParameter records, ten migrated declarations | 825 / 57 |
+| b17ddb8 | Explicit ontology-scoped resolution and binding vocabulary | 835 / 58 |
 
-## Prior payload declarations — verified and committed as f97c913
+All six commits and pushes were performed by Dev, with results preserved in the transcript
+extract. Chapter 95 starts at a3d2d35, the documentation commit after chapter 94's code baseline.
 
-Observed main at d169b0e, locally clean before this increment; Dev's pasted output confirms
-commit and push. Dev's full sbt gate on 2026-10-19 verifies the new baseline **815 / 56**,
-zero failed, canceled, ignored or pending tests and zero aborted suites. All report-only
-headlines match, including zero pending mods actors. Dev committed and pushed this payload
-increment as f97c913; the remaining paragraphs preserve its pre-commit checkpoint.
+Durable contracts:
 
-Dev accepted codec-aspect ownership, then `codec payload [field, otherField]` and its
-canonical `codecAspect.payload` list. CodecAspect adds payload [Text], default empty,
-and isEmpty includes it. Drake handles compact/multiline lists, emits the canonical section,
-and rejects duplicates/malformed declarations. Generator validation rejects unknown fields,
-incompatible types and sealed-family representation conflicts. The three owners declare
-TypeName.typeParameters, DracoAspect.derivation and TypeElement.valueType/value. Their Scala
-projections stay byte-identical. Inherited fields retain owner bindings; no core-name list
-remains. CirceCodecs still supplies the target bindings. Other codec Drake clauses and broader
-selector semantics remain unimplemented; existing codec eligibility is unchanged.
+- Generate names a held domain and transform, answers through the Response consumer with
+  Generated carrying one Emission per definition. Factory-supplied executable bindings must
+  match held definitions. Fresh session; Problems on refusal; no writes or activation.
+- Dracon replaces draco.format.json.JSON as combined wrapper/format. Encoder(T): T -> Dracon;
+  Decoder(T): Dracon -> Presence(T). Circe implementation belongs at the wrapper/target boundary.
+  The proposed separate six-form value family was not accepted.
+- Core value/valueType/derivation/argument trees use Dracon. CodecAspect.payload names fields
+  whose Dracon values (or sequence elements) serialize directly, preserving raw JSON payloads.
+  Ordinary Dracon wrapper encoding remains distinct. The generator's field allowlist is gone.
+- Dynamic.typeParameters contains TypeParameter records with name and Dracon upper/lower
+  bounds; absent bounds are Null. Method names contain no generic target syntax. TypeName's
+  existing header/actual argument representation has not been split.
+- NameResolution receives DomainOntology and primitive/host bindings explicitly. Lookup:
+  local self/formals first, unique ontology identity second, explicit bindings last. Unknown
+  or ambiguous names fail; dotted names also require an exact known identity. Existing type
+  operators recurse. Definition/domain anchors stay qualified. Quoted and host-opaque spans
+  are preserved; structured symbolic leaves respect local binders.
+- Scoped Drake parse/emit, JSON read/compact and Scala generate are implemented. Scala adds
+  selective imports with collision checks. Dreams Generate uses its held ontology and the
+  TransformBinding.nameBindings pairs; duplicates fail before execution. GenDrake receives
+  the scope through its fresh session. Standalone legacy sessions retain unscoped emission.
+- Repository bootstrap files remain qualified; there has been **no bulk shortening**. No
+  Haskell generator was implemented. Imports discussed in the transcript are illustrative.
 
-All main/mods and tests compiled directly. Final full ScalaTest probe with local TCP access:
-**815 passed, zero failed or aborted**, 57 suites including discovery; Dev subsequently confirmed
-**815 / 56** with sbt, six tests added (DrakeParseTest +2, DraconTest +4), no new corpus types.
-Earlier probes caught compact-list tokenization and missing fixture domain/typeDefinition
-members; the final full run includes all TCP tests passing together. All headlines unchanged:
-108+10 scope, one loss across 118, 108 aspect sections, GenDrake 106/106, example map 28/20/0/0,
-PON 80/550/42, canonical 7, scenario 23 clean, forest 1/2, categorical subtype visibility,
-file-only pending mods actors 0. Comparing 182 wire documents found only the intended three
-codecAspect.payload additions; existing field values remain identical. DrakeCLI check keeps
-only ActorAspect/BodyElement's known authored-ahead drift (surface 2, JSON 1).
+## Verification and lessons
 
-Next action: Dev commits and pushes using the path-scoped commands. Only verification
-prose changed after his passing gate; no further test run is needed. Temporary probe class
-directories have been removed; whitespace and documentation symlink checks pass. Record: `git-record-2026-10-18-1731`. No sbt, commit,
-push or new issues by Codex. .dcon and activation stay deferred. Journal remains chapter 94;
-this conversation has not been transcript-audited/journaled, and no markers advance.
-Probe logs and compatibility comparisons are transient /tmp artifacts. Prior checkpoints
-below are historical and superseded by this section.
+| Headline | Verified value |
+|---|---|
+| DomainAspect | 109 complete, 1 parameterized included, 0 skipped |
+| GenDrake | 107/107, 0 missing, 0 extra |
+| Example-domain generation | 28 match, 20 differ, 0 error, 0 missing / 48 |
+| Surface losses | 1 across 119 types, ActorAspect type form |
+| Parse scope | 109 draco + 10 mods, 0 held back |
+| DracoAspect | 109 complete, 2 frozen authored-ahead baselines, 0 skipped |
+| PON / canonical | 80 numbers, 550 expressions, 42 discrepancies / 7 differ |
+| Scenario | 23 files, all clean |
+| Forest | 1 of 2 ash alarms crossed to birch |
+| Subtype visibility | CO-DECLARATION DROPS THE FACT |
+| Pending mods actors | 0, file-only DrakeGenTest.log |
 
-## Prior core-tree migration — verified and committed as d169b0e
+Final direct compiled probe also passed 835, with 59 suites including Runner discovery
+versus sbt's 58. Earlier probe harness failures are not erased: missing test resources caused
+three scenario failures and two PON cancellations; restored resources yielded the final full
+pass. An integration fixture omitted Format, Dracon's parent; supplying both fixed it without
+weakening validation. The final passing probe includes the local-value/import collision guard.
+Earlier wrapper/core probes hit sandbox socket failures; separate permitted loopback runs and
+Dev's complete gates subsequently passed. See chapter Status notes and per-commit records.
 
-Observed main at db7e7a8; Dev's pasted output confirms the previous wrapper increment was
-committed and pushed with a clean tree. Dev reported the current migration's full sbt
-gate on 2026-10-17: **809 / 56**, zero failed, canceled, ignored or pending tests,
-zero aborted suites. Every headline matches the figures below. Dev then committed and
-pushed the migration as d169b0e with clean final status; this section preserves the earlier evidence. Dev accepted both the
-core-tree scope and explicit payload codec bindings; .dcon and activation stay deferred.
+DrakeCLI retains known ActorAspect/BodyElement authored-ahead differences (surface 2, JSON 1);
+Editor check was 0/0. Probe directories were removed before Dev's gate. This documentation pass
+needs no sbt rerun. Check whitespace, source hashes, chapter links/index and shared symlinks.
+Dev's shell does not have rg; use grep in handed-over commands. Never edit generated main Scala
+alone: regenerate the trios. Every val in an App object must be lazy.
 
-TypeElement.value/valueType, TypeName.typeParameters and DracoAspect.derivation use Dracon.
-Their factory definitions and generated aspect consumers follow. Neutral wrapper operations,
-TypeName.read/write and Dracon structural equality preserve shape interpretation and identity.
-Explicit CirceCodecs payload capabilities are selected by a scoped bootstrap binding table in
-DracoGenerator. Ordinary wrapper codecs retain {"json": ...}. No new codec-aspect syntax.
-The handwritten Scala parser/generator still uses Circe behind an opt-in DefinitionTrees
-bridge in mods/scalatarget; the migrated field/factory and aspect-renderer definitions
-no longer name Json/cursor operations.
-The legacy Generated.scala bootstrap lacks a trio and was migrated directly to neutral values.
+## Deferred work and priority context
 
-All main/mods and tests compiled directly. Final full probe: **809 tests, 802 passed, seven
-sandbox ZeroMQ socket-bind failures, zero aborted**; unchanged ZeroMqBridgeTest rerun with
-local TCP access **9 / 9 passed**. Five new DraconTest cases; Dev subsequently verified **809 / 56**
-(the direct Runner adds a discovery suite). Old/new compiled codecs reserialized the same
-182 current definition inputs identically. All corpus gates and headlines pass unchanged:
-108+10 parse scope, one loss across 118, 108 aspect sections, GenDrake 106/106, example map
-28/20/0/0 of 48, PON 80/550/42, canonical 7, scenario 23 clean, forest 1/2, categorical
-subtype visibility, pending mods actors 0. DrakeCLI check: only ActorAspect/BodyElement's
-known authored-ahead drift (surface 2, JSON 1). Earlier compile/projection/test corrections
-are recorded in `git-record-2026-10-17-1457`. No sbt, commit, push or new issues by Codex.
+- #51 is the active continuation: context-independent type expressions/vocabulary. Its
+  priority-next label referred to the August derivation edge, already completed; the label
+  did not approve all old proposals. Reconcile issue prose against current code and Dev's words.
+- Before the ontology detour, Codex proposed placing type-level formal declarations in the
+  owning DracoAspect while TypeName carries actual arguments. **Not accepted.** Return to it
+  only after the short-name work, one point at a time.
+- Activation: Dev explicitly deferred the proposal to start an explicit Assembly of held actor
+  definitions using factory-supplied executable constructors matched to them. **Not accepted.**
+- .dcon extension migration deferred until wrapper work; no acceptance of migration yet.
+- #43 broader codec-aspect emission and #12 Dreams remain context, not new authorizations.
+  Inferred derivation is later work. Membership reciprocity was surfaced, not filed.
+- Persistence belongs to the consuming project. ZeroMQ protocol choices remain provisional;
+  transport work is independent of this bootstrap design.
 
-Next action: Dev runs the path-scoped commit/push commands and supplies final status.
-Only verification prose changed after his gate; no repeat test run is needed. No additional design or .dcon migration authorized.
-Journal remains through chapter 94; current Codex dialogue has not been transcript-audited
-or journaled, and no markers advance. Probe logs and the wire comparison are transient /tmp
-artifacts; temporary target probe directories were removed. The prior checkpoints below are historical and superseded by this section.
+## Documentary coverage and gaps
 
-## Prior Dracon wrapper increment — verified and committed as db7e7a8
+Chapters **95–99** cover this session through Dev's October 21 handoff request, after chapter
+94's Claude session. Audit: `draco-dev-journal/sources/codex-2026-10-15-to-21-audit.md`.
+The extract contains 71 originals: 36 user messages, 35 final replies, 35 complete exchanges
+plus the open request. All 12 responsive results are summarized in chapters and retained in
+full in the extract. Three observed compactions retain originals on both sides; this is bounded
+recoverability, not a claim of complete historical capture. This documentation pass's final
+reply is outside the boundary and can be recovered by the next documentation pass.
 
-Observed main at **9185f1a**, Generate committed and pushed by Dev with a clean tree
-before this increment. Its verified baseline is **782 tests / 55 suites**. The Dracon
-increment is generated, compiled and verified by Dev's full sbt gate reported on
-2026-10-16: **804 tests / 56 suites**, zero failed or aborted. Dev subsequently committed
-and pushed it as db7e7a8; the following paragraphs preserve that checkpoint's evidence. The earlier pending documentation note is folded into record
-`git-record-2026-10-15-1703`, now describing this whole increment.
-
-Dev accepted, one design point at a time: dracon owns the neutral value/codec vocabulary,
-target-language domains own implementation bindings; `draco.format.dracon.Dracon`
-replaces `draco.format.json.JSON` as the combined wrapper and format domain; explicit
-codec capabilities passed to operations needing them; and the signatures Encoder(T):
-T -> Dracon, Decoder(T): Dracon -> Presence(T). The six-form value-family proposal was
-not accepted. **.dcon remains deferred**; every definition carrier still uses .json.
-
-Implemented trios: Dracon and its Value moved from format/json to format/dracon;
-Encoder(T) and Decoder(T) added there; ScalaTarget gains CirceCodecs, its explicit
-Circe Encoder/Decoder adapters. Dracon keeps the raw Json payload at its wrapper
-boundary and provides selection returning Presence(Dracon). Invalid/negative/oversize
-array indices and absent paths return Absent; a selected JSON null is Present. The
-neutral capabilities carry encode/decode function values, not inferred host instances.
-
-Implementation choice to avoid a module cycle: generic Format.Value(F) now selects
-Presence(F), with no `T: Decoder` and no dependency on Dracon. Dracon.Value implements
-selection and adds decode(T)(source, decoder), returning Presence(T). A missing path
-does not evaluate the supplied decoder. This replaces the old null-returning decode.
-Example actor/message definitions, authored actor Drake/JSON, Scala and their tests
-now name Dracon; the endogenous initialization's domain list replaces JSON with Dracon.
-Codec metadata selection still round-trips through JSON. No engine behavior changed;
-DracoGenerator's example comments follow the renamed type. The remaining core Json,
-cursor and codec-generator host references await later neutral-operation design, as
-do declarative codec-field operators and broader target lexeme bindings.
-
-Verification: direct scalac rebuilt the entire main/mods tree and every test over a
-fresh copy of Dev's compiled classes, with current resources overlaid, hidden resources
-excluded and the removed format/json classes/resources purged. 804 tests discovered:
-797 passed, seven failed exclusively on ZeroMQ loopback socket binds in the sandbox,
-zero aborted suites. The unchanged ZeroMqBridgeTest rerun with local TCP socket access
-passed all nine tests, including all seven failures. This is a complete probe with a
-separate loopback rerun, not a clean full sbt run. DraconTest's seven cases passed.
-One compile correction: the old TestValue logger expected String, now logs a Presence
-through fold; its extraction checks now assert rather than only log. DrakeCLI check over
-format and ScalaTarget reports surface drift 0 / JSON drift 0. The whole main corpus
-retains only ActorAspect/BodyElement authored-ahead drift; the example scan additionally
-reports five untouched sentient JSON discrepancies. The example gen map is unchanged.
-Probe directories were removed after checks; logs are transient under /tmp.
-
-Dev-verified full gate (reported 2026-10-16): **804 tests / 56 suites** (782 + 15 corpus tests for three net-new
-main types + seven DraconTest tests; the direct Runner counts its discovery wrapper as
-a 57th suite). Observed report-only moves: parse scope **108 draco + 10 mods**, one
-surface loss across **118** types; aspect probes **108** complete sections; GenDrake
-**106/106**. Everything else unchanged: example map 28/20/0/0 of 48, PON 80/550/42,
-canonical 7, scenario 23 clean, forest 1/2, categorical subtype visibility, pending mods
-actors 0 (read from its file-only log). DRACO.md's headline table is updated for these
-legitimate corpus moves; its full-suite baseline is now 804 / 56. Dev's pasted output
-confirms every headline listed here and the file-only pending-actor count of zero.
-
-Completed next action from this checkpoint: Dev committed and pushed as db7e7a8,
-then supplied clean final status. Only verification prose changed after his gate. Definition paths have moved: follow DRACO.md's
-rename exception if the index shows renames, verify only intended changes, and commit
-without a pathspec in that case. No sbt, commit, push or new GitHub issues by Codex.
-
-Activation remains **deferred and unaccepted** at Dev's request. Preserve Codex's
-recommendation: start an explicitly supplied Assembly whose actor definitions are held
-in the accepted ontology, using factory-supplied executable constructor bindings matched
-to those definitions. Generation and activation remain separately requested operations.
-Do not build it without Dev's acceptance. After the wrapper gate, resume Dracon with
-one neutral-operation design point, not automatic activation or extension migration.
-
-Journal coverage remains chapter 94; this Codex conversation has not yet been journaled
-or transcript-audited. No markers advanced.
-
-## Generate increment checkpoint — 2026-10-15 (historical pre-commit note)
-
-Observed main at a3d2d35, the chapter-94 documentation commit after 78bff9d; clean on
-receipt. Dev's full run on 2026-10-15 verified **782 / 55**, zero failures or aborted
-suites, every report-only headline unchanged. Codex read the file-only log directly:
-mods actors pending Drake authoring 0 (Dev's rg command was unavailable). This increment
-is tested and uncommitted. Previous full baseline: 768 / 54 at 78bff9d.
-
-Dev accepted Generate → Generated, then accepted factory-supplied executable transform
-bindings in this Codex conversation. Those supersede the earlier "raised, not accepted"
-resumption notes retained below as the incoming Claude checkpoint. Implemented: Generate,
-Generated, TransformBinding and GenerateRequested trios; User/Editor trios updated; optional
-fourth Editor factory parameter defaults to empty. Five Editor rules and five core rules;
-the new rule checks bindings and queues the response, invoked after validation has collected
-all Problems. A matching binding runs in a fresh session; failure/count mismatch refuses
-without partial output. Generation neither changes/delivers the ontology nor writes/activates
-anything. Bindings carry domain/super-domain snapshots plus concrete definition/executable
-RuleType pairs, explicitly associated by the trusted caller, not inferred through reflection.
-GenDrake is the first executable chain. GenScala migration and activation remain ahead.
-
-Engine change: normalize referenced definitions and parent context through targetTypes in
-namesCodecless; otherwise neutral Text incorrectly makes the already-codable Emission appear
-codec-less, suppressing Generated's codec. No main-corpus definitions changed.
-
-Verification so far: compiled the modified engine and all dreams companions against current
-resources over Dev's compiled classes; compiled all dreams tests. Four-suite probe:
-GenerationTest 6, EditorTest 36, DreamsTest 24, InitializationTest 6 — **72 passed, 0 failed**.
-Initial probes caught local generation/name-resolution and codec defects, and a fixture
-missing DrakeTarget. Dev's full gate confirmed **782 / 55**: 768 + eight new trio gates
-+ six GenerationTest tests, with every report-only headline unchanged.
-
-Journal coverage remains through chapter 94; the current Codex exchanges have not yet been
-journaled or transcript-audited. No markers advanced. Six-suite engine-gate probe passed **537 / 0 failed**: DracoGenTest, DrakeGenTest,
-DrakeParseTest, SourceContractTest, GenDrakeTest and ExampleDomainsGenTest. Main-corpus
-Scala projections remain pinned; losses 1 across 115, parse scope 105 + 10, GenDrake
-103/103 and example gen map 28/20/0/0 unchanged. The file-only pending mods-actor
-headline remains 0. Next action: Dev runs the path-scoped commit and push commands, then
-supplies final status. Only verification prose changed after the full run; no second gate
-is needed. After the commit is confirmed, open activation with its first design point. After a verified commit, open activation with its own first design point.
-
-## Checkpoint
-
-- Updated: 2026-10-15, by Claude Code, closing the session for a handoff. Destination:
-  **Codex** (Dev named the OpenAI platform as the next task-session, continuing Generate).
-  Everything the next agent needs is in tracked project files — DRACO.md, this file, the
-  records, chapters 93 and 94 with their audits; no Claude-private memory is required or
-  relied upon.
-- Observed branch/HEAD: main at 78bff9d, pushed (`main...origin/main`) — the combined
-  Create/Update and Editor-rules commit, one after f4336a4 (Delete), 799e9ae (Read),
-  5057a5c (the Request family), 6869e47 (the combined delivery, CRUD and initialization
-  commit), fcc80ba (chapter 93) and efa9085 (composition). Session start was fcc80ba.
-- That commit (5057a5c) carried the Request-family increment: the new `Request` trio and
-  the Latent, User and Editor trios under `src/mods/{resources,scala}/draco/dreams/
-  {user,editor}`; the engine fixes in `src/mods/scala/draco/Drake.scala` (case-head
-  dotted type) and `DracoGenerator.scala` (import scan into case bodies);
-  `DrakeParseTest` (+1), `EditorTest`, `DreamsTest` (+2), `InitializationTest`; DRACO.md,
-  README, CHANGELOG, the Dreams README, this file and record `git-record-2026-10-13-1311`,
-  plus the confirmation of the SelfDeclaration alignment. No main-corpus TYPE added; the
-  gates are byte-identical over the main corpus.
-- That commit (799e9ae) carried the Read increment: the new `Read` trio and the User and
-  Editor trios under `src/mods/{resources,scala}/draco/dreams/{user,editor}`; `EditorTest`
-  (+1) and `DreamsTest` (+2); DRACO.md, README, CHANGELOG, the Dreams README, this file
-  and record `git-record-2026-10-13-2158`, plus the 744 / 54 verification note for
-  5057a5c. No main-corpus TYPE added, no engine change.
-- That commit (f4336a4) carried the Delete increment: the core `DomainOntology` trio
-  (`excluding`); the new `Delete` trio and the User and Editor trios; `DomainOntologyTest`
-  (+1), `EditorTest` (+1), `DreamsTest` (+2); the documents and record
-  `git-record-2026-10-14-1136`, plus the 747 / 54 verification note for 799e9ae.
-- In the tree after it, documentation only: this verification note (DRACO.md §1 and §3,
-  CHANGELOG, README, this file, record `git-record-2026-10-15-1132`).
-- That commit (78bff9d) carried the Create/Update increment (2026-10-14) and the
-  Editor-rules increment (2026-10-15) — under
-  `src/mods/{resources,scala}/draco/dreams` the new `Create`, `Update`, `Accepted`,
-  `CreateHeld`, `UpdateUnheld`, `ReadUnheld` and `DeleteUnheld` trios, the Latent (abstract),
-  Request (three dyns), Read, Delete, User, Editor (thin actor) and Initialization (typed by
-  Create) trios; in core the `DomainOntology` trio (`holds`, `holding`); the engine
-  (`DracoGenerator`: transitive codec eligibility); `EditorTest` (+12), `DreamsTest` (+4),
-  `DomainOntologyTest` (+1), `InitializationTest` (constructions); DRACO.md §1, §3 (two
-  paragraphs) and §6 (two entries), README, CHANGELOG (three entries), the Dreams and
-  Service READMEs, this file and record `git-record-2026-10-14-1217`. One core type gained
-  two dyns; no TYPE added; the gates are byte-identical, so no headline moves.
-- That commit carried: under `src/mods/{resources,scala}/draco/dreams/` the Editor and
-  Actual trios (editor), the User and new Response trios and the Latent trio moved from
-  editor to user (a `git mv` rename), the Dreams trio and the new Initialization trio; in
-  core the `SelfDeclaration` trio (namePath comparison) and `DomainBuilder` (mods);
-  `EditorTest`, `DreamsTest`, `SelfDeclarationRulesTest` and the new `InitializationTest`;
-  DRACO.md §1, §3 (three paragraphs) and §6 (three gotchas), README, CHANGELOG (four
-  entries), the Dreams, Service and mods READMEs, this file and record
-  `git-record-2026-10-12-1413`. No main-corpus TYPE was added, so no report-only headline
-  moves.
-- Gate: Dev's full `sbt test` on 2026-10-15 passed **768 tests / 54 suites, 0 failed, 0
-  aborted**, every report-only headline unchanged, then the commit and push went through
-  (78bff9d). 768 = 751 + 17 as predicted, which corroborates the Delete figure (f4336a4,
-  committed after its gate but with the output not pasted). Earlier read runs: 747 / 54
-  (799e9ae, 2026-10-14), 744 / 54 (5057a5c) and 741 / 54 (6869e47) on 2026-10-13.
-- Destination: either agent. Dev alternates sessions.
-- Permission: Dev authorized both agents to maintain the journal and shared documentation
-  on September 23. sbt, commit, push and new-issue restrictions remain in force.
-
-## Decisions this session (Dev, 2026-10-09)
-
-- `DomainDictionary` is the **domain ontology**, `DomainOntology`: an operational ontology
-  built from domains and their intra- and inter-relationships. "Dictionary" was an
-  expedient on the way to a formal ontology and now names only a domain's `TypeDictionary`.
-- The authoring types are **Latent** and **Actual**, and they operate on **domains**, not
-  ontologies: a Latent is one domain in candidate form, an Actual the accepted (or
-  rejected) domain. Ontologies are built from domains and their relationships.
-- Scope boundary accepted: the first slice takes a Latent to an Actual one domain at a
-  time, reusing core's rules; the Editor builds its own knowledge from core's rule
-  patterns (no reply protocol on the Draco actor).
-- **The ontology is draco's innate, endogenous ontology** (Dev, 2026-10-12): the framework's
-  own domains plus the dreams definitions as they can be accepted — self-referential, to be
-  maintained with care. The Editor is accepted as its holder on condition that acceptance
-  never compromises the framework: acceptance alters nothing running (generation and
-  activation stay explicit), and `Uniqueness` — over name and package, parameters free —
-  refuses a second owner of any name. Update-by-identity: a Latent whose domain name and
-  package match an accepted domain replaces it. Delivering the grown ontology to a caller
-  waits for the initialization client.
-- **Derivation is the ontology's first explicit relationship**, with provenance on the
-  edge (`declared`), declared edges first; inferred derivation (classification by shared
-  elements) is a later rule. Scope of the second increment: the relationship alone —
-  `Derivation`, projected `derivations`, `dependencies`, `including`, the rule reading
-  edges — Editor untouched. Composing accepted Actuals into the ontology is still ahead.
-- **The grown ontology reaches the caller through a consumer on the Editor's factory**
-  (Dev, 2026-10-12 afternoon, the initialization client's first design point): the ontology
-  has no codec, so it cannot ride a message or the Actual; the Editor's factory takes
-  `ontology: DomainOntology -> Unit` beside `actual`, invoked after the Actual on every
-  acceptance and never on a rejection. A caller keeping its last delivery holds the current
-  state. Chapter 91's candidate-batch idea remains superseded, not pending.
-- **User defines the requests, Editor the responses** (Dev, 2026-10-12 afternoon, restating
-  the original CRUD view of Editor and User; accepted as the client/server interface of
-  editing). The "client" is a User: the endogenous initialization client is draco as its own
-  first User, not a new domain and not a Service type. Create and Update are the `Latent`
-  (the ontology decides which, by identity); Read and Delete are LATER request types; the
-  `Actual` is the response. `Latent` therefore lives in `draco.dreams.user`.
-- **An abstract `Response` in User, derived by Editor's `Actual`** (Dev, same afternoon,
-  after the mutual-dependency point was raised at Dev's request): a user consumes
-  `User.Response` (`problems`, `accepted`), never `Editor.Actual`, so Editor depends on User
-  and never the reverse — a cycle the ontology could hold but a Haskell module pair cannot.
-- **The computed dependency order from an empty ontology** (Dev, same afternoon, the
-  client's bootstrap order): one Latent per canonical domain, ordered from the definitions
-  themselves, Draco first, nothing hand-listed. The client's home — `draco.dreams.Dreams`,
-  the constructing layer — is the model's placement (it must name both User and Editor,
-  which neither may do), stated, not asked; Dev may move it.
-- **SelfDeclaration over name and package, parameters free** — NOT a decision Dev took in
-  dialogue. The endogenous run refused `Format(F)` (bare self-declaration, as its members
-  point) and XML, JSON and Value behind it; the model applied Dev's 2026-10-12 principle
-  (parameters compose references, not definitions; a self-declaration points at the
-  definition) and aligned the rule, reversing the 2026-10-09 whole-TypeName comparison.
-  Dev CONFIRMED the alignment on 2026-10-13 ("I confirm the SelfDeclaration alignment"); the
-  alternative (a parameterized self-declaration on Format) was rejected because the
-  members' container pointers are bare.
-- **The Request family** (Dev, 2026-10-13, "I accept the Request family in User,
-  proceed" — Read's first design point): User declares abstract `Request`; Latent and
-  Read derive it; the Editor's message type becomes `Request` and its message body
-  dispatches by `case`. Delete joins the family later.
-- **Read names one domain and is answered with an Actual** (Dev, 2026-10-13 evening, "I
-  accept Read naming one domain answered with an Actual, proceed" — Read's second point):
-  by TypeName (name + package, parameters free, as definitions are keyed); the answer is
-  the domain's definition and members as the accepted ontology holds them, or a refused
-  Actual naming the domain with one Problem when the ontology owns none; through the same
-  Response consumer; a Read never changes the state and never delivers an ontology. Not
-  chosen: a new response type for reads, reading a member by name, one answer carrying
-  the whole ontology (no codec).
-- **Delete through `excluding`** (Dev, 2026-10-14, "I accept Delete through excluding,
-  proceed" — Delete's first point): one domain by TypeName; the ontology that would
-  result through `excluding`, the inverse of `including`; judged by the same five rules
-  over the whole of it, so a domain nothing depends on is removed, one another derives
-  from is refused naming the dependent, an unowned one is refused with one Problem; the
-  Actual carries the domain as held; the shrunk ontology is delivered on acceptance.
-  Draco itself cannot be deleted while anything derives from its root. The CRUD
-  vocabulary is complete. Model's choice, stated not asked: the judgment factored into
-  one global `judge` on the Editor, called by the Latent and Delete branches.
-- **Create and Update deriving Latent** (Dev, 2026-10-14, "I accept Create and Update
-  deriving Latent, proceed", after asking why User had Read and Delete but not Create and
-  Update — the answer was history, and a hidden difference: a Create of an existing name
-  was a silent update, an Update of a misspelled name a silent creation). Latent is the
-  abstract candidate shape; Create is refused when the identity is already owned, Update
-  when it is not; both otherwise judged as before. Model's choice: a second global
-  `holder` for the lookup all four branches share; the client typed by Create (Latent has
-  no codec).
-- **Editor-domain rules with the actor thinned** (Dev, 2026-10-15, "I accept Editor-domain
-  rules with the actor thinned, proceed", after observing that the dreams domains carried
-  no rule aspects, only an actor firing core's rules): the intent checks are four Editor
-  rules over the request and an `Accepted` fact; the core five keep validating the
-  provisional; the actor inserts, fires and reads the Actual back. Model's choices, stated
-  not asked: `proposal`/`subject`/`contents` as bodiless dyns on User's Request that each
-  verb implements (a request knows what it asks for); `holds`/`holding` in core; the
-  engine's codec eligibility made transitive so `Accepted(ontology)` compiles (closing the
-  §6 gap rather than dodging it).
-
-## Completed Development
-
-- **Ontology rename.** `DomainOntology` replaces `DomainDictionary` across the trio, the
-  Draco member list, `DomainBuilder` (`dictionary` → `ontology`), the ZeroMQ bridge and
-  five tests; `defines(typeName)` added. Map shape unchanged.
-- **Core composition.** `TypeDictionary(domainDefinition, members = [])` and
-  `Domain(domainDefinition, members = [])` populate from supplied definitions;
-  `DomainBuilder.define` loads from resources and delegates.
-- **Core validation.** `DerivationResolvable` joins the `DomainOntology` fact and flags
-  any named parent it does not define — no package filter, no loader call.
-  `SelfDeclaration` compares the whole TypeName. The validation suites and the Draco
-  actor test insert the ontology as a fact.
-- **Service.** `ServiceConfiguration` contains an `Assembly` (the accepted shape).
-- **Editor.** `Latent`, `Actual` and the `Editor` actor in `draco.dreams.editor`, as
-  generated trios under `src/mods/{resources,scala}/draco/dreams/editor`. Actual's
-  populated `domain` is a dyn, not a carried field (codec eligibility is not transitive).
-- **Delivery (2026-10-12 afternoon).** The Editor's factory is
-  `actorType(initial, actual: Actual -> Unit, ontology: DomainOntology -> Unit)`; after the
-  Actual, `guard(problems.isEmpty).ifThenElse(ontology(accepted), ())` delivers the new state
-  on acceptance only. `()` is the corpus's first unit literal; it round-trips as a leaf.
-  EditorTest's helper collects both consumers and their interleaving; two tests pin the
-  contract.
-- **CRUD reading (2026-10-12 afternoon).** `Latent` trio moved to `draco.dreams.user`
-  (`git mv`); new `draco.dreams.user.Response` (`fix problems [draco.Problem]`, `dyn accepted
-  Boolean problems.isEmpty`, no factory — abstract, the Aspects precedent); `Actual` is
-  `type Actual from draco dreams user Response` keeping definition, members and the derived
-  domain, its factory supplying `problems`, its codec carrying the inherited slot; `Editor`
-  has `messageType draco dreams user Latent`, `types [Actual]`, consumer
-  `(draco.dreams.user.Response -> Unit)`; `User` has `types [Latent, Response]`. A qualified
-  reference in `from` and `messageType` is SPACE-separated package words. EditorTest: Latent
-  trio checks gone, a dependency-direction test added (16). DreamsTest rewritten: Dreams
-  anchor folded to one test, User/Latent/Response trio checks, request-domain and
-  abstract-Response tests, the composition test pinning Latent at user and Editor → User (12).
-- **Initialization client (2026-10-12 afternoon).** `draco.dreams.Initialization`, Dreams'
-  first member (Dreams trio updated): `fix domains [Latent]`, `fix initial DomainOntology`
-  (`DomainOntology()`), `fix responses [Response]+`, `mut ontology`, consumers `note`/`keep`,
-  dyns `owns`, `parents`, `ready`, `order` (recursive, wave by wave), `ordered`,
-  `editorType` (mints the Editor with the client's consumers), `run(editor)`, `complete`,
-  `accepted`; codec over `domains` only. `SelfDeclaration` trio and `DomainBuilder.validate`
-  compare `namePath`. `InitializationTest` (6): trio ×2, computed order over the 18 canonical
-  domains supplied in reverse, cycle/dangling case, the endogenous run (all 18 accepted, the
-  client in the ontology it built), JSON round trip. `SelfDeclarationRulesTest`'s
-  parameter test inverted (checks Format(F) itself); EditorTest's SelfDeclaration case
-  refuses a self-declaration naming another definition and accepts the bare one;
-  DreamsTest's Dreams tests expect the one member.
-- **Request family (2026-10-13).** `draco.dreams.user.Request` (no elements, no factory);
-  `type Latent from Request`; User `types [Latent, Request, Response]`; Editor
-  `messageType draco dreams user Request`, message body `case latent draco.dreams.user.Latent [ … ]`
-  holding the whole validation with `latent` for `msg`; the generator writes
-  `case latent: Latent =>` and `case _ => ()`. Engine: `Drake.parse` case head — a token
-  whose last segment is upper-case is the type (a dotted type had become the binder's
-  NAME); `DracoGenerator.externalImports` looks one level into case bodies (the `[Problem]+`
-  inside the branch had lost its `mutable` import). Tests: DrakeParseTest +1 (dotted case
-  head keeps its binder; unbound and default heads unchanged; round trip), DreamsTest +2
-  (Request trio; User holds three), EditorTest (messageType Request, the one branch,
-  Latent derives Request), InitializationTest (`Actor[Request]` cast).
-- **Read (2026-10-13 evening).** `type Read from Request` with `fix domain draco.TypeName`
-  (factory `par domain`); User `types [Latent, Read, Request, Response]`; Editor's second
-  branch `case read draco.dreams.user.Read [ fix owner Presence(DomainType)
-  presence(accepted.keys.find(\d -> namePath == read.domain.namePath)); mon
-  actual(owner.fold(Actual(TypeDefinition(read.domain), [], [Problem(read.domain, s"domain
-  … is not in the accepted ontology")]), \d -> Actual(d.typeDefinition,
-  d.typeDictionary.elementTypes))) ]`. Tests: EditorTest +1 (Read before and after
-  acceptance, a domain of the initial ontology with every member, an unknown domain, and
-  only the one acceptance delivering an ontology; `deliveries` now takes `Seq[Request]`),
-  DreamsTest +2 (Read trio; User holds four; Read derives Request and names one domain).
-- **Delete (2026-10-14).** Core `DomainOntology` gains `dyn excluding DomainOntology [ par
-  typeName TypeName ]` (filter by namePath; trio regenerated, DracoGenTest byte-identical).
-  `type Delete from Request` with `fix domain draco.TypeName`; User `types [Delete, Latent,
-  Read, Request, Response]`. Editor: a `globals` section with `dyn judge [draco.Problem]`
-  (`par rules Knowledge`, `par provisional DomainOntology`; definitions, problems buffer,
-  session, set/insert ×3/fire/close, `fix value problems.toSeq`) — the first globals on an
-  actor-minting type, rendered as a companion `def` visible inside the minted actor; the
-  Latent branch now `fix problems [Problem] judge(rules, provisional)`; the third branch
-  `case delete draco.dreams.user.Delete [ owner; provisional = accepted.excluding(delete.domain);
-  problems = owner.fold([one Problem], \d -> judge(rules, provisional)); swap; actual(held
-  domain or stub); deliver on acceptance ]`. The emitter orders `factory` before `globals`
-  (authored drake adopted). Tests: DomainOntologyTest +1 (excluding), EditorTest +1 (the
-  seven-step Delete sequence; three branches and the one global pinned), DreamsTest +2
-  (Delete trio; User holds five).
-- **Create and Update (2026-10-14).** `Latent.drake` loses its factory (elements only,
-  `from Request`); `type Create from Latent` and `type Update from Latent`, each with the
-  two elements and a factory; User `types [Create, Delete, Latent, Read, Request, Response,
-  Update]`. Editor: a second global `dyn holder Presence(DomainType) [ par ontology, par
-  typeName ]` (the `presence(keys.find(namePath ==))` lookup); the Latent branch became
-  `case create Create [ owner = holder(accepted, identity); provisional = including(...);
-  problems = owner.fold(judge(rules, provisional), \d -> [Problem "already in the accepted
-  ontology"]) ... ]` and `case update Update [ ... owner.fold([Problem "not in the accepted
-  ontology"], \d -> judge(rules, provisional)) ... ]`; Read and Delete use `holder` too.
-  Initialization: `domains`, `order`, `ordered`, `run` typed `[draco.dreams.user.Create]`.
-  Tests: every former `Latent(...)` construction is a `Create(...)` (perl rename), the
-  three update-sequence steps and the delivered-update step are `Update(...)`; EditorTest
-  +1 (the intents test; four branches and two globals pinned; Latent abstract), DreamsTest
-  +4 (Create and Update trios; User holds seven; derivations pinned); InitializationTest
-  builds Creates and decodes as Create.
-- **Editor-domain rules (2026-10-15).** Core `DomainOntology`: `dyn holds Boolean [par
-  typeName]` and `dyn holding Presence(DomainType) [par typeName]`. User `Request`: three
-  bodiless dyns `proposal`, `subject`, `contents` (each `par accepted DomainOntology`);
-  Create/Update/Read/Delete implement them (Create/Update: `including(Domain(definition,
-  members))`, own definition and members; Delete: `excluding(domain)`; Read: `accepted`;
-  Read/Delete subject and contents through `holding(domain).fold(stub, held)`). Editor:
-  `Accepted` (`fix ontology DomainOntology`, factory — codec-less by the transitive rule);
-  rules `CreateHeld` (`var c draco.dreams.user.Create`, `var a Accepted`, `con
-  a.ontology.holds(c.definition.typeName)`, Problem "already in the accepted ontology"),
-  `UpdateUnheld`, `ReadUnheld`, `DeleteUnheld` (the `!` conditions, "not in the accepted
-  ontology"); `types [Accepted, Actual, CreateHeld, DeleteUnheld, ReadUnheld,
-  UpdateUnheld]`; the actor's start fires nine patterns, its message is the membrane
-  (`now fix provisional/subject/contents/changing`, definitions, problems buffer, session,
-  five inserts, fire, close, swap, actual, deliver). No globals, no cases. Engine:
-  `DracoGenerator.namesCodecless` + `parentChain` (transitive codec eligibility). Tests:
-  EditorTest +11 (trios ×5, the rules in a bare session, the structural test pins six
-  members, nine patterns, no cases, no globals, a Read's proposal is the same ontology),
-  DomainOntologyTest +1 (holds/holding), DreamsTest pins Request's dyns and the six members.
-- **Tests.** `EditorTest` (13: six trio checks, one structural, six behavioural: acceptance
-  with a populated domain, Completeness/DerivationResolvable/SelfDeclaration problems,
-  ordering and non-mutation, JSON round trip). ServiceTest +2, SelfDeclarationRulesTest +1,
-  DerivationResolvableRulesTest rewritten (+1, including a parent no resource holds).
-  DreamsTest keeps Dreams and User only. DomainBuilderTest checks `defines`.
-- **Docs.** DRACO.md (orientation paragraph, §1 probe sentence, three §6 gotchas, retired
-  list), README (ontology vocabulary, work in progress, status), drake.dlt history line,
-  ZEROMQ contract, Service/Dreams/mods READMEs, CHANGELOG (Added + Changed), git record.
-
-## Verification
-
-Editor-rules increment (2026-10-15, one commit with the Create/Update increment below):
-Dev's full run passed **768 tests / 54 suites, 0 failed, 0 aborted**, every report-only
-headline unchanged — the current verified baseline, recorded in DRACO.md §1; committed and
-pushed as 78bff9d. Before it, Claude did not run sbt. A compiled-class probe recompiled the engine
-(`DracoGenerator`), the core `DomainOntology` and all seventeen dreams companions into
-`target/scala-2.13/probe-classes` and DomainOntologyTest, EditorTest, DreamsTest and
-InitializationTest into `probe-test-classes` over the current overlay: **DomainOntologyTest
-8, EditorTest 30, DreamsTest 22, InitializationTest 6 — 66 / 0 failed**. Gates and the
-ontology-using suites against the new engine: **DracoGenTest, DrakeGenTest,
-SourceContractTest, UniquenessRulesTest, DerivationResolvableRulesTest, ServiceTest,
-DomainBuilderTest — 319 / 0 failed**: transitive codec eligibility changes nothing in the
-main corpus. `DrakeCLI check`: user, editor and dreams 0 drift, main corpus the two
-authored-ahead files only. Two probe iterations caught: the engine's stub test takes a
-TypeName; a lambda inside a splat argument passing through as host text (bound first); a
-named parent is not a codec guarantee (DomainOntology derives Dictionary — the loaded parent
-chain is the family context now); and three test expectations of mine. Expected sbt
-arithmetic from 751 / 54 (inferred, see Gate): +1 +4 (Create/Update) +1 +11 (rules) =
-**768 / 54**, no headline moves. Probe dirs removed. Dev's full run is the gate.
-
-Create/Update increment (2026-10-14; gated with the increment above, 768 / 54 at 78bff9d):
-before Dev's run, Claude did not run sbt. A compiled-class
-probe over overlays REBUILT from Dev's post-Delete classes (the first attempt used overlays
-from before that run: `excluding` missing at compile, then stale test classes ran — refresh
-the overlay after EVERY Dev run) recompiled the twelve staged companions into
-`target/scala-2.13/probe-classes` and EditorTest, DreamsTest and InitializationTest into
-`probe-test-classes`: **EditorTest 19, DreamsTest 22, InitializationTest 6 — 47 / 0
-failed**; ServiceTest 9 / 0 unchanged. `DrakeCLI check` on user, editor and dreams: 0
-drift. Expected sbt arithmetic from 751 / 54 (inferred, see Gate): +1 +4 = **756 / 54**,
-no headline moves (no main-corpus change). Probe dirs removed. Dev's full run is the gate.
-
-Delete increment (2026-10-14): committed by Dev as f4336a4 after the gate; the run's
-output was not pasted (751 / 54 expected). Before it, Claude did not run sbt. A compiled-class probe
-recompiled `DomainOntology` and the ten staged companions into
-`target/scala-2.13/probe-classes` and DomainOntologyTest, EditorTest, DreamsTest and
-InitializationTest into `probe-test-classes` over the current overlay: **DomainOntologyTest
-7, EditorTest 18, DreamsTest 18, InitializationTest 6 — 49 / 0 failed**. DracoGenTest,
-DrakeGenTest, UniquenessRulesTest, DerivationResolvableRulesTest, ServiceTest and
-DomainBuilderTest from the compiled tests against the probe: **316 / 0 failed** — the
-regenerated `DomainOntology.scala` is byte-identical with its gate. `DrakeCLI check`: user
-and editor 0 drift, main corpus the two authored-ahead files only. Expected sbt arithmetic
-from Dev's 747 / 54: +1 +1 +2 = **751 / 54**, no headline moves. Probe dirs removed. Dev's
-full run is the gate.
-
-Read increment (2026-10-13 evening): Dev's full run on 2026-10-14 passed **747 tests / 54
-suites, 0 failed, 0 aborted**, every report-only headline unchanged — the current verified
-baseline, recorded in DRACO.md §1; committed and pushed as 799e9ae. Before it, Claude did
-not run sbt. A compiled-class
-probe recompiled the nine staged companions into `target/scala-2.13/probe-classes` and
-EditorTest, DreamsTest and InitializationTest into `probe-test-classes`, over the overlay
-rebuilt from Dev's 741 classes with the engine fixes compiled in: **EditorTest 17,
-DreamsTest 16, InitializationTest 6 — 39 / 0 failed**; ServiceTest 9 / 0 unchanged.
-`DrakeCLI check` on user and editor: 0 drift. Expected sbt arithmetic from Dev's 744 / 54:
-+1 +2 = **747 / 54**, no headline moves (no main-corpus TYPE added, no engine change).
-Probe dirs removed. Dev's full run is the gate.
-
-Request-family increment (2026-10-13): Dev's full run passed **744 tests / 54 suites, 0
-failed, 0 aborted**, every report-only headline unchanged — the current verified baseline,
-recorded in DRACO.md §1; committed and pushed as 5057a5c. Before it, Claude did not run
-sbt. A compiled-class probe over overlays REBUILT from Dev's 741 / 54 classes — the first attempt used overlays
-copied before that run and failed two SelfDeclaration cases with the pre-alignment rule:
-stale classes, not code; refresh the overlay after every Dev run — recompiled the engine
-(`Drake`, `DracoGenerator`) and the eight staged companions into
-`target/scala-2.13/probe-classes` and the four changed suites into `probe-test-classes`:
-**DrakeParseTest 239, EditorTest 16, DreamsTest 14, InitializationTest 6 — 275 / 0 failed**
-(surface losses 1 across 115, parse scope 105 + 10 unchanged). Gates against the new
-engine from the compiled tests: **DracoGenTest, DrakeGenTest, SourceContractTest,
-ScenarioDrakeTest, ServiceTest, GenDrakeTest — 307 / 0 failed**, scenario 23 clean,
-GenDrake 103 of 103: the engine fixes are byte-identical over the main corpus. `DrakeCLI
-check` on user, editor, the ash scenario and the main corpus: no drift beyond the two
-authored-ahead files. Expected sbt arithmetic from Dev's 741 / 54: +1 +2 = **744 / 54**,
-no headline moves. Probe dirs removed. Dev's full run is the gate.
-
-Initialization increment + SelfDeclaration alignment (2026-10-12 afternoon): Dev's full run
-on 2026-10-13 passed **741 tests / 54 suites, 0 failed, 0 aborted**, every report-only
-headline unchanged — the current verified baseline, recorded in DRACO.md §1. Before it,
-Claude did not run sbt. A compiled-class probe recompiled `SelfDeclaration`,
-`DomainBuilder` and the seven staged companions (Dreams, Initialization, User, Latent,
-Response, Actual, Editor) into `target/scala-2.13/probe-{classes,test-classes}` over an
-overlay of current resources on Dev's efa9085 classes (hidden dotfiles and the old
-editor/Latent excluded) and ran the four changed suites — **InitializationTest 6,
-DreamsTest 12, EditorTest 16, SelfDeclarationRulesTest 3: 37 / 0 failed** — and seven
-unchanged suites against the new rule (Foundation, DracoActor, DomainBuilder, Service,
-DomainOntology, Uniqueness, DerivationResolvable: **34 / 0**). `DrakeCLI check`: dreams and
-user 0/0, main corpus the two authored-ahead files only. Expected sbt arithmetic from Dev's
-733 / 53: +1 +1 +6 = **741 / 54**, no headline moves (no main-corpus TYPE added). Probe
-dirs removed. Dev's full run is the gate. Before the Format finding, the first probe of
-this increment had the endogenous run refusing 4 of 18 domains — the finding, not a
-test defect.
-
-Delivery + CRUD increments (2026-10-12 afternoon): Dev's full run passed **735 tests / 53
-suites, 0 failed, 0 aborted**, every report-only headline unchanged — the current verified
-baseline, recorded in DRACO.md §1. Before it, Claude did not run sbt.
-A compiled-class probe recompiled the five regenerated companions (user: User, Latent,
-Response; editor: Actual, Editor) and both suites into `target/scala-2.13/probe-{classes,
-test-classes}` over an overlay of the current main and mods resources on Dev's efa9085
-classes (hidden dotfiles and the old editor/Latent excluded) and ran them with the
-scalatest Runner: **EditorTest 16 / 0 failed** (was 15), **DreamsTest 12 / 0 failed** (was
-11), **ServiceTest 9 / 0** unchanged. `DrakeCLI check` on both directories: surface drift
-0, json drift 0. Two probe iterations caught defects in the new DreamsTest assertions only
-(a loaded definition is rooted at DracoType; every dreams domain therefore depends on
-Draco). Expected sbt arithmetic from 733 / 53: +1 +1 = **735 / 53**, no headline moves.
-Probe dirs removed. Dev's full run is the gate.
-
-Composition increment: Dev's full run on 2026-10-12 passed **733 tests / 53 suites, 0 failed,
-0 aborted**, headlines at 105 draco + 10 mods, one loss across 115 types, 105 aspect
-sections, GenDrake 103/103, everything else unchanged; committed/pushed efa9085. That is
-the current verified baseline; DRACO.md §1 records it. The probe before it — main, mods
-and tests recompiled into `target/scala-2.13/probe-*`, hidden resources excluded — had
-passed 733 / 0 failed / 53 suites as sbt counts (54 with the Runner's wrapper): 723 + 5 corpus tests for `Uniqueness` + 2 `UniquenessRulesTest`
-+ 2 net in EditorTest + 1 in DomainOntologyTest. The added corpus type moves four
-headlines by one — parse scope 105 draco + 10 mods, one loss across 115 types, 105
-aspect sections, GenDrake 103/103; the DRACO.md table carries the two tabled rows.
-Everything else unchanged. Probe dirs removed.
-
-Derivation increment: Dev's full run on 2026-10-10 passed **723 tests / 52 suites, 0 failed,
-0 aborted**, the four moved headlines matching the probe, and committed/pushed d181e64.
-That is the current verified baseline; DRACO.md §1 records it. The probe before it —
-main, mods and tests recompiled into `target/scala-2.13/probe-*`, hidden resources
-excluded — passed **723 tests / 0 failed / 52 suites** as sbt counts (53 with the
-Runner's wrapper): 713 + 5 corpus tests for `Derivation` + 5 in `DomainOntologyTest`.
-The one added corpus type moves four headlines by one — parse scope 104 draco + 10 mods,
-one surface loss across 114 types, 104 sections in both aspect probes, GenDrake 102/102;
-the DRACO.md table carries the two tabled rows. Every other figure unchanged. Two
-earlier probe iterations caught defects in the new tests only. Probe dirs removed.
-
-First authoring slice (verified): Claude did not run sbt. A compiled-class probe recompiled the WHOLE tree — main, mods
-and tests — into `target/scala-2.13/probe-{classes,test-classes}` (the `Domain` factory's
-new parameter makes every compiled companion binary-stale, so a partial overlay was not
-an option), overlaid current resources (hidden dotfiles excluded, as sbt excludes them),
-and ran every suite with the scalatest Runner:
-
-- **713 tests, 0 failed, 0 aborted**; 52 suites as the Runner counts (51 as sbt will:
-  50 + EditorTest). Expected sbt arithmetic from Dev's 701: −5 +13 +2 +1 +1 = 713.
-- Report-only headlines all match DRACO.md: gen map 28/20/0/0 of 48; surface losses 1
-  across 113; parse scope 103 draco + 10 mods; PON 80/550/42; canonical 7; scenario 23
-  clean; DomainAspect 103/1/0; DracoAspect 103/2/0; GenDrake 101/101; CO-DECLARATION
-  DROPS THE FACT; mods actors pending Drake authoring 0 (file-only).
-- Earlier probe iterations caught: the ambiguous single-fact `insert` (fixed with
-  `Seq(fact): _*`); unsupplied members never reaching working memory (the Editor now
-  inserts the candidate's populated `elementTypes`); the obsolete `draco`-package filter.
-- The probe directories were removed afterwards. Probe logs: scratchpad only, transient.
-
-Dev then ran the full gate on 2026-10-09: **713 tests / 51 suites, 0 failed, 0 aborted**,
-every report-only headline matching, and committed/pushed 462cde6. That is the current
-verified baseline; DRACO.md §1 records it.
-
-## Documentation Coverage
-
-- Journal coverage reaches chapter 94 (this Claude session, 2026-10-12 to 10-15): 16
-  assertive Dev prompts verbatim, 19 final replies near-verbatim, 5 delegated-action notes;
-  the bounded extract `sources/claude-2026-10-12-to-15.jsonl` (39 records with source
-  line, UTC, SHA-256) and its audit record the frozen prefix (3381 lines). The reply
-  answering Dev's wrap-up request — this documentation pass — is outside the boundary;
-  chapter 94's Status says so. One evidence gap is disclosed in the chapter: the gate run
-  for f4336a4 (Delete) was never pasted; its 751 / 54 is corroborated by the next run. Both
-  `draco-docs-synced-through` markers advance to 94 after reviewing DRACO.md and README
-  against the chapter — they were written during the session and carry its decisions.
-- Chapter 93 (2026-10-07 to 10-12) and Codex's chapters 90–92 with their audits are
-  untouched by this pass.
-- Codex's chapters 90–92 and their audits are untouched by this session.
-
-## Resumption
-
-1. The Create/Update and Editor-rules increments are committed and pushed as 78bff9d at
-   the verified 768 / 54 baseline, which also corroborates the Delete figure. Only this
-   verification note is pending: a documentation-only commit with
-   `draco-git-record/git-record-2026-10-15-1132`, no sbt run needed.
-
-2. Next authorized work, in Dev's accepted order: generation and activation as explicit
-   operations — open with one design point before building (what a generation request
-   names, what it produces, and that acceptance never triggered it). Later: inferred
-   derivation (classification by shared elements). Candidate rule surfaced, not filed:
-   membership reciprocity (a supplied member the domain does not name is silently
-   dropped).
-
-### First action for the next agent
-
-Read DRACO.md, this file and the 2026-10-15-1132 record; inspect `git status` and `git log`.
-Expect HEAD at or after 78bff9d (baseline 768 / 54) with a clean tree once Dev has committed
-the documentation note. Read chapter 94's Status and DRACO.md §3's eleven 2026-10-09/15
-paragraphs for the decisions; chapter 94 and its audit cover this Claude session completely
-up to Dev's wrap-up request, so nothing from it needs re-importing. The next authorized work
-is GENERATION as an explicit operation. Its first design point is RAISED and NOT YET ACCEPTED
-(Claude's recommendation, 2026-10-15): a fifth User request, `Generate`, naming a held domain
-and a transform domain by TypeName; answered through the same Response consumer with a new
-Editor response, `Generated`, deriving Response and carrying one `generator.Emission` per
-definition of the domain, produced by inserting the domain's definition and members into a
-fresh session built from the transform domain's rules exactly as `GenDrakeTest` runs it; a
-domain or transform the ontology does not hold is a Problem by a fifth Editor rule in the
-shape of the four; nothing is written anywhere and nothing is activated (the consuming project
-owns persistence); the state is untouched, so no ontology is delivered; GenDrake is the first
-transform a Generate can name (GenScala is not yet migrated). Open that with Dev — accept or
-correct — before building; then activation as an explicit operation, with its own first point.
-Later: inferred derivation. Surfaced, not filed: membership reciprocity.
+Chapter 94's 39 originals and quotations were rechecked; its historical Status is preserved.
+Claude's previously out-of-bound closing reply is now preserved in a separate one-record
+bridge extract. The missing f4336a4 gate paste in chapter 94 remains a disclosed older gap.
+Both documentation sync markers advance to 99 after reconciliation. Historical git-record
+statements about chapter-94 coverage remain historical; do not rewrite prior commit records.

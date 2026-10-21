@@ -780,14 +780,16 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 94: the grown ontology's consumer, Dev's CRUD reading of User and
-Editor, the Request family of four verbs over the Latent shape, the endogenous initialization
-client and the SelfDeclaration alignment, and the Editor's judgment moved into Editor-domain rules
-with the actor thinned. The [latest retrieval audit](draco-dev-journal/sources/claude-2026-10-12-to-15-audit.md)
-preserves nineteen complete exchanges plus the open wrap-up request; chapter 93's audit preserved
-sixteen. Earlier extracts
-and historical chapter statuses are unchanged. The bridge's historical full run passed
-685 tests / 49 suites; the latest Dreams full run passed 701 tests / 50 suites, both
+Journal coverage reaches chapter 99: explicit generation, Dracon and payload-codec ownership,
+structured method formals, and ontology-scoped names. The [latest retrieval audit](draco-dev-journal/sources/codex-2026-10-15-to-21-audit.md)
+preserves 35 complete Codex exchanges plus the open handoff request, and separately recovers
+Claude's closing reply after chapter 94's old boundary. Historical Status sections remain intact.
+The code checkpoint is b17ddb8, committed and pushed by Dev on October 21, with the verified
+835 tests / 58 suites baseline. The next two-stage bootstrap-loading proposal is unaccepted;
+repository bootstrap files remain qualified. [The resumption prompt](DEVELOPMENT_RESUME_PROMPT.md)
+and [handoff](DEVELOPMENT_HANDOFF.md) are shared by Codex and Claude Code. The following
+paragraphs retain the earlier development chronology. The bridge's historical full run passed
+685 tests / 49 suites; the Dreams skeleton full run passed 701 tests / 50 suites, both
 run by Dev with unchanged report-only baselines. The first authoring slice landed on
 2026-10-09 (`Latent` → `Editor` actor → `Actual`, the `DomainOntology` rename, ontology-relative
 derivation validation and `ServiceConfiguration`), committed as 462cde6 after Dev's full run passed
@@ -813,4 +815,4 @@ figure unchanged: Create and Update as verbs over the abstract Latent shape, and
 moved into four Editor-domain rules over an Accepted fact, the actor thinned to a membrane and codec
 eligibility made transitive.
 
-<!-- draco-docs-synced-through: chapter 94 -->
+<!-- draco-docs-synced-through: chapter 99 -->

@@ -50,7 +50,8 @@ suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
 **835 tests / 58 suites**, verified by Dev on 2026-10-20 for ontology-scoped names
-(record `git-record-2026-10-20-1503`), awaiting commit: ten added tests, zero failed, canceled,
+(record `git-record-2026-10-20-1503`), committed and pushed by Dev as b17ddb8 on October 21:
+ten added tests, zero failed, canceled,
 ignored or pending tests, zero aborted suites, every report-only headline unchanged,
 including zero pending mods actors. Before it:
 **825 tests / 57 suites**, verified by Dev on 2026-10-19 for structured method formals
@@ -417,7 +418,7 @@ The consuming project owns persistence. Parsing remains rule-owned and dispatch
 uses the active dictionary. See src/mods/resources/draco/service/README.md for the
 shared plan and src/mods/ZEROMQ_CODEC_CONTRACT.md for the next integration proposal.
 The empty Service anchor is committed in 604aff2; proposed envelope/socket/codec
-choices are not settled. Journal coverage reaches chapter 94; the first authoring slice landed
+choices are not settled. Journal coverage reaches chapter 99; the first authoring slice landed
 2026-10-09 (below).
 
 **ZeroMQ bridge staging (2026-10-05).** Service now contains TextOutput, the neutral
@@ -763,8 +764,18 @@ are added (Dev gate 835 / 58); no corpus type or count change. Final full direct
 ScalaTest probe passed 835 tests, zero failures/cancellations/aborts (59 suites including
 Runner discovery), with every report-only figure unchanged and file-only pending mods
 actors 0. Dev's full sbt gate on October 20 confirmed 835 / 58, zero failed/canceled/ignored/
-pending tests and zero aborted suites, with every headline unchanged. Awaiting commit.
+pending tests and zero aborted suites, with every headline unchanged.
+Dev committed and pushed b17ddb8 on October 21.
 Record: `git-record-2026-10-20-1503`.
+
+**Handoff checkpoint (2026-10-21).** Chapters 95–99 preserve this Codex session with a
+bounded original-message extract: 35 complete exchanges plus the open handoff request.
+The prior Claude closing reply is recovered separately; chapter 94's historical Status stays
+unchanged. See DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md for either agent.
+The next proposal — two-stage loading from explicit domain declarations, establishing member
+identities before resolving bodies with an ontology and binding vocabulary — is **unaccepted**.
+No bootstrap migration is authorized by this documentation handoff. The type-level formal/actual
+split, activation and .dcon migration also remain unaccepted or deferred.
 
 **#51 continuation.** The issue's priority-next label was scoped to the derivation edge
 completed in August; it is not evidence that every proposal in its older comments remains
@@ -824,12 +835,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 94 on 2026-10-15.
+Current documentation was reconciled through journal chapter 99 on 2026-10-21.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 94 on
-  2026-10-15.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 99 on
+  2026-10-21.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -1019,4 +1030,4 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 94 -->
+<!-- draco-docs-synced-through: chapter 99 -->
