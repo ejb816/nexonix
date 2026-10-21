@@ -114,7 +114,8 @@ class GenerationTest extends AnyFunSuite {
       _domainAspect = DomainAspect(name))
     val runs = new java.util.concurrent.atomic.AtomicInteger()
     val counted = Rule[Emit](k => { runs.incrementAndGet(); Emit.ruleType.pattern(k) }, _ => ())
-    val b = TransformBinding(transform, Seq(generator), Seq((Emit.typeDefinition, counted), (EmissionReceived.typeDefinition, EmissionReceived.ruleType)))
+    val b = TransformBinding(transform, Seq(generator), Seq((Emit.typeDefinition, counted), (EmissionReceived.typeDefinition, EmissionReceived.ruleType)),
+      Seq("String" -> TypeName("String")))
     val (responses, deliveries) = deliver(held, Seq(Create(definition, Seq(member)), Update(definition, Seq(changed)), Generate(name, transformName)), Seq(b))
     assert(runs.get() == 1, "only the explicit Generate executes a binding")
     assert(responses.take(2).forall(r => r.accepted && r.isInstanceOf[Actual]))
@@ -136,4 +137,21 @@ class GenerationTest extends AnyFunSuite {
       assert(responses.last.accepted && deliveries.isEmpty)
     }
   }
+  test("Generate resolves short names against the current held ontology and returns resolution failures as Problems") {
+    val shortened = TypeDefinition(memberName,
+      _dracoAspect = DracoAspect(_elements = Seq(Fixed("content", io.circe.Json.fromString("Dracon"), io.circe.Json.Null))),
+      _domainAspect = DomainAspect(name))
+    val withMember = ontology.including(Domain(definition, Seq(shortened)))
+    val withDracon = withMember.including(load("Format", "draco.format")).including(load("Dracon", "draco.format.dracon"))
+    val (good, _) = deliver(withDracon, Seq(Generate(name, transformName)), Seq(binding))
+    val generated = good.head.asInstanceOf[GenerationResponse]
+    assert(generated.accepted, generated.problems.map(_.message).mkString(", "))
+    assert(generated.emissions.exists(_.value.contains("fix content Dracon")))
+    val (bad, deliveries) = deliver(withMember, Seq(Generate(name, transformName), Read(name)), Seq(binding))
+    val rejected = bad.head.asInstanceOf[GenerationResponse]
+    assert(!rejected.accepted && rejected.emissions.isEmpty)
+    assert(rejected.problems.exists(_.message.contains("Unknown type 'Dracon'")))
+    assert(bad.last.accepted && deliveries.isEmpty)
+  }
+
 }

@@ -574,6 +574,27 @@ zero failed or aborted, with all report-only figures matching the updated baseli
 Dev's full gate for the subsequent core-tree migration passed **809 / 56**, reported 2026-10-17,
 with zero failures or aborts and all report-only figures unchanged. The old/new codec comparison
 also preserved all 182 definition wire values; that increment is committed as d169b0e.
+Ontology-scoped operations now accept an explicit NameResolution built from a DomainOntology
+and a binding vocabulary. For example, with Dracon held in the ontology:
+
+```scala
+val scope = new NameResolution(ontology, Map("String" -> TypeName("String")))
+val definition = Drake.parse(source, scope)
+val compactJson = scope.compactJson(definition)
+val restored = scope.read(compactJson)
+val drake = Drake.emit(definition, scope)
+val scalaSource = DracoGenerator.generate(definition, scope)
+```
+
+Drake/JSON can use Dracon; internal identity remains qualified, and Scala imports the type
+where safe. Self and formal parameters bind before ontology lookup; missing/ambiguous names
+fail, and primitives/host names require explicit bindings. Dreams uses its held ontology and
+each TransformBinding's nameBindings. Qualified bootstrap files and unscoped APIs remain;
+they have not been bulk-migrated to an implicit global scope. Haskell imports remain a future
+target realization. The full direct compiled probe passed 835 tests, zero failures or aborts,
+with all report-only figures unchanged. Dev's October 20 sbt gate confirmed 835 / 58,
+zero failures or aborts, and all headlines unchanged, including zero pending mods actors.
+
 Method formal parameters now have their own TypeParameter records: a name plus optional
 upper/lower bounds represented as Dracon type forms. Dynamic.typeParameters defaults empty;
 the method name contains no target syntax. For example, Drake's updated(V1 >: V) has JSON

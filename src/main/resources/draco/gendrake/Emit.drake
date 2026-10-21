@@ -5,5 +5,5 @@ rule
     variables
       var definition TypeDefinition
   action
-    fix emission draco.generator.Emission draco.generator.Emission(draco.Drake.emit(definition))
+    fix emission draco.generator.Emission draco.generator.Emission(draco.Drake.emitFromSession(definition, ctx.getRuntime().get("nameResolution")))
     mon ctx.insert(emission)

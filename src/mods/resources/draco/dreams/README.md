@@ -182,3 +182,16 @@ transitive codec check normalizes neutral Text to its target spelling when inspe
 Emission. No files are written, no ontology is changed or delivered, and nothing is activated.
 Acceptance alone never executes a binding. GenerationTest covers this operation alongside
 the staged trio gates in DreamsTest and EditorTest. Dev's full gate passed 782 / 55, every report-only headline unchanged.
+
+## Explicit resolution scope (2026-10-20)
+
+Generate uses the Editor's held DomainOntology to resolve short type names before executing
+the transform. TransformBinding.nameBindings supplies explicit primitive/host aliases as
+[(Text, TypeName)]; the empty default grants none. Unknown/ambiguous names and duplicate
+bindings return Generated Problems with no emissions. GenDrake uses that operation scope
+to emit short names wherever they retain the same identity. Local self/formal names bind
+first; there is no classpath name-discovery fallback. Existing standalone GenDrake sessions
+without a scope retain their qualified bootstrap emission. See README for scoped Drake,
+JSON and Scala API examples. Direct full probe: 835 passed, every headline unchanged.
+Dev's October 20 full gate confirmed 835 / 58, zero failures or aborts, every headline
+unchanged and zero pending mods actors.

@@ -1,0 +1,41 @@
+Resolve short type names against an explicit ontology and binding vocabulary
+
+Dev accepted ontology-scoped names before the proposed type-level formal/actual split,
+then explicit operation scope, local-first resolution and explicit primitive/host bindings.
+NameResolution never discovers names from the classpath. Resolve self/formals, then unique
+ontology names, then explicit aliases; fail on unknown or ambiguous types. Qualified names
+require exact identity. Structural type forms and nominal references resolve uniformly for
+Drake and JSON. Compact emission preserves identity and domain anchors and only abbreviates
+names that resolve back to the same identity. Structured symbolic expression leaves honor
+local binders; quoted values and host-opaque spans remain opaque.
+
+Add scoped parse/emit, JSON read/compact and Scala generation APIs. Scala projects with
+selective imports, retaining qualifications on collisions and preserving strings/comments.
+Existing bootstrap loader and unscoped APIs remain; no implicit global ontology or bulk
+bootstrap corpus migration. Haskell import mapping remains future target work.
+
+Dreams passes its held ontology into Generate. TransformBinding supplies nameBindings as
+explicit alias/TypeName pairs, default empty; duplicate aliases fail. Resolve definitions
+before transform rules run, supply scope to the fresh session, and let GenDrake Emit use it.
+Legacy standalone GenDrake sessions keep their prior behavior. Failures use Generated's
+existing Problems path without emissions. Regenerate the three affected definition trios.
+
+Nine focused resolver/projection tests plus one Dreams integration test; Dev confirmed
+835 / 58 on October 20, from 825 / 57 at a13ad38, zero failed/canceled/ignored/pending
+tests and zero aborted suites, every report-only headline unchanged, pending mods actors 0. Final full direct compiled ScalaTest probe: 835 passed, zero failed/canceled/ignored/pending
+and zero aborted suites (59 including discovery); all main/mods/test sources compiled.
+Every report unchanged: scope 109+10, loss 1 across 119, aspect sections 109, GenDrake
+107/107, example map 28/20/0/0, PON 80/550/42, canonical 7, scenario 23 clean, forest 1/2,
+categorical subtype visibility and file-only pending mods actors 0. Main DrakeCLI retains
+known authored-ahead differences (surface 2, JSON 1); Editor 0/0.
+Earlier harness omission of test resources caused three scenario failures and two PON
+cancellations; final full run restored resources and passed all together, with TCP access.
+The final run includes the local-value/import collision guard. Whitespace and shared
+symlink checks pass; temporary probe directories removed. The integration fixture
+initially omitted Dracon's parent Format domain; corrected by supplying both, without
+weakening derivation validation. No new corpus types; verified headlines unchanged.
+
+Update DRACO, README, spec, Dreams documentation, handoff and changelog. Return to the
+bootstrap loader scope design before shortening qualified repository carriers. No sbt,
+commit, push or issue mutations by Codex. Journal remains chapter 94; this conversation
+has no transcript audit, and no coverage markers advance.

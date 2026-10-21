@@ -38,8 +38,23 @@
               "draco.generator.Emission",
               {
                 "()": [
-                  "draco.Drake.emit",
-                  "definition"
+                  "draco.Drake.emitFromSession",
+                  "definition",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "ctx.getRuntime"
+                            ]
+                          },
+                          "get"
+                        ]
+                      },
+                      "\"nameResolution\""
+                    ]
+                  }
                 ]
               }
             ]

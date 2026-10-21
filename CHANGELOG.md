@@ -49,6 +49,12 @@ for the definition that will replace it.
 
 ### Added
 
+- **Ontology-scoped names.** Scoped Drake, JSON and Scala operations resolve short type names
+  against explicit local bindings, a DomainOntology and a supplied primitive/host vocabulary.
+  Dreams generation uses its held ontology, reports resolution failures, and emits short names;
+  Scala generation supplies selective imports where safe.
+
+
 - **Structured method formals.** Dynamic now carries TypeParameter records with a name and
   optional Dracon upper/lower bounds, replacing parameter syntax embedded in method names.
   Ten declarations retain their Drake surface and generated Scala signatures.

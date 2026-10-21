@@ -3,6 +3,7 @@ type TransformBinding
     fix domain draco.DomainType
     fix supers [draco.DomainType]
     fix rules [(draco.TypeDefinition, draco.RuleType)]
+    fix nameBindings [(draco.drake.Text, draco.TypeName)]
     dyn domains [draco.DomainType] supers.prepended(domain)
     dyn definitions [draco.TypeDefinition] domains.flatMap(\d -> d.typeDictionary.elementTypes.prepended(d.typeDefinition))
     dyn matches Boolean [
@@ -19,22 +20,28 @@ type TransformBinding
         par subject draco.TypeName
         par transform draco.TypeName
         par definitions [draco.TypeDefinition]
+        par ontology draco.DomainOntology
       body
-        fix value draco.dreams.editor.Generated try { val emissions = run(definitions); draco.dreams.editor.Generated(subject, transform, emissions) } catch { case scala.util.control.NonFatal(error) => draco.dreams.editor.Generated(subject, transform, Seq.empty, Seq(draco.Problem(transform, "generation failed: " + error.getClass.getSimpleName + ": " + Option(error.getMessage).getOrElse("")))) }
+        fix value draco.dreams.editor.Generated try { val emissions = run(definitions, ontology); draco.dreams.editor.Generated(subject, transform, emissions) } catch { case scala.util.control.NonFatal(error) => draco.dreams.editor.Generated(subject, transform, Seq.empty, Seq(draco.Problem(transform, "generation failed: " + error.getClass.getSimpleName + ": " + Option(error.getMessage).getOrElse("")))) }
     ]
     dyn run [draco.generator.Emission] [
       parameters
         par definitions [draco.TypeDefinition]
+        par ontology draco.DomainOntology
       body
+        mon require(nameBindings.map(_._1).distinct.size == nameBindings.size, "duplicate name binding")
+        fix resolutionScope draco.NameResolution new draco.NameResolution(ontology, nameBindings.toMap)
+        now fix resolved [draco.TypeDefinition] definitions.map(resolutionScope.resolve)
         fix knowledge org.evrete.api.Knowledge draco.Rule.knowledgeService.newKnowledge("Generate")
         mon rules.foreach(\r -> r._2.pattern(knowledge))
         fix received [draco.generator.Emission]+ scala.collection.mutable.ArrayBuffer()
         fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
-        fix value [draco.generator.Emission] try { session.set("received", received); session.insert(definitions.toSeq: _*); session.fire(); require(received.size == definitions.size, "transform did not emit once per definition"); received.toSeq } finally session.close()
+        fix value [draco.generator.Emission] try { session.set("received", received); session.set("nameResolution", resolutionScope); session.insert(resolved.toSeq: _*); session.fire(); require(received.size == definitions.size, "transform did not emit once per definition"); received.toSeq } finally session.close()
     ]
   factory
     parameters
       par domain draco.DomainType
       par supers [draco.DomainType]
       par rules [(draco.TypeDefinition, draco.RuleType)]
+      par nameBindings [(draco.drake.Text, draco.TypeName)] []
 domain draco dreams editor Editor

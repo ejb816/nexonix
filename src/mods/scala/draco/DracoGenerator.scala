@@ -2188,6 +2188,12 @@ object DracoGenerator extends App {
     )
   }
 
+  def generate(td: TypeDefinition, scope: NameResolution): String =
+    scope.projectScala(generate(scope.resolve(td)))
+
+  def generate(definitions: Seq[TypeDefinition], scope: NameResolution): String =
+    scope.projectScala(generate(definitions.map(scope.resolve)))
+
   def generate (_td: TypeDefinition) : String = {
     // Uniform root meaning: an absent derivation on a loaded definition MEANS
     // derives-the-root (TypeLoader.rooted; the root itself and true stubs are

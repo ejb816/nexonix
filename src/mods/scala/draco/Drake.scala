@@ -362,6 +362,12 @@ object Drake {
   /** Emit the .drake surface for a TypeDefinition (the drake.dlt TEMPLATE:
     * plain-type sections + domain + rule + actor + codec payload). Codec discriminator
     * syntax remains unsupported and is rejected rather than dropped. */
+  def emit(td: TypeDefinition, scope: NameResolution): String = emit(scope.compact(td))
+
+  /** Older rule sessions have no scope; Dreams supplies one explicitly. */
+  def emitFromSession(td: TypeDefinition, scope: NameResolution): String =
+    if (scope == null) emit(td) else emit(td, scope)
+
   def emit (td: TypeDefinition) : String = {
     if (td.codecAspect.discriminator.nonEmpty)
       sys.error(s"Drake.emit: codec discriminator not yet emitted: ${td.typeName.name}")
@@ -1138,7 +1144,12 @@ object Drake {
   /** Parse a .drake source into its TypeDefinition — the inverse of emit().
     * The plain-type template plus rule, actor and codec payload declarations.
     * Other codec syntax remains unsupported and is rejected rather than dropped. */
-  def parse (source: String) : TypeDefinition = {
+  def parse(source: String, scope: NameResolution): TypeDefinition =
+    scope.resolve(parseDefinition(source, contextual = true))
+
+  def parse(source: String): TypeDefinition = parseDefinition(source, contextual = false)
+
+  private def parseDefinition(source: String, contextual: Boolean): TypeDefinition = {
     val c = new Cursor (source, lex (source))
     // A definition whose first word is `domain` is the NAMELESS domain's anchor (draco's
     // default package, 2026-09-20): no header, no name, the empty path its whole identity.
@@ -1256,7 +1267,7 @@ object Drake {
     // `domain` on the surface and the owning package is not known until the whole
     // source has been read.
     def resolved (tn: TypeName) : TypeName =
-      if (tn.name.isEmpty || tn.namePackage.nonEmpty) tn
+      if (contextual || tn.name.isEmpty || tn.namePackage.nonEmpty) tn
       else TypeName (tn.name, domainName.namePackage, tn.typeParameters)
 
     TypeDefinition (

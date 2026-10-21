@@ -4,7 +4,52 @@ This is the shared resumption checkpoint for Claude Code and Codex, not an addit
 architecture specification or a transcript. Follow DRACO.md section 7 and verify this
 snapshot against the current tree before acting.
 
-## Current method-formal increment — 2026-10-19, Codex
+## Current ontology-scoped resolution — 2026-10-20, Codex
+
+Started clean at a13ad38, Dev-confirmed commit/push after 825 / 57 with all headlines matching.
+Dev then prioritized ontology-scoped names over the proposed type-level formal/actual split.
+Accepted: explicit DomainOntology per operation; self/type/method formals bind first, unique
+ontology names second; explicit primitive/host binding vocabulary last. Unknown/ambiguous
+names fail; qualification requires an exact known identity, with no classpath fallback.
+
+Implemented NameResolution in the engine, scoped Drake.parse/emit, scoped JSON read/compact,
+and scoped Scala generate with selective imports. Structural type forms, formal bounds and
+nominal references resolve; structured symbolic expression leaves honor local binders.
+Quoted values and host-opaque spans are not searched as source code. Definition identity and
+containing-domain anchors remain qualified. Bootstrap resource loading and unscoped APIs stay
+as-is; bulk shortening repository bootstrap files needs an explicit loader context next.
+No Haskell target added. Example usage is in README and drake.dlt.
+
+TransformBinding adds nameBindings [(Text, TypeName)] default empty, rejecting duplicate
+aliases. GenerateRequested passes the held ontology; definitions resolve before rules run.
+The fresh session supplies its scope to GenDrake Emit; legacy standalone sessions still emit
+without a scope. Resolution failures return Generated Problems and no emissions. All three
+changed definition trios regenerated using the compiled CLI. Nine new NameResolutionTest
+cases plus one GenerationTest case: Dev confirmed 835 / 58 on October 20, zero failed,
+canceled, ignored or pending tests and zero aborted suites; no corpus count changes.
+Every report-only headline matched, including file-only pending mods actors 0. Awaiting commit.
+Final full direct probe passed 835 tests, zero failed/canceled/ignored/pending tests and
+zero aborted suites; Runner counts 59 with discovery, versus 58 in Dev's sbt gate.
+Every headline unchanged: scope 109+10, one loss across 119, aspect sections 109,
+GenDrake 107/107, example map 28/20/0/0, PON 80/550/42, canonical 7, scenario 23 clean,
+forest 1/2, categorical subtype visibility, file-only pending mods actors 0. Main DrakeCLI
+check keeps the known ActorAspect/BodyElement drift (surface 2, JSON 1); Editor check 0/0.
+An earlier full probe omitted test resources and had three scenario failures/two PON
+cancellations; corrected harness and final complete run passed everything together.
+A final local-value collision guard was included in that final passing full run.
+Temporary probe directories removed; whitespace and shared symlink checks pass.
+The focused integration fixture initially omitted Dracon's parent
+Format domain; it now supplies both, preserving existing derivation validation.
+
+Next action: Dev runs the scoped commit/push commands. Only verification prose changed
+after his passing gate; no retest is required. After commit, bring the loader/bootstrap scope design point before bulk migration;
+the type-level formal/actual split remains proposed, not accepted. .dcon and activation remain
+deferred. Do not stop at commit confirmation without returning to the #51 work.
+No sbt, commit, push or GitHub issue mutations by Codex. Journal coverage remains chapter 94;
+this conversation has not been transcript-audited/journaled, and no markers advance.
+Record: `git-record-2026-10-20-1503`.
+
+## Prior method-formal increment — committed and pushed as a13ad38
 
 Started from clean main at f97c913; Dev confirmed commit/push and 815 / 56 with all
 headlines matching. The payload increment below is now historical.
@@ -19,7 +64,7 @@ payload-bound upper/lower fields carry raw type forms. No TypeName actual/header
 Legacy Dynamic names embedding brackets are rejected by projection; migrate using Drake.parse.
 Context-bound syntax is not introduced. Five focused tests plus five new corpus tests:
 Dev confirmed **825 / 57** on 2026-10-19, zero failed/canceled/ignored/pending tests,
-zero aborted suites and all headlines matching. Work remains uncommitted. Final full direct compiled probe: 825 passed, zero failed,
+zero aborted suites and all headlines matching. Subsequently committed/pushed as a13ad38. Final full direct compiled probe: 825 passed, zero failed,
 canceled, ignored or pending tests, zero aborted suites; Runner counts 58 with discovery.
 Local TCP access included all loopback fixtures. Parse scope 109+10, one loss across 119,
 109 aspect sections, GenDrake 107/107; every other report unchanged and file-only pending

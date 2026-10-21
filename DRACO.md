@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**835 tests / 58 suites**, verified by Dev on 2026-10-20 for ontology-scoped names
+(record `git-record-2026-10-20-1503`), awaiting commit: ten added tests, zero failed, canceled,
+ignored or pending tests, zero aborted suites, every report-only headline unchanged,
+including zero pending mods actors. Before it:
 **825 tests / 57 suites**, verified by Dev on 2026-10-19 for structured method formals
-(record `git-record-2026-10-19-1254`), uncommitted: ten added tests, zero failures or aborts,
+(record `git-record-2026-10-19-1254`), committed and pushed as a13ad38: ten added tests, zero failures or aborts,
 all headlines matching the updated table, including zero pending mods actors. Before it:
 **815 tests / 56 suites**, verified by Dev on 2026-10-19 for the payload-declaration
 increment committed and pushed as f97c913 (record `git-record-2026-10-18-1731`): six new tests, zero
@@ -739,6 +743,28 @@ Dev confirmed the full sbt gate **825 / 57** on 2026-10-19, zero failures or abo
 109, GenDrake 107/107, zero pending mods actors, every other report headline unchanged.
 The table reflects this verified corpus growth; the full baseline is now 825 / 57. DrakeCLI retains only the two known authored-ahead surfaces.
 Record: `git-record-2026-10-19-1254`.
+
+**Ontology-scoped names (2026-10-20, Codex; Dev gate verified).** Dev accepted an explicit
+DomainOntology per operation, local self/type/method formal bindings before unique ontology
+lookup, and an explicit primitive/host binding vocabulary alongside it. The hand-written
+NameResolution engine resolves structural type forms and nominal references, reads scoped
+JSON and produces compact JSON. Scoped Drake.parse/emit and DracoGenerator.generate overloads
+use it; Scala adds selective imports when shortening does not collide with imports or locals.
+Dreams Generate receives the current held ontology, with TransformBinding.nameBindings as
+explicit alias/TypeName pairs (empty default, duplicates rejected). Definitions resolve before
+rule registration/execution; resolution failures use Generated's Problems, with no emissions.
+GenDrake emits through the scope supplied by the session; legacy standalone sessions preserve
+their prior behavior. No implicit global ontology, resource discovery or host-name acceptance.
+Host-opaque expression spans remain opaque; structured symbolic leaves resolve with local
+binders respected. Qualified bootstrap files/loader and unscoped APIs are retained; selecting
+and supplying bootstrap loader scope is a subsequent design point before bulk shortening those
+files. No Haskell target implementation. Nine focused tests and one Dreams integration test
+are added (Dev gate 835 / 58); no corpus type or count change. Final full direct
+ScalaTest probe passed 835 tests, zero failures/cancellations/aborts (59 suites including
+Runner discovery), with every report-only figure unchanged and file-only pending mods
+actors 0. Dev's full sbt gate on October 20 confirmed 835 / 58, zero failed/canceled/ignored/
+pending tests and zero aborted suites, with every headline unchanged. Awaiting commit.
+Record: `git-record-2026-10-20-1503`.
 
 **#51 continuation.** The issue's priority-next label was scoped to the derivation edge
 completed in August; it is not evidence that every proposal in its older comments remains

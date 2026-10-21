@@ -813,3 +813,37 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
 payload codec bindings preserve their JSON carrier shape; ordinary wrapper serialization
 is unchanged. Neutral construction and inspection replace Json/cursor references in the
 migrated definitions. No grammar change, codec-aspect syntax or .dcon extension migration.
+
+ONTOLOGY-SCOPED NAMES (2026-10-20)
+  An operation may supply NameResolution(ontology, bindings). Both are explicit; name
+  lookup never discovers definitions on the classpath. Self and in-scope type/method
+  formals bind first, unique ontology names second, explicit primitive/host bindings last.
+  Missing or ambiguous type names fail. Qualification chooses an exact identity; it does
+  not waive membership in the ontology or binding vocabulary. Type operators retain their
+  meaning and their operands resolve recursively, including formal bounds.
+
+  Drake.parse(source, scope) resolves names to qualified identities. scope.read(json)
+  applies the same rule to a JSON definition. Drake.emit(definition, scope) and
+  scope.compactJson(definition) abbreviate names only when they resolve back to the same
+  identity. Definition identity and the containing-domain anchor retain their package.
+  Thus a field may be authored as 'fix content Dracon' or {"valueType":"Dracon"}; the
+  operation's supplied ontology identifies draco.format.dracon.Dracon.
+
+  Structured constructor/member expression leaves use that scope as well. Quoted strings
+  and host-opaque expression spans remain opaque; this is not a text replacement over
+  arbitrary target code. Expression binders remain local. Legacy unscoped parse/emit and
+  bootstrap resource loading remain available, with their existing qualified spellings.
+  A scoped JSON document must travel with its operation context; no hidden global scope.
+
+  DracoGenerator.generate(definition, scope) resolves before Scala projection, then uses
+  selective imports for unambiguous qualified identities. Existing imports, local type
+  declarations and method formals prevent unsafe shortening. Strings/comments are retained.
+  Other targets can use the same resolved identities with their own module/import mapping;
+  no Haskell generator is implemented by this change.
+
+  Dreams Generate uses the Editor's held ontology. TransformBinding.nameBindings explicitly
+  supplies primitive/host aliases as [(Text, TypeName)], default empty. Duplicate aliases
+  fail; empty does not grant implicit primitive or host names. Definitions resolve before
+  transform rules execute. GenDrake's session receives that scope for short-name emission;
+  standalone legacy GenDrake sessions without a scope keep their previous emission behavior.
+  Resolution failures use the existing Generated Problems path and emit nothing.

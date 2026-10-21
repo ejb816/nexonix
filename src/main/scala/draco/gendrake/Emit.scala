@@ -12,7 +12,7 @@ object Emit extends App with DracoType {
 
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val definition: TypeDefinition = ctx.get[TypeDefinition]("$definition")
-      lazy val emission: draco.generator.Emission = draco.generator.Emission(draco.Drake.emit(definition))
+      lazy val emission: draco.generator.Emission = draco.generator.Emission(draco.Drake.emitFromSession(definition, ctx.getRuntime().get("nameResolution")))
       ctx.insert(emission)
   }
 
