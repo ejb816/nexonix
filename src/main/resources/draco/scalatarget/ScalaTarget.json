@@ -25,7 +25,8 @@
       ]
     },
     "elementTypeNames": [
-      "CirceCodecs"
+      "CirceCodecs",
+      "HostBindings"
     ]
   }
 }

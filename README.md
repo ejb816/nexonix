@@ -615,7 +615,11 @@ under the ontology-first rule — the host `Unit` as `draco.base.Unit`, and a ba
 the Drake domain — which were the next design point before any bootstrap file is shortened. The unit capture is
 closed (2026-10-21): the unit type is the empty Objective `()`, read by drake as `{"(,)": []}` and
 spelled `Unit` by the Scala target, so no host leaf names it and Base's marker captures nothing;
-the corpus is re-authored and CLI's engine reference qualified. The host vocabulary remains open.
+the corpus is re-authored and CLI's engine reference qualified. The host vocabulary followed the
+same day: `draco.scalatarget.HostBindings` declares, as a definition beside CirceCodecs, the
+`[(Text, TypeName)]` pairs that bind every host name the canonical corpus still spells to the
+identity the Scala target realizes, supplied explicitly to `DomainBuilder.load` and to Generate;
+Local is listed as a Draco member. Shortening the bootstrap files is still a later step.
 
 Method formal parameters now have their own TypeParameter records: a name plus optional
 upper/lower bounds represented as Dracon type forms. Dynamic.typeParameters defaults empty;

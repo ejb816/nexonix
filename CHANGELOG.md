@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+Host vocabulary (2026-10-21; Dev verified 845 tests / 59 suites): `draco.scalatarget.HostBindings` declares, as a definition, the
+`[(Text, TypeName)]` pairs binding every host name the canonical corpus still spells to the identity the Scala
+target realizes; it is supplied explicitly to `DomainBuilder.load` and, through TransformBinding, to Generate.
+Local is listed as a Draco member. One corpus type added; the parse-scope, surface-loss, aspect-section and
+GenDrake headlines each move by one.
+
 Unit type (2026-10-21; Dev verified 840 tests / 59 suites, every headline unchanged): the unit type is the empty Objective `()` — drake reads `()` in a
 type slot as `{"(,)": []}`, the ScalaTarget spells it `Unit`, and the thirty `Unit` leaves across the
 corpus are re-authored, so the Base domain's `Unit` marker no longer captures consumer arrows under

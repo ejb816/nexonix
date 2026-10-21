@@ -1,0 +1,703 @@
+{
+  "typeName": {
+    "name": "HostBindings",
+    "namePackage": [
+      "draco",
+      "scalatarget"
+    ]
+  },
+  "dracoAspect": {
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "primitives",
+        "valueType": {
+          "[]": [
+            {
+              "(,)": [
+                "draco.drake.Text",
+                "draco.TypeName"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "[]": [
+            {
+              "(,)": [
+                "\"Any\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Any\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Boolean\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Boolean\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Double\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Double\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Int\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Int\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Long\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Long\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Product\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Product\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"String\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"String\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Integer\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Integer\"",
+                    {
+                      "[]": [
+                        "\"java\"",
+                        "\"lang\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"System\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"System\"",
+                    {
+                      "[]": [
+                        "\"java\"",
+                        "\"lang\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Enumeration\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Enumeration\"",
+                    {
+                      "[]": [
+                        "\"scala\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "collections",
+        "valueType": {
+          "[]": [
+            {
+              "(,)": [
+                "draco.drake.Text",
+                "draco.TypeName"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "[]": [
+            {
+              "(,)": [
+                "\"Array\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Array\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Iterator\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Iterator\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Map\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Map\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Option\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Option\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Seq\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Seq\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Some\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Some\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"ArrayBuffer\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"ArrayBuffer\"",
+                    {
+                      "[]": [
+                        "\"scala\"",
+                        "\"collection\"",
+                        "\"mutable\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "seams",
+        "valueType": {
+          "[]": [
+            {
+              "(,)": [
+                "draco.drake.Text",
+                "draco.TypeName"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "[]": [
+            {
+              "(,)": [
+                "\"Json\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Json\"",
+                    {
+                      "[]": [
+                        "\"io\"",
+                        "\"circe\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"io.circe.Encoder\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Encoder\"",
+                    {
+                      "[]": [
+                        "\"io\"",
+                        "\"circe\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"io.circe.Decoder\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Decoder\"",
+                    {
+                      "[]": [
+                        "\"io\"",
+                        "\"circe\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"URI\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"URI\"",
+                    {
+                      "[]": [
+                        "\"java\"",
+                        "\"net\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"URL\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"URL\"",
+                    {
+                      "[]": [
+                        "\"java\"",
+                        "\"net\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"File\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"File\"",
+                    {
+                      "[]": [
+                        "\"java\"",
+                        "\"io\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Files\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Files\"",
+                    {
+                      "[]": [
+                        "\"java\"",
+                        "\"nio\"",
+                        "\"file\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Path\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Path\"",
+                    {
+                      "[]": [
+                        "\"java\"",
+                        "\"nio\"",
+                        "\"file\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Paths\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Paths\"",
+                    {
+                      "[]": [
+                        "\"java\"",
+                        "\"nio\"",
+                        "\"file\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"StandardCharsets\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"StandardCharsets\"",
+                    {
+                      "[]": [
+                        "\"java\"",
+                        "\"nio\"",
+                        "\"charset\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"BufferedSource\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"BufferedSource\"",
+                    {
+                      "[]": [
+                        "\"scala\"",
+                        "\"io\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"scala.io.Source\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Source\"",
+                    {
+                      "[]": [
+                        "\"scala\"",
+                        "\"io\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"Try\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Try\"",
+                    {
+                      "[]": [
+                        "\"scala\"",
+                        "\"util\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"ActivationMode\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"ActivationMode\"",
+                    {
+                      "[]": [
+                        "\"org\"",
+                        "\"evrete\"",
+                        "\"api\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"org.evrete.api.Knowledge\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Knowledge\"",
+                    {
+                      "[]": [
+                        "\"org\"",
+                        "\"evrete\"",
+                        "\"api\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"KnowledgeService\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"KnowledgeService\"",
+                    {
+                      "[]": [
+                        "\"org\"",
+                        "\"evrete\"",
+                        "\"api\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"StatefulSession\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"StatefulSession\"",
+                    {
+                      "[]": [
+                        "\"org\"",
+                        "\"evrete\"",
+                        "\"api\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"ExtensibleBehavior\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"ExtensibleBehavior\"",
+                    {
+                      "[]": [
+                        "\"org\"",
+                        "\"apache\"",
+                        "\"pekko\"",
+                        "\"actor\"",
+                        "\"typed\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "engine",
+        "valueType": {
+          "[]": [
+            {
+              "(,)": [
+                "draco.drake.Text",
+                "draco.TypeName"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "[]": [
+            {
+              "(,)": [
+                "\"DracoGenerator\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"DracoGenerator\"",
+                    {
+                      "[]": [
+                        "\"draco\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"draco.Drake\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"Drake\"",
+                    {
+                      "[]": [
+                        "\"draco\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"NameResolution\"",
+                {
+                  "()": [
+                    "draco.TypeName",
+                    "\"NameResolution\"",
+                    {
+                      "[]": [
+                        "\"draco\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "bindings",
+        "valueType": {
+          "[]": [
+            {
+              "(,)": [
+                "draco.drake.Text",
+                "draco.TypeName"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "++": [
+            "primitives",
+            "collections",
+            "seams",
+            "engine"
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "vocabulary",
+        "valueType": {
+          "{}": [
+            "draco.drake.Text",
+            "draco.TypeName"
+          ]
+        },
+        "value": "bindings.toMap"
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "ScalaTarget",
+      "namePackage": [
+        "draco",
+        "scalatarget"
+      ]
+    }
+  }
+}

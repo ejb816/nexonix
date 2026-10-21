@@ -2,4 +2,5 @@ type ScalaTarget from draco Target
 domain draco scalatarget ScalaTarget
   types [
     CirceCodecs
+    HostBindings
   ]

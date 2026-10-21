@@ -6,16 +6,25 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **b95419c** (two-stage
-  loading, committed and pushed by Dev at the verified 839 / 59 gate). The tree now carries the
-  UNCOMMITTED unit-type increment: `src/mods/scala/draco/{Drake,DracoGenerator,AssemblyValidator}.scala`,
+- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **7d5de4f** (the unit type,
+  committed and pushed by Dev at the verified 840 / 59 gate). The tree now carries the UNCOMMITTED
+  host-vocabulary increment: `src/main/resources/draco/scalatarget/HostBindings.{drake,json}` and
+  `src/main/scala/draco/scalatarget/HostBindings.scala` (new trio), Draco and ScalaTarget trios
+  (member lists), `src/test/scala/draco/DomainLoadingTest.scala`, `src/test/scala/draco/format/dracon/DraconTest.scala`
+  (its pinned ScalaTarget member list now names HostBindings; Dev's first gate failed on it, 844 / 845),
+  DRACO.md (table rows moved),
+  README.md, CHANGELOG.md, this file and record `git-record-2026-10-21-1915` (gate line a
+  placeholder until Dev's run). Do not discard it. The previous increment, as committed, was: `src/mods/scala/draco/{Drake,DracoGenerator,AssemblyValidator}.scala`,
   `src/main/scala/draco/CLI.scala` (regenerated), twelve re-authored drake sources with their JSON
   and seven JSON-only example definitions (36 files in status), `src/main/resources/draco/drake.dlt`,
   `src/test/scala/draco/{DrakeParseTest,DomainLoadingTest}.scala`, DRACO.md, README.md,
   CHANGELOG.md, this file and record `git-record-2026-10-21-1830` (gate line a placeholder until
   Dev's run). Do not discard it.
-- Latest verified code baseline: **840 tests / 59 suites**, Dev's October 21 second full gate on the
-  unit-type increment, zero failed/canceled/ignored/pending tests, zero aborted suites, every
+- Latest verified code baseline: **845 tests / 59 suites**, Dev's October 21 second full gate on the
+  host-vocabulary increment, zero failed/canceled/ignored/pending tests, zero aborted suites, parse
+  scope 110 + 10, one loss across 120, aspect sections 110, GenDrake 108 of 108, every other headline
+  unchanged, pending mods actors 0 (the first run failed DraconTest's pinned member list, corrected).
+- Before it, **840 tests / 59 suites**, Dev's October 21 second full gate on the unit-type increment, zero failed/canceled/ignored/pending tests, zero aborted suites, every
   report-only headline unchanged, pending mods actors 0. The first run had failed the two assembly
   suites (AssemblyValidator read the consumer arrow's result as the string `Unit`); fixed before the
   second. Before it, 839 / 59 at b95419c and 835 / 58 at b17ddb8.
@@ -31,12 +40,11 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Next action
 
-After Dev's commit of the unit-type increment: bring the next design point. Both captures the loader measured are now closed: the
-unit type by this increment, CLI's `Drake.emit` by qualification. The next #51 design point, not yet
-put to Dev: the bootstrap host vocabulary — the 41 host names the canonical corpus still spells as
-leaves (String, Int, Boolean, Json, URI, URL, the evrete and pekko types, the hand-written engine
-objects) — who supplies it and in what form, before any bootstrap file is shortened. Journal chapter
-100 is written from this session's record at its closing handoff. One recommendation.
+After Dev's commit of the host-vocabulary increment: with the loader, the unit type and the vocabulary landed, the next #51 design point is the
+one Dev asked for on October 20: shortening the bootstrap files themselves — which files, through
+which operation (the loader's scope now exists; the trio gates read JSON unscoped and the companions
+load unscoped), and what the gates compare. Journal chapter 100 is written from this session's record
+at its closing handoff. One recommendation.
 
 ## Completed in this session
 

@@ -34,6 +34,7 @@ domain draco Draco
     Fixed
     Generator
     Holon
+    Local
     Main
     Monadic
     Mutable

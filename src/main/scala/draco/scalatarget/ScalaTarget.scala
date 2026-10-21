@@ -8,7 +8,7 @@ object ScalaTarget extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ScalaTarget", _namePackage = Seq ("draco", "scalatarget")))
   lazy val dracoType: Type[ScalaTarget] = Type[ScalaTarget] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ("CirceCodecs")
+  lazy val elementTypeNames: Seq[String] = Seq ("CirceCodecs", "HostBindings")
 
   lazy val domainType: Domain[ScalaTarget] = Domain[ScalaTarget] (typeDefinition)
 }

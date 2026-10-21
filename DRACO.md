@@ -49,6 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**845 tests / 59 suites**, verified by Dev on 2026-10-21 for the Scala target's host vocabulary as a
+definition (record `git-record-2026-10-21-1915`): five per-type tests for the one added corpus type,
+zero failed, canceled, ignored or pending tests, zero aborted suites, the parse-scope, surface-loss,
+aspect-section and GenDrake headlines each moved by one (table updated in that commit), every other
+headline unchanged, including zero pending mods actors; Dev's first run of that gate failed one pinned
+member list in DraconTest, corrected before the second. Before it:
 **840 tests / 59 suites**, verified by Dev on 2026-10-21 for the unit type as the empty Objective
 (record `git-record-2026-10-21-1830`): one added test, zero failed, canceled, ignored or pending tests,
 zero aborted suites, every report-only headline unchanged, including zero pending mods actors; Dev's
@@ -134,8 +140,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 1 field across 119 types — type form 1 (ActorAspect), expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 109 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 1 field across 120 types — type form 1 (ActorAspect), expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -825,6 +831,23 @@ string `Unit` as its arrow's result — the third consumer of the type vocabular
 (§6, again) — and now recognises the empty Objective.
 The remaining bootstrap-vocabulary point before shortening any file: the 41 host names the corpus still
 spells as leaves.
+
+**The Scala target's host vocabulary is a definition (2026-10-21, Claude Code; Dev verified 845 / 59).** Dev accepted
+"the bootstrap host vocabulary as a definition-backed member of draco.scalatarget carrying [(Text, TypeName)]
+binding pairs, supplied explicitly to load and Generate, with Local listed as a Draco member."
+`draco.scalatarget.HostBindings` sits beside CirceCodecs: four global lists — `primitives`, `collections`,
+`seams` (circe, java, scala.io, scala.util, evrete, pekko) and `engine` (DracoGenerator, draco.Drake,
+NameResolution, the hand-written realizations definitions reference) — concatenated as `bindings`, with
+`vocabulary` their map, in the form `TransformBinding.nameBindings` already carries. Each pair is the name as
+the corpus authors it and the identity the ScalaTarget realizes it as; a name a draco type shadows (Encoder,
+Decoder, Knowledge, Source, Drake) is keyed QUALIFIED, since the ontology wins the bare form, and a qualified
+reference resolves by identity whatever the key. It is supplied explicitly — `DomainBuilder.load` takes it as
+its bindings, Generate through `nameBindings` — never defaulted, never discovered, so a Haskell target supplies
+its own table for the same authored names and no definition file carries a target spelling. `Local`, the one
+TypeElement kind absent from Draco's `types` list, is listed, so `draco.Local` resolves through the ontology;
+DomainLoadingTest reads the vocabulary from the definition and pins that neither Unit nor Local is a binding.
+One corpus type added: parse scope 110 + 10, one loss across 120 types, 110 aspect sections, GenDrake 108 of
+108 (table updated in this commit). Shortening the bootstrap files is still a later step.
 
 **Handoff checkpoint (2026-10-21).** Chapters 95–99 preserve this Codex session with a
 bounded original-message extract: 35 complete exchanges plus the open handoff request.

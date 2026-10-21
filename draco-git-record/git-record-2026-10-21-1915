@@ -1,0 +1,41 @@
+Declare the Scala target's host vocabulary as a definition and list Local among Draco's members
+
+Dev accepted, on 2026-10-21, "the bootstrap host vocabulary as a definition-backed member of
+draco.scalatarget carrying [(Text, TypeName)] binding pairs, supplied explicitly to load and
+Generate, with Local listed as a Draco member." The two-stage loader had measured the need: the
+canonical corpus resolves only with 41 host names no draco domain defines, and that list lived in
+a test.
+
+draco.scalatarget.HostBindings is the new trio beside CirceCodecs: four global lists in the form
+TransformBinding.nameBindings already carries — primitives, collections, seams (circe, java, scala.io,
+scala.util, evrete, pekko) and the hand-written engine (DracoGenerator, draco.Drake, NameResolution)
+— concatenated as `bindings`, with `vocabulary` their map. Each pair is the name as the corpus
+authors it and the identity the Scala target realizes it as; a name a draco type shadows
+(Encoder, Decoder, Knowledge, Source, Drake) is keyed qualified, since the ontology would win the
+bare form, and a qualified reference resolves by identity whatever the key. The vocabulary is
+supplied explicitly: DomainBuilder.load takes it as its bindings, Generate through
+TransformBinding.nameBindings; nothing defaults to it and nothing discovers it, so another target
+supplies its own table for the same authored names and no definition file carries a target spelling.
+
+Local, the one TypeElement kind absent from Draco's `types` list, is listed, so `draco.Local`
+resolves through the ontology; the loading test pins that and that neither Unit nor Local is a
+binding. Draco.scala and ScalaTarget.scala regenerate on their member lists; HostBindings.scala is
+generated. DomainLoadingTest reads the vocabulary from the definition. One new corpus type: parse
+scope 110 draco + 10 mods, one loss across 120 types, 110 aspect sections, GenDrake 108 of 108;
+every other headline unchanged (table updated in this commit). Shortening the bootstrap files
+remains a later step.
+
+Probe on the compiled engine over a resource overlay, nineteen suites including the three trio
+gates, the example map, SourceContract, GenDrake, both aspect suites, the scenario, loading,
+resolution, builder, ontology, the four dreams suites and both assembly suites: 689 passed, zero
+failed or aborted, pending mods actors 0.
+
+Dev's first full gate failed one test (844 of 845): DraconTest pinned ScalaTarget's member list as
+exactly CirceCodecs, written when that was its only member; the assertion now names both.
+
+Gate: Dev's second full sbt run on 2026-10-21, pasted: 845 tests / 59 suites, zero failed, canceled,
+ignored or pending tests, zero aborted suites; parse scope 110 draco + 10 mods, one loss across 120
+types, 110 aspect sections in both probes, GenDrake 108 of 108, every other headline unchanged;
+pending mods actors 0 in the file-only log. Committed and pushed by Dev.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

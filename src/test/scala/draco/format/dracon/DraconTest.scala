@@ -86,7 +86,7 @@ class DraconTest extends AnyFunSuite {
     assert(DomainBuilder.validate(domain).isEmpty)
     assert(!java.nio.file.Files.exists(java.nio.file.Paths.get("src/main/resources/draco/format/json/JSON.json")))
     assert(TypeLoader.tryLoad(TypeName("JSON", Seq("draco", "format", "json"))).fold(true, _ => false))
-    assert(draco.scalatarget.ScalaTarget.elementTypeNames == Seq("CirceCodecs"))
+    assert(draco.scalatarget.ScalaTarget.elementTypeNames == Seq("CirceCodecs", "HostBindings"))
   }
 
   test("definition tree payload codecs preserve nested JSON without wrapper envelopes") {

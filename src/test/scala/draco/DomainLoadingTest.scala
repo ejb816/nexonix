@@ -27,19 +27,10 @@ class DomainLoadingTest extends AnyFunSuite {
 
   private def typeName(path: String): TypeName = { val parts = path.split('.').toSeq; TypeName(parts.last, parts.dropRight(1)) }
 
-  /** The host names the canonical corpus still spells as leaves, each bound to itself: the
-   *  vocabulary is explicit, and realizing these names is a target's concern, not this test's.
-   *  The unit type is not among them: it is the empty Objective `()` since 2026-10-21, so the Base
-   *  domain's `draco.base.Unit` captures nothing. */
-  private val hostVocabulary: Map[String, TypeName] = Seq(
-    "Any", "Array", "Boolean", "BufferedSource", "Double", "DracoGenerator", "Enumeration", "Int", "Integer",
-    "Iterator", "Json", "KnowledgeService", "Long", "Map", "Option", "Product", "Seq", "Some", "String", "System",
-    "URI", "URL", "draco.Drake", "draco.Local", "draco.NameResolution", "io.circe.Decoder", "io.circe.Encoder",
-    "io.circe.Json", "java.io.File", "java.net.URI", "java.nio.charset.StandardCharsets", "java.nio.file.Files",
-    "java.nio.file.Path", "java.nio.file.Paths", "org.apache.pekko.actor.typed.ExtensibleBehavior",
-    "org.evrete.api.ActivationMode", "org.evrete.api.Knowledge", "org.evrete.api.StatefulSession",
-    "scala.collection.mutable.ArrayBuffer", "scala.io.BufferedSource", "scala.io.Source", "scala.util.Try"
-  ).map(n => n -> typeName(n)).toMap
+  /** The host vocabulary is the ScalaTarget's own definition, `draco.scalatarget.HostBindings`
+   *  (Dev accepted 2026-10-21): every host name the canonical corpus still spells as a leaf, paired
+   *  with the identity the Scala target realizes it as, supplied explicitly — never discovered. */
+  private val hostVocabulary: Map[String, TypeName] = draco.scalatarget.HostBindings.vocabulary
 
   private def populated: Seq[DomainType] = canonical.map(d => DomainBuilder.define(d.name, d.namePackage))
   private def definitionsOf(o: DomainOntology): Seq[TypeDefinition] =
@@ -71,6 +62,8 @@ class DomainLoadingTest extends AnyFunSuite {
     assert(definitionsOf(loaded).forall(td => !DomainBuilder.isStub(td)), "every declared member has a definition")
     canonical.foreach(d => assert(loaded.holds(d), d.namePath))
     assert(loaded.defines(typeName("draco.format.dracon.Dracon")) && loaded.defines(typeName("draco.TypeName")))
+    assert(loaded.defines(typeName("draco.Local")), "Local is a Draco member, resolved by the ontology, not a binding")
+    assert(!hostVocabulary.contains("Unit") && !hostVocabulary.contains("Local") && !hostVocabulary.contains("draco.Local"))
     val element = definitionsOf(loaded).find(_.typeName.namePath == "draco.TypeName").get
       .dracoAspect.elements.find(_.name == "typeParameters").get
     assert(TypeForm.text(element.valueType) == "[draco.format.dracon.Dracon]", "a qualified reference stays qualified")
