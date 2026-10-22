@@ -6,6 +6,48 @@
       "gendrake"
     ]
   },
+  "uses": [
+    {
+      "name": "DomainAspect",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeName",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "DomainAspectText",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {

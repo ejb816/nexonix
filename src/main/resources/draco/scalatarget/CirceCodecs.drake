@@ -16,4 +16,10 @@ type CirceCodecs
       body
         fix value Decoder(T) Decoder(\source -> presence(host.decodeJson(source.json).toOption))
     ]
+uses [
+  draco drake Present
+  draco format dracon Decoder
+  draco format dracon Dracon
+  draco format dracon Encoder
+]
 domain draco scalatarget ScalaTarget

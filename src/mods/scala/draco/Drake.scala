@@ -374,6 +374,13 @@ object Drake {
 
     val dracoText = dracoAspectText(td)
     val typeSection = if (dracoText.isEmpty) Seq.empty else Seq(dracoText)
+    // The RESOLUTION RECORD (2026-10-21): `uses [ … ]`, a section of its own between the type
+    // section and the domain line — the identities the bodies name by their short form, each in
+    // the anchor spelling, package words then the name. Written by the compact form, never by
+    // hand; elided when empty.
+    val uses =
+      if (td.uses.isEmpty) Seq.empty
+      else "uses [" +: td.uses.map(tn => "  " + (tn.namePackage :+ tn.name).mkString(" ")) :+ "]"
 
     // Actor message references retain the same package-relative spelling.
     def reference (tn: TypeName) : String =
@@ -432,7 +439,7 @@ object Drake {
     require(payload.distinct.size == payload.size, s"Drake.emit: duplicate payload field in ${td.typeName.name}")
     require(payload.forall(_.matches("[A-Za-z_][A-Za-z0-9_]*")), s"Drake.emit: invalid payload field in ${td.typeName.name}")
     val codec = if (payload.isEmpty) Seq.empty else Seq("codec", s"  payload [${payload.mkString(", ")}]")
-    (typeSection ++ domain ++ rule ++ actor ++ codec).mkString("", "\n", "\n")
+    (typeSection ++ uses ++ domain ++ rule ++ actor ++ codec).mkString("", "\n", "\n")
   }
 
   // --- Parsing (.drake surface -> JSON TypeDefinition) ---
@@ -467,6 +474,8 @@ object Drake {
     memberKeywords ++ Set (
       "type", "from", "domain", "super", "source", "target", "types", "rule", "actor", "codec",
       "modules", "extensible", "elements", "factory", "parameters", "body", "globals",
+      // `uses` (2026-10-21) — the RESOLUTION RECORD: the identities the bodies name short.
+      "uses",
       "pattern", "action", "variables", "conditions",
       "start", "message", "signal", "messageType",
       // `case` (drake.dlt CASE-BRANCH) — reserved from 3b on, once the last definition
@@ -1204,6 +1213,7 @@ object Drake {
     var signal           = Action.Null
     var payload          = Seq.empty[String]
     var hasCodec         = false
+    var uses             = Seq.empty[TypeName]
 
     def actionBody (admits: Set[String] = actionKeywords) : Action = {
       val body = parseBlock (c, admits).map (_.asInstanceOf[BodyElement])   // sequenced: by-name parameter
@@ -1213,6 +1223,9 @@ object Drake {
     while (!c.exhausted) {
       c.takeText () match {
         case "modules"     => modules = parseRefList (c)
+        case "uses"        =>
+          uses = parseRefList (c)
+          require(uses.forall(_.namePackage.nonEmpty), s"Drake.parse: a uses entry is written in full in $name")
         case "extensible"  => extensible = takeQualifiedRef (c)
         case "elements"    => elements = parseBlock (c, declarationKeywords)
         case "globals"     => globalElements = parseBlock (c, declarationKeywords).map (_.asInstanceOf[BodyElement])
@@ -1276,6 +1289,7 @@ object Drake {
 
     TypeDefinition (
       _typeName = TypeName (name, domainName.namePackage, typeParameters),
+      _uses = uses,
       _dracoAspect = DracoAspect (
         _superDomain    = superDomain,
         _modules        = modules.map (resolved),

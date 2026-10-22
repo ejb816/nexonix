@@ -5,4 +5,7 @@ type Mutable from BodyElement
       par valueType Dracon
       par value Dracon Dracon.Null
       par now Boolean false
+uses [
+  draco format dracon Dracon
+]
 domain draco Draco

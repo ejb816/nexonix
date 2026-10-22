@@ -20,6 +20,9 @@ type DracoAspect
     fix isEmpty (DracoAspect -> Boolean) \da -> da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty
     fix parents (DracoAspect -> [TypeName]) \da -> da.derivation.filter(\parent -> parent.has("name")).flatMap(\parent -> TypeName.read(parent).fold([], \name -> [name]))
     fix foreignParents (DracoAspect -> [Dracon]) \da -> da.derivation.filterNot(\parent -> parent.has("name"))
+uses [
+  draco format dracon Dracon
+]
 domain draco Draco
 codec
   payload [derivation]

@@ -1,0 +1,44 @@
+Carry a resolution record: a definition's uses list names what its bodies say short
+
+Dev accepted, on 2026-10-21, "the resolution record: a definition carries a `uses` list of the
+identities its bodies name short, written by compact and validated against the ontology, so an
+unscoped reader resolves the file from itself; the rest of the sweep follows it." The gap it
+closes showed itself while building: the unscoped GeneratorCLI, generating TypeDefinition, loaded
+the swept TypeName and misjudged its payload, since nothing in the file said which Dracon.
+
+TypeDefinition gains `uses [TypeName]`, default empty and elided, beside typeName; its trio is
+regenerated, and TypeLoader's rooting reconstruction and the generator's target-type rebuild carry
+the slot (the first did not, and the record never reached the engine until it did — the §6 rule
+about rebuilds, once more). On the surface `uses [ … ]` is a section of its own between the type
+section and the domain line, each entry in the anchor spelling — `draco format dracon Dracon` —
+written by the compact form and never by hand; `uses` is reserved. NameResolution.compactJson
+writes it: every identity of the ontology that a body names by its short form, other than the
+definition's own package, sorted; a definition spelling everything in full carries none. Every
+scoped read validates it — an entry the ontology does not define is an error — and a resolved
+definition carries no record, every name being in full, so compact recomputes it.
+NameResolution.recorded(td) is the scope a definition carries in itself: one placeholder domain
+per package of the record, no bindings, lenient, so a leaf the record does not name passes as
+written. The engine's unscoped generation spells a recorded definition through that scope exactly
+as a scoped generation would and shortens by import; its loader does the same for a recorded
+definition it loads with no scope in effect. So, for the seventeen swept definitions, unscoped
+and scoped generation are identical and equal the pinned Scala, and their referrers generate
+unscoped again; the ontology is needed only to author and validate the record. A definition
+spelled in full and unswept still generates as its author spelled it, imports and all only under
+a scope — the rest of the sweep removes that asymmetry.
+
+The seventeen swept files are re-swept and carry their records (TypeName's: Absent, Presence,
+Present, Dracon). ResolutionRecordTest (4) is the 60th suite: the record is written, sorted,
+idempotent and round-trips the surface; unscoped equals scoped for every swept definition and
+their pinned files; the recorded scope passes unknown names; a stale entry fails every scoped read.
+No corpus type changed, so no headline moves.
+
+Probe on the compiled engine: 29 suites, 766 passed, zero failed or aborted, every headline
+unchanged, pending mods actors 0; the whole main and mods tree compiles against the regenerated
+classes; GeneratorCLI's unscoped generation of TypeName, TypeDefinition, Problem and CirceCodecs
+equals the pinned Scala.
+
+Gate: Dev's full sbt run on 2026-10-21, pasted, green on its first run: 849 tests / 60 suites, zero
+failed, canceled, ignored or pending tests, zero aborted suites; every report-only headline
+unchanged; pending mods actors 0 in the file-only log. Committed and pushed by Dev.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

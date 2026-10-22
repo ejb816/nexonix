@@ -49,6 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**849 tests / 60 suites**, verified by Dev on 2026-10-21 for the resolution record (record
+`git-record-2026-10-21-2130`): four added tests in the added `ResolutionRecordTest`, zero failed, canceled,
+ignored or pending tests, zero aborted suites, every report-only headline unchanged, including zero pending
+mods actors, green on its first run. Before it:
 **845 tests / 59 suites**, verified by Dev on 2026-10-21 for the bootstrap shortening of the Dracon referrers
 through canonical scoped generation (record `git-record-2026-10-21-2000`): no test or corpus type added,
 zero failed, canceled, ignored or pending tests, zero aborted suites, every report-only headline unchanged,
@@ -883,6 +887,27 @@ generation into src/main, joined them after Dev's first full gate (842 / 845) sh
 regenerated rules. Integer, System and Enumeration are bound BARE in HostBindings, the Scala target reading them
 so, which keeps `import java.lang.Integer` out of the regenerated rules. No test added, no corpus type changed.
 The remaining bodies of the corpus follow in a later sweep; the companions still load unscoped.
+
+**The resolution record: `uses` (2026-10-21, Claude Code; Dev verified 849 / 60).** Dev accepted "the resolution
+record: a definition carries a `uses` list of the identities its bodies name short, written by compact and
+validated against the ontology, so an unscoped reader resolves the file from itself; the rest of the sweep
+follows it." The gap showed itself first: the unscoped GeneratorCLI, generating TypeDefinition, loaded the
+swept TypeName and misjudged its payload. `TypeDefinition` gains `uses [TypeName]` (default empty, elided)
+beside `typeName`; `TypeLoader.rooted` and the generator's target-type rebuild carry it (the first did not,
+and the record never reached the engine until it did — §6's rule about rebuilds, again). On the surface
+`uses [ … ]` is a section of its own between the type section and the domain line, each entry in the anchor
+spelling (`draco format dracon Dracon`), written by the compact form, never by hand; `uses` is reserved.
+`NameResolution.compactJson` writes it — every ontology identity a body names short, other than the own
+package, sorted — every scoped read VALIDATES it (an entry the ontology does not define is an error), and a
+resolved definition carries none (every name in full; compact recomputes it). `NameResolution.recorded(td)`
+is the scope a definition carries in itself: a placeholder domain per package of the record, no bindings,
+LENIENT (a leaf the record does not name passes as written). The engine's UNSCOPED generation spells a recorded
+definition through that scope exactly as a scoped generation would, and its loader does the same for a
+recorded definition loaded with no scope in effect: for the seventeen swept definitions unscoped and scoped
+generation are identical and equal the pinned Scala, and their referrers generate unscoped again; the
+ontology is needed only to author and validate the record. An unswept file spelled in full still gains its
+imports only under a scope — the rest of the sweep removes that asymmetry. `ResolutionRecordTest` (4) is
+the 60th suite. No corpus type changed, so no headline moves.
 
 **Handoff checkpoint (2026-10-21).** Chapters 95–99 preserve this Codex session with a
 bounded original-message extract: 35 complete exchanges plus the open handoff request.

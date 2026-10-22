@@ -1,9 +1,11 @@
 type TypeDefinition from Aspects
   elements
     fix typeName TypeName
+    fix uses [TypeName]
   factory
     parameters
       par typeName TypeName
+      par uses [TypeName] []
       par dracoAspect DracoAspect DracoAspect.Null
       par domainAspect DomainAspect DomainAspect.Null
       par ruleAspect RuleAspect RuleAspect.Null

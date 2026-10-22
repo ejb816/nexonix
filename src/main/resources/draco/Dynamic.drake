@@ -18,4 +18,7 @@ type Dynamic from BodyElement
       fix value Dracon _value
       fix now Boolean _now
       fix typeParameters [TypeParameter] _typeParameters
+uses [
+  draco format dracon Dracon
+]
 domain draco Draco

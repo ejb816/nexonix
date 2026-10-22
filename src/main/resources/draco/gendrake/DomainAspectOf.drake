@@ -10,4 +10,12 @@ type DomainAspectOf from draco draketarget DomainAspectText
       loc aspect DomainAspect definition.domainAspect
       loc rendered DomainAspectText DomainAspectText(reference(aspect.typeName), reference(definition.dracoAspect.superDomain), reference(aspect.source), reference(aspect.target), aspect.elementTypeNames, definition.typeName.name.isEmpty)
       fix value Text rendered.value
+uses [
+  draco DomainAspect
+  draco TypeDefinition
+  draco TypeName
+  draco drake Text
+  draco draketarget DomainAspectText
+  draco format dracon Dracon
+]
 domain draco gendrake GenDrake

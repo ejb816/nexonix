@@ -8,6 +8,10 @@ type TypeParameter
       par name Text
       par upperBound Dracon Dracon.Null
       par lowerBound Dracon Dracon.Null
+uses [
+  draco drake Text
+  draco format dracon Dracon
+]
 domain draco Draco
 codec
   payload [upperBound, lowerBound]

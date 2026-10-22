@@ -6,9 +6,16 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **44a5005** (the host
-  vocabulary, committed and pushed by Dev at the verified 845 / 59 gate). The tree now carries the
-  UNCOMMITTED bootstrap-shortening increment, 88 files: seventeen swept trios under
+- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **0b8fc03** (the bootstrap
+  shortening, committed and pushed by Dev at the verified 845 / 59 gate). The tree now carries the
+  UNCOMMITTED resolution-record increment: the TypeDefinition and TypeLoader trios (`uses`),
+  `src/mods/scala/draco/{Drake,NameResolution,DracoGenerator}.scala`, the seventeen swept trios
+  re-swept with their records, `src/main/resources/draco/drake.dlt`, the new
+  `src/test/scala/draco/ResolutionRecordTest.scala`, DRACO.md, README.md, CHANGELOG.md, this file and
+  record `git-record-2026-10-21-2130`. Do not discard it until committed. Dev's full gate on it (October
+  21, first run) passed **849 / 60**, zero failed/canceled/ignored/pending tests, zero aborted suites, every
+  headline unchanged, pending mods actors 0; a 29-suite compiled-class probe had passed 766 / 766, the whole
+  tree compiles, and unscoped CLI generation of swept files and their referrers equals the pinned Scala. The previous increment, as committed, carried 88 files: seventeen swept trios under
   `src/main/resources/draco` (JSON bodies compact, drake re-emitted, Scala regenerated), 35 regenerated
   Scala files in all (25 main, the ten staged dreams/service files), `src/mods/scala/draco/{NameResolution,
   DracoGenerator}.scala`, `src/main/resources/draco/drake.dlt`, the new `src/test/scala/draco/CanonicalScope.scala`,
@@ -52,12 +59,11 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Next action
 
-After Dev's commit of the bootstrap-shortening increment: the next #51 design point is the
-REST of the sweep — the remaining main and mods bodies (the companions and the example domains still
-load and generate unscoped; the engine now canonicalizes, so the sweep is mechanical and gate-pinned)
-— or, before it, the per-file question the sweep raised: whether a shortened file should carry its own
-resolution record, as Haskell and Scala files carry imports, so an unscoped reader could resolve it.
-Journal chapter 100 is written from this session's record at its closing handoff. One recommendation.
+After Dev's commit of the resolution-record increment: the next #51 design point is the
+REST of the sweep — every remaining main and mods body compacted with its record, mechanical and
+gate-pinned now that the engine canonicalizes and a recorded file resolves itself — including whether
+the example domains (unscoped, report-only) and the staged dreams/service files join it. Journal
+chapter 100 is written from this session's record at its closing handoff. One recommendation.
 
 ## Completed in this session
 

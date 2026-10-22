@@ -4,4 +4,7 @@ type Condition from BodyElement
       par value Dracon
     body
       fix value Dracon _value
+uses [
+  draco format dracon Dracon
+]
 domain draco Draco

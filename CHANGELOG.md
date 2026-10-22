@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+Resolution record (2026-10-21; Dev verified 849 tests / 60 suites, every headline unchanged): a TypeDefinition carries `uses`, the identities its bodies name
+short, as a `uses [ … ]` section of its own; the compact form writes it, every scoped read validates it, and
+an unscoped reader — the engine's generation and loading, the GeneratorCLI — resolves a recorded file from
+itself. `ResolutionRecordTest` is the 60th suite.
+
 Bootstrap shortening (2026-10-21; Dev verified 845 tests / 59 suites, every headline unchanged): the seventeen main definitions that spelled the Dracon path
 now carry compact bodies with qualified anchors; scoped generation canonicalizes a definition (compact, then
 qualified only where the engine cannot read a bare name) and shortens by selective import, so every

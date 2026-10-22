@@ -9,6 +9,9 @@ type TypeElement from Primal(Dracon)
     fix body [BodyElement] []
     fix value Dracon Dracon.Null
     fix now Boolean false
+uses [
+  draco format dracon Dracon
+]
 domain draco Draco
 codec
   payload [valueType, value]

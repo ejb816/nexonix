@@ -623,7 +623,10 @@ Local is listed as a Draco member. The first sweep followed: the seventeen main 
 spelled the Dracon path carry compact bodies — `[Dracon]`, `Presence(TypeName)` — with their nominal
 anchors still qualified, and scoped generation canonicalizes a definition before generating it, so
 every definition-backed Scala file now carries selective imports and the corpus gates supply the
-canonical scope explicitly. The remaining bodies follow in a later sweep.
+canonical scope explicitly. A swept definition also carries its **resolution record**, a `uses`
+section listing the identities its bodies name short, written by the compact form and validated
+against the ontology, so a reader with no ontology resolves the file from itself, as a Haskell or
+Scala module does from its imports. The remaining bodies follow in a later sweep.
 
 Method formal parameters now have their own TypeParameter records: a name plus optional
 upper/lower bounds represented as Dracon type forms. Dynamic.typeParameters defaults empty;

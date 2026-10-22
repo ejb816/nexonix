@@ -19,6 +19,15 @@
         "kind": "Fixed",
         "name": "typeName",
         "valueType": "TypeName"
+      },
+      {
+        "kind": "Fixed",
+        "name": "uses",
+        "valueType": {
+          "[]": [
+            "TypeName"
+          ]
+        }
       }
     ],
     "factory": {
@@ -29,6 +38,19 @@
           "kind": "Parameter",
           "name": "typeName",
           "valueType": "TypeName"
+        },
+        {
+          "kind": "Parameter",
+          "name": "uses",
+          "valueType": {
+            "[]": [
+              "TypeName"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
         },
         {
           "kind": "Parameter",

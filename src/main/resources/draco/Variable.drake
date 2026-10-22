@@ -6,4 +6,7 @@ type Variable from BodyElement
     body
       fix name String _name
       fix valueType Dracon _valueType
+uses [
+  draco format dracon Dracon
+]
 domain draco Draco

@@ -25,4 +25,13 @@ type DracoAspectOf from draco draketarget DracoAspectText
       loc factoryResult Text guard(factoryPresent).ifThenElse(guard(slotText(aspect.factory.valueType) == slotText(factoryType)).ifThenElse("", slotText(aspect.factory.valueType)), "")
       loc rendered DracoAspectText DracoAspectText(name, parents, aspect.modules.map(reference), extensible, aspect.elements.flatMap(\element -> elementText(element, 2)), factoryPresent, factoryResult, aspect.factory.parameters.flatMap(\element -> elementText(element, 3)), aspect.factory.body.flatMap(\element -> elementText(element, 3)), aspect.globalElements.flatMap(\element -> elementText(element, 2)))
       fix value Text rendered.value
+uses [
+  draco DracoAspect
+  draco TypeDefinition
+  draco TypeElement
+  draco TypeName
+  draco drake Text
+  draco draketarget DracoAspectText
+  draco format dracon Dracon
+]
 domain draco gendrake GenDrake

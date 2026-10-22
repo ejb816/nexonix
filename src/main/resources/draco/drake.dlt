@@ -53,6 +53,12 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   held by the operation's DomainOntology by its short name (`Dracon`), resolved by the scope the operation
   is given; a NOMINAL ANCHOR — the header's own name, the domain line, a `from` record, a messageType — is
   always written in full. The bootstrap files spell bodies short where swept and anchors qualified.
+  THE RESOLUTION RECORD (2026-10-21): a definition whose bodies say short names carries `uses [ … ]`, a
+  section of its own between the type section and the domain line, listing every identity the bodies
+  name short, other than the own package, one per line in the anchor spelling (`draco format dracon
+  Dracon`), sorted. It is WRITTEN by the compact form, never by hand, validated against the ontology on
+  every scoped read, and absent when nothing is short; a reader with no ontology resolves the file from it
+  alone — it is what a Haskell module's import list, or a Scala file's, projects from. `uses` is reserved.
   TYPE-FORM TREE — Atomic (a string leaf), Objective `{"(,)": [...]}` (EMPTY, `()`, is the UNIT TYPE —
   the empty product, Haskell's unit, drake's own; no host leaf names it, 2026-10-21), Parametric `{"()": [F, A ...]}`,
   Morphic `{"->": [S, T]}` binary and RIGHT-associative (Haskell's: A -> B -> C is A -> (B -> C)), the

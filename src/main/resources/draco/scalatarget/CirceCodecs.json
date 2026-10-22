@@ -6,6 +6,39 @@
       "scalatarget"
     ]
   },
+  "uses": [
+    {
+      "name": "Present",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Decoder",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    },
+    {
+      "name": "Encoder",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
   "dracoAspect": {
     "globalElements": [
       {

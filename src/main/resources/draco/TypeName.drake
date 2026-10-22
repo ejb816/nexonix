@@ -31,6 +31,12 @@ type TypeName
   globals
     fix read (Dracon -> Presence(TypeName)) \source -> guard(source.isObject).ifThenElse(source.field("name").textOrEmpty.fold(Absent(), \name -> source.field("namePackage").textsOrEmpty.fold(Absent(), \parts -> source.field("typeParameters").itemsOrEmpty.fold(Absent(), \arguments -> Present(TypeName(name, parts, arguments))))), Absent())
     fix write (TypeName -> Dracon) \name -> Dracon.record(guard(name.name.nonEmpty).ifThenElse([("name", Dracon.string(name.name))], []) ++ guard(name.namePackage.nonEmpty).ifThenElse([("namePackage", Dracon.array(name.namePackage.map(Dracon.string)))], []) ++ guard(name.typeParameters.nonEmpty).ifThenElse([("typeParameters", Dracon.array(name.typeParameters))], []))
+uses [
+  draco drake Absent
+  draco drake Presence
+  draco drake Present
+  draco format dracon Dracon
+]
 domain draco Draco
 codec
   payload [typeParameters]

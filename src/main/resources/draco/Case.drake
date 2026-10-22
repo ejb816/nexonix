@@ -5,4 +5,7 @@ type Case from BodyElement
       par valueType Dracon Dracon.Null
       par body [BodyElement] []
       par value Dracon Dracon.Null
+uses [
+  draco format dracon Dracon
+]
 domain draco Draco

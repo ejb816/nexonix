@@ -5,6 +5,16 @@
       "draco"
     ]
   },
+  "uses": [
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
   "dracoAspect": {
     "modules": [
       {

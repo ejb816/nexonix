@@ -5,6 +5,7 @@ import io.circe.syntax.EncoderOps
 
 trait TypeDefinition extends Aspects {
   val typeName: TypeName
+  val uses: Seq[TypeName]
 }
 
 object TypeDefinition extends App with DracoType {
@@ -15,6 +16,7 @@ object TypeDefinition extends App with DracoType {
   implicit lazy val encoder: Encoder[TypeDefinition] = Encoder.instance { x =>
     val fields = Seq(
       Some("typeName" -> x.typeName.asJson),
+      if (x.uses.nonEmpty) Some("uses" -> x.uses.asJson) else None,
       if (!DracoAspect.isEmpty(x.dracoAspect)) Some("dracoAspect" -> x.dracoAspect.asJson) else None,
       if (!DomainAspect.isEmpty(x.domainAspect)) Some("domainAspect" -> x.domainAspect.asJson) else None,
       if (!RuleAspect.isEmpty(x.ruleAspect)) Some("ruleAspect" -> x.ruleAspect.asJson) else None,
@@ -26,16 +28,18 @@ object TypeDefinition extends App with DracoType {
   implicit lazy val decoder: Decoder[TypeDefinition] = Decoder.instance { cursor =>
     for {
       _typeName <- cursor.downField("typeName").as[TypeName]
+      _uses <- cursor.downField("uses").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
       _dracoAspect <- cursor.downField("dracoAspect").as[Option[DracoAspect]].map(_.getOrElse(DracoAspect.Null))
       _domainAspect <- cursor.downField("domainAspect").as[Option[DomainAspect]].map(_.getOrElse(DomainAspect.Null))
       _ruleAspect <- cursor.downField("ruleAspect").as[Option[RuleAspect]].map(_.getOrElse(RuleAspect.Null))
       _actorAspect <- cursor.downField("actorAspect").as[Option[ActorAspect]].map(_.getOrElse(ActorAspect.Null))
       _codecAspect <- cursor.downField("codecAspect").as[Option[CodecAspect]].map(_.getOrElse(CodecAspect.Null))
-    } yield TypeDefinition (_typeName, _dracoAspect, _domainAspect, _ruleAspect, _actorAspect, _codecAspect)
+    } yield TypeDefinition (_typeName, _uses, _dracoAspect, _domainAspect, _ruleAspect, _actorAspect, _codecAspect)
   }
 
   def apply (
     _typeName: => TypeName,
+    _uses: => Seq[TypeName] = Seq.empty,
     _dracoAspect: => DracoAspect = DracoAspect.Null,
     _domainAspect: => DomainAspect = DomainAspect.Null,
     _ruleAspect: => RuleAspect = RuleAspect.Null,
@@ -43,6 +47,7 @@ object TypeDefinition extends App with DracoType {
     _codecAspect: => CodecAspect = CodecAspect.Null
   ) : TypeDefinition = new TypeDefinition {
     override lazy val typeName: TypeName = _typeName
+    override lazy val uses: Seq[TypeName] = _uses
     override lazy val dracoAspect: DracoAspect = _dracoAspect
     override lazy val domainAspect: DomainAspect = _domainAspect
     override lazy val ruleAspect: RuleAspect = _ruleAspect
@@ -53,6 +58,7 @@ object TypeDefinition extends App with DracoType {
 
   lazy val Null: TypeDefinition = apply(
     _typeName = null.asInstanceOf[TypeName],
+    _uses = Seq.empty,
     _dracoAspect = DracoAspect.Null,
     _domainAspect = DomainAspect.Null,
     _ruleAspect = RuleAspect.Null,

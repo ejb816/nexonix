@@ -6,7 +6,7 @@ import io.circe.{Json, JsonObject}
   * Bindings map authored primitive/host names to their qualified identities.
   * The supplied ontology always takes precedence over a binding of the same name.
   */
-final class NameResolution(val ontology: DomainOntology, val bindings: Map[String, TypeName]) {
+final class NameResolution(val ontology: DomainOntology, val bindings: Map[String, TypeName], lenient: Boolean = false) {
   private def identity(n: TypeName): String = (n.namePackage :+ n.name).mkString(".")
   private val names = ontology.kvMap.keys.toSeq.flatMap(d =>
     d.typeDefinition.typeName +: d.typeDictionary.elementTypes.map(_.typeName))
@@ -24,7 +24,10 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
       bindings.get(text).map(identity).orElse {
         val qualified = bindings.values.map(identity).filter(_ == text).toSet
         qualified.headOption
-      }.getOrElse(throw new IllegalArgumentException(s"Unknown type '$text' in the supplied ontology and bindings"))
+      }.getOrElse(
+        // A RECORDED scope (built from a definition's own `uses`) knows only what the record
+        // names; every other leaf is the author's business and passes as written.
+        if (lenient) text else throw new IllegalArgumentException(s"Unknown type '$text' in the supplied ontology and bindings"))
     }
   })
 
@@ -46,11 +49,38 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
 
   /** Resolve from either carrier. compactJson is the ontology-scoped JSON spelling;
     * resolved identities remain available internally and are never inferred from paths. */
-  def read(json: Json): TypeDefinition =
-    TypeDefinition.decoder.decodeJson(rewrite(json, (_, full, _) => full)).fold(throw _, x => x)
+  def read(json: Json): TypeDefinition = {
+    // The record is VALIDATED against the ontology on every scoped read (Dev, 2026-10-21): an
+    // entry the ontology does not define is an error, as an unknown name is.
+    json.hcursor.downField("uses").as[Option[Seq[TypeName]]].toOption.flatten.getOrElse(Seq.empty).foreach { tn =>
+      require(ontological(identity(tn)), s"uses names '${identity(tn)}', which the supplied ontology does not define")
+    }
+    // A RESOLVED definition carries no record: every name is in full, so the record is the
+    // compact form's artifact and compact recomputes it.
+    TypeDefinition.decoder.decodeJson(rewrite(json.mapObject(_.remove("uses")), (_, full, _) => full)).fold(throw _, x => x)
+  }
   def resolve(td: TypeDefinition): TypeDefinition = read(TypeDefinition.encoder(td))
-  def compactJson(td: TypeDefinition): Json =
-    rewrite(TypeDefinition.encoder(resolve(td)), (_, full, local) => short(full, local))
+  /** The compact form WRITES the resolution record (Dev, 2026-10-21): `uses` lists every
+    * identity of the ontology that a body names by its short form, other than the definition's
+    * own package, sorted; a definition that spells everything in full carries none. */
+  def compactJson(td: TypeDefinition): Json = {
+    val resolved = resolve(td)
+    val own = resolved.typeName.namePackage
+    val shortened = scala.collection.mutable.Set.empty[String]
+    val compact = rewrite(TypeDefinition.encoder(resolved), (_, full, local) => {
+      val s = short(full, local)
+      if (s != full && ontological(full) && full.take(full.lastIndexOf('.')).split('.').toSeq != own) shortened += full
+      s
+    })
+    val record = shortened.toSeq.sorted.map { full => val parts = full.split('.').toSeq; TypeName(parts.last, parts.dropRight(1)) }
+    compact.mapObject { o =>
+      val without = o.remove("uses")
+      if (record.isEmpty) without
+      else JsonObject.fromIterable(without.toIterable.toSeq.flatMap { case (k, v) =>
+        // `uses` sits after `typeName`, where the carrier's field order puts it.
+        if (k == "typeName") Seq(k -> v, "uses" -> Json.fromValues(record.map(TypeName.encoder(_)))) else Seq(k -> v) })
+    }
+  }
   def compact(td: TypeDefinition): TypeDefinition =
     TypeDefinition.decoder.decodeJson(compactJson(td)).fold(throw _, x => x)
 
@@ -230,5 +260,19 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
       if (lines.startsWith("package ") && end >= 0) lines.take(end + 1) + "\n" + imports + "\n" + lines.drop(end + 1)
       else imports + "\n\n" + lines
     }
+  }
+}
+
+object NameResolution {
+  /** The scope a definition carries in itself (2026-10-21): its `uses` record as the whole
+    * ontology — one placeholder domain per package, holding the names — no bindings, and lenient,
+    * so every leaf the record does not name passes as the author wrote it. An unscoped reader
+    * resolves the file from this alone; the ontology is needed only to author and validate it. */
+  def recorded(td: TypeDefinition): NameResolution = {
+    val domains: Seq[DomainType] = td.uses.groupBy(_.namePackage).toSeq.sortBy(_._1.mkString(".")).map { case (pkg, names) =>
+      val anchor = TypeName("", pkg)
+      Domain[Any](TypeDefinition(anchor, _domainAspect = DomainAspect(anchor, names.map(_.name))))
+    }
+    new NameResolution(DomainOntology(domains), Map.empty, lenient = true)
   }
 }

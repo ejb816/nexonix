@@ -52,7 +52,11 @@ object DracoGenerator extends App {
     // A loaded definition is read under the engine's own conventions; the scope in effect
     // only qualifies what those cannot read. A name the scope does not know leaves the
     // definition as loaded, which is what the unscoped engine always read.
-    scopeInEffect.value.fold(td)(s => try canonical(s, td)._1 catch { case _: IllegalArgumentException => td })
+    scopeInEffect.value match {
+      case Some(s) => try canonical(s, td)._1 catch { case _: IllegalArgumentException => td }
+      case None if td.uses.nonEmpty => val r = NameResolution.recorded(td); r.minimal(td, readable(td, r))._1
+      case None => td
+    }
   }
 
   /** The CANONICAL spelling of a definition for this engine (2026-10-21): its compact form —
@@ -2242,7 +2246,8 @@ object DracoGenerator extends App {
                          td.actorAspect.messageType,
                          targetBody(td.actorAspect.signal).asInstanceOf[Action],
                          targetBody(td.actorAspect.start).asInstanceOf[Action]),
-      _codecAspect  = td.codecAspect
+      _codecAspect  = td.codecAspect,
+      _uses         = td.uses
     )
   }
 
@@ -2253,12 +2258,12 @@ object DracoGenerator extends App {
     * a resolvable name, so a resolved definition and its compact form generate identically. */
   def generate(td: TypeDefinition, scope: NameResolution): String = scopeInEffect.withValue(Some(scope)) {
     val (spelled, qualified) = canonical(scope, td)
-    scope.projectScala(generate(spelled), shortenable(td, qualified))
+    scope.projectScala(generateSpelled(spelled), shortenable(td, qualified))
   }
 
   def generate(definitions: Seq[TypeDefinition], scope: NameResolution): String = scopeInEffect.withValue(Some(scope)) {
     val spelled = definitions.map(td => (td, canonical(scope, td)))
-    scope.projectScala(generate(spelled.map(_._2._1)), spelled.flatMap { case (td, (_, q)) => shortenable(td, q) }.toSet)
+    scope.projectScala(generateSpelled(spelled.map(_._2._1)), spelled.flatMap { case (td, (_, q)) => shortenable(td, q) }.toSet)
   }
 
   /** The qualified identities the Scala text may shorten: not one whose bare name a host class
@@ -2266,7 +2271,19 @@ object DracoGenerator extends App {
   private def shortenable (td: TypeDefinition, qualified: Set[String]) : Set[String] =
     qualified.filterNot(full => shadowedByHost(td, full.drop(full.lastIndexOf('.') + 1)))
 
-  def generate (_td: TypeDefinition) : String = {
+  /** UNSCOPED generation (2026-10-21): a definition that carries a resolution record is spelled
+    * through the scope the record gives — the identities its bodies name short — and shortened
+    * back by import, exactly as a scoped generation would spell it; the ontology is needed only
+    * to author the record. A definition with no record generates as it always did. */
+  def generate (td: TypeDefinition) : String =
+    if (td.uses.isEmpty) generateSpelled(td)
+    else {
+      val scope = NameResolution.recorded(td)
+      val (spelled, qualified) = scope.minimal(td, readable(td, scope))
+      scope.projectScala(generateSpelled(spelled), shortenable(td, qualified))
+    }
+
+  private def generateSpelled (_td: TypeDefinition) : String = {
     // Uniform root meaning: an absent derivation on a loaded definition MEANS
     // derives-the-root (TypeLoader.rooted; the root itself and true stubs are
     // exempt at the load boundary). Rooting at the generate entry makes emission
@@ -2353,7 +2370,20 @@ object DracoGenerator extends App {
     source.stripPrefix("\n")
   }
 
-  def generate (_typeDefinitions: Seq[TypeDefinition]) : String = {
+  def generate (definitions: Seq[TypeDefinition]) : String =
+    if (definitions.forall(_.uses.isEmpty)) generateSpelled(definitions)
+    else {
+      val spelled = definitions.map { td =>
+        val scope = NameResolution.recorded(td)
+        val (sp, q) = scope.minimal(td, readable(td, scope))
+        (sp, shortenable(td, q), scope)
+      }
+      // One file, several records: the union scope shortens what any member recorded.
+      val union = NameResolution.recorded(TypeDefinition(definitions.head.typeName, _uses = definitions.flatMap(_.uses).distinct))
+      union.projectScala(generateSpelled(spelled.map(_._1)), spelled.flatMap(_._2).toSet)
+    }
+
+  private def generateSpelled (_typeDefinitions: Seq[TypeDefinition]) : String = {
     // Same two entry-boundary normalizations as the single-type overload. Applying
     // `targetTypes` here as well as there double-applies it on the size-1 path below,
     // which is harmless: a translated expression carries no brace, so the second pass
