@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+Documentation checkpoint (2026-10-22): journal chapters 100–104 preserve the Claude Code session from the
+Codex handoff through Dev's close request with a bounded transcript audit; the introduction, DRACO.md,
+README.md, the handoff and the resumption prompt record the verified 849 / 60 baseline at 7b1bfea and the
+open presence proposal for either agent.
+
 Formals and actuals (2026-10-21; Dev verified 849 tests / 60 suites on 2026-10-22, every headline unchanged): a definition's header formals are TypeParameter records in
 `DracoAspect.typeParameters`, its own name is bare, and a TypeName's parameters are a reference's actual
 arguments; the drake surface and the generated Scala are unchanged, and the 23 parameterized trios are

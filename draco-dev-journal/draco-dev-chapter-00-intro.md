@@ -550,3 +550,23 @@ Dev challenges the lack of follow-through. The priority-label reading is correct
 ### [Chapter 99 - Ontology-Scoped Names and the Next Handoff](draco-dev-chapter-99.md)
 
 Dev prioritizes short names and accepts explicit ontology scope, local binding precedence and primitive/host vocabulary. Scoped parsing and generation land at b17ddb8, verified 835/58. Two-stage bootstrap loading is proposed but not accepted before the handoff request.
+
+### [Chapter 100 - Receiving the Codex Handoff and Two-Stage Loading](draco-dev-chapter-100.md)
+
+Claude receives the Codex handoff, measures the two-stage loading proposal with a read-only probe and restates it; Dev accepts, and DomainBuilder.identities and DomainBuilder.load land at b95419c, verified 839/59. The probe's two captures — the host Unit and CLI's bare Drake.emit — become the next design point.
+
+### [Chapter 101 - The Unit Type and the Host Vocabulary](draco-dev-chapter-101.md)
+
+The unit type becomes the empty Objective `()` and the corpus is re-authored (7d5de4f, 840/59); Dev remarks that development is beyond what could proceed without agents; the Scala target's host vocabulary becomes the definition-backed HostBindings with Local listed in Draco (44a5005, 845/59).
+
+### [Chapter 102 - Shortening the Dracon Referrers and the Resolution Record](draco-dev-chapter-102.md)
+
+Seventeen bodies go compact with anchors qualified, which forces scoped generation to canonicalize instead of resolve (0b8fc03, three gate runs); a definition then carries its `uses` record so an unscoped reader resolves the file from itself (773b6d9, 849/60).
+
+### [Chapter 103 - Sweeping the Canonical Corpus](draco-dev-chapter-103.md)
+
+Every remaining main, dreams and service definition is compacted with its record in one pass; the compact form learns to keep host leaves as authored, shorten only unambiguous names and spell anchor parameters by the anchor convention. Committed as d279709, verified 849/60.
+
+### [Chapter 104 - Formals in the Aspect, and the Close](draco-dev-chapter-104.md)
+
+Header formals become TypeParameter records in DracoAspect and a definition's name is bare (7b1bfea, 849/60), closing #51's open questions. The presence design point — Presence-typed role slots for present-empty rules and actors — is put to Dev, who closes the session with it open.

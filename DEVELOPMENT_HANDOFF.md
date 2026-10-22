@@ -1,189 +1,143 @@
 # Development Handoff
 
-Updated October 21, 2026 by Codex for a new task in **either Codex or Claude Code**.
+Updated October 22, 2026 by Claude Code for a new task in **either Codex or Claude Code**.
 This is the current checkpoint; the journal and git records preserve historical checkpoints.
 Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **d279709** (the corpus
-  sweep, committed and pushed by Dev at the verified 849 / 60 gate). The tree now carries the
-  UNCOMMITTED formal/actual increment, 38 files: the DracoAspect, TypeLoader and DracoAspectOf trios,
-  the 23 parameterized trios re-parsed (JSON only), `src/mods/scala/draco/{Drake,NameResolution,
-  DracoGenerator}.scala`, `src/main/resources/draco/drake.dlt`, five test suites with moved pins
-  (DrakeParseTest, NameResolutionTest, DracoAspectTest, SelfDeclarationRulesTest, and the DrakeParseTest
-  round-trip helper), DRACO.md, README.md, CHANGELOG.md, this file and record `git-record-2026-10-21-2300`
-  Do not discard it until committed. Dev's full gate on it (October 22, first run) passed **849 / 60**,
-  zero failed/canceled/ignored/pending tests, zero aborted suites, every headline unchanged, pending mods
-  actors 0; every discovered suite had passed 849 / 849 on compiled classes and the whole tree compiles.
-  The previous increment, as committed, carried 126 files: 55 compacted JSON and 50 re-emitted drake surfaces under
-  `src/main/resources/draco` and `src/mods/resources/draco/{dreams,service}`, 11 regenerated definition-backed Scala files
-  (host imports gained at 0b8fc03 revert; Decoder, Encoder and Generated spelled in full where shadowed;
-  HostBindings with two corrected bindings),
-  `src/mods/scala/draco/{NameResolution,DracoGenerator}.scala`, `ResolutionRecordTest`, `GenDrakeTest` and
-  `DomainLineTest` (its bootstrap-spelling pins moved after Dev's first gate, 848 / 849),
-  DRACO.md, README.md, CHANGELOG.md, this file and record `git-record-2026-10-21-2230`. Do not discard it
-  until committed. Dev's second full gate on it (October 21) passed **849 / 60**, zero
-  failed/canceled/ignored/pending tests, zero aborted suites, every headline unchanged, pending mods
-  actors 0 (the first failed one DomainLineTest pin); a 31-suite compiled-class probe had passed 775 / 775
-  from a clean restore, the whole tree compiles, and unscoped, scoped and pinned generation agree on all 134
-  definitions. The previous increment, as committed: the TypeDefinition and TypeLoader trios (`uses`),
-  `src/mods/scala/draco/{Drake,NameResolution,DracoGenerator}.scala`, the seventeen swept trios
-  re-swept with their records, `src/main/resources/draco/drake.dlt`, the new
-  `src/test/scala/draco/ResolutionRecordTest.scala`, DRACO.md, README.md, CHANGELOG.md, this file and
-  record `git-record-2026-10-21-2130`. Do not discard it until committed. Dev's full gate on it (October
-  21, first run) passed **849 / 60**, zero failed/canceled/ignored/pending tests, zero aborted suites, every
-  headline unchanged, pending mods actors 0; a 29-suite compiled-class probe had passed 766 / 766, the whole
-  tree compiles, and unscoped CLI generation of swept files and their referrers equals the pinned Scala. The previous increment, as committed, carried 88 files: seventeen swept trios under
-  `src/main/resources/draco` (JSON bodies compact, drake re-emitted, Scala regenerated), 35 regenerated
-  Scala files in all (25 main, the ten staged dreams/service files), `src/mods/scala/draco/{NameResolution,
-  DracoGenerator}.scala`, `src/main/resources/draco/drake.dlt`, the new `src/test/scala/draco/CanonicalScope.scala`,
-  ten scoped test suites (PrimesRulesTest writes its generation into src/main and overwrote three
-  regenerated files on Dev's first gate, 842 / 845; now scoped), HostBindings with Integer, System and
-  Enumeration bound bare, DRACO.md, README.md, CHANGELOG.md, this file and record
-  `git-record-2026-10-21-2000`. Do not discard it until committed. Dev's third full gate on it (October
-  21) passed **845 / 59**, zero failed/canceled/ignored/pending tests, zero aborted suites, every
-  headline unchanged, pending mods actors 0 (the first failed three primes rules overwritten by the
-  unscoped PrimesRulesTest, the second failed to compile on a helper reference); a 29-suite
-  compiled-class probe had passed 770 / 770 and the whole main and mods tree compiles.
-  The previous increment, as committed, was: `src/main/resources/draco/scalatarget/HostBindings.{drake,json}` and
-  `src/main/scala/draco/scalatarget/HostBindings.scala` (new trio), Draco and ScalaTarget trios
-  (member lists), `src/test/scala/draco/DomainLoadingTest.scala`, `src/test/scala/draco/format/dracon/DraconTest.scala`
-  (its pinned ScalaTarget member list now names HostBindings; Dev's first gate failed on it, 844 / 845),
-  DRACO.md (table rows moved),
-  README.md, CHANGELOG.md, this file and record `git-record-2026-10-21-1915` (gate line a
-  placeholder until Dev's run). Do not discard it. The previous increment, as committed, was: `src/mods/scala/draco/{Drake,DracoGenerator,AssemblyValidator}.scala`,
-  `src/main/scala/draco/CLI.scala` (regenerated), twelve re-authored drake sources with their JSON
-  and seven JSON-only example definitions (36 files in status), `src/main/resources/draco/drake.dlt`,
-  `src/test/scala/draco/{DrakeParseTest,DomainLoadingTest}.scala`, DRACO.md, README.md,
-  CHANGELOG.md, this file and record `git-record-2026-10-21-1830` (gate line a placeholder until
-  Dev's run). Do not discard it.
-- Latest verified code baseline: **845 tests / 59 suites**, Dev's October 21 second full gate on the
-  host-vocabulary increment, zero failed/canceled/ignored/pending tests, zero aborted suites, parse
-  scope 110 + 10, one loss across 120, aspect sections 110, GenDrake 108 of 108, every other headline
-  unchanged, pending mods actors 0 (the first run failed DraconTest's pinned member list, corrected).
-- Before it, **840 tests / 59 suites**, Dev's October 21 second full gate on the unit-type increment, zero failed/canceled/ignored/pending tests, zero aborted suites, every
-  report-only headline unchanged, pending mods actors 0. The first run had failed the two assembly
-  suites (AssemblyValidator read the consumer arrow's result as the string `Unit`); fixed before the
-  second. Before it, 839 / 59 at b95419c and 835 / 58 at b17ddb8.
-- Dev ACCEPTED on October 21, after the loader landed, the unit type as the empty Objective `()`,
-  rendering `Unit` in Scala, the corpus re-authored and Base's `Unit` kept. Built as accepted.
+- Observed branch: `main`, HEAD **7b1bfea**, clean and aligned with `origin/main`; Dev's pasted
+  October 22 output confirms commit and push. This handoff adds documentation only, still
+  uncommitted when written: journal chapters 100–104, their source extract and audit, the
+  introduction's index, DRACO.md, README.md, CHANGELOG.md, this file, DEVELOPMENT_RESUME_PROMPT.md
+  and record `git-record-2026-10-22-0730`. If Dev commits it, expect HEAD after 7b1bfea. Inspect
+  status; do not assume a clean tree or discard pending documentation.
+- Latest verified code baseline: **849 tests / 60 suites**, Dev's October 22 full sbt gate on
+  7b1bfea, zero failed/canceled/ignored/pending tests, zero aborted suites, every report-only
+  headline as the DRACO.md table states, pending mods actors 0. No runtime changes since.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
-  compiler/projection probes have been used, but do not replace Dev's full gate.
-- One design point per reply; one recommendation with accept-or-correct; build only what
-  Dev accepts. After each completed increment, reconnect to the next existing priority.
+  compiler/projection probes have been used (overlay the current resources on a copy of the
+  compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
+  recompiled test suites on the scalatest Runner's runpath rather than the classpath); they do
+  not replace Dev's full gate, and they missed suites more than once this session — run every
+  discovered suite, with the test resources on the loader's roots, before handing over a gate.
+- One design point per reply; one recommendation with accept-or-correct; build only what Dev
+  accepts. After each verified commit, bring the next design point tied to the existing work.
 - New GitHub issues require explicit approval every time. None created or modified here.
-- Shared project documentation is the cross-agent memory. No private Claude/Codex memory
-  is required or overwritten. The copyable prompt is in DEVELOPMENT_RESUME_PROMPT.md.
+- Shared project documentation is the cross-agent memory. No private Claude/Codex memory is
+  required or overwritten. The copyable prompt is in DEVELOPMENT_RESUME_PROMPT.md.
 
-## Next action
+## First action in the new session
 
-After Dev's commit of the formal/actual increment: #51's open questions are closed — short
-names resolve through an explicit ontology, files carry their records, host names are the target's
-declared vocabulary, and formals and actuals live in their own slots. Remaining items, none yet put to
-Dev: the example domains (48 definitions outside the canonical ontology, report-only, 20 of 48 drifted);
-the two authored-ahead surfaces (BodyElement, ActorAspect); and the deferred proposals DRACO.md lists
-(activation, .dcon). Journal chapter 100 is written from this session's record at its closing handoff.
-One recommendation.
+Read DRACO.md, the shared documentation skill, this checkpoint, chapter 104 and its audit.
+Inspect git status/log. Restate the **unaccepted** presence proposal below with your own reading
+and ask Dev to accept or correct it before building. Dev closed the previous session with it open;
+closing is not acceptance.
 
-## Completed in this session
+The open proposal (Claude, October 22): drake.dlt marks `rule` and `actor` presence-significant
+and facet-creating — writing the head, even empty, says the type is a rule or an actor, and the
+JSON must carry the key with an empty value — and `Drake.parse` honors it (a `rule` head sets the
+role), but the generated TypeDefinition codec elides an empty RuleAspect or ActorAspect, so a
+present-empty role is lost through the carrier. Recommended: the two role slots in `Aspects`
+become Presence-typed (`ruleAspect`, `actorAspect` as `Presence` of their aspect), Present
+emitted even when empty, Absent omitted; about 78 readers across the engine, the dreams rules and
+the tests move from an emptiness test to a presence fold. With it, the two authored-ahead surfaces
+(`draco/BodyElement.drake`, `draco/ActorAspect.drake`, frozen since 2026-09-28 with present-empty
+`rule`/`actor` heads, a three-line host lambda, an explicit factory name and a different element
+order) re-canonicalize as the plain types they are, their JSON catches up (closing the last
+surface loss, `ActorAspect => Boolean`), the frozen baselines under
+`src/test/resources/draco/draketarget/draco-aspect-baseline/` and the exclusions in DrakeGenTest,
+DrakeParseTest and DracoAspectTest go, and the presence behavior moves into a round-trip test.
+The alternative is to re-canonicalize the two files without touching the carrier, closing every
+gate residue but leaving the spec's presence principle unimplemented for roles.
+
+Code to inspect: `src/main/resources/draco/Aspects.drake` and `TypeDefinition.drake` (the slots
+and the generated codec's elision), `src/mods/scala/draco/Drake.scala` (`isRule`/`isActor` flags
+in `parseDefinition`), `src/mods/scala/draco/DracoGenerator.scala` (`isRule`, `isActor`,
+`hasActorBehavior`, `roleAspectCount`), `src/mods/resources/draco/dreams/editor/*.drake` (readers
+of `ruleAspect`), the two authored-ahead files and the baseline README.
+
+## Completed in the previous session (Claude Code, October 21–22)
 
 | Commit | Increment | Dev's full gate |
 |---|---|---|
-| 9185f1a | Generate/Generated and executable transform bindings | 782 / 55 |
-| db7e7a8 | Dracon wrapper/format, Encoder and Decoder, Circe adapters | 804 / 56 |
-| d169b0e | Core definition trees use Dracon; explicit payload codecs | 809 / 56 |
-| f97c913 | Payload declarations belong to the owning CodecAspect | 815 / 56 |
-| a13ad38 | Structured method TypeParameter records, ten migrated declarations | 825 / 57 |
-| b17ddb8 | Explicit ontology-scoped resolution and binding vocabulary | 835 / 58 |
+| b95419c | Two-stage loading: `DomainBuilder.identities` / `load` | 839 / 59 |
+| 7d5de4f | The unit type is the empty Objective `()` | 840 / 59 (second run) |
+| 44a5005 | `draco.scalatarget.HostBindings`; Local listed in Draco | 845 / 59 (second run) |
+| 0b8fc03 | Seventeen Dracon referrers compact; canonical scoped generation | 845 / 59 (third run) |
+| 773b6d9 | The resolution record, `uses` | 849 / 60 |
+| d279709 | The canonical corpus swept | 849 / 60 (second run) |
+| 7b1bfea | Formals in `DracoAspect.typeParameters`; TypeName actuals only | 849 / 60 |
 
-All six commits and pushes were performed by Dev, with results preserved in the transcript
-extract. Chapter 95 starts at a3d2d35, the documentation commit after chapter 94's code baseline.
+All seven commits and pushes were performed by Dev, with results preserved in the transcript
+extract. Chapters 100–104 cover them; chapter 99 ends with the Codex handoff this session received.
 
 Durable contracts:
 
-- Generate names a held domain and transform, answers through the Response consumer with
-  Generated carrying one Emission per definition. Factory-supplied executable bindings must
-  match held definitions. Fresh session; Problems on refusal; no writes or activation.
-- Dracon replaces draco.format.json.JSON as combined wrapper/format. Encoder(T): T -> Dracon;
-  Decoder(T): Dracon -> Presence(T). Circe implementation belongs at the wrapper/target boundary.
-  The proposed separate six-form value family was not accepted.
-- Core value/valueType/derivation/argument trees use Dracon. CodecAspect.payload names fields
-  whose Dracon values (or sequence elements) serialize directly, preserving raw JSON payloads.
-  Ordinary Dracon wrapper encoding remains distinct. The generator's field allowlist is gone.
-- Dynamic.typeParameters contains TypeParameter records with name and Dracon upper/lower
-  bounds; absent bounds are Null. Method names contain no generic target syntax. TypeName's
-  existing header/actual argument representation has not been split.
-- NameResolution receives DomainOntology and primitive/host bindings explicitly. Lookup:
-  local self/formals first, unique ontology identity second, explicit bindings last. Unknown
-  or ambiguous names fail; dotted names also require an exact known identity. Existing type
-  operators recurse. Definition/domain anchors stay qualified. Quoted and host-opaque spans
-  are preserved; structured symbolic leaves respect local binders.
-- Scoped Drake parse/emit, JSON read/compact and Scala generate are implemented. Scala adds
-  selective imports with collision checks. Dreams Generate uses its held ontology and the
-  TransformBinding.nameBindings pairs; duplicates fail before execution. GenDrake receives
-  the scope through its fresh session. Standalone legacy sessions retain unscoped emission.
-- Repository bootstrap files remain qualified; there has been **no bulk shortening**. No
-  Haskell generator was implemented. Imports discussed in the transcript are illustrative.
+- `DomainBuilder.identities(declarations, path)` composes the identity-only ontology of declared
+  domains from anchors alone; `DomainBuilder.load(declarations, bindings, path)` resolves every body
+  through NameResolution over it. Nothing is discovered; the companions load unscoped.
+- The unit type is the empty Objective `()`, spelled `Unit` by the Scala target; no host leaf names it.
+- `HostBindings` declares the Scala target's host vocabulary as `[(Text, TypeName)]` pairs, supplied
+  explicitly to `load` and to Generate; JDK-implicit names are bound bare; the hand-written engine
+  objects (DracoGenerator, Drake, NameResolution, Generated) are engine bindings.
+- Scoped generation CANONICALIZES: compact, then qualified only where the engine cannot read a bare
+  name (`DracoGenerator.readable`), then shortened back by selective import; the output does not
+  depend on the author's spelling. The compact form keeps host leaves as authored, shortens only
+  names unique across ontology and vocabulary (draco.rete wraps stay bare), keeps nominal anchors in
+  full and spells anchor parameters own-package bare, else full.
+- A definition carries `uses`, its resolution record, written by compact, validated on every scoped
+  read, dropped by resolution; `NameResolution.recorded(td)` is the lenient scope a file carries in
+  itself; the engine reads it only during a generation. Unscoped, scoped and pinned generation
+  agree on every definition of the canonical corpus (ResolutionRecordTest pins it).
+- The canonical corpus is swept: every main definition but BodyElement and ActorAspect, and the
+  staged dreams and service definitions, carry compact bodies; the example domains are not swept.
+- A definition's header formals are `TypeParameter` records in `DracoAspect.typeParameters`; its own
+  TypeName is bare; a TypeName's parameters are a reference's actuals. Rebuild sites that carry the
+  slot: `TypeLoader.rooted`, the generator's `targetTypes` and family merge.
+- The test suites that generate corpus Scala supply `CanonicalScope.scope` (a test helper) explicitly;
+  PrimesRulesTest writes its generation into src/main and is scoped for that reason.
 
 ## Verification and lessons
 
-| Headline | Verified value |
+| Headline | Verified value (7b1bfea) |
 |---|---|
-| DomainAspect | 109 complete, 1 parameterized included, 0 skipped |
-| GenDrake | 107/107, 0 missing, 0 extra |
+| DomainAspect | 110 complete, 1 parameterized included, 0 skipped |
+| DracoAspect | 110 complete, 2 frozen authored-ahead baselines, 0 skipped |
+| GenDrake | 108/108, 0 missing, 0 extra |
 | Example-domain generation | 28 match, 20 differ, 0 error, 0 missing / 48 |
-| Surface losses | 1 across 119 types, ActorAspect type form |
-| Parse scope | 109 draco + 10 mods, 0 held back |
-| DracoAspect | 109 complete, 2 frozen authored-ahead baselines, 0 skipped |
+| Surface losses | 1 across 120 types, ActorAspect type form |
+| Parse scope | 110 draco + 10 mods, 0 held back |
 | PON / canonical | 80 numbers, 550 expressions, 42 discrepancies / 7 differ |
 | Scenario | 23 files, all clean |
 | Forest | 1 of 2 ash alarms crossed to birch |
 | Subtype visibility | CO-DECLARATION DROPS THE FACT |
 | Pending mods actors | 0, file-only DrakeGenTest.log |
 
-Final direct compiled probe also passed 835, with 59 suites including Runner discovery
-versus sbt's 58. Earlier probe harness failures are not erased: missing test resources caused
-three scenario failures and two PON cancellations; restored resources yielded the final full
-pass. An integration fixture omitted Format, Dracon's parent; supplying both fixed it without
-weakening validation. The final passing probe includes the local-value/import collision guard.
-Earlier wrapper/core probes hit sandbox socket failures; separate permitted loopback runs and
-Dev's complete gates subsequently passed. See chapter Status notes and per-commit records.
-
-DrakeCLI retains known ActorAspect/BodyElement authored-ahead differences (surface 2, JSON 1);
-Editor check was 0/0. Probe directories were removed before Dev's gate. This documentation pass
-needs no sbt rerun. Check whitespace, source hashes, chapter links/index and shared symlinks.
-Dev's shell does not have rg; use grep in handed-over commands. Never edit generated main Scala
-alone: regenerate the trios. Every val in an App object must be lazy.
+Lessons the session paid for, each in its record: the §6 rebuild rule bit three times (`TypeLoader.rooted`
+and the generator's rebuilds silently dropped `uses`, then `typeParameters`; compile the regenerated
+loader BEFORE regenerating the corpus); the engine keys decisions on bare spellings, so scoped generation
+must canonicalize rather than resolve; the engine's loader must apply a record only during generation or
+DomainBuilder and the companions disagree; a `git checkout` of a directory holding uncommitted edits
+reverts them — restore specific files; a probe that omits a suite or the test resources from the loader's
+roots misses what Dev's gate finds.
 
 ## Deferred work and priority context
 
-- #51 is the active continuation: context-independent type expressions/vocabulary. Its
-  priority-next label referred to the August derivation edge, already completed; the label
-  did not approve all old proposals. Reconcile issue prose against current code and Dev's words.
-- Before the ontology detour, Codex proposed placing type-level formal declarations in the
-  owning DracoAspect while TypeName carries actual arguments. **Not accepted.** Return to it
-  only after the short-name work, one point at a time.
-- Activation: Dev explicitly deferred the proposal to start an explicit Assembly of held actor
-  definitions using factory-supplied executable constructors matched to them. **Not accepted.**
-- .dcon extension migration deferred until wrapper work; no acceptance of migration yet.
-- #43 broader codec-aspect emission and #12 Dreams remain context, not new authorizations.
-  Inferred derivation is later work. Membership reciprocity was surfaced, not filed.
-- Persistence belongs to the consuming project. ZeroMQ protocol choices remain provisional;
-  transport work is independent of this bootstrap design.
+- The presence proposal above is the next design point, unaccepted.
+- The 48 example domains under `src/mods/resources/domains` are outside the canonical ontology,
+  report-only (28 match / 20 differ) and unswept; whether they join under their own declared ontology
+  is an open question, not put to Dev.
+- Activation (an explicitly supplied Assembly of held actor definitions with factory-supplied
+  executable constructors) and the `.dcon` extension remain deferred; no Haskell target exists.
+- #43 broader codec-aspect emission, #12 Dreams, inferred derivation and membership reciprocity remain
+  context, not authorizations. Persistence belongs to the consuming project; ZeroMQ choices are provisional.
 
 ## Documentary coverage and gaps
 
-Chapters **95–99** cover this session through Dev's October 21 handoff request, after chapter
-94's Claude session. Audit: `draco-dev-journal/sources/codex-2026-10-15-to-21-audit.md`.
-The extract contains 71 originals: 36 user messages, 35 final replies, 35 complete exchanges
-plus the open request. All 12 responsive results are summarized in chapters and retained in
-full in the extract. Three observed compactions retain originals on both sides; this is bounded
-recoverability, not a claim of complete historical capture. This documentation pass's final
-reply is outside the boundary and can be recovered by the next documentation pass.
-
-Chapter 94's 39 originals and quotations were rechecked; its historical Status is preserved.
-Claude's previously out-of-bound closing reply is now preserved in a separate one-record
-bridge extract. The missing f4336a4 gate paste in chapter 94 remains a disclosed older gap.
-Both documentation sync markers advance to 99 after reconciliation. Historical git-record
-statements about chapter-94 coverage remain historical; do not rewrite prior commit records.
+Chapters **100–104** cover the Claude Code session from the Codex handoff through Dev's close request,
+with audit `draco-dev-journal/sources/claude-2026-10-21-to-22-audit.md`: 55 original records, 28 user
+messages (11 assertive, 17 responsive), 27 final replies, 27 complete exchanges plus the open close
+request. No compaction was observed in the frozen prefix; the reply completing this documentation pass is
+outside it and can be recovered by the next pass. Chapters 95–99 (Codex) and 94 (Claude) keep their
+historical Status sections. Both documentation sync markers advance to 104 after reconciliation.

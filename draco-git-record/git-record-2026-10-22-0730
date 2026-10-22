@@ -1,0 +1,33 @@
+Preserve chapters 100–104 and prepare a shared Claude Code or Codex handoff
+
+Dev asked to close the session here: prepare the handoff, write journal chapter 100 from the
+session's record, and leave the presence decision open for the next session. Observe clean main at
+7b1bfea; Dev's pasted output confirms commit and push. Preserve the verified 849 tests / 60 suites
+baseline from his October 22 full gate, every report-only figure as the table states and pending
+mods actors zero. No runtime files change.
+
+Recover the original Claude Code session records through the close request, not compaction
+replacement histories (none were observed): 55 messages, 28 user (11 assertive, 17 responsive
+command results) and 27 final replies, 27 complete exchanges plus the open request, in a bounded
+extract with source line, uuid, UTC time and text hash and a frozen-prefix hash. The eleven
+increments fall into five chapters: 100 (the handoff and two-stage loading), 101 (the unit type and
+the host vocabulary), 102 (the Dracon referrers and the resolution record), 103 (the corpus sweep),
+104 (formals in the aspect and the close). Assertive prompts and final replies are verbatim; the
+seventeen pasted results are folded into delegated-action notes with their figures; failed gates,
+corrections and the mid-increment restore that reverted engine edits are retained, not smoothed.
+
+Update the introduction's index to 104 chapters, reconcile DRACO.md and README.md against the code
+and advance both documentation-sync markers to 104. Replace the handoff checkpoint with one current
+cross-agent checkpoint — the seven commits, the durable contracts, the headlines, the probe lessons
+and the open presence proposal — and the resumption prompt for either agent.
+
+The presence proposal remains unaccepted: Presence-typed role slots so a present-empty rule or actor
+survives the carrier, the two authored-ahead surfaces re-canonicalized, their exhibit moved into a
+round-trip test. Activation and .dcon remain deferred; the example domains remain unswept.
+
+Validation: original source records, timestamps and hashes checked; dialogue and delegated results
+checked against the extract; chapter links, index and sync markers checked; git diff --check and the
+shared symlink checker pass. Documentation only; no sbt rerun is needed. This handoff's final reply
+is outside the frozen extract and remains for a later documentation pass.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

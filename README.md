@@ -818,14 +818,16 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 99: explicit generation, Dracon and payload-codec ownership,
-structured method formals, and ontology-scoped names. The [latest retrieval audit](draco-dev-journal/sources/codex-2026-10-15-to-21-audit.md)
-preserves 35 complete Codex exchanges plus the open handoff request, and separately recovers
-Claude's closing reply after chapter 94's old boundary. Historical Status sections remain intact.
-The code checkpoint is b17ddb8, committed and pushed by Dev on October 21, with the verified
-835 tests / 58 suites baseline. The next two-stage bootstrap-loading proposal is unaccepted;
-repository bootstrap files remain qualified. [The resumption prompt](DEVELOPMENT_RESUME_PROMPT.md)
-and [handoff](DEVELOPMENT_HANDOFF.md) are shared by Codex and Claude Code. The following
+Journal coverage reaches chapter 104: two-stage loading, the unit type, the host vocabulary,
+the shortened corpus with its resolution records, and formals in the aspect. The
+[latest retrieval audit](draco-dev-journal/sources/claude-2026-10-21-to-22-audit.md) preserves 27
+complete Claude Code exchanges plus the open close request; the
+[Codex audit before it](draco-dev-journal/sources/codex-2026-10-15-to-21-audit.md) preserves 35.
+Historical Status sections remain intact. The code checkpoint is 7b1bfea, committed and pushed by
+Dev on October 22, with the verified 849 tests / 60 suites baseline. The next design point —
+Presence-typed role slots for the present-empty roles the spec defines — is open and unaccepted.
+[The resumption prompt](DEVELOPMENT_RESUME_PROMPT.md) and [handoff](DEVELOPMENT_HANDOFF.md) are
+shared by Codex and Claude Code. The following
 paragraphs retain the earlier development chronology. The bridge's historical full run passed
 685 tests / 49 suites; the Dreams skeleton full run passed 701 tests / 50 suites, both
 run by Dev with unchanged report-only baselines. The first authoring slice landed on
@@ -853,4 +855,4 @@ figure unchanged: Create and Update as verbs over the abstract Latent shape, and
 moved into four Editor-domain rules over an Accepted fact, the actor thinned to a membrane and codec
 eligibility made transitive.
 
-<!-- draco-docs-synced-through: chapter 99 -->
+<!-- draco-docs-synced-through: chapter 104 -->

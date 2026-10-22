@@ -452,7 +452,7 @@ The consuming project owns persistence. Parsing remains rule-owned and dispatch
 uses the active dictionary. See src/mods/resources/draco/service/README.md for the
 shared plan and src/mods/ZEROMQ_CODEC_CONTRACT.md for the next integration proposal.
 The empty Service anchor is committed in 604aff2; proposed envelope/socket/codec
-choices are not settled. Journal coverage reaches chapter 99; the first authoring slice landed
+choices are not settled. Journal coverage reaches chapter 104; the first authoring slice landed
 2026-10-09 (below).
 
 **ZeroMQ bridge staging (2026-10-05).** Service now contains TextOutput, the neutral
@@ -951,15 +951,15 @@ lost every formal before the regenerated loader was compiled first, §6's rule a
 are migrated by re-parsing their drake; every generated Scala file is byte-identical but for the three defining
 trios. Identity does not move. No test or corpus type added.
 
-**Handoff checkpoint (2026-10-21).** Chapters 95–99 preserve this Codex session with a
-bounded original-message extract: 35 complete exchanges plus the open handoff request.
-The prior Claude closing reply is recovered separately; chapter 94's historical Status stays
-unchanged. See DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md for either agent.
-The next proposal — two-stage loading from explicit domain declarations, establishing member
-identities before resolving bodies with an ontology and binding vocabulary — was unaccepted at that
-handoff and ACCEPTED by Dev later on 2026-10-21 as restated above; Dev verified its gate at 839 / 59.
-No bootstrap migration is authorized. The type-level formal/actual
-split, activation and .dcon migration also remain unaccepted or deferred.
+**Handoff checkpoint (2026-10-22).** Chapters 100–104 preserve the Claude Code session of October 21–22 with a
+bounded original-message extract: 27 complete exchanges plus the open close request, seven commits from b95419c
+to 7b1bfea, each at a Dev-verified gate. Chapters 95–99 preserve the Codex session before it (35 exchanges plus the
+handoff request). See DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md for either agent. #51's open
+questions are CLOSED by that session (two-stage loading, the unit type, the host vocabulary, the swept corpus with
+records, formals in the aspect). The next design point is OPEN and unaccepted: Presence-typed role slots so a
+present-empty rule or actor survives the carrier, with the two authored-ahead surfaces (BodyElement, ActorAspect)
+re-canonicalized as plain types and their exhibit moved into a round-trip test. Activation and .dcon migration
+remain deferred; the example domains remain unswept.
 
 **#51 continuation.** The issue's priority-next label was scoped to the derivation edge
 completed in August; it is not evidence that every proposal in its older comments remains
@@ -1019,12 +1019,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 99 on 2026-10-21.
+Current documentation was reconciled through journal chapter 104 on 2026-10-22.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 99 on
-  2026-10-21.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 104 on
+  2026-10-22.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -1214,4 +1214,4 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 99 -->
+<!-- draco-docs-synced-through: chapter 104 -->
