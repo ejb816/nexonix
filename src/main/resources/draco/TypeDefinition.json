@@ -5,6 +5,22 @@
       "draco"
     ]
   },
+  "uses": [
+    {
+      "name": "Absent",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Presence",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -67,14 +83,32 @@
         {
           "kind": "Parameter",
           "name": "ruleAspect",
-          "valueType": "RuleAspect",
-          "value": "RuleAspect.Null"
+          "valueType": {
+            "()": [
+              "Presence",
+              "RuleAspect"
+            ]
+          },
+          "value": {
+            "()": [
+              "Absent"
+            ]
+          }
         },
         {
           "kind": "Parameter",
           "name": "actorAspect",
-          "valueType": "ActorAspect",
-          "value": "ActorAspect.Null"
+          "valueType": {
+            "()": [
+              "Presence",
+              "ActorAspect"
+            ]
+          },
+          "value": {
+            "()": [
+              "Absent"
+            ]
+          }
         },
         {
           "kind": "Parameter",

@@ -23,13 +23,6 @@ import scala.util.Using
  *  unsupported discriminator syntax still fails loudly rather than being dropped. */
 class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
 
-  /** Excluded from comparison — hand-authored surface deliberately AHEAD of the
-   *  JSON (target-state syntax discovery the emitter cannot yet reconstruct). */
-  private val authoredAhead: Map[String, String] = Map(
-    "draco/BodyElement.json" -> "present-empty rule/actor heads (presence model not yet in JSON)",
-    "draco/ActorAspect.json" -> "present-empty heads + start/message/signal rename (Phase 2b)"
-  )
-
   private def deriveDrakePath(resourcePath: String): String =
     resourcePath.stripSuffix(".json") + ".drake"
 
@@ -83,7 +76,7 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
 
   // --- Per-type: Drake.emit output matches the authored .drake ---
 
-  discoverResourcePaths().filterNot(authoredAhead.contains).foreach { rp =>
+  discoverResourcePaths().foreach { rp =>
     val drakePath = deriveDrakePath(rp)
     test(s"$rp: Drake.emit matches $drakePath (whitespace-normalized)") {
       val td = loadTypeDefinition(rp)
@@ -121,7 +114,7 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
         .filter(_.endsWith(".json"))
         .toList
         .sorted
-    }.filter(rp => !ActorAspect.isEmpty(loadModsTypeDefinition(rp).actorAspect))
+    }.filter(rp => loadModsTypeDefinition(rp).actorAspect.fold(false, _ => true))
   }
 
   private def loadModsTypeDefinition(rp: String): TypeDefinition = {

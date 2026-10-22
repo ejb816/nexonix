@@ -37,8 +37,8 @@ class ServiceTest extends AnyFunSuite {
     assert(Service.domainType.typeDefinition.typeName == expected)
     assert(Service.elementTypeNames == Seq("ServiceConfiguration", "TextOutput"))
     assert(Service.domainType.typeDictionary.size == 2)
-    assert(ActorAspect.isEmpty(td.actorAspect))
-    assert(RuleAspect.isEmpty(td.ruleAspect))
+    assert(td.actorAspect.fold(true, _ => false))
+    assert(td.ruleAspect.fold(true, _ => false))
     assert(CodecAspect.isEmpty(td.codecAspect))
   }
 

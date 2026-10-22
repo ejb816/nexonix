@@ -31,8 +31,8 @@ object ListDomain {
     def loaded(td: TypeDefinition): Boolean =
       !DracoAspect.isEmpty(td.dracoAspect) ||
       !DomainAspect.isEmpty(td.domainAspect) ||
-      !RuleAspect.isEmpty(td.ruleAspect) ||
-      !ActorAspect.isEmpty(td.actorAspect)
+      td.ruleAspect.fold(false, _ => true) ||
+      td.actorAspect.fold(false, _ => true)
 
     val td = DracoGenerator.loadType(TypeName(name, _namePackage = pkg))
     if (!loaded(td)) {
@@ -62,20 +62,20 @@ object ListDomain {
     val rows: Seq[Row] = dom.elementTypeNames.map { elementName =>
       val elementTd = DracoGenerator.loadType(TypeName(elementName, _namePackage = pkg))
       val kind =
-        if (!RuleAspect.isEmpty(elementTd.ruleAspect))  "RULE"
-        else if (!ActorAspect.isEmpty(elementTd.actorAspect)) "ACTOR"
+        if (elementTd.ruleAspect.fold(false, _ => true))  "RULE"
+        else if (elementTd.actorAspect.fold(false, _ => true)) "ACTOR"
         else                                 "TYPE"
       if (!loaded(elementTd)) {
         Row(kind, elementName, "[MISSING — no resource found]", missing = true)
       } else {
         val detail = kind match {
           case "RULE" =>
-            val vars   = elementTd.ruleAspect.pattern.variables.size
-            val steps  = elementTd.ruleAspect.action.body.size
+            val vars   = elementTd.ruleAspect.fold(RuleAspect.Null, identity).pattern.variables.size
+            val steps  = elementTd.ruleAspect.fold(RuleAspect.Null, identity).action.body.size
             s"$vars var(s), $steps-step action"
           case "ACTOR" =>
-            val msg = elementTd.actorAspect.message.body.size
-            val sig = elementTd.actorAspect.signal.body.size
+            val msg = elementTd.actorAspect.fold(ActorAspect.Null, identity).message.body.size
+            val sig = elementTd.actorAspect.fold(ActorAspect.Null, identity).signal.body.size
             s"$msg message-step(s), $sig signal-step(s)"
           case _ =>
             if (elementTd.dracoAspect.derivation.isEmpty) "(no derivation)"

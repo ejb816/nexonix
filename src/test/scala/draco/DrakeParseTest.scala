@@ -110,15 +110,9 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     allPaths.filterNot(rp => carriesUnsupportedCodecAspect(loadTypeDefinition(rp)))
       .filter(rp => readDrake(deriveDrakePath(rp)).isDefined)
 
-  /** DrakeGenTest's own exclusions: hand-authored surface deliberately AHEAD of the
-   *  JSON. Their .drake carries present-empty rule/actor heads their JSON does not,
-   *  so the emitter is not their spec and the SOURCE round-trip has no fixed point
-   *  to hit. Their JSON round-trip is unaffected and stays in gate 2. */
-  private val authoredAhead: Set[String] = Set("draco/BodyElement.json", "draco/ActorAspect.json")
-
   // --- Gate 1: the surface round-trip ---
 
-  parsedPaths.filterNot(authoredAhead).foreach { rp =>
+  parsedPaths.foreach { rp =>
     val drakePath = deriveDrakePath(rp)
     test(s"$drakePath: emit(parse(source)) reproduces the source") {
       val authored = readDrake(drakePath).getOrElse(fail(s"missing $drakePath"))
@@ -568,7 +562,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |    ]
         |""".stripMargin
     val parsed   = Drake.parse(authored)
-    val branches = parsed.actorAspect.message.body.collect { case c: Case => c }
+    val branches = parsed.actorAspect.fold(ActorAspect.Null, identity).message.body.collect { case c: Case => c }
     assert(branches.map(_.name) == Seq("latent", "", "other"))
     assert(branches.map(c => TypeForm.text(c.valueType)) == Seq("draco.dreams.user.Latent", "Fixed", ""))
     val (handNorm, roundNorm) = (normalize(authored), normalize(Drake.emit(parsed)))

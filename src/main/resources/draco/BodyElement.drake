@@ -11,9 +11,6 @@ type BodyElement from TypeElement
     Variable
     Factory
     Local
-    Case ]
+    Case
+  ]
 domain draco Draco
-rule
-  pattern
-  action
-actor

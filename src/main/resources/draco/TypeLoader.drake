@@ -35,7 +35,7 @@ type TypeLoader
         par typeName TypeName
       body
         loc td TypeDefinition loadType(typeName)
-        fix value Boolean DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect)
+        fix value Boolean DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && td.ruleAspect.fold(true, \aspect -> false) && td.actorAspect.fold(true, \aspect -> false)
     ]
 uses [
   draco drake Absent

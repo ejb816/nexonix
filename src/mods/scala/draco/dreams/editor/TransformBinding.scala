@@ -16,7 +16,7 @@ trait TransformBinding extends DracoType {
   def matches(_accepted: => draco.DomainOntology): Boolean = {
     lazy val accepted: draco.DomainOntology = _accepted
     lazy val aspect: draco.DomainAspect = domain.typeDefinition.domainAspect
-    lazy val expected: Seq[io.circe.Json] = definitions.filter(td => !draco.RuleAspect.isEmpty(td.ruleAspect)).map(td => draco.TypeDefinition.encoder(td))
+    lazy val expected: Seq[io.circe.Json] = definitions.filter(td => td.ruleAspect.fold(false, aspect => true)).map(td => draco.TypeDefinition.encoder(td))
     lazy val actual: Seq[io.circe.Json] = rules.map(r => draco.TypeDefinition.encoder(r._1))
     aspect.source.namePath == draco.TypeDefinition.typeDefinition.typeName.namePath && aspect.target.name.nonEmpty && domains.map(d => d.typeDefinition.typeName.namePath).distinct.size == domains.size && domains.forall(d => accepted.holding(d.typeDefinition.typeName).fold(false, held => draco.TypeDefinition.encoder(held.typeDefinition) == draco.TypeDefinition.encoder(d.typeDefinition) && held.typeDictionary.elementTypes.map(td => draco.TypeDefinition.encoder(td)).toSet == d.typeDictionary.elementTypes.map(td => draco.TypeDefinition.encoder(td)).toSet)) && domains.forall(d => d.typeDefinition.dracoAspect.superDomain.name.isEmpty || domains.exists(s => s.typeDefinition.typeName.namePath == d.typeDefinition.dracoAspect.superDomain.namePath)) && actual.distinct.size == actual.size && actual.toSet == expected.toSet
   }

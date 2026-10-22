@@ -365,14 +365,26 @@
                 },
                 {
                   "()": [
-                    "RuleAspect.isEmpty",
-                    "td.ruleAspect"
+                    "td.ruleAspect.fold",
+                    "true",
+                    {
+                      "\\": [
+                        "aspect",
+                        "false"
+                      ]
+                    }
                   ]
                 },
                 {
                   "()": [
-                    "ActorAspect.isEmpty",
-                    "td.actorAspect"
+                    "td.actorAspect.fold",
+                    "true",
+                    {
+                      "\\": [
+                        "aspect",
+                        "false"
+                      ]
+                    }
                   ]
                 }
               ]

@@ -923,7 +923,7 @@ object DracoGenerator extends App {
       else { val parent = loadType(tn); parent +: parentChain(parent, seen + tn.namePath) }
     }
   private def namesCodecless (valueType: String, td: TypeDefinition) : Boolean =
-    extractTypeNames(valueType).exists { name =>
+    extractTypeNames(rolePresence(valueType).getOrElse(valueType)).exists { name =>
       val parts      = name.split('.').toSeq
       val referenced = if (parts.size > 1) TypeName(parts.last, parts.init) else TypeName(name, td.typeName.namePackage)
       val key        = referenced.namePath
@@ -965,8 +965,16 @@ object DracoGenerator extends App {
 
   // --- Codec generation helpers ---
 
+  /** Role slots preserve presence independently of the aspect object's content. */
+  private def rolePresence(valueType: String): Option[String] = {
+    val prefix = Seq("Presence[", "draco.drake.Presence[").find(valueType.startsWith)
+    prefix.flatMap(p => if (valueType.endsWith("]")) Some(valueType.substring(p.length, valueType.length - 1)) else None)
+      .filter(t => Set("RuleAspect", "ActorAspect", "draco.RuleAspect", "draco.ActorAspect").contains(t))
+  }
+
   private def elisionCheck (p: Parameter, bound: Set[String] = Set.empty) : Option[String] = {
-    if (expression(p.value).isEmpty) None  // required field — always encode
+    if (rolePresence(p.valueType.text).nonEmpty) Some(s"x.${p.name}.fold(false, _ => true)")
+    else if (expression(p.value).isEmpty) None  // required field — always encode
     else p.valueType.text match {
       case "String"                    => Some(s"x.${p.name}.nonEmpty")
       case s if s.startsWith("Seq[")   => Some(s"x.${p.name}.nonEmpty")
@@ -1111,7 +1119,8 @@ object DracoGenerator extends App {
 
   private def encodedField(p: Parameter, bound: Set[String]): String = {
     val value = s"x.${p.name}"
-    if (!payloadField(p, bound)) s"$value.asJson"
+    if (rolePresence(p.valueType.text).nonEmpty) s"$value.fold[Json](Json.Null, aspect => aspect.asJson)"
+    else if (!payloadField(p, bound)) s"$value.asJson"
     else if (p.valueType.text.startsWith("Seq["))
       s"Json.fromValues($value.map(draco.scalatarget.CirceCodecs.encodePayload.apply))"
     else s"draco.scalatarget.CirceCodecs.encodePayload($value)"
@@ -1139,6 +1148,9 @@ object DracoGenerator extends App {
     * elides them when empty), defaulting to the type's "zero". Non-elidable
     * types use the parameter's explicit default if present, else strict-require. */
   private def decoderForLine (p: Parameter, indent: String, bound: Set[String]) : String = {
+    rolePresence(p.valueType.text).foreach { aspect =>
+      return s"""${indent}_${p.name} <- (if (cursor.keys.exists(_.exists(_ == "${p.name}"))) cursor.downField("${p.name}").as[$aspect].map(value => draco.drake.Present(value): draco.drake.Presence[$aspect]) else Right(draco.drake.Absent[$aspect]()))"""
+    }
     if (payloadField(p, bound)) {
       val sequence = p.valueType.text.startsWith("Seq[")
       val wireType = if (sequence) "Seq[Json]" else "Json"
@@ -1606,9 +1618,9 @@ object DracoGenerator extends App {
     * identical block. */
   private def ruleBody (td: TypeDefinition) : String = {
     val name = td.typeName.name
-    s"""${conditionFunctions(td.ruleAspect.pattern.conditions, td.ruleAspect.pattern.variables)}
+    s"""${conditionFunctions(td.ruleAspect.fold(RuleAspect.Null, identity).pattern.conditions, td.ruleAspect.fold(RuleAspect.Null, identity).pattern.variables)}
        |  private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
-       |${actionBody(td.ruleAspect.action, td.ruleAspect.pattern.variables)}
+       |${actionBody(td.ruleAspect.fold(RuleAspect.Null, identity).action, td.ruleAspect.fold(RuleAspect.Null, identity).pattern.variables)}
        |  }
        |
        |  private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
@@ -1616,9 +1628,9 @@ object DracoGenerator extends App {
        |    .builder()
        |    .newRule ("${td.typeName.namePath}")
        |    .forEach (
-       |${factVariables(td.ruleAspect.pattern.variables)}
+       |${factVariables(td.ruleAspect.fold(RuleAspect.Null, identity).pattern.variables)}
        |    )
-       |${whereConditions(td.ruleAspect.pattern.conditions, td.ruleAspect.pattern.variables, td.typeName.namePath)}
+       |${whereConditions(td.ruleAspect.fold(RuleAspect.Null, identity).pattern.conditions, td.ruleAspect.fold(RuleAspect.Null, identity).pattern.variables, td.typeName.namePath)}
        |    .execute (action(_))
        |    .build()
        |  }
@@ -1657,7 +1669,7 @@ object DracoGenerator extends App {
     * so an actor routes here rather than to plain domain emission. Empty for every
     * non-actor type, so existing emission is unaffected. */
   private def hasActorBehavior (td: TypeDefinition) : Boolean =
-    !ActorAspect.isEmpty(td.actorAspect)
+    td.actorAspect.fold(false, _ => true)
 
   /** The actor's message type — the `T` substituted into the generated
     * `ExtensibleBehavior[T]` / `Behavior[T]` and the `receive`/`receiveSignal`
@@ -1678,7 +1690,7 @@ object DracoGenerator extends App {
     def spelled (tn: TypeName) : String =
       if (tn.namePackage.isEmpty || tn.namePackage == td.typeName.namePackage) parameterizedName(tn)
       else s"${tn.namePackage.mkString(".")}.${parameterizedName(tn)}"
-    val fromAspect = Some(td.actorAspect.messageType).filter(_.name.nonEmpty).map(spelled)
+    val fromAspect = Some(td.actorAspect.fold(ActorAspect.Null, identity).messageType).filter(_.name.nonEmpty).map(spelled)
     def fromDerivation = DracoAspect.parents(td.dracoAspect)
       .find(_.name == "Actor")
       .flatMap(_.typeParameters.headOption).map(value => typeParameterScala(value))
@@ -1739,7 +1751,7 @@ object DracoGenerator extends App {
     val rules = domainChain(domainTd).flatMap { d =>
       d.domainAspect.elementTypeNames
         .map(n => TypeName(n, _namePackage = d.typeName.namePackage))
-        .filter(tn => !RuleAspect.isEmpty(loadType(tn).ruleAspect))
+        .filter(tn => loadType(tn).ruleAspect.fold(false, _ => true))
     }.distinct
     if (rules.isEmpty)
       s"""  private lazy val knowledge: Knowledge = Rule.knowledgeService.newKnowledge("$tag")"""
@@ -1782,14 +1794,14 @@ object DracoGenerator extends App {
     * `signal` emit exactly as before. */
   private def actorBehavior (td: TypeDefinition, msgType: String) : String = {
     val objName = td.typeName.name
-    val setup = actorActionBody(td.actorAspect.start, "    ")
-    val recv  = actorActionBody(td.actorAspect.message)
+    val setup = actorActionBody(td.actorAspect.fold(ActorAspect.Null, identity).start, "    ")
+    val recv  = actorActionBody(td.actorAspect.fold(ActorAspect.Null, identity).message)
     val setupSection = if (setup.nonEmpty) s"$setup\n\n" else ""
     val recvBlock    = if (recv.nonEmpty)  s"$recv\n"     else ""
     // signal is the actor's receiveSignal handler: at PostStop the author reads the
     // accumulated working memory (post-rule-execution harvest) and runs cleanup. Empty ⇒
     // a bare `Behaviors.same`, byte-identical to a no-op receiveSignal.
-    val signal = actorActionBody(td.actorAspect.signal, "          ")
+    val signal = actorActionBody(td.actorAspect.fold(ActorAspect.Null, identity).signal, "          ")
     val signalBody =
       if (signal.isEmpty) s"      Behaviors.same[$msgType]"
       else
@@ -1940,7 +1952,7 @@ object DracoGenerator extends App {
     td.domainAspect.source.name.nonEmpty && td.domainAspect.target.name.nonEmpty
 
   private def isRule (td: TypeDefinition) : Boolean =
-    !RuleAspect.isEmpty(td.ruleAspect)
+    td.ruleAspect.fold(false, _ => true)
 
   private def isActor (td: TypeDefinition) : Boolean =
     DracoAspect.parents(td.dracoAspect).exists(tn => Set("ActorType", "ExtensibleBehavior").contains(tn.name))
@@ -2003,7 +2015,7 @@ object DracoGenerator extends App {
     // A case-branch nests its own statements (drake.dlt CASE-BRANCH): the Editor's `[Problem]+`
     // moved inside `case latent Latent [ ... ]` on 2026-10-13 and lost its import until the
     // scan looked one level down.
-    val actionBodies = (td.ruleAspect.action +: Seq(td.actorAspect.start, td.actorAspect.message, td.actorAspect.signal))
+    val actionBodies = (td.ruleAspect.fold(RuleAspect.Null, identity).action +: Seq(td.actorAspect.fold(ActorAspect.Null, identity).start, td.actorAspect.fold(ActorAspect.Null, identity).message, td.actorAspect.fold(ActorAspect.Null, identity).signal))
       .flatMap(a => if (a == null) Seq.empty else a.body.flatMap(e => e.valueType.text +: e.body.map(_.valueType.text)))
     def formalBounds(e: TypeElement): Seq[String] = {
       val own = e match {
@@ -2254,16 +2266,11 @@ object DracoGenerator extends App {
         _globalElements = da.globalElements.map(targetBody)
       ),
       _domainAspect = td.domainAspect,
-      _ruleAspect   =
-        if (RuleAspect.isEmpty(td.ruleAspect)) td.ruleAspect
-        else RuleAspect(targetBody(td.ruleAspect.pattern).asInstanceOf[Pattern],
-                        targetBody(td.ruleAspect.action).asInstanceOf[Action]),
-      _actorAspect  =
-        if (ActorAspect.isEmpty(td.actorAspect)) td.actorAspect
-        else ActorAspect(targetBody(td.actorAspect.message).asInstanceOf[Action],
-                         td.actorAspect.messageType,
-                         targetBody(td.actorAspect.signal).asInstanceOf[Action],
-                         targetBody(td.actorAspect.start).asInstanceOf[Action]),
+      _ruleAspect = td.ruleAspect.fold[draco.drake.Presence[RuleAspect]](draco.drake.Absent(), ra =>
+        draco.drake.Present(RuleAspect(targetBody(ra.pattern).asInstanceOf[Pattern], targetBody(ra.action).asInstanceOf[Action]))),
+      _actorAspect = td.actorAspect.fold[draco.drake.Presence[ActorAspect]](draco.drake.Absent(), aa =>
+        draco.drake.Present(ActorAspect(targetBody(aa.message).asInstanceOf[Action], aa.messageType,
+          targetBody(aa.signal).asInstanceOf[Action], targetBody(aa.start).asInstanceOf[Action]))),
       _codecAspect  = td.codecAspect,
       _uses         = td.uses
     )
@@ -2439,7 +2446,7 @@ object DracoGenerator extends App {
     // the ScalaTarget spells with `mutable.`; the rule path has no external block, so the
     // one import it can need is appended here (2026-09-20).
     val mutableRef =
-      if (td.ruleAspect.action != null && td.ruleAspect.action.body.exists(_.valueType.text.contains("mutable.")))
+      if (td.ruleAspect.fold(RuleAspect.Null, identity).action != null && td.ruleAspect.fold(RuleAspect.Null, identity).action.body.exists(_.valueType.text.contains("mutable.")))
         Seq("import scala.collection.mutable") else Seq.empty
     val allImports = packageHierarchyImports(td.typeName.namePackage) ++ ruleFrameworkImports ++ mutableRef
     allImports.mkString("\n")

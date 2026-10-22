@@ -46,8 +46,14 @@
           "kind": "Condition",
           "value": {
             "()": [
-              "RuleAspect.isEmpty",
-              "td.ruleAspect"
+              "td.ruleAspect.fold",
+              "true",
+              {
+                "\\": [
+                  "aspect",
+                  "false"
+                ]
+              }
             ]
           }
         },
@@ -55,8 +61,14 @@
           "kind": "Condition",
           "value": {
             "()": [
-              "ActorAspect.isEmpty",
-              "td.actorAspect"
+              "td.actorAspect.fold",
+              "true",
+              {
+                "\\": [
+                  "aspect",
+                  "false"
+                ]
+              }
             ]
           }
         }

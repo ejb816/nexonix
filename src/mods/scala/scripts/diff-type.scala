@@ -26,7 +26,7 @@ object DiffType {
   // presence, not a name suffix: a ruleAspect emits a `Rule`-suffixed object;
   // plain types and actors keep the bare name.
   private def scalaFilename(name: String, td: TypeDefinition): String =
-    if (!RuleAspect.isEmpty(td.ruleAspect)) name + "Rule.scala"
+    if (td.ruleAspect.fold(false, _ => true)) name + "Rule.scala"
     else                                    name + ".scala"
 
   // DracoGenTest.normalize equivalent: strip trailing whitespace per line, collapse
@@ -69,8 +69,8 @@ object DiffType {
     def loaded(td: TypeDefinition): Boolean =
       !DracoAspect.isEmpty(td.dracoAspect) ||
       !DomainAspect.isEmpty(td.domainAspect) ||
-      !RuleAspect.isEmpty(td.ruleAspect) ||
-      !ActorAspect.isEmpty(td.actorAspect)
+      td.ruleAspect.fold(false, _ => true) ||
+      td.actorAspect.fold(false, _ => true)
 
     val td = DracoGenerator.loadType(TypeName(name, _namePackage = pkg))
     if (!loaded(td)) {

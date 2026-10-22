@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- Preserve rule and actor presence through Presence-typed aspect slots and containing-record
+  JSON encoding, including empty declared roles. Canonicalize BodyElement and ActorAspect,
+  remove their frozen fixtures and exclusions, and close the remaining surface loss. Dev’s
+  full gate verified 857 tests / 61 suites, with every expected headline matching.
+
 Documentation checkpoint (2026-10-22): journal chapters 100–104 preserve the Claude Code session from the
 Codex handoff through Dev's close request with a bounded transcript audit; the introduction, DRACO.md,
 README.md, the handoff and the resumption prompt record the verified 849 / 60 baseline at 7b1bfea and the

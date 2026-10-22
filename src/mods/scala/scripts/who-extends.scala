@@ -40,8 +40,8 @@ object WhoExtends {
     def loaded(td: TypeDefinition): Boolean =
       !DracoAspect.isEmpty(td.dracoAspect) ||
       !DomainAspect.isEmpty(td.domainAspect) ||
-      !RuleAspect.isEmpty(td.ruleAspect) ||
-      !ActorAspect.isEmpty(td.actorAspect)
+      td.ruleAspect.fold(false, _ => true) ||
+      td.actorAspect.fold(false, _ => true)
 
     // True iff `tn`, or any transitive ancestor via dracoAspect.derivation, has
     // namePath == target. Cycle-protected via the per-call seen set.

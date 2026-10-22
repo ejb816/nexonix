@@ -49,6 +49,11 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**857 tests / 61 suites**, verified by Dev on 2026-10-22 for role presence (record
+`git-record-2026-10-22-0800`): four new tests and four restored corpus tests, zero failed,
+canceled, ignored or pending tests, zero aborted suites. Surface losses are zero across
+120 types; DracoAspect has zero frozen baselines. Every other report-only headline matches,
+including zero pending mods actors. Dev's first full gate was green. Before it:
 **849 tests / 60 suites**, verified by Dev on 2026-10-22 for the formal/actual split (record
 `git-record-2026-10-21-2300`): no test or corpus type added, zero failed, canceled, ignored or pending tests,
 zero aborted suites, every report-only headline unchanged, including zero pending mods actors, green on its
@@ -156,7 +161,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 1 field across 120 types — type form 1 (ActorAspect), expression form 0 |
+| `DrakeParseTest` | drake surface losses | 0 fields across 120 types — type form 0, expression form 0 |
 | `DrakeParseTest` | Drake.parse scope | 110 draco + 10 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
@@ -276,8 +281,8 @@ Compact by intent. Architecture detail belongs in `README.md` once that file is 
   for a FOREIGN one — Dictionary's `{"{}": ["K", "V"]}`; read names through `DracoAspect.parents`)
 - `domainAspect` — typeName (self-loop for a domain, container pointer otherwise), elementTypeNames,
   source, target (both present = a **transform domain**; role is presence, as everywhere else)
-- `ruleAspect` — pattern, action
-- `actorAspect` — messageType, start, message, signal
+- `ruleAspect` — Presence(RuleAspect), carrying pattern and action when Present
+- `actorAspect` — Presence(ActorAspect), carrying messageType, start, message and signal when Present
 - `codecAspect` — discriminator, payload (field names selecting direct Dracon payloads; 2026-10-18)
 
 **Role is presence, not name.** A type is a rule because it carries a `ruleAspect`, an
@@ -392,9 +397,9 @@ Scala, so the parser never hands the engine a tree with the wrong scope. A paren
 holding an expression the parser reads DISSOLVES into its tree, and each renderer writes back the
 minimal pair by its own target's fixity (2026-09-21) — so an authored redundant pair does not survive
 re-canonicalization. `=>` is never a drake token: it is the Scala target's spelling of the lambda node. The JSON corpus is re-canonicalized from the drake after each parser step (`DrakeCLI parse
-X.drake > X.json` with the compiled parser; 2026-09-16 for calls, 2026-09-17 for type forms, 2026-09-21 for operators and lambdas), with
-two deliberate exceptions: BodyElement and ActorAspect (authored-ahead aspects); format/json/Value
-came off the list on 2026-09-21 when its conditionals became `guard(c).ifThenElse(t, e)`. Parse is a measurement tool, not
+X.drake > X.json` with the compiled parser; 2026-09-16 for calls, 2026-09-17 for type forms, 2026-09-21 for operators and lambdas). BodyElement and ActorAspect were re-canonicalized
+on 2026-10-22, removing the last two exceptions; format/json/Value came off the list on
+2026-09-21 when its conditionals became `guard(c).ifThenElse(t, e)`. Parse is a measurement tool, not
 yet an authoring path (GitHub #61).
 
 **Tiers.** `src/main/scala` is definition-backed. `src/mods/scala` compiles into the same
@@ -1215,3 +1220,19 @@ Prefer a new development task at a verified increment boundary after the handoff
 current, not solely because compaction occurred. No task is created automatically.
 
 <!-- draco-docs-synced-through: chapter 104 -->
+
+**Role presence increment (2026-10-22, Codex; Dev verified 857 / 61).** Dev accepted Presence-typed
+rule/actor slots and their field-level encoding. Absent omits the key; Present writes its
+aspect object even when empty. The generator supports this encoding for Presence of the
+two role-aspect types, checking codec eligibility on their contained aspect; it does not
+supply a general Presence codec. Parser, emitter, role dispatch, completeness, loader stub
+checks, dreams binding validation and inspection scripts use the distinction. BodyElement
+and ActorAspect are canonical plain types; the frozen fixtures and exclusions are removed.
+Four RolePresenceTest cases cover absent/rule/actor/both through JSON, Drake and generation;
+four restored corpus tests bring the expected gate to 857 tests / 61 suites. The surface-loss
+baseline above changes to zero; Dev’s full gate verified 857 / 61 on its first run.
+
+The final direct compiled-class probe passed all 857 tests, 62 suites including Runner
+discovery, no failures or aborts. Main/mods and test resources were on loader roots. All
+other report-only headlines matched, including zero pending mods actors. Dev subsequently
+verified 857 tests / 61 suites with the same headlines and no failures or aborts.

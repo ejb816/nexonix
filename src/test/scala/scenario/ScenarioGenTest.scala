@@ -151,11 +151,11 @@ class ScenarioGenTest extends AnyFunSuite with PersistentTestLog {
   private def rulesIn(domain: TypeDefinition): Seq[String] =
     domain.domainAspect.elementTypeNames
       .map(n => TypeLoader.loadType(TypeName(n, _namePackage = domain.typeName.namePackage)))
-      .filter(m => !RuleAspect.isEmpty(m.ruleAspect))
+      .filter(m => m.ruleAspect.fold(false, _ => true))
       .map(_.typeName.name)
 
   test("an actor accepts every rule its domain chain owns") {
-    val actors = definitions.filter(td => !ActorAspect.isEmpty(td.actorAspect))
+    val actors = definitions.filter(td => td.actorAspect.fold(false, _ => true))
     assume(actors.nonEmpty, "no actors in the scenario")
 
     val shortfall = actors.map { td =>

@@ -668,11 +668,10 @@ DIVERGENCES  (drake surface / target vs current JSON + procedural Generator)
                                           converts to the `if` operator (DONE). TypeName.equals converts to a case-branch
                                           with a default — `case tn TypeName [ = ... ]` / `case [ = false ]` — which
                                           needs the Case kind to exist, so it lands with the kind, as its first use.
-  PRESENCE model (this template)    <->   current Generator/JSON still ELIDE uniformly: TypeDefinition's encoder
-                                          omits an aspect via X.isEmpty, and every field elides on empty. The template
+  PRESENCE model (this template)    <->   current Generator/JSON preserve rule/actor presence: TypeDefinition's encoder
+                                          omits Absent role slots and writes Present aspect objects, including empty ones. Other aspects elide via X.isEmpty. The template
                                           above is the target — preserve presence for *; elide for ~ — not yet built.
-                                          In particular rule/actor are NOT yet presence-significant in the impl
-                                          (a present-empty rule currently elides to absent), and the codec selector /
+                                          Rule/actor presence is implemented through Presence-typed slots and containing-record field encoding; the codec selector /
                                           suppress-vs-default distinction is not implemented.
   CODEC declared, not inferred      <->   CONFIRMED direction (see INFERENCE): codec is never inferred. Current Generator
     (target — future migration)           does the opposite — it INFERS a default codec for any eligible record (>=1 own

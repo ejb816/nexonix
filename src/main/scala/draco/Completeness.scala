@@ -10,8 +10,8 @@ object Completeness extends App with DracoType {
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
   def w0(td: TypeDefinition): Boolean = DracoAspect.isEmpty(td.dracoAspect)
   def w1(td: TypeDefinition): Boolean = DomainAspect.isEmpty(td.domainAspect)
-  def w2(td: TypeDefinition): Boolean = RuleAspect.isEmpty(td.ruleAspect)
-  def w3(td: TypeDefinition): Boolean = ActorAspect.isEmpty(td.actorAspect)
+  def w2(td: TypeDefinition): Boolean = td.ruleAspect.fold(true, aspect => false)
+  def w3(td: TypeDefinition): Boolean = td.actorAspect.fold(true, aspect => false)
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val td: TypeDefinition = ctx.get[TypeDefinition]("$td")
       ctx.insert(Problem(td.typeName, s"member ${td.typeName.name} is declared but unauthored (no JSON on disk)"))

@@ -1,0 +1,21 @@
+Preserve empty rule and actor roles through Presence-typed slots
+
+Dev accepted Presence-typed role slots and field-level encoding in the receiving Codex
+session. Absent omits the key; Present writes the contained aspect object even when empty.
+The generator supports these two role-aspect field types without defining a standalone
+Presence codec. All classification, rebuilding, emission, completeness, stub and dreams
+readers follow presence. Definition changes are parsed and projected with canonical scope.
+
+Canonicalize BodyElement and ActorAspect as plain types. Replace their fixtures and gate
+exclusions with four round-trip and generation tests; four restored corpus tests yield
+857 tests / 61 suites. Surface losses fall to zero across 120 definitions.
+
+Final direct probe: 857 passed, 62 suites including Runner discovery, no failures or aborts;
+all report-only figures unchanged except zero surface losses and zero frozen baselines.
+Pending mods actors: 0. Main/mods and test resources on loader roots. First probe used an
+incorrect /tmp location; corrected to target/scala-2.13. Intermediate failures identified
+missing compact records and a domainless fixture; corrected. Socket tests required running
+outside the restricted sandbox. Dev’s first full sbt gate on October 22 passed 857 tests / 61 suites, zero failed,
+canceled, ignored or pending tests, zero aborted suites. Every headline matched the
+expected figures, including zero pending mods actors in the pasted file-only report.
+No sbt, commit or push by Codex.

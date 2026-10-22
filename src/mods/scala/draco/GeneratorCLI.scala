@@ -181,8 +181,8 @@ object GeneratorCLI {
     * each group alphabetical. Matches the order used in the existing hand-authored
     * elementTypeNames lists. Rule-/actor-ness is aspect presence, not a name suffix. */
   private def elementCategory(td: TypeDefinition): Int =
-    if (!RuleAspect.isEmpty(td.ruleAspect)) 1
-    else if (!ActorAspect.isEmpty(td.actorAspect)) 2
+    if (td.ruleAspect.fold(false, _ => true)) 1
+    else if (td.actorAspect.fold(false, _ => true)) 2
     else 0
 
   /** Scan the domain JSON's parent directory for sibling type JSONs and

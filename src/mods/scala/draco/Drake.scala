@@ -397,9 +397,9 @@ object Drake {
     // sub-block) so sectionLines emits them bracket-free; the action body sits
     // directly under `action`, one indent level deeper.
     val rule =
-      if (RuleAspect.isEmpty(td.ruleAspect)) Seq.empty
+      if (td.ruleAspect.fold(true, _ => false)) Seq.empty
       else {
-        val ra = td.ruleAspect
+        val ra = td.ruleAspect.fold(RuleAspect.Null, identity)
         val variables =
           if (ra.pattern.variables.isEmpty) Seq.empty
           else sectionLines("variables", ra.pattern.variables, 2)
@@ -420,9 +420,9 @@ object Drake {
     // indent level deeper, same shape as the rule `action` body. A block elides when
     // its action carries no body (an actor typically populates only some of the three).
     val actor =
-      if (ActorAspect.isEmpty(td.actorAspect)) Seq.empty
+      if (td.actorAspect.fold(true, _ => false)) Seq.empty
       else {
-        val aa = td.actorAspect
+        val aa = td.actorAspect.fold(ActorAspect.Null, identity)
         def block(keyword: String, action: Action): Seq[String] =
           if (action.body.isEmpty) Seq.empty
           else s"  $keyword" +: action.body.flatMap(elementLines(_, 2))
@@ -1302,8 +1302,8 @@ object Drake {
         _factory        = factory,
         _globalElements = globalElements),
       _domainAspect = DomainAspect (domainName, elementTypeNames, resolved (domainSource), resolved (domainTarget)),
-      _ruleAspect   = if (!isRule) RuleAspect.Null else RuleAspect (Pattern (variables, conditions), action),
-      _actorAspect  = if (!isActor) ActorAspect.Null else ActorAspect (message, resolved (messageType), signal, start),
+      _ruleAspect   = if (!isRule) draco.drake.Absent() else draco.drake.Present(RuleAspect (Pattern (variables, conditions), action)),
+      _actorAspect  = if (!isActor) draco.drake.Absent() else draco.drake.Present(ActorAspect (message, resolved (messageType), signal, start)),
       _codecAspect  = CodecAspect(_payload = payload))
   }
 }

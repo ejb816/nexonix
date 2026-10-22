@@ -99,8 +99,8 @@ TypeDefinition  (derives Aspects)
   +-- typeName     : TypeName
   +-- dracoAspect  : DracoAspect    -- structure shared by every type
   +-- domainAspect : DomainAspect   -- domain membership
-  +-- ruleAspect   : RuleAspect     -- rule pattern and action
-  +-- actorAspect  : ActorAspect    -- actor handlers
+  +-- ruleAspect   : Presence(RuleAspect)     -- rule pattern and action
+  +-- actorAspect  : Presence(ActorAspect)    -- actor handlers
   +-- codecAspect  : CodecAspect    -- serialization discriminator and payload-field names
 ```
 
@@ -133,7 +133,7 @@ Drake clause remains unsupported.
 
 **Role is presence, not name.** A type is a domain, a rule, or an actor because the
 corresponding aspect is populated — never because of a name suffix, a filename, or a
-marker parent. All aspects default to empty, so a simple type needs only a `typeName`, a
+marker parent. Role aspects default to Absent; the other aspects default to empty, so a simple type needs only a `typeName`, a
 `derivation`, and a `domainAspect.typeName`.
 
 ### TypeName
@@ -365,7 +365,7 @@ the type parameter.
 
 ### Rules
 
-A rule is a type whose `ruleAspect` is populated. It is named for its concept — no suffix
+A rule is a type whose `ruleAspect` is Present. It is named for its concept — no suffix
 on the file, the definition, or the projection. Its `pattern` carries the **variables** it
 binds and the **conditions** over them; its `action` is the body that runs when the rule
 fires.
@@ -626,8 +626,7 @@ every definition-backed Scala file now carries selective imports and the corpus 
 canonical scope explicitly. A swept definition also carries its **resolution record**, a `uses`
 section listing the identities its bodies name short, written by the compact form and validated
 against the ontology, so a reader with no ontology resolves the file from itself, as a Haskell or
-Scala module does from its imports. The whole canonical corpus is swept: every main definition
-but the two authored-ahead ones, and the staged dreams and service definitions, carry compact
+Scala module does from its imports. The whole canonical corpus is swept: every main definition, and the staged dreams and service definitions, carry compact
 bodies with their records, host leaves as authored, and unscoped and scoped generation agree on
 every file, so the ontology is needed only to author and validate. A definition's header
 formals are TypeParameter records in its DracoAspect since 2026-10-21, its own name bare; a
@@ -825,7 +824,7 @@ complete Claude Code exchanges plus the open close request; the
 [Codex audit before it](draco-dev-journal/sources/codex-2026-10-15-to-21-audit.md) preserves 35.
 Historical Status sections remain intact. The code checkpoint is 7b1bfea, committed and pushed by
 Dev on October 22, with the verified 849 tests / 60 suites baseline. The next design point —
-Presence-typed role slots for the present-empty roles the spec defines — is open and unaccepted.
+Presence-typed role slots for the present-empty roles the spec defines — was accepted by Dev in the receiving Codex session and is implemented and Dev-verified at 857 tests / 61 suites, with zero failures or aborts.
 [The resumption prompt](DEVELOPMENT_RESUME_PROMPT.md) and [handoff](DEVELOPMENT_HANDOFF.md) are
 shared by Codex and Claude Code. The following
 paragraphs retain the earlier development chronology. The bridge's historical full run passed
@@ -856,3 +855,11 @@ moved into four Editor-domain rules over an Accepted fact, the actor thinned to 
 eligibility made transitive.
 
 <!-- draco-docs-synced-through: chapter 104 -->
+
+Role slots now carry `Presence(RuleAspect)` and `Presence(ActorAspect)`. The containing
+record omits an Absent field and writes a Present aspect directly as its existing JSON
+object, including an empty object. The decoder preserves field presence; role selection,
+Drake emission, completeness and stub checks use presence independently of content.
+This field encoding does not introduce a standalone codec for Presence. BodyElement and
+ActorAspect now have canonical plain-type surfaces; their former role exhibits are
+covered by RolePresenceTest, with no frozen fixtures or corpus exclusions.

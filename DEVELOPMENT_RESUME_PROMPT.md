@@ -1,7 +1,12 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
-This is a handoff from Claude Code, suitable for either Codex or Claude Code. First read AGENTS.md/CLAUDE.md (both link to DRACO.md), DEVELOPMENT_HANDOFF.md, the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md, journal chapter 104 and its transcript audit under draco-dev-journal/sources/. Chapters 100–103 cover the preceding increments if needed. Inspect git status and git log. The last code commit is 7b1bfea, committed and pushed by me, with a verified baseline of 849 tests / 60 suites and every report-only headline matching the handoff. A documentation-only handoff commit may follow it; preserve any uncommitted documentation.
-
-#51's short-name and formal/actual work is complete for the canonical corpus. The next proposal was raised by Claude on October 22 and I have NOT accepted it: Presence-typed role slots in Aspects, so that a present-empty rule or actor — which drake.dlt defines and the parser already honors — survives the JSON carrier, with the two authored-ahead surfaces (BodyElement, ActorAspect) re-canonicalized as plain types and their exhibit moved into a round-trip test. Inspect Aspects, TypeDefinition's generated codec, the parser's role flags, the generator's role tests and the dreams readers of ruleAspect; restate the proposal with your own reading and put it to me for acceptance or correction before building.
-
-Keep to one design point per reply, one recommendation with accept-or-correct, and build only what I accept. Activation and the .dcon migration remain deferred; the example domains are unswept. Do not run sbt, commit or push; hand over path-scoped commands and wait for my results. Use grep in my shell, where rg is unavailable. New GitHub issues need my explicit approval. Before handing over a gate, run every discovered suite on compiled classes with the test resources on the loader's roots. After each verified commit, bring the next design point tied to the existing work instead of stopping at acknowledgment. Keep project documentation and the handoff current; private agent memory is not a prerequisite.
+Read AGENTS.md, DEVELOPMENT_HANDOFF.md and .draco/skills/update-draco-docs/SKILL.md.
+Inspect status and log; preserve the uncommitted Presence-role increment accepted by Dev.
+Starting HEAD was 4dcef69, following code 7b1bfea. The direct compiled-class run passed
+857 tests (62 suites including discovery), all headlines matching except the intended zero
+surface losses and zero frozen baselines. Dev’s first sbt gate verified 857 / 61 with matching headlines; await his commit/push result.
+Do not run sbt, commit or push. Use grep in Dev’s shell. One design point per reply,
+build only accepted scope, and bring the next point after a verified commit.
+Role presence and its field-level encoding are accepted and implemented; see the handoff
+and git-record-2026-10-22-0800. Activation and .dcon remain deferred; examples are unswept.
+Journal coverage remains through chapter 104; this receiving Codex session is not journaled.

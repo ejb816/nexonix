@@ -5,6 +5,15 @@
       "draco"
     ]
   },
+  "uses": [
+    {
+      "name": "Presence",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
@@ -20,12 +29,22 @@
       {
         "kind": "Fixed",
         "name": "ruleAspect",
-        "valueType": "RuleAspect"
+        "valueType": {
+          "()": [
+            "Presence",
+            "RuleAspect"
+          ]
+        }
       },
       {
         "kind": "Fixed",
         "name": "actorAspect",
-        "valueType": "ActorAspect"
+        "valueType": {
+          "()": [
+            "Presence",
+            "ActorAspect"
+          ]
+        }
       },
       {
         "kind": "Fixed",

@@ -41,8 +41,8 @@ object DomainBuilder {
   def isStub(td: TypeDefinition): Boolean =
     DracoAspect.isEmpty(td.dracoAspect) &&
       DomainAspect.isEmpty(td.domainAspect) &&
-      RuleAspect.isEmpty(td.ruleAspect) &&
-      ActorAspect.isEmpty(td.actorAspect)
+      td.ruleAspect.fold(true, _ => false) &&
+      td.actorAspect.fold(true, _ => false)
 
   /** Define a domain from its resources: load its own definition, then load
     * every member named in `domainAspect.elementTypeNames`, and return the

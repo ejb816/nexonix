@@ -1,20 +1,18 @@
 # Development Handoff
 
-Updated October 22, 2026 by Claude Code for a new task in **either Codex or Claude Code**.
+Updated October 22, 2026 by Codex after receiving Claude Code’s handoff.
 This is the current checkpoint; the journal and git records preserve historical checkpoints.
 Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **7b1bfea**, clean and aligned with `origin/main`; Dev's pasted
-  October 22 output confirms commit and push. This handoff adds documentation only, still
-  uncommitted when written: journal chapters 100–104, their source extract and audit, the
-  introduction's index, DRACO.md, README.md, CHANGELOG.md, this file, DEVELOPMENT_RESUME_PROMPT.md
-  and record `git-record-2026-10-22-0730`. If Dev commits it, expect HEAD after 7b1bfea. Inspect
-  status; do not assume a clean tree or discard pending documentation.
-- Latest verified code baseline: **849 tests / 60 suites**, Dev's October 22 full sbt gate on
-  7b1bfea, zero failed/canceled/ignored/pending tests, zero aborted suites, every report-only
-  headline as the DRACO.md table states, pending mods actors 0. No runtime changes since.
+- Observed branch: `main`, starting HEAD **4dcef69**, documentation handoff after 7b1bfea.
+  The receiving Codex session has uncommitted role-presence implementation, tests and docs.
+  No commit or push has been performed by Codex.
+- Latest verified code baseline: **857 tests / 61 suites**, Dev's October 22 full sbt gate
+  on the uncommitted role-presence increment, green on its first run. Zero failed/canceled/
+  ignored/pending tests and zero aborted suites; surface losses and frozen baselines zero,
+  all other headlines unchanged, pending mods actors 0. Awaiting Dev's commit and push.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -27,35 +25,25 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 - Shared project documentation is the cross-agent memory. No private Claude/Codex memory is
   required or overwritten. The copyable prompt is in DEVELOPMENT_RESUME_PROMPT.md.
 
-## First action in the new session
+## Current receiving-session increment (Codex, October 22)
 
-Read DRACO.md, the shared documentation skill, this checkpoint, chapter 104 and its audit.
-Inspect git status/log. Restate the **unaccepted** presence proposal below with your own reading
-and ask Dev to accept or correct it before building. Dev closed the previous session with it open;
-closing is not acceptance.
-
-The open proposal (Claude, October 22): drake.dlt marks `rule` and `actor` presence-significant
-and facet-creating — writing the head, even empty, says the type is a rule or an actor, and the
-JSON must carry the key with an empty value — and `Drake.parse` honors it (a `rule` head sets the
-role), but the generated TypeDefinition codec elides an empty RuleAspect or ActorAspect, so a
-present-empty role is lost through the carrier. Recommended: the two role slots in `Aspects`
-become Presence-typed (`ruleAspect`, `actorAspect` as `Presence` of their aspect), Present
-emitted even when empty, Absent omitted; about 78 readers across the engine, the dreams rules and
-the tests move from an emptiness test to a presence fold. With it, the two authored-ahead surfaces
-(`draco/BodyElement.drake`, `draco/ActorAspect.drake`, frozen since 2026-09-28 with present-empty
-`rule`/`actor` heads, a three-line host lambda, an explicit factory name and a different element
-order) re-canonicalize as the plain types they are, their JSON catches up (closing the last
-surface loss, `ActorAspect => Boolean`), the frozen baselines under
-`src/test/resources/draco/draketarget/draco-aspect-baseline/` and the exclusions in DrakeGenTest,
-DrakeParseTest and DracoAspectTest go, and the presence behavior moves into a round-trip test.
-The alternative is to re-canonicalize the two files without touching the carrier, closing every
-gate residue but leaving the spec's presence principle unimplemented for roles.
-
-Code to inspect: `src/main/resources/draco/Aspects.drake` and `TypeDefinition.drake` (the slots
-and the generated codec's elision), `src/mods/scala/draco/Drake.scala` (`isRule`/`isActor` flags
-in `parseDefinition`), `src/mods/scala/draco/DracoGenerator.scala` (`isRule`, `isActor`,
-`hasActorBehavior`, `roleAspectCount`), `src/mods/resources/draco/dreams/editor/*.drake` (readers
-of `ruleAspect`), the two authored-ahead files and the baseline README.
+Dev accepted Presence-typed role slots and field-level encoding. Implemented, uncommitted:
+Absent omits a field; Present writes its aspect object, including empty objects. The generator
+supports these two role-aspect field types, with no general standalone Presence codec.
+Role readers, rebuilds, completeness and stub checks, dreams and inspection scripts are
+migrated. BodyElement and ActorAspect are canonical plain types; frozen fixtures and
+exclusions are removed. Four new tests plus four restored tests yield 857 / 61.
+Final direct full-suite verification passed **857 tests**, 62 suites including Runner discovery,
+zero failures/canceled/ignored/pending tests and zero aborted suites. Dev subsequently verified 857 tests / 61 suites.
+Current main/mods/test resources were included in loader roots. Surface losses: 0 across 120;
+DracoAspect: 110 sections, 0 frozen, 0 skipped. Every other headline matches the historical
+baseline below, including pending mods actors 0. Dev’s first sbt gate passed with matching figures; await commit and push.
+The first probe location in /tmp broke repository-root discovery; corrected to target/scala-2.13.
+An intermediate run caught missing compact records and a domainless test fixture; both corrected.
+The final run had local socket access for existing ZeroMQ tests after sandbox binding failures.
+Observed starting HEAD is 4dcef69, the documentation commit following 7b1bfea.
+Record: git-record-2026-10-22-0800. Journal coverage stays at chapter 104; this session
+is not yet journaled. No sbt, commit or push has been run by Codex.
 
 ## Completed in the previous session (Claude Code, October 21–22)
 
@@ -124,7 +112,7 @@ roots misses what Dev's gate finds.
 
 ## Deferred work and priority context
 
-- The presence proposal above is the next design point, unaccepted.
+- The accepted presence increment above is verified and awaits Dev’s commit.
 - The 48 example domains under `src/mods/resources/domains` are outside the canonical ontology,
   report-only (28 match / 20 differ) and unswept; whether they join under their own declared ontology
   is an open question, not put to Dev.

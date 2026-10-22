@@ -62,7 +62,7 @@ class DreamsTest extends AnyFunSuite {
     assert(Dreams.elementTypeNames == Seq("Initialization"))
     assert(Dreams.domainType.typeDictionary.size == 1)
     assert(DracoAspect.isEmpty(definitionAt("draco/dreams/Dreams").dracoAspect))
-    assert(RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect) && CodecAspect.isEmpty(td.codecAspect))
+    assert(td.ruleAspect.fold(true, _ => false) && td.actorAspect.fold(true, _ => false) && CodecAspect.isEmpty(td.codecAspect))
     val loaded = DomainBuilder.define("Dreams", Seq("draco", "dreams"))
     assert(!DomainBuilder.isStub(loaded.typeDefinition))
     assert(loaded.typeDictionary.elementTypes.forall(m => !DomainBuilder.isStub(m)))
@@ -76,7 +76,7 @@ class DreamsTest extends AnyFunSuite {
     assert(td.domainAspect.typeName == td.typeName)
     assert(User.elementTypeNames == Seq("Create", "Delete", "Generate", "Latent", "Read", "Request", "Response", "Update"))
     assert(User.domainType.typeDictionary.size == 8)
-    assert(RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect) && CodecAspect.isEmpty(td.codecAspect))
+    assert(td.ruleAspect.fold(true, _ => false) && td.actorAspect.fold(true, _ => false) && CodecAspect.isEmpty(td.codecAspect))
     Seq(Create, Delete, Generate, Latent, Read, Request, Response, Update).foreach(m => assert(m.typeDefinition.domainAspect.typeName == td.typeName))
     // Request is the abstract head of the family (2026-10-13): no elements, no factory.
     // Latent is the candidate SHAPE (definition + members), abstract since 2026-10-14, and

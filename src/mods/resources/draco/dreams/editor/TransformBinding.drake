@@ -11,7 +11,7 @@ type TransformBinding
         par accepted DomainOntology
       body
         fix aspect DomainAspect domain.typeDefinition.domainAspect
-        fix expected [io.circe.Json] definitions.filter(\td -> !draco.RuleAspect.isEmpty(td.ruleAspect)).map(\td -> TypeDefinition.encoder(td))
+        fix expected [io.circe.Json] definitions.filter(\td -> td.ruleAspect.fold(false, \aspect -> true)).map(\td -> TypeDefinition.encoder(td))
         fix actual [io.circe.Json] rules.map(\r -> TypeDefinition.encoder(r._1))
         fix value Boolean aspect.source.namePath == TypeDefinition.typeDefinition.typeName.namePath && aspect.target.name.nonEmpty && domains.map(\d -> d.typeDefinition.typeName.namePath).distinct.size == domains.size && domains.forall(\d -> accepted.holding(d.typeDefinition.typeName).fold(false, \held -> TypeDefinition.encoder(held.typeDefinition) == TypeDefinition.encoder(d.typeDefinition) && held.typeDictionary.elementTypes.map(\td -> TypeDefinition.encoder(td)).toSet == d.typeDictionary.elementTypes.map(\td -> TypeDefinition.encoder(td)).toSet)) && domains.forall(\d -> d.typeDefinition.dracoAspect.superDomain.name.isEmpty || domains.exists(\s -> s.typeDefinition.typeName.namePath == d.typeDefinition.dracoAspect.superDomain.namePath)) && actual.distinct.size == actual.size && actual.toSet == expected.toSet
     ]

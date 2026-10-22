@@ -35,7 +35,7 @@ object AssemblyValidator {
     * fallback, for definitions not yet migrated (DracoGenerator.actorMessageType makes
     * the same choice, and for the same reason). */
   private def messageType(td: TypeDefinition): Option[String] =
-    Some(td.actorAspect.messageType)
+    Some(td.actorAspect.fold(ActorAspect.Null, identity).messageType)
       .filter(_.name.nonEmpty)
       .map(_.namePath)
       .orElse(

@@ -37,8 +37,8 @@ object DerivationChain {
     def loaded(td: TypeDefinition): Boolean =
       !DracoAspect.isEmpty(td.dracoAspect) ||
       !DomainAspect.isEmpty(td.domainAspect) ||
-      !RuleAspect.isEmpty(td.ruleAspect) ||
-      !ActorAspect.isEmpty(td.actorAspect)
+      td.ruleAspect.fold(false, _ => true) ||
+      td.actorAspect.fold(false, _ => true)
 
     def walk(tn: TypeName, depth: Int, seen: mutable.Set[String]): Unit = {
       val key = tn.namePath

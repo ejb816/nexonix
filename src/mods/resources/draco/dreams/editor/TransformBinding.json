@@ -187,8 +187,14 @@
                             "td",
                             {
                               "()": [
-                                "!draco.RuleAspect.isEmpty",
-                                "td.ruleAspect"
+                                "td.ruleAspect.fold",
+                                "false",
+                                {
+                                  "\\": [
+                                    "aspect",
+                                    "true"
+                                  ]
+                                }
                               ]
                             }
                           ]

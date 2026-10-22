@@ -91,7 +91,7 @@ class ScenarioDrakeTest extends AnyFunSuite with draco.PersistentTestLog {
       log.info(f"  $path%-34s from=${draco.DracoAspect.parents(da).map(_.namePath).mkString(",")}%-28s " +
         f"super=${da.superDomain.namePath}%-26s domain=${td.domainAspect.typeName.namePath}%-26s " +
         s"elements=${da.elements.size} types=${td.domainAspect.elementTypeNames.size} " +
-        s"rule=${!draco.RuleAspect.isEmpty(td.ruleAspect)} actor=${!draco.ActorAspect.isEmpty(td.actorAspect)}")
+        s"rule=${td.ruleAspect.fold(false, _ => true)} actor=${td.actorAspect.fold(false, _ => true)}")
     }
 
     console.info(s"scenario in today's drake: ${outcomes.size} files, " +

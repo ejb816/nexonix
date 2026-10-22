@@ -32,6 +32,6 @@ object TypeLoader extends App with DracoType {
   def isStub(_typeName: => TypeName): Boolean = {
     lazy val typeName: TypeName = _typeName
     lazy val td: TypeDefinition = loadType(typeName)
-    DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect)
+    DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && td.ruleAspect.fold(true, aspect => false) && td.actorAspect.fold(true, aspect => false)
   }
 }

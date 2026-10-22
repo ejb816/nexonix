@@ -62,7 +62,12 @@
       {
         "kind": "Fixed",
         "name": "isEmpty",
-        "valueType": "ActorAspect => Boolean",
+        "valueType": {
+          "->": [
+            "ActorAspect",
+            "Boolean"
+          ]
+        },
         "value": "aa => aa.message.body.isEmpty && aa.signal.body.isEmpty && aa.start.body.isEmpty"
       }
     ]

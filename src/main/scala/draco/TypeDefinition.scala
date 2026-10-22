@@ -1,5 +1,8 @@
 package draco
 
+import draco.drake.Absent
+import draco.drake.Presence
+
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
@@ -19,8 +22,8 @@ object TypeDefinition extends App with DracoType {
       if (x.uses.nonEmpty) Some("uses" -> x.uses.asJson) else None,
       if (!DracoAspect.isEmpty(x.dracoAspect)) Some("dracoAspect" -> x.dracoAspect.asJson) else None,
       if (!DomainAspect.isEmpty(x.domainAspect)) Some("domainAspect" -> x.domainAspect.asJson) else None,
-      if (!RuleAspect.isEmpty(x.ruleAspect)) Some("ruleAspect" -> x.ruleAspect.asJson) else None,
-      if (!ActorAspect.isEmpty(x.actorAspect)) Some("actorAspect" -> x.actorAspect.asJson) else None,
+      if (x.ruleAspect.fold(false, _ => true)) Some("ruleAspect" -> x.ruleAspect.fold[Json](Json.Null, aspect => aspect.asJson)) else None,
+      if (x.actorAspect.fold(false, _ => true)) Some("actorAspect" -> x.actorAspect.fold[Json](Json.Null, aspect => aspect.asJson)) else None,
       if (!CodecAspect.isEmpty(x.codecAspect)) Some("codecAspect" -> x.codecAspect.asJson) else None
     ).flatten
     Json.obj(fields: _*)
@@ -31,8 +34,8 @@ object TypeDefinition extends App with DracoType {
       _uses <- cursor.downField("uses").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
       _dracoAspect <- cursor.downField("dracoAspect").as[Option[DracoAspect]].map(_.getOrElse(DracoAspect.Null))
       _domainAspect <- cursor.downField("domainAspect").as[Option[DomainAspect]].map(_.getOrElse(DomainAspect.Null))
-      _ruleAspect <- cursor.downField("ruleAspect").as[Option[RuleAspect]].map(_.getOrElse(RuleAspect.Null))
-      _actorAspect <- cursor.downField("actorAspect").as[Option[ActorAspect]].map(_.getOrElse(ActorAspect.Null))
+      _ruleAspect <- (if (cursor.keys.exists(_.exists(_ == "ruleAspect"))) cursor.downField("ruleAspect").as[RuleAspect].map(value => draco.drake.Present(value): Presence[RuleAspect]) else Right(Absent[RuleAspect]()))
+      _actorAspect <- (if (cursor.keys.exists(_.exists(_ == "actorAspect"))) cursor.downField("actorAspect").as[ActorAspect].map(value => draco.drake.Present(value): Presence[ActorAspect]) else Right(Absent[ActorAspect]()))
       _codecAspect <- cursor.downField("codecAspect").as[Option[CodecAspect]].map(_.getOrElse(CodecAspect.Null))
     } yield TypeDefinition (_typeName, _uses, _dracoAspect, _domainAspect, _ruleAspect, _actorAspect, _codecAspect)
   }
@@ -42,16 +45,16 @@ object TypeDefinition extends App with DracoType {
     _uses: => Seq[TypeName] = Seq.empty,
     _dracoAspect: => DracoAspect = DracoAspect.Null,
     _domainAspect: => DomainAspect = DomainAspect.Null,
-    _ruleAspect: => RuleAspect = RuleAspect.Null,
-    _actorAspect: => ActorAspect = ActorAspect.Null,
+    _ruleAspect: => Presence[RuleAspect] = Absent(),
+    _actorAspect: => Presence[ActorAspect] = Absent(),
     _codecAspect: => CodecAspect = CodecAspect.Null
   ) : TypeDefinition = new TypeDefinition {
     override lazy val typeName: TypeName = _typeName
     override lazy val uses: Seq[TypeName] = _uses
     override lazy val dracoAspect: DracoAspect = _dracoAspect
     override lazy val domainAspect: DomainAspect = _domainAspect
-    override lazy val ruleAspect: RuleAspect = _ruleAspect
-    override lazy val actorAspect: ActorAspect = _actorAspect
+    override lazy val ruleAspect: Presence[RuleAspect] = _ruleAspect
+    override lazy val actorAspect: Presence[ActorAspect] = _actorAspect
     override lazy val codecAspect: CodecAspect = _codecAspect
     override lazy val typeDefinition: TypeDefinition = TypeDefinition.typeDefinition
   }
@@ -61,8 +64,8 @@ object TypeDefinition extends App with DracoType {
     _uses = Seq.empty,
     _dracoAspect = DracoAspect.Null,
     _domainAspect = DomainAspect.Null,
-    _ruleAspect = RuleAspect.Null,
-    _actorAspect = ActorAspect.Null,
+    _ruleAspect = Absent(),
+    _actorAspect = Absent(),
     _codecAspect = CodecAspect.Null
   )
 

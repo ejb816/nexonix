@@ -106,27 +106,19 @@ class DracoAspectTest extends AnyFunSuite with PersistentTestLog {
     assert(rendered == "type Stub")
   }
 
-  test("complete Draco sections reproduce the corpus including authored-ahead baselines") {
+  test("complete Draco sections reproduce the corpus without exclusions") {
     val paths = Using.resource(Files.walk(Paths.get("src/main/resources/draco"))) { stream =>
       stream.iterator.asScala.filter(p => Files.isRegularFile(p) && p.toString.endsWith(".json")).toList.sorted
     }
     assert(paths.nonEmpty)
-    // These surfaces predate the migration and deliberately differ from their JSON.
-    // Freeze the old emitter's type section instead of excluding either definition.
-    val authoredAhead = Set("ActorAspect.json", "BodyElement.json")
-      .map(name => Paths.get("src/main/resources/draco").resolve(name))
-    assert(authoredAhead.subsetOf(paths.toSet))
     paths.foreach { path =>
       val td = io.circe.parser.parse(new String(Files.readAllBytes(path), UTF_8))
         .flatMap(_.as[TypeDefinition]).fold(error => fail(s"$path: $error"), identity)
       val authored = path.resolveSibling(path.getFileName.toString.stripSuffix(".json") + ".drake")
       assert(Files.isRegularFile(authored), s"missing $authored")
-      val expected = if (authoredAhead(path))
-        Paths.get("src/test/resources/draco/draketarget/draco-aspect-baseline").resolve(authored.getFileName)
-      else authored
-      assert(render(td) == section(new String(Files.readAllBytes(expected), UTF_8)), s"Draco section differs: $path")
+      assert(render(td) == section(new String(Files.readAllBytes(authored), UTF_8)), s"Draco section differs: $path")
     }
-    console.info(s"DracoAspect over the corpus: ${paths.size} complete sections reproduced, 2 frozen authored-ahead baselines, 0 skipped")
+    console.info(s"DracoAspect over the corpus: ${paths.size} complete sections reproduced, 0 frozen authored-ahead baselines, 0 skipped")
   }
 
   test("the running generator rule uses the definition-backed Draco section") {

@@ -7,7 +7,7 @@ rule
     conditions
       con DracoAspect.isEmpty(td.dracoAspect)
       con DomainAspect.isEmpty(td.domainAspect)
-      con RuleAspect.isEmpty(td.ruleAspect)
-      con ActorAspect.isEmpty(td.actorAspect)
+      con td.ruleAspect.fold(true, \aspect -> false)
+      con td.actorAspect.fold(true, \aspect -> false)
   action
     mon ctx.insert(Problem(td.typeName, s"member ${td.typeName.name} is declared but unauthored (no JSON on disk)"))

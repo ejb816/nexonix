@@ -32,8 +32,8 @@ object InspectType {
     val loaded =
       !DracoAspect.isEmpty(td.dracoAspect) ||
       !DomainAspect.isEmpty(td.domainAspect) ||
-      !RuleAspect.isEmpty(td.ruleAspect) ||
-      !ActorAspect.isEmpty(td.actorAspect)
+      td.ruleAspect.fold(false, _ => true) ||
+      td.actorAspect.fold(false, _ => true)
 
     if (!loaded) {
       System.err.println(s"error: no TypeDefinition found for ${pkg.mkString(".")}.$name")
@@ -85,12 +85,12 @@ object InspectType {
 
     println()
     println(s"=== RuleAspect ===")
-    println(s"  variables        = ${if (td.ruleAspect.pattern.variables.isEmpty) "(none)" else s"${td.ruleAspect.pattern.variables.size} var(s)"}")
+    println(s"  variables        = ${if (td.ruleAspect.fold(RuleAspect.Null, identity).pattern.variables.isEmpty) "(none)" else s"${td.ruleAspect.fold(RuleAspect.Null, identity).pattern.variables.size} var(s)"}")
 
     println()
     println(s"=== ActorAspect ===")
-    val a = td.actorAspect
-    val hasActor = a.message.body.nonEmpty || a.signal.body.nonEmpty
+    val a = td.actorAspect.fold(ActorAspect.Null, identity)
+    val hasActor = td.actorAspect.fold(false, _ => true)
     println(s"  message    = ${if (a.message.body.isEmpty) "(none)" else s"${a.message.body.size} body element(s)"}")
     println(s"  signal     = ${if (a.signal.body.isEmpty) "(none)" else s"${a.signal.body.size} body element(s)"}")
     if (!hasActor) println(s"  (no actor behavior)")

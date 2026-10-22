@@ -41,8 +41,8 @@ object ListDomains {
     def loaded(td: TypeDefinition): Boolean =
       !DracoAspect.isEmpty(td.dracoAspect) ||
       !DomainAspect.isEmpty(td.domainAspect) ||
-      !RuleAspect.isEmpty(td.ruleAspect) ||
-      !ActorAspect.isEmpty(td.actorAspect)
+      td.ruleAspect.fold(false, _ => true) ||
+      td.actorAspect.fold(false, _ => true)
 
     println("Known domains:")
     println()
@@ -62,8 +62,8 @@ object ListDomains {
       } else {
         val items       = td.domainAspect.elementTypeNames
         val loadedItems = items.map(n => DracoGenerator.loadType(TypeName(n, _namePackage = pkg)))
-        val rules   = loadedItems.count(t => !RuleAspect.isEmpty(t.ruleAspect))
-        val actors  = loadedItems.count(t => !ActorAspect.isEmpty(t.actorAspect))
+        val rules   = loadedItems.count(t => t.ruleAspect.fold(false, _ => true))
+        val actors  = loadedItems.count(t => t.actorAspect.fold(false, _ => true))
         val types   = items.size - rules - actors
         (path, Domain(items.size, types, rules, actors))
       }

@@ -1,10 +1,12 @@
 package draco
 
+import draco.drake.Presence
+
 trait Aspects extends DracoType {
   val dracoAspect: DracoAspect
   val domainAspect: DomainAspect
-  val ruleAspect: RuleAspect
-  val actorAspect: ActorAspect
+  val ruleAspect: Presence[RuleAspect]
+  val actorAspect: Presence[ActorAspect]
   val codecAspect: CodecAspect
 }
 

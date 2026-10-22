@@ -2,7 +2,10 @@ type Aspects
   elements
     fix dracoAspect DracoAspect
     fix domainAspect DomainAspect
-    fix ruleAspect RuleAspect
-    fix actorAspect ActorAspect
+    fix ruleAspect Presence(RuleAspect)
+    fix actorAspect Presence(ActorAspect)
     fix codecAspect CodecAspect
+uses [
+  draco drake Presence
+]
 domain draco Draco
