@@ -24,4 +24,37 @@ class RolePresenceTest extends AnyFunSuite {
     }
   }
 
+  for ((name, heads) <- Seq(
+    "EmptyPlainProjection" -> "",
+    "EmptyRuleProjection" -> "rule\n",
+    "EmptyActorProjection" -> "actor\n",
+    "EmptyBothProjection" -> "rule\nactor\n")) {
+    test(s"empty role projection compiles and its declared roles are usable: $name") {
+      val parsed = Drake.parse(s"type $name\ndomain draco Draco\n" + heads)
+      val td = TypeDefinition.decoder.decodeJson(TypeDefinition.encoder(parsed)).fold(throw _, identity)
+      val source = DracoGenerator.generate(td)
+      val compiled = DracoGenerator.compile(source, s"$name.scala")
+      assert(compiled.isRight, compiled.left.toOption.toSeq.flatten.mkString("\n"))
+      val companion = DracoGenerator.loadClass(compiled.toOption.get, s"draco.$name$$")
+      val module = companion.getField("MODULE$").get(null)
+      if (heads.contains("rule")) {
+        val rule = companion.getMethod("ruleType").invoke(module).asInstanceOf[RuleType]
+        val knowledge = Rule.knowledgeService.newKnowledge(name)
+        rule.pattern(knowledge)
+        val session = knowledge.newStatefulSession()
+        try session.fire() finally session.close()
+      }
+      if (heads.contains("actor")) {
+        val actor = companion.getMethod("actorType").invoke(module)
+          .asInstanceOf[org.apache.pekko.actor.typed.Behavior[Any]]
+        val kit = org.apache.pekko.actor.testkit.typed.scaladsl.BehaviorTestKit(actor)
+        kit.run("unhandled payload")
+        assert(kit.isAlive)
+        assert(kit.retrieveAllEffects().isEmpty)
+        kit.run(42)
+        assert(kit.isAlive)
+        assert(kit.retrieveAllEffects().isEmpty)
+      }
+    }
+  }
 }

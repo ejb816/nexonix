@@ -1,0 +1,17 @@
+Exercise generated empty-role projections through compilation and runtime harnesses
+
+Dev accepted executable coverage of all four absent/present-empty rule/actor combinations.
+Four added RolePresenceTest cases parse and decode the carrier, compile generated Scala,
+load the companion, register and fire a session for declared rules, and send two payloads
+through Pekko BehaviorTestKit for declared actors. Actors remain alive without effects;
+the combined projection supports both checks. No production semantics or corpus changes.
+An empty action is unobservable here: registration and firing succeed, but these tests do
+not assert how many times Evrete invokes an empty action.
+
+All discovered suites passed on compiled classes with current main/mods/test resources on
+loader roots: 861 tests, 62 suites including Runner discovery, zero failed/canceled/ignored/
+pending tests, zero aborted suites. Every report-only figure matches b04d81d, including zero
+pending mods actors. Dev's first full sbt gate on October 22 verified 861 tests / 61 suites,
+zero failed/canceled/ignored/pending tests, zero aborted suites, every report-only headline
+unchanged, including the pasted file-only pending mods actors 0.
+No sbt, commit, or push performed by Codex. Earlier post-commit checkpoint edits are included.

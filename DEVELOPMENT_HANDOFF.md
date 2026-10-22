@@ -6,13 +6,13 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, starting HEAD **4dcef69**, documentation handoff after 7b1bfea.
-  The receiving Codex session has uncommitted role-presence implementation, tests and docs.
-  No commit or push has been performed by Codex.
-- Latest verified code baseline: **857 tests / 61 suites**, Dev's October 22 full sbt gate
-  on the uncommitted role-presence increment, green on its first run. Zero failed/canceled/
-  ignored/pending tests and zero aborted suites; surface losses and frozen baselines zero,
-  all other headlines unchanged, pending mods actors 0. Awaiting Dev's commit and push.
+- Observed branch: `main`, HEAD **b04d81d**, committed and pushed by Dev after the verified gate.
+  Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
+  This post-commit checkpoint update is documentation only, uncommitted.
+- Latest verified baseline: **861 tests / 61 suites**, Dev's October 22 full sbt gate on
+  the uncommitted executable empty-role tests, green on its first run. Zero failed/canceled/
+  ignored/pending tests, zero aborted suites; every report-only headline unchanged, including
+  pending mods actors 0. Production code remains b04d81d, committed and pushed by Dev.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -27,7 +27,7 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Current receiving-session increment (Codex, October 22)
 
-Dev accepted Presence-typed role slots and field-level encoding. Implemented, uncommitted:
+Dev accepted Presence-typed role slots and field-level encoding. Implemented and committed by Dev as b04d81d:
 Absent omits a field; Present writes its aspect object, including empty objects. The generator
 supports these two role-aspect field types, with no general standalone Presence codec.
 Role readers, rebuilds, completeness and stub checks, dreams and inspection scripts are
@@ -37,7 +37,7 @@ Final direct full-suite verification passed **857 tests**, 62 suites including R
 zero failures/canceled/ignored/pending tests and zero aborted suites. Dev subsequently verified 857 tests / 61 suites.
 Current main/mods/test resources were included in loader roots. Surface losses: 0 across 120;
 DracoAspect: 110 sections, 0 frozen, 0 skipped. Every other headline matches the historical
-baseline below, including pending mods actors 0. Dev’s first sbt gate passed with matching figures; await commit and push.
+baseline below, including pending mods actors 0. Dev’s first sbt gate passed with matching figures; Dev committed and pushed b04d81d.
 The first probe location in /tmp broke repository-root discovery; corrected to target/scala-2.13.
 An intermediate run caught missing compact records and a domainless test fixture; both corrected.
 The final run had local socket access for existing ZeroMQ tests after sandbox binding failures.
@@ -112,7 +112,7 @@ roots misses what Dev's gate finds.
 
 ## Deferred work and priority context
 
-- The accepted presence increment above is verified and awaits Dev’s commit.
+- The accepted presence increment above is verified, committed and pushed as b04d81d.
 - The 48 example domains under `src/mods/resources/domains` are outside the canonical ontology,
   report-only (28 match / 20 differ) and unswept; whether they join under their own declared ontology
   is an open question, not put to Dev.
@@ -129,3 +129,16 @@ messages (11 assertive, 17 responsive), 27 final replies, 27 complete exchanges 
 request. No compaction was observed in the frozen prefix; the reply completing this documentation pass is
 outside it and can be recovered by the next pass. Chapters 95–99 (Codex) and 94 (Claude) keep their
 historical Status sections. Both documentation sync markers advance to 104 after reconciliation.
+
+## Executable empty-role coverage (accepted by Dev, implemented and Dev-verified; commit pending)
+
+Four additional RolePresenceTest cases compile and load all four role combinations after
+carrier round-trip, register and fire a session for declared rules, and exercise empty
+actors with String and Int payloads through BehaviorTestKit. All cases passed without
+production changes. The combined projection supports both checks. Empty action invocation
+count is not measured. Full compiled-class run: 861 tests, 62 suites including discovery,
+zero failures or aborts; all report-only headlines unchanged, pending mods actors 0.
+Current resources, including test resources, were on loader roots. Dev’s first full sbt gate
+verified 861 tests / 61 suites, no failures or aborts and all headlines matching.
+Record: git-record-2026-10-22-0739. Next action: Dev’s path-scoped commit and push;
+this increment is uncommitted.

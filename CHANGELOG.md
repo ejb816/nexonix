@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- Add executable coverage for all four empty rule/actor combinations: generated Scala
+  compiles, empty rules register and permit session firing, and empty actors process
+  different payloads without effects or termination, including the composed projection.
+  Dev verified 861 tests / 61 suites with every report-only headline unchanged.
+
 - Preserve rule and actor presence through Presence-typed aspect slots and containing-record
   JSON encoding, including empty declared roles. Canonicalize BodyElement and ActorAspect,
   remove their frozen fixtures and exclusions, and close the remaining surface loss. Dev’s

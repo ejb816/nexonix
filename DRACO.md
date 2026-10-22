@@ -49,6 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**861 tests / 61 suites**, verified by Dev on 2026-10-22 for executable empty-role coverage
+(record `git-record-2026-10-22-0739`): four added tests, no production or corpus changes,
+zero failed/canceled/ignored/pending tests, zero aborted suites, every report-only headline
+unchanged, including zero pending mods actors. Dev's first full gate was green. Before it:
 **857 tests / 61 suites**, verified by Dev on 2026-10-22 for role presence (record
 `git-record-2026-10-22-0800`): four new tests and four restored corpus tests, zero failed,
 canceled, ignored or pending tests, zero aborted suites. Surface losses are zero across
@@ -1236,3 +1240,13 @@ The final direct compiled-class probe passed all 857 tests, 62 suites including 
 discovery, no failures or aborts. Main/mods and test resources were on loader roots. All
 other report-only headlines matched, including zero pending mods actors. Dev subsequently
 verified 857 tests / 61 suites with the same headlines and no failures or aborts.
+
+**Executable empty-role coverage (2026-10-22, Codex; Dev verified 861 / 61).** Four additional
+RolePresenceTest cases compile and load the absent/rule/actor/both projections after carrier
+round-trip. Declared rules register and permit session firing; declared actors process a
+String and an Int through BehaviorTestKit, staying alive without effects. Both roles work
+in the composed projection. No production behavior or corpus change. The tests do not
+measure invocation count of an empty rule action. All 861 tests passed directly, 62 suites
+including discovery, every report-only headline unchanged. Dev’s first full gate verified
+861 tests / 61 suites, zero failures or aborts and matching headlines.
+Record: `git-record-2026-10-22-0739`. Latest Dev-verified baseline is 861 / 61; commit pending.
