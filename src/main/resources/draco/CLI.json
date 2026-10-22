@@ -3,12 +3,14 @@
     "name": "CLI",
     "namePackage": [
       "draco"
-    ],
-    "typeParameters": [
-      "L"
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "L"
+      }
+    ],
     "globalElements": [
       {
         "kind": "Dynamic",

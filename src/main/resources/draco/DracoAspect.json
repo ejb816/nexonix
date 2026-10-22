@@ -19,6 +19,15 @@
     "elements": [
       {
         "kind": "Fixed",
+        "name": "typeParameters",
+        "valueType": {
+          "[]": [
+            "TypeParameter"
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
         "name": "superDomain",
         "valueType": "TypeName"
       },
@@ -73,6 +82,19 @@
       "kind": "Factory",
       "valueType": "DracoAspect",
       "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "typeParameters",
+          "valueType": {
+            "[]": [
+              "TypeParameter"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
         {
           "kind": "Parameter",
           "name": "superDomain",
@@ -160,6 +182,7 @@
             "da",
             {
               "&&": [
+                "da.typeParameters.isEmpty",
                 "da.superDomain.name.isEmpty",
                 "da.modules.isEmpty",
                 "da.extensible.name.isEmpty",

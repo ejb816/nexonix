@@ -3,9 +3,13 @@
     "name": "Generator",
     "namePackage": [
       "draco"
-    ],
+    ]
+  },
+  "dracoAspect": {
     "typeParameters": [
-      "T"
+      {
+        "name": "T"
+      }
     ]
   },
   "domainAspect": {

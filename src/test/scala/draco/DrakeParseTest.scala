@@ -147,8 +147,10 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         // A valueType is a string or a type-form tree and the surface spells both one
         // way; the JSON round-trip compares that spelling until the corpus is trees.
         case ("valueType", v) => "valueType" -> Json.fromString(Drake.typeSurface(v))
-        // Dynamic formals are records, not TypeName's type-form arguments.
-        case ("typeParameters", v) if obj("kind").flatMap(_.asString).contains("Dynamic") =>
+        // Formals are records — a Dynamic's, and since 2026-10-21 the definition's own in its
+        // DracoAspect — not TypeName's type-form arguments.
+        case ("typeParameters", v) if obj("kind").flatMap(_.asString).contains("Dynamic") ||
+          v.asArray.exists(ps => ps.nonEmpty && ps.forall(_.hcursor.downField("name").succeeded)) =>
           "typeParameters" -> v
         case ("typeParameters", v) => "typeParameters" -> Json.fromValues(v.asArray.getOrElse(Vector.empty).map(p => Json.fromString(Drake.typeSurface(p))))
         case (key, v) => key -> surfaceCarried(v)
@@ -503,9 +505,11 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         |domain draco Draco
         |""".stripMargin
     val parsed = Drake.parse(authored)
-    assert(parsed.typeName.typeParameters.map(_.json) == Seq(
-      Json.obj("<:" -> Json.arr(Json.fromString("S"), Json.fromString("DomainType"))),
-      Json.fromString("T")), parsed.typeName.typeParameters.map(_.noSpaces).mkString(", "))
+    // The header's formals are DracoAspect.typeParameters records (Dev, 2026-10-21); the name is bare.
+    assert(parsed.typeName.typeParameters.isEmpty)
+    assert(parsed.dracoAspect.typeParameters.map(_.name) == Seq("S", "T"))
+    assert(parsed.dracoAspect.typeParameters.head.upperBound.json == Json.fromString("DomainType"))
+    assert(parsed.dracoAspect.typeParameters(1).upperBound.json.isNull && parsed.dracoAspect.typeParameters(1).lowerBound.json.isNull)
     val holon = DracoAspect.parents(parsed.dracoAspect).find(_.name == "Holon").getOrElse(fail("Holon not derived"))
     assert(holon.typeParameters.map(_.json) == Seq(Json.obj("(,)" -> Json.arr(Json.fromString("S"), Json.fromString("T")))),
       holon.typeParameters.map(_.noSpaces).mkString(", "))

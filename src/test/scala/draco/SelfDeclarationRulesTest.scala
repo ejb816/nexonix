@@ -100,14 +100,23 @@ class SelfDeclarationRulesTest extends AnyFunSuite {
     // domain, Format(F), self-declares as `domain draco format Format`, exactly as its
     // members point at it; the endogenous initialization run refused it, and XML, JSON
     // and Value with it, until the rule was aligned.
+    // Since 2026-10-21 the formals are DracoAspect.typeParameters records and the definition's own
+    // name is bare, which is what this rule always compared; a reference-shaped name is also accepted.
     val parameterized: DomainType = Domain[Any](
+      TypeDefinition(
+        TypeName("Generic", _namePackage = Seq("draco")),
+        _dracoAspect = DracoAspect(_typeParameters = Seq(TypeParameter("T"))),
+        _domainAspect = DomainAspect(TypeName("Generic", _namePackage = Seq("draco")))))
+    val referenceShaped: DomainType = Domain[Any](
       TypeDefinition(
         TypeName("Generic", _namePackage = Seq("draco"), _typeParameters = Seq(io.circe.Json.fromString("T"))),
         _domainAspect = DomainAspect(TypeName("Generic", _namePackage = Seq("draco")))))
 
     assert(validate(Seq(parameterized), Seq.empty).isEmpty, "the bare self-declaration of a parameterized domain is not a problem")
+    assert(validate(Seq(referenceShaped), Seq.empty).isEmpty)
     val format = DomainBuilder.define("Format", Seq("draco", "format"))
-    assert(format.typeDefinition.typeName.typeParameters.nonEmpty && format.typeDefinition.domainAspect.typeName.typeParameters.isEmpty)
+    assert(format.typeDefinition.dracoAspect.typeParameters.map(_.name) == Seq("F") &&
+      format.typeDefinition.typeName.typeParameters.isEmpty && format.typeDefinition.domainAspect.typeName.typeParameters.isEmpty)
     assert(validate(Seq(format), Seq.empty).isEmpty, "Format(F), the corpus's own case, passes")
   }
 }

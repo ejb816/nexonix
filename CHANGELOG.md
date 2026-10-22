@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+Formals and actuals (2026-10-21; Dev verified 849 tests / 60 suites on 2026-10-22, every headline unchanged): a definition's header formals are TypeParameter records in
+`DracoAspect.typeParameters`, its own name is bare, and a TypeName's parameters are a reference's actual
+arguments; the drake surface and the generated Scala are unchanged, and the 23 parameterized trios are
+migrated.
+
 Corpus sweep (2026-10-21; Dev verified 849 tests / 60 suites, every headline unchanged): every main definition but the two authored-ahead ones, and the staged
 dreams and service definitions, carry compact bodies with their records; the compact form keeps host leaves as
 authored, shortens only names unique across ontology and vocabulary, and spells anchor parameters in the anchor

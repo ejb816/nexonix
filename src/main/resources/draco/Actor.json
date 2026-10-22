@@ -3,12 +3,14 @@
     "name": "Actor",
     "namePackage": [
       "draco"
-    ],
-    "typeParameters": [
-      "T"
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "T"
+      }
+    ],
     "extensible": {
       "name": "ExtensibleBehavior",
       "namePackage": [

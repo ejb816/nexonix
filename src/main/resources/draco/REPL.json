@@ -3,9 +3,13 @@
     "name": "REPL",
     "namePackage": [
       "draco"
-    ],
+    ]
+  },
+  "dracoAspect": {
     "typeParameters": [
-      "L"
+      {
+        "name": "L"
+      }
     ]
   },
   "domainAspect": {

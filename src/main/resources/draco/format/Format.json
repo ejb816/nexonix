@@ -4,12 +4,14 @@
     "namePackage": [
       "draco",
       "format"
-    ],
-    "typeParameters": [
-      "F"
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "F"
+      }
+    ],
     "derivation": [
       {
         "name": "Primal",

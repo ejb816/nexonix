@@ -3,9 +3,6 @@
     "name": "Rule",
     "namePackage": [
       "draco"
-    ],
-    "typeParameters": [
-      "T"
     ]
   },
   "uses": [
@@ -25,6 +22,11 @@
     }
   ],
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "T"
+      }
+    ],
     "derivation": [
       {
         "name": "RuleType",

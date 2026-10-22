@@ -4,12 +4,14 @@
     "namePackage": [
       "draco",
       "drake"
-    ],
-    "typeParameters": [
-      "T"
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "T"
+      }
+    ],
     "modules": [
       {
         "name": "Present",

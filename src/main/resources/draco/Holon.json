@@ -3,13 +3,13 @@
     "name": "Holon",
     "namePackage": [
       "draco"
-    ],
+    ]
+  },
+  "dracoAspect": {
     "typeParameters": [
       {
-        "<:": [
-          "T",
-          "Product"
-        ]
+        "name": "T",
+        "upperBound": "Product"
       }
     ]
   },

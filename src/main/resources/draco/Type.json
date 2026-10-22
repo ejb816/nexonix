@@ -3,12 +3,14 @@
     "name": "Type",
     "namePackage": [
       "draco"
-    ],
-    "typeParameters": [
-      "T"
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "T"
+      }
+    ],
     "factory": {
       "kind": "Factory",
       "valueType": {

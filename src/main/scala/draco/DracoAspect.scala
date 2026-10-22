@@ -6,6 +6,7 @@ import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
 
 trait DracoAspect extends DracoType {
+  val typeParameters: Seq[TypeParameter]
   val superDomain: TypeName
   val modules: Seq[TypeName]
   val extensible: TypeName
@@ -22,6 +23,7 @@ object DracoAspect extends App with DracoType {
 
   implicit lazy val encoder: Encoder[DracoAspect] = Encoder.instance { x =>
     val fields = Seq(
+      if (x.typeParameters.nonEmpty) Some("typeParameters" -> x.typeParameters.asJson) else None,
       if (x.superDomain.name.nonEmpty) Some("superDomain" -> x.superDomain.asJson) else None,
       if (x.modules.nonEmpty) Some("modules" -> x.modules.asJson) else None,
       if (x.extensible.name.nonEmpty) Some("extensible" -> x.extensible.asJson) else None,
@@ -34,6 +36,7 @@ object DracoAspect extends App with DracoType {
   }
   implicit lazy val decoder: Decoder[DracoAspect] = Decoder.instance { cursor =>
     for {
+      _typeParameters <- cursor.downField("typeParameters").as[Option[Seq[TypeParameter]]].map(_.getOrElse(Seq.empty))
       _superDomain <- cursor.downField("superDomain").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
       _modules <- cursor.downField("modules").as[Option[Seq[TypeName]]].map(_.getOrElse(Seq.empty))
       _extensible <- cursor.downField("extensible").as[Option[TypeName]].map(_.getOrElse(TypeName.Null))
@@ -41,10 +44,11 @@ object DracoAspect extends App with DracoType {
       _elements <- cursor.downField("elements").as[Option[Seq[TypeElement]]].map(_.getOrElse(Seq.empty))
       _factory <- cursor.downField("factory").as[Option[Factory]].map(_.getOrElse(Factory.Null))
       _globalElements <- cursor.downField("globalElements").as[Option[Seq[BodyElement]]].map(_.getOrElse(Seq.empty))
-    } yield DracoAspect (_superDomain, _modules, _extensible, _derivation, _elements, _factory, _globalElements)
+    } yield DracoAspect (_typeParameters, _superDomain, _modules, _extensible, _derivation, _elements, _factory, _globalElements)
   }
 
   def apply (
+    _typeParameters: => Seq[TypeParameter] = Seq.empty,
     _superDomain: => TypeName = TypeName.Null,
     _modules: => Seq[TypeName] = Seq.empty,
     _extensible: => TypeName = TypeName.Null,
@@ -53,6 +57,7 @@ object DracoAspect extends App with DracoType {
     _factory: => Factory = Factory.Null,
     _globalElements: => Seq[BodyElement] = Seq.empty
   ) : DracoAspect = new DracoAspect {
+    override lazy val typeParameters: Seq[TypeParameter] = _typeParameters
     override lazy val superDomain: TypeName = _superDomain
     override lazy val modules: Seq[TypeName] = _modules
     override lazy val extensible: TypeName = _extensible
@@ -65,7 +70,7 @@ object DracoAspect extends App with DracoType {
 
   lazy val Null: DracoAspect = apply()
 
-  lazy val isEmpty: DracoAspect => Boolean = da => da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty
+  lazy val isEmpty: DracoAspect => Boolean = da => da.typeParameters.isEmpty && da.superDomain.name.isEmpty && da.modules.isEmpty && da.extensible.name.isEmpty && da.derivation.isEmpty && da.elements.isEmpty && da.factory.valueType.isNull && da.globalElements.isEmpty
   lazy val parents: DracoAspect => Seq[TypeName] = da => da.derivation.filter(parent => parent.has("name")).flatMap(parent => TypeName.read(parent).fold(Seq.empty, name => Seq(name)))
   lazy val foreignParents: DracoAspect => Seq[Dracon] = da => da.derivation.filterNot(parent => parent.has("name"))
 }

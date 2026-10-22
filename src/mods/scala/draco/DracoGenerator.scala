@@ -419,6 +419,18 @@ object DracoGenerator extends App {
     else s"$base[${tn.typeParameters.map(value => typeParameterScala(value)).mkString(", ")}]"
   }
 
+  /** A definition's FORMALS (Dev, 2026-10-21): DracoAspect.typeParameters records, the header's
+    * declarations — `T`, `T <: Product` — spelled as a method's formals are; the definition's own
+    * TypeName carries none, a TypeName's parameters being the ACTUALS of a reference. */
+  private def formalScala (p: TypeParameter) : String =
+    p.name + (if (p.lowerBound.isNull) "" else " >: " + typeParameterScala(p.lowerBound.json)) +
+      (if (p.upperBound.isNull) "" else " <: " + typeParameterScala(p.upperBound.json))
+  private def formalsBracket (formals: Seq[TypeParameter]) : String =
+    if (formals.isEmpty) "" else formals.map(formalScala).mkString("[", ", ", "]")
+  /** The definition's name with a wildcard per formal: "Primal[_]" or "Primal". */
+  private def wildcardName (td: TypeDefinition) : String =
+    td.typeName.name + (if (td.dracoAspect.typeParameters.isEmpty) "" else td.dracoAspect.typeParameters.map(_ => "_").mkString("[", ", ", "]"))
+
   /** Wildcard name from TypeName: "Primal[_]" or "Primal" if no typeParameters. */
   private def wildcardTypeName (tn: TypeName) : String = {
     val base = tn.name
@@ -1163,7 +1175,7 @@ object DracoGenerator extends App {
 
   private def simpleCodecDeclaration (td: TypeDefinition, familyMap: Map[String, TypeDefinition]) : String = {
     val name = td.typeName.name
-    val wName = wildcardTypeName(td.typeName)
+    val wName = wildcardName(td)
     val params = td.dracoAspect.factory.parameters
     s"""  implicit lazy val encoder: Encoder[$wName] = ${fieldElisionEncoder(params, payloadBindings(td, familyMap))}
        |  implicit lazy val decoder: Decoder[$wName] = ${fieldElisionDecoder(params, name, payloadBindings(td, familyMap))}""".stripMargin
@@ -1174,7 +1186,7 @@ object DracoGenerator extends App {
     familyMap: Map[String, TypeDefinition]
   ) : String = {
     val name = td.typeName.name
-    val wName = wildcardTypeName(td.typeName)
+    val wName = wildcardName(td)
     val leaves = collectLeafModules(td, familyMap)
     // The wire key for the type tag: authored via CodecAspect.discriminator,
     // defaulting to "kind" when unset so existing emission is unchanged.
@@ -1310,7 +1322,7 @@ object DracoGenerator extends App {
 
   private def subtypeCodecDeclaration (td: TypeDefinition, parentName: String) : String = {
     val name = td.typeName.name
-    val wName = wildcardTypeName(td.typeName)
+    val wName = wildcardName(td)
     s"""  private lazy val codec = Codec.sub[$parentName, $wName]($parentName.encoder, $parentName.decoder)
        |  implicit def encoder: Encoder[$wName] = codec.encoder
        |  implicit def decoder: Decoder[$wName] = codec.decoder""".stripMargin
@@ -1328,7 +1340,7 @@ object DracoGenerator extends App {
     // none. Presence's codec is the CODEC ASPECT's business, written in drake, not a
     // circe instance the host derives; until then the family is codec-less and reads
     // like Value: constructible, comparable, projectable, not yet serializable.
-    def parameterized (t: TypeDefinition) : Boolean = t.typeName.typeParameters.nonEmpty
+    def parameterized (t: TypeDefinition) : Boolean = t.dracoAspect.typeParameters.nonEmpty
     findDiscriminatedParent(td, familyMap) match {
       case Some(parentName) if familyMap.get(parentName).exists(parameterized) => ""
       case Some(parentName) =>
@@ -1373,19 +1385,20 @@ object DracoGenerator extends App {
     typeName: TypeName,
     elements: Seq[TypeElement],
     factory: Factory,
-    nameSuffix: String = ""
+    nameSuffix: String = "",
+    formals: Seq[TypeParameter] = Seq.empty
   ) : String = {
     val name = typeName.name + nameSuffix
-    val wName = wildcardTypeName(typeName) + nameSuffix
+    val wName = typeName.name + (if (formals.isEmpty) "" else formals.map(_ => "_").mkString("[", ", ", "]")) + nameSuffix
     // `Null` instantiates the type at Nothing — unless a factory parameter is typed by
     // the type's own variable (`_value: T` on Present[T]): Nothing has no value to pass,
     // and a null cast to Nothing throws on first touch, so such a type's Null is at Any
     // with a null Any. Every existing Null is at Nothing; none of them mentions a variable.
-    val variables = typeName.typeParameters.map(value => typeVariable(value)).filter(_.nonEmpty)
+    val variables = formals.map(_.name)
     def mentionsVariable (text: String) : Boolean =
       variables.exists(v => text.matches(s"(?s).*\\b${java.util.regex.Pattern.quote(v)}\\b.*"))
     val instantiation = if (factory.parameters.exists(p => mentionsVariable(p.valueType.text))) "Any" else "Nothing"
-    val typeParams = if (typeName.typeParameters.isEmpty) "" else s"[${typeName.typeParameters.map(_ => instantiation).mkString(", ")}]"
+    val typeParams = if (formals.isEmpty) "" else s"[${formals.map(_ => instantiation).mkString(", ")}]"
     if (factory.valueType.text.nonEmpty) {
       val allHaveDefaults = factory.parameters.nonEmpty && factory.parameters.forall(p => expression(p.value).nonEmpty)
       if (allHaveDefaults) {
@@ -1430,8 +1443,8 @@ object DracoGenerator extends App {
     val hasFactory = factory.valueType.text.nonEmpty && !isActorMintingFactory(factory)
     val hasGlobalElements = td.dracoAspect.globalElements.nonEmpty
     val objName = td.typeName.name + nameSuffix
-    val wName = wildcardTypeName(td.typeName) + nameSuffix
-    val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.map(value => typeParameterScala(value)).mkString(", ")}]"
+    val wName = wildcardName(td) + nameSuffix
+    val typeParams = formalsBracket(td.dracoAspect.typeParameters)
 
     val parents = Seq(
       if (hasExplicitMain(td.dracoAspect.globalElements)) None else Some("App"),
@@ -1465,7 +1478,7 @@ object DracoGenerator extends App {
          |$codecBlock
          |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType.text} = new ${factory.valueType.text} ${factoryBody(td)}
          |
-         |  ${nullInstance(td.typeName, td.dracoAspect.elements, td.dracoAspect.factory, nameSuffix)}
+         |  ${nullInstance(td.typeName, td.dracoAspect.elements, td.dracoAspect.factory, nameSuffix, td.dracoAspect.typeParameters)}
          |
          |${globalElementsDeclaration(td.dracoAspect.globalElements)}
          |}""".stripMargin
@@ -1493,7 +1506,7 @@ object DracoGenerator extends App {
     val body = typeBody(td.dracoAspect.elements)
     val extPart  = if (ext.nonEmpty)  s" $ext"  else ""
     val bodyPart = if (body.nonEmpty) s" $body" else ""
-    s"${typeModifier(td.dracoAspect.modules)}trait ${parameterizedName(td.typeName)}$nameSuffix$extPart$bodyPart"
+    s"${typeModifier(td.dracoAspect.modules)}trait ${td.typeName.name}${formalsBracket(td.dracoAspect.typeParameters)}$nameSuffix$extPart$bodyPart"
   }
 
   // --- Domain companion generation ---
@@ -1539,7 +1552,7 @@ object DracoGenerator extends App {
     val etnLiteral = elementTypeNamesLiteral(td)
     val codec = codecDeclaration(td, familyContext)
     val codecBlock = if (codec.nonEmpty) s"\n$codec\n" else ""
-    val wName = wildcardTypeName(td.typeName)
+    val wName = wildcardName(td)
     val dtLiteral = domainTypeLiteral(wName)
     val globals = if (hasGlobalElements) s"\n${globalElementsDeclaration(td.dracoAspect.globalElements)}" else ""
     // A domain type may also be constructible (aspect co-presence): emit its
@@ -1549,11 +1562,11 @@ object DracoGenerator extends App {
     val factoryBlock =
       if (factory.valueType.text.isEmpty || isActorMintingFactory(factory)) ""
       else {
-        val typeParams = if (td.typeName.typeParameters.isEmpty) "" else s"[${td.typeName.typeParameters.map(value => typeParameterScala(value)).mkString(", ")}]"
+        val typeParams = formalsBracket(td.dracoAspect.typeParameters)
         s"""
            |  def apply$typeParams (${factoryParameters(factory.parameters)}) : ${factory.valueType.text} = new ${factory.valueType.text} ${factoryBody(td)}
            |
-           |  ${nullInstance(td.typeName, td.dracoAspect.elements, factory)}
+           |  ${nullInstance(td.typeName, td.dracoAspect.elements, factory, formals = td.dracoAspect.typeParameters)}
            |""".stripMargin
       }
     s"""$etnLiteral
@@ -1570,7 +1583,7 @@ object DracoGenerator extends App {
     val header = if (parents.isEmpty) s"object $objName" else s"object $objName extends ${parents.mkString(" with ")}"
     val tdOverride = if (chainHits(td, "DracoType")) "override " else ""
     val tdLiteral = s"  ${tdOverride}lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
-    val wName = wildcardTypeName(td.typeName)
+    val wName = wildcardName(td)
     val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
 
     s"""$header {
@@ -1824,7 +1837,7 @@ object DracoGenerator extends App {
 
   private def actorGlobal (td: TypeDefinition) : String = {
     val objName = td.typeName.name
-    val wName = wildcardTypeName(td.typeName)
+    val wName = wildcardName(td)
     val tdLiteral = s"  override lazy val typeDefinition: TypeDefinition = ${typeDefinitionLoad(td)}"
     val tiLiteral = s"  lazy val dracoType: Type[$wName] = Type[$wName] (typeDefinition)"
     val etn = elementTypeNamesLiteral(td)
@@ -1860,7 +1873,7 @@ object DracoGenerator extends App {
     ).flatten
     val header = if (parents.isEmpty) s"object $objName" else s"object $objName extends ${parents.mkString(" with ")}"
     val tdOverride = if (withDracoType) "override " else ""
-    val wName = wildcardTypeName(td.typeName)
+    val wName = wildcardName(td)
     val blocks = Seq(
       if (isDomain(td)) Some(domainBlock(td)) else None,
       if (isRule(td)) Some(ruleBody(td)) else None,
@@ -2231,6 +2244,7 @@ object DracoGenerator extends App {
     TypeDefinition(
       _typeName    = td.typeName,
       _dracoAspect = DracoAspect(
+        _typeParameters = da.typeParameters,
         _superDomain    = da.superDomain,
         _modules        = da.modules,
         _extensible     = da.extensible,
@@ -2404,6 +2418,7 @@ object DracoGenerator extends App {
     val mergedTd = TypeDefinition(
       _typeName = ordered.head.typeName,
       _dracoAspect = DracoAspect(
+        _typeParameters = ordered.head.dracoAspect.typeParameters,
         _derivation = ordered.flatMap(_.dracoAspect.derivation) ++
           ordered.map(_.dracoAspect.extensible).filter(_.name.nonEmpty).map(TypeName.encoder(_)),
         _elements = ordered.flatMap(_.dracoAspect.elements),

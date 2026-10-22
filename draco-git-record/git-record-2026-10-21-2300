@@ -1,0 +1,44 @@
+Hold a definition's formals as TypeParameter records in its DracoAspect; a TypeName carries actuals only
+
+Dev accepted, on 2026-10-21, "header formals as TypeParameter records in DracoAspect.typeParameters,
+with TypeName.typeParameters carrying actual arguments only and a definition's own name keyed
+bare." This closes the formal/actual question #51 had held since Codex raised it before the
+ontology detour: one slot did two jobs, a header's formals and a reference's actuals, told apart
+by context.
+
+DracoAspect gains `typeParameters [TypeParameter]` as its first slot, the record a method's formals
+already use — a name with optional upper and lower bounds as type-form trees — and `isEmpty` counts
+it. The parser reads a header's parameters as formals (`T`, `T <: Product`, through the method-formal
+reader, duplicates refused) into the aspect, and the definition's own TypeName carries none; the
+implicit factory result applies the name to the formals' names, `Domain(T)`. DracoAspectOf, the
+definition-backed header transform, spells the formals from the aspect — name and bounds through its
+form callback — and its implicit factory result from them, so the drake surface is unchanged:
+`type Coordinate(T <: Product)`. The engine reads formals from the aspect wherever it rendered the
+definition's own name — the trait header, the wildcard self-type, the Null instance's variables and
+instantiation, the factory's bracket, the family's parameterized test — through formalScala and
+formalsBracket; a reference's parameters are still spelled from its TypeName. TypeLoader's rooting
+rebuild and the generator's target-type and family-merge rebuilds carry the slot (§6's rule about
+rebuilds, which cost one blind regeneration before the loader was recompiled first). NameResolution
+binds the formals' names over the whole definition from the aspect and walks their bounds as
+formals. The 23 parameterized trios are migrated by re-parsing their drake: their JSON names are
+bare and their aspects hold the records; every generated Scala file is byte-identical except the
+three trios that define the change (DracoAspect, TypeLoader, DracoAspectOf). The rest of the corpus
+needed no sweep: a swept file's record is untouched.
+
+Tests move their pins to the new shape: DrakeParseTest's header test and its round-trip helper
+(formal records are not type forms), NameResolutionTest's two formal binders, DracoAspectTest's two
+header fixtures (a header formal is a name with a bound, never a type form; references keep nested
+parameters) and SelfDeclarationRulesTest's corpus case. Identity does not move: a definition is
+keyed bare, as Uniqueness, self-declaration and the ontology already keyed it.
+
+Probe on the compiled engine: the 23 trios re-parsed, every definition-backed Scala regenerated
+through the scoped generator and byte-identical but for the three, unscoped equal to scoped equal
+to pinned over all 134 definitions, the whole main and mods tree compiled, and every discovered
+suite run: 849 passed, zero failed or aborted, every headline unchanged, pending mods actors 0.
+No test or corpus type added.
+
+Gate: Dev's full sbt run on 2026-10-22, pasted, green on its first run: 849 tests / 60 suites, zero
+failed, canceled, ignored or pending tests, zero aborted suites; every report-only headline
+unchanged; pending mods actors 0 in the file-only log. Committed and pushed by Dev.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

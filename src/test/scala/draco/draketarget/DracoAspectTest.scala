@@ -45,15 +45,18 @@ class DracoAspectTest extends AnyFunSuite with PersistentTestLog {
     val parameter = Json.obj("[]" -> Json.arr(Json.fromString("draco.drake.Text")))
     val local = TypeName("Parent", Seq("example"), Seq(parameter))
     val remote = TypeName("Peer", Seq("other"), Seq(Json.fromString("T")))
-    val td = TypeDefinition(TypeName("Child", Seq("example"), Seq(parameter)),
-      _dracoAspect = DracoAspect(_derivation = Seq(local.asJson),
-        _modules = Seq(remote, local), _extensible = local),
+    // The header's formals are DracoAspect.typeParameters records (Dev, 2026-10-21): a name with
+    // optional bounds; the definition's name is bare. References keep their nested parameters.
+    val td = TypeDefinition(TypeName("Child", Seq("example")),
+      _dracoAspect = DracoAspect(_typeParameters = Seq(TypeParameter("T", _upperBound = parameter)),
+        _derivation = Seq(local.asJson), _modules = Seq(remote, local), _extensible = local),
       _domainAspect = DomainAspect(TypeName("Domain", Seq("example"))))
-    val expected = "type Child([draco.drake.Text]) from Parent([draco.drake.Text])\n  modules [\n    other Peer(T)\n    Parent([draco.drake.Text])\n  ]\n  extensible example Parent([draco.drake.Text])"
+    val expected = "type Child(T <: [draco.drake.Text]) from Parent([draco.drake.Text])\n  modules [\n    other Peer(T)\n    Parent([draco.drake.Text])\n  ]\n  extensible example Parent([draco.drake.Text])"
     assert(render(td) == expected)
     assert(section(Drake.emit(td)) == expected)
     val parsed = Drake.parse(Drake.emit(td))
     assert(parsed.typeName == td.typeName)
+    assert(parsed.dracoAspect.typeParameters.map(p => (p.name, p.upperBound.json)) == Seq(("T", parameter)))
     assert(parsed.dracoAspect.modules == td.dracoAspect.modules)
     assert(parsed.dracoAspect.extensible == td.dracoAspect.extensible)
   }
@@ -83,7 +86,7 @@ class DracoAspectTest extends AnyFunSuite with PersistentTestLog {
     assert(Drake.emit(Drake.parse(Drake.emit(td))) == source)
     val explicit = source.replace("  factory\n", "  factory ActorType(T)\n")
     assert(Drake.emit(Drake.parse(explicit)) == explicit)
-    val legacy = TypeDefinition(td.typeName, _dracoAspect = DracoAspect(
+    val legacy = TypeDefinition(td.typeName, _dracoAspect = DracoAspect(_typeParameters = td.dracoAspect.typeParameters,
       _factory = Factory(_valueType = Json.fromString("Example[T]"))))
     assert(render(legacy) == "type Example(T)\n  factory")
   }

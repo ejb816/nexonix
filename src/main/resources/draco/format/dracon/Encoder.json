@@ -5,12 +5,14 @@
       "draco",
       "format",
       "dracon"
-    ],
-    "typeParameters": [
-      "T"
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "T"
+      }
+    ],
     "elements": [
       {
         "kind": "Fixed",

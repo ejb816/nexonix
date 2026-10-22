@@ -4,17 +4,15 @@
     "namePackage": [
       "draco",
       "base"
-    ],
-    "typeParameters": [
-      {
-        "<:": [
-          "T",
-          "Product"
-        ]
-      }
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "T",
+        "upperBound": "Product"
+      }
+    ],
     "derivation": [
       {
         "name": "Holon",

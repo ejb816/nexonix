@@ -49,7 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**849 tests / 60 suites**, verified by Dev on 2026-10-21 for the corpus sweep (record
+**849 tests / 60 suites**, verified by Dev on 2026-10-22 for the formal/actual split (record
+`git-record-2026-10-21-2300`): no test or corpus type added, zero failed, canceled, ignored or pending tests,
+zero aborted suites, every report-only headline unchanged, including zero pending mods actors, green on its
+first run. Before it, the same **849 / 60**, verified by Dev on 2026-10-21 for the corpus sweep (record
 `git-record-2026-10-21-2230`): no test or corpus type added, zero failed, canceled, ignored or pending tests,
 zero aborted suites, every report-only headline unchanged, including zero pending mods actors; Dev's first run
 of that gate failed one bootstrap-spelling pin in DomainLineTest, moved before the second. Before it, the same
@@ -267,7 +270,8 @@ Compact by intent. Architecture detail belongs in `README.md` once that file is 
 **Type system.** `DracoType` is a one-member trait (`val typeDefinition`).
 `TypeDefinition extends Aspects { val typeName }`, and `Aspects` is **five** slots:
 
-- `dracoAspect` — superDomain, modules, extensible, derivation, elements, factory, globalElements
+- `dracoAspect` — typeParameters (the header's formals, `[TypeParameter]`, 2026-10-21), superDomain, modules,
+  extensible, derivation, elements, factory, globalElements
   (`derivation` is `[draco.format.dracon.Dracon]` since 2026-10-17, previously `[Json]`: a TypeName object for a draco parent, a type-form node
   for a FOREIGN one — Dictionary's `{"{}": ["K", "V"]}`; read names through `DracoAspect.parents`)
 - `domainAspect` — typeName (self-loop for a domain, container pointer otherwise), elementTypeNames,
@@ -292,14 +296,17 @@ override of drake.dlt EVALUATION. JSON uses a `"kind"` discriminator;
 `Codec.sub` narrows the parent codec.
 
 **`TypeName`** is `name` + `namePackage` + `typeParameters`, with derived `namePath` and
-`resourcePath`. It compares **structurally** (GitHub #37). Each type parameter is Dracon holding a JSON node on the
-value-type terms (wrapped since 2026-10-17; tree syntax since 2026-09-17) — a string is the authored text, a tree a type form, and the parser
-builds the tree for every header parameter and reference argument (`S <: DomainType` is a bound leaf,
-`(S, T)` an Objective) — read as text through
-`TypeForm.text` and spelled for Scala at each render site, because identity is not rewritten in place. Type parameters are part of the
-identity: a position holds either a variable or a concrete type, a type is abstract iff any
-position contains a variable at any depth, and only a fully concrete name can be the
-derivation for an atomic term. So `Dictionary(K, V)` ≠ `Dictionary(TypeName, TypeDefinition)`.
+`resourcePath`. It compares **structurally** (GitHub #37). Its type parameters are the ACTUAL ARGUMENTS of a
+REFERENCE (Dev, 2026-10-21): each is Dracon holding a JSON node on the value-type terms (wrapped since
+2026-10-17; tree syntax since 2026-09-17) — a string is the authored text, a tree a type form, and the parser
+builds the tree for every reference argument (`(S, T)` an Objective) — read as text through `TypeForm.text`
+and spelled for Scala at each render site, because identity is not rewritten in place. A reference is
+abstract iff any position contains a variable at any depth, and only a fully concrete name can be the
+derivation for an atomic term; so `Dictionary(K, V)` ≠ `Dictionary(TypeName, TypeDefinition)`. A DEFINITION's
+own name carries NO parameters: its header's FORMALS — `type Coordinate(T <: Product)` — are `TypeParameter`
+records (name, optional upper and lower bounds as type forms, the record a method's formals use) held in
+`DracoAspect.typeParameters`, and the definition is keyed bare, as Uniqueness, self-declaration and the
+ontology always keyed it.
 
 **Companion convention.** Every generated companion is:
 
@@ -930,6 +937,19 @@ agree about every definition (TransformBinding.matches had refused the held GenD
 through `import draco._`, and KnowledgeService's binding names org.evrete. Unscoped and scoped generation now
 agree over the WHOLE main corpus (ResolutionRecordTest pins it), so the ontology is needed only to author and
 validate; the test suites' explicit scope is a convenience. No test or corpus type added.
+
+**Formals in the aspect, actuals in the name (2026-10-21, Claude Code; Dev verified 849 / 60 on 2026-10-22).** Dev accepted "header
+formals as TypeParameter records in DracoAspect.typeParameters, with TypeName.typeParameters carrying actual
+arguments only and a definition's own name keyed bare", closing the formal/actual question #51 held since
+Codex raised it. `DracoAspect.typeParameters [TypeParameter]` is the aspect's first slot; the parser reads a
+header's parameters as formals (through the method-formal reader) into it and leaves the definition's TypeName
+bare; the implicit factory result applies the name to the formals' names. `DracoAspectOf` spells the header
+from the aspect, so the drake surface is unchanged. The engine reads formals from the aspect wherever it renders
+the definition's own name (`formalScala`, `formalsBracket`, `wildcardName`); references spell from their
+TypeName as before. TypeLoader's rooting and the generator's rebuilds carry the slot — one blind regeneration
+lost every formal before the regenerated loader was compiled first, §6's rule again. The 23 parameterized trios
+are migrated by re-parsing their drake; every generated Scala file is byte-identical but for the three defining
+trios. Identity does not move. No test or corpus type added.
 
 **Handoff checkpoint (2026-10-21).** Chapters 95–99 preserve this Codex session with a
 bounded original-message extract: 35 complete exchanges plus the open handoff request.

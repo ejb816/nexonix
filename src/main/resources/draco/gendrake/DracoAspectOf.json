@@ -32,6 +32,12 @@
       ]
     },
     {
+      "name": "TypeParameter",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
       "name": "Text",
       "namePackage": [
         "draco",
@@ -480,6 +486,80 @@
         },
         {
           "kind": "Local",
+          "name": "formalText",
+          "valueType": {
+            "->": [
+              "TypeParameter",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "p",
+              {
+                "++": [
+                  "p.name",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              "p.lowerBound.isNull"
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      "\"\"",
+                      {
+                        "++": [
+                          "\" >: \"",
+                          {
+                            "()": [
+                              "formText",
+                              "p.lowerBound"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              "p.upperBound.isNull"
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      "\"\"",
+                      {
+                        "++": [
+                          "\" <: \"",
+                          {
+                            "()": [
+                              "formText",
+                              "p.upperBound"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
           "name": "name",
           "valueType": "Text",
           "value": {
@@ -497,9 +577,42 @@
               },
               "\"\"",
               {
-                "()": [
-                  "appliedName",
-                  "definition.typeName"
+                "++": [
+                  "definition.typeName.name",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              "aspect.typeParameters.isEmpty"
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      "\"\"",
+                      {
+                        "++": [
+                          "\"(\"",
+                          {
+                            "()": [
+                              "join",
+                              "\", \"",
+                              {
+                                "()": [
+                                  "aspect.typeParameters.map",
+                                  "formalText"
+                                ]
+                              }
+                            ]
+                          },
+                          "\")\""
+                        ]
+                      }
+                    ]
+                  }
                 ]
               }
             ]
@@ -558,7 +671,7 @@
                   {
                     "()": [
                       "guard",
-                      "definition.typeName.typeParameters.isEmpty"
+                      "aspect.typeParameters.isEmpty"
                     ]
                   },
                   "ifThenElse"
@@ -593,7 +706,22 @@
                                       }
                                     ]
                                   },
-                                  "definition.typeName.typeParameters"
+                                  {
+                                    "()": [
+                                      "aspect.typeParameters.map",
+                                      {
+                                        "\\": [
+                                          "p",
+                                          {
+                                            "()": [
+                                              "Dracon.string",
+                                              "p.name"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
                                 ]
                               }
                             ]

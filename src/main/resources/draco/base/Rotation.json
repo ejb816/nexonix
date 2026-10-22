@@ -4,12 +4,14 @@
     "namePackage": [
       "draco",
       "base"
-    ],
-    "typeParameters": [
-      "T"
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "T"
+      }
+    ],
     "derivation": [
       {
         "name": "Cardinal",

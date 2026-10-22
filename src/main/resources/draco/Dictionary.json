@@ -3,13 +3,17 @@
     "name": "Dictionary",
     "namePackage": [
       "draco"
-    ],
-    "typeParameters": [
-      "K",
-      "V"
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "K"
+      },
+      {
+        "name": "V"
+      }
+    ],
     "derivation": [
       {
         "{}": [

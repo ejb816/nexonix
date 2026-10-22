@@ -4,9 +4,6 @@
     "namePackage": [
       "draco",
       "format"
-    ],
-    "typeParameters": [
-      "F"
     ]
   },
   "uses": [
@@ -26,6 +23,11 @@
     }
   ],
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "F"
+      }
+    ],
     "elements": [
       {
         "kind": "Fixed",

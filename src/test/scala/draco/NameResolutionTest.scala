@@ -74,7 +74,7 @@ class NameResolutionTest extends AnyFunSuite {
       |    ]
       |domain sample Test
       |""".stripMargin, resolver)
-    assert(td.typeName.typeParameters.head.json == Json.fromString("T"))
+    assert(td.dracoAspect.typeParameters.head.name == "T" && td.typeName.typeParameters.isEmpty)
     val method = td.dracoAspect.elements(1).asInstanceOf[Dynamic]
     assert(method.valueType.json == Json.fromString("R"))
     assert(method.parameters.head.valueType.json == Json.fromString("T"))
@@ -88,7 +88,7 @@ class NameResolutionTest extends AnyFunSuite {
       |    dyn choose(R <: Box([T])) (R -> {String, T})
       |domain sample Test
       |""".stripMargin, resolver)
-    assert(td.typeName.typeParameters.head.noSpaces.contains("sample.Bound"))
+    assert(td.dracoAspect.typeParameters.head.upperBound.json == Json.fromString("sample.Bound"))
     val method = td.dracoAspect.elements.head.asInstanceOf[Dynamic]
     assert(TypeForm.text(method.typeParameters.head.upperBound) == "sample.Box([T])")
     assert(TypeForm.text(method.valueType) == "R -> {String, T}")

@@ -1150,9 +1150,9 @@ object Drake {
 
   /** The factory's valueType is the enclosing type — the drake surface leaves it
     * implicit (drake.dlt CONVENTIONS: `factory` takes no name). */
-  private def factoryValueType (name: String, typeParameters: Seq[Json]) : Json =
-    if (typeParameters.isEmpty) Json.fromString (name)
-    else Json.obj ("()" -> Json.fromValues (Json.fromString (name) +: typeParameters))
+  private def factoryValueType (name: String, formals: Seq[TypeParameter]) : Json =
+    if (formals.isEmpty) Json.fromString (name)
+    else Json.obj ("()" -> Json.fromValues (Json.fromString (name) +: formals.map (f => Json.fromString (f.name))))
 
   /** Parse a .drake source into its TypeDefinition — the inverse of emit().
     * The plain-type template plus rule, actor and codec payload declarations.
@@ -1168,10 +1168,12 @@ object Drake {
     // default package, 2026-09-20): no header, no name, the empty path its whole identity.
     val nameless = c.at ("domain")
     if (!nameless) c.expect ("type")
-    // The header's parameters are TYPE FORMS (drake.dlt CONVENTIONS): a bare variable is
-    // an Atomic string, `S <: DomainType` a bound leaf, exactly as a value-type slot reads.
+    // The header's parameters are the definition's FORMALS (Dev, 2026-10-21): TypeParameter records —
+    // a name with optional bounds as type-form trees, as a method's formals are — held by the
+    // DracoAspect; the definition's own name carries none, a TypeName's parameters being ACTUALS.
     val (name, typeParameterTexts) = if (nameless) ("", Seq.empty[String]) else splitApplied (c.takeText ())
-    val typeParameters = typeParameterTexts.map (typeForm)
+    val typeParameters = typeParameterTexts.map (parseMethodFormal)
+    require(typeParameters.map(_.name).distinct.size == typeParameters.size, s"Drake.parse: duplicate formal in $name")
     // A parent is a NAME (a draco type, resolved against the domain once it is read) or a
     // TYPE FORM (a foreign parent, outside every draco domain — Dictionary's `{K, V}`), and the
     // carrier holds each as what it is (2026-09-20); order is kept.
@@ -1288,9 +1290,10 @@ object Drake {
       else TypeName (tn.name, domainName.namePackage, tn.typeParameters)
 
     TypeDefinition (
-      _typeName = TypeName (name, domainName.namePackage, typeParameters),
+      _typeName = TypeName (name, domainName.namePackage),
       _uses = uses,
       _dracoAspect = DracoAspect (
+        _typeParameters = typeParameters,
         _superDomain    = superDomain,
         _modules        = modules.map (resolved),
         _extensible     = extensible,

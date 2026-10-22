@@ -18,9 +18,10 @@ type DracoAspectOf from draco draketarget DracoAspectText
       loc root (TypeName -> Boolean) \name -> name.name == "DracoType" && name.namePackage == ["draco"]
       loc rootRestored Boolean DracoAspect.parents(aspect).filterNot(root).isEmpty
       loc parents [Text] aspect.derivation.flatMap(\parent -> guard(parent.has("name")).ifThenElse(TypeName.read(parent).fold([], \name -> guard(rootRestored && root(name)).ifThenElse([], [reference(name)])), [formText(parent)]))
-      loc name Text guard(definition.typeName.name.isEmpty).ifThenElse("", appliedName(definition.typeName))
+      loc formalText (TypeParameter -> Text) \p -> p.name ++ guard(p.lowerBound.isNull).ifThenElse("", " >: " ++ formText(p.lowerBound)) ++ guard(p.upperBound.isNull).ifThenElse("", " <: " ++ formText(p.upperBound))
+      loc name Text guard(definition.typeName.name.isEmpty).ifThenElse("", definition.typeName.name ++ guard(aspect.typeParameters.isEmpty).ifThenElse("", "(" ++ join(", ", aspect.typeParameters.map(formalText)) ++ ")"))
       loc extensible Text guard(aspect.extensible.name.isEmpty).ifThenElse("", join(" ", aspect.extensible.namePackage ++ [appliedName(aspect.extensible)]))
-      loc factoryType Dracon guard(definition.typeName.typeParameters.isEmpty).ifThenElse(Dracon.string(definition.typeName.name), Dracon.record([("()", Dracon.array([Dracon.string(definition.typeName.name)] ++ definition.typeName.typeParameters))]))
+      loc factoryType Dracon guard(aspect.typeParameters.isEmpty).ifThenElse(Dracon.string(definition.typeName.name), Dracon.record([("()", Dracon.array([Dracon.string(definition.typeName.name)] ++ aspect.typeParameters.map(\p -> Dracon.string(p.name))))]))
       loc factoryPresent Boolean slotText(aspect.factory.valueType).nonEmpty
       loc factoryResult Text guard(factoryPresent).ifThenElse(guard(slotText(aspect.factory.valueType) == slotText(factoryType)).ifThenElse("", slotText(aspect.factory.valueType)), "")
       loc rendered DracoAspectText DracoAspectText(name, parents, aspect.modules.map(reference), extensible, aspect.elements.flatMap(\element -> elementText(element, 2)), factoryPresent, factoryResult, aspect.factory.parameters.flatMap(\element -> elementText(element, 3)), aspect.factory.body.flatMap(\element -> elementText(element, 3)), aspect.globalElements.flatMap(\element -> elementText(element, 2)))
@@ -30,6 +31,7 @@ uses [
   draco TypeDefinition
   draco TypeElement
   draco TypeName
+  draco TypeParameter
   draco drake Text
   draco draketarget DracoAspectText
   draco format dracon Dracon

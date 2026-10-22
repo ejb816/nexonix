@@ -123,7 +123,9 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
         .orElse(TypeForm.node(p).filter(n => Set("<:", ">:")(n._1)).flatMap(_._2.headOption.flatMap(_.asString)))
       name.filter(_.matches("[A-Za-z_][A-Za-z0-9_]*")).map(n => n -> n)
     }.toMap
-    val header = owner.get[Vector[Json]]("typeParameters").getOrElse(Vector.empty)
+    // The definition's FORMALS are DracoAspect.typeParameters records (2026-10-21); the header's
+    // name carries none. Their names bind locally over the whole definition.
+    val header = document.hcursor.downField("dracoAspect").downField("typeParameters").as[Vector[Json]].getOrElse(Vector.empty)
     val rootLocal = formals(header) ++ Map(ownerName -> ownerPath, ownerPath -> ownerPath)
     def name(text: String, local: Map[String, String]): String = render(text, lookup(text, local), local)
     def form(j: Json, local: Map[String, String], r: (String, String, Map[String, String]) => String = render): Json = {
@@ -215,7 +217,7 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
           })
           case (key @ ("valueType" | "upperBound" | "lowerBound"), v) => key -> form(v, scope)
           case ("value", v) => "value" -> expression(v, scope ++ valueLocal ++ values)
-          case ("typeParameters", v) if method => "typeParameters" -> walk(v, scope, "formals")
+          case ("typeParameters", v) if method || context == "dracoAspect" => "typeParameters" -> walk(v, scope, "formals")
           case ("typeParameters", v) => "typeParameters" -> Json.fromValues(v.asArray.get.map(form(_, scope)))
           case (key, v) => key -> walk(v, scope, key, valueLocal ++ values)
         }))

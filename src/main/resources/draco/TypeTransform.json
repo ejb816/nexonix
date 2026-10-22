@@ -3,23 +3,19 @@
     "name": "TypeTransform",
     "namePackage": [
       "draco"
-    ],
-    "typeParameters": [
-      {
-        "<:": [
-          "S",
-          "DracoType"
-        ]
-      },
-      {
-        "<:": [
-          "T",
-          "DracoType"
-        ]
-      }
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "S",
+        "upperBound": "DracoType"
+      },
+      {
+        "name": "T",
+        "upperBound": "DracoType"
+      }
+    ],
     "derivation": [
       {
         "name": "Holon",

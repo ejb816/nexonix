@@ -5,9 +5,6 @@
       "draco",
       "format",
       "dracon"
-    ],
-    "typeParameters": [
-      "T"
     ]
   },
   "uses": [
@@ -20,6 +17,11 @@
     }
   ],
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "T"
+      }
+    ],
     "elements": [
       {
         "kind": "Fixed",

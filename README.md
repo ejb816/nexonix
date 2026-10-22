@@ -629,7 +629,9 @@ against the ontology, so a reader with no ontology resolves the file from itself
 Scala module does from its imports. The whole canonical corpus is swept: every main definition
 but the two authored-ahead ones, and the staged dreams and service definitions, carry compact
 bodies with their records, host leaves as authored, and unscoped and scoped generation agree on
-every file, so the ontology is needed only to author and validate.
+every file, so the ontology is needed only to author and validate. A definition's header
+formals are TypeParameter records in its DracoAspect since 2026-10-21, its own name bare; a
+TypeName's parameters are the actual arguments of a reference.
 
 Method formal parameters now have their own TypeParameter records: a name plus optional
 upper/lower bounds represented as Dracon type forms. Dynamic.typeParameters defaults empty;

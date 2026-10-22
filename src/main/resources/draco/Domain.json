@@ -3,12 +3,14 @@
     "name": "Domain",
     "namePackage": [
       "draco"
-    ],
-    "typeParameters": [
-      "T"
     ]
   },
   "dracoAspect": {
+    "typeParameters": [
+      {
+        "name": "T"
+      }
+    ],
     "derivation": [
       {
         "name": "DomainType",

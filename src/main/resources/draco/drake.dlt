@@ -53,6 +53,10 @@ VALUE-TYPES  (drake type-expression -> JSON valueType)
   held by the operation's DomainOntology by its short name (`Dracon`), resolved by the scope the operation
   is given; a NOMINAL ANCHOR — the header's own name, the domain line, a `from` record, a messageType — is
   always written in full. The bootstrap files spell bodies short where swept and anchors qualified.
+  HEADER FORMALS (2026-10-21): the parameters of a header, `type Coordinate(T <: Product)`, are the
+  definition's FORMALS — TypeParameter records (a name, optional `<:` and `>:` bounds as type forms), the
+  record a method's formals use — held in DracoAspect.typeParameters; the definition's own TypeName carries
+  none and is keyed bare. A TypeName's parameters are the ACTUALS of a reference, `Dictionary(K, V)`.
   THE RESOLUTION RECORD (2026-10-21): a definition whose bodies say short names carries `uses [ … ]`, a
   section of its own between the type section and the domain line, listing every identity the bodies
   name short, other than the own package, one per line in the anchor spelling (`draco format dracon
