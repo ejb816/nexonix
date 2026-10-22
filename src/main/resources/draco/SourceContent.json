@@ -46,13 +46,13 @@
         {
           "kind": "Local",
           "name": "sourceURI",
-          "valueType": "java.net.URI",
+          "valueType": "URI",
           "value": {
             "()": [
               "_sourceRoot.resolve",
               {
                 "()": [
-                  "java.net.URI.create",
+                  "URI.create",
                   "_logicalPath"
                 ]
               }

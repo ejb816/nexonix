@@ -1,8 +1,6 @@
 package draco.dreams.editor
 
 import draco.dreams.user.Response
-import org.evrete.api.ActivationMode
-import scala.collection.mutable.ArrayBuffer
 
 import draco.dreams._
 import draco._
@@ -58,9 +56,9 @@ object Editor extends App with DracoType {
       val contents: Seq[draco.TypeDefinition] = msg.contents(accepted)
       val changing: Boolean = provisional != accepted
       lazy val definitions: Seq[draco.TypeDefinition] = provisional.keys.toSeq.flatMap(domain => domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
-      lazy val problems: mutable.Buffer[draco.Problem] = ArrayBuffer()
-      lazy val responses: mutable.Buffer[Seq[draco.Problem] => Response] = ArrayBuffer()
-      lazy val session: org.evrete.api.StatefulSession = rules.newStatefulSession(ActivationMode.CONTINUOUS)
+      lazy val problems: mutable.Buffer[draco.Problem] = scala.collection.mutable.ArrayBuffer()
+      lazy val responses: mutable.Buffer[Seq[draco.Problem] => Response] = scala.collection.mutable.ArrayBuffer()
+      lazy val session: org.evrete.api.StatefulSession = rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
       session.set("problems", problems)
       session.set("transforms", transforms)
       session.set("responses", responses)

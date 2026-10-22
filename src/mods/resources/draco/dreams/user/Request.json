@@ -7,29 +7,43 @@
       "user"
     ]
   },
+  "uses": [
+    {
+      "name": "DomainOntology",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
         "kind": "Dynamic",
         "name": "proposal",
-        "valueType": "draco.DomainOntology",
+        "valueType": "DomainOntology",
         "parameters": [
           {
             "kind": "Parameter",
             "name": "accepted",
-            "valueType": "draco.DomainOntology"
+            "valueType": "DomainOntology"
           }
         ]
       },
       {
         "kind": "Dynamic",
         "name": "subject",
-        "valueType": "draco.TypeDefinition",
+        "valueType": "TypeDefinition",
         "parameters": [
           {
             "kind": "Parameter",
             "name": "accepted",
-            "valueType": "draco.DomainOntology"
+            "valueType": "DomainOntology"
           }
         ]
       },
@@ -38,14 +52,14 @@
         "name": "contents",
         "valueType": {
           "[]": [
-            "draco.TypeDefinition"
+            "TypeDefinition"
           ]
         },
         "parameters": [
           {
             "kind": "Parameter",
             "name": "accepted",
-            "valueType": "draco.DomainOntology"
+            "valueType": "DomainOntology"
           }
         ]
       }

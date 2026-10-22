@@ -1,11 +1,15 @@
 type UpdateUnheld
+uses [
+  draco Problem
+  draco dreams user Update
+]
 domain draco dreams editor Editor
 rule
   pattern
     variables
-      var u draco.dreams.user.Update
+      var u Update
       var a Accepted
     conditions
       con !a.ontology.holds(u.definition.typeName)
   action
-    mon ctx.insert(draco.Problem(u.definition.typeName, s"domain ${u.definition.typeName.name} is not in the accepted ontology"))
+    mon ctx.insert(Problem(u.definition.typeName, s"domain ${u.definition.typeName.name} is not in the accepted ontology"))

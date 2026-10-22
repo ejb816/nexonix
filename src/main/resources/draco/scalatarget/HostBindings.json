@@ -6,6 +6,21 @@
       "scalatarget"
     ]
   },
+  "uses": [
+    {
+      "name": "TypeName",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "globalElements": [
       {
@@ -15,8 +30,8 @@
           "[]": [
             {
               "(,)": [
-                "draco.drake.Text",
-                "draco.TypeName"
+                "Text",
+                "TypeName"
               ]
             }
           ]
@@ -28,7 +43,7 @@
                 "\"Any\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Any\""
                   ]
                 }
@@ -39,7 +54,7 @@
                 "\"Boolean\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Boolean\""
                   ]
                 }
@@ -50,7 +65,7 @@
                 "\"Double\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Double\""
                   ]
                 }
@@ -61,7 +76,7 @@
                 "\"Int\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Int\""
                   ]
                 }
@@ -72,7 +87,7 @@
                 "\"Long\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Long\""
                   ]
                 }
@@ -83,7 +98,7 @@
                 "\"Product\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Product\""
                   ]
                 }
@@ -94,7 +109,7 @@
                 "\"String\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"String\""
                   ]
                 }
@@ -105,7 +120,7 @@
                 "\"Integer\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Integer\""
                   ]
                 }
@@ -116,7 +131,7 @@
                 "\"System\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"System\""
                   ]
                 }
@@ -127,7 +142,7 @@
                 "\"Enumeration\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Enumeration\""
                   ]
                 }
@@ -143,8 +158,8 @@
           "[]": [
             {
               "(,)": [
-                "draco.drake.Text",
-                "draco.TypeName"
+                "Text",
+                "TypeName"
               ]
             }
           ]
@@ -156,7 +171,7 @@
                 "\"Array\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Array\""
                   ]
                 }
@@ -167,7 +182,7 @@
                 "\"Iterator\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Iterator\""
                   ]
                 }
@@ -178,7 +193,7 @@
                 "\"Map\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Map\""
                   ]
                 }
@@ -189,7 +204,7 @@
                 "\"Option\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Option\""
                   ]
                 }
@@ -200,7 +215,7 @@
                 "\"Seq\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Seq\""
                   ]
                 }
@@ -211,7 +226,7 @@
                 "\"Some\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Some\""
                   ]
                 }
@@ -222,7 +237,7 @@
                 "\"ArrayBuffer\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"ArrayBuffer\"",
                     {
                       "[]": [
@@ -245,8 +260,8 @@
           "[]": [
             {
               "(,)": [
-                "draco.drake.Text",
-                "draco.TypeName"
+                "Text",
+                "TypeName"
               ]
             }
           ]
@@ -258,7 +273,7 @@
                 "\"Json\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Json\"",
                     {
                       "[]": [
@@ -275,7 +290,7 @@
                 "\"io.circe.Encoder\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Encoder\"",
                     {
                       "[]": [
@@ -292,7 +307,7 @@
                 "\"io.circe.Decoder\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Decoder\"",
                     {
                       "[]": [
@@ -309,7 +324,7 @@
                 "\"URI\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"URI\"",
                     {
                       "[]": [
@@ -326,7 +341,7 @@
                 "\"URL\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"URL\"",
                     {
                       "[]": [
@@ -343,7 +358,7 @@
                 "\"File\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"File\"",
                     {
                       "[]": [
@@ -360,7 +375,7 @@
                 "\"Files\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Files\"",
                     {
                       "[]": [
@@ -378,7 +393,7 @@
                 "\"Path\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Path\"",
                     {
                       "[]": [
@@ -396,7 +411,7 @@
                 "\"Paths\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Paths\"",
                     {
                       "[]": [
@@ -414,7 +429,7 @@
                 "\"StandardCharsets\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"StandardCharsets\"",
                     {
                       "[]": [
@@ -432,7 +447,7 @@
                 "\"BufferedSource\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"BufferedSource\"",
                     {
                       "[]": [
@@ -449,7 +464,7 @@
                 "\"scala.io.Source\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Source\"",
                     {
                       "[]": [
@@ -466,7 +481,7 @@
                 "\"Try\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Try\"",
                     {
                       "[]": [
@@ -483,7 +498,7 @@
                 "\"ActivationMode\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"ActivationMode\"",
                     {
                       "[]": [
@@ -501,7 +516,7 @@
                 "\"org.evrete.api.Knowledge\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Knowledge\"",
                     {
                       "[]": [
@@ -519,13 +534,12 @@
                 "\"KnowledgeService\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"KnowledgeService\"",
                     {
                       "[]": [
                         "\"org\"",
-                        "\"evrete\"",
-                        "\"api\""
+                        "\"evrete\""
                       ]
                     }
                   ]
@@ -537,7 +551,7 @@
                 "\"StatefulSession\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"StatefulSession\"",
                     {
                       "[]": [
@@ -555,7 +569,7 @@
                 "\"ExtensibleBehavior\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"ExtensibleBehavior\"",
                     {
                       "[]": [
@@ -580,8 +594,8 @@
           "[]": [
             {
               "(,)": [
-                "draco.drake.Text",
-                "draco.TypeName"
+                "Text",
+                "TypeName"
               ]
             }
           ]
@@ -593,7 +607,7 @@
                 "\"DracoGenerator\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"DracoGenerator\"",
                     {
                       "[]": [
@@ -609,7 +623,7 @@
                 "\"draco.Drake\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"Drake\"",
                     {
                       "[]": [
@@ -625,8 +639,24 @@
                 "\"NameResolution\"",
                 {
                   "()": [
-                    "draco.TypeName",
+                    "TypeName",
                     "\"NameResolution\"",
+                    {
+                      "[]": [
+                        "\"draco\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"draco.Generated\"",
+                {
+                  "()": [
+                    "TypeName",
+                    "\"Generated\"",
                     {
                       "[]": [
                         "\"draco\""
@@ -646,8 +676,8 @@
           "[]": [
             {
               "(,)": [
-                "draco.drake.Text",
-                "draco.TypeName"
+                "Text",
+                "TypeName"
               ]
             }
           ]
@@ -666,8 +696,8 @@
         "name": "vocabulary",
         "valueType": {
           "{}": [
-            "draco.drake.Text",
-            "draco.TypeName"
+            "Text",
+            "TypeName"
           ]
         },
         "value": "bindings.toMap"

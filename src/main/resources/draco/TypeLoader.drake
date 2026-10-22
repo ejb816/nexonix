@@ -1,22 +1,22 @@
 type TypeLoader
   globals
-    dyn readDefinition draco.drake.Presence(TypeDefinition) [
+    dyn readDefinition Presence(TypeDefinition) [
       parameters
         now par url URL
       body
-        fix value draco.drake.Presence(TypeDefinition) presence(bracket(scala.io.Source.fromURL(url), \s -> s.close(), \s -> io.circe.parser.parse(s.mkString).flatMap(_.as[TypeDefinition]).toOption))
+        fix value Presence(TypeDefinition) presence(bracket(scala.io.Source.fromURL(url), \s -> s.close(), \s -> io.circe.parser.parse(s.mkString).flatMap(_.as[TypeDefinition]).toOption))
     ]
-    dyn loadFromResource draco.drake.Presence(TypeDefinition) [
+    dyn loadFromResource Presence(TypeDefinition) [
       parameters
         par resourcePath String
       body
-        fix value draco.drake.Presence(TypeDefinition) draco.generator.carrier.DefinitionPath.default.source(resourcePath).fold(draco.drake.Absent(), readDefinition)
+        fix value Presence(TypeDefinition) DefinitionPath.default.source(resourcePath).fold(Absent(), readDefinition)
     ]
-    dyn tryLoad draco.drake.Presence(TypeDefinition) [
+    dyn tryLoad Presence(TypeDefinition) [
       parameters
         par typeName TypeName
       body
-        fix value draco.drake.Presence(TypeDefinition) loadFromResource(typeName.resourcePath)
+        fix value Presence(TypeDefinition) loadFromResource(typeName.resourcePath)
     ]
     dyn rooted TypeDefinition [
       parameters
@@ -37,4 +37,9 @@ type TypeLoader
         loc td TypeDefinition loadType(typeName)
         fix value Boolean DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && RuleAspect.isEmpty(td.ruleAspect) && ActorAspect.isEmpty(td.actorAspect)
     ]
+uses [
+  draco drake Absent
+  draco drake Presence
+  draco generator carrier DefinitionPath
+]
 domain draco Draco

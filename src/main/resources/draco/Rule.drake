@@ -8,4 +8,8 @@ type Rule(T) from RuleType
       par action (RhsContext -> ())
   globals
     fix knowledgeService KnowledgeService new KnowledgeService ()
+uses [
+  draco rete Knowledge
+  draco rete RhsContext
+]
 domain draco Draco

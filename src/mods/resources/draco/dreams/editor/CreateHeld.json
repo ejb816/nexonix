@@ -7,6 +7,22 @@
       "editor"
     ]
   },
+  "uses": [
+    {
+      "name": "Problem",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Create",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    }
+  ],
   "domainAspect": {
     "typeName": {
       "name": "Editor",
@@ -24,7 +40,7 @@
         {
           "kind": "Variable",
           "name": "c",
-          "valueType": "draco.dreams.user.Create"
+          "valueType": "Create"
         },
         {
           "kind": "Variable",
@@ -54,7 +70,7 @@
               "ctx.insert",
               {
                 "()": [
-                  "draco.Problem",
+                  "Problem",
                   "c.definition.typeName",
                   "s\"domain ${c.definition.typeName.name} is already in the accepted ontology\""
                 ]

@@ -1,15 +1,19 @@
 type Request
   elements
-    dyn proposal draco.DomainOntology [
+    dyn proposal DomainOntology [
       parameters
-        par accepted draco.DomainOntology
+        par accepted DomainOntology
     ]
-    dyn subject draco.TypeDefinition [
+    dyn subject TypeDefinition [
       parameters
-        par accepted draco.DomainOntology
+        par accepted DomainOntology
     ]
-    dyn contents [draco.TypeDefinition] [
+    dyn contents [TypeDefinition] [
       parameters
-        par accepted draco.DomainOntology
+        par accepted DomainOntology
     ]
+uses [
+  draco DomainOntology
+  draco TypeDefinition
+]
 domain draco dreams user User

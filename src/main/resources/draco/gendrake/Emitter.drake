@@ -1,7 +1,11 @@
 type Emitter
   factory ActorType
     parameters
-      par received [draco.generator.Emission]+
+      par received [Emission]+
+uses [
+  draco ActorType
+  draco generator Emission
+]
 domain draco gendrake GenDrake
 actor
   messageType draco TypeDefinition

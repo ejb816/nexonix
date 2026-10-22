@@ -1,27 +1,32 @@
 type Create from Latent
   elements
-    fix definition draco.TypeDefinition
-    fix members [draco.TypeDefinition]
-    dyn proposal draco.DomainOntology [
+    fix definition TypeDefinition
+    fix members [TypeDefinition]
+    dyn proposal DomainOntology [
       parameters
-        par accepted draco.DomainOntology
+        par accepted DomainOntology
       body
-        fix value draco.DomainOntology accepted.including(draco.Domain(definition, members))
+        fix value DomainOntology accepted.including(Domain(definition, members))
     ]
-    dyn subject draco.TypeDefinition [
+    dyn subject TypeDefinition [
       parameters
-        par accepted draco.DomainOntology
+        par accepted DomainOntology
       body
-        fix value draco.TypeDefinition definition
+        fix value TypeDefinition definition
     ]
-    dyn contents [draco.TypeDefinition] [
+    dyn contents [TypeDefinition] [
       parameters
-        par accepted draco.DomainOntology
+        par accepted DomainOntology
       body
-        fix value [draco.TypeDefinition] members
+        fix value [TypeDefinition] members
     ]
   factory
     parameters
-      par definition draco.TypeDefinition
-      par members [draco.TypeDefinition] []
+      par definition TypeDefinition
+      par members [TypeDefinition] []
+uses [
+  draco Domain
+  draco DomainOntology
+  draco TypeDefinition
+]
 domain draco dreams user User

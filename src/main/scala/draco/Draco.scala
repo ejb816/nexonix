@@ -1,7 +1,5 @@
 package draco
 
-import org.evrete.api.ActivationMode
-
 import scala.collection.mutable
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
@@ -31,7 +29,7 @@ object Draco extends App with DracoType {
     override lazy val typeDefinition: TypeDefinition = Draco.typeDefinition
     lazy val problems: mutable.Buffer[Problem] = _problems
 
-    lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession(ActivationMode.CONTINUOUS)
+    lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
     session.set("problems", problems)
 
     override def receive(ctx: TypedActorContext[DracoType], msg: DracoType): Behavior[DracoType] = {

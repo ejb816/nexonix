@@ -1,12 +1,17 @@
 type Generated from draco dreams user Response
   elements
-    fix domain draco.TypeName
-    fix transform draco.TypeName
-    fix emissions [draco.generator.Emission]
-  factory
+    fix domain TypeName
+    fix transform TypeName
+    fix emissions [Emission]
+  factory draco.dreams.editor.Generated
     parameters
-      par domain draco.TypeName
-      par transform draco.TypeName
-      par emissions [draco.generator.Emission] []
-      par problems [draco.Problem] []
+      par domain TypeName
+      par transform TypeName
+      par emissions [Emission] []
+      par problems [Problem] []
+uses [
+  draco Problem
+  draco TypeName
+  draco generator Emission
+]
 domain draco dreams editor Editor

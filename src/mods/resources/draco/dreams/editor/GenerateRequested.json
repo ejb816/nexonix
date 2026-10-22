@@ -7,6 +7,43 @@
       "editor"
     ]
   },
+  "uses": [
+    {
+      "name": "DomainOntology",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Problem",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Presence",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Generate",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    },
+    {
+      "name": "Response",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    }
+  ],
   "domainAspect": {
     "typeName": {
       "name": "Editor",
@@ -24,7 +61,7 @@
         {
           "kind": "Variable",
           "name": "g",
-          "valueType": "draco.dreams.user.Generate"
+          "valueType": "Generate"
         },
         {
           "kind": "Variable",
@@ -39,14 +76,14 @@
         {
           "kind": "Fixed",
           "name": "request",
-          "valueType": "draco.dreams.user.Generate",
+          "valueType": "Generate",
           "value": "g",
           "now": true
         },
         {
           "kind": "Fixed",
           "name": "held",
-          "valueType": "draco.DomainOntology",
+          "valueType": "DomainOntology",
           "value": "a.ontology",
           "now": true
         },
@@ -106,7 +143,7 @@
           "name": "binding",
           "valueType": {
             "()": [
-              "draco.drake.Presence",
+              "Presence",
               "TransformBinding"
             ]
           },
@@ -123,7 +160,7 @@
           "name": "issues",
           "valueType": {
             "[]": [
-              "draco.Problem"
+              "Problem"
             ]
           },
           "value": {
@@ -154,7 +191,7 @@
                     "[]": [
                       {
                         "()": [
-                          "draco.Problem",
+                          "Problem",
                           "request.domain",
                           "\"domain is not in the accepted ontology\""
                         ]
@@ -189,7 +226,7 @@
                     "[]": [
                       {
                         "()": [
-                          "draco.Problem",
+                          "Problem",
                           "request.transform",
                           "\"transform is not in the accepted ontology\""
                         ]
@@ -224,7 +261,7 @@
                     "[]": [
                       {
                         "()": [
-                          "draco.Problem",
+                          "Problem",
                           "request.transform",
                           "\"transform requires exactly one executable binding\""
                         ]
@@ -270,7 +307,7 @@
                     "[]": [
                       {
                         "()": [
-                          "draco.Problem",
+                          "Problem",
                           "request.transform",
                           "\"executable binding does not match the held transform definitions\""
                         ]
@@ -310,10 +347,10 @@
                 "->": [
                   {
                     "[]": [
-                      "draco.Problem"
+                      "Problem"
                     ]
                   },
-                  "draco.dreams.user.Response"
+                  "Response"
                 ]
               }
             ]
@@ -341,10 +378,10 @@
             "->": [
               {
                 "[]": [
-                  "draco.Problem"
+                  "Problem"
                 ]
               },
-              "draco.dreams.user.Response"
+              "Response"
             ]
           },
           "value": {

@@ -1,45 +1,45 @@
 type Initialization
   elements
-    fix domains [draco.dreams.user.Create]
-    fix initial draco.DomainOntology
-    fix responses [draco.dreams.user.Response]+
-    mut ontology draco.DomainOntology
-    fix note (draco.dreams.user.Response -> ())
-    fix keep (draco.DomainOntology -> ())
+    fix domains [Create]
+    fix initial DomainOntology
+    fix responses [Response]+
+    mut ontology DomainOntology
+    fix note (Response -> ())
+    fix keep (DomainOntology -> ())
     dyn owns Boolean [
       parameters
-        par latent draco.dreams.user.Latent
-        par typeName draco.TypeName
+        par latent Latent
+        par typeName TypeName
       body
         fix value Boolean latent.definition.typeName.namePath == typeName.namePath || latent.members.exists(\m -> m.typeName.namePath == typeName.namePath)
     ]
-    dyn parents [draco.TypeName] [
+    dyn parents [TypeName] [
       parameters
-        par latent draco.dreams.user.Latent
+        par latent Latent
       body
-        fix value [draco.TypeName] latent.members.prepended(latent.definition).flatMap(\td -> draco.DracoAspect.parents(td.dracoAspect)).filter(\p -> !owns(latent, p))
+        fix value [TypeName] latent.members.prepended(latent.definition).flatMap(\td -> DracoAspect.parents(td.dracoAspect)).filter(\p -> !owns(latent, p))
     ]
     dyn ready Boolean [
       parameters
-        par latent draco.dreams.user.Latent
-        par placed [draco.dreams.user.Create]
+        par latent Latent
+        par placed [Create]
       body
         fix value Boolean parents(latent).filter(\p -> domains.exists(\l -> owns(l, p))).forall(\p -> placed.exists(\l -> owns(l, p)))
     ]
-    dyn order [draco.dreams.user.Create] [
+    dyn order [Create] [
       parameters
-        par placed [draco.dreams.user.Create]
-        par remaining [draco.dreams.user.Create]
+        par placed [Create]
+        par remaining [Create]
       body
-        fix wave [draco.dreams.user.Create] remaining.filter(\l -> ready(l, placed))
-        fix rest [draco.dreams.user.Create] remaining.filterNot(\l -> ready(l, placed))
-        fix value [draco.dreams.user.Create] guard(wave.isEmpty).ifThenElse(placed ++ remaining, order(placed ++ wave, rest))
+        fix wave [Create] remaining.filter(\l -> ready(l, placed))
+        fix rest [Create] remaining.filterNot(\l -> ready(l, placed))
+        fix value [Create] guard(wave.isEmpty).ifThenElse(placed ++ remaining, order(placed ++ wave, rest))
     ]
-    dyn ordered [draco.dreams.user.Create] order([], domains)
-    dyn editorType draco.ActorType draco.dreams.editor.Editor.actorType(initial, note, keep)
+    dyn ordered [Create] order([], domains)
+    dyn editorType ActorType Editor.actorType(initial, note, keep)
     dyn run () [
       parameters
-        par editor (draco.dreams.user.Create -> ())
+        par editor (Create -> ())
       body
         fix value () ordered.foreach(editor)
     ]
@@ -47,12 +47,22 @@ type Initialization
     dyn accepted Boolean complete && responses.forall(\r -> r.accepted)
   factory
     parameters
-      par domains [draco.dreams.user.Create] []
+      par domains [Create] []
     body
-      fix domains [draco.dreams.user.Create] _domains
-      fix initial draco.DomainOntology draco.DomainOntology()
-      fix responses [draco.dreams.user.Response]+ scala.collection.mutable.ArrayBuffer()
-      mut ontology draco.DomainOntology initial
-      fix note (draco.dreams.user.Response -> ()) \r -> add(responses, r)
-      fix keep (draco.DomainOntology -> ()) \o -> ontology = o
+      fix domains [Create] _domains
+      fix initial DomainOntology DomainOntology()
+      fix responses [Response]+ scala.collection.mutable.ArrayBuffer()
+      mut ontology DomainOntology initial
+      fix note (Response -> ()) \r -> add(responses, r)
+      fix keep (DomainOntology -> ()) \o -> ontology = o
+uses [
+  draco ActorType
+  draco DomainOntology
+  draco DracoAspect
+  draco TypeName
+  draco dreams editor Editor
+  draco dreams user Create
+  draco dreams user Latent
+  draco dreams user Response
+]
 domain draco dreams Dreams

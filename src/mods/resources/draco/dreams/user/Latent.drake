@@ -1,5 +1,8 @@
 type Latent from Request
   elements
-    fix definition draco.TypeDefinition
-    fix members [draco.TypeDefinition]
+    fix definition TypeDefinition
+    fix members [TypeDefinition]
+uses [
+  draco TypeDefinition
+]
 domain draco dreams user User

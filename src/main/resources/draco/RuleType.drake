@@ -2,4 +2,8 @@ type RuleType
   elements
     fix action (RhsContext -> ())
     fix pattern (Knowledge -> ())
+uses [
+  draco rete Knowledge
+  draco rete RhsContext
+]
 domain draco Draco

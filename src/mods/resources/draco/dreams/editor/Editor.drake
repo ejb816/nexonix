@@ -1,10 +1,23 @@
 type Editor
   factory ActorType
     parameters
-      par initial draco.DomainOntology
-      par actual (draco.dreams.user.Response -> ())
-      par ontology (draco.DomainOntology -> ())
+      par initial DomainOntology
+      par actual (Response -> ())
+      par ontology (DomainOntology -> ())
       par transforms [TransformBinding] []
+uses [
+  draco ActorType
+  draco CollectProblems
+  draco Completeness
+  draco DerivationResolvable
+  draco DomainOntology
+  draco Problem
+  draco Rule
+  draco SelfDeclaration
+  draco TypeDefinition
+  draco Uniqueness
+  draco dreams user Response
+]
 domain draco dreams editor Editor
   types [
     Accepted
@@ -20,27 +33,27 @@ domain draco dreams editor Editor
 actor
   messageType draco dreams user Request
   start
-    fix rules org.evrete.api.Knowledge draco.Rule.knowledgeService.newKnowledge("Editor")
-    mon draco.Completeness.ruleType.pattern(rules)
-    mon draco.SelfDeclaration.ruleType.pattern(rules)
-    mon draco.DerivationResolvable.ruleType.pattern(rules)
-    mon draco.Uniqueness.ruleType.pattern(rules)
-    mon draco.CollectProblems.ruleType.pattern(rules)
+    fix rules org.evrete.api.Knowledge Rule.knowledgeService.newKnowledge("Editor")
+    mon Completeness.ruleType.pattern(rules)
+    mon SelfDeclaration.ruleType.pattern(rules)
+    mon DerivationResolvable.ruleType.pattern(rules)
+    mon Uniqueness.ruleType.pattern(rules)
+    mon CollectProblems.ruleType.pattern(rules)
     mon CreateHeld.ruleType.pattern(rules)
     mon UpdateUnheld.ruleType.pattern(rules)
     mon ReadUnheld.ruleType.pattern(rules)
     mon DeleteUnheld.ruleType.pattern(rules)
     mon GenerateRequested.ruleType.pattern(rules)
-    mut accepted draco.DomainOntology initial
-    fix accept (draco.DomainOntology -> ()) \next -> accepted = next
+    mut accepted DomainOntology initial
+    fix accept (DomainOntology -> ()) \next -> accepted = next
   message
-    now fix provisional draco.DomainOntology msg.proposal(accepted)
-    now fix subject draco.TypeDefinition msg.subject(accepted)
-    now fix contents [draco.TypeDefinition] msg.contents(accepted)
+    now fix provisional DomainOntology msg.proposal(accepted)
+    now fix subject TypeDefinition msg.subject(accepted)
+    now fix contents [TypeDefinition] msg.contents(accepted)
     now fix changing Boolean provisional != accepted
-    fix definitions [draco.TypeDefinition] provisional.keys.toSeq.flatMap(\domain -> domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
-    fix problems [draco.Problem]+ scala.collection.mutable.ArrayBuffer()
-    fix responses [[draco.Problem] -> draco.dreams.user.Response]+ scala.collection.mutable.ArrayBuffer()
+    fix definitions [TypeDefinition] provisional.keys.toSeq.flatMap(\domain -> domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
+    fix problems [Problem]+ scala.collection.mutable.ArrayBuffer()
+    fix responses [[Problem] -> Response]+ scala.collection.mutable.ArrayBuffer()
     fix session org.evrete.api.StatefulSession rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
     mon session.set("problems", problems)
     mon session.set("transforms", transforms)

@@ -1,4 +1,4 @@
-type GenScala from draco Generator(ScalaTarget)
+type GenScala from draco Generator(draco.scalatarget.ScalaTarget)
 domain draco genscala GenScala
   super draco generator Generator
   source draco TypeDefinition

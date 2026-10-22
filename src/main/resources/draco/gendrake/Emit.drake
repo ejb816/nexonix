@@ -1,9 +1,13 @@
 type Emit
+uses [
+  draco TypeDefinition
+  draco generator Emission
+]
 domain draco gendrake GenDrake
 rule
   pattern
     variables
       var definition TypeDefinition
   action
-    fix emission draco.generator.Emission draco.generator.Emission(draco.Drake.emitFromSession(definition, ctx.getRuntime().get("nameResolution")))
+    fix emission Emission Emission(draco.Drake.emitFromSession(definition, ctx.getRuntime().get("nameResolution")))
     mon ctx.insert(emission)

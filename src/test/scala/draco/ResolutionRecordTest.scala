@@ -5,6 +5,7 @@ import io.circe.parser
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.file.{Files, Paths}
+import scala.jdk.CollectionConverters._
 
 /** The RESOLUTION RECORD (Dev accepted 2026-10-21): a definition carries `uses`, the identities
  *  its bodies name by their short form, written by the compact form and validated against the
@@ -33,14 +34,20 @@ class ResolutionRecordTest extends AnyFunSuite {
     assert(TypeDefinition.encoder(Drake.parse(surface)) == TypeDefinition.encoder(td), "the record round-trips through the surface")
   }
 
-  test("an unscoped reader resolves a recorded definition from itself: unscoped generation equals scoped generation") {
-    swept.foreach { stem =>
+  test("an unscoped reader resolves a recorded definition from itself: unscoped generation equals scoped generation over the whole corpus") {
+    // Since the corpus sweep (2026-10-21) every main definition is recorded where it needs to be,
+    // so the ontology is needed only to author: unscoped and scoped generation agree everywhere.
+    val families = Set("draco/TypeElement", "draco/BodyElement", "draco/Fixed", "draco/Mutable", "draco/Dynamic", "draco/Parameter",
+      "draco/Monadic", "draco/Pattern", "draco/Action", "draco/Condition", "draco/Variable", "draco/Factory", "draco/Local", "draco/Case",
+      "draco/drake/Presence", "draco/drake/Present", "draco/drake/Absent")
+    val all = java.nio.file.Files.walk(Paths.get("src/main/resources/draco")).iterator().asScala
+      .filter(_.toString.endsWith(".json")).map(p => Paths.get("src/main/resources").relativize(p).toString.stripSuffix(".json")).toSeq.sorted
+    assert(all.size >= 110)
+    all.foreach { stem =>
       val td = load(stem)
       assert(DracoGenerator.generate(td) == DracoGenerator.generate(td, scope), stem)
-    }
-    // The six swept definitions with a file of their own (the eleven family kinds share TypeElement.scala).
-    swept.filter(stem => Files.exists(Paths.get(s"src/main/scala/$stem.scala")) && stem != "draco/TypeElement").foreach { stem =>
-      assert(DracoGenerator.generate(load(stem)) == read(s"src/main/scala/$stem.scala"), stem)
+      if (!families(stem) && Files.exists(Paths.get(s"src/main/scala/$stem.scala")))
+        assert(DracoGenerator.generate(td) == read(s"src/main/scala/$stem.scala"), stem)
     }
     // A referrer of a swept definition: the engine loads TypeName through its record when judging the codec.
     assert(DracoGenerator.generate(load("draco/TypeDefinition")) == read("src/main/scala/draco/TypeDefinition.scala"))

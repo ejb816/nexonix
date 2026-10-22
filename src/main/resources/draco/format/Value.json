@@ -9,19 +9,35 @@
       "F"
     ]
   },
+  "uses": [
+    {
+      "name": "Presence",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
         "kind": "Fixed",
         "name": "name",
-        "valueType": "draco.drake.Text"
+        "valueType": "Text"
       },
       {
         "kind": "Fixed",
         "name": "pathElements",
         "valueType": {
           "[]": [
-            "draco.drake.Text"
+            "Text"
           ]
         }
       },
@@ -30,7 +46,7 @@
         "name": "value",
         "valueType": {
           "()": [
-            "draco.drake.Presence",
+            "Presence",
             "F"
           ]
         },

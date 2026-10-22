@@ -1,0 +1,51 @@
+Sweep the canonical corpus: every body compact with its record, the Scala gate-pinned
+
+Dev accepted, on 2026-10-21, "sweeping the rest of the canonical corpus in one pass: every remaining
+main definition and the staged dreams and service definitions compacted with their records, Scala
+byte-identical and gate-pinned, the example domains left out."
+
+The sweep compacts 132 definitions — the 108 main definitions other than the authored-ahead
+BodyElement and ActorAspect, which keep their frozen surfaces, and the 24 staged dreams and service
+definitions — against the canonical identity ontology and HostBindings: 55 JSON files change, 50
+drake surfaces are re-emitted, 58 definitions carry a record. The example domains stay out. Two
+first runs of the sweep taught the compact form three rules it now keeps. A HOST LEAF KEEPS THE
+AUTHOR'S SPELLING: the compact form never writes a binding's identity into a definition and never
+shortens one, since the vocabulary is the target's; the previous compact shortened host names, so eleven
+definition-backed Scala files regenerate: the host imports gained at 0b8fc03 (`import java.nio.file.Files`,
+`import org.evrete.api.ActivationMode`) revert, and Decoder, Encoder and Generated are spelled in full
+where a host name shadows them. AN IDENTITY IS SHORTENED ONLY
+WHEN ITS SIMPLE NAME IS UNIQUE ACROSS THE ONTOLOGY AND THE VOCABULARY, so a reader holding just the
+file's record finds it unambiguous and a target table does not capture it — Decoder and Encoder in
+the Dracon domain stay in full — with the draco.rete wrap types the exception, bare as they always
+were, since their bare name is their realization. AN ANCHOR'S TYPE PARAMETERS FOLLOW THE ANCHOR'S
+CONVENTION, bare in the own package and in full elsewhere, never the record's short form: Nominal
+still derives `Primal(draco.drake.Text)`.
+
+Two more corrections the sweep forced. The engine's loader resolved a recorded definition through
+its record for EVERY caller, so DomainBuilder and the companions disagreed about one definition and
+TransformBinding.matches refused the held GenDrake; the record is now read only during a generation.
+The hand-written draco.Generated bootstrap shadows draco.dreams.editor.Generated through
+`import draco._`, so it joins HostBindings' engine bindings — a host realization the compact form
+must not shorten past — and KnowledgeService's binding names org.evrete, where the class is.
+
+GenDrakeTest moves one pin to the swept spelling: Emission's parameter says Text and its record
+names draco.drake.Text, the anchor unchanged. ResolutionRecordTest's second test now covers the
+whole main corpus: unscoped generation equals scoped generation for every definition, and the
+pinned file for every definition with a file of its own.
+
+Probe on the compiled engine from a clean restore: the sweep, then every definition verified —
+unscoped equals scoped equals pinned for all 132 and both sealed families — the whole main and mods
+tree compiled, and 31 suites, 775 passed, zero failed or aborted, every headline unchanged, pending
+mods actors 0. No test or corpus type added.
+
+Dev's first full gate failed one test (848 of 849): DomainLineTest pinned the bootstrap spelling of
+three swept bodies — Surface, DomainLine and DomainLineOf saying draco.drake.Text — as GenDrakeTest
+had; its pins now say Text with each record naming draco.drake.Text, the anchor unchanged. An
+all-suites probe without the test resources on the loader's roots also failed three scenario tests,
+a probe artifact Dev's run did not show.
+
+Gate: Dev's second full sbt run on 2026-10-21, pasted: 849 tests / 60 suites, zero failed, canceled,
+ignored or pending tests, zero aborted suites; every report-only headline unchanged; pending mods
+actors 0 in the file-only log. Committed and pushed by Dev.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

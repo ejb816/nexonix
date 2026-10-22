@@ -1,11 +1,15 @@
 type CreateHeld
+uses [
+  draco Problem
+  draco dreams user Create
+]
 domain draco dreams editor Editor
 rule
   pattern
     variables
-      var c draco.dreams.user.Create
+      var c Create
       var a Accepted
     conditions
       con a.ontology.holds(c.definition.typeName)
   action
-    mon ctx.insert(draco.Problem(c.definition.typeName, s"domain ${c.definition.typeName.name} is already in the accepted ontology"))
+    mon ctx.insert(Problem(c.definition.typeName, s"domain ${c.definition.typeName.name} is already in the accepted ontology"))

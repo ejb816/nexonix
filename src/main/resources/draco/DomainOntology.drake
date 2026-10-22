@@ -38,11 +38,11 @@ type DomainOntology from Dictionary(DomainType, TypeDictionary)
       body
         fix value Boolean kvMap.keys.exists(\domain -> domain.typeDefinition.typeName.namePath == typeName.namePath)
     ]
-    dyn holding draco.drake.Presence(DomainType) [
+    dyn holding Presence(DomainType) [
       parameters
         par typeName TypeName
       body
-        fix value draco.drake.Presence(DomainType) presence(kvMap.keys.find(\domain -> domain.typeDefinition.typeName.namePath == typeName.namePath))
+        fix value Presence(DomainType) presence(kvMap.keys.find(\domain -> domain.typeDefinition.typeName.namePath == typeName.namePath))
     ]
   factory
     parameters
@@ -50,4 +50,7 @@ type DomainOntology from Dictionary(DomainType, TypeDictionary)
     body
       fix kvMap {DomainType, TypeDictionary} _domains.map(\domain -> (domain, domain.typeDictionary)).toMap
       fix derivations [Derivation] _domains.flatMap(\domain -> domain.typeDictionary.elementTypes.prepended(domain.typeDefinition).flatMap(\td -> DracoAspect.parents(td.dracoAspect).map(\parent -> Derivation(td.typeName, parent))))
+uses [
+  draco drake Presence
+]
 domain draco Draco

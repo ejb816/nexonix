@@ -37,14 +37,20 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
     TypeName(parts.last, parts.dropRight(1))
   }
 
+  /** The COMPACT spelling of an identity (2026-10-21, narrowed with the corpus sweep): only an identity
+    * the ontology holds is shortened, and only when its simple name is unique across the ontology AND
+    * the binding vocabulary — a reader holding just the file's record must find it unambiguous, and a
+    * target whose own table realizes the simple name (Decoder, Encoder) must not capture it. The
+    * draco.rete wrap types are the exception: their bare name IS their realization in the host table
+    * (Knowledge, RhsContext), so the surface keeps them bare as it always has. A host identity is
+    * never shortened here: the vocabulary is the target's. */
   private def short(full: String, local: Map[String, String]): String = {
     val simple = full.split('.').last
     def matches(candidate: String): Boolean =
       try lookup(candidate, local) == full catch { case _: IllegalArgumentException => false }
-    if (matches(simple)) simple
-    else bindings.toSeq.sortBy(_._1).collectFirst {
-      case (alias, target) if identity(target) == full && matches(alias) => alias
-    }.getOrElse(full)
+    val wrap = full.startsWith("draco.rete.")
+    val hostShadow = !wrap && bindings.exists { case (alias, target) => alias == simple || target.name == simple }
+    if (ontological(full) && !hostShadow && matches(simple)) simple else full
   }
 
   /** Resolve from either carrier. compactJson is the ontology-scoped JSON spelling;
@@ -67,10 +73,17 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
     val resolved = resolve(td)
     val own = resolved.typeName.namePackage
     val shortened = scala.collection.mutable.Set.empty[String]
-    val compact = rewrite(TypeDefinition.encoder(resolved), (_, full, local) => {
-      val s = short(full, local)
-      if (s != full && ontological(full) && full.take(full.lastIndexOf('.')).split('.').toSeq != own) shortened += full
-      s
+    // A host leaf keeps the author's spelling: the vocabulary is the target's, and the compact
+    // form never writes a binding's identity into a definition.
+    val authoredHost = scala.collection.mutable.Map.empty[String, String]
+    rewrite(TypeDefinition.encoder(td), (authored, full, _) => { if (!ontological(full)) authoredHost.getOrElseUpdate(full, authored); full })
+    val compact = rewrite(TypeDefinition.encoder(resolved), (authored, full, local) => {
+      if (!ontological(full)) authoredHost.getOrElse(full, authored)
+      else {
+        val s = short(full, local)
+        if (s != full && full.take(full.lastIndexOf('.')).split('.').toSeq != own) shortened += full
+        s
+      }
     })
     val record = shortened.toSeq.sorted.map { full => val parts = full.split('.').toSeq; TypeName(parts.last, parts.dropRight(1)) }
     compact.mapObject { o =>
@@ -113,20 +126,25 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
     val header = owner.get[Vector[Json]]("typeParameters").getOrElse(Vector.empty)
     val rootLocal = formals(header) ++ Map(ownerName -> ownerPath, ownerPath -> ownerPath)
     def name(text: String, local: Map[String, String]): String = render(text, lookup(text, local), local)
-    def form(j: Json, local: Map[String, String]): Json = {
+    def form(j: Json, local: Map[String, String], r: (String, String, Map[String, String]) => String = render): Json = {
       if (j.isNull || j.asString.contains("")) j
       else j.asString match {
         // A string leaf that is not a name is host-opaque type text (the ActorAspect residue
         // the surface-loss headline counts); it is preserved, as host-opaque expression spans are.
         case Some(text) if !text.matches("[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*") => j
-        case Some(text) => Json.fromString(name(text, local))
+        case Some(text) => Json.fromString(r(text, lookup(text, local), local))
         case None => TypeForm.node(j) match {
           case Some((op, args)) if Set("()", "(,)", "[]", "[]+", "{}", "{}+", "->", "<:", ">:")(op) =>
-            Json.obj(op -> Json.fromValues(args.map(form(_, local))))
+            Json.obj(op -> Json.fromValues(args.map(form(_, local, r))))
           case _ => throw new IllegalArgumentException(s"Not a structural type form: ${j.noSpaces}")
         }
       }
     }
+    // An anchor's type parameters follow the anchor's own convention (2026-10-21): bare in the
+    // definition's own package, in full elsewhere — never the record's short form.
+    val anchorParameter: (String, String, Map[String, String]) => String = (authored, full, local) =>
+      if (local.contains(authored)) authored
+      else { val cut = full.lastIndexOf('.'); if (cut >= 0 && full.take(cut).split('.').toSeq == ownerPackage) full.drop(cut + 1) else full }
     def reference(j: Json, local: Map[String, String], anchor: Boolean = false): Json = { val _ = anchor
       val c = j.hcursor
       val n = c.get[String]("name").getOrElse("")
@@ -143,7 +161,7 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
         val fields = Vector("name" -> Json.fromString(parts.last)) ++
           (if (parts.size > 1) Vector("namePackage" -> Json.fromValues(parts.dropRight(1).map(Json.fromString))) else Vector.empty) ++
           c.get[Vector[Json]]("typeParameters").toOption.filter(_.nonEmpty)
-            .map(ps => "typeParameters" -> Json.fromValues(ps.map(form(_, local)))).toVector
+            .map(ps => "typeParameters" -> Json.fromValues(ps.map(form(_, local, anchorParameter)))).toVector
         Json.obj(fields: _*)
       }
     }

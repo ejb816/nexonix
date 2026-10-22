@@ -1,5 +1,8 @@
 type Response
   elements
-    fix problems [draco.Problem]
+    fix problems [Problem]
     dyn accepted Boolean problems.isEmpty
+uses [
+  draco Problem
+]
 domain draco dreams user User

@@ -49,6 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**849 tests / 60 suites**, verified by Dev on 2026-10-21 for the corpus sweep (record
+`git-record-2026-10-21-2230`): no test or corpus type added, zero failed, canceled, ignored or pending tests,
+zero aborted suites, every report-only headline unchanged, including zero pending mods actors; Dev's first run
+of that gate failed one bootstrap-spelling pin in DomainLineTest, moved before the second. Before it, the same
 **849 tests / 60 suites**, verified by Dev on 2026-10-21 for the resolution record (record
 `git-record-2026-10-21-2130`): four added tests in the added `ResolutionRecordTest`, zero failed, canceled,
 ignored or pending tests, zero aborted suites, every report-only headline unchanged, including zero pending
@@ -908,6 +912,24 @@ generation are identical and equal the pinned Scala, and their referrers generat
 ontology is needed only to author and validate the record. An unswept file spelled in full still gains its
 imports only under a scope — the rest of the sweep removes that asymmetry. `ResolutionRecordTest` (4) is
 the 60th suite. No corpus type changed, so no headline moves.
+
+**The corpus swept (2026-10-21, Claude Code; Dev verified 849 / 60).** Dev accepted "sweeping the rest of the canonical
+corpus in one pass: every remaining main definition and the staged dreams and service definitions compacted with
+their records, Scala byte-identical and gate-pinned, the example domains left out." 132 definitions are compact
+— every main definition but the authored-ahead BodyElement and ActorAspect, and the 24 staged dreams and service
+definitions — 58 carrying a record; the example domains stay out. The sweep taught the compact form three rules:
+a HOST LEAF KEEPS THE AUTHOR'S SPELLING (the compact form never writes or shortens a binding's identity — eleven
+definition-backed Scala files regenerate: the host imports gained at 0b8fc03 revert, and Decoder, Encoder and
+Generated are spelled in full where a host name shadows them); an identity is shortened only when its
+simple name is UNIQUE ACROSS THE ONTOLOGY AND THE VOCABULARY (Decoder and Encoder in the Dracon domain stay in
+full; the draco.rete wrap types stay bare, their bare name being their realization); an ANCHOR'S TYPE PARAMETERS
+follow the anchor's convention, own-package bare, else in full (`Primal(draco.drake.Text)`). Two corrections the
+sweep forced: the engine's loader reads a record only DURING A GENERATION, so DomainBuilder and the companions
+agree about every definition (TransformBinding.matches had refused the held GenDrake); the hand-written
+`draco.Generated` bootstrap joins HostBindings' engine bindings, since it shadows `draco.dreams.editor.Generated`
+through `import draco._`, and KnowledgeService's binding names org.evrete. Unscoped and scoped generation now
+agree over the WHOLE main corpus (ResolutionRecordTest pins it), so the ontology is needed only to author and
+validate; the test suites' explicit scope is a convenience. No test or corpus type added.
 
 **Handoff checkpoint (2026-10-21).** Chapters 95–99 preserve this Codex session with a
 bounded original-message extract: 35 complete exchanges plus the open handoff request.

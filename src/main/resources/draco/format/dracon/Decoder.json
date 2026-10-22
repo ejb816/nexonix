@@ -10,6 +10,15 @@
       "T"
     ]
   },
+  "uses": [
+    {
+      "name": "Presence",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
@@ -20,7 +29,7 @@
             "Dracon",
             {
               "()": [
-                "draco.drake.Presence",
+                "Presence",
                 "T"
               ]
             }
@@ -32,7 +41,7 @@
       "kind": "Factory",
       "valueType": {
         "()": [
-          "Decoder",
+          "draco.format.dracon.Decoder",
           "T"
         ]
       },
@@ -45,7 +54,7 @@
               "Dracon",
               {
                 "()": [
-                  "draco.drake.Presence",
+                  "Presence",
                   "T"
                 ]
               }

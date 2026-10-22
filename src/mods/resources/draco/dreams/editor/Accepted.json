@@ -7,12 +7,20 @@
       "editor"
     ]
   },
+  "uses": [
+    {
+      "name": "DomainOntology",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
         "kind": "Fixed",
         "name": "ontology",
-        "valueType": "draco.DomainOntology"
+        "valueType": "DomainOntology"
       }
     ],
     "factory": {
@@ -22,7 +30,7 @@
         {
           "kind": "Parameter",
           "name": "ontology",
-          "valueType": "draco.DomainOntology"
+          "valueType": "DomainOntology"
         }
       ]
     }

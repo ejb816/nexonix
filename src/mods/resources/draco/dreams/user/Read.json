@@ -7,6 +7,26 @@
       "user"
     ]
   },
+  "uses": [
+    {
+      "name": "DomainOntology",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeName",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -22,24 +42,24 @@
       {
         "kind": "Fixed",
         "name": "domain",
-        "valueType": "draco.TypeName"
+        "valueType": "TypeName"
       },
       {
         "kind": "Dynamic",
         "name": "proposal",
-        "valueType": "draco.DomainOntology",
+        "valueType": "DomainOntology",
         "parameters": [
           {
             "kind": "Parameter",
             "name": "accepted",
-            "valueType": "draco.DomainOntology"
+            "valueType": "DomainOntology"
           }
         ],
         "body": [
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "draco.DomainOntology",
+            "valueType": "DomainOntology",
             "value": "accepted"
           }
         ]
@@ -47,19 +67,19 @@
       {
         "kind": "Dynamic",
         "name": "subject",
-        "valueType": "draco.TypeDefinition",
+        "valueType": "TypeDefinition",
         "parameters": [
           {
             "kind": "Parameter",
             "name": "accepted",
-            "valueType": "draco.DomainOntology"
+            "valueType": "DomainOntology"
           }
         ],
         "body": [
           {
             "kind": "Fixed",
             "name": "value",
-            "valueType": "draco.TypeDefinition",
+            "valueType": "TypeDefinition",
             "value": {
               "()": [
                 {
@@ -75,7 +95,7 @@
                 },
                 {
                   "()": [
-                    "draco.TypeDefinition",
+                    "TypeDefinition",
                     "domain"
                   ]
                 },
@@ -95,14 +115,14 @@
         "name": "contents",
         "valueType": {
           "[]": [
-            "draco.TypeDefinition"
+            "TypeDefinition"
           ]
         },
         "parameters": [
           {
             "kind": "Parameter",
             "name": "accepted",
-            "valueType": "draco.DomainOntology"
+            "valueType": "DomainOntology"
           }
         ],
         "body": [
@@ -111,7 +131,7 @@
             "name": "value",
             "valueType": {
               "[]": [
-                "draco.TypeDefinition"
+                "TypeDefinition"
               ]
             },
             "value": {
@@ -150,7 +170,7 @@
         {
           "kind": "Parameter",
           "name": "domain",
-          "valueType": "draco.TypeName"
+          "valueType": "TypeName"
         }
       ]
     }

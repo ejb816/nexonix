@@ -1,7 +1,10 @@
 type Decoder(T)
   elements
-    fix decode (Dracon -> draco.drake.Presence(T))
-  factory
+    fix decode (Dracon -> Presence(T))
+  factory draco.format.dracon.Decoder(T)
     parameters
-      par decode (Dracon -> draco.drake.Presence(T))
+      par decode (Dracon -> Presence(T))
+uses [
+  draco drake Presence
+]
 domain draco format dracon Dracon

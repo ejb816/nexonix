@@ -6,6 +6,15 @@
       "draketarget"
     ]
   },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -25,21 +34,21 @@
           "name": "package",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           }
         },
         {
           "kind": "Parameter",
           "name": "name",
-          "valueType": "draco.drake.Text"
+          "valueType": "Text"
         }
       ],
       "body": [
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": {
             "++": [
               "\"domain \"",

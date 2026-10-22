@@ -7,8 +7,8 @@ type Main
       par sourceName String
       par sinkName String
     body
-      fix sourceRoot URI classOf[Main].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/main/${_sourceName}/"))
-      fix sinkRoot URI classOf[Test].getResource("/").toURI.resolve(java.net.URI.create(s"../../../src/main/${_sinkName}/"))
+      fix sourceRoot URI classOf[Main].getResource("/").toURI.resolve(URI.create(s"../../../src/main/${_sourceName}/"))
+      fix sinkRoot URI classOf[Test].getResource("/").toURI.resolve(URI.create(s"../../../src/main/${_sinkName}/"))
   globals
     fix roots Main Main ("resources", "scala")
 domain draco Draco

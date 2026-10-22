@@ -27,7 +27,7 @@
       "kind": "Factory",
       "valueType": {
         "()": [
-          "Encoder",
+          "draco.format.dracon.Encoder",
           "T"
         ]
       },

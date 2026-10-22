@@ -4,7 +4,6 @@ import draco.dreams.editor.Editor
 import draco.dreams.user.Create
 import draco.dreams.user.Latent
 import draco.dreams.user.Response
-import scala.collection.mutable.ArrayBuffer
 
 import draco._
 import io.circe.{Decoder, Encoder, Json}
@@ -71,7 +70,7 @@ object Initialization extends App with DracoType {
   ) : Initialization = new Initialization {
     override lazy val domains: Seq[Create] = _domains
     override lazy val initial: draco.DomainOntology = draco.DomainOntology()
-    override lazy val responses: mutable.Buffer[Response] = ArrayBuffer()
+    override lazy val responses: mutable.Buffer[Response] = scala.collection.mutable.ArrayBuffer()
     override var ontology: draco.DomainOntology = initial
     override lazy val note: Response => Unit = r => responses += r
     override lazy val keep: draco.DomainOntology => Unit = o => ontology = o

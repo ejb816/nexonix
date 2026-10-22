@@ -6,6 +6,15 @@
       "draketarget"
     ]
   },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -25,7 +34,7 @@
         {
           "kind": "Parameter",
           "name": "value",
-          "valueType": "draco.drake.Text"
+          "valueType": "Text"
         }
       ]
     }

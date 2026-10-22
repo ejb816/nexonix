@@ -6,6 +6,15 @@
       "draketarget"
     ]
   },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -23,24 +32,24 @@
         {
           "kind": "Parameter",
           "name": "domainReference",
-          "valueType": "draco.drake.Text"
+          "valueType": "Text"
         },
         {
           "kind": "Parameter",
           "name": "parentReference",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": "\"\""
         },
         {
           "kind": "Parameter",
           "name": "sourceReference",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": "\"\""
         },
         {
           "kind": "Parameter",
           "name": "targetReference",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": "\"\""
         },
         {
@@ -48,7 +57,7 @@
           "name": "members",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -69,7 +78,7 @@
           "name": "parentLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -107,7 +116,7 @@
           "name": "sourceLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -145,7 +154,7 @@
           "name": "targetLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -183,7 +192,7 @@
           "name": "memberLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -239,7 +248,7 @@
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": {
             "()": [
               {

@@ -1,18 +1,25 @@
 type GenerateRequested
+uses [
+  draco DomainOntology
+  draco Problem
+  draco drake Presence
+  draco dreams user Generate
+  draco dreams user Response
+]
 domain draco dreams editor Editor
 rule
   pattern
     variables
-      var g draco.dreams.user.Generate
+      var g Generate
       var a Accepted
   action
-    now fix request draco.dreams.user.Generate g
-    now fix held draco.DomainOntology a.ontology
+    now fix request Generate g
+    now fix held DomainOntology a.ontology
     now fix bindings [TransformBinding] ctx.getRuntime().get("transforms")
     now fix candidates [TransformBinding] bindings.filter(\b -> b.domain.typeDefinition.typeName.namePath == request.transform.namePath)
-    now fix binding draco.drake.Presence(TransformBinding) presence(candidates.headOption)
-    fix issues [draco.Problem] guard(held.holds(request.domain)).ifThenElse([], [draco.Problem(request.domain, "domain is not in the accepted ontology")]) ++ guard(held.holds(request.transform)).ifThenElse([], [draco.Problem(request.transform, "transform is not in the accepted ontology")]) ++ guard(candidates.size == 1).ifThenElse([], [draco.Problem(request.transform, "transform requires exactly one executable binding")]) ++ guard(binding.fold(true, \b -> b.matches(held))).ifThenElse([], [draco.Problem(request.transform, "executable binding does not match the held transform definitions")])
+    now fix binding Presence(TransformBinding) presence(candidates.headOption)
+    fix issues [Problem] guard(held.holds(request.domain)).ifThenElse([], [Problem(request.domain, "domain is not in the accepted ontology")]) ++ guard(held.holds(request.transform)).ifThenElse([], [Problem(request.transform, "transform is not in the accepted ontology")]) ++ guard(candidates.size == 1).ifThenElse([], [Problem(request.transform, "transform requires exactly one executable binding")]) ++ guard(binding.fold(true, \b -> b.matches(held))).ifThenElse([], [Problem(request.transform, "executable binding does not match the held transform definitions")])
     mon issues.foreach(\p -> ctx.insert(p))
-    loc responses [[draco.Problem] -> draco.dreams.user.Response]+ ctx.getRuntime().get("responses")
-    fix respond ([draco.Problem] -> draco.dreams.user.Response) \problems -> guard(problems.isEmpty).ifThenElse(binding.fold(draco.dreams.editor.Generated(request.domain, request.transform, [], problems), \b -> b.generate(request.domain, request.transform, request.contents(held).prepended(request.subject(held)), held)), draco.dreams.editor.Generated(request.domain, request.transform, [], problems))
+    loc responses [[Problem] -> Response]+ ctx.getRuntime().get("responses")
+    fix respond ([Problem] -> Response) \problems -> guard(problems.isEmpty).ifThenElse(binding.fold(draco.dreams.editor.Generated(request.domain, request.transform, [], problems), \b -> b.generate(request.domain, request.transform, request.contents(held).prepended(request.subject(held)), held)), draco.dreams.editor.Generated(request.domain, request.transform, [], problems))
     mon add(responses, respond)

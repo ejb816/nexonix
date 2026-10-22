@@ -6,12 +6,20 @@
       "service"
     ]
   },
+  "uses": [
+    {
+      "name": "Assembly",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
         "kind": "Fixed",
         "name": "assembly",
-        "valueType": "draco.Assembly"
+        "valueType": "Assembly"
       }
     ],
     "factory": {
@@ -21,8 +29,8 @@
         {
           "kind": "Parameter",
           "name": "assembly",
-          "valueType": "draco.Assembly",
-          "value": "draco.Assembly.Null"
+          "valueType": "Assembly",
+          "value": "Assembly.Null"
         }
       ]
     }

@@ -31,7 +31,7 @@
           "draco"
         ],
         "typeParameters": [
-          "Dracon"
+          "draco.format.dracon.Dracon"
         ]
       }
     ],

@@ -7,6 +7,22 @@
       "editor"
     ]
   },
+  "uses": [
+    {
+      "name": "Problem",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Delete",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    }
+  ],
   "domainAspect": {
     "typeName": {
       "name": "Editor",
@@ -24,7 +40,7 @@
         {
           "kind": "Variable",
           "name": "d",
-          "valueType": "draco.dreams.user.Delete"
+          "valueType": "Delete"
         },
         {
           "kind": "Variable",
@@ -54,7 +70,7 @@
               "ctx.insert",
               {
                 "()": [
-                  "draco.Problem",
+                  "Problem",
                   "d.domain",
                   "s\"domain ${d.domain.name} is not in the accepted ontology\""
                 ]

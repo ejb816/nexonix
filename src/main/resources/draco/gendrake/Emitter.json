@@ -6,6 +6,21 @@
       "gendrake"
     ]
   },
+  "uses": [
+    {
+      "name": "ActorType",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Emission",
+      "namePackage": [
+        "draco",
+        "generator"
+      ]
+    }
+  ],
   "dracoAspect": {
     "factory": {
       "kind": "Factory",
@@ -16,7 +31,7 @@
           "name": "received",
           "valueType": {
             "[]+": [
-              "draco.generator.Emission"
+              "Emission"
             ]
           }
         }

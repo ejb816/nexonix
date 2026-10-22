@@ -34,6 +34,9 @@ type Primes
       body
         fix value [Int] filter(naturals(2)).take(n)
     ]
+uses [
+  draco Rule
+]
 domain draco primes Primes
   types [
     Accumulator

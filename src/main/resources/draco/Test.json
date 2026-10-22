@@ -50,7 +50,7 @@
               },
               {
                 "()": [
-                  "java.net.URI.create",
+                  "URI.create",
                   "s\"../../../src/test/${_sourceName}/\""
                 ]
               }
@@ -77,7 +77,7 @@
               },
               {
                 "()": [
-                  "java.net.URI.create",
+                  "URI.create",
                   "s\"../../../src/test/${_sinkName}/\""
                 ]
               }

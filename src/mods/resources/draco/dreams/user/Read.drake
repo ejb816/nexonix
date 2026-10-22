@@ -1,25 +1,30 @@
 type Read from Request
   elements
-    fix domain draco.TypeName
-    dyn proposal draco.DomainOntology [
+    fix domain TypeName
+    dyn proposal DomainOntology [
       parameters
-        par accepted draco.DomainOntology
+        par accepted DomainOntology
       body
-        fix value draco.DomainOntology accepted
+        fix value DomainOntology accepted
     ]
-    dyn subject draco.TypeDefinition [
+    dyn subject TypeDefinition [
       parameters
-        par accepted draco.DomainOntology
+        par accepted DomainOntology
       body
-        fix value draco.TypeDefinition accepted.holding(domain).fold(draco.TypeDefinition(domain), \d -> d.typeDefinition)
+        fix value TypeDefinition accepted.holding(domain).fold(TypeDefinition(domain), \d -> d.typeDefinition)
     ]
-    dyn contents [draco.TypeDefinition] [
+    dyn contents [TypeDefinition] [
       parameters
-        par accepted draco.DomainOntology
+        par accepted DomainOntology
       body
-        fix value [draco.TypeDefinition] accepted.holding(domain).fold([], \d -> d.typeDictionary.elementTypes)
+        fix value [TypeDefinition] accepted.holding(domain).fold([], \d -> d.typeDictionary.elementTypes)
     ]
   factory
     parameters
-      par domain draco.TypeName
+      par domain TypeName
+uses [
+  draco DomainOntology
+  draco TypeDefinition
+  draco TypeName
+]
 domain draco dreams user User

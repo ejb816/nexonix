@@ -42,12 +42,12 @@ object Generated extends App with DracoType {
     _transform: => draco.TypeName,
     _emissions: => Seq[Emission] = Seq.empty,
     _problems: => Seq[draco.Problem] = Seq.empty
-  ) : Generated = new Generated {
+  ) : draco.dreams.editor.Generated = new draco.dreams.editor.Generated {
     override lazy val domain: draco.TypeName = _domain
     override lazy val transform: draco.TypeName = _transform
     override lazy val emissions: Seq[Emission] = _emissions
     override lazy val problems: Seq[draco.Problem] = _problems
-    override lazy val typeDefinition: TypeDefinition = Generated.typeDefinition
+    override lazy val typeDefinition: TypeDefinition = draco.dreams.editor.Generated.typeDefinition
   }
 
   lazy val Null: Generated = apply(

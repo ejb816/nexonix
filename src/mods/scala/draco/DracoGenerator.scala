@@ -54,7 +54,10 @@ object DracoGenerator extends App {
     // definition as loaded, which is what the unscoped engine always read.
     scopeInEffect.value match {
       case Some(s) => try canonical(s, td)._1 catch { case _: IllegalArgumentException => td }
-      case None if td.uses.nonEmpty => val r = NameResolution.recorded(td); r.minimal(td, readable(td, r))._1
+      // Only a GENERATION reads a recorded definition through its record; every other caller of
+      // this loader — DomainBuilder, the validators, the scripts — gets the file as authored, as
+      // the companions do, so the two never disagree about one definition.
+      case None if generating.value && td.uses.nonEmpty => val r = NameResolution.recorded(td); r.minimal(td, readable(td, r))._1
       case None => td
     }
   }
@@ -108,6 +111,7 @@ object DracoGenerator extends App {
     * body is. Unscoped generation leaves it None and loads as before. A DynamicVariable
     * because sbt runs suites in parallel threads; a lazy val because this object is an App. */
   private lazy val scopeInEffect = new scala.util.DynamicVariable[Option[NameResolution]](None)
+  private lazy val generating = new scala.util.DynamicVariable[Boolean](false)
 
   /** True iff `td` itself, or any transitive ancestor via `draco.derivation`, has a
     * typeName matching `targetName`. Used to decide whether emitted factory bodies
@@ -2275,13 +2279,14 @@ object DracoGenerator extends App {
     * through the scope the record gives — the identities its bodies name short — and shortened
     * back by import, exactly as a scoped generation would spell it; the ontology is needed only
     * to author the record. A definition with no record generates as it always did. */
-  def generate (td: TypeDefinition) : String =
+  def generate (td: TypeDefinition) : String = generating.withValue(true) {
     if (td.uses.isEmpty) generateSpelled(td)
     else {
       val scope = NameResolution.recorded(td)
       val (spelled, qualified) = scope.minimal(td, readable(td, scope))
       scope.projectScala(generateSpelled(spelled), shortenable(td, qualified))
     }
+  }
 
   private def generateSpelled (_td: TypeDefinition) : String = {
     // Uniform root meaning: an absent derivation on a loaded definition MEANS
@@ -2370,7 +2375,7 @@ object DracoGenerator extends App {
     source.stripPrefix("\n")
   }
 
-  def generate (definitions: Seq[TypeDefinition]) : String =
+  def generate (definitions: Seq[TypeDefinition]) : String = generating.withValue(true) {
     if (definitions.forall(_.uses.isEmpty)) generateSpelled(definitions)
     else {
       val spelled = definitions.map { td =>
@@ -2382,6 +2387,7 @@ object DracoGenerator extends App {
       val union = NameResolution.recorded(TypeDefinition(definitions.head.typeName, _uses = definitions.flatMap(_.uses).distinct))
       union.projectScala(generateSpelled(spelled.map(_._1)), spelled.flatMap(_._2).toSet)
     }
+  }
 
   private def generateSpelled (_typeDefinitions: Seq[TypeDefinition]) : String = {
     // Same two entry-boundary normalizations as the single-type overload. Applying

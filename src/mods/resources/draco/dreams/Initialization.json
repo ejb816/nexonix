@@ -6,6 +6,64 @@
       "dreams"
     ]
   },
+  "uses": [
+    {
+      "name": "ActorType",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "DomainOntology",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "DracoAspect",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeName",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Editor",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "editor"
+      ]
+    },
+    {
+      "name": "Create",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    },
+    {
+      "name": "Latent",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    },
+    {
+      "name": "Response",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
@@ -13,35 +71,35 @@
         "name": "domains",
         "valueType": {
           "[]": [
-            "draco.dreams.user.Create"
+            "Create"
           ]
         }
       },
       {
         "kind": "Fixed",
         "name": "initial",
-        "valueType": "draco.DomainOntology"
+        "valueType": "DomainOntology"
       },
       {
         "kind": "Fixed",
         "name": "responses",
         "valueType": {
           "[]+": [
-            "draco.dreams.user.Response"
+            "Response"
           ]
         }
       },
       {
         "kind": "Mutable",
         "name": "ontology",
-        "valueType": "draco.DomainOntology"
+        "valueType": "DomainOntology"
       },
       {
         "kind": "Fixed",
         "name": "note",
         "valueType": {
           "->": [
-            "draco.dreams.user.Response",
+            "Response",
             {
               "(,)": [
               ]
@@ -54,7 +112,7 @@
         "name": "keep",
         "valueType": {
           "->": [
-            "draco.DomainOntology",
+            "DomainOntology",
             {
               "(,)": [
               ]
@@ -70,12 +128,12 @@
           {
             "kind": "Parameter",
             "name": "latent",
-            "valueType": "draco.dreams.user.Latent"
+            "valueType": "Latent"
           },
           {
             "kind": "Parameter",
             "name": "typeName",
-            "valueType": "draco.TypeName"
+            "valueType": "TypeName"
           }
         ],
         "body": [
@@ -117,14 +175,14 @@
         "name": "parents",
         "valueType": {
           "[]": [
-            "draco.TypeName"
+            "TypeName"
           ]
         },
         "parameters": [
           {
             "kind": "Parameter",
             "name": "latent",
-            "valueType": "draco.dreams.user.Latent"
+            "valueType": "Latent"
           }
         ],
         "body": [
@@ -133,7 +191,7 @@
             "name": "value",
             "valueType": {
               "[]": [
-                "draco.TypeName"
+                "TypeName"
               ]
             },
             "value": {
@@ -158,7 +216,7 @@
                             "td",
                             {
                               "()": [
-                                "draco.DracoAspect.parents",
+                                "DracoAspect.parents",
                                 "td.dracoAspect"
                               ]
                             }
@@ -194,14 +252,14 @@
           {
             "kind": "Parameter",
             "name": "latent",
-            "valueType": "draco.dreams.user.Latent"
+            "valueType": "Latent"
           },
           {
             "kind": "Parameter",
             "name": "placed",
             "valueType": {
               "[]": [
-                "draco.dreams.user.Create"
+                "Create"
               ]
             }
           }
@@ -287,7 +345,7 @@
         "name": "order",
         "valueType": {
           "[]": [
-            "draco.dreams.user.Create"
+            "Create"
           ]
         },
         "parameters": [
@@ -296,7 +354,7 @@
             "name": "placed",
             "valueType": {
               "[]": [
-                "draco.dreams.user.Create"
+                "Create"
               ]
             }
           },
@@ -305,7 +363,7 @@
             "name": "remaining",
             "valueType": {
               "[]": [
-                "draco.dreams.user.Create"
+                "Create"
               ]
             }
           }
@@ -316,7 +374,7 @@
             "name": "wave",
             "valueType": {
               "[]": [
-                "draco.dreams.user.Create"
+                "Create"
               ]
             },
             "value": {
@@ -342,7 +400,7 @@
             "name": "rest",
             "valueType": {
               "[]": [
-                "draco.dreams.user.Create"
+                "Create"
               ]
             },
             "value": {
@@ -368,7 +426,7 @@
             "name": "value",
             "valueType": {
               "[]": [
-                "draco.dreams.user.Create"
+                "Create"
               ]
             },
             "value": {
@@ -412,7 +470,7 @@
         "name": "ordered",
         "valueType": {
           "[]": [
-            "draco.dreams.user.Create"
+            "Create"
           ]
         },
         "value": {
@@ -429,10 +487,10 @@
       {
         "kind": "Dynamic",
         "name": "editorType",
-        "valueType": "draco.ActorType",
+        "valueType": "ActorType",
         "value": {
           "()": [
-            "draco.dreams.editor.Editor.actorType",
+            "Editor.actorType",
             "initial",
             "note",
             "keep"
@@ -452,7 +510,7 @@
             "name": "editor",
             "valueType": {
               "->": [
-                "draco.dreams.user.Create",
+                "Create",
                 {
                   "(,)": [
                   ]
@@ -520,7 +578,7 @@
           "name": "domains",
           "valueType": {
             "[]": [
-              "draco.dreams.user.Create"
+              "Create"
             ]
           },
           "value": {
@@ -535,7 +593,7 @@
           "name": "domains",
           "valueType": {
             "[]": [
-              "draco.dreams.user.Create"
+              "Create"
             ]
           },
           "value": "_domains"
@@ -543,10 +601,10 @@
         {
           "kind": "Fixed",
           "name": "initial",
-          "valueType": "draco.DomainOntology",
+          "valueType": "DomainOntology",
           "value": {
             "()": [
-              "draco.DomainOntology"
+              "DomainOntology"
             ]
           }
         },
@@ -555,7 +613,7 @@
           "name": "responses",
           "valueType": {
             "[]+": [
-              "draco.dreams.user.Response"
+              "Response"
             ]
           },
           "value": {
@@ -567,7 +625,7 @@
         {
           "kind": "Mutable",
           "name": "ontology",
-          "valueType": "draco.DomainOntology",
+          "valueType": "DomainOntology",
           "value": "initial"
         },
         {
@@ -575,7 +633,7 @@
           "name": "note",
           "valueType": {
             "->": [
-              "draco.dreams.user.Response",
+              "Response",
               {
                 "(,)": [
                 ]
@@ -600,7 +658,7 @@
           "name": "keep",
           "valueType": {
             "->": [
-              "draco.DomainOntology",
+              "DomainOntology",
               {
                 "(,)": [
                 ]

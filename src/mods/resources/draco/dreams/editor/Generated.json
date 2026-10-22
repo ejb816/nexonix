@@ -7,6 +7,27 @@
       "editor"
     ]
   },
+  "uses": [
+    {
+      "name": "Problem",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeName",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Emission",
+      "namePackage": [
+        "draco",
+        "generator"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -22,43 +43,43 @@
       {
         "kind": "Fixed",
         "name": "domain",
-        "valueType": "draco.TypeName"
+        "valueType": "TypeName"
       },
       {
         "kind": "Fixed",
         "name": "transform",
-        "valueType": "draco.TypeName"
+        "valueType": "TypeName"
       },
       {
         "kind": "Fixed",
         "name": "emissions",
         "valueType": {
           "[]": [
-            "draco.generator.Emission"
+            "Emission"
           ]
         }
       }
     ],
     "factory": {
       "kind": "Factory",
-      "valueType": "Generated",
+      "valueType": "draco.dreams.editor.Generated",
       "parameters": [
         {
           "kind": "Parameter",
           "name": "domain",
-          "valueType": "draco.TypeName"
+          "valueType": "TypeName"
         },
         {
           "kind": "Parameter",
           "name": "transform",
-          "valueType": "draco.TypeName"
+          "valueType": "TypeName"
         },
         {
           "kind": "Parameter",
           "name": "emissions",
           "valueType": {
             "[]": [
-              "draco.generator.Emission"
+              "Emission"
             ]
           },
           "value": {
@@ -71,7 +92,7 @@
           "name": "problems",
           "valueType": {
             "[]": [
-              "draco.Problem"
+              "Problem"
             ]
           },
           "value": {

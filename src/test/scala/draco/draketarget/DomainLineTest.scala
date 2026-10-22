@@ -45,13 +45,17 @@ class DomainLineTest extends AnyFunSuite with PersistentTestLog {
     val surface = TypeLoader.loadType(TypeName("Surface", Seq("draco", "draketarget")))
     val line = TypeLoader.loadType(TypeName("DomainLine", Seq("draco", "draketarget")))
     val mapped = TypeLoader.loadType(TypeName("DomainLineOf", Seq("draco", "gendrake")))
-    assert(DracoAspect.parents(surface.dracoAspect).find(_.name == "Primal").get.typeParameters.map(_.json) == Seq(text))
-    assert(surface.dracoAspect.factory.parameters.map(_.valueType.json) == Seq(text))
+    assert(DracoAspect.parents(surface.dracoAspect).find(_.name == "Primal").get.typeParameters.map(_.json) == Seq(text),
+      "an anchor's parameter stays in the anchor convention")
+    // Since the corpus sweep (2026-10-21) the bodies say Text and each record names it.
+    val short = Json.fromString("Text")
+    assert(surface.dracoAspect.factory.parameters.map(_.valueType.json) == Seq(short))
     assert(line.dracoAspect.factory.parameters.map(_.valueType.json) ==
-      Seq(Json.obj("[]" -> Json.arr(text)), text))
+      Seq(Json.obj("[]" -> Json.arr(short)), short))
     Seq(line, mapped).foreach { td =>
-      assert(td.dracoAspect.factory.body.find(_.name == "value").get.valueType.json == text)
+      assert(td.dracoAspect.factory.body.find(_.name == "value").get.valueType.json == short)
     }
+    Seq(surface, line, mapped).foreach(td => assert(td.uses.map(_.namePath).contains("draco.drake.Text"), td.typeName.namePath))
     assert(Surface("\u00e9").value == "\u00e9")
     assert(DomainLine(Seq("draco", "draketarget"), "DrakeTarget").value == "domain draco draketarget DrakeTarget")
   }

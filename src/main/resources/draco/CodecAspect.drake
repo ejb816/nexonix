@@ -1,11 +1,14 @@
 type CodecAspect
   elements
     fix discriminator String
-    fix payload [draco.drake.Text]
+    fix payload [Text]
   factory
     parameters
       par discriminator String ""
-      par payload [draco.drake.Text] []
+      par payload [Text] []
   globals
     fix isEmpty (CodecAspect -> Boolean) \ca -> ca.discriminator.isEmpty && ca.payload.isEmpty
+uses [
+  draco drake Text
+]
 domain draco Draco

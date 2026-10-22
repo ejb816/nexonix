@@ -1,9 +1,13 @@
 type Value(F)
   elements
-    fix name draco.drake.Text
-    fix pathElements [draco.drake.Text]
-    dyn value draco.drake.Presence(F) [
+    fix name Text
+    fix pathElements [Text]
+    dyn value Presence(F) [
       parameters
         par source F
     ]
+uses [
+  draco drake Presence
+  draco drake Text
+]
 domain draco format Format(F)

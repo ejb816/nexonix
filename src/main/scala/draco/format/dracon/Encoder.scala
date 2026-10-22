@@ -14,9 +14,9 @@ object Encoder extends App with DracoType {
 
   def apply[T] (
     _encode: => T => Dracon
-  ) : Encoder[T] = new Encoder[T] {
+  ) : draco.format.dracon.Encoder[T] = new draco.format.dracon.Encoder[T] {
     override lazy val encode: T => Dracon = _encode
-    override lazy val typeDefinition: TypeDefinition = Encoder.typeDefinition
+    override lazy val typeDefinition: TypeDefinition = draco.format.dracon.Encoder.typeDefinition
   }
 
   lazy val Null: Encoder[_] = apply[Any](

@@ -21,7 +21,7 @@
           "draco"
         ],
         "typeParameters": [
-          "DrakeTarget"
+          "draco.draketarget.DrakeTarget"
         ]
       }
     ]

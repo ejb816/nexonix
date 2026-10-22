@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+Corpus sweep (2026-10-21; Dev verified 849 tests / 60 suites, every headline unchanged): every main definition but the two authored-ahead ones, and the staged
+dreams and service definitions, carry compact bodies with their records; the compact form keeps host leaves as
+authored, shortens only names unique across ontology and vocabulary, and spells anchor parameters in the anchor
+convention; unscoped and scoped generation agree over the whole corpus.
+
 Resolution record (2026-10-21; Dev verified 849 tests / 60 suites, every headline unchanged): a TypeDefinition carries `uses`, the identities its bodies name
 short, as a `uses [ … ]` section of its own; the compact form writes it, every scoped read validates it, and
 an unscoped reader — the engine's generation and loading, the GeneratorCLI — resolves a recorded file from

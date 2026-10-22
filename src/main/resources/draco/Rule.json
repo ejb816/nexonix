@@ -8,6 +8,22 @@
       "T"
     ]
   },
+  "uses": [
+    {
+      "name": "Knowledge",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
+    },
+    {
+      "name": "RhsContext",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {

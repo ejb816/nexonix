@@ -5,6 +5,15 @@
       "draco"
     ]
   },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
@@ -17,7 +26,7 @@
         "name": "payload",
         "valueType": {
           "[]": [
-            "draco.drake.Text"
+            "Text"
           ]
         }
       }
@@ -37,7 +46,7 @@
           "name": "payload",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {

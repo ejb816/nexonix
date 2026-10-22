@@ -1,4 +1,4 @@
-type GenDrake from draco Generator(DrakeTarget)
+type GenDrake from draco Generator(draco.draketarget.DrakeTarget)
 domain draco gendrake GenDrake
   super draco generator Generator
   source draco TypeDefinition

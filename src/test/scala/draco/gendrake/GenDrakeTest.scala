@@ -73,8 +73,11 @@ class GenDrakeTest extends AnyFunSuite with PersistentTestLog {
   test("GenDrake runs: every definition crosses to an Emission that is its own .drake") {
     val text = io.circe.Json.fromString("draco.drake.Text")
     val emission = TypeLoader.loadType(TypeName("Emission", Seq("draco", "generator")))
-    assert(DracoAspect.parents(emission.dracoAspect).find(_.name == "Primal").get.typeParameters.map(_.json) == Seq(text))
-    assert(emission.dracoAspect.factory.parameters.map(_.valueType.json) == Seq(text))
+    assert(DracoAspect.parents(emission.dracoAspect).find(_.name == "Primal").get.typeParameters.map(_.json) == Seq(text),
+      "an anchor's parameter stays in the anchor convention")
+    // Since the corpus sweep (2026-10-21) the body says Text and the record names it.
+    assert(emission.dracoAspect.factory.parameters.map(_.valueType.json) == Seq(io.circe.Json.fromString("Text")))
+    assert(emission.uses.map(_.namePath) == Seq("draco.drake.Text"))
 
     val pairs = jsonPaths.flatMap { p =>
       val name = p.getFileName.toString.stripSuffix(".json")

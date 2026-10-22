@@ -15,23 +15,7 @@
       ]
     },
     {
-      "name": "Decoder",
-      "namePackage": [
-        "draco",
-        "format",
-        "dracon"
-      ]
-    },
-    {
       "name": "Dracon",
-      "namePackage": [
-        "draco",
-        "format",
-        "dracon"
-      ]
-    },
-    {
-      "name": "Encoder",
       "namePackage": [
         "draco",
         "format",
@@ -46,13 +30,13 @@
         "name": "payloadEncoder",
         "valueType": {
           "()": [
-            "Encoder",
+            "draco.format.dracon.Encoder",
             "Dracon"
           ]
         },
         "value": {
           "()": [
-            "Encoder",
+            "draco.format.dracon.Encoder",
             {
               "\\": [
                 "value",
@@ -67,13 +51,13 @@
         "name": "payloadDecoder",
         "valueType": {
           "()": [
-            "Decoder",
+            "draco.format.dracon.Decoder",
             "Dracon"
           ]
         },
         "value": {
           "()": [
-            "Decoder",
+            "draco.format.dracon.Decoder",
             {
               "\\": [
                 "value",
@@ -125,7 +109,7 @@
         "name": "encoder",
         "valueType": {
           "()": [
-            "Encoder",
+            "draco.format.dracon.Encoder",
             "T"
           ]
         },
@@ -147,13 +131,13 @@
             "name": "value",
             "valueType": {
               "()": [
-                "Encoder",
+                "draco.format.dracon.Encoder",
                 "T"
               ]
             },
             "value": {
               "()": [
-                "Encoder",
+                "draco.format.dracon.Encoder",
                 {
                   "\\": [
                     "value",
@@ -185,7 +169,7 @@
         "name": "decoder",
         "valueType": {
           "()": [
-            "Decoder",
+            "draco.format.dracon.Decoder",
             "T"
           ]
         },
@@ -207,13 +191,13 @@
             "name": "value",
             "valueType": {
               "()": [
-                "Decoder",
+                "draco.format.dracon.Decoder",
                 "T"
               ]
             },
             "value": {
               "()": [
-                "Decoder",
+                "draco.format.dracon.Decoder",
                 {
                   "\\": [
                     "source",

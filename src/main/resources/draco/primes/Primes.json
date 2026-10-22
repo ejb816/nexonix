@@ -6,6 +6,14 @@
       "primes"
     ]
   },
+  "uses": [
+    {
+      "name": "Rule",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {

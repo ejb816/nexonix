@@ -16,9 +16,9 @@ object Decoder extends App with DracoType {
 
   def apply[T] (
     _decode: => Dracon => Presence[T]
-  ) : Decoder[T] = new Decoder[T] {
+  ) : draco.format.dracon.Decoder[T] = new draco.format.dracon.Decoder[T] {
     override lazy val decode: Dracon => Presence[T] = _decode
-    override lazy val typeDefinition: TypeDefinition = Decoder.typeDefinition
+    override lazy val typeDefinition: TypeDefinition = draco.format.dracon.Decoder.typeDefinition
   }
 
   lazy val Null: Decoder[_] = apply[Any](

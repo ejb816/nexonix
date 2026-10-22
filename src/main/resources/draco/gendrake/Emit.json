@@ -6,6 +6,21 @@
       "gendrake"
     ]
   },
+  "uses": [
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Emission",
+      "namePackage": [
+        "draco",
+        "generator"
+      ]
+    }
+  ],
   "domainAspect": {
     "typeName": {
       "name": "GenDrake",
@@ -32,10 +47,10 @@
         {
           "kind": "Fixed",
           "name": "emission",
-          "valueType": "draco.generator.Emission",
+          "valueType": "Emission",
           "value": {
             "()": [
-              "draco.generator.Emission",
+              "Emission",
               {
                 "()": [
                   "draco.Drake.emitFromSession",

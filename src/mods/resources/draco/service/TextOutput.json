@@ -6,6 +6,15 @@
       "service"
     ]
   },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
@@ -13,7 +22,7 @@
         "name": "send",
         "valueType": {
           "->": [
-            "draco.drake.Text",
+            "Text",
             "Boolean"
           ]
         }
@@ -28,7 +37,7 @@
           "name": "send",
           "valueType": {
             "->": [
-              "draco.drake.Text",
+              "Text",
               "Boolean"
             ]
           }

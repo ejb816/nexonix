@@ -6,6 +6,28 @@
       "gendrake"
     ]
   },
+  "uses": [
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "DomainLine",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -48,7 +70,7 @@
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": "line.value"
         }
       ]

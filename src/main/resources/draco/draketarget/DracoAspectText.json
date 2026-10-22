@@ -6,6 +6,15 @@
       "draketarget"
     ]
   },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -23,14 +32,14 @@
         {
           "kind": "Parameter",
           "name": "name",
-          "valueType": "draco.drake.Text"
+          "valueType": "Text"
         },
         {
           "kind": "Parameter",
           "name": "parents",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -43,7 +52,7 @@
           "name": "modules",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -54,7 +63,7 @@
         {
           "kind": "Parameter",
           "name": "extensible",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": "\"\""
         },
         {
@@ -62,7 +71,7 @@
           "name": "elements",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -79,7 +88,7 @@
         {
           "kind": "Parameter",
           "name": "factoryResult",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": "\"\""
         },
         {
@@ -87,7 +96,7 @@
           "name": "factoryParameters",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -100,7 +109,7 @@
           "name": "factoryBody",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -113,7 +122,7 @@
           "name": "globals",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -128,7 +137,7 @@
           "name": "header",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -194,7 +203,7 @@
           "name": "moduleLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -252,7 +261,7 @@
           "name": "extensibleLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -290,7 +299,7 @@
           "name": "elementLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -328,7 +337,7 @@
           "name": "parameterLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -366,7 +375,7 @@
           "name": "bodyLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -404,7 +413,7 @@
           "name": "factoryLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -469,7 +478,7 @@
           "name": "globalLines",
           "valueType": {
             "[]": [
-              "draco.drake.Text"
+              "Text"
             ]
           },
           "value": {
@@ -505,7 +514,7 @@
         {
           "kind": "Fixed",
           "name": "value",
-          "valueType": "draco.drake.Text",
+          "valueType": "Text",
           "value": {
             "()": [
               "join",

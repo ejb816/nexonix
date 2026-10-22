@@ -1,7 +1,7 @@
 type Encoder(T)
   elements
     fix encode (T -> Dracon)
-  factory
+  factory draco.format.dracon.Encoder(T)
     parameters
       par encode (T -> Dracon)
 domain draco format dracon Dracon

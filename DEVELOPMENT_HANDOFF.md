@@ -6,9 +6,20 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **0b8fc03** (the bootstrap
-  shortening, committed and pushed by Dev at the verified 845 / 59 gate). The tree now carries the
-  UNCOMMITTED resolution-record increment: the TypeDefinition and TypeLoader trios (`uses`),
+- Updated October 21, 2026 by Claude Code. Observed branch `main`, HEAD **773b6d9** (the resolution
+  record, committed and pushed by Dev at the verified 849 / 60 gate). The tree now carries the
+  UNCOMMITTED corpus sweep, 120 files: 55 compacted JSON and 50 re-emitted drake surfaces under
+  `src/main/resources/draco` and `src/mods/resources/draco/{dreams,service}`, 11 regenerated definition-backed Scala files
+  (host imports gained at 0b8fc03 revert; Decoder, Encoder and Generated spelled in full where shadowed;
+  HostBindings with two corrected bindings),
+  `src/mods/scala/draco/{NameResolution,DracoGenerator}.scala`, `ResolutionRecordTest`, `GenDrakeTest` and
+  `DomainLineTest` (its bootstrap-spelling pins moved after Dev's first gate, 848 / 849),
+  DRACO.md, README.md, CHANGELOG.md, this file and record `git-record-2026-10-21-2230`. Do not discard it
+  until committed. Dev's second full gate on it (October 21) passed **849 / 60**, zero
+  failed/canceled/ignored/pending tests, zero aborted suites, every headline unchanged, pending mods
+  actors 0 (the first failed one DomainLineTest pin); a 31-suite compiled-class probe had passed 775 / 775
+  from a clean restore, the whole tree compiles, and unscoped, scoped and pinned generation agree on all 134
+  definitions. The previous increment, as committed: the TypeDefinition and TypeLoader trios (`uses`),
   `src/mods/scala/draco/{Drake,NameResolution,DracoGenerator}.scala`, the seventeen swept trios
   re-swept with their records, `src/main/resources/draco/drake.dlt`, the new
   `src/test/scala/draco/ResolutionRecordTest.scala`, DRACO.md, README.md, CHANGELOG.md, this file and
@@ -59,11 +70,12 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Next action
 
-After Dev's commit of the resolution-record increment: the next #51 design point is the
-REST of the sweep — every remaining main and mods body compacted with its record, mechanical and
-gate-pinned now that the engine canonicalizes and a recorded file resolves itself — including whether
-the example domains (unscoped, report-only) and the staged dreams/service files join it. Journal
-chapter 100 is written from this session's record at its closing handoff. One recommendation.
+After Dev's commit of the corpus sweep: #51's short-name work is complete for the canonical
+corpus. The next design point, not yet put to Dev, is the example domains (48 definitions outside the
+canonical ontology, report-only, 20 of 48 drifted) — whether they join the sweep under their own
+declared ontology or stay as examples of the unswept form — or, returning to #51's remaining
+question, the type-level formal/actual split Codex proposed before the ontology detour (unaccepted).
+Journal chapter 100 is written from this session's record at its closing handoff. One recommendation.
 
 ## Completed in this session
 

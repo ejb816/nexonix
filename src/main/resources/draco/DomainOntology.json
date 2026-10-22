@@ -5,6 +5,15 @@
       "draco"
     ]
   },
+  "uses": [
+    {
+      "name": "Presence",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -333,7 +342,7 @@
         "name": "holding",
         "valueType": {
           "()": [
-            "draco.drake.Presence",
+            "Presence",
             "DomainType"
           ]
         },
@@ -350,7 +359,7 @@
             "name": "value",
             "valueType": {
               "()": [
-                "draco.drake.Presence",
+                "Presence",
                 "DomainType"
               ]
             },

@@ -7,6 +7,32 @@
       "editor"
     ]
   },
+  "uses": [
+    {
+      "name": "Domain",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "DomainType",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Problem",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -22,24 +48,24 @@
       {
         "kind": "Fixed",
         "name": "definition",
-        "valueType": "draco.TypeDefinition"
+        "valueType": "TypeDefinition"
       },
       {
         "kind": "Fixed",
         "name": "members",
         "valueType": {
           "[]": [
-            "draco.TypeDefinition"
+            "TypeDefinition"
           ]
         }
       },
       {
         "kind": "Dynamic",
         "name": "domain",
-        "valueType": "draco.DomainType",
+        "valueType": "DomainType",
         "value": {
           "()": [
-            "draco.Domain",
+            "Domain",
             "definition",
             "members"
           ]
@@ -53,14 +79,14 @@
         {
           "kind": "Parameter",
           "name": "definition",
-          "valueType": "draco.TypeDefinition"
+          "valueType": "TypeDefinition"
         },
         {
           "kind": "Parameter",
           "name": "members",
           "valueType": {
             "[]": [
-              "draco.TypeDefinition"
+              "TypeDefinition"
             ]
           },
           "value": {
@@ -73,7 +99,7 @@
           "name": "problems",
           "valueType": {
             "[]": [
-              "draco.Problem"
+              "Problem"
             ]
           },
           "value": {

@@ -7,6 +7,76 @@
       "editor"
     ]
   },
+  "uses": [
+    {
+      "name": "ActorType",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "CollectProblems",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Completeness",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "DerivationResolvable",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "DomainOntology",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Problem",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Rule",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "SelfDeclaration",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Uniqueness",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Response",
+      "namePackage": [
+        "draco",
+        "dreams",
+        "user"
+      ]
+    }
+  ],
   "dracoAspect": {
     "factory": {
       "kind": "Factory",
@@ -15,14 +85,14 @@
         {
           "kind": "Parameter",
           "name": "initial",
-          "valueType": "draco.DomainOntology"
+          "valueType": "DomainOntology"
         },
         {
           "kind": "Parameter",
           "name": "actual",
           "valueType": {
             "->": [
-              "draco.dreams.user.Response",
+              "Response",
               {
                 "(,)": [
                 ]
@@ -35,7 +105,7 @@
           "name": "ontology",
           "valueType": {
             "->": [
-              "draco.DomainOntology",
+              "DomainOntology",
               {
                 "(,)": [
                 ]
@@ -87,7 +157,7 @@
         {
           "kind": "Fixed",
           "name": "provisional",
-          "valueType": "draco.DomainOntology",
+          "valueType": "DomainOntology",
           "value": {
             "()": [
               "msg.proposal",
@@ -99,7 +169,7 @@
         {
           "kind": "Fixed",
           "name": "subject",
-          "valueType": "draco.TypeDefinition",
+          "valueType": "TypeDefinition",
           "value": {
             "()": [
               "msg.subject",
@@ -113,7 +183,7 @@
           "name": "contents",
           "valueType": {
             "[]": [
-              "draco.TypeDefinition"
+              "TypeDefinition"
             ]
           },
           "value": {
@@ -141,7 +211,7 @@
           "name": "definitions",
           "valueType": {
             "[]": [
-              "draco.TypeDefinition"
+              "TypeDefinition"
             ]
           },
           "value": {
@@ -166,7 +236,7 @@
           "name": "problems",
           "valueType": {
             "[]+": [
-              "draco.Problem"
+              "Problem"
             ]
           },
           "value": {
@@ -184,10 +254,10 @@
                 "->": [
                   {
                     "[]": [
-                      "draco.Problem"
+                      "Problem"
                     ]
                   },
-                  "draco.dreams.user.Response"
+                  "Response"
                 ]
               }
             ]
@@ -415,7 +485,7 @@
           "valueType": "org.evrete.api.Knowledge",
           "value": {
             "()": [
-              "draco.Rule.knowledgeService.newKnowledge",
+              "Rule.knowledgeService.newKnowledge",
               "\"Editor\""
             ]
           }
@@ -424,7 +494,7 @@
           "kind": "Monadic",
           "value": {
             "()": [
-              "draco.Completeness.ruleType.pattern",
+              "Completeness.ruleType.pattern",
               "rules"
             ]
           }
@@ -433,7 +503,7 @@
           "kind": "Monadic",
           "value": {
             "()": [
-              "draco.SelfDeclaration.ruleType.pattern",
+              "SelfDeclaration.ruleType.pattern",
               "rules"
             ]
           }
@@ -442,7 +512,7 @@
           "kind": "Monadic",
           "value": {
             "()": [
-              "draco.DerivationResolvable.ruleType.pattern",
+              "DerivationResolvable.ruleType.pattern",
               "rules"
             ]
           }
@@ -451,7 +521,7 @@
           "kind": "Monadic",
           "value": {
             "()": [
-              "draco.Uniqueness.ruleType.pattern",
+              "Uniqueness.ruleType.pattern",
               "rules"
             ]
           }
@@ -460,7 +530,7 @@
           "kind": "Monadic",
           "value": {
             "()": [
-              "draco.CollectProblems.ruleType.pattern",
+              "CollectProblems.ruleType.pattern",
               "rules"
             ]
           }
@@ -513,7 +583,7 @@
         {
           "kind": "Mutable",
           "name": "accepted",
-          "valueType": "draco.DomainOntology",
+          "valueType": "DomainOntology",
           "value": "initial"
         },
         {
@@ -521,7 +591,7 @@
           "name": "accept",
           "valueType": {
             "->": [
-              "draco.DomainOntology",
+              "DomainOntology",
               {
                 "(,)": [
                 ]

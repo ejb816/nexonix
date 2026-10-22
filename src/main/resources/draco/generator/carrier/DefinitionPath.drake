@@ -7,13 +7,13 @@ type DefinitionPath
       body
         fix value [URL] roots.map(\root -> new URL(root.toString + resourcePath.stripPrefix("/"))).filter(\url -> scala.util.Try(url.openStream().close()).isSuccess)
     ]
-    dyn source draco.drake.Presence(URL) [
+    dyn source Presence(URL) [
       parameters
         par resourcePath String
       body
         loc found [URL] sources(resourcePath)
         mon require(found.size <= 1, s"draco: $resourcePath is defined at ${found.size} roots, and a type name must resolve to exactly one definition: " + found.mkString(", "))
-        fix value draco.drake.Presence(URL) presence(found.headOption)
+        fix value Presence(URL) presence(found.headOption)
     ]
   factory
     parameters
@@ -21,4 +21,7 @@ type DefinitionPath
   globals
     fix hostRoots [URI] System.getProperty("java.class.path", "").split(java.io.File.pathSeparatorChar).filter(_.nonEmpty).map(\entry -> new java.io.File(entry)).map(\file -> guard(file.getName.endsWith(".jar")).ifThenElse(URI.create("jar:" ++ file.toURI.toString ++ "!/"), URI.create(guard(file.toURI.toString.endsWith("/")).ifThenElse(file.toURI.toString, file.toURI.toString ++ "/")))).toSeq
     fix default DefinitionPath DefinitionPath(hostRoots)
+uses [
+  draco drake Presence
+]
 domain draco generator carrier Carrier

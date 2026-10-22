@@ -2,7 +2,6 @@ package draco
 
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.EncoderOps
-import scala.io.BufferedSource
 
 trait CLI[L] extends DracoType
 
@@ -13,7 +12,7 @@ object CLI extends DracoType {
 
   def load(_path: => String): TypeDefinition = {
     lazy val path: String = _path
-    lazy val source: BufferedSource = scala.io.Source.fromFile(path)
+    lazy val source: scala.io.BufferedSource = scala.io.Source.fromFile(path)
     lazy val text: String = try source.mkString finally source.close()
     io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
   }

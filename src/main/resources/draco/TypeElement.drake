@@ -1,4 +1,4 @@
-type TypeElement from Primal(Dracon)
+type TypeElement from Primal(draco.format.dracon.Dracon)
   modules [
     BodyElement
   ]

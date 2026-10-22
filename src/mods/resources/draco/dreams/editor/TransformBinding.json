@@ -7,19 +7,77 @@
       "editor"
     ]
   },
+  "uses": [
+    {
+      "name": "DomainAspect",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "DomainOntology",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "DomainType",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Rule",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "RuleType",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeName",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Emission",
+      "namePackage": [
+        "draco",
+        "generator"
+      ]
+    }
+  ],
   "dracoAspect": {
     "elements": [
       {
         "kind": "Fixed",
         "name": "domain",
-        "valueType": "draco.DomainType"
+        "valueType": "DomainType"
       },
       {
         "kind": "Fixed",
         "name": "supers",
         "valueType": {
           "[]": [
-            "draco.DomainType"
+            "DomainType"
           ]
         }
       },
@@ -30,8 +88,8 @@
           "[]": [
             {
               "(,)": [
-                "draco.TypeDefinition",
-                "draco.RuleType"
+                "TypeDefinition",
+                "RuleType"
               ]
             }
           ]
@@ -44,8 +102,8 @@
           "[]": [
             {
               "(,)": [
-                "draco.drake.Text",
-                "draco.TypeName"
+                "Text",
+                "TypeName"
               ]
             }
           ]
@@ -56,7 +114,7 @@
         "name": "domains",
         "valueType": {
           "[]": [
-            "draco.DomainType"
+            "DomainType"
           ]
         },
         "value": {
@@ -71,7 +129,7 @@
         "name": "definitions",
         "valueType": {
           "[]": [
-            "draco.TypeDefinition"
+            "TypeDefinition"
           ]
         },
         "value": {
@@ -99,14 +157,14 @@
           {
             "kind": "Parameter",
             "name": "accepted",
-            "valueType": "draco.DomainOntology"
+            "valueType": "DomainOntology"
           }
         ],
         "body": [
           {
             "kind": "Fixed",
             "name": "aspect",
-            "valueType": "draco.DomainAspect",
+            "valueType": "DomainAspect",
             "value": "domain.typeDefinition.domainAspect"
           },
           {
@@ -145,7 +203,7 @@
                     "td",
                     {
                       "()": [
-                        "draco.TypeDefinition.encoder",
+                        "TypeDefinition.encoder",
                         "td"
                       ]
                     }
@@ -170,7 +228,7 @@
                     "r",
                     {
                       "()": [
-                        "draco.TypeDefinition.encoder",
+                        "TypeDefinition.encoder",
                         "r._1"
                       ]
                     }
@@ -188,7 +246,7 @@
                 {
                   "==": [
                     "aspect.source.namePath",
-                    "draco.TypeDefinition.typeDefinition.typeName.namePath"
+                    "TypeDefinition.typeDefinition.typeName.namePath"
                   ]
                 },
                 "aspect.target.name.nonEmpty",
@@ -243,13 +301,13 @@
                                       "==": [
                                         {
                                           "()": [
-                                            "draco.TypeDefinition.encoder",
+                                            "TypeDefinition.encoder",
                                             "held.typeDefinition"
                                           ]
                                         },
                                         {
                                           "()": [
-                                            "draco.TypeDefinition.encoder",
+                                            "TypeDefinition.encoder",
                                             "d.typeDefinition"
                                           ]
                                         }
@@ -267,7 +325,7 @@
                                                     "td",
                                                     {
                                                       "()": [
-                                                        "draco.TypeDefinition.encoder",
+                                                        "TypeDefinition.encoder",
                                                         "td"
                                                       ]
                                                     }
@@ -288,7 +346,7 @@
                                                     "td",
                                                     {
                                                       "()": [
-                                                        "draco.TypeDefinition.encoder",
+                                                        "TypeDefinition.encoder",
                                                         "td"
                                                       ]
                                                     }
@@ -367,26 +425,26 @@
           {
             "kind": "Parameter",
             "name": "subject",
-            "valueType": "draco.TypeName"
+            "valueType": "TypeName"
           },
           {
             "kind": "Parameter",
             "name": "transform",
-            "valueType": "draco.TypeName"
+            "valueType": "TypeName"
           },
           {
             "kind": "Parameter",
             "name": "definitions",
             "valueType": {
               "[]": [
-                "draco.TypeDefinition"
+                "TypeDefinition"
               ]
             }
           },
           {
             "kind": "Parameter",
             "name": "ontology",
-            "valueType": "draco.DomainOntology"
+            "valueType": "DomainOntology"
           }
         ],
         "body": [
@@ -403,7 +461,7 @@
         "name": "run",
         "valueType": {
           "[]": [
-            "draco.generator.Emission"
+            "Emission"
           ]
         },
         "parameters": [
@@ -412,14 +470,14 @@
             "name": "definitions",
             "valueType": {
               "[]": [
-                "draco.TypeDefinition"
+                "TypeDefinition"
               ]
             }
           },
           {
             "kind": "Parameter",
             "name": "ontology",
-            "valueType": "draco.DomainOntology"
+            "valueType": "DomainOntology"
           }
         ],
         "body": [
@@ -460,7 +518,7 @@
             "name": "resolved",
             "valueType": {
               "[]": [
-                "draco.TypeDefinition"
+                "TypeDefinition"
               ]
             },
             "value": {
@@ -477,7 +535,7 @@
             "valueType": "org.evrete.api.Knowledge",
             "value": {
               "()": [
-                "draco.Rule.knowledgeService.newKnowledge",
+                "Rule.knowledgeService.newKnowledge",
                 "\"Generate\""
               ]
             }
@@ -506,7 +564,7 @@
             "name": "received",
             "valueType": {
               "[]+": [
-                "draco.generator.Emission"
+                "Emission"
               ]
             },
             "value": {
@@ -530,7 +588,7 @@
             "name": "value",
             "valueType": {
               "[]": [
-                "draco.generator.Emission"
+                "Emission"
               ]
             },
             "value": "try { session.set(\"received\", received); session.set(\"nameResolution\", resolutionScope); session.insert(resolved.toSeq: _*); session.fire(); require(received.size == definitions.size, \"transform did not emit once per definition\"); received.toSeq } finally session.close()"
@@ -545,14 +603,14 @@
         {
           "kind": "Parameter",
           "name": "domain",
-          "valueType": "draco.DomainType"
+          "valueType": "DomainType"
         },
         {
           "kind": "Parameter",
           "name": "supers",
           "valueType": {
             "[]": [
-              "draco.DomainType"
+              "DomainType"
             ]
           }
         },
@@ -563,8 +621,8 @@
             "[]": [
               {
                 "(,)": [
-                  "draco.TypeDefinition",
-                  "draco.RuleType"
+                  "TypeDefinition",
+                  "RuleType"
                 ]
               }
             ]
@@ -577,8 +635,8 @@
             "[]": [
               {
                 "(,)": [
-                  "draco.drake.Text",
-                  "draco.TypeName"
+                  "Text",
+                  "TypeName"
                 ]
               }
             ]

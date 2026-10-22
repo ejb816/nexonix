@@ -1,11 +1,17 @@
 type Actual from draco dreams user Response
   elements
-    fix definition draco.TypeDefinition
-    fix members [draco.TypeDefinition]
-    dyn domain draco.DomainType draco.Domain(definition, members)
+    fix definition TypeDefinition
+    fix members [TypeDefinition]
+    dyn domain DomainType Domain(definition, members)
   factory
     parameters
-      par definition draco.TypeDefinition
-      par members [draco.TypeDefinition] []
-      par problems [draco.Problem] []
+      par definition TypeDefinition
+      par members [TypeDefinition] []
+      par problems [Problem] []
+uses [
+  draco Domain
+  draco DomainType
+  draco Problem
+  draco TypeDefinition
+]
 domain draco dreams editor Editor
