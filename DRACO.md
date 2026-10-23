@@ -49,6 +49,11 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**880 tests / 64 suites**, verified by Dev on 2026-10-23 for the Aerial OriginateReport
+repair (record `git-record-2026-10-23-1216`): three new focused tests and two newly active
+parser checks, zero failed/canceled/ignored/pending tests and zero aborted suites. Example
+map is 29 match / 19 differ, surface losses zero across 126 types, parse scope 110 + 16;
+every other headline unchanged, including pending mods actors 0. First full gate green. Before it:
 **875 tests / 63 suites**, verified by Dev on 2026-10-23 for explicit example resolution
 bindings (record `git-record-2026-10-23-1106`): two tests in one added suite, zero failed,
 canceled, ignored or pending tests, zero aborted suites. Every report-only headline matches,
@@ -173,9 +178,9 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 125 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 15 mods in, 0 held back |
+| `ExampleDomainsGenTest` | example-domain gen map | 29 match, 19 differ, 0 error, 0 missing (of 48) |
+| `DrakeParseTest` | drake surface losses | 0 fields across 126 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 16 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -271,7 +276,7 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 `DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
 effect, transitively: generated output is pinned to the hand-written files, and sbt
 compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
-gap is `ExampleDomainsGenTest`, which reports 28 match / 20 differ over the example domains
+gap is `ExampleDomainsGenTest`, which reports 29 match / 19 differ over the example domains
 and compiles none of it.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
@@ -1282,3 +1287,13 @@ report-only headlines remain unchanged in the full direct run: 875 passed, 64 su
 including discovery, zero failures or aborts, pending mods actors 0. Dev’s first full sbt
 gate verified 875 / 63, zero failures or aborts and matching headlines.
 Record: git-record-2026-10-23-1106.
+
+
+**Aerial OriginateReport (2026-10-23, accepted; Dev verified 880 / 64).** Its Drake/JSON now
+owns the existing report conversion and its Scala is regenerated. Exact projection and
+normal/default runtime checks pass. Full direct verification: 880 tests / 65 suites
+including discovery, zero failures or aborts, with current main/mods/test resources.
+Dev’s first full sbt gate passed 880 / 64. The current headline table reflects this increment: 29/19 example
+map, zero losses across 126 types, 110 + 16 parse scope; other headlines unchanged.
+No failed/canceled/ignored/pending tests or aborted suites; all expected headlines matched.
+The repair remains uncommitted.

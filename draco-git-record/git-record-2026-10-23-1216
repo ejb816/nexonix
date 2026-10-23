@@ -1,0 +1,17 @@
+Carry Aerial OriginateReport conversion in its definition
+
+Dev accepted repairing this one example rule after the explicit loading scope.
+Its old JSON called originate(intent), a helper held only in handwritten Scala.
+Author the conversion in a new Drake surface, parse the JSON and regenerate Scala.
+Preserve PositionReport, POSITION, callsign default UNKNOWN, flightLevel default 0,
+altitudeFeet = flightLevel * 100 and the existing consumer callback.
+
+Add exact Drake/JSON/Scala agreement and two runtime delivery checks. Other example
+bodies, shared conversion abstractions, activation and .dcon remain outside scope.
+
+Direct compilation and every discovered suite passed: 880 tests / 65 suites including
+discovery, zero failures or aborts. Main/mods/test resources were on loader roots.
+Example map 29/19; zero surface losses across 126 types; parse scope 110 + 16; all
+other headlines unchanged, pending mods actors 0. Dev’s first full sbt gate passed 880 / 64 on October 23, with zero failed/canceled/
+ignored/pending tests, zero aborted suites and all expected headlines matching.
+No sbt, commit or push executed by Codex.

@@ -1,4 +1,3 @@
-
 package domains.aerial
 
 import draco._
@@ -7,31 +6,20 @@ import org.evrete.api.{Knowledge, RhsContext}
 
 trait OriginateReport
 
-object OriginateReport extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("OriginateReport", _namePackage = Seq ("domains", "aerial")))
+object OriginateReport extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("OriginateReport", _namePackage = Seq ("domains", "aerial")))
   lazy val dracoType: Type[OriginateReport] = Type[OriginateReport] (typeDefinition)
   lazy val domainType: Domain[Aerial] = Domain[Aerial] (typeDefinition)
 
-  private def originate(intent: FlightIntent): PositionReport = {
-    val cur      = intent.json.hcursor
-    val callsign = cur.get[String]("callsign").getOrElse("UNKNOWN")
-    val fl       = cur.get[Int]("flightLevel").getOrElse(0)
-    val payload  = io.circe.Json.obj(
-      "message"      -> io.circe.Json.fromString("POSITION"),
-      "callsign"     -> io.circe.Json.fromString(callsign),
-      "altitudeFeet" -> io.circe.Json.fromInt(fl * 100)
-    )
-    new PositionReport {
-      override lazy val typeDefinition: TypeDefinition = PositionReport.typeDefinition
-      override val json: io.circe.Json = payload
-    }
-  }
-
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val intent: FlightIntent = ctx.get[FlightIntent]("$intent")
-      val consumer: draco.format.dracon.Dracon => Unit =
-        ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
-      consumer(originate(intent))
+      lazy val consumer: draco.format.dracon.Dracon => Unit = ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
+      lazy val cursor: io.circe.HCursor = intent.json.hcursor
+      lazy val callsign: String = cursor.get[String]("callsign").getOrElse("UNKNOWN")
+      lazy val flightLevel: Int = cursor.get[Int]("flightLevel").getOrElse(0)
+      lazy val payload: io.circe.Json = io.circe.Json.obj(("message", io.circe.Json.fromString("POSITION")), ("callsign", io.circe.Json.fromString(callsign)), ("altitudeFeet", io.circe.Json.fromInt(flightLevel * 100)))
+      lazy val report: PositionReport = new PositionReport { override lazy val typeDefinition: TypeDefinition = PositionReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+      consumer(report)
   }
 
   private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {

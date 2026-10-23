@@ -6,6 +6,15 @@
       "aerial"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Aerial",
+      "namePackage": [
+        "domains",
+        "aerial"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -32,21 +41,133 @@
               }
             ]
           },
-          "value": "ctx.getRuntime().get[draco.format.dracon.Dracon => Unit](\"consumer\")"
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ctx.getRuntime"
+                    ]
+                  },
+                  "get[draco.format.dracon.Dracon => Unit]"
+                ]
+              },
+              "\"consumer\""
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "cursor",
+          "valueType": "io.circe.HCursor",
+          "value": "intent.json.hcursor"
+        },
+        {
+          "kind": "Fixed",
+          "name": "callsign",
+          "valueType": "String",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "cursor.get[String]",
+                      "\"callsign\""
+                    ]
+                  },
+                  "getOrElse"
+                ]
+              },
+              "\"UNKNOWN\""
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "flightLevel",
+          "valueType": "Int",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "cursor.get[Int]",
+                      "\"flightLevel\""
+                    ]
+                  },
+                  "getOrElse"
+                ]
+              },
+              "0"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "payload",
+          "valueType": "io.circe.Json",
+          "value": {
+            "()": [
+              "io.circe.Json.obj",
+              {
+                "(,)": [
+                  "\"message\"",
+                  {
+                    "()": [
+                      "io.circe.Json.fromString",
+                      "\"POSITION\""
+                    ]
+                  }
+                ]
+              },
+              {
+                "(,)": [
+                  "\"callsign\"",
+                  {
+                    "()": [
+                      "io.circe.Json.fromString",
+                      "callsign"
+                    ]
+                  }
+                ]
+              },
+              {
+                "(,)": [
+                  "\"altitudeFeet\"",
+                  {
+                    "()": [
+                      "io.circe.Json.fromInt",
+                      {
+                        "*": [
+                          "flightLevel",
+                          "100"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "report",
+          "valueType": "PositionReport",
+          "value": "new PositionReport { override lazy val typeDefinition: TypeDefinition = PositionReport.typeDefinition; override lazy val json: io.circe.Json = payload }"
         },
         {
           "kind": "Monadic",
-          "value": "consumer(originate(intent))"
+          "value": {
+            "()": [
+              "consumer",
+              "report"
+            ]
+          }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Aerial",
-      "namePackage": [
-        "domains",
-        "aerial"
       ]
     }
   }

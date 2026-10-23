@@ -6,13 +6,14 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **1d69df1**, committed and pushed by Dev after the 873 / 62 gate.
+- Observed branch: `main`, HEAD **ae0264e**, committed and pushed by Dev after the 875 / 63 gate.
   Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
-  This post-commit checkpoint update is documentation only, uncommitted.
-- Latest verified baseline: **875 tests / 63 suites**, Dev's October 23 full sbt gate on
-  the uncommitted example resolution bindings increment, green on its first run. Zero failed/
-  canceled/ignored/pending tests, zero aborted suites. Every report-only headline unchanged,
-  including pending mods actors 0. Awaiting Dev's commit and push; HEAD remains 1d69df1.
+  The accepted Aerial OriginateReport repair is implemented, Dev-verified and uncommitted.
+- Latest verified baseline: **880 tests / 64 suites**, Dev's October 23 full sbt gate on
+  the Aerial OriginateReport repair, green on its first run. Zero failed/canceled/ignored/
+  pending tests and zero aborted suites. Example map 29/19; zero losses across 126 types;
+  parse scope 110 + 16. All other headlines unchanged, including pending mods actors 0.
+  Await Dev's path-scoped commit and push; HEAD remains ae0264e.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -194,11 +195,41 @@ observation boundary with no JSON definition, so it belongs to the example calle
 not the shared target vocabulary or domain membership. No body sweep or projection repair.
 Dev accepted this recommendation; the implemented result follows.
 
-## Example resolution bindings (October 23, implemented and Dev-verified; commit pending)
+## Example resolution bindings (October 23, implemented, verified, committed and pushed)
 
 Dev accepted HCursor in HostBindings, AerialSink in the example caller's bindings and a
 loading gate. The HostBindings trio is updated; ExampleScope supplies explicit canonical
 plus six-example declarations and the caller sink. ExampleLoadingTest adds two tests for
 all 48 definitions, order independence and missing-binding failures. No body/projection edits.
-Dev verified 875 / 63, every headline unchanged. Full compiled-class verification passed: 875 tests, 64 suites including Runner discovery, zero failures or aborts, every headline unchanged and pending mods actors 0. Current main/mods/test resources were on loader roots. Dev’s first full sbt gate passed 875 / 63 with zero failures/canceled/ignored/pending tests, zero aborted suites and all headlines matching. Awaiting commit and push.
+Dev verified 875 / 63, every headline unchanged. Full compiled-class verification passed: 875 tests, 64 suites including Runner discovery, zero failures or aborts, every headline unchanged and pending mods actors 0. Current main/mods/test resources were on loader roots. Dev’s first full sbt gate passed 875 / 63 with zero failures/canceled/ignored/pending tests, zero aborted suites and all headlines matching. Dev committed and pushed ae0264e.
 Record: git-record-2026-10-23-1106. No sbt, commit or push by Codex.
+
+## Design point after ae0264e (accepted)
+
+Start projection repair with domains.aerial.OriginateReport alone. Its JSON action calls
+originate(intent), but the conversion exists only as a private method in hand-written Scala;
+the definition has no corresponding body. Existing behavior reads callsign (default UNKNOWN)
+and flightLevel (default 0), emits POSITION and altitudeFeet = flightLevel * 100.
+Recommend authoring that existing conversion in the rule's Drake/JSON definition, regenerating
+its Scala, and adding exact projection plus behavioral checks (normal input and missing fields).
+Keep the rule's existing consumer contract. Do not sweep the other examples or introduce a
+shared conversion abstraction in this step. Dev accepted this scope. The implementation and verification checkpoint follows.
+
+
+## Aerial OriginateReport repair (October 23, accepted, implemented and Dev-verified; uncommitted)
+
+The new Drake surface owns the existing conversion. Its parsed JSON and generated Scala
+agree exactly. OriginateReportTest checks all three projections and fires the rule for
+normal input and absent fields, retaining the consumer callback and PositionReport payload.
+Only this rule is repaired; the other example bodies remain outside the accepted scope.
+
+All main/mods/domain sources and all test sources compiled directly. Every discovered suite
+passed: 880 tests / 65 suites including Runner discovery, zero failed/canceled/ignored/pending
+tests and zero aborted suites. Current main, mods and test resources were on loader roots.
+Dev’s first full sbt gate passed: 880 tests / 64 suites (three new focused tests plus two newly active
+parser checks). Example map is 29 match / 19 differ / 0 errors / 0 missing; parse scope
+110 draco + 16 mods; surface losses 0 across 126 types. All other report-only headlines
+unchanged, including file-only pending mods actors 0. No sbt, commit or push by Codex.
+Dev’s pasted gate confirms zero failed/canceled/ignored/pending tests, zero aborted suites
+and all expected headlines. Latest verified baseline is 880 / 64; commit/push pending.
+Record: git-record-2026-10-23-1216. Journal coverage remains through chapter 104.

@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- Author Aerial OriginateReport’s existing conversion in Drake/JSON and regenerate its Scala.
+  Pin exact projections and normal/default report delivery; the example map improves to
+  29 matches / 19 differences.
+
 - Declare HCursor in the Scala target vocabulary and supply AerialSink through an explicit
   example caller scope. Add two-stage loading checks for all 48 example definitions,
   declaration-order independence and required external bindings. Dev verified 875 tests /
