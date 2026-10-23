@@ -1,0 +1,22 @@
+Supply explicit target and caller bindings for example-domain loading
+
+Dev accepted completing the explicit example resolution scope after reciprocal membership.
+Add io.circe.HCursor to ScalaTarget HostBindings and regenerate its trio. Supply the
+hand-written observation boundary domains.aerial.AerialSink only through the example
+caller's ExampleScope test helper, alongside the explicit six example domain declarations
+and canonical dependencies. No sink definition, discovery or global caller binding.
+
+ExampleLoadingTest adds two gates: all 48 example definitions load through DomainBuilder's
+two stages, equal direct resolution and independent of declaration order; removing either
+required external binding fails. The sink remains outside target vocabulary and ontology.
+No example body or projection rewrites. Dev-verified full gate: 875 tests / 63 suites,
+all report-only headlines unchanged. Full direct run passed 875 tests, 64 suites including
+Runner discovery, zero failed/canceled/ignored/pending tests and zero aborted suites. Current
+main/mods/test resources were on loader roots; every headline matched, pending mods actors 0.
+Dev's first full sbt gate on October 23 verified 875 tests / 63 suites, zero failed/canceled/
+ignored/pending tests, zero aborted suites and every report-only headline unchanged, including
+the pasted file-only pending mods actors 0. No sbt, commit or push by Codex.
+
+During direct test compilation, the new cursor assertion first lacked the type-form
+extension and then passed Dracon where TypeForm.text requires Json; corrected to the
+explicit TypeForm.text(cursor.valueType.json) API before executing the suite.

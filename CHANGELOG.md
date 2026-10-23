@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- Declare HCursor in the Scala target vocabulary and supply AerialSink through an explicit
+  example caller scope. Add two-stage loading checks for all 48 example definitions,
+  declaration-order independence and required external bindings. Dev verified 875 tests /
+  63 suites with every report-only headline unchanged.
+
 - Make membership reciprocal for sixteen existing example definitions across Aerial,
   Ethereal, Marine, Terrestrial and World. Add the five domain Drake surfaces and checks
   for membership consistency and agreement across their trios. Dev verified 873 tests /

@@ -870,3 +870,10 @@ Five domain surfaces were added, with reciprocal membership and trio checks. The
 remain unswept and the example generation comparison remains 28 matches / 20 differences;
 complete identity coverage does not imply complete projection or host-name resolution.
 See EXAMPLE_DOMAIN_AUDIT.md for the pre-change evidence and remaining gaps.
+
+Example loading now supplies an explicit caller scope: the canonical dependencies and six
+example domains, ScalaTarget HostBindings (including io.circe.HCursor), and the caller-owned
+AerialSink binding. ExampleLoadingTest verifies all 48 definitions through two-stage loading,
+independently of declaration order, and rejects either missing external binding. The sink
+is an observation boundary, not a member of the ontology or the shared target vocabulary.
+Loading coverage does not establish that the still-unswept examples generate faithfully.

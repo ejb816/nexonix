@@ -6,13 +6,13 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **375c513**, committed and pushed by Dev after the 861 / 61 gate.
+- Observed branch: `main`, HEAD **1d69df1**, committed and pushed by Dev after the 873 / 62 gate.
   Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
   This post-commit checkpoint update is documentation only, uncommitted.
-- Latest verified baseline: **873 tests / 62 suites**, Dev's October 23 full sbt gate on
-  the uncommitted membership increment, green on its first run. Zero failed/canceled/ignored/
-  pending tests, zero aborted suites. Zero losses across 125 types, parse scope 110 + 15;
-  every other headline unchanged, pending mods actors 0. Awaiting Dev's commit and push.
+- Latest verified baseline: **875 tests / 63 suites**, Dev's October 23 full sbt gate on
+  the uncommitted example resolution bindings increment, green on its first run. Zero failed/
+  canceled/ignored/pending tests, zero aborted suites. Every report-only headline unchanged,
+  including pending mods actors 0. Awaiting Dev's commit and push; HEAD remains 1d69df1.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -166,7 +166,7 @@ The next unaccepted recommendation is reciprocal membership for the 16 already-o
 example definitions plus a consistency check, before host-binding or projection repairs.
 No code or corpus changes; verified baseline stays 861 / 61. Audit/checkpoint docs are uncommitted.
 
-## Example membership increment (October 23, accepted, implemented and Dev-verified; commit pending)
+## Example membership increment (October 23, accepted, implemented and Dev-verified; committed as 1d69df1)
 
 Dev accepted the audit's membership recommendation. Five domain lists now include the 16
 already-owned definitions; Sentient is unchanged. Added missing Drake surfaces for those
@@ -178,4 +178,27 @@ repairs remain separate, unaccepted work. Record: git-record-2026-10-23-1048.
 
 Dev’s first full gate on October 23 verified 873 / 62, zero failures or aborts, every
 expected headline matching, including the pasted file-only pending mods actors 0.
-Next action: Dev’s path-scoped commit and push.
+Dev committed and pushed 1d69df1.
+
+## Design point after 1d69df1 (subsequently accepted)
+
+A fresh read-only resolution probe using current compiled classes and the explicit canonical
+plus six-example declaration set now holds 48/48 identities and resolves 46/48 definitions.
+Only aerial.Consumer (domains.aerial.AerialSink) and aerial.Input (io.circe.HCursor) fail.
+Cartesian and Position resolve through the repaired domain membership.
+
+Recommendation: complete the explicit example resolution scope. Add io.circe.HCursor to
+ScalaTarget HostBindings, supply domains.aerial.AerialSink as a caller-owned binding in the
+example scope, and gate two-stage loading of all 48 examples. AerialSink is a hand-written
+observation boundary with no JSON definition, so it belongs to the example caller's bindings,
+not the shared target vocabulary or domain membership. No body sweep or projection repair.
+Dev accepted this recommendation; the implemented result follows.
+
+## Example resolution bindings (October 23, implemented and Dev-verified; commit pending)
+
+Dev accepted HCursor in HostBindings, AerialSink in the example caller's bindings and a
+loading gate. The HostBindings trio is updated; ExampleScope supplies explicit canonical
+plus six-example declarations and the caller sink. ExampleLoadingTest adds two tests for
+all 48 definitions, order independence and missing-binding failures. No body/projection edits.
+Dev verified 875 / 63, every headline unchanged. Full compiled-class verification passed: 875 tests, 64 suites including Runner discovery, zero failures or aborts, every headline unchanged and pending mods actors 0. Current main/mods/test resources were on loader roots. Dev’s first full sbt gate passed 875 / 63 with zero failures/canceled/ignored/pending tests, zero aborted suites and all headlines matching. Awaiting commit and push.
+Record: git-record-2026-10-23-1106. No sbt, commit or push by Codex.

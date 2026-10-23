@@ -49,6 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**875 tests / 63 suites**, verified by Dev on 2026-10-23 for explicit example resolution
+bindings (record `git-record-2026-10-23-1106`): two tests in one added suite, zero failed,
+canceled, ignored or pending tests, zero aborted suites. Every report-only headline matches,
+including zero pending mods actors. Dev's first full gate was green. Before it:
 **873 tests / 62 suites**, verified by Dev on 2026-10-23 for reciprocal example membership
 (record `git-record-2026-10-23-1048`): two new consistency tests and ten newly active parser
 tests, zero failed/canceled/ignored/pending tests, zero aborted suites. Surface losses remain
@@ -1266,3 +1270,15 @@ run to 873 tests, 63 suites including discovery, all passed. Surface-loss covera
 125 (zero losses) and parse scope to 110 + 15; all other headlines match, pending mods actors 0.
 Dev’s first full gate passed 873 / 62 with all expected headlines matching; commit pending.
 Record: git-record-2026-10-23-1048. Audit: EXAMPLE_DOMAIN_AUDIT.md.
+
+**Example resolution bindings (2026-10-23, Codex; Dev verified 875 / 63).** Dev accepted
+io.circe.HCursor in ScalaTarget HostBindings and AerialSink supplied explicitly by the
+example caller. HostBindings' trio adds the qualified cursor binding; ExampleScope is a
+test caller helper supplying canonical dependencies, six example declarations and the
+qualified sink binding. ExampleLoadingTest gates all 48 definitions against direct resolution,
+reversed declaration order, no stubs, and failure when either external binding is withheld.
+No body sweep or projection repairs. Two added tests and one suite yield 875 / 63; all
+report-only headlines remain unchanged in the full direct run: 875 passed, 64 suites
+including discovery, zero failures or aborts, pending mods actors 0. Dev’s first full sbt
+gate verified 875 / 63, zero failures or aborts and matching headlines.
+Record: git-record-2026-10-23-1106.
