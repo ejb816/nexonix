@@ -1,0 +1,10 @@
+type Ethereal from domains world World
+domain domains ethereal Ethereal
+  types [
+    LaunchIntent
+    EphemerisReport
+    ConsumeReport
+    OriginateReport
+    Consumer
+    Creator
+  ]

@@ -1,0 +1,8 @@
+type World
+domain domains world World
+  types [
+    Cartesian
+    Consumer
+    Observable
+    Provider
+  ]

@@ -29,7 +29,11 @@
       "MarchIntent",
       "LocationReport",
       "ConsumeReport",
-      "OriginateReport"
+      "OriginateReport",
+      "Consumer",
+      "Creator",
+      "Location",
+      "Output"
     ]
   }
 }

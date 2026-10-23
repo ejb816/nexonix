@@ -9,7 +9,7 @@ object Terrestrial extends App {
   lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Terrestrial", _namePackage = Seq ("domains", "terrestrial")))
   lazy val dracoType: Type[Terrestrial] = Type[Terrestrial] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ("MarchIntent", "LocationReport", "ConsumeReport", "OriginateReport")
+  lazy val elementTypeNames: Seq[String] = Seq ("MarchIntent", "LocationReport", "ConsumeReport", "OriginateReport", "Consumer", "Creator", "Location", "Output")
 
   lazy val domainType: Domain[Terrestrial] = Domain[Terrestrial] (typeDefinition)
 }

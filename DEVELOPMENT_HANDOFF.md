@@ -6,13 +6,13 @@ Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **b04d81d**, committed and pushed by Dev after the verified gate.
+- Observed branch: `main`, HEAD **375c513**, committed and pushed by Dev after the 861 / 61 gate.
   Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
   This post-commit checkpoint update is documentation only, uncommitted.
-- Latest verified baseline: **861 tests / 61 suites**, Dev's October 22 full sbt gate on
-  the uncommitted executable empty-role tests, green on its first run. Zero failed/canceled/
-  ignored/pending tests, zero aborted suites; every report-only headline unchanged, including
-  pending mods actors 0. Production code remains b04d81d, committed and pushed by Dev.
+- Latest verified baseline: **873 tests / 62 suites**, Dev's October 23 full sbt gate on
+  the uncommitted membership increment, green on its first run. Zero failed/canceled/ignored/
+  pending tests, zero aborted suites. Zero losses across 125 types, parse scope 110 + 15;
+  every other headline unchanged, pending mods actors 0. Awaiting Dev's commit and push.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -130,7 +130,7 @@ request. No compaction was observed in the frozen prefix; the reply completing t
 outside it and can be recovered by the next pass. Chapters 95–99 (Codex) and 94 (Claude) keep their
 historical Status sections. Both documentation sync markers advance to 104 after reconciliation.
 
-## Executable empty-role coverage (accepted by Dev, implemented and Dev-verified; commit pending)
+## Executable empty-role coverage (accepted by Dev, implemented, Dev-verified, committed and pushed)
 
 Four additional RolePresenceTest cases compile and load all four role combinations after
 carrier round-trip, register and fire a session for declared rules, and exercise empty
@@ -140,5 +140,42 @@ count is not measured. Full compiled-class run: 861 tests, 62 suites including d
 zero failures or aborts; all report-only headlines unchanged, pending mods actors 0.
 Current resources, including test resources, were on loader roots. Dev’s first full sbt gate
 verified 861 tests / 61 suites, no failures or aborts and all headlines matching.
-Record: git-record-2026-10-22-0739. Next action: Dev’s path-scoped commit and push;
-this increment is uncommitted.
+Record: git-record-2026-10-22-0739. Dev committed and pushed this increment as 375c513; his pasted output confirms the push.
+
+## Next proposal after 375c513 (Codex; unaccepted)
+
+Measure the example domains against an explicitly declared resolution scope before proposing
+a sweep. ExampleDomainsGenTest still generates 48 definitions unscoped and reports 28 match /
+20 differ without asserting agreement. CanonicalScope lists no example domains. Aerial's
+anchor lists four data/rule members but not its Creator, Consumer or Input actors, so a scope
+built only from existing membership lists may not cover the files the report visits.
+Recommend a read-only audit of declared domains/membership, resolution with HostBindings,
+and scoped versus unscoped output over all 48 files. Report exact gaps and distinguish naming
+changes from existing projection differences. No membership edits, corpus rewriting or new
+issues are authorized by this proposal. Activation and .dcon remain deferred.
+
+## Example-domain audit completed (accepted read-only scope)
+
+See EXAMPLE_DOMAIN_AUDIT.md for scope, per-file evidence and limits. At 375c513:
+32/48 identities held; 16 omitted members point at the same six owners. 45 resolve,
+three first failures (AerialSink, HCursor, Cartesian). A diagnostic scope adding those
+and Position resolves all 48, without changing membership files. Scoped output:
+34 unchanged, 11 spelling-only changes, 3 errors; comparison with committed Scala:
+23 matches / 22 differences / 3 errors. Unscoped remains 28 / 20 / 0 / 0.
+The next unaccepted recommendation is reciprocal membership for the 16 already-owned
+example definitions plus a consistency check, before host-binding or projection repairs.
+No code or corpus changes; verified baseline stays 861 / 61. Audit/checkpoint docs are uncommitted.
+
+## Example membership increment (October 23, accepted, implemented and Dev-verified; commit pending)
+
+Dev accepted the audit's membership recommendation. Five domain lists now include the 16
+already-owned definitions; Sentient is unchanged. Added missing Drake surfaces for those
+five domains, parsed their JSON back, and changed only membership lists in their existing
+hand-written Scala companions. All 48 example identities are covered by declared domains.
+Two ExampleMembershipTest checks plus ten newly active parser tests yield 873 tests / 62 suites.
+Full compiled-class verification passed all 873 tests (63 suites including discovery), no failures or aborts. Body sweeping, host bindings, and projection
+repairs remain separate, unaccepted work. Record: git-record-2026-10-23-1048.
+
+Dev’s first full gate on October 23 verified 873 / 62, zero failures or aborts, every
+expected headline matching, including the pasted file-only pending mods actors 0.
+Next action: Dev’s path-scoped commit and push.

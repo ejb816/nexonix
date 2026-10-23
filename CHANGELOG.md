@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- Make membership reciprocal for sixteen existing example definitions across Aerial,
+  Ethereal, Marine, Terrestrial and World. Add the five domain Drake surfaces and checks
+  for membership consistency and agreement across their trios. Dev verified 873 tests /
+  62 suites with all expected report-only headlines matching.
+
 - Add executable coverage for all four empty rule/actor combinations: generated Scala
   compiles, empty rules register and permit session firing, and empty actors process
   different payloads without effects or termination, including the composed projection.

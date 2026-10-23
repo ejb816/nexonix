@@ -29,7 +29,11 @@
       "FlightIntent",
       "PositionReport",
       "ConsumeReport",
-      "OriginateReport"
+      "OriginateReport",
+      "Consumer",
+      "Creator",
+      "Input",
+      "Position"
     ]
   }
 }

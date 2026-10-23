@@ -1,0 +1,24 @@
+Make example-domain membership reciprocal for sixteen existing definitions
+
+Dev accepted the read-only example-domain audit, then its bounded membership recommendation.
+Aerial gains Consumer, Creator, Input and Position; Ethereal and Marine each gain Consumer
+and Creator; Terrestrial gains Consumer, Creator, Location and Output; World gains Cartesian,
+Consumer, Observable and Provider. Sentient already agrees. All 48 definitions now have
+identities in the six explicitly declared example domains.
+
+The five affected domains had no Drake surfaces. Emit them and parse back to canonical JSON;
+change only the corresponding elementTypeNames lists in their hand-written Scala companions.
+These example companions remain outside the canonical generation gate, retaining their known
+conventions and behavior. No body sweep, host vocabulary change or projection repair.
+
+ExampleMembershipTest adds two checks: reciprocal membership and identity coverage over all
+48 definitions, and Drake/JSON/compiled-membership agreement for the five affected trios.
+The five new Drake surfaces activate ten existing parser tests. Dev-verified full gate: 873 / 62.
+The audit and checkpoint documents preserve the source of this decision. Full compiled-class
+run passed 873 tests, 63 suites including discovery, zero failed/canceled/ignored/pending tests
+and zero aborted suites. Current main/mods and test resources were on loader roots.
+Surface losses: zero across 125 types; parse scope 110 + 15. Every other headline unchanged,
+including zero pending mods actors. Dev's first full sbt gate on October 23 passed 873 tests / 62 suites,
+zero failed/canceled/ignored/pending tests, zero aborted suites. Every expected headline
+matched, including the pasted file-only pending mods actors 0.
+No sbt, commit or push performed by Codex.

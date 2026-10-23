@@ -29,7 +29,9 @@
       "LaunchIntent",
       "EphemerisReport",
       "ConsumeReport",
-      "OriginateReport"
+      "OriginateReport",
+      "Consumer",
+      "Creator"
     ]
   }
 }

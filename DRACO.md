@@ -49,6 +49,11 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**873 tests / 62 suites**, verified by Dev on 2026-10-23 for reciprocal example membership
+(record `git-record-2026-10-23-1048`): two new consistency tests and ten newly active parser
+tests, zero failed/canceled/ignored/pending tests, zero aborted suites. Surface losses remain
+zero across 125 types; parse scope is 110 draco + 15 mods. Every other report-only headline
+matches, including zero pending mods actors. Dev's first full gate was green. Before it:
 **861 tests / 61 suites**, verified by Dev on 2026-10-22 for executable empty-role coverage
 (record `git-record-2026-10-22-0739`): four added tests, no production or corpus changes,
 zero failed/canceled/ignored/pending tests, zero aborted suites, every report-only headline
@@ -165,8 +170,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 28 match, 20 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 120 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 10 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 0 fields across 125 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 15 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -1250,3 +1255,14 @@ measure invocation count of an empty rule action. All 861 tests passed directly,
 including discovery, every report-only headline unchanged. Dev’s first full gate verified
 861 tests / 61 suites, zero failures or aborts and matching headlines.
 Record: `git-record-2026-10-22-0739`. Latest Dev-verified baseline is 861 / 61; commit pending.
+
+**Example membership (2026-10-23, Codex; Dev verified 873 / 62).** Dev accepted reciprocal
+membership for sixteen existing example definitions after the audit at 375c513. Five domain
+trios now list their already-owned members; their missing Drake surfaces were emitted and
+parsed back. Existing hand-written example companions retain their conventions, changing
+only elementTypeNames. No body sweep or projection repair: the example map stays 28 match /
+20 differ. Two new consistency tests plus ten newly active parser checks bring the direct
+run to 873 tests, 63 suites including discovery, all passed. Surface-loss coverage grows to
+125 (zero losses) and parse scope to 110 + 15; all other headlines match, pending mods actors 0.
+Dev’s first full gate passed 873 / 62 with all expected headlines matching; commit pending.
+Record: git-record-2026-10-23-1048. Audit: EXAMPLE_DOMAIN_AUDIT.md.

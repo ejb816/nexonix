@@ -1,0 +1,10 @@
+type Marine from domains world World
+domain domains marine Marine
+  types [
+    VoyageIntent
+    FixReport
+    ConsumeReport
+    OriginateReport
+    Consumer
+    Creator
+  ]

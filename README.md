@@ -863,3 +863,10 @@ Drake emission, completeness and stub checks use presence independently of conte
 This field encoding does not introduce a standalone codec for Presence. BodyElement and
 ActorAspect now have canonical plain-type surfaces; their former role exhibits are
 covered by RolePresenceTest, with no frozen fixtures or corpus exclusions.
+
+The six example domains now explicitly include all 48 existing JSON definitions: sixteen
+previously omitted members were added to their already-declared owners on October 23.
+Five domain surfaces were added, with reciprocal membership and trio checks. Their bodies
+remain unswept and the example generation comparison remains 28 matches / 20 differences;
+complete identity coverage does not imply complete projection or host-name resolution.
+See EXAMPLE_DOMAIN_AUDIT.md for the pre-change evidence and remaining gaps.

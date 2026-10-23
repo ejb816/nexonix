@@ -1,0 +1,12 @@
+type Terrestrial from domains world World
+domain domains terrestrial Terrestrial
+  types [
+    MarchIntent
+    LocationReport
+    ConsumeReport
+    OriginateReport
+    Consumer
+    Creator
+    Location
+    Output
+  ]

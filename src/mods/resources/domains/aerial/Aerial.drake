@@ -1,0 +1,12 @@
+type Aerial from domains world World
+domain domains aerial Aerial
+  types [
+    FlightIntent
+    PositionReport
+    ConsumeReport
+    OriginateReport
+    Consumer
+    Creator
+    Input
+    Position
+  ]
