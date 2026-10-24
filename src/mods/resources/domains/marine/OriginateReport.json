@@ -6,6 +6,15 @@
       "marine"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Marine",
+      "namePackage": [
+        "domains",
+        "marine"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -32,21 +41,144 @@
               }
             ]
           },
-          "value": "ctx.getRuntime().get[draco.format.dracon.Dracon => Unit](\"consumer\")"
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ctx.getRuntime"
+                    ]
+                  },
+                  "get[draco.format.dracon.Dracon => Unit]"
+                ]
+              },
+              "\"consumer\""
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "cursor",
+          "valueType": "io.circe.HCursor",
+          "value": "intent.json.hcursor"
+        },
+        {
+          "kind": "Fixed",
+          "name": "vessel",
+          "valueType": "String",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "cursor.get[String]",
+                      "\"vessel\""
+                    ]
+                  },
+                  "getOrElse"
+                ]
+              },
+              "\"UNKNOWN\""
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "depthMetres",
+          "valueType": "Int",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "cursor.get[Int]",
+                      "\"depthMetres\""
+                    ]
+                  },
+                  "getOrElse"
+                ]
+              },
+              "0"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "depthFathoms",
+          "valueType": "Int",
+          "value": {
+            "/": [
+              {
+                "*": [
+                  "depthMetres",
+                  "10000"
+                ]
+              },
+              "18288"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "payload",
+          "valueType": "io.circe.Json",
+          "value": {
+            "()": [
+              "io.circe.Json.obj",
+              {
+                "(,)": [
+                  "\"kind\"",
+                  {
+                    "()": [
+                      "io.circe.Json.fromString",
+                      "\"FIX\""
+                    ]
+                  }
+                ]
+              },
+              {
+                "(,)": [
+                  "\"vessel\"",
+                  {
+                    "()": [
+                      "io.circe.Json.fromString",
+                      "vessel"
+                    ]
+                  }
+                ]
+              },
+              {
+                "(,)": [
+                  "\"depthFathoms\"",
+                  {
+                    "()": [
+                      "io.circe.Json.fromInt",
+                      "depthFathoms"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "report",
+          "valueType": "FixReport",
+          "value": "new FixReport { override lazy val typeDefinition: TypeDefinition = FixReport.typeDefinition; override lazy val json: io.circe.Json = payload }"
         },
         {
           "kind": "Monadic",
-          "value": "consumer(originate(intent))"
+          "value": {
+            "()": [
+              "consumer",
+              "report"
+            ]
+          }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Marine",
-      "namePackage": [
-        "domains",
-        "marine"
       ]
     }
   }

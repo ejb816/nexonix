@@ -1,19 +1,19 @@
 # Development Handoff
 
-Updated October 22, 2026 by Codex after receiving Claude Code’s handoff.
+Updated October 23, 2026 by Codex after Dev verified the Marine repair.
 This is the current checkpoint; the journal and git records preserve historical checkpoints.
 Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **ae0264e**, committed and pushed by Dev after the 875 / 63 gate.
+- Observed branch: `main`, HEAD **3608fab**, committed and pushed by Dev after the 880 / 64 gate.
   Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
-  The accepted Aerial OriginateReport repair is implemented, Dev-verified and uncommitted.
-- Latest verified baseline: **880 tests / 64 suites**, Dev's October 23 full sbt gate on
-  the Aerial OriginateReport repair, green on its first run. Zero failed/canceled/ignored/
-  pending tests and zero aborted suites. Example map 29/19; zero losses across 126 types;
-  parse scope 110 + 16. All other headlines unchanged, including pending mods actors 0.
-  Await Dev's path-scoped commit and push; HEAD remains ae0264e.
+  The Aerial repair is committed. The accepted Marine OriginateReport repair is uncommitted.
+- Latest verified baseline: **886 tests / 65 suites**, Dev's October 23 full sbt gate on
+  the Marine OriginateReport repair, green on its first run. Zero failed/canceled/ignored/
+  pending tests and zero aborted suites. Example map 30/18; zero losses across 127 types;
+  parse scope 110 + 17. All other headlines unchanged, including pending mods actors 0.
+  Await Dev's path-scoped commit and push; HEAD remains 3608fab.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -216,7 +216,7 @@ Keep the rule's existing consumer contract. Do not sweep the other examples or i
 shared conversion abstraction in this step. Dev accepted this scope. The implementation and verification checkpoint follows.
 
 
-## Aerial OriginateReport repair (October 23, accepted, implemented and Dev-verified; uncommitted)
+## Aerial OriginateReport repair (October 23, accepted, implemented and Dev-verified; committed as 3608fab)
 
 The new Drake surface owns the existing conversion. Its parsed JSON and generated Scala
 agree exactly. OriginateReportTest checks all three projections and fires the rule for
@@ -231,5 +231,34 @@ parser checks). Example map is 29 match / 19 differ / 0 errors / 0 missing; pars
 110 draco + 16 mods; surface losses 0 across 126 types. All other report-only headlines
 unchanged, including file-only pending mods actors 0. No sbt, commit or push by Codex.
 Dev’s pasted gate confirms zero failed/canceled/ignored/pending tests, zero aborted suites
-and all expected headlines. Latest verified baseline is 880 / 64; commit/push pending.
+and all expected headlines. Latest verified baseline is 880 / 64; Dev committed and pushed 3608fab.
 Record: git-record-2026-10-23-1216. Journal coverage remains through chapter 104.
+
+
+## Design point after 3608fab (subsequently accepted)
+
+Repair domains.marine.OriginateReport alone. Its JSON still calls originate(intent), while
+only handwritten Scala owns the conversion. Recommend carrying the existing VoyageIntent
+conversion into Drake/JSON and regenerating Scala, preserving FixReport, kind FIX, vessel
+default UNKNOWN, depthMetres default 0, and integer depthFathoms = (depthMetres * 10000) / 18288.
+Pin exact projections and callback behavior for normal, non-integral conversion and missing
+fields. Preserve current arithmetic; no shared abstraction or other example sweep. Dev accepted this scope; the implementation and verification checkpoint follows.
+
+
+## Marine OriginateReport repair (October 23, implemented and Dev-verified; uncommitted)
+
+The new Drake surface owns the existing VoyageIntent-to-FixReport conversion. Parsed JSON
+and generated Scala agree exactly. Four focused tests check the trio and callback delivery
+for exact conversion, fractional truncation and absent fields. Preserve kind FIX, vessel
+UNKNOWN, depthMetres 0 and integer depthFathoms = (depthMetres * 10000) / 18288.
+No engine or other example changes; the previous Aerial repair remains committed at 3608fab.
+
+All main/mods/domain sources and all test sources compiled directly. Every discovered suite
+passed: 886 tests / 66 suites including Runner discovery, zero failed/canceled/ignored/pending
+tests and zero aborted suites. Current main, mods and test resources were on loader roots.
+Dev’s first full sbt gate passed: 886 / 65 (four focused tests and two newly active parser checks).
+Example map 30 match / 18 differ / 0 error / 0 missing; parse scope 110 + 17; surface losses
+0 across 127 types. Every other headline unchanged, including file-only pending mods actors 0.
+Dev’s pasted gate confirms 886 / 65 with zero failed/canceled/ignored/pending tests, zero
+aborted suites and all expected headlines matching. Commit and push are pending. No sbt, commit or
+push by Codex. Record: git-record-2026-10-23-1613. Journal coverage stays at chapter 104.

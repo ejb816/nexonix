@@ -1,0 +1,19 @@
+Carry Marine OriginateReport conversion in its definition
+
+Dev accepted repairing this one rule after the Aerial repair at 3608fab.
+Its JSON called originate(intent), whose implementation lived only in handwritten Scala.
+Author the existing VoyageIntent conversion in Drake, parse JSON and regenerate Scala.
+Preserve FixReport, kind FIX, vessel default UNKNOWN, depthMetres default 0,
+integer depthFathoms = (depthMetres * 10000) / 18288 and the consumer callback.
+
+Add exact Drake/JSON/Scala agreement and runtime delivery checks for an exact conversion,
+a fractional conversion that truncates, and missing fields. No engine changes, shared
+conversion abstraction or other example repair. Activation and .dcon stay deferred.
+
+Direct full verification: 886 tests / 66 suites including Runner discovery, zero failures
+or aborts. All main/mods/domain sources and tests compiled, current main/mods/test
+resources on loader roots. Example map 30/18, zero losses across 127 types, parse scope
+110 + 17; every other headline unchanged, pending mods actors 0. Dev’s first full sbt gate
+passed 886 / 65 on October 23, zero failed/canceled/ignored/pending tests, zero aborted
+suites and every expected headline matching.
+No sbt, commit or push executed by Codex.
