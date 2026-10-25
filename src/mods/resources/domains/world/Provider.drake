@@ -1,0 +1,9 @@
+type Provider from draco Actor(domains.world.World)
+  factory ActorType
+    parameters
+      par target (domains.world.World -> ())
+domain domains world World
+actor
+  messageType World
+  message
+    mon target(msg)

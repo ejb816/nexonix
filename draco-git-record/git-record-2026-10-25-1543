@@ -1,0 +1,19 @@
+Carry Provider forwarding behavior in its actor definition
+
+Dev accepted repairing Provider alone after Observable at 81154e3.
+Its definition had the Actor(World) derivation and callback factory but no actor aspect.
+Author a canonical Drake surface with the World actor role and target(msg) action,
+parse JSON and regenerate Scala. Preserve callback laziness, unchanged message delivery,
+continued behavior and inert signals. No Consumer, adapter, activation or .dcon changes.
+
+Add four focused projection/actor harness checks for role identity, lazy once-per-actor
+callback capture, unchanged once-per-message forwarding and inert signal handling.
+Retain existing World assembly integration checks.
+
+All main/mods/domain sources and test sources compiled directly. Every discovered suite
+passed: 925 tests / 71 suites including discovery, zero failures or aborts, with current
+main/mods/test resources on loader roots. Example map 35/13, zero losses across 132 types,
+parse scope 110 + 22; all other headlines unchanged, pending mods actors 0.
+Dev’s first full sbt gate passed 925 / 70 on October 25, zero failed/canceled/ignored/
+pending tests, zero aborted suites and all expected headlines matching.
+No sbt, commit or push executed by Codex.

@@ -49,6 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**925 tests / 70 suites**, verified by Dev on 2026-10-25 for the Provider repair
+(record `git-record-2026-10-25-1543`): four new focused tests, two newly active parser
+checks and one actor emission check, zero failed/canceled/ignored/pending tests and zero
+aborted suites. Example map is 35 match / 13 differ, surface losses zero across 132 types,
+parse scope 110 + 22; every other headline unchanged, including pending mods actors 0.
+First full Dev gate green. Before it:
 **918 tests / 69 suites**, verified by Dev on 2026-10-25 for the Observable repair
 (record `git-record-2026-10-25-1517`): eight new focused tests and two newly active parser
 checks, zero failed/canceled/ignored/pending tests and zero aborted suites. Example map
@@ -204,9 +210,9 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `ExampleDomainsGenTest` | example-domain gen map | 34 match, 14 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 131 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 21 mods in, 0 held back |
+| `ExampleDomainsGenTest` | example-domain gen map | 35 match, 13 differ, 0 error, 0 missing (of 48) |
+| `DrakeParseTest` | drake surface losses | 0 fields across 132 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 22 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -302,7 +308,7 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 `DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
 effect, transitively: generated output is pinned to the hand-written files, and sbt
 compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
-gap is `ExampleDomainsGenTest`, which reports 34 match / 14 differ over the example domains
+gap is `ExampleDomainsGenTest`, which reports 35 match / 13 differ over the example domains
 and compiles none of it.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
@@ -1375,4 +1381,13 @@ After the binding correction, all discovered suites passed: 918 tests / 70 suite
 discovery, zero failures or aborts, current main/mods/test resources on loader roots.
 Dev’s first full sbt gate passed 918 / 69, zero failed/canceled/ignored/pending tests
 and zero aborted suites. Current headlines: 34/14 example map, zero losses across 131 types,
-parse scope 110 + 21; other headlines unchanged. Latest Dev-verified baseline is 918 / 69; this increment is uncommitted.
+parse scope 110 + 21; other headlines unchanged. That checkpoint passed 918 / 69. Dev committed and pushed the Observable repair as 81154e3.
+
+
+**World Provider (2026-10-25, accepted; Dev verified 925 / 70).** Its explicit World actor role
+and existing forwarding action now live in Drake/JSON. Regenerated Scala preserves lazy
+target capture, unchanged delivery and inert signals. Four focused tests and the existing
+World assembly checks pass. Full direct run: 925 tests / 71 suites including discovery,
+zero failures or aborts, current main/mods/test resources on loader roots. Dev’s first full sbt gate passed
+925 / 70, zero failed/canceled/ignored/pending tests and zero aborted suites. Current headlines: 35/13 example map, zero losses across 132 types, parse scope
+110 + 22; all others unchanged. Latest Dev-verified baseline is 925 / 70; this increment is uncommitted.

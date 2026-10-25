@@ -1,19 +1,19 @@
 # Development Handoff
 
-Updated October 25, 2026 by Codex after Dev verified the Observable repair.
+Updated October 25, 2026 by Codex after Dev verified the Provider repair.
 This is the current checkpoint; the journal and git records preserve historical checkpoints.
 Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **804c8a4**, committed and pushed by Dev after the 908 / 68 gate.
+- Observed branch: `main`, HEAD **81154e3**, committed and pushed by Dev after the 918 / 69 gate.
   Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
-  The Cartesian repair is committed; the accepted Observable repair is implemented, Dev-verified and uncommitted.
-- Latest verified baseline: **918 tests / 69 suites**, Dev's October 25 full sbt gate on
-  the Observable repair, green on its first Dev run. Zero failed/canceled/ignored/pending
-  tests and zero aborted suites. Example map 34/14; zero losses across 131 types; parse scope
-  110 + 21. All other headlines unchanged, including pending mods actors 0.
-  Await Dev's path-scoped commit and push; HEAD remains 804c8a4.
+  The Observable repair is committed; the accepted Provider repair is implemented, Dev-verified and uncommitted.
+- Latest verified baseline: **925 tests / 70 suites**, Dev's October 25 full sbt gate on
+  the Provider repair, green on its first run. Zero failed/canceled/ignored/pending tests
+  and zero aborted suites. Example map 35/13; zero losses across 132 types; parse scope
+  110 + 22. All other headlines unchanged, including pending mods actors 0.
+  Await Dev's path-scoped commit and push; HEAD remains 81154e3.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -374,7 +374,7 @@ Keep Geodesy mathematics, actors and other example definitions unchanged. Dev ac
 this scope on October 25.
 
 
-## Observable repair (October 25, implemented and Dev-verified; uncommitted)
+## Observable repair (October 25, Dev-verified and committed as 81154e3)
 
 Drake/JSON now carries both existing geodetic helpers with strict parameters. Scala is
 regenerated, including accepted nested Cartesian codecs; lazy factory arguments, frame
@@ -394,6 +394,37 @@ on loader roots. Dev’s first full sbt gate passed: 918 / 69 (eight focused tes
 Example map 34 match / 14 differ / 0 error / 0 missing; zero losses across 131 types;
 parse scope 110 + 21. All other headlines unchanged, including pending mods actors 0.
 Dev’s pasted gate confirms 918 / 69, zero failed/canceled/ignored/pending tests, zero
+aborted suites and all expected headlines matching. Dev committed and pushed 81154e3.
+Record: git-record-2026-10-25-1517. No sbt, commit or push by Codex.
+Journal coverage remains chapter 104.
+
+
+## Design point after 81154e3 (accepted October 25)
+
+Recommend repairing domains.world.Provider alone. JSON has the Actor(World) derivation and
+ActorType factory with target callback but no actorAspect; generation therefore omits its
+handwritten forwarding behavior. Author its Drake surface and explicit World actor role,
+carry target(msg) as the message action and regenerate Scala. Preserve lazy callback capture,
+unchanged World message forwarding, same behavior after messages and inert signal handling.
+Pin exact projections and actor harness checks for forwarding, callback evaluation and signal
+behavior; retain WorldAssemblyTest. Consumer, other adapters, activation and .dcon stay deferred.
+Dev accepted this scope on October 25.
+
+
+## Provider repair (October 25, implemented and Dev-verified; uncommitted)
+
+The canonical Drake surface declares the World actor role and target(msg) message action.
+JSON is parsed and Scala regenerated. Four focused tests pin exact projections/role identity,
+lazy once-per-actor target capture, unchanged once-per-message forwarding and inert signals.
+World assembly checks pass. Consumer, other adapters, activation and .dcon are unchanged.
+
+All main/mods/domain sources and test sources compiled directly. Every discovered suite
+passed: 925 tests / 71 suites including Runner discovery, zero failed/canceled/ignored/pending
+tests, zero aborted suites. Current main/mods/test resources were on loader roots.
+Dev’s first full sbt gate passed: 925 / 70 (four focused tests, two parser checks, one actor emission check).
+Example map 35 match / 13 differ / 0 error / 0 missing; zero losses across 132 types;
+parse scope 110 + 22. All other headlines unchanged, including pending mods actors 0.
+Dev’s pasted gate confirms 925 / 70, zero failed/canceled/ignored/pending tests, zero
 aborted suites and all expected headlines matching. Commit and push are pending.
-Changes are uncommitted. Record: git-record-2026-10-25-1517. No sbt, commit or push by Codex.
+Changes are uncommitted. Record: git-record-2026-10-25-1543. No sbt, commit or push by Codex.
 Journal coverage remains chapter 104.

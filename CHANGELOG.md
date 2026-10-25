@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- Declare World Provider’s actor role and forwarding action in Drake/JSON and regenerate
+  Scala. Pin exact projections, lazy callback capture, message identity and inert signal
+  handling while retaining the World assembly checks.
+
 - Carry World Observable’s geodetic helpers in Drake/JSON and regenerate Scala with nested
   Cartesian codecs. Pin projections, evaluation behavior, conversion results and codec defaults
   while preserving the existing Geodesy implementation and binding it explicitly in the example caller.
