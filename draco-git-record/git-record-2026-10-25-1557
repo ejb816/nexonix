@@ -1,0 +1,22 @@
+Carry Consumer conversion behavior in its actor definition
+
+Dev accepted repairing Consumer alone after Provider at 3648806.
+Author the World actor role and existing Position-to-Location branch in Drake/JSON,
+then regenerate Scala. Preserve feet * 0.3048, Observable conversion, math.round(h).toInt,
+one provider call, ignored other messages, lazy callback capture and inert signals.
+Use now on local bindings to retain strict evaluation. The existing effect-case emitter
+supplies the ignore catch-all. No generator, Geodesy or other adapter changes.
+
+Add five focused projection/actor checks for conversion and rounding, ignored messages,
+callback capture and signals. Retain World assembly and transform integration checks.
+The Location call uses positional factory arguments: inspection of named construction
+showed that the existing initializer drops cross-package qualification. This separate
+engine limitation is documented, not repaired or filed as an issue in this increment.
+
+All main/mods/domain sources and test sources compiled directly. Every discovered suite
+passed: 933 tests / 72 suites including discovery, zero failures or aborts, with current
+main/mods/test resources on loader roots. Example map 36/12, zero losses across 133 types,
+parse scope 110 + 23; all other headlines unchanged, pending mods actors 0.
+Dev’s first full sbt gate passed 933 / 71 on October 25, zero failed/canceled/ignored/
+pending tests, zero aborted suites and all expected headlines matching.
+No sbt, commit or push executed by Codex.

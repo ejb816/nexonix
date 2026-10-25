@@ -1,0 +1,15 @@
+type Consumer from draco Actor(domains.world.World)
+  factory ActorType
+    parameters
+      par provider (domains.world.World -> ())
+domain domains world World
+actor
+  messageType World
+  message
+    case position domains.aerial.Position [
+      now fix heightMetres Double position.altitudeFeet * 0.3048
+      now fix observable Observable Observable.fromGeodetic(position.latitude, position.longitude, heightMetres)
+      now fix coordinates (Double, Double, Double) Observable.toGeodetic(observable)
+      now fix location domains.terrestrial.Location domains.terrestrial.Location(coordinates._1, coordinates._2, math.round(coordinates._3).toInt)
+      mon provider(location)
+    ]

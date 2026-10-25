@@ -49,6 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**933 tests / 71 suites**, verified by Dev on 2026-10-25 for the Consumer repair
+(record `git-record-2026-10-25-1557`): five new focused tests, two newly active parser
+checks and one actor emission check, zero failed/canceled/ignored/pending tests and zero
+aborted suites. Example map is 36 match / 12 differ, surface losses zero across 133 types,
+parse scope 110 + 23; every other headline unchanged, including pending mods actors 0.
+First full Dev gate green. Before it:
 **925 tests / 70 suites**, verified by Dev on 2026-10-25 for the Provider repair
 (record `git-record-2026-10-25-1543`): four new focused tests, two newly active parser
 checks and one actor emission check, zero failed/canceled/ignored/pending tests and zero
@@ -210,9 +216,9 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `ExampleDomainsGenTest` | example-domain gen map | 35 match, 13 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 132 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 22 mods in, 0 held back |
+| `ExampleDomainsGenTest` | example-domain gen map | 36 match, 12 differ, 0 error, 0 missing (of 48) |
+| `DrakeParseTest` | drake surface losses | 0 fields across 133 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 23 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -308,7 +314,7 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 `DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
 effect, transitively: generated output is pinned to the hand-written files, and sbt
 compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
-gap is `ExampleDomainsGenTest`, which reports 35 match / 13 differ over the example domains
+gap is `ExampleDomainsGenTest`, which reports 36 match / 12 differ over the example domains
 and compiles none of it.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
@@ -1390,4 +1396,16 @@ target capture, unchanged delivery and inert signals. Four focused tests and the
 World assembly checks pass. Full direct run: 925 tests / 71 suites including discovery,
 zero failures or aborts, current main/mods/test resources on loader roots. Dev’s first full sbt gate passed
 925 / 70, zero failed/canceled/ignored/pending tests and zero aborted suites. Current headlines: 35/13 example map, zero losses across 132 types, parse scope
-110 + 22; all others unchanged. Latest Dev-verified baseline is 925 / 70; this increment is uncommitted.
+110 + 22; all others unchanged. That checkpoint passed 925 / 70. Dev committed and pushed Provider as 3648806.
+
+
+**World Consumer (2026-10-25, accepted; Dev verified 933 / 71).** Its World actor role and
+Position-to-Location case now live in Drake/JSON. Regenerated Scala preserves strict local
+bindings, Observable conversion, rounding, ignored other messages, lazy callback capture
+and inert signals. Five focused tests and existing World assembly/transform checks pass.
+The Location call is positional; named construction's qualification loss remains a separate
+engine limitation recorded in the handoff. Full direct run: 933 tests / 72 suites including
+discovery, zero failures or aborts, current main/mods/test resources on loader roots.
+Dev’s first full sbt gate passed 933 / 71, zero failed/canceled/ignored/pending tests
+and zero aborted suites. Current headlines: 36/12 example map, zero losses across 133 types,
+parse scope 110 + 23; other headlines unchanged. Latest Dev-verified baseline is 933 / 71; this increment is uncommitted.

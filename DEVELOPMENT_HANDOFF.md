@@ -1,19 +1,19 @@
 # Development Handoff
 
-Updated October 25, 2026 by Codex after Dev verified the Provider repair.
+Updated October 25, 2026 by Codex after Dev verified the Consumer repair.
 This is the current checkpoint; the journal and git records preserve historical checkpoints.
 Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **81154e3**, committed and pushed by Dev after the 918 / 69 gate.
+- Observed branch: `main`, HEAD **3648806**, committed and pushed by Dev after the 925 / 70 gate.
   Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
-  The Observable repair is committed; the accepted Provider repair is implemented, Dev-verified and uncommitted.
-- Latest verified baseline: **925 tests / 70 suites**, Dev's October 25 full sbt gate on
-  the Provider repair, green on its first run. Zero failed/canceled/ignored/pending tests
-  and zero aborted suites. Example map 35/13; zero losses across 132 types; parse scope
-  110 + 22. All other headlines unchanged, including pending mods actors 0.
-  Await Dev's path-scoped commit and push; HEAD remains 81154e3.
+  The Provider repair is committed; the accepted Consumer repair is implemented, Dev-verified and uncommitted.
+- Latest verified baseline: **933 tests / 71 suites**, Dev's October 25 full sbt gate on
+  the Consumer repair, green on its first run. Zero failed/canceled/ignored/pending tests
+  and zero aborted suites. Example map 36/12; zero losses across 133 types; parse scope
+  110 + 23. All other headlines unchanged, including pending mods actors 0.
+  Await Dev's path-scoped commit and push; HEAD remains 3648806.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -411,7 +411,7 @@ behavior; retain WorldAssemblyTest. Consumer, other adapters, activation and .dc
 Dev accepted this scope on October 25.
 
 
-## Provider repair (October 25, implemented and Dev-verified; uncommitted)
+## Provider repair (October 25, Dev-verified and committed as 3648806)
 
 The canonical Drake surface declares the World actor role and target(msg) message action.
 JSON is parsed and Scala regenerated. Four focused tests pin exact projections/role identity,
@@ -425,6 +425,42 @@ Dev’s first full sbt gate passed: 925 / 70 (four focused tests, two parser che
 Example map 35 match / 13 differ / 0 error / 0 missing; zero losses across 132 types;
 parse scope 110 + 22. All other headlines unchanged, including pending mods actors 0.
 Dev’s pasted gate confirms 925 / 70, zero failed/canceled/ignored/pending tests, zero
+aborted suites and all expected headlines matching. Dev committed and pushed 3648806.
+Record: git-record-2026-10-25-1543. No sbt, commit or push by Codex.
+Journal coverage remains chapter 104.
+
+
+## Design point after 3648806 (accepted October 25)
+
+Recommend repairing domains.world.Consumer alone. Its JSON has the Actor(World) derivation
+and provider callback factory but lacks the actor role and message body. Carry its existing
+Position-to-Location branch into Drake/JSON and regenerate Scala: altitudeFeet * 0.3048,
+Observable.fromGeodetic then toGeodetic, math.round(h).toInt and exactly one provider call.
+Preserve ignored non-Position messages, lazy provider capture and inert signals. Pin exact
+projections, actor conversion/rounding, ignored-message behavior, callback timing and signals;
+retain WorldAssemblyTest and existing transform checks. No new transform rules, geodesy
+changes, other adapter repairs, activation or .dcon migration. Dev accepted this scope on October 25.
+
+
+## Consumer repair (October 25, implemented and Dev-verified; uncommitted)
+
+The canonical Drake surface now owns the World actor role and Position-to-Location case.
+JSON is parsed and Scala regenerated. Strict local bindings retain the previous evaluation;
+the effect-case emitter supplies the ignored-message fallback. Five focused tests cover
+projections, positive/negative rounding, ignored messages, lazy provider capture and signals.
+Existing World assembly and transform checks pass. No other adapter or generator changes.
+
+The Location factory call uses positional arguments. During source inspection the named
+construction initializer dropped its cross-package qualifier; that separate engine limitation
+is recorded for later acceptance, not fixed here and no issue was created.
+
+All main/mods/domain sources and test sources compiled directly. Every discovered suite
+passed: 933 tests / 72 suites including Runner discovery, zero failed/canceled/ignored/pending
+tests, zero aborted suites. Current main/mods/test resources were on loader roots.
+Dev’s first full sbt gate passed: 933 / 71 (five focused tests, two parser checks, one actor emission check).
+Example map 36 match / 12 differ / 0 error / 0 missing; zero losses across 133 types;
+parse scope 110 + 23. All other headlines unchanged, including pending mods actors 0.
+Dev’s pasted gate confirms 933 / 71, zero failed/canceled/ignored/pending tests, zero
 aborted suites and all expected headlines matching. Commit and push are pending.
-Changes are uncommitted. Record: git-record-2026-10-25-1543. No sbt, commit or push by Codex.
+Changes are uncommitted. Record: git-record-2026-10-25-1557. No sbt, commit or push by Codex.
 Journal coverage remains chapter 104.

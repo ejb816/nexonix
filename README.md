@@ -869,7 +869,7 @@ previously omitted members were added to their already-declared owners on Octobe
 Five domain surfaces were added, with reciprocal membership and trio checks. All four audited OriginateReport conversions (Aerial, Marine, Terrestrial and Ethereal) now live in their definitions; exact
 projection checks and runtime cases pin their generated Scala, defaults and callback
 behavior, including integer truncation toward zero for positive and negative inputs. The example generation comparison is
-35 matches / 13 differences after the Provider repair; the remaining bodies are unswept.
+36 matches / 12 differences after the Consumer repair; the remaining bodies are unswept.
 See EXAMPLE_DOMAIN_AUDIT.md for the pre-change evidence and remaining gaps.
 
 Example loading now supplies an explicit caller scope: the canonical dependencies and six
@@ -896,3 +896,8 @@ it is a helper binding, not an ontology member or shared Scala target vocabulary
 World Provider now declares its actor role and existing target(msg) forwarding action in
 Drake/JSON. Generated Scala retains lazy callback capture and inert signal handling;
 focused actor harness checks cover delivery identity, continued behavior and callback timing.
+
+
+World Consumer now carries its existing Position-to-Location branch in Drake/JSON, using
+the Observable helpers and the same rounding to integer metres. Other messages remain
+ignored; lazy provider capture and inert signal behavior are covered by actor checks.

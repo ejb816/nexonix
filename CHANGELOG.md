@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- Carry World Consumer’s Position-to-Location actor branch in Drake/JSON and regenerate
+  Scala. Pin conversion and rounding, ignored messages, lazy provider capture and inert signals,
+  retaining existing World assembly and transform checks.
+
 - Declare World Provider’s actor role and forwarding action in Drake/JSON and regenerate
   Scala. Pin exact projections, lazy callback capture, message identity and inert signal
   handling while retaining the World assembly checks.

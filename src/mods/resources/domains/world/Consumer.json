@@ -46,5 +46,103 @@
         "world"
       ]
     }
+  },
+  "actorAspect": {
+    "message": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Case",
+          "name": "position",
+          "valueType": "domains.aerial.Position",
+          "body": [
+            {
+              "kind": "Fixed",
+              "name": "heightMetres",
+              "valueType": "Double",
+              "value": {
+                "*": [
+                  "position.altitudeFeet",
+                  "0.3048"
+                ]
+              },
+              "now": true
+            },
+            {
+              "kind": "Fixed",
+              "name": "observable",
+              "valueType": "Observable",
+              "value": {
+                "()": [
+                  "Observable.fromGeodetic",
+                  "position.latitude",
+                  "position.longitude",
+                  "heightMetres"
+                ]
+              },
+              "now": true
+            },
+            {
+              "kind": "Fixed",
+              "name": "coordinates",
+              "valueType": {
+                "(,)": [
+                  "Double",
+                  "Double",
+                  "Double"
+                ]
+              },
+              "value": {
+                "()": [
+                  "Observable.toGeodetic",
+                  "observable"
+                ]
+              },
+              "now": true
+            },
+            {
+              "kind": "Fixed",
+              "name": "location",
+              "valueType": "domains.terrestrial.Location",
+              "value": {
+                "()": [
+                  "domains.terrestrial.Location",
+                  "coordinates._1",
+                  "coordinates._2",
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "math.round",
+                          "coordinates._3"
+                        ]
+                      },
+                      "toInt"
+                    ]
+                  }
+                ]
+              },
+              "now": true
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "provider",
+                  "location"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "messageType": {
+      "name": "World",
+      "namePackage": [
+        "domains",
+        "world"
+      ]
+    }
   }
 }
