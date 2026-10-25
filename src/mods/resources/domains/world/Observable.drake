@@ -1,0 +1,24 @@
+type Observable from World
+  elements
+    fix geocentric Cartesian
+    fix heliocentric Cartesian
+  factory
+    parameters
+      par geocentric Cartesian Cartesian.Null
+      par heliocentric Cartesian Cartesian.Null
+  globals
+    dyn fromGeodetic Observable [
+      parameters
+        now par latitude Double
+        now par longitude Double
+        now par heightMetres Double
+      body
+        fix value Observable Observable(_geocentric:Cartesian(Geodesy.geodeticToEcef(latitude, longitude, heightMetres)))
+    ]
+    dyn toGeodetic (Double, Double, Double) [
+      parameters
+        now par observable Observable
+      body
+        fix value (Double, Double, Double) Geodesy.ecefToGeodetic(observable.geocentric.x, observable.geocentric.y, observable.geocentric.z)
+    ]
+domain domains world World

@@ -45,7 +45,104 @@
           "value": "Cartesian.Null"
         }
       ]
-    }
+    },
+    "globalElements": [
+      {
+        "kind": "Dynamic",
+        "name": "fromGeodetic",
+        "valueType": "Observable",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "latitude",
+            "valueType": "Double",
+            "now": true
+          },
+          {
+            "kind": "Parameter",
+            "name": "longitude",
+            "valueType": "Double",
+            "now": true
+          },
+          {
+            "kind": "Parameter",
+            "name": "heightMetres",
+            "valueType": "Double",
+            "now": true
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Observable",
+            "value": {
+              "()": [
+                "Observable",
+                {
+                  "=": [
+                    "_geocentric",
+                    {
+                      "()": [
+                        "Cartesian",
+                        {
+                          "()": [
+                            "Geodesy.geodeticToEcef",
+                            "latitude",
+                            "longitude",
+                            "heightMetres"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "toGeodetic",
+        "valueType": {
+          "(,)": [
+            "Double",
+            "Double",
+            "Double"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "observable",
+            "valueType": "Observable",
+            "now": true
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "(,)": [
+                "Double",
+                "Double",
+                "Double"
+              ]
+            },
+            "value": {
+              "()": [
+                "Geodesy.ecefToGeodetic",
+                "observable.geocentric.x",
+                "observable.geocentric.y",
+                "observable.geocentric.z"
+              ]
+            }
+          }
+        ]
+      }
+    ]
   },
   "domainAspect": {
     "typeName": {

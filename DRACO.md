@@ -49,6 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**918 tests / 69 suites**, verified by Dev on 2026-10-25 for the Observable repair
+(record `git-record-2026-10-25-1517`): eight new focused tests and two newly active parser
+checks, zero failed/canceled/ignored/pending tests and zero aborted suites. Example map
+is 34 match / 14 differ, surface losses zero across 131 types, parse scope 110 + 21;
+every other headline unchanged, including pending mods actors 0. First Dev gate green;
+the earlier direct-run loading failures and binding correction are recorded below. Before it:
 **908 tests / 68 suites**, verified by Dev on 2026-10-25 for the Cartesian repair
 (record `git-record-2026-10-25-1505`): six new focused tests and two newly active parser
 checks, zero failed/canceled/ignored/pending tests and zero aborted suites. Example map
@@ -198,9 +204,9 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `ExampleDomainsGenTest` | example-domain gen map | 33 match, 15 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 130 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 20 mods in, 0 held back |
+| `ExampleDomainsGenTest` | example-domain gen map | 34 match, 14 differ, 0 error, 0 missing (of 48) |
+| `DrakeParseTest` | drake surface losses | 0 fields across 131 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 21 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -296,7 +302,7 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 `DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
 effect, transitively: generated output is pinned to the hand-written files, and sbt
 compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
-gap is `ExampleDomainsGenTest`, which reports 33 match / 15 differ over the example domains
+gap is `ExampleDomainsGenTest`, which reports 34 match / 14 differ over the example domains
 and compiles none of it.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
@@ -1358,4 +1364,15 @@ All discovered suites passed directly: 908 tests / 69 suites including discovery
 or aborts, current main/mods/test resources on loader roots. Dev’s first full sbt gate passed 908 / 68, zero failed/canceled/ignored/pending tests
 and zero aborted suites. Current
 headlines: 33/15 example map, zero losses across 130 types, parse scope 110 + 20; all others
-unchanged. Latest Dev-verified baseline is 908 / 68; this increment is uncommitted.
+unchanged. That checkpoint passed 908 / 68. Dev committed and pushed the Cartesian repair as 804c8a4.
+
+
+**World Observable (2026-10-25, accepted; Dev verified 918 / 69).** Both geodetic helpers
+now live in Drake/JSON with strict parameters. Generated Scala preserves lazy frames and
+defaults and includes nested Cartesian codecs. ExampleScope explicitly binds the existing
+Geodesy helper; the first direct run exposed this dependency in two loading failures.
+After the binding correction, all discovered suites passed: 918 tests / 70 suites including
+discovery, zero failures or aborts, current main/mods/test resources on loader roots.
+Dev’s first full sbt gate passed 918 / 69, zero failed/canceled/ignored/pending tests
+and zero aborted suites. Current headlines: 34/14 example map, zero losses across 131 types,
+parse scope 110 + 21; other headlines unchanged. Latest Dev-verified baseline is 918 / 69; this increment is uncommitted.

@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- Carry World Observable’s geodetic helpers in Drake/JSON and regenerate Scala with nested
+  Cartesian codecs. Pin projections, evaluation behavior, conversion results and codec defaults
+  while preserving the existing Geodesy implementation and binding it explicitly in the example caller.
+
 - Carry World Cartesian’s tuple overload in its Drake/JSON definition and regenerate Scala
   with inferred coordinate codecs. Pin both factories’ evaluation behavior, zero defaults,
   exact projections and codec round-trip/default handling.

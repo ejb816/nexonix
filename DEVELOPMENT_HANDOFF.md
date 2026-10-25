@@ -1,19 +1,19 @@
 # Development Handoff
 
-Updated October 25, 2026 by Codex after Dev verified the Cartesian repair.
+Updated October 25, 2026 by Codex after Dev verified the Observable repair.
 This is the current checkpoint; the journal and git records preserve historical checkpoints.
 Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **e819663**, committed and pushed by Dev after the 900 / 67 gate.
+- Observed branch: `main`, HEAD **804c8a4**, committed and pushed by Dev after the 908 / 68 gate.
   Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
-  The Ethereal repair is committed; the accepted Cartesian repair is implemented, Dev-verified and uncommitted.
-- Latest verified baseline: **908 tests / 68 suites**, Dev's October 25 full sbt gate on
-  the Cartesian repair, green on its first run. Zero failed/canceled/ignored/pending tests
-  and zero aborted suites. Example map 33/15; zero losses across 130 types; parse scope
-  110 + 20. All other headlines unchanged, including pending mods actors 0.
-  Await Dev's path-scoped commit and push; HEAD remains e819663.
+  The Cartesian repair is committed; the accepted Observable repair is implemented, Dev-verified and uncommitted.
+- Latest verified baseline: **918 tests / 69 suites**, Dev's October 25 full sbt gate on
+  the Observable repair, green on its first Dev run. Zero failed/canceled/ignored/pending
+  tests and zero aborted suites. Example map 34/14; zero losses across 131 types; parse scope
+  110 + 21. All other headlines unchanged, including pending mods actors 0.
+  Await Dev's path-scoped commit and push; HEAD remains 804c8a4.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -340,7 +340,7 @@ defaults. Add exact projection checks and exercise both factory paths, retaining
 checks. Do not change Observable, geodesy or actor behavior. Dev accepted this scope on October 25.
 
 
-## Cartesian repair (October 25, implemented and Dev-verified; uncommitted)
+## Cartesian repair (October 25, Dev-verified and committed as 804c8a4)
 
 The canonical Drake surface now carries the tuple apply overload as a global method with
 now on its tuple argument. JSON is parsed from it and Scala regenerated, including the
@@ -356,6 +356,44 @@ Dev’s first full sbt gate passed: 908 / 68 (six focused tests plus two newly a
 Example map 33 match / 15 differ / 0 error / 0 missing; zero losses across 130 types;
 parse scope 110 + 20. All other headlines unchanged, including pending mods actors 0.
 Dev’s pasted gate confirms 908 / 68, zero failed/canceled/ignored/pending tests, zero
+aborted suites and all expected headlines matching. Dev committed and pushed 804c8a4.
+Record: git-record-2026-10-25-1505. No sbt, commit or push by Codex.
+Journal coverage remains chapter 104.
+
+
+## Design point after 804c8a4 (accepted October 25)
+
+Recommend repairing domains.world.Observable alone. Its definition omits fromGeodetic and
+toGeodetic, which currently live only in handwritten Scala and call the existing Geodesy
+implementation. Carry both helpers into Drake/JSON with their current strict parameters;
+regenerate Scala, preserving lazy factory arguments, Cartesian.Null defaults and Null.
+Explicitly include the inferred nested geocentric/heliocentric codec pair, now supported
+by the generated Cartesian codecs. Pin exact projections, helper behavior and evaluation,
+codec round-trip/defaults, and retain the existing Aerial-to-Terrestrial transform check.
+Keep Geodesy mathematics, actors and other example definitions unchanged. Dev accepted
+this scope on October 25.
+
+
+## Observable repair (October 25, implemented and Dev-verified; uncommitted)
+
+Drake/JSON now carries both existing geodetic helpers with strict parameters. Scala is
+regenerated, including accepted nested Cartesian codecs; lazy factory arguments, frame
+defaults and Null remain. Eight focused tests cover projections, evaluation, representative
+conversion points and nested codec round-trip/defaults. Existing World transform checks pass.
+Geodesy mathematics, actors and other definitions remain unchanged.
+
+First full direct run: 916 passed / 2 failed of 918; ExampleLoadingTest exposed the newly
+visible Geodesy dependency. ExampleScope now supplies it as an explicit caller binding,
+following the sink pattern. Loading tests check removal fails, and it is neither an
+ontology member nor shared target vocabulary. No runtime helper code changed.
+
+All main/mods/domain sources and test sources compiled directly. The full rerun passed
+every discovered suite: 918 tests / 70 suites including Runner discovery, zero failed/
+canceled/ignored/pending tests, zero aborted suites. Current main/mods/test resources were
+on loader roots. Dev’s first full sbt gate passed: 918 / 69 (eight focused tests plus two parser checks).
+Example map 34 match / 14 differ / 0 error / 0 missing; zero losses across 131 types;
+parse scope 110 + 21. All other headlines unchanged, including pending mods actors 0.
+Dev’s pasted gate confirms 918 / 69, zero failed/canceled/ignored/pending tests, zero
 aborted suites and all expected headlines matching. Commit and push are pending.
-Changes are uncommitted. Record: git-record-2026-10-25-1505. No sbt, commit or push by Codex.
+Changes are uncommitted. Record: git-record-2026-10-25-1517. No sbt, commit or push by Codex.
 Journal coverage remains chapter 104.

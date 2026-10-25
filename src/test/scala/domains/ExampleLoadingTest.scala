@@ -25,16 +25,22 @@ class ExampleLoadingTest extends AnyFunSuite {
     assert(encoded(actual) == encoded(examples(reversed)))
     assert(!scope.ontological(ExampleScope.sink.namePath), "the caller's sink is a binding, not a domain member")
     assert(!draco.scalatarget.HostBindings.vocabulary.values.exists(_ == ExampleScope.sink))
+    assert(!scope.ontological(ExampleScope.geodesy.namePath), "the geodesy helper is a caller binding")
+    assert(!draco.scalatarget.HostBindings.vocabulary.values.exists(_ == ExampleScope.geodesy))
     val input = actual.find(_.typeName.namePath == "domains.aerial.Input").get
     val cursor = input.actorAspect.fold(fail("Input has no actor role"), _.message.body.find(_.name == "cursor").get)
     assert(TypeForm.text(cursor.valueType.json) == "io.circe.HCursor")
   }
 
-  test("example loading requires the caller sink and the target cursor bindings explicitly") {
+  test("example loading requires the caller sink, geodesy helper and target cursor bindings explicitly") {
     val noSink = intercept[IllegalArgumentException] {
-      DomainBuilder.load(ExampleScope.declarations, draco.scalatarget.HostBindings.vocabulary)
+      DomainBuilder.load(ExampleScope.declarations, ExampleScope.bindings - ExampleScope.sink.namePath)
     }
     assert(noSink.getMessage.contains("domains.aerial.AerialSink"), noSink.getMessage)
+    val noGeodesy = intercept[IllegalArgumentException] {
+      DomainBuilder.load(ExampleScope.declarations, ExampleScope.bindings - ExampleScope.geodesy.name)
+    }
+    assert(noGeodesy.getMessage.contains("Geodesy"), noGeodesy.getMessage)
     val noCursor = intercept[IllegalArgumentException] {
       DomainBuilder.load(ExampleScope.declarations, ExampleScope.bindings - "io.circe.HCursor")
     }

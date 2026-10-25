@@ -1,0 +1,23 @@
+Carry Observable geodetic helpers in its definition
+
+Dev accepted repairing Observable alone after Cartesian at 804c8a4.
+Author its canonical Drake surface and fromGeodetic/toGeodetic global methods with
+strict parameters. Parse JSON and regenerate Scala, including accepted inferred nested
+Cartesian codecs. Preserve lazy frame arguments, Cartesian.Null defaults and Null.
+
+Add eight focused checks for projections, defaults, lazy factories, strict helper
+arguments, geocentric-only access, representative conversion points and codec round-trip,
+missing frames/coordinates and invalid nested values. Retain existing World transform tests.
+Geodesy mathematics, actors and other definitions are unchanged. Activation and .dcon deferred.
+
+The first full direct run passed 916 of 918 tests; two ExampleLoadingTest cases failed
+because the now-visible Geodesy calls needed a binding. Supply Geodesy explicitly in
+ExampleScope and extend loading checks for its absence and non-ontological status.
+Its code and the shared target vocabulary are unchanged.
+
+The full rerun passed every discovered suite: 918 tests / 70 suites including discovery,
+zero failures or aborts, current main/mods/test resources on loader roots. Example map
+34/14, zero losses across 131 types, parse scope 110 + 21; other headlines unchanged,
+pending mods actors 0. Dev’s first full sbt gate passed 918 / 69 on October 25, zero failed/canceled/ignored/
+pending tests, zero aborted suites and all expected headlines matching.
+No sbt, commit or push executed by Codex.

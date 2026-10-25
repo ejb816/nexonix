@@ -869,7 +869,7 @@ previously omitted members were added to their already-declared owners on Octobe
 Five domain surfaces were added, with reciprocal membership and trio checks. All four audited OriginateReport conversions (Aerial, Marine, Terrestrial and Ethereal) now live in their definitions; exact
 projection checks and runtime cases pin their generated Scala, defaults and callback
 behavior, including integer truncation toward zero for positive and negative inputs. The example generation comparison is
-33 matches / 15 differences after the Cartesian repair; the remaining bodies are unswept.
+34 matches / 14 differences after the Observable repair; the remaining bodies are unswept.
 See EXAMPLE_DOMAIN_AUDIT.md for the pre-change evidence and remaining gaps.
 
 Example loading now supplies an explicit caller scope: the canonical dependencies and six
@@ -885,3 +885,9 @@ strict tuple parameter. Its regenerated Scala preserves the lazy scalar factory,
 defaults and Null, and includes inferred x/y/z codecs. Focused checks pin exact projections,
 evaluation behavior, codec round-trip and missing-coordinate defaults. Observable, geodesy
 and actor behavior are unchanged by this repair.
+
+
+Observable now carries fromGeodetic/toGeodetic in its definition, preserving strict helper
+parameters and lazy frame factories. Its generated codecs carry both nested Cartesian frames.
+The example caller explicitly binds Geodesy, whose existing mathematics remains unchanged;
+it is a helper binding, not an ontology member or shared Scala target vocabulary.
