@@ -1,0 +1,19 @@
+Carry Terrestrial OriginateReport conversion in its definition
+
+Dev accepted repairing this one rule after the Marine repair at bd6b7b3.
+Its JSON called originate(intent), whose body lived only in handwritten Scala.
+Author the existing MarchIntent conversion in Drake, parse JSON and regenerate Scala.
+Preserve LocationReport, type LOCATION, unit default UNKNOWN, elevationFeet default 0,
+integer elevationMetres = (elevationFeet * 3048) / 10000 and the consumer callback.
+
+Add exact Drake/JSON/Scala agreement and runtime checks for exact conversion, positive
+and negative fractional truncation toward zero, and missing fields. No engine changes,
+shared abstraction or other example repair. Activation and .dcon remain deferred.
+
+All main/mods/domain sources and test sources compiled directly. Every discovered suite
+passed: 893 tests / 67 suites including discovery, zero failures or aborts, with current
+main/mods/test resources on loader roots. Example map 31/17, zero losses across 128 types,
+parse scope 110 + 18; all other headlines unchanged, pending mods actors 0.
+Dev’s first full sbt gate passed 893 / 66 on October 24, zero failed/canceled/ignored/
+pending tests, zero aborted suites and all expected headlines matching.
+No sbt, commit or push executed by Codex.

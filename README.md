@@ -866,10 +866,10 @@ covered by RolePresenceTest, with no frozen fixtures or corpus exclusions.
 
 The six example domains now explicitly include all 48 existing JSON definitions: sixteen
 previously omitted members were added to their already-declared owners on October 23.
-Five domain surfaces were added, with reciprocal membership and trio checks. The Aerial and Marine OriginateReport conversions now live in their definitions; exact
+Five domain surfaces were added, with reciprocal membership and trio checks. The Aerial, Marine and Terrestrial OriginateReport conversions now live in their definitions; exact
 projection checks and runtime cases pin their generated Scala, defaults and callback
-behavior, including Marine’s integer truncation. The example generation comparison is
-30 matches / 18 differences; the remaining bodies are unswept.
+behavior, including integer truncation and Terrestrial’s negative elevations. The example generation comparison is
+31 matches / 17 differences; the remaining bodies are unswept.
 See EXAMPLE_DOMAIN_AUDIT.md for the pre-change evidence and remaining gaps.
 
 Example loading now supplies an explicit caller scope: the canonical dependencies and six

@@ -1,19 +1,19 @@
 # Development Handoff
 
-Updated October 23, 2026 by Codex after Dev verified the Marine repair.
+Updated October 24, 2026 by Codex after Dev verified the Terrestrial repair.
 This is the current checkpoint; the journal and git records preserve historical checkpoints.
 Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **3608fab**, committed and pushed by Dev after the 880 / 64 gate.
+- Observed branch: `main`, HEAD **bd6b7b3**, committed and pushed by Dev after the 886 / 65 gate.
   Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
-  The Aerial repair is committed. The accepted Marine OriginateReport repair is uncommitted.
-- Latest verified baseline: **886 tests / 65 suites**, Dev's October 23 full sbt gate on
-  the Marine OriginateReport repair, green on its first run. Zero failed/canceled/ignored/
-  pending tests and zero aborted suites. Example map 30/18; zero losses across 127 types;
-  parse scope 110 + 17. All other headlines unchanged, including pending mods actors 0.
-  Await Dev's path-scoped commit and push; HEAD remains 3608fab.
+  The Marine repair is committed. The accepted Terrestrial repair is implemented, Dev-verified and uncommitted.
+- Latest verified baseline: **893 tests / 66 suites**, Dev's October 24 full sbt gate on
+  the Terrestrial OriginateReport repair, green on its first run. Zero failed/canceled/
+  ignored/pending tests and zero aborted suites. Example map 31/17; zero losses across
+  128 types; parse scope 110 + 18. All other headlines unchanged, including pending mods actors 0.
+  Await Dev's path-scoped commit and push; HEAD remains bd6b7b3.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -245,7 +245,7 @@ Pin exact projections and callback behavior for normal, non-integral conversion 
 fields. Preserve current arithmetic; no shared abstraction or other example sweep. Dev accepted this scope; the implementation and verification checkpoint follows.
 
 
-## Marine OriginateReport repair (October 23, implemented and Dev-verified; uncommitted)
+## Marine OriginateReport repair (October 23, implemented and Dev-verified; committed as bd6b7b3)
 
 The new Drake surface owns the existing VoyageIntent-to-FixReport conversion. Parsed JSON
 and generated Scala agree exactly. Four focused tests check the trio and callback delivery
@@ -260,5 +260,36 @@ Dev’s first full sbt gate passed: 886 / 65 (four focused tests and two newly a
 Example map 30 match / 18 differ / 0 error / 0 missing; parse scope 110 + 17; surface losses
 0 across 127 types. Every other headline unchanged, including file-only pending mods actors 0.
 Dev’s pasted gate confirms 886 / 65 with zero failed/canceled/ignored/pending tests, zero
-aborted suites and all expected headlines matching. Commit and push are pending. No sbt, commit or
+aborted suites and all expected headlines matching. Dev committed and pushed bd6b7b3. No sbt, commit or
 push by Codex. Record: git-record-2026-10-23-1613. Journal coverage stays at chapter 104.
+
+
+## Design point after bd6b7b3 (accepted October 24)
+
+Repair domains.terrestrial.OriginateReport alone. Its JSON calls originate(intent), but
+only handwritten Scala carries the MarchIntent-to-LocationReport conversion. Recommend
+authoring that existing body in Drake/JSON, regenerating Scala and pinning exact projections
+and callback behavior. Preserve type LOCATION, unit default UNKNOWN, elevationFeet default 0
+and integer elevationMetres = (elevationFeet * 3048) / 10000. Cover exact conversion,
+positive and negative fractional truncation, and absent fields. No arithmetic redesign,
+shared conversion abstraction or other example repair. Dev accepted this scope on October 24.
+
+
+## Terrestrial OriginateReport repair (October 24, implemented and Dev-verified; uncommitted)
+
+The accepted rule now owns its MarchIntent-to-LocationReport conversion in Drake/JSON;
+Scala is regenerated. Five focused tests pin exact projections and callback delivery for
+exact conversion, positive and negative truncation toward zero, and missing fields.
+Preserved type LOCATION, unit UNKNOWN, elevationFeet 0 and integer arithmetic
+(elevationFeet * 3048) / 10000. No other example or engine changes.
+
+All main/mods/domain sources and test sources compiled directly. Every discovered suite
+passed: 893 tests / 67 suites including Runner discovery, zero failed/canceled/ignored/pending
+tests, zero aborted suites. Current main/mods/test resources were on loader roots.
+Dev’s first full sbt gate passed: 893 / 66 (five focused tests plus two newly active parser checks).
+Example map 31 match / 17 differ / 0 error / 0 missing; zero losses across 128 types;
+parse scope 110 + 18. All other headlines unchanged, including pending mods actors 0.
+Dev’s pasted gate confirms 893 / 66, zero failed/canceled/ignored/pending tests, zero
+aborted suites and all expected headlines matching. Commit and push are pending.
+Changes are uncommitted. Record: git-record-2026-10-24-1008. No sbt, commit or push by Codex.
+Journal coverage remains chapter 104.

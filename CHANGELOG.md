@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- Author Terrestrial OriginateReport’s existing conversion in Drake/JSON and regenerate Scala.
+  Pin exact projections and report delivery for normal input, positive and negative integer
+  truncation, and missing fields.
+
 - Author Marine OriginateReport’s existing conversion in Drake/JSON and regenerate its Scala.
   Pin exact projections and report delivery for normal input, integer truncation and missing
   fields; the example map improves to 30 matches / 18 differences.

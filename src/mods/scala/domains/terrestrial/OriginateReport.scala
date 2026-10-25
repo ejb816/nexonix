@@ -1,4 +1,3 @@
-
 package domains.terrestrial
 
 import draco._
@@ -7,32 +6,21 @@ import org.evrete.api.{Knowledge, RhsContext}
 
 trait OriginateReport
 
-object OriginateReport extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("OriginateReport", _namePackage = Seq ("domains", "terrestrial")))
+object OriginateReport extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("OriginateReport", _namePackage = Seq ("domains", "terrestrial")))
   lazy val dracoType: Type[OriginateReport] = Type[OriginateReport] (typeDefinition)
   lazy val domainType: Domain[Terrestrial] = Domain[Terrestrial] (typeDefinition)
 
-  private def originate(intent: MarchIntent): LocationReport = {
-    val cur         = intent.json.hcursor
-    val unit        = cur.get[String]("unit").getOrElse("UNKNOWN")
-    val elevationFt = cur.get[Int]("elevationFeet").getOrElse(0)
-    val elevationM  = (elevationFt * 3048) / 10000   // feet -> metres, integer
-    val payload = io.circe.Json.obj(
-      "type" -> io.circe.Json.fromString("LOCATION"),
-      "unit" -> io.circe.Json.fromString(unit),
-      "elevationMetres" -> io.circe.Json.fromInt(elevationM)
-    )
-    new LocationReport {
-      override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition
-      override val json: io.circe.Json = payload
-    }
-  }
-
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val intent: MarchIntent = ctx.get[MarchIntent]("$intent")
-      val consumer: draco.format.dracon.Dracon => Unit =
-        ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
-      consumer(originate(intent))
+      lazy val consumer: draco.format.dracon.Dracon => Unit = ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
+      lazy val cursor: io.circe.HCursor = intent.json.hcursor
+      lazy val unit: String = cursor.get[String]("unit").getOrElse("UNKNOWN")
+      lazy val elevationFeet: Int = cursor.get[Int]("elevationFeet").getOrElse(0)
+      lazy val elevationMetres: Int = elevationFeet * 3048 / 10000
+      lazy val payload: io.circe.Json = io.circe.Json.obj(("type", io.circe.Json.fromString("LOCATION")), ("unit", io.circe.Json.fromString(unit)), ("elevationMetres", io.circe.Json.fromInt(elevationMetres)))
+      lazy val report: LocationReport = new LocationReport { override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+      consumer(report)
   }
 
   private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {
