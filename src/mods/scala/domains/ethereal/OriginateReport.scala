@@ -1,4 +1,3 @@
-
 package domains.ethereal
 
 import draco._
@@ -7,32 +6,21 @@ import org.evrete.api.{Knowledge, RhsContext}
 
 trait OriginateReport
 
-object OriginateReport extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("OriginateReport", _namePackage = Seq ("domains", "ethereal")))
+object OriginateReport extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("OriginateReport", _namePackage = Seq ("domains", "ethereal")))
   lazy val dracoType: Type[OriginateReport] = Type[OriginateReport] (typeDefinition)
   lazy val domainType: Domain[Ethereal] = Domain[Ethereal] (typeDefinition)
 
-  private def originate(intent: LaunchIntent): EphemerisReport = {
-    val cur                 = intent.json.hcursor
-    val obj                 = cur.get[String]("object").getOrElse("UNKNOWN")
-    val altitudeNauticalMi  = cur.get[Int]("altitudeNauticalMiles").getOrElse(0)
-    val altitudeKm          = (altitudeNauticalMi * 1852) / 1000   // nautical miles -> kilometres, integer
-    val payload = io.circe.Json.obj(
-      "category" -> io.circe.Json.fromString("EPHEMERIS"),
-      "object" -> io.circe.Json.fromString(obj),
-      "altitudeKilometres" -> io.circe.Json.fromInt(altitudeKm)
-    )
-    new EphemerisReport {
-      override lazy val typeDefinition: TypeDefinition = EphemerisReport.typeDefinition
-      override val json: io.circe.Json = payload
-    }
-  }
-
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val intent: LaunchIntent = ctx.get[LaunchIntent]("$intent")
-      val consumer: draco.format.dracon.Dracon => Unit =
-        ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
-      consumer(originate(intent))
+      lazy val consumer: draco.format.dracon.Dracon => Unit = ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
+      lazy val cursor: io.circe.HCursor = intent.json.hcursor
+      lazy val obj: String = cursor.get[String]("object").getOrElse("UNKNOWN")
+      lazy val altitudeNauticalMiles: Int = cursor.get[Int]("altitudeNauticalMiles").getOrElse(0)
+      lazy val altitudeKilometres: Int = altitudeNauticalMiles * 1852 / 1000
+      lazy val payload: io.circe.Json = io.circe.Json.obj(("category", io.circe.Json.fromString("EPHEMERIS")), ("object", io.circe.Json.fromString(obj)), ("altitudeKilometres", io.circe.Json.fromInt(altitudeKilometres)))
+      lazy val report: EphemerisReport = new EphemerisReport { override lazy val typeDefinition: TypeDefinition = EphemerisReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+      consumer(report)
   }
 
   private lazy val pattern: Knowledge => Unit = (knowledge: Knowledge) => {

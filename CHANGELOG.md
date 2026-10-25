@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- Author Ethereal OriginateReport’s existing conversion in Drake/JSON and regenerate Scala,
+  closing the fourth audited conversion-helper gap. Pin exact projections and report delivery
+  for normal input, positive and negative integer truncation, and missing fields.
+
 - Author Terrestrial OriginateReport’s existing conversion in Drake/JSON and regenerate Scala.
   Pin exact projections and report delivery for normal input, positive and negative integer
   truncation, and missing fields.

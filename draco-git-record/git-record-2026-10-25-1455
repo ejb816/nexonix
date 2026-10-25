@@ -1,0 +1,21 @@
+Carry Ethereal OriginateReport conversion in its definition
+
+Dev accepted repairing this one rule after the Terrestrial repair at 97bf690.
+Its JSON called originate(intent), whose body lived only in handwritten Scala.
+Author the existing LaunchIntent conversion in Drake, parse JSON and regenerate Scala.
+Preserve EphemerisReport, category EPHEMERIS, object default UNKNOWN,
+altitudeNauticalMiles default 0, integer altitudeKilometres =
+(altitudeNauticalMiles * 1852) / 1000 and the consumer callback.
+
+Add exact Drake/JSON/Scala agreement and runtime checks for exact conversion, positive
+and negative fractional truncation toward zero, and missing fields. This closes the last
+of the four audited conversion-helper gaps. No engine changes, shared abstraction or
+other example repair. Activation and .dcon remain deferred.
+
+All main/mods/domain sources and test sources compiled directly. Every discovered suite
+passed: 900 tests / 68 suites including discovery, zero failures or aborts, with current
+main/mods/test resources on loader roots. Example map 32/16, zero losses across 129 types,
+parse scope 110 + 19; all other headlines unchanged, pending mods actors 0.
+Dev’s first full sbt gate passed 900 / 67 on October 25, zero failed/canceled/ignored/
+pending tests, zero aborted suites and all expected headlines matching.
+No sbt, commit or push executed by Codex.

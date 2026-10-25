@@ -1,19 +1,19 @@
 # Development Handoff
 
-Updated October 24, 2026 by Codex after Dev verified the Terrestrial repair.
+Updated October 25, 2026 by Codex after Dev verified the Ethereal repair.
 This is the current checkpoint; the journal and git records preserve historical checkpoints.
 Follow DRACO.md section 7 and verify the actual tree on arrival.
 
 ## Checkpoint and permissions
 
-- Observed branch: `main`, HEAD **bd6b7b3**, committed and pushed by Dev after the 886 / 65 gate.
+- Observed branch: `main`, HEAD **97bf690**, committed and pushed by Dev after the 893 / 66 gate.
   Status was clean and aligned with origin/main on receipt; Dev’s pasted output confirms push.
-  The Marine repair is committed. The accepted Terrestrial repair is implemented, Dev-verified and uncommitted.
-- Latest verified baseline: **893 tests / 66 suites**, Dev's October 24 full sbt gate on
-  the Terrestrial OriginateReport repair, green on its first run. Zero failed/canceled/
-  ignored/pending tests and zero aborted suites. Example map 31/17; zero losses across
-  128 types; parse scope 110 + 18. All other headlines unchanged, including pending mods actors 0.
-  Await Dev's path-scoped commit and push; HEAD remains bd6b7b3.
+  The Terrestrial repair is committed; the accepted Ethereal repair is implemented, Dev-verified and uncommitted.
+- Latest verified baseline: **900 tests / 67 suites**, Dev's October 25 full sbt gate on
+  the Ethereal OriginateReport repair, green on its first run. Zero failed/canceled/ignored/
+  pending tests and zero aborted suites. Example map 32/16; zero losses across 129 types;
+  parse scope 110 + 19. All other headlines unchanged, including pending mods actors 0.
+  Await Dev's path-scoped commit and push; HEAD remains 97bf690.
 - Do not run sbt, git commit or git push. Give Dev commands and wait for results. Direct
   compiler/projection probes have been used (overlay the current resources on a copy of the
   compiled classes under `target/scala-2.13/`, recompile the changed engine into it, put
@@ -275,7 +275,7 @@ positive and negative fractional truncation, and absent fields. No arithmetic re
 shared conversion abstraction or other example repair. Dev accepted this scope on October 24.
 
 
-## Terrestrial OriginateReport repair (October 24, implemented and Dev-verified; uncommitted)
+## Terrestrial OriginateReport repair (October 24, Dev-verified; committed October 25 as 97bf690)
 
 The accepted rule now owns its MarchIntent-to-LocationReport conversion in Drake/JSON;
 Scala is regenerated. Five focused tests pin exact projections and callback delivery for
@@ -290,6 +290,39 @@ Dev’s first full sbt gate passed: 893 / 66 (five focused tests plus two newly 
 Example map 31 match / 17 differ / 0 error / 0 missing; zero losses across 128 types;
 parse scope 110 + 18. All other headlines unchanged, including pending mods actors 0.
 Dev’s pasted gate confirms 893 / 66, zero failed/canceled/ignored/pending tests, zero
+aborted suites and all expected headlines matching. Dev committed and pushed 97bf690.
+Record: git-record-2026-10-24-1008. No sbt, commit or push by Codex.
+Journal coverage remains chapter 104.
+
+
+## Design point after 97bf690 (accepted October 25)
+
+Repair domains.ethereal.OriginateReport alone, the last of the four audited OriginateReport
+helper gaps. JSON calls originate(intent), but handwritten Scala alone holds the conversion.
+Recommend authoring the existing LaunchIntent-to-EphemerisReport conversion in Drake/JSON,
+regenerating Scala and pinning exact projections and callback behavior. Preserve category
+EPHEMERIS, object default UNKNOWN, altitudeNauticalMiles default 0, and integer arithmetic
+(altitudeNauticalMiles * 1852) / 1000. Check exact conversion, positive and negative
+truncation toward zero, and missing fields. No arithmetic redesign, shared abstraction or
+other example repair. Dev accepted this scope on October 25.
+
+
+## Ethereal OriginateReport repair (October 25, implemented and Dev-verified; uncommitted)
+
+The accepted rule now owns its LaunchIntent-to-EphemerisReport conversion in Drake/JSON;
+Scala is regenerated. Five focused tests pin exact projections and callback delivery for
+exact conversion, positive and negative truncation toward zero, and missing fields.
+Preserved category EPHEMERIS, object UNKNOWN, altitudeNauticalMiles 0 and integer arithmetic
+(altitudeNauticalMiles * 1852) / 1000. This closes the fourth audited conversion-helper gap.
+No other example or engine changes; the remaining 16 projection differences are unswept.
+
+All main/mods/domain sources and test sources compiled directly. Every discovered suite
+passed: 900 tests / 68 suites including Runner discovery, zero failed/canceled/ignored/pending
+tests, zero aborted suites. Current main/mods/test resources were on loader roots.
+Dev’s first full sbt gate passed: 900 / 67 (five focused tests plus two newly active parser checks).
+Example map 32 match / 16 differ / 0 error / 0 missing; zero losses across 129 types;
+parse scope 110 + 19. All other headlines unchanged, including pending mods actors 0.
+Dev’s pasted gate confirms 900 / 67, zero failed/canceled/ignored/pending tests, zero
 aborted suites and all expected headlines matching. Commit and push are pending.
-Changes are uncommitted. Record: git-record-2026-10-24-1008. No sbt, commit or push by Codex.
+Changes are uncommitted. Record: git-record-2026-10-25-1455. No sbt, commit or push by Codex.
 Journal coverage remains chapter 104.

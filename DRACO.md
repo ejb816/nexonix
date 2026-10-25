@@ -49,6 +49,11 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**900 tests / 67 suites**, verified by Dev on 2026-10-25 for the Ethereal OriginateReport
+repair (record `git-record-2026-10-25-1455`): five new focused tests and two newly active
+parser checks, zero failed/canceled/ignored/pending tests and zero aborted suites. Example
+map is 32 match / 16 differ, surface losses zero across 129 types, parse scope 110 + 19;
+every other headline unchanged, including pending mods actors 0. First full gate green. Before it:
 **893 tests / 66 suites**, verified by Dev on 2026-10-24 for the Terrestrial OriginateReport
 repair (record `git-record-2026-10-24-1008`): five new focused tests and two newly active
 parser checks, zero failed/canceled/ignored/pending tests and zero aborted suites. Example
@@ -188,9 +193,9 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `ExampleDomainsGenTest` | example-domain gen map | 31 match, 17 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 128 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 18 mods in, 0 held back |
+| `ExampleDomainsGenTest` | example-domain gen map | 32 match, 16 differ, 0 error, 0 missing (of 48) |
+| `DrakeParseTest` | drake surface losses | 0 fields across 129 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 19 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -286,7 +291,7 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 `DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
 effect, transitively: generated output is pinned to the hand-written files, and sbt
 compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
-gap is `ExampleDomainsGenTest`, which reports 31 match / 17 differ over the example domains
+gap is `ExampleDomainsGenTest`, which reports 32 match / 16 differ over the example domains
 and compiles none of it.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
@@ -1324,6 +1329,17 @@ conversion now lives in Drake/JSON and its Scala is regenerated. Exact projectio
 runtime checks cover normal input, positive and negative truncation, and missing fields.
 Full direct verification passed 893 tests / 67 suites including discovery, with zero
 failures or aborts and current main/mods/test resources on loader roots. Dev’s first full sbt gate passed
-893 / 66, zero failed/canceled/ignored/pending tests and zero aborted suites. The headline table now measures 31/17 examples, zero losses across 128 types,
+893 / 66, zero failed/canceled/ignored/pending tests and zero aborted suites. That increment measured 31/17 examples, zero losses across 128 types,
 parse scope 110 + 18; other headlines unchanged. Latest Dev-verified baseline is
-893 / 66; this increment is uncommitted.
+893 / 66 at that checkpoint. Dev committed and pushed the Terrestrial repair as 97bf690.
+
+
+**Ethereal OriginateReport (2026-10-25, accepted; Dev verified 900 / 67).** Its existing
+conversion now lives in Drake/JSON and its Scala is regenerated, closing the fourth audited
+conversion-helper gap. Exact projections and runtime checks cover normal input, positive
+and negative truncation, and missing fields. Full direct verification passed 900 tests /
+68 suites including discovery, zero failures or aborts, with current main/mods/test resources
+on loader roots. Dev’s first full sbt gate passed 900 / 67, zero failed/canceled/ignored/pending tests
+and zero aborted suites. The current headline table measures 32/16 examples,
+zero losses across 129 types, parse scope 110 + 19; other headlines unchanged. Latest
+Dev-verified baseline is 900 / 67; this increment is uncommitted.
