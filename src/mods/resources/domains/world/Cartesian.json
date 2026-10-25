@@ -47,7 +47,43 @@
           "value": "0.0"
         }
       ]
-    }
+    },
+    "globalElements": [
+      {
+        "kind": "Dynamic",
+        "name": "apply",
+        "valueType": "Cartesian",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "value",
+            "valueType": {
+              "(,)": [
+                "Double",
+                "Double",
+                "Double"
+              ]
+            },
+            "now": true
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Cartesian",
+            "value": {
+              "()": [
+                "Cartesian",
+                "value._1",
+                "value._2",
+                "value._3"
+              ]
+            }
+          }
+        ]
+      }
+    ]
   },
   "domainAspect": {
     "typeName": {

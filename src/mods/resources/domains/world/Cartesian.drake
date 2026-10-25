@@ -1,0 +1,18 @@
+type Cartesian
+  elements
+    fix x Double
+    fix y Double
+    fix z Double
+  factory
+    parameters
+      par x Double 0.0
+      par y Double 0.0
+      par z Double 0.0
+  globals
+    dyn apply Cartesian [
+      parameters
+        now par value (Double, Double, Double)
+      body
+        fix value Cartesian Cartesian(value._1, value._2, value._3)
+    ]
+domain domains world World

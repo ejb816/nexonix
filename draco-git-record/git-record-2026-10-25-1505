@@ -1,0 +1,20 @@
+Carry Cartesian tuple factory in its definition
+
+Dev accepted repairing Cartesian alone after the four OriginateReport helper gaps.
+Author its canonical Drake surface and tuple apply overload as a global method, using
+now on the tuple argument to preserve strict evaluation. Parse JSON and regenerate Scala.
+Keep lazy scalar arguments, all coordinate defaults, tuple coordinate order and Null.
+Include the existing generator's inferred x/y/z codec pair as explicitly accepted.
+
+Add six focused checks for exact projections, defaults/Null, independent lazy scalar
+arguments, strict once-only tuple evaluation, codec round-trip and missing coordinates
+with invalid-value rejection. Keep existing WorldCanonicalTest and World integration checks.
+No Observable, geodesy, actor or generator changes. Activation and .dcon remain deferred.
+
+All main/mods/domain sources and test sources compiled directly. Every discovered suite
+passed: 908 tests / 69 suites including discovery, zero failures or aborts, with current
+main/mods/test resources on loader roots. Example map 33/15, zero losses across 130 types,
+parse scope 110 + 20; all other headlines unchanged, pending mods actors 0.
+Dev’s first full sbt gate passed 908 / 68 on October 25, zero failed/canceled/ignored/
+pending tests, zero aborted suites and all expected headlines matching.
+No sbt, commit or push executed by Codex.

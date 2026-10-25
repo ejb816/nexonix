@@ -49,6 +49,11 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**908 tests / 68 suites**, verified by Dev on 2026-10-25 for the Cartesian repair
+(record `git-record-2026-10-25-1505`): six new focused tests and two newly active parser
+checks, zero failed/canceled/ignored/pending tests and zero aborted suites. Example map
+is 33 match / 15 differ, surface losses zero across 130 types, parse scope 110 + 20;
+every other headline unchanged, including pending mods actors 0. First full gate green. Before it:
 **900 tests / 67 suites**, verified by Dev on 2026-10-25 for the Ethereal OriginateReport
 repair (record `git-record-2026-10-25-1455`): five new focused tests and two newly active
 parser checks, zero failed/canceled/ignored/pending tests and zero aborted suites. Example
@@ -193,9 +198,9 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `ExampleDomainsGenTest` | example-domain gen map | 32 match, 16 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 129 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 19 mods in, 0 held back |
+| `ExampleDomainsGenTest` | example-domain gen map | 33 match, 15 differ, 0 error, 0 missing (of 48) |
+| `DrakeParseTest` | drake surface losses | 0 fields across 130 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 20 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -291,7 +296,7 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 `DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
 effect, transitively: generated output is pinned to the hand-written files, and sbt
 compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
-gap is `ExampleDomainsGenTest`, which reports 32 match / 16 differ over the example domains
+gap is `ExampleDomainsGenTest`, which reports 33 match / 15 differ over the example domains
 and compiles none of it.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
@@ -1340,6 +1345,17 @@ conversion-helper gap. Exact projections and runtime checks cover normal input, 
 and negative truncation, and missing fields. Full direct verification passed 900 tests /
 68 suites including discovery, zero failures or aborts, with current main/mods/test resources
 on loader roots. Dev’s first full sbt gate passed 900 / 67, zero failed/canceled/ignored/pending tests
-and zero aborted suites. The current headline table measures 32/16 examples,
+and zero aborted suites. That increment measured 32/16 examples,
 zero losses across 129 types, parse scope 110 + 19; other headlines unchanged. Latest
-Dev-verified baseline is 900 / 67; this increment is uncommitted.
+Dev-verified baseline is 900 / 67 at that checkpoint. Dev committed and pushed e819663.
+
+
+**World Cartesian (2026-10-25, accepted; Dev verified 908 / 68).** The tuple overload now lives
+in the definition as a global apply method with a strict tuple parameter. Generated Scala
+preserves lazy scalar arguments, defaults and Null and includes the accepted inferred
+coordinate codecs. Six focused tests cover exact projections, evaluation behavior and codecs.
+All discovered suites passed directly: 908 tests / 69 suites including discovery, zero failures
+or aborts, current main/mods/test resources on loader roots. Dev’s first full sbt gate passed 908 / 68, zero failed/canceled/ignored/pending tests
+and zero aborted suites. Current
+headlines: 33/15 example map, zero losses across 130 types, parse scope 110 + 20; all others
+unchanged. Latest Dev-verified baseline is 908 / 68; this increment is uncommitted.

@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- Carry World Cartesian’s tuple overload in its Drake/JSON definition and regenerate Scala
+  with inferred coordinate codecs. Pin both factories’ evaluation behavior, zero defaults,
+  exact projections and codec round-trip/default handling.
+
 - Author Ethereal OriginateReport’s existing conversion in Drake/JSON and regenerate Scala,
   closing the fourth audited conversion-helper gap. Pin exact projections and report delivery
   for normal input, positive and negative integer truncation, and missing fields.

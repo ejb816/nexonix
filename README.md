@@ -869,7 +869,7 @@ previously omitted members were added to their already-declared owners on Octobe
 Five domain surfaces were added, with reciprocal membership and trio checks. All four audited OriginateReport conversions (Aerial, Marine, Terrestrial and Ethereal) now live in their definitions; exact
 projection checks and runtime cases pin their generated Scala, defaults and callback
 behavior, including integer truncation toward zero for positive and negative inputs. The example generation comparison is
-32 matches / 16 differences; the remaining bodies are unswept.
+33 matches / 15 differences after the Cartesian repair; the remaining bodies are unswept.
 See EXAMPLE_DOMAIN_AUDIT.md for the pre-change evidence and remaining gaps.
 
 Example loading now supplies an explicit caller scope: the canonical dependencies and six
@@ -878,3 +878,10 @@ AerialSink binding. ExampleLoadingTest verifies all 48 definitions through two-s
 independently of declaration order, and rejects either missing external binding. The sink
 is an observation boundary, not a member of the ontology or the shared target vocabulary.
 Loading coverage does not establish that the still-unswept examples generate faithfully.
+
+
+World Cartesian now carries its tuple overload in Drake/JSON as a global method with a
+strict tuple parameter. Its regenerated Scala preserves the lazy scalar factory, zero
+defaults and Null, and includes inferred x/y/z codecs. Focused checks pin exact projections,
+evaluation behavior, codec round-trip and missing-coordinate defaults. Observable, geodesy
+and actor behavior are unchanged by this repair.
