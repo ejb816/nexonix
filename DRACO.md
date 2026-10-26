@@ -49,6 +49,10 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**936 tests / 72 suites**, verified by Dev on 2026-10-26 for the named-construction head
+(record `git-record-2026-10-26-1449`): three new focused tests in one added suite, zero
+failed/canceled/ignored/pending tests, every report-only headline unchanged, including pending mods
+actors 0. No committed Scala regenerated. First full Dev gate green. Before it:
 **933 tests / 71 suites**, verified by Dev on 2026-10-25 for the Consumer repair
 (record `git-record-2026-10-25-1557`): five new focused tests, two newly active parser
 checks and one actor emission check, zero failed/canceled/ignored/pending tests and zero
@@ -1403,8 +1407,8 @@ zero failures or aborts, current main/mods/test resources on loader roots. Dev�
 Position-to-Location case now live in Drake/JSON. Regenerated Scala preserves strict local
 bindings, Observable conversion, rounding, ignored other messages, lazy callback capture
 and inert signals. Five focused tests and existing World assembly/transform checks pass.
-The Location call is positional; named construction's qualification loss remains a separate
-engine limitation recorded in the handoff. Full direct run: 933 tests / 72 suites including
+The Location call is positional; the named-construction qualification loss observed then was
+repaired on 2026-10-26 (below). Full direct run: 933 tests / 72 suites including
 discovery, zero failures or aborts, current main/mods/test resources on loader roots.
 Dev’s first full sbt gate passed 933 / 71, zero failed/canceled/ignored/pending tests
 and zero aborted suites. Current headlines: 36/12 example map, zero losses across 133 types,
@@ -1413,10 +1417,33 @@ parse scope 110 + 23; other headlines unchanged. Dev committed and pushed this i
 
 **October 26 handoff.** All accepted work through a8b5447 is verified and committed by Dev.
 DEVELOPMENT_HANDOFF.md contains the current checkpoint, commit ledger and direct-run procedure.
-The proposed named-construction qualification repair remains unaccepted; preserving it for a
-new Codex or Claude Code session does not authorize implementation. Documentation currency
+The named-construction qualification repair it preserved as unaccepted was accepted and built
+the same day (next paragraph). Documentation currency
 is through this handoff; chapters 105–112 now cover the session from original records, including
 the prior Claude closing exchange and the correction of the initially omitted journal work.
 The source audit verifies recoverability across both observed compactions; its frozen boundary
 is Dev’s acceptance of this repair, excluding the repair’s final reply. Private agent memory
 is not a prerequisite.
+
+
+**Named construction spells its head (2026-10-26, Claude Code; Dev verified 936 / 72).** Dev accepted
+"spell the named-construction head as authored/resolved, same as the positional path, with one
+cross-package compile-and-run test checking scoped and unscoped generation", after the reading was
+verified by a direct probe: `DracoGenerator.constructionInitializer` spelled the SLOT TYPE's last
+segment, so a Consumer variant constructing `domains.terrestrial.Location(latitude:…)` in
+domains.world generated bare `Location(_latitude = …)` and scalac refused it; the positional path
+renders the head verbatim, which is why the accepted Consumer compiles. The head is now
+`expression(operands.head)` — as the author or the scope in effect spelled it; unscoped a
+cross-package construction keeps its qualification, scoped the engine shortens it to the bare name
+and adds the selective import. The factory check and the `_name` mapping are unchanged. MEASURED
+before building: only three definitions carry a named argument, all examples — Input authors its
+own package's Position bare, Output is not intercepted (LocationReport has no factory), Observable's
+construction sits in a dyn body — and old and new engine generate byte-identical Scala for all
+three and for Consumer, so no committed file regenerates. Two adjacent observations surfaced, NOT
+recommended or accepted: the method keys its factory lookup on the slot type rather than the head,
+and a dyn-body result never maps named parameters to the factory's `_` convention (Observable
+authors `_geocentric` by hand, a Scala spelling in a drake source). `NamedConstructionTest` (3) is
+the 72nd suite: the probe constructs Location inside a global dyn, the generated file imports only
+`draco._` and `domains._`, both generations are compiled with the runtime compiler and run. Full
+direct run 936 / 73 including discovery, every headline unchanged; Dev's first full gate 936, zero
+failed/canceled/ignored/pending, pending mods actors 0.

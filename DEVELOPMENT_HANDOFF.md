@@ -1,6 +1,7 @@
 # Development Handoff
 
-Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code.
+Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code;
+refreshed the same day by Claude Code after the named-construction head repair.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -11,38 +12,45 @@ Read DRACO.md (AGENTS.md and CLAUDE.md are symlinks), this file, and
 `.draco/skills/update-draco-docs/SKILL.md`. Inspect status and log before editing.
 Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is not required.
 
-- Branch: main. Last code commit: **a8b5447**, Consumer repair. Dev's pasted output
-  confirms commit and push; local main and origin/main agreed on October 26 inspection.
-- Latest Dev-verified gate: **933 tests / 71 suites**, October 25, on the Consumer tree.
-  Zero failed/canceled/ignored/pending tests and zero aborted suites. First Dev gate green.
-- All accepted implementation work is complete, verified, committed and pushed by Dev.
-- Only documentation is pending for this handoff: CHANGELOG.md, DRACO.md, README.md,
-  DEVELOPMENT_HANDOFF.md, DEVELOPMENT_RESUME_PROMPT.md, journal introduction, chapters 105–112,
-  their Codex extract/audit and Claude closing extract, and draco-git-record/git-record-2026-10-26-1253. No runtime or test-source edits.
-  A documentation-only commit may follow a8b5447; inspect it and preserve uncommitted docs.
-- **The next recommendation below is preserved, NOT accepted.** The handoff request
-  authorizes documentation, not implementation of that recommendation.
+- Branch: main. Last code commit before this increment: **a8b5447**, Consumer repair, then
+  **7495539**, the documentation-only handoff after it. The named-construction head repair
+  (record `git-record-2026-10-26-1449`) is Dev-gated and awaits Dev's commit and push; inspect
+  `git log -1` to learn whether it landed and under which hash.
+- Latest Dev-verified gate: **936 tests / 72 suites**, October 26, on the named-construction
+  tree. Zero failed/canceled/ignored/pending tests, every headline unchanged, pending mods
+  actors 0. First Dev gate green.
+- All accepted implementation work is complete and verified; the latest increment's commit
+  is Dev's step.
+- Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
+  verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
+  pending, to be sourced from the session's original records.
+
+## Named-construction head repair (accepted and built, October 26)
+
+Dev accepted, in these words: "spell the named-construction head as authored/resolved, same as
+the positional path, with one cross-package compile-and-run test checking scoped and unscoped
+generation." `DracoGenerator.constructionInitializer` spells the applied head through
+`expression(operands.head)`; the factory check and the `_name` parameter mapping are unchanged.
+Unscoped, a cross-package construction keeps its qualification; scoped, the engine shortens it
+and adds the selective import. `NamedConstructionTest` (src/test/scala/domains/world) generates,
+compiles and runs a domains.world probe constructing domains.terrestrial.Location both ways and
+pins an own-package bare head staying bare. Old and new engine generate byte-identical Scala for
+the three named-argument sites (aerial/Input, terrestrial/Output, world/Observable) and Consumer;
+no committed Scala regenerated.
 
 ## Next design point — acceptance required
 
-Codex recommends a narrow repair of named-construction qualification in
-`src/mods/scala/draco/DracoGenerator.scala`, method `constructionInitializer` (near line 260).
-It currently writes `valueType.split('.').last`, so a qualified construction of
-`domains.terrestrial.Location` can emit bare `Location` without a usable import.
-This was observed while authoring Consumer; its accepted implementation uses the valid
-positional call and is already tested and committed.
+Two adjacent observations were surfaced during the repair, neither recommended nor accepted:
 
-Proposed scope:
+- A dyn-body RESULT (`fix value T T(name:v)`) renders through `expression`, not the construction
+  initializer, so its named arguments are never mapped to the factory's `_name` convention.
+  world/Observable's `fromGeodetic` authors `_geocentric:` by hand — a Scala spelling inside a
+  drake source. Candidate next point: route the dyn-body result through the same initializer.
+- `constructionInitializer` keys its factory lookup on the SLOT type, not the applied head, so a
+  slot typed by a parent constructing a child falls back to the unmapped rendering.
 
-- Preserve the resolved constructor qualification while retaining named-parameter mapping.
-- Add a generated compilation/runtime regression from a different package, without an
-  import masking the defect; check scoped and unscoped generation.
-- Measure main/staged/example corpus impact before any necessary regeneration; obey trio gates.
-- Keep Consumer's accepted positional call unchanged. No general constructor redesign,
-  unrelated example repair or new issue is authorized.
-
-Receiving agent: verify this reading, restate this one recommendation and ask Dev to accept
-or correct it before building. Do not treat its presence here as acceptance.
+Receiving agent: bring ONE of these as a recommendation with accept-or-correct; build only
+what Dev accepts. Their presence here is not acceptance.
 
 ## Operating boundaries
 
@@ -64,13 +72,14 @@ or correct it before building. Do not treat its presence here as acceptance.
 
 ## Current verification evidence
 
-Dev's October 25 full sbt output and commit/push output were pasted into this conversation.
-The preceding direct run passed **933 tests / 72 suites including Runner discovery**.
-The one extra direct suite is discovery; sbt reports 71. All sources used by these tests
-were compiled directly and current main/mods/test resources were overlaid on loader roots.
-The handoff changes are documentation-only; no new implementation gate was run for them.
+Dev's October 26 full sbt output for the named-construction tree was pasted into the Claude
+Code session: 936 tests, zero failed/canceled/ignored/pending, every headline below matching,
+file-only pending mods actors 0. The preceding direct run passed **936 tests / 73 suites
+including Runner discovery** (sbt reports 72): all main/mods/domain and test sources compiled
+into fresh class roots under target/scala-2.13 with current main/mods/test resources overlaid
+and the hidden root anchors removed; `git status` afterwards showed only the two intended changes.
 
-| Headline | Verified at a8b5447 |
+| Headline | Verified at the named-construction tree (and at a8b5447) |
 |---|---|
 | DomainAspect | 110 complete, 1 parameterized included, 0 skipped |
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
@@ -107,6 +116,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 81154e3 | Observable helpers, nested codecs and caller Geodesy binding | 918 / 69 | 2026-10-25-1517 |
 | 3648806 | Provider actor role and forwarding | 925 / 70 | 2026-10-25-1543 |
 | a8b5447 | Consumer actor role and Position-to-Location branch | 933 / 71 | 2026-10-25-1557 |
+| 7495539 | Documentation handoff: chapters 105–112, audit, handoff files | — | 2026-10-26-1253 |
+| pending | Named construction spells its head as authored; NamedConstructionTest (Claude Code) | 936 / 72 | 2026-10-26-1449 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
@@ -135,7 +146,11 @@ EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a curren
 - Provider forwards unchanged World messages once; Consumer converts only Position, ignores
   other messages, uses feet * 0.3048 and math.round(h).toInt, and captures its callback lazily.
   Both preserve inert signals and existing World assembly behavior. Consumer uses strict local
-  bindings in its case branch and a positional Location call. No generator change was made.
+  bindings in its case branch and a positional Location call. No generator change was made then;
+  the named-construction head repair of October 26 is the one generator change since.
+- A named-argument construction's head is spelled as authored or as the scope in effect spells
+  it, exactly as a positional call is. Only NAMED-argument applications are intercepted, and only
+  when the slot type loads a definition with a factory; everything else renders as before.
 - Scoped canonical generation and TypeName formal/actual separation remain as documented in
   DRACO.md and chapters 100–104. Rebuilds must preserve uses and typeParameters. Companions
   load unscoped; recorded resolution is applied during generation. Do not sweep examples by

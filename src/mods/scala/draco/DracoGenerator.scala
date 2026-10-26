@@ -251,8 +251,8 @@ object DracoGenerator extends App {
 
   /** When `value` constructs the declared draco type `valueType` with NAMED
     * arguments, render the call-site Scala. A type with a factory renders a
-    * factory-apply `T(_p = v, …)` — the `_` prefix matches the factory the
-    * Generator emits for that type (`def apply(_p: … )`). A factory-less type is an
+    * factory-apply `T(_p = v, …)` — `T` the applied HEAD as spelled, the `_` prefix
+    * matching the factory the Generator emits for that type (`def apply(_p: … )`). A factory-less type is an
     * anonymous `new T { override … }`; that path (inherited-member resolution) is
     * not yet handled, so it returns None and falls back to the plain projection.
     * Only NAMED-arg constructions are intercepted, so positional application trees
@@ -260,14 +260,19 @@ object DracoGenerator extends App {
   private def constructionInitializer (valueType: String, value: Json) : Option[String] = {
     if (!Expression.isApplication(value)) None
     else {
-      val args = Expression.operands(value).tail
+      val operands = Expression.operands(value)
+      val args = operands.tail
       if (!args.exists(a => Expression.namedArgument(a).isDefined)) None
       else loadDracoType(valueType).filter(_.dracoAspect.factory.valueType.text.nonEmpty).map { _ =>
         val rendered = args.map(a => Expression.namedArgument(a) match {
           case Some((name, v)) => s"_$name = ${expression(v)}"
           case None            => expression(a)
         })
-        s"${valueType.split('.').last}(${rendered.mkString(", ")})"
+        // The head is spelled as the author (or the scope in effect) spelled it, exactly as a
+        // positional call is — never the slot type's last segment, which left a cross-package
+        // construction (`domains.terrestrial.Location(latitude:…)` authored in domains.world)
+        // bare and unresolved in the generated file (2026-10-26).
+        s"${expression(operands.head)}(${rendered.mkString(", ")})"
       }
     }
   }

@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Spell a named-argument construction's head as the author or the scope in effect spelled it,
+  as the positional path already did, instead of the slot type's last segment, which left a
+  cross-package construction bare and unresolved in the generated file. Add NamedConstructionTest,
+  which generates, compiles and runs a cross-package probe unscoped and scoped; no committed
+  Scala changes.
+
 - Prepare the October 26 Codex/Claude Code handoff with the verified implementation ledger,
   current report baselines and direct-test procedure. Preserve the named-construction
   qualification recommendation as unaccepted. Recover original exchanges across compactions,

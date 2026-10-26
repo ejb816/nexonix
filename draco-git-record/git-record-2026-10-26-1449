@@ -1,0 +1,43 @@
+Spell a named construction's head as authored, as the positional path does
+
+Dev accepted the one recommendation restated from Codex's October 26 handoff: spell the
+named-construction head as authored or resolved, the same as the positional path, with one
+cross-package compile-and-run test checking scoped and unscoped generation. The reading was
+verified first by a direct probe: DracoGenerator.constructionInitializer spelled the SLOT
+TYPE's last segment, so a Consumer variant constructing domains.terrestrial.Location with
+named arguments generated bare `Location(_latitude = …)` in domains.world and scalac refused
+it ("not found: value Location"). The positional path renders the head verbatim, which is why
+the accepted Consumer compiles.
+
+The repair is one line in constructionInitializer: the head is `expression(operands.head)`,
+the applied head as the author or the scope in effect spelled it, never the slot type's last
+segment. The factory check and the `_name` parameter mapping are unchanged. Unscoped, a
+cross-package construction keeps its qualification; scoped, the engine shortens it to the bare
+name and adds the selective import, as it does every resolvable name. Consumer's accepted
+positional call is untouched. No general constructor redesign and no other example repair.
+
+Corpus impact, measured before building: only three definitions carry a named argument, all
+examples. aerial/Input authors its own package's Position bare, so it renders bare before and
+after; terrestrial/Output is not intercepted, LocationReport having no factory; world/Observable's
+construction sits in a dyn body, which renders through expression with no `_` mapping. Old and
+new engine generate byte-identical Scala for Input, Output, Observable and Consumer, so no
+committed file regenerates. Two adjacent observations were surfaced, not recommended: the
+method keys its factory lookup on the slot type rather than the head, and a dyn-body result
+never maps named parameters to the factory's `_` convention (Observable authors `_geocentric`).
+
+NamedConstructionTest (3) is new, the 72nd suite: a probe authored in domains.world constructs
+domains.terrestrial.Location with named arguments inside a global dyn; the generated file
+imports only `draco._` and `domains._`, so no import masks the head's spelling. Unscoped, the
+qualified head is asserted; scoped through the example scope, the bare head plus its selective
+import; both generations are compiled with the runtime compiler and run, and the constructed
+Location carries the authored values. The third test pins an own-package head authored bare
+staying bare, as Input spells Position.
+
+All main/mods/domain sources and test sources compiled directly into fresh class roots with
+current main/mods/test resources overlaid and the hidden anchors removed. Every discovered
+suite passed: 936 tests / 73 suites including discovery, zero failures or aborts. Example map
+36/12, zero losses across 133 types, parse scope 110 + 23, GenDrake 108/108, both aspect probes
+110 sections; all other headlines unchanged, pending mods actors 0 in the file-only log.
+Dev's first full sbt gate passed 936 tests on October 26, zero failed/canceled/ignored/pending
+tests, every headline matching and pending mods actors 0 (72 suites, one added to 71).
+No sbt, commit or push executed by Claude Code.
