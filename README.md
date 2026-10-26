@@ -817,14 +817,14 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 104: two-stage loading, the unit type, the host vocabulary,
-the shortened corpus with its resolution records, and formals in the aspect. The
-[latest retrieval audit](draco-dev-journal/sources/claude-2026-10-21-to-22-audit.md) preserves 27
-complete Claude Code exchanges plus the open close request; the
-[Codex audit before it](draco-dev-journal/sources/codex-2026-10-15-to-21-audit.md) preserves 35.
-Historical Status sections remain intact. The code checkpoint is 7b1bfea, committed and pushed by
-Dev on October 22, with the verified 849 tests / 60 suites baseline. The next design point —
-Presence-typed role slots for the present-empty roles the spec defines — was accepted by Dev in the receiving Codex session and is implemented and Dev-verified at 857 tests / 61 suites, with zero failures or aborts.
+Journal coverage reaches chapter 112: role presence, executable empty roles, example membership
+and loading, four conversion-rule repairs, Cartesian and Observable, Provider and Consumer,
+and the handoff correction. The
+[latest retrieval audit](draco-dev-journal/sources/codex-2026-10-22-to-26-audit.md) preserves
+42 completed Codex exchanges plus the open journal-recovery acceptance, and recovers the prior
+Claude handoff close. Historical Status sections remain intact. The current code checkpoint
+is a8b5447, committed and pushed by Dev October 25, verified at 933 tests / 71 suites.
+Named-construction qualification is the next recommendation and remains unaccepted.
 [The resumption prompt](DEVELOPMENT_RESUME_PROMPT.md) and [handoff](DEVELOPMENT_HANDOFF.md) are
 shared by Codex and Claude Code. The following
 paragraphs retain the earlier development chronology. The bridge's historical full run passed
@@ -854,7 +854,7 @@ figure unchanged: Create and Update as verbs over the abstract Latent shape, and
 moved into four Editor-domain rules over an Accepted fact, the actor thinned to a membrane and codec
 eligibility made transitive.
 
-<!-- draco-docs-synced-through: chapter 104 -->
+<!-- draco-docs-synced-through: chapter 112 -->
 
 Role slots now carry `Presence(RuleAspect)` and `Presence(ActorAspect)`. The containing
 record omits an Absent field and writes a Present aspect directly as its existing JSON
@@ -901,3 +901,13 @@ focused actor harness checks cover delivery identity, continued behavior and cal
 World Consumer now carries its existing Position-to-Location branch in Drake/JSON, using
 the Observable helpers and the same rounding to integer metres. Other messages remain
 ignored; lazy provider capture and inert signal behavior are covered by actor checks.
+
+
+The October 26 development checkpoint is in [DEVELOPMENT_HANDOFF.md](DEVELOPMENT_HANDOFF.md),
+with a copyable opening prompt in [DEVELOPMENT_RESUME_PROMPT.md](DEVELOPMENT_RESUME_PROMPT.md)
+for either Codex or Claude Code. Last verified implementation: a8b5447, 933 tests / 71 suites.
+The named-construction qualification repair is a preserved, unaccepted recommendation.
+Journal chapters 105–112 cover the subsequent session, sourced from original Codex messages
+that survive both observed compactions, with the prior Claude closing exchange also recovered.
+The [source audit](draco-dev-journal/sources/codex-2026-10-22-to-26-audit.md) states the frozen
+boundary and exclusions; chapter 112 preserves the journal omission and its correction.

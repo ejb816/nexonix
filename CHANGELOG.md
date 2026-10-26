@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Prepare the October 26 Codex/Claude Code handoff with the verified implementation ledger,
+  current report baselines and direct-test procedure. Preserve the named-construction
+  qualification recommendation as unaccepted. Recover original exchanges across compactions,
+  add journal chapters 105–112 and the prior Claude closing exchange, and update the introduction,
+  source audit and coverage markers, preserving the initial journal omission and correction.
+
 - Carry World Consumer’s Position-to-Location actor branch in Drake/JSON and regenerate
   Scala. Pin conversion and rounding, ignored messages, lazy provider capture and inert signals,
   retaining existing World assembly and transform checks.

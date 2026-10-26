@@ -1275,7 +1275,7 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 104 -->
+<!-- draco-docs-synced-through: chapter 112 -->
 
 **Role presence increment (2026-10-22, Codex; Dev verified 857 / 61).** Dev accepted Presence-typed
 rule/actor slots and their field-level encoding. Absent omits the key; Present writes its
@@ -1408,4 +1408,15 @@ engine limitation recorded in the handoff. Full direct run: 933 tests / 72 suite
 discovery, zero failures or aborts, current main/mods/test resources on loader roots.
 Dev’s first full sbt gate passed 933 / 71, zero failed/canceled/ignored/pending tests
 and zero aborted suites. Current headlines: 36/12 example map, zero losses across 133 types,
-parse scope 110 + 23; other headlines unchanged. Latest Dev-verified baseline is 933 / 71; this increment is uncommitted.
+parse scope 110 + 23; other headlines unchanged. Dev committed and pushed this increment as a8b5447 after the 933 / 71 gate.
+
+
+**October 26 handoff.** All accepted work through a8b5447 is verified and committed by Dev.
+DEVELOPMENT_HANDOFF.md contains the current checkpoint, commit ledger and direct-run procedure.
+The proposed named-construction qualification repair remains unaccepted; preserving it for a
+new Codex or Claude Code session does not authorize implementation. Documentation currency
+is through this handoff; chapters 105–112 now cover the session from original records, including
+the prior Claude closing exchange and the correction of the initially omitted journal work.
+The source audit verifies recoverability across both observed compactions; its frozen boundary
+is Dev’s acceptance of this repair, excluding the repair’s final reply. Private agent memory
+is not a prerequisite.

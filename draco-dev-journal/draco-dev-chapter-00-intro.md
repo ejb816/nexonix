@@ -1,8 +1,15 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across ninety-nine chapters of development sessions between March 22 and October 21, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 112 chapters of development sessions between March 22 and October 26, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
+
+**October 26 integrity checkpoint:** The [retrieval audit](sources/codex-2026-10-22-to-26-audit.md)
+preserves 42 completed Codex exchanges plus the open journal-recovery acceptance, covering
+chapters 105–112. Original records survive both observed compactions. A separate three-record
+Claude extract closes the prior handoff boundary. The journal includes the initial premature
+handoff claim, Dev’s challenge and Codex’s correction; this repair’s final reply lies outside
+the frozen prefix. Bounded recoverability does not establish completeness beyond that prefix.
 
 **September 30 integrity checkpoint:** The [retrieval audit](sources/codex-2026-09-23-to-30-audit.md)
 preserves source times and order for 26 complete written exchanges plus the open audit
@@ -570,3 +577,35 @@ Every remaining main, dreams and service definition is compacted with its record
 ### [Chapter 104 - Formals in the Aspect, and the Close](draco-dev-chapter-104.md)
 
 Header formals become TypeParameter records in DracoAspect and a definition's name is bare (7b1bfea, 849/60), closing #51's open questions. The presence design point — Presence-typed role slots for present-empty rules and actors — is put to Dev, who closes the session with it open.
+
+### [Chapter 105 - Receiving the Handoff and Preserving Empty Roles](draco-dev-chapter-105.md)
+
+Claude’s recovered closing exchange leads into Codex’s receipt. Dev accepts Presence-typed role slots and field-level encoding separately; b04d81d passes 857/61. The empty-role exhibit moves into tests.
+
+### [Chapter 106 - Executing the Four Role Combinations](draco-dev-chapter-106.md)
+
+Dev requests the four-combination table and accepts executable coverage. All projections compile and run through role harnesses; 375c513 passes 861/61. An example-domain audit is proposed.
+
+### [Chapter 107 - Auditing Example Membership and Loading](draco-dev-chapter-107.md)
+
+The accepted audit exposes omitted membership and unresolved external references. Sixteen memberships become reciprocal at 1d69df1 (873/62); explicit HCursor and AerialSink bindings enable all 48 definitions to load at ae0264e (875/63).
+
+### [Chapter 108 - Aerial and Marine Conversion Definitions](draco-dev-chapter-108.md)
+
+Dev accepts one rule at a time. Aerial’s conversion lands at 3608fab (880/64), Marine’s at bd6b7b3 (886/65), preserving defaults, integer arithmetic and callbacks.
+
+### [Chapter 109 - Terrestrial and Ethereal Conversion Definitions](draco-dev-chapter-109.md)
+
+Terrestrial’s conversion lands at 97bf690 (893/66), Ethereal’s at e819663 (900/67). The fourth audited conversion-helper gap closes; Cartesian is proposed next.
+
+### [Chapter 110 - Cartesian and Observable Projection Repairs](draco-dev-chapter-110.md)
+
+Cartesian’s tuple factory and codecs land at 804c8a4 (908/68). Observable’s helpers and nested codecs land at 81154e3 (918/69), after direct-run loading failures expose the required Geodesy caller binding.
+
+### [Chapter 111 - Provider, Consumer and the Constructor Proposal](draco-dev-chapter-111.md)
+
+Provider forwarding lands at 3648806 (925/70), Consumer conversion at a8b5447 (933/71). Named-construction qualification loss becomes the next unaccepted recommendation.
+
+### [Chapter 112 - The Handoff and the Missing Journal](draco-dev-chapter-112.md)
+
+Dev requests a full handoff, notices the unchanged journal, and challenges the deferral. Codex acknowledges the omission; Dev accepts original-message recovery in this session. The original messages are recoverable across both logged compactions.

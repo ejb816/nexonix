@@ -1,0 +1,30 @@
+Preserve chapters 105–112 and prepare the shared handoff after Consumer
+
+Dev requested preserving the next recommendation and preparing a full handoff for a new
+Codex or Claude Code session. Last code commit remains a8b5447, verified by Dev at 933 tests /
+71 suites with all expected headlines. Dev's pasted output confirms commit and push.
+
+Replace the accumulated handoff chronology with a current checkpoint, twelve-commit ledger,
+report baselines, remaining example inventory, explicit permissions and direct verification
+procedure independent of temporary scripts. Refresh the copyable resume prompt and correct
+the stale uncommitted status in DRACO.md. Link the handoff from README and update CHANGELOG.
+
+Preserve named-construction qualification as unaccepted; no generator repair is authorized.
+Keep Consumer's positional call, activation and .dcon deferrals intact. No session launched.
+Dev challenged the initial omission of journal work and accepted recovery in this session.
+Preserve 85 original Codex message records (43 user, 42 final replies): 42 completed exchanges
+plus the open journal-recovery acceptance. Recover the previous Claude closing exchange in
+three additional records. Verify source lines, UTC timestamps, hashes, preceding chapter
+quotations and both observed compaction boundaries. No replacement summary supplies dialogue.
+
+Write chapters 105–112 with original assertive prompts and final replies, delegated-result
+notes and record-backed Status. Preserve Observable’s failed direct run and correction,
+Consumer’s positional-call decision, and the initial premature handoff claim. Update the
+introduction and advance reviewed sync markers to 112. The current repair’s final reply is
+outside the frozen source boundary; bounded recoverability is not global completeness.
+
+Validation: read-only git/status/log and relevant code/report inspection; shared symlinks and
+chapter/index/link and whitespace checks. Only documentation, bounded JSONL dialogue extracts
+and this record change. No runtime/test edits, sbt, commit,
+push, new issue or private-memory modification by Codex. Existing code gate remains valid;
+no new implementation gate claimed for this documentation-only handoff.
