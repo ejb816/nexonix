@@ -7,21 +7,22 @@ DRACO.md), DEVELOPMENT_HANDOFF.md and the shared documentation skill at
 sources/codex-2026-10-22-to-26-audit.md for the Codex session's decisions and coverage.
 Inspect git status/log; preserve uncommitted documentation. No private agent memory is required.
 
-Last Dev-verified increment: the named-construction head repair (record
-git-record-2026-10-26-1449), gated by me at 936 tests / 72 suites on October 26, zero failures
-or aborts, every report-only headline unchanged (example map 36 match / 12 differ, zero surface
-losses across 133 types, parse scope 110 draco + 23 mods, file-only pending mods actors 0).
-Check `git log -1` for its commit; the code commit before it is a8b5447 (Consumer), then the
-documentation handoff 7495539. All accepted implementation work is done.
+Last Dev-verified increment: a dyn's result intercepted as a named construction, with a bare
+slot type resolving against the definition in effect and Observable authoring `geocentric:`
+(record git-record-2026-10-26-1534), gated by me at 937 tests / 72 suites on October 26, zero
+failures or aborts, every report-only headline unchanged (example map 36 match / 12 differ, zero
+surface losses across 133 types, parse scope 110 draco + 23 mods, file-only pending mods actors 0).
+Check `git log -1` for its commit; before it e241378 (the named-construction head, same day),
+a8b5447 (Consumer) and the documentation handoff 7495539. All accepted implementation work is done.
 
 Chapter 113, covering the October 26 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-PRESERVED BUT NOT ACCEPTED, two observations from the repair: a dyn-body result renders its
-named arguments through expression with no `_name` mapping (world/Observable authors
-`_geocentric:` by hand, a Scala spelling in a drake source), and constructionInitializer keys
-its factory lookup on the slot type rather than the applied head. Bring ONE as a recommendation
-for my acceptance or correction before building.
+PRESERVED BUT NOT ACCEPTED, one observation from the named-construction work:
+constructionInitializer keys its factory lookup on the slot type rather than the applied head,
+so a slot typed by a parent constructing a child falls back to the unmapped rendering; the
+corpus has no such site. Bring it, or the next related point, as one recommendation for my
+acceptance or correction before building.
 
 Keep to one design point per reply, one recommendation with accept-or-correct, and build only
 what I accept. Do not run sbt, commit or push; hand over path-scoped commands and wait for my

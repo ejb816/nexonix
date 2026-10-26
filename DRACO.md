@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**937 tests / 72 suites**, verified by Dev on 2026-10-26 for the dyn result as a named construction
+(record `git-record-2026-10-26-1534`): one added test, zero failed/canceled/ignored/pending tests,
+every report-only headline unchanged, including pending mods actors 0. Observable's JSON moved one
+leaf; no committed Scala regenerated. First full Dev gate green. Before it:
 **936 tests / 72 suites**, verified by Dev on 2026-10-26 for the named-construction head
-(record `git-record-2026-10-26-1449`): three new focused tests in one added suite, zero
+(record `git-record-2026-10-26-1449`, committed as e241378): three new focused tests in one added suite, zero
 failed/canceled/ignored/pending tests, every report-only headline unchanged, including pending mods
 actors 0. No committed Scala regenerated. First full Dev gate green. Before it:
 **933 tests / 71 suites**, verified by Dev on 2026-10-25 for the Consumer repair
@@ -1446,4 +1450,25 @@ authors `_geocentric` by hand, a Scala spelling in a drake source). `NamedConstr
 the 72nd suite: the probe constructs Location inside a global dyn, the generated file imports only
 `draco._` and `domains._`, both generations are compiled with the runtime compiler and run. Full
 direct run 936 / 73 including discovery, every headline unchanged; Dev's first full gate 936, zero
-failed/canceled/ignored/pending, pending mods actors 0.
+failed/canceled/ignored/pending, pending mods actors 0. Committed and pushed by Dev as e241378.
+
+
+**A dyn's result is intercepted as a named construction (2026-10-26, Claude Code; Dev verified 937 / 72).**
+Dev accepted "route a dyn's result (body `fix value` and leaf) through constructionInitializer with
+the existing expression fallback, re-author Observable's `_geocentric:` as `geocentric:` with its JSON
+re-canonicalized and Scala byte-identical, and add one NamedConstructionTest case." A dyn's RESULT had
+rendered through the plain expression, so a named argument reached Scala without the factory's `_`
+prefix and Observable's `fromGeodetic` authored `_geocentric:` by hand. MEASURED first: 86 `fix value`
+results, one a named construction, four Text-typed PATHS (`rendered.value` and the like) that the full
+initializer's String-slot rule would have quoted — so the route is `dynResult`, the construction
+interception with `expression` as fallback, at all five result sites, never `defaultInitializer`.
+ONE ENABLING CHANGE, flagged with the gate: the interception looked up only a DOTTED slot type, and
+Observable's result is `fix value Observable`, so the generator now keeps `definitionInEffect`, a lazy
+thread-local set while a definition is spelled (`generateSpelled` → `spelledSource`), and a bare slot
+type resolves against that definition's package, as `namesCodecless` resolves a bare parameter type;
+unscoped and scoped generation agree, canonical spelling having qualified such names already. Only
+Observable.json moved (one leaf); Observable, Input, Output and Consumer regenerate byte-identical.
+NamedConstructionTest +1 (body and leaf result, compiled and run), its own-package case authoring the
+slot type bare. Preserved, unaccepted: the interception keys its factory lookup on the slot type, not
+the applied head. Direct run 937 / 73 including discovery; Dev's first full gate 937, every headline
+unchanged, pending mods actors 0.

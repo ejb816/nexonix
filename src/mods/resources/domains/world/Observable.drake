@@ -13,7 +13,7 @@ type Observable from World
         now par longitude Double
         now par heightMetres Double
       body
-        fix value Observable Observable(_geocentric:Cartesian(Geodesy.geodeticToEcef(latitude, longitude, heightMetres)))
+        fix value Observable Observable(geocentric:Cartesian(Geodesy.geodeticToEcef(latitude, longitude, heightMetres)))
     ]
     dyn toGeodetic (Double, Double, Double) [
       parameters

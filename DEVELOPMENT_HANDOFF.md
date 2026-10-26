@@ -12,13 +12,14 @@ Read DRACO.md (AGENTS.md and CLAUDE.md are symlinks), this file, and
 `.draco/skills/update-draco-docs/SKILL.md`. Inspect status and log before editing.
 Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is not required.
 
-- Branch: main. Last code commit before this increment: **a8b5447**, Consumer repair, then
-  **7495539**, the documentation-only handoff after it. The named-construction head repair
-  (record `git-record-2026-10-26-1449`) is Dev-gated and awaits Dev's commit and push; inspect
-  `git log -1` to learn whether it landed and under which hash.
-- Latest Dev-verified gate: **936 tests / 72 suites**, October 26, on the named-construction
-  tree. Zero failed/canceled/ignored/pending tests, every headline unchanged, pending mods
-  actors 0. First Dev gate green.
+- Branch: main. Code commits this session: **e241378**, the named-construction head repair
+  (record `git-record-2026-10-26-1449`), committed and pushed by Dev; then the dyn-result
+  increment (record `git-record-2026-10-26-1534`), Dev-gated and awaiting Dev's commit and push —
+  inspect `git log -1` to learn whether it landed and under which hash. Before them a8b5447
+  (Consumer) and 7495539 (the documentation handoff).
+- Latest Dev-verified gate: **937 tests / 72 suites**, October 26, on the dyn-result tree.
+  Zero failed/canceled/ignored/pending tests, every headline unchanged, pending mods actors 0.
+  First Dev gate green.
 - All accepted implementation work is complete and verified; the latest increment's commit
   is Dev's step.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
@@ -38,19 +39,28 @@ pins an own-package bare head staying bare. Old and new engine generate byte-ide
 the three named-argument sites (aerial/Input, terrestrial/Output, world/Observable) and Consumer;
 no committed Scala regenerated.
 
+## Dyn result as a named construction (accepted and built, October 26)
+
+Dev accepted: "route a dyn's result (body `fix value` and leaf) through constructionInitializer
+with the existing expression fallback, re-author Observable's `_geocentric:` as `geocentric:` with
+its JSON re-canonicalized and Scala byte-identical, and add one NamedConstructionTest case."
+`dynResult` renders every dyn result through the construction interception with `expression` as
+fallback — never `defaultInitializer`, whose String-slot rule would quote the four Text-typed path
+results in the corpus. One enabling change, flagged to Dev with the gate: `loadDracoType` looked up
+only a dotted slot type, so the generator now keeps `definitionInEffect` (a lazy thread-local set
+while a definition is spelled) and resolves a bare slot type against that definition's package, as
+the codec judge does. Observable's JSON moved one leaf; Observable, Input, Output and Consumer
+regenerate byte-identical. NamedConstructionTest has four cases.
+
 ## Next design point — acceptance required
 
-Two adjacent observations were surfaced during the repair, neither recommended nor accepted:
+One observation remains from the named-construction work, neither recommended nor accepted:
+`constructionInitializer` keys its factory lookup on the SLOT type, not the applied head, so a
+slot typed by a parent constructing a child (`fix t Terrestrial Location(latitude:…)`) falls
+back to the unmapped rendering. The corpus has no such site today.
 
-- A dyn-body RESULT (`fix value T T(name:v)`) renders through `expression`, not the construction
-  initializer, so its named arguments are never mapped to the factory's `_name` convention.
-  world/Observable's `fromGeodetic` authors `_geocentric:` by hand — a Scala spelling inside a
-  drake source. Candidate next point: route the dyn-body result through the same initializer.
-- `constructionInitializer` keys its factory lookup on the SLOT type, not the applied head, so a
-  slot typed by a parent constructing a child falls back to the unmapped rendering.
-
-Receiving agent: bring ONE of these as a recommendation with accept-or-correct; build only
-what Dev accepts. Their presence here is not acceptance.
+Receiving agent: bring this, or whatever the next related point is, as one recommendation with
+accept-or-correct; build only what Dev accepts. Its presence here is not acceptance.
 
 ## Operating boundaries
 
@@ -72,14 +82,15 @@ what Dev accepts. Their presence here is not acceptance.
 
 ## Current verification evidence
 
-Dev's October 26 full sbt output for the named-construction tree was pasted into the Claude
-Code session: 936 tests, zero failed/canceled/ignored/pending, every headline below matching,
-file-only pending mods actors 0. The preceding direct run passed **936 tests / 73 suites
-including Runner discovery** (sbt reports 72): all main/mods/domain and test sources compiled
-into fresh class roots under target/scala-2.13 with current main/mods/test resources overlaid
-and the hidden root anchors removed; `git status` afterwards showed only the two intended changes.
+Dev's October 26 full sbt outputs for both increments were pasted into the Claude Code session:
+936 then 937 tests, zero failed/canceled/ignored/pending, every headline below matching, file-only
+pending mods actors 0. Each was preceded by a direct run of **every discovered suite** (936 / 73
+then 937 / 73 including Runner discovery; sbt reports 72): all main/mods/domain and test sources
+compiled into fresh class roots under target/scala-2.13 (`nc-classes`, `nc-test-classes`) with
+current main/mods/test resources overlaid and the hidden root anchors removed; `git status`
+afterwards showed only the intended changes.
 
-| Headline | Verified at the named-construction tree (and at a8b5447) |
+| Headline | Verified at the dyn-result tree (and at e241378, a8b5447) |
 |---|---|
 | DomainAspect | 110 complete, 1 parameterized included, 0 skipped |
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
@@ -117,7 +128,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 3648806 | Provider actor role and forwarding | 925 / 70 | 2026-10-25-1543 |
 | a8b5447 | Consumer actor role and Position-to-Location branch | 933 / 71 | 2026-10-25-1557 |
 | 7495539 | Documentation handoff: chapters 105–112, audit, handoff files | — | 2026-10-26-1253 |
-| pending | Named construction spells its head as authored; NamedConstructionTest (Claude Code) | 936 / 72 | 2026-10-26-1449 |
+| e241378 | Named construction spells its head as authored; NamedConstructionTest (Claude Code) | 936 / 72 | 2026-10-26-1449 |
+| pending | Dyn result intercepted as a named construction; bare slot type resolves; Observable `geocentric:` (Claude Code) | 937 / 72 | 2026-10-26-1534 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
@@ -150,7 +162,9 @@ EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a curren
   the named-construction head repair of October 26 is the one generator change since.
 - A named-argument construction's head is spelled as authored or as the scope in effect spells
   it, exactly as a positional call is. Only NAMED-argument applications are intercepted, and only
-  when the slot type loads a definition with a factory; everything else renders as before.
+  when the slot type — dotted, or bare and resolved against the definition in effect's package —
+  loads a definition with a factory; everything else renders as before. A dyn's result (body
+  `fix value` and leaf) is intercepted the same way, with the plain expression as its fallback.
 - Scoped canonical generation and TypeName formal/actual separation remain as documented in
   DRACO.md and chapters 100–104. Rebuilds must preserve uses and typeParameters. Companions
   load unscoped; recorded resolution is applied during generation. Do not sweep examples by

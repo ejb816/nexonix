@@ -1,0 +1,42 @@
+Intercept a dyn's result as a named construction, and resolve a bare slot type
+
+Dev accepted the next related point after e241378, in these words: "route a dyn's result
+(body `fix value` and leaf) through constructionInitializer with the existing expression
+fallback, re-author Observable's `_geocentric:` as `geocentric:` with its JSON re-canonicalized
+and Scala byte-identical, and add one NamedConstructionTest case." Until now a dyn's RESULT
+rendered through the plain expression, so a named argument reached Scala without the factory's
+`_` prefix, and world/Observable's fromGeodetic authored `_geocentric:` by hand — a Scala
+spelling inside a drake source. Measured before building: 86 `fix value` results in the corpus,
+one of them a named construction (Observable's); six Text-typed with non-literal values, four of
+those plain paths (`rendered.value`, `line.value`, `_compound.value`), which rules out routing a
+result through the full initializer, whose String-slot rule would quote them. So the route is
+the narrow one: a new `dynResult` helper, `constructionInitializer(valueType, value)` with
+`expression(value)` as the fallback, at all five result sites — resultOf's body `value`, the
+leaf dyn in typeBody, and the two methodBody callers.
+
+ONE ENABLING CHANGE beyond the accepted words, flagged to Dev with the gate: the first probe
+left Observable unmapped, because loadDracoType looked up only a DOTTED slot type and the result
+is `fix value Observable` — Input had worked only by spelling its slot type qualified. The
+generator now keeps `definitionInEffect`, a lazy thread-local set by generateSpelled while a
+definition is spelled (the body moved to `spelledSource`), and a bare slot type resolves against
+that definition's package, exactly as namesCodecless resolves a bare parameter type. Without it
+Observable's Scala could not stay byte-identical with `geocentric:` authored; with it, unscoped
+and scoped generation agree, since canonical spelling already qualified such names under a
+scope. No definition in effect leaves a bare name unresolved as before.
+
+Observable.drake authors `geocentric:`; its JSON was re-canonicalized with the compiled parser and
+differs in that one leaf. Observable.scala regenerates byte-identical, as do Input, Output and
+Consumer, so no committed Scala moves. NamedConstructionTest gains the accepted case — a probe
+whose named construction is a body result and a leaf result, both generated, compiled and run —
+and its own-package case now authors the slot type bare, pinning the resolution above.
+The remaining observation stays preserved and unaccepted: the interception keys its factory
+lookup on the slot type rather than the applied head.
+
+All main/mods/domain and test sources compiled directly into fresh class roots with current
+main/mods/test resources overlaid and the hidden anchors removed. Every discovered suite passed:
+937 tests / 73 suites including discovery, zero failures or aborts; example map 36/12, zero
+losses across 133 types, parse scope 110 + 23, GenDrake 108/108, both aspect probes 110 sections,
+all other headlines unchanged, pending mods actors 0 in the file-only log. Dev's first full sbt
+gate passed 937 tests on October 26, zero failed/canceled/ignored/pending, every headline
+matching and pending mods actors 0 (72 suites, unchanged). No sbt, commit or push executed by
+Claude Code.

@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- Intercept a dyn's result, body `fix value` and leaf, as a named construction, so its arguments
+  take the factory's `_` names, and resolve a bare slot type against the definition being
+  generated. World Observable authors `geocentric:` without the Scala underscore; its Scala is
+  byte-identical. NamedConstructionTest gains the dyn-result case.
+
 - Spell a named-argument construction's head as the author or the scope in effect spelled it,
   as the positional path already did, instead of the slot type's last segment, which left a
   cross-package construction bare and unresolved in the generated file. Add NamedConstructionTest,
