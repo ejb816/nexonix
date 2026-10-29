@@ -13,11 +13,12 @@ Read DRACO.md (AGENTS.md and CLAUDE.md are symlinks), this file, and
 Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is not required.
 
 - Branch: main. Code commits this session: **e241378**, the named-construction head repair
-  (record `git-record-2026-10-26-1449`), committed and pushed by Dev; then the dyn-result
-  increment (record `git-record-2026-10-26-1534`), Dev-gated and awaiting Dev's commit and push —
-  inspect `git log -1` to learn whether it landed and under which hash. Before them a8b5447
-  (Consumer) and 7495539 (the documentation handoff).
-- Latest Dev-verified gate: **937 tests / 72 suites**, October 26, on the dyn-result tree.
+  (record `git-record-2026-10-26-1449`); **9779e39**, the dyn-result increment (record
+  `git-record-2026-10-26-1534`), both committed and pushed by Dev; then the head-keyed lookup
+  (record `git-record-2026-10-29-0755`), Dev-gated and awaiting Dev's commit and push — inspect
+  `git log -1` to learn whether it landed and under which hash. Before them a8b5447 (Consumer)
+  and 7495539 (the documentation handoff).
+- Latest Dev-verified gate: **938 tests / 72 suites**, October 29, on the head-keyed tree.
   Zero failed/canceled/ignored/pending tests, every headline unchanged, pending mods actors 0.
   First Dev gate green.
 - All accepted implementation work is complete and verified; the latest increment's commit
@@ -52,15 +53,25 @@ while a definition is spelled) and resolves a bare slot type against that defini
 the codec judge does. Observable's JSON moved one leaf; Observable, Input, Output and Consumer
 regenerate byte-identical. NamedConstructionTest has four cases.
 
+## The head decides the construction (accepted and built, October 27)
+
+Dev accepted: "key constructionInitializer's factory lookup on the applied head (dotted as
+spelled, bare against the definition in effect) instead of the slot type, and add one
+NamedConstructionTest case with a parent-typed slot, compiled and run." The lookup asks about
+the head leaf; the slot type plays no part; `constructionInitializer` and `dynResult` take the
+value alone. Nil corpus impact by construction. NamedConstructionTest has five cases. This closes
+the three observations of October 26; nothing from the named-construction thread is preserved.
+
 ## Next design point — acceptance required
 
-One observation remains from the named-construction work, neither recommended nor accepted:
-`constructionInitializer` keys its factory lookup on the SLOT type, not the applied head, so a
-slot typed by a parent constructing a child (`fix t Terrestrial Location(latitude:…)`) falls
-back to the unmapped rendering. The corpus has no such site today.
+No recommendation is preserved. The remaining inventory for a next point is the twelve example
+differences listed below (Output's authored projection still lacking its handwritten message
+binder/dispatch is the one known to be more than a spelling difference), the deferred activation
+recommendation, and .dcon migration — none of them accepted. Inventory is context, not
+authorization.
 
-Receiving agent: bring this, or whatever the next related point is, as one recommendation with
-accept-or-correct; build only what Dev accepts. Its presence here is not acceptance.
+Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
+accepts.
 
 ## Operating boundaries
 
@@ -82,15 +93,15 @@ accept-or-correct; build only what Dev accepts. Its presence here is not accepta
 
 ## Current verification evidence
 
-Dev's October 26 full sbt outputs for both increments were pasted into the Claude Code session:
-936 then 937 tests, zero failed/canceled/ignored/pending, every headline below matching, file-only
-pending mods actors 0. Each was preceded by a direct run of **every discovered suite** (936 / 73
-then 937 / 73 including Runner discovery; sbt reports 72): all main/mods/domain and test sources
-compiled into fresh class roots under target/scala-2.13 (`nc-classes`, `nc-test-classes`) with
-current main/mods/test resources overlaid and the hidden root anchors removed; `git status`
-afterwards showed only the intended changes.
+Dev's full sbt outputs for the three increments were pasted into the Claude Code session
+(October 26, 26 and 29): 936, 937 then 938 tests, zero failed/canceled/ignored/pending, every
+headline below matching, file-only pending mods actors 0. Each was preceded by a direct run of
+**every discovered suite** (936, 937, 938 / 73 including Runner discovery; sbt reports 72): all
+main/mods/domain and test sources compiled into fresh class roots under target/scala-2.13
+(`nc-classes`, `nc-test-classes`) with current main/mods/test resources overlaid and the hidden
+root anchors removed; `git status` afterwards showed only the intended changes.
 
-| Headline | Verified at the dyn-result tree (and at e241378, a8b5447) |
+| Headline | Verified at the head-keyed tree (and at 9779e39, e241378, a8b5447) |
 |---|---|
 | DomainAspect | 110 complete, 1 parameterized included, 0 skipped |
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
@@ -129,7 +140,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | a8b5447 | Consumer actor role and Position-to-Location branch | 933 / 71 | 2026-10-25-1557 |
 | 7495539 | Documentation handoff: chapters 105–112, audit, handoff files | — | 2026-10-26-1253 |
 | e241378 | Named construction spells its head as authored; NamedConstructionTest (Claude Code) | 936 / 72 | 2026-10-26-1449 |
-| pending | Dyn result intercepted as a named construction; bare slot type resolves; Observable `geocentric:` (Claude Code) | 937 / 72 | 2026-10-26-1534 |
+| 9779e39 | Dyn result intercepted as a named construction; bare slot type resolves; Observable `geocentric:` (Claude Code) | 937 / 72 | 2026-10-26-1534 |
+| pending | Construction factory lookup keyed on the applied head; parent-typed slot case (Claude Code) | 938 / 72 | 2026-10-29-0755 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
@@ -162,9 +174,10 @@ EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a curren
   the named-construction head repair of October 26 is the one generator change since.
 - A named-argument construction's head is spelled as authored or as the scope in effect spells
   it, exactly as a positional call is. Only NAMED-argument applications are intercepted, and only
-  when the slot type — dotted, or bare and resolved against the definition in effect's package —
-  loads a definition with a factory; everything else renders as before. A dyn's result (body
-  `fix value` and leaf) is intercepted the same way, with the plain expression as its fallback.
+  when the applied HEAD — a name leaf, dotted, or bare and resolved against the definition in
+  effect's package — loads a definition with a factory; the slot type plays no part, and
+  everything else renders as before. A dyn's result (body `fix value` and leaf) is intercepted
+  the same way, with the plain expression as its fallback.
 - Scoped canonical generation and TypeName formal/actual separation remain as documented in
   DRACO.md and chapters 100–104. Rebuilds must preserve uses and typeParameters. Companions
   load unscoped; recorded resolution is applied during generation. Do not sweep examples by

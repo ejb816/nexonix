@@ -106,4 +106,26 @@ class NamedConstructionTest extends AnyFunSuite {
     noMaskingImport(source)
     constructed(compileAndMake(source, "dyn result", Seq("make", "leaf")))
   }
+
+  // The type CONSTRUCTED is the applied head, whatever the slot is typed by (2026-10-27). Until
+  // then the factory lookup keyed on the slot type: a slot typed by the parent domain Terrestrial,
+  // which has no factory, made the engine treat Location's named construction as no construction
+  // at all and render `Location(latitude = …)`, which Location's factory refuses.
+  test("parent-typed slot: the head decides the construction, and the result is the child") {
+    val authored =
+      """type Probe
+        |  globals
+        |    dyn make domains.terrestrial.Terrestrial domains.terrestrial.Location(latitude:1.5, longitude:-2.5, elevationMetres:7)
+        |domain domains world World
+        |""".stripMargin
+    val source = DracoGenerator.generate(Drake.parse(authored))
+    assert(source.contains(s"def make: domains.terrestrial.Terrestrial = domains.terrestrial.$call"), source)
+    noMaskingImport(source)
+    val compiled = DracoGenerator.compile(source, "Probe.scala")
+    assert(compiled.isRight, s"parent-typed slot generation did not compile:\n${compiled.left.getOrElse(Seq.empty).mkString("\n")}\n$source")
+    val companion = DracoGenerator.loadClass(compiled.toOption.get, "domains.world.Probe$")
+    val made = companion.getMethod("make").invoke(companion.getField("MODULE$").get(null))
+    assert(made.isInstanceOf[domains.terrestrial.Location], s"the result is not a Location: ${made.getClass}")
+    constructed(Seq(made.asInstanceOf[domains.terrestrial.Location]))
+  }
 }

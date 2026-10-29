@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**938 tests / 72 suites**, verified by Dev on 2026-10-29 for the head-keyed construction lookup
+(record `git-record-2026-10-29-0755`): one added test, zero failed/canceled/ignored/pending tests,
+every report-only headline unchanged, including pending mods actors 0. No definition or committed
+Scala changed. First full Dev gate green. Before it:
 **937 tests / 72 suites**, verified by Dev on 2026-10-26 for the dyn result as a named construction
-(record `git-record-2026-10-26-1534`): one added test, zero failed/canceled/ignored/pending tests,
+(record `git-record-2026-10-26-1534`, committed as 9779e39): one added test, zero failed/canceled/ignored/pending tests,
 every report-only headline unchanged, including pending mods actors 0. Observable's JSON moved one
 leaf; no committed Scala regenerated. First full Dev gate green. Before it:
 **936 tests / 72 suites**, verified by Dev on 2026-10-26 for the named-construction head
@@ -1469,6 +1473,21 @@ type resolves against that definition's package, as `namesCodecless` resolves a 
 unscoped and scoped generation agree, canonical spelling having qualified such names already. Only
 Observable.json moved (one leaf); Observable, Input, Output and Consumer regenerate byte-identical.
 NamedConstructionTest +1 (body and leaf result, compiled and run), its own-package case authoring the
-slot type bare. Preserved, unaccepted: the interception keys its factory lookup on the slot type, not
+slot type bare. Preserved then, built next: the interception keyed its factory lookup on the slot type, not
 the applied head. Direct run 937 / 73 including discovery; Dev's first full gate 937, every headline
-unchanged, pending mods actors 0.
+unchanged, pending mods actors 0. Committed and pushed by Dev as 9779e39.
+
+
+**The head decides the construction (2026-10-27, Claude Code; Dev verified 938 / 72 on 2026-10-29).** Dev
+accepted "key constructionInitializer's factory lookup on the applied head (dotted as spelled, bare against
+the definition in effect) instead of the slot type, and add one NamedConstructionTest case with a parent-typed
+slot, compiled and run." The interception had loaded the SLOT type to ask whether a named application was a
+factory call; a probe `dyn make domains.terrestrial.Terrestrial domains.terrestrial.Location(latitude:…)`
+rendered `Location(latitude = 1.5, …)` unmapped, Terrestrial being a domain with no factory. The lookup now
+asks about the HEAD leaf — dotted as spelled, bare against the definition in effect, a non-name head no
+construction — and `constructionInitializer`, `dynResult` take the value alone; the slot type plays no part,
+as it never did on the positional path. Corpus impact nil by construction: at the three named sites and in
+Consumer the head names what the slot named, all four byte-identical. NamedConstructionTest +1 (the
+parent-typed slot, compiled and run, the result a Location). This closes the three observations of October 26;
+nothing from the named-construction thread remains preserved. Direct run 938 / 73 including discovery on
+2026-10-27; Dev's first full gate 938 on 2026-10-29, every headline unchanged, pending mods actors 0.

@@ -1,0 +1,36 @@
+Key a named construction's factory lookup on the applied head, not the slot type
+
+Dev accepted the last observation from the named-construction work, in these words: "key
+constructionInitializer's factory lookup on the applied head (dotted as spelled, bare against
+the definition in effect) instead of the slot type, and add one NamedConstructionTest case with
+a parent-typed slot, compiled and run." The interception decided whether a named application
+was a factory call by loading the SLOT type and checking for a factory; the thing constructed is
+the HEAD. The two coincide at every corpus site, which is why nothing had shown it. A probe
+showed the gap: `dyn make domains.terrestrial.Terrestrial domains.terrestrial.Location(latitude:…)`
+rendered `Location(latitude = 1.5, …)` — Terrestrial is a domain with no factory, so the lookup
+said "not a construction" and the arguments reached Scala unmapped, which Location's `_latitude`
+factory refuses. Typing a slot by a parent and constructing a child is ordinary authoring.
+
+constructionInitializer now takes only the value and asks loadDracoType about the head leaf —
+dotted as spelled, or bare and resolved against the definition in effect, exactly as the slot
+type was resolved since 9779e39; a head that is not a name leaf is no construction. The slot
+type plays no part in the decision, as it never did on the positional path; initializer and
+dynResult pass the value alone. Corpus impact is nil by construction: at the three named sites
+(aerial/Input, terrestrial/Output, world/Observable) and in Consumer the head names the
+definition the slot named, and all four regenerate byte-identical — Input and Output to the
+pre-repair engine's output, Observable and Consumer to their committed Scala.
+
+NamedConstructionTest gains the accepted fifth case: a domains.world probe whose slot is the
+parent domain Terrestrial and whose head constructs Location with named arguments, asserted to
+map `_latitude`, `_longitude`, `_elevationMetres`, compiled with the runtime compiler, run, and
+its result checked to be a Location carrying the authored values. This closes the three
+observations raised on October 26; none remains preserved from the named-construction thread.
+
+All main/mods/domain and test sources compiled directly on 2026-10-27 into fresh class roots
+with current main/mods/test resources overlaid and the hidden anchors removed. Every discovered
+suite passed: 938 tests / 73 suites including discovery, zero failures or aborts; example map
+36/12, zero losses across 133 types, parse scope 110 + 23, GenDrake 108/108, both aspect probes
+110 sections, all other headlines unchanged, pending mods actors 0 in the file-only log; the tree
+held only the two intended files. Dev's first full sbt gate passed 938 tests on 2026-10-29, zero
+failed/canceled/ignored/pending, every headline matching and pending mods actors 0 (72 suites,
+unchanged). No sbt, commit or push executed by Claude Code.

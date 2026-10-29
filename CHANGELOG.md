@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- Key a named construction's factory lookup on the applied head instead of the slot type, so a
+  slot typed by a parent constructing a child maps its arguments to the factory's `_` names.
+  NamedConstructionTest gains a parent-typed-slot case compiled and run; no committed Scala or
+  definition changes.
+
 - Intercept a dyn's result, body `fix value` and leaf, as a named construction, so its arguments
   take the factory's `_` names, and resolve a bare slot type against the definition being
   generated. World Observable authors `geocentric:` without the Scala underscore; its Scala is

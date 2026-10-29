@@ -240,13 +240,14 @@ object DracoGenerator extends App {
     }
   }
 
-  /** Load the draco TypeDefinition named by a plain `valueType` — dotted
+  /** Load the draco TypeDefinition a plain `name` refers to — dotted
     * (`domains.aerial.Position`), or bare and resolved against the definition in effect's own
     * package (`Observable` inside domains.world, 2026-10-26) — or None when it names no such
     * resource, carries type parameters / arrows (not a bare constructible type), or is bare
-    * with no definition in effect. */
-  private def loadDracoType (valueType: String) : Option[TypeDefinition] = {
-    val s = valueType.trim
+    * with no definition in effect. Since 2026-10-27 the name asked about is a construction's
+    * applied HEAD; it was the slot type before. */
+  private def loadDracoType (name: String) : Option[TypeDefinition] = {
+    val s = name.trim
     if (s.isEmpty || s.exists("[(<".contains(_))) None
     else {
       val parts = s.split('.').toVector
@@ -261,21 +262,24 @@ object DracoGenerator extends App {
     }
   }
 
-  /** When `value` constructs the declared draco type `valueType` with NAMED
-    * arguments, render the call-site Scala. A type with a factory renders a
-    * factory-apply `T(_p = v, …)` — `T` the applied HEAD as spelled, the `_` prefix
-    * matching the factory the Generator emits for that type (`def apply(_p: … )`). A factory-less type is an
-    * anonymous `new T { override … }`; that path (inherited-member resolution) is
-    * not yet handled, so it returns None and falls back to the plain projection.
-    * Only NAMED-arg constructions are intercepted, so positional application trees
-    * render exactly as before. */
-  private def constructionInitializer (valueType: String, value: Json) : Option[String] = {
+  /** When `value` constructs a draco type with NAMED arguments, render the call-site
+    * Scala. The type constructed is the applied HEAD — a name leaf, dotted as spelled or
+    * bare against the definition in effect (2026-10-27; until then the lookup keyed on the
+    * SLOT type, so a slot typed by a parent constructing a child — `dyn make Terrestrial
+    * Location(latitude:…)` — fell back to the unmapped rendering). A type with a factory
+    * renders a factory-apply `T(_p = v, …)` — `T` the head as spelled, the `_` prefix
+    * matching the factory the Generator emits for that type (`def apply(_p: … )`). A
+    * factory-less type is an anonymous `new T { override … }`; that path (inherited-member
+    * resolution) is not yet handled, so it returns None and falls back to the plain
+    * projection. Only NAMED-arg constructions are intercepted, so positional application
+    * trees render exactly as before. */
+  private def constructionInitializer (value: Json) : Option[String] = {
     if (!Expression.isApplication(value)) None
     else {
       val operands = Expression.operands(value)
       val args = operands.tail
       if (!args.exists(a => Expression.namedArgument(a).isDefined)) None
-      else loadDracoType(valueType).filter(_.dracoAspect.factory.valueType.text.nonEmpty).map { _ =>
+      else operands.head.asString.flatMap(loadDracoType).filter(_.dracoAspect.factory.valueType.text.nonEmpty).map { _ =>
         val rendered = args.map(a => Expression.namedArgument(a) match {
           case Some((name, v)) => s"_$name = ${expression(v)}"
           case None            => expression(a)
@@ -295,15 +299,15 @@ object DracoGenerator extends App {
     * stored in a String-typed field). String values already carry their own
     * quoting and pass through expression() verbatim. */
   private def initializer (valueType: String, value: Json) : String =
-    constructionInitializer(valueType, value).getOrElse(defaultInitializer(valueType, value))
+    constructionInitializer(value).getOrElse(defaultInitializer(valueType, value))
 
-  /** Render a dyn's RESULT — a leaf dyn's own value, or the `value` element of a block body —
-    * for the method's declared result type. A named construction is intercepted exactly as a
-    * `fix` is (2026-10-26; until then a result bypassed it, and world/Observable had to author
-    * `_geocentric:` by hand); everything else renders as the expression it is, never through
-    * `defaultInitializer`, whose String-slot rule would quote a result that is a path. */
-  private def dynResult (valueType: String, value: Json) : String =
-    constructionInitializer(valueType, value).getOrElse(expression(value))
+  /** Render a dyn's RESULT — a leaf dyn's own value, or the `value` element of a block body.
+    * A named construction is intercepted exactly as a `fix` is (2026-10-26; until then a result
+    * bypassed it, and world/Observable had to author `_geocentric:` by hand); everything else
+    * renders as the expression it is, never through `defaultInitializer`, whose String-slot
+    * rule would quote a result that is a path. */
+  private def dynResult (value: Json) : String =
+    constructionInitializer(value).getOrElse(expression(value))
 
   /** The ScalaTarget spelling of the DECLARED NAMES a value may apply (drake.dlt
     * SYMBOLS) — the primitives a substitution string needs beyond `++`, applied by
@@ -742,7 +746,7 @@ object DracoGenerator extends App {
     * when the body carries none, which is a Unit body. */
   private def resultOf (body: Seq[BodyElement]) : (Seq[BodyElement], String) = {
     val (results, statements) = body.partition { case f: Fixed => f.name == "value"; case _ => false }
-    (statements, results.headOption.map(r => dynResult(r.valueType.text, r.value)).getOrElse(""))
+    (statements, results.headOption.map(r => dynResult(r.value)).getOrElse(""))
   }
 
   private def methodBody (
@@ -810,7 +814,7 @@ object DracoGenerator extends App {
           if (init.nonEmpty) s"  var ${m.name}: ${m.valueType.text} = $init"
           else s"  var ${m.name}: ${m.valueType.text}"
         case d: Dynamic =>
-          val result = dynResult(d.valueType.text, d.value)
+          val result = dynResult(d.value)
           if (d.body.nonEmpty || result.nonEmpty) s"  def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, result, scrutinee = dynScrutinee(d), parameters = d.parameters)}"
           else s"  def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text}"
         case mo: Monadic =>
@@ -864,7 +868,7 @@ object DracoGenerator extends App {
       if (factory.body.nonEmpty) factory.body.map {
         case f: Fixed   => s"    override lazy val ${f.name}: ${f.valueType.text} = ${initializer(f.valueType.text, f.value)}"
         case m: Mutable => s"    override var ${m.name}: ${m.valueType.text} = ${initializer(m.valueType.text, m.value)}"
-        case d: Dynamic => s"    override def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, dynResult(d.valueType.text, d.value), methodIndent = 4, scrutinee = dynScrutinee(d), parameters = d.parameters)}"
+        case d: Dynamic => s"    override def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, dynResult(d.value), methodIndent = 4, scrutinee = dynScrutinee(d), parameters = d.parameters)}"
         case mo: Monadic => s"    ${expression(mo.value)}"
         case l: Local   => s"    ${binding(l)} ${l.name}: ${l.valueType.text} = ${initializer(l.valueType.text, l.value)}"
         case _: Case    => sys.error("draco: a case-branch is not admitted in a factory body (drake.dlt CASE-BRANCH: an actor's message, or a dyn-with-body)")
@@ -896,7 +900,7 @@ object DracoGenerator extends App {
           val init = if (rendered.isEmpty) s"null.asInstanceOf[${m.valueType.text}]" else rendered
           s"  var ${m.name}: ${m.valueType.text} = $init"
         case d: Dynamic =>
-          s"  def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, dynResult(d.valueType.text, d.value), scrutinee = dynScrutinee(d), parameters = d.parameters)}"
+          s"  def ${methodName(d)}${methodParameters(d.parameters)}: ${d.valueType.text} = ${methodBody(d.body, dynResult(d.value), scrutinee = dynScrutinee(d), parameters = d.parameters)}"
         case mo: Monadic =>
           // Indent every line so multi-line global blocks (encoder/decoder/etc.)
           // emit at the correct object-body indent level.
