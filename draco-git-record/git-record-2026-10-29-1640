@@ -1,0 +1,47 @@
+Carry terrestrial Output's Location branch in its actor definition
+
+Dev accepted, in these words: "re-author Output's message as a case branch binding location to
+domains.terrestrial.Location, with the three strict bindings and consumer(report), the report
+constructed in the OriginateReport form, Output.scala regenerated from the definition, and one
+OutputProjectionTest covering exact trio agreement, one report per Location, ignored other
+messages and lazy consumer capture." Output was the one example difference the October audit
+found to be more than spelling: its drake message body read `location` that nothing bound — the
+hand-written `case location: Location =>` and its catch-all had never reached the definition —
+and constructed the report as `LocationReport(typeDefinition:…, json:payload)`, a named
+construction of a type with no factory, which the engine passes through unmapped and Scala has
+no apply to meet. The generated file could not compile either way.
+
+The message body is now one branch, `case location Location [ … ]`, the branch type spelled bare
+because Location is in Output's own package, holding `now fix payload` (the same io.circe.Json.obj
+tree), `now fix report LocationReport new LocationReport { … }` — host text, the form the
+terrestrial OriginateReport rule has carried since 97bf690 — and `mon consumer(report)`. Two
+bindings, not three: the accepted wording counted the consumer line. The JSON is re-canonicalized
+from the drake with the compiled DrakeCLI (surface drift 0, json drift 0 over terrestrial) and
+Output.scala is the compiled GeneratorCLI's output, unscoped as the other example actors were
+regenerated: it dispatches `case location: Location =>` with the generator's `case _ => ()`, binds
+the two values strictly, and takes the Terrestrial actor convention the hand-written file lacked —
+`elementTypeNames` and a `knowledge` registering the domain's ConsumeReport and OriginateReport
+rules, exactly as Creator and the terrestrial Consumer carry them. No engine change. LocationReport
+keeps no factory, so its construction stays host text; a `json` factory on it, which would let
+Output and OriginateReport both construct through the named-argument path, was named as adjacent
+and is not recommended here.
+
+OutputProjectionTest (4) is new, the 73rd suite, on the ConsumerProjectionTest pattern: exact
+drake/JSON/Scala agreement with the World actor role; each Location producing one LocationReport
+whose payload carries type LOCATION, latitude, longitude and elevationMetres in that order, the
+report's typeDefinition being LocationReport's; Observable and Position ignored before and after
+an accepted Location; the consumer captured lazily, once per actor, with signals inert.
+
+All main/mods/domain and test sources compiled directly on 2026-10-29 into fresh class roots with
+current main/mods/test resources overlaid and the hidden anchors removed. THE FIRST RUN FAILED ONE
+TEST: the lazy-capture case counted a capture before any Location, because the test's own helper
+took the consumer strictly and evaluated the counting factory at the call — a by-name parameter
+on the helper, as actorType's is, corrected it; Output itself was not at fault. The second run
+passed every discovered suite: 942 tests / 74 suites including discovery, zero failures or
+aborts; the example map moves to 37 match / 11 differ (of 48); zero losses across 133 types,
+parse scope 110 + 23, GenDrake 108/108, both aspect probes 110 sections, PON 80/550/42, canonical
+7, scenario 23 clean, forest 1 of 2, CO-DECLARATION DROPS THE FACT, pending mods actors 0 in the
+file-only log. Dev's first full sbt gate then passed 942 tests on 2026-10-29, zero
+failed/canceled/ignored/pending, every headline matching and pending mods actors 0 (73 suites).
+The tree held the three Output files, the test, and this commit's records. No sbt, commit or
+push executed by Claude Code.

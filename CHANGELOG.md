@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Carry terrestrial Output's Location-to-LocationReport conversion in Drake/JSON as a `case`
+  branch and regenerate its Scala, which previously referenced an unbound `location` and an
+  apply LocationReport does not have. OutputProjectionTest pins the trio, one report per
+  Location with its four payload keys, ignored other messages and lazy consumer capture. The
+  example map moves to 37 match / 11 differ.
+
 - Key a named construction's factory lookup on the applied head instead of the slot type, so a
   slot typed by a parent constructing a child maps its arguments to the factory's `_` names.
   NamedConstructionTest gains a parent-typed-slot case compiled and run; no committed Scala or

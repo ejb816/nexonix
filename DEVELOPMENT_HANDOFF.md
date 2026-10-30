@@ -1,7 +1,8 @@
 # Development Handoff
 
 Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code;
-refreshed the same day by Claude Code after the named-construction head repair.
+refreshed by Claude Code through October 29 after the named-construction repairs and the
+terrestrial Output repair.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -14,15 +15,16 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
 
 - Branch: main. Code commits this session: **e241378**, the named-construction head repair
   (record `git-record-2026-10-26-1449`); **9779e39**, the dyn-result increment (record
-  `git-record-2026-10-26-1534`), both committed and pushed by Dev; then the head-keyed lookup
-  (record `git-record-2026-10-29-0755`), Dev-gated and awaiting Dev's commit and push — inspect
-  `git log -1` to learn whether it landed and under which hash. Before them a8b5447 (Consumer)
-  and 7495539 (the documentation handoff).
-- Latest Dev-verified gate: **938 tests / 72 suites**, October 29, on the head-keyed tree.
-  Zero failed/canceled/ignored/pending tests, every headline unchanged, pending mods actors 0.
-  First Dev gate green.
-- All accepted implementation work is complete and verified; the latest increment's commit
-  is Dev's step.
+  `git-record-2026-10-26-1534`); **112f277**, the head-keyed factory lookup (record
+  `git-record-2026-10-29-0755`), all three committed and pushed by Dev; then the terrestrial
+  Output repair (record `git-record-2026-10-29-1640`), Dev-gated and awaiting Dev's commit and
+  push — inspect `git log -1` to learn whether it landed and under which hash. Before them
+  a8b5447 (Consumer) and 7495539 (the documentation handoff).
+- Latest Dev-verified gate: **942 tests / 73 suites**, October 29, on the Output tree. Zero
+  failed/canceled/ignored/pending tests, example map 37 match / 11 differ, every other headline
+  unchanged, pending mods actors 0. First Dev gate green.
+- All accepted implementation work is complete and verified; the Output increment's commit is
+  Dev's step.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -62,13 +64,29 @@ the head leaf; the slot type plays no part; `constructionInitializer` and `dynRe
 value alone. Nil corpus impact by construction. NamedConstructionTest has five cases. This closes
 the three observations of October 26; nothing from the named-construction thread is preserved.
 
+## Terrestrial Output carries its Location branch (accepted and built, October 29)
+
+Dev accepted: "re-author Output's message as a case branch binding location to
+domains.terrestrial.Location, with the three strict bindings and consumer(report), the report
+constructed in the OriginateReport form, Output.scala regenerated from the definition, and one
+OutputProjectionTest covering exact trio agreement, one report per Location, ignored other
+messages and lazy consumer capture." The message body is `case location Location [ … ]` — the
+branch type spelled bare, Location being in Output's own package — with two strict bindings
+(`now fix payload`, `now fix report`; the accepted words' "three" counted the `mon consumer(report)`
+line) and the report as `new LocationReport { … }` host text, the form OriginateReport already
+carries. The JSON is re-canonicalized from the drake and Output.scala is the generator's output:
+it gains the Terrestrial actor convention (`elementTypeNames`, a `knowledge` registering the
+domain's two rules, as Creator and the terrestrial Consumer have) and renders the dispatch as
+`case location: Location =>` with the generator's `case _ => ()`. OutputProjectionTest (4) is the
+73rd suite. The example map moves to 37 match / 11 differ. LocationReport still has no factory, so
+its construction stays host text; a `json` factory on it was named as adjacent, not recommended.
+
 ## Next design point — acceptance required
 
-No recommendation is preserved. The remaining inventory for a next point is the twelve example
-differences listed below (Output's authored projection still lacking its handwritten message
-binder/dispatch is the one known to be more than a spelling difference), the deferred activation
-recommendation, and .dcon migration — none of them accepted. Inventory is context, not
-authorization.
+No recommendation is preserved. The remaining inventory for a next point is the eleven example
+differences listed below, the deferred activation recommendation, .dcon migration, and the
+adjacent observation that LocationReport (JSON only, no drake, no factory) is constructed as host
+text at two sites — none of them accepted. Inventory is context, not authorization.
 
 Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
 accepts.
@@ -93,20 +111,23 @@ accepts.
 
 ## Current verification evidence
 
-Dev's full sbt outputs for the three increments were pasted into the Claude Code session
-(October 26, 26 and 29): 936, 937 then 938 tests, zero failed/canceled/ignored/pending, every
-headline below matching, file-only pending mods actors 0. Each was preceded by a direct run of
-**every discovered suite** (936, 937, 938 / 73 including Runner discovery; sbt reports 72): all
+Dev's full sbt outputs for the four increments were pasted into the Claude Code session
+(October 26, 26, 29 and 29): 936, 937, 938 then 942 tests, zero failed/canceled/ignored/pending,
+every headline below matching, file-only pending mods actors 0. Each was preceded by a direct
+run of **every discovered suite** (936, 937, 938 / 73 and 942 / 74 including Runner discovery;
+sbt reports one fewer): all
 main/mods/domain and test sources compiled into fresh class roots under target/scala-2.13
 (`nc-classes`, `nc-test-classes`) with current main/mods/test resources overlaid and the hidden
-root anchors removed; `git status` afterwards showed only the intended changes.
+root anchors removed; `git status` afterwards showed only the intended changes. The Output
+increment's first direct run failed its lazy-capture test through the test's own strict helper
+parameter; the second run was green.
 
-| Headline | Verified at the head-keyed tree (and at 9779e39, e241378, a8b5447) |
+| Headline | Verified at the Output tree (and at 112f277, 9779e39, e241378, a8b5447) |
 |---|---|
 | DomainAspect | 110 complete, 1 parameterized included, 0 skipped |
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
 | GenDrake | 108/108, 0 missing, 0 extra |
-| Example generation | 36 match, 12 differ, 0 error, 0 missing / 48 |
+| Example generation | 37 match, 11 differ, 0 error, 0 missing / 48 (36 / 12 before the Output repair) |
 | Surface losses | 0 fields across 133 types |
 | Parse scope | 110 draco + 23 mods, 0 held back |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
@@ -141,7 +162,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 7495539 | Documentation handoff: chapters 105–112, audit, handoff files | — | 2026-10-26-1253 |
 | e241378 | Named construction spells its head as authored; NamedConstructionTest (Claude Code) | 936 / 72 | 2026-10-26-1449 |
 | 9779e39 | Dyn result intercepted as a named construction; bare slot type resolves; Observable `geocentric:` (Claude Code) | 937 / 72 | 2026-10-26-1534 |
-| pending | Construction factory lookup keyed on the applied head; parent-typed slot case (Claude Code) | 938 / 72 | 2026-10-29-0755 |
+| 112f277 | Construction factory lookup keyed on the applied head; parent-typed slot case (Claude Code) | 938 / 72 | 2026-10-29-0755 |
+| pending | Terrestrial Output's Location branch in its definition; OutputProjectionTest (Claude Code) | 942 / 73 | 2026-10-29-1640 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
@@ -171,7 +193,11 @@ EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a curren
   other messages, uses feet * 0.3048 and math.round(h).toInt, and captures its callback lazily.
   Both preserve inert signals and existing World assembly behavior. Consumer uses strict local
   bindings in its case branch and a positional Location call. No generator change was made then;
-  the named-construction head repair of October 26 is the one generator change since.
+  the three named-construction repairs of October 26–27 are the generator changes since.
+- Terrestrial Output converts only Location, as a `case` branch in its definition, into a
+  LocationReport whose payload keys are type, latitude, longitude and elevationMetres; other
+  World messages are ignored, the consumer is captured lazily, signals are inert. The report is
+  constructed as host text because LocationReport has no factory.
 - A named-argument construction's head is spelled as authored or as the scope in effect spells
   it, exactly as a positional call is. Only NAMED-argument applications are intercepted, and only
   when the applied HEAD — a name leaf, dotted, or bare and resolved against the definition in
@@ -183,12 +209,12 @@ EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a curren
   load unscoped; recorded resolution is applied during generation. Do not sweep examples by
   assuming scoped and unscoped spellings are identical.
 
-The 12 remaining example differences in Dev's latest report are:
+The 11 remaining example differences after the Output repair are:
 aerial/Aerial, aerial/Input, aerial/Position; ethereal/ConsumeReport, ethereal/Ethereal;
 marine/ConsumeReport, marine/Marine; terrestrial/ConsumeReport, terrestrial/Location,
-terrestrial/Output, terrestrial/Terrestrial; world/World. These are not uniformly harmless
-spelling differences. In particular Output's authored projection still lacks its handwritten
-message binder/dispatch. Inventory is context, not repair authorization.
+terrestrial/Terrestrial; world/World. These have not been individually read for more than
+spelling; the audit noted companion/import conventions and inferred codecs on Position and
+Location. Inventory is context, not repair authorization.
 
 ## Reproducing the direct verification procedure
 

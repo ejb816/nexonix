@@ -41,89 +41,82 @@
       "kind": "Action",
       "body": [
         {
-          "kind": "Fixed",
-          "name": "payload",
-          "valueType": "io.circe.Json",
-          "value": {
-            "()": [
-              "io.circe.Json.obj",
-              {
-                "(,)": [
-                  "\"type\"",
+          "kind": "Case",
+          "name": "location",
+          "valueType": "Location",
+          "body": [
+            {
+              "kind": "Fixed",
+              "name": "payload",
+              "valueType": "io.circe.Json",
+              "value": {
+                "()": [
+                  "io.circe.Json.obj",
                   {
-                    "()": [
-                      "io.circe.Json.fromString",
-                      "\"LOCATION\""
+                    "(,)": [
+                      "\"type\"",
+                      {
+                        "()": [
+                          "io.circe.Json.fromString",
+                          "\"LOCATION\""
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "(,)": [
+                      "\"latitude\"",
+                      {
+                        "()": [
+                          "io.circe.Json.fromDoubleOrNull",
+                          "location.latitude"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "(,)": [
+                      "\"longitude\"",
+                      {
+                        "()": [
+                          "io.circe.Json.fromDoubleOrNull",
+                          "location.longitude"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "(,)": [
+                      "\"elevationMetres\"",
+                      {
+                        "()": [
+                          "io.circe.Json.fromInt",
+                          "location.elevationMetres"
+                        ]
+                      }
                     ]
                   }
                 ]
               },
-              {
-                "(,)": [
-                  "\"latitude\"",
-                  {
-                    "()": [
-                      "io.circe.Json.fromDoubleOrNull",
-                      "location.latitude"
-                    ]
-                  }
-                ]
-              },
-              {
-                "(,)": [
-                  "\"longitude\"",
-                  {
-                    "()": [
-                      "io.circe.Json.fromDoubleOrNull",
-                      "location.longitude"
-                    ]
-                  }
-                ]
-              },
-              {
-                "(,)": [
-                  "\"elevationMetres\"",
-                  {
-                    "()": [
-                      "io.circe.Json.fromInt",
-                      "location.elevationMetres"
-                    ]
-                  }
+              "now": true
+            },
+            {
+              "kind": "Fixed",
+              "name": "report",
+              "valueType": "LocationReport",
+              "value": "new LocationReport { override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition; override lazy val json: io.circe.Json = payload }",
+              "now": true
+            },
+            {
+              "kind": "Monadic",
+              "value": {
+                "()": [
+                  "consumer",
+                  "report"
                 ]
               }
-            ]
-          }
-        },
-        {
-          "kind": "Fixed",
-          "name": "report",
-          "valueType": "domains.terrestrial.LocationReport",
-          "value": {
-            "()": [
-              "domains.terrestrial.LocationReport",
-              {
-                "=": [
-                  "typeDefinition",
-                  "LocationReport.typeDefinition"
-                ]
-              },
-              {
-                "=": [
-                  "json",
-                  "payload"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "kind": "Monadic",
-          "value": {
-            "()": [
-              "consumer",
-              "report"
-            ]
-          }
+            }
+          ]
         }
       ]
     },

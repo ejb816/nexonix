@@ -6,6 +6,8 @@ domain domains terrestrial Terrestrial
 actor
   messageType domains world World
   message
-    fix payload io.circe.Json io.circe.Json.obj(("type", io.circe.Json.fromString("LOCATION")), ("latitude", io.circe.Json.fromDoubleOrNull(location.latitude)), ("longitude", io.circe.Json.fromDoubleOrNull(location.longitude)), ("elevationMetres", io.circe.Json.fromInt(location.elevationMetres)))
-    fix report domains.terrestrial.LocationReport domains.terrestrial.LocationReport(typeDefinition:LocationReport.typeDefinition, json:payload)
-    mon consumer(report)
+    case location Location [
+      now fix payload io.circe.Json io.circe.Json.obj(("type", io.circe.Json.fromString("LOCATION")), ("latitude", io.circe.Json.fromDoubleOrNull(location.latitude)), ("longitude", io.circe.Json.fromDoubleOrNull(location.longitude)), ("elevationMetres", io.circe.Json.fromInt(location.elevationMetres)))
+      now fix report LocationReport new LocationReport { override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+      mon consumer(report)
+    ]

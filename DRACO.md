@@ -49,8 +49,13 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**942 tests / 73 suites**, verified by Dev on 2026-10-29 for the terrestrial Output repair (record
+`git-record-2026-10-29-1640`): four new focused tests in one added suite, zero
+failed/canceled/ignored/pending tests. Example map is 37 match / 11 differ; every other report-only
+headline unchanged, including pending mods actors 0. One example trio changed, no engine change.
+First full Dev gate green. Before it:
 **938 tests / 72 suites**, verified by Dev on 2026-10-29 for the head-keyed construction lookup
-(record `git-record-2026-10-29-0755`): one added test, zero failed/canceled/ignored/pending tests,
+(record `git-record-2026-10-29-0755`, committed as 112f277): one added test, zero failed/canceled/ignored/pending tests,
 every report-only headline unchanged, including pending mods actors 0. No definition or committed
 Scala changed. First full Dev gate green. Before it:
 **937 tests / 72 suites**, verified by Dev on 2026-10-26 for the dyn result as a named construction
@@ -228,7 +233,7 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `ExampleDomainsGenTest` | example-domain gen map | 36 match, 12 differ, 0 error, 0 missing (of 48) |
+| `ExampleDomainsGenTest` | example-domain gen map | 37 match, 11 differ, 0 error, 0 missing (of 48) |
 | `DrakeParseTest` | drake surface losses | 0 fields across 133 types — type form 0, expression form 0 |
 | `DrakeParseTest` | Drake.parse scope | 110 draco + 23 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
@@ -326,7 +331,7 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 `DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
 effect, transitively: generated output is pinned to the hand-written files, and sbt
 compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
-gap is `ExampleDomainsGenTest`, which reports 36 match / 12 differ over the example domains
+gap is `ExampleDomainsGenTest`, which reports 37 match / 11 differ over the example domains
 and compiles none of it.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
@@ -1491,3 +1496,25 @@ Consumer the head names what the slot named, all four byte-identical. NamedConst
 parent-typed slot, compiled and run, the result a Location). This closes the three observations of October 26;
 nothing from the named-construction thread remains preserved. Direct run 938 / 73 including discovery on
 2026-10-27; Dev's first full gate 938 on 2026-10-29, every headline unchanged, pending mods actors 0.
+Committed and pushed by Dev as 112f277.
+
+
+**Terrestrial Output carries its Location branch (2026-10-29, Claude Code; Dev verified 942 / 73).** Dev accepted
+"re-author Output's message as a case branch binding location to domains.terrestrial.Location, with the
+three strict bindings and consumer(report), the report constructed in the OriginateReport form,
+Output.scala regenerated from the definition, and one OutputProjectionTest covering exact trio agreement,
+one report per Location, ignored other messages and lazy consumer capture." Output was the one example
+difference the audit found to be more than spelling: its message body read `location` with no binder (the
+hand-written `case location: Location =>` never reached the definition) and constructed the report as a
+named application of factory-less LocationReport, which the engine passes through unmapped and Scala has no
+apply to meet. The body is now `case location Location [ … ]` — bare, Location being in Output's own
+package — with `now fix payload`, `now fix report LocationReport new LocationReport { … }` (host text, the
+form OriginateReport carries since 97bf690; two bindings, the accepted "three" counted the consumer line)
+and `mon consumer(report)`. JSON re-canonicalized, Scala the generator's output: the dispatch with the
+generator's `case _ => ()`, and the Terrestrial actor convention the hand-written file lacked
+(`elementTypeNames`, a `knowledge` registering the domain's two rules, as Creator has). No engine change;
+LocationReport keeps no factory, a `json` factory on it being adjacent and unrecommended. OutputProjectionTest
+(4) is the 73rd suite; the first direct run failed its lazy-capture case through the TEST's own strict
+helper parameter, corrected before the second. Direct run 942 / 74 including discovery; Dev's first full gate
+942, every headline matching. Example map 37 match / 11 differ (table updated in this commit); every other
+headline unchanged, pending mods actors 0.
