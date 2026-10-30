@@ -18,6 +18,13 @@ the block below.
 
 ## [Unreleased]
 
+- Give terrestrial `LocationReport` a Drake surface with a `json` factory and regenerate its
+  Scala, which gains `apply`, `Null` and the Dracon-shaped codec; OriginateReport and Output now
+  construct it as `LocationReport(payload)` instead of an anonymous host construction, their
+  Scala regenerated on that one line each. LocationReportTest pins the trio, the by-name factory
+  argument and the codec round-trip. Parse scope moves to 110 draco + 24 mods and surface-loss
+  coverage to 134 types; the example map stays 37 match / 11 differ.
+
 - Carry terrestrial Output's Location-to-LocationReport conversion in Drake/JSON as a `case`
   branch and regenerate its Scala, which previously referenced an unbound `location` and an
   apply LocationReport does not have. OutputProjectionTest pins the trio, one report per

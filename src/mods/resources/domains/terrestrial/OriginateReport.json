@@ -168,7 +168,12 @@
           "kind": "Fixed",
           "name": "report",
           "valueType": "LocationReport",
-          "value": "new LocationReport { override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition; override lazy val json: io.circe.Json = payload }"
+          "value": {
+            "()": [
+              "LocationReport",
+              "payload"
+            ]
+          }
         },
         {
           "kind": "Monadic",

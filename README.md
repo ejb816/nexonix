@@ -823,7 +823,7 @@ and the handoff correction. The
 [latest retrieval audit](draco-dev-journal/sources/codex-2026-10-22-to-26-audit.md) preserves
 42 completed Codex exchanges plus the open journal-recovery acceptance, and recovers the prior
 Claude handoff close. Historical Status sections remain intact. The current code checkpoint
-is the terrestrial Output repair of October 29 (record git-record-2026-10-29-1640), after 112f277, verified at 942 tests / 73 suites on October 29.
+is the LocationReport json factory of October 30 (record git-record-2026-10-30-1038), after c5b8089, verified at 947 tests / 74 suites on October 30.
 That repair closed the recommendation the handoff had preserved as unaccepted.
 [The resumption prompt](DEVELOPMENT_RESUME_PROMPT.md) and [handoff](DEVELOPMENT_HANDOFF.md) are
 shared by Codex and Claude Code. The following
@@ -869,7 +869,7 @@ previously omitted members were added to their already-declared owners on Octobe
 Five domain surfaces were added, with reciprocal membership and trio checks. All four audited OriginateReport conversions (Aerial, Marine, Terrestrial and Ethereal) now live in their definitions; exact
 projection checks and runtime cases pin their generated Scala, defaults and callback
 behavior, including integer truncation toward zero for positive and negative inputs. The example generation comparison is
-37 matches / 11 differences after the Output repair of October 29 (Consumer brought it to 36 / 12); the remaining bodies are unswept.
+37 matches / 11 differences after the Output repair of October 29 (Consumer brought it to 36 / 12), unchanged by the LocationReport factory of October 30, whose three terrestrial files are the generator's output; the remaining bodies are unswept.
 See EXAMPLE_DOMAIN_AUDIT.md for the pre-change evidence and remaining gaps.
 
 Example loading now supplies an explicit caller scope: the canonical dependencies and six
@@ -905,7 +905,7 @@ ignored; lazy provider capture and inert signal behavior are covered by actor ch
 
 The October 26 development checkpoint is in [DEVELOPMENT_HANDOFF.md](DEVELOPMENT_HANDOFF.md),
 with a copyable opening prompt in [DEVELOPMENT_RESUME_PROMPT.md](DEVELOPMENT_RESUME_PROMPT.md)
-for either Codex or Claude Code. Last verified implementation: the terrestrial Output repair of October 29, 942 tests / 73 suites, after 112f277.
+for either Codex or Claude Code. Last verified implementation: the LocationReport json factory of October 30, 947 tests / 74 suites, after c5b8089.
 The named-construction qualification repair preserved there was accepted and built the same day.
 Journal chapters 105–112 cover the subsequent session, sourced from original Codex messages
 that survive both observed compactions, with the prior Claude closing exchange also recovered.

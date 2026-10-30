@@ -8,6 +8,6 @@ actor
   message
     case location Location [
       now fix payload io.circe.Json io.circe.Json.obj(("type", io.circe.Json.fromString("LOCATION")), ("latitude", io.circe.Json.fromDoubleOrNull(location.latitude)), ("longitude", io.circe.Json.fromDoubleOrNull(location.longitude)), ("elevationMetres", io.circe.Json.fromInt(location.elevationMetres)))
-      now fix report LocationReport new LocationReport { override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+      now fix report LocationReport LocationReport(payload)
       mon consumer(report)
     ]

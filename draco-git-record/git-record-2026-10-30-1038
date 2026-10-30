@@ -1,0 +1,74 @@
+Give terrestrial LocationReport a json factory and construct it through it
+
+Dev accepted, in these words: "Build the LocationReport json factory with both terrestrial sites
+re-authored" — the recommendation being to give LocationReport its drake surface with the `json`
+factory, re-canonicalize its JSON, replace its hand-written Scala with the generated file,
+re-author both terrestrial construction sites as `LocationReport(payload)` and regenerate them,
+and add one LocationReportTest covering exact trio agreement, a lazily evaluated factory
+argument, and a codec round-trip of the json; the three sibling reports to follow by the same
+pattern as the next increment.
+
+The point the Output repair left in view: five definition sites construct a report the same way,
+as the host-opaque string `new X { override lazy val typeDefinition = X.typeDefinition; override
+lazy val json = payload }` — terrestrial Output and the four OriginateReports — because the four
+report types (terrestrial LocationReport, aerial PositionReport, marine FixReport, ethereal
+EphemerisReport) were JSON-only definitions with no drake surface, no elements and no factory:
+`type X from <Medium> draco format dracon Dracon` and nothing more. A Dracon carries `json`, and
+Dracon's own factory is `par json Json`; a derived report with the same factory is the natural
+constructor — in Haskell, `LocationReport :: Json -> LocationReport` over the parent's payload.
+
+Probed with the compiled CLIs before recommending. The surface
+
+    type LocationReport from Terrestrial draco format dracon Dracon
+      factory
+        parameters
+          par json Json
+    domain domains terrestrial Terrestrial
+
+parses, emits back clean, and generates a companion with `apply(_json: => Json)` binding
+`override lazy val json`, a Dracon-shaped encoder and decoder, and `Null = apply(Json.Null)`,
+importing `io.circe.{Decoder, Encoder, Json}` exactly as Dracon's companion does. The BARE
+spelling `Json` is the one HostBindings carries and Dracon.drake authors; the qualified
+`io.circe.Json` spelling generates a Null of `null.asInstanceOf[io.circe.Json]` and a strict
+decoder, and was not used. Re-authoring the two terrestrial sites as `fix report LocationReport
+LocationReport(payload)` — a positional call the parser trees as `{"()": ["LocationReport",
+"payload"]}` — regenerates OriginateReport.scala and Output.scala with exactly that one line
+changed each: `lazy val report: LocationReport = LocationReport(payload)` in the rule action,
+`val report: LocationReport = LocationReport(payload)` in the strict case branch. No engine
+change. The hand constructions in tests (`new domains.aerial.PositionReport { … }`) stay valid
+Scala; a factory invalidates none of them.
+
+Built as probed: LocationReport.drake is new (the first drake surface in the corpus for a report
+type), LocationReport.json is the compiled DrakeCLI's re-canonicalization (the factory record
+added, nothing else moved), LocationReport.scala is the compiled GeneratorCLI's output replacing
+the hand-written companion, which it extends rather than alters (the trait, the three kind-vals
+and the loader line are unchanged). `DrakeCLI check` over terrestrial: surface drift 0, json
+drift 0. LocationReportTest (3) pins the trio (emit, parse, generate, the factory's one
+parameter named json typed Json, parents Terrestrial then Dracon), the by-name argument
+(evaluated zero times until the first read of `json`, once after, never again; the instance is a
+Terrestrial and a Dracon; Null's json is Json.Null) and the codec (`asJson` is `{"json": payload}`,
+decoding reads the report back, an empty object decodes to Json.Null). The existing terrestrial
+OriginateReportTest and OutputProjectionTest pin the two regenerated sites by exact agreement
+with their files, so they gate this regeneration without change.
+
+Headline moves: LocationReport's new drake surface enters the parse scope (110 draco + 24 mods)
+and the surface-loss coverage (0 fields across 134 types); the example map stays 37 match /
+11 differ because LocationReport, OriginateReport and Output are the generator's output. The
+table in DRACO.md §1 is updated in this commit.
+
+Adjacent, not built: PositionReport, FixReport and EphemerisReport share the shape and are
+constructed as host text in their OriginateReports; they are the recommended next increment.
+The four *Intent types share the shape too, but no definition constructs them — only tests do —
+so they are an observation, not part of this thread.
+
+Verification: every discovered suite run directly on compiled classes with current main, mods and
+test resources on the loader roots — 947 tests passed, 75 suites including the Runner's discovery
+wrapper, zero failed, canceled, ignored, pending or aborted: 942 + the three LocationReportTest
+cases + the two DrakeParseTest checks the new drake surface activates. Headlines: example map
+37 match / 11 differ / 0 error / 0 missing of 48, surface losses 0 across 134 types, parse scope
+110 draco + 24 mods, DomainAspect and DracoAspect 110 sections, GenDrake 108 of 108, PON 80 / 550 /
+42 and canonical 7, scenario 23 clean, forest 1 of 2, CO-DECLARATION categorical, pending mods
+actors 0. The first direct run stopped at test compilation on a value-type accessor in the new
+test (`valueType.text` for `TypeForm.text(valueType.json)`), corrected before the second; no
+production file changed between the runs. Dev's full sbt gate on 2026-10-30: 947 succeeded, 0 failed, canceled, ignored or pending, every
+headline matching, pending mods actors 0 — 947 tests / 74 suites, green on its first run.

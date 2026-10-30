@@ -7,12 +7,19 @@ DRACO.md), DEVELOPMENT_HANDOFF.md and the shared documentation skill at
 sources/codex-2026-10-22-to-26-audit.md for the Codex session's decisions and coverage.
 Inspect git status/log; preserve uncommitted documentation. No private agent memory is required.
 
-Last Dev-verified increment: terrestrial Output's Location-to-LocationReport conversion carried
+Latest Dev-verified increment: terrestrial LocationReport's drake surface with a
+`json` factory, its Scala regenerated, OriginateReport and Output constructing it as
+`LocationReport(payload)`, LocationReportTest added (record git-record-2026-10-30-1038); gated
+by me at 947 tests / 74 suites on October 30, zero failures or aborts, parse scope 110 + 24, surface
+losses 0 across 134 types, example map unchanged at 37 / 11, pending mods actors 0. Check `git log -1`
+for its commit.
+
+Before it: terrestrial Output's Location-to-LocationReport conversion carried
 in its definition as a case branch, Scala regenerated, OutputProjectionTest added (record
 git-record-2026-10-29-1640), gated by me at 942 tests / 73 suites on October 29, zero failures
 or aborts, example map 37 match / 11 differ, every other report-only headline unchanged (zero
 surface losses across 133 types, parse scope 110 draco + 23 mods, file-only pending mods actors
-0). Check `git log -1` for its commit; before it 112f277 (head-keyed construction lookup),
+0), committed and pushed by me as c5b8089; before it 112f277 (head-keyed construction lookup),
 9779e39 (dyn result as a named construction) and e241378 (the named-construction head), then
 a8b5447 (Consumer) and the documentation handoff 7495539. All accepted implementation work is
 done; the named-construction thread is closed.

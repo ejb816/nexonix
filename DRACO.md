@@ -49,8 +49,14 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**947 tests / 74 suites**, verified by Dev on 2026-10-30 for the LocationReport json factory (record
+`git-record-2026-10-30-1038`): three new focused tests in one added suite and two newly active parser
+checks, zero failed/canceled/ignored/pending tests. Parse scope 110 + 24, surface
+losses 0 across 134 types; example map 37 match / 11 differ and every other headline unchanged, including
+pending mods actors 0. One example trio gains its drake surface and factory, two re-author one line, no
+engine change. First full Dev gate green. Before it:
 **942 tests / 73 suites**, verified by Dev on 2026-10-29 for the terrestrial Output repair (record
-`git-record-2026-10-29-1640`): four new focused tests in one added suite, zero
+`git-record-2026-10-29-1640`, committed as c5b8089): four new focused tests in one added suite, zero
 failed/canceled/ignored/pending tests. Example map is 37 match / 11 differ; every other report-only
 headline unchanged, including pending mods actors 0. One example trio changed, no engine change.
 First full Dev gate green. Before it:
@@ -234,8 +240,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 37 match, 11 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 133 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 23 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 0 fields across 134 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 24 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -1513,8 +1519,36 @@ form OriginateReport carries since 97bf690; two bindings, the accepted "three" c
 and `mon consumer(report)`. JSON re-canonicalized, Scala the generator's output: the dispatch with the
 generator's `case _ => ()`, and the Terrestrial actor convention the hand-written file lacked
 (`elementTypeNames`, a `knowledge` registering the domain's two rules, as Creator has). No engine change;
-LocationReport keeps no factory, a `json` factory on it being adjacent and unrecommended. OutputProjectionTest
+LocationReport kept no factory then, a `json` factory on it being adjacent and unrecommended (accepted and built the
+next day, below). OutputProjectionTest
 (4) is the 73rd suite; the first direct run failed its lazy-capture case through the TEST's own strict
 helper parameter, corrected before the second. Direct run 942 / 74 including discovery; Dev's first full gate
 942, every headline matching. Example map 37 match / 11 differ (table updated in this commit); every other
-headline unchanged, pending mods actors 0.
+headline unchanged, pending mods actors 0. Committed and pushed by Dev as c5b8089.
+
+
+**LocationReport constructs through a json factory (2026-10-30, Claude Code; Dev verified 947 / 74).**
+Dev accepted "Build the LocationReport json factory with both terrestrial sites re-authored" — the
+recommendation being LocationReport's first drake surface carrying `factory parameters par json Json`, its
+JSON re-canonicalized, its hand-written companion replaced by the generator's output, the two terrestrial
+sites (OriginateReport's action, Output's Location branch) re-authored `fix report LocationReport
+LocationReport(payload)` and regenerated, one LocationReportTest, the three sibling reports to follow. Five
+definition sites built a report as the host-opaque `new X { override lazy val typeDefinition …; override
+lazy val json = payload }` because the four report types (LocationReport, PositionReport, FixReport,
+EphemerisReport) were JSON-only, no surface, no elements, no factory. A Dracon carries `json` and Dracon's
+own factory is `par json Json`; the derived report's factory is the same constructor. PROBED first with the
+compiled CLIs: the BARE `Json` spelling (HostBindings' key, Dracon.drake's own) generates `apply(_json: =>
+Json)`, the Dracon-shaped codec and `Null = apply(Json.Null)` with `import io.circe.{Decoder, Encoder,
+Json}`; the qualified spelling generates a `null.asInstanceOf[io.circe.Json]` Null and was not used. Both
+sites regenerate with exactly one line changed (`lazy val report = LocationReport(payload)` in the rule,
+`val report = LocationReport(payload)` in the strict branch); the companion's trait, kind-vals and loader
+line are unchanged; tests' hand constructions stay valid. No engine change. LocationReportTest (3) is the
+74th suite — the trio, the by-name argument evaluated once on first read and never when unused, the codec
+round-trip; the existing OriginateReportTest and OutputProjectionTest pin the regenerated sites unchanged.
+The new surface enters the parse scope (110 + 24) and the surface-loss coverage (134), activating two
+DrakeParseTest checks; the example map stays 37 / 11, the three files being the generator's output (table
+updated in this commit). The first direct run stopped at test compilation on an accessor in the new test
+(`TypeForm.text(valueType.json)`), corrected before the second; Dev's first full gate 947, every headline
+matching, pending mods actors 0. Adjacent, not built: the three sibling
+reports by the same pattern (recommended next); the four *Intent types share the shape but no definition
+constructs them.

@@ -19,7 +19,7 @@ object OriginateReport extends App with DracoType {
       lazy val elevationFeet: Int = cursor.get[Int]("elevationFeet").getOrElse(0)
       lazy val elevationMetres: Int = elevationFeet * 3048 / 10000
       lazy val payload: io.circe.Json = io.circe.Json.obj(("type", io.circe.Json.fromString("LOCATION")), ("unit", io.circe.Json.fromString(unit)), ("elevationMetres", io.circe.Json.fromInt(elevationMetres)))
-      lazy val report: LocationReport = new LocationReport { override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+      lazy val report: LocationReport = LocationReport(payload)
       consumer(report)
   }
 

@@ -16,15 +16,18 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
 - Branch: main. Code commits this session: **e241378**, the named-construction head repair
   (record `git-record-2026-10-26-1449`); **9779e39**, the dyn-result increment (record
   `git-record-2026-10-26-1534`); **112f277**, the head-keyed factory lookup (record
-  `git-record-2026-10-29-0755`), all three committed and pushed by Dev; then the terrestrial
-  Output repair (record `git-record-2026-10-29-1640`), Dev-gated and awaiting Dev's commit and
-  push — inspect `git log -1` to learn whether it landed and under which hash. Before them
-  a8b5447 (Consumer) and 7495539 (the documentation handoff).
-- Latest Dev-verified gate: **942 tests / 73 suites**, October 29, on the Output tree. Zero
-  failed/canceled/ignored/pending tests, example map 37 match / 11 differ, every other headline
-  unchanged, pending mods actors 0. First Dev gate green.
-- All accepted implementation work is complete and verified; the Output increment's commit is
-  Dev's step.
+  `git-record-2026-10-29-0755`), all three committed and pushed by Dev; and **c5b8089**, the
+  terrestrial Output repair (record `git-record-2026-10-29-1640`), all four committed and pushed
+  by Dev; then the LocationReport json factory (record `git-record-2026-10-30-1038`), Dev-gated at
+  947 / 74 on October 30 and awaiting Dev's commit and push — inspect `git log -1` and
+  `git status --short` to learn where it stands. Before them a8b5447 (Consumer) and 7495539
+  (the documentation handoff).
+- Latest Dev-verified gate: **947 tests / 74 suites**, October 30, on the LocationReport tree. Zero
+  failed/canceled/ignored/pending tests, parse scope 110 + 24, surface losses 0 across 134 types,
+  example map 37 match / 11 differ, every other headline unchanged, pending mods actors 0. First
+  Dev gate green.
+- All accepted implementation work through c5b8089 is complete, verified and committed; the
+  LocationReport factory is built and Dev-gated, with its commit and push the open step.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -81,12 +84,32 @@ domain's two rules, as Creator and the terrestrial Consumer have) and renders th
 73rd suite. The example map moves to 37 match / 11 differ. LocationReport still has no factory, so
 its construction stays host text; a `json` factory on it was named as adjacent, not recommended.
 
+## LocationReport constructs through a json factory (accepted and built, October 30)
+
+Dev accepted: "Build the LocationReport json factory with both terrestrial sites re-authored",
+the recommendation being LocationReport's first drake surface carrying `factory parameters par
+json Json` (the BARE spelling HostBindings carries and Dracon.drake authors; the qualified spelling
+generates a `null.asInstanceOf` Null), its JSON re-canonicalized, its hand-written companion
+replaced by the generator's output (which adds `apply(_json: => Json)`, the Dracon-shaped codec
+and `Null`), and the two terrestrial sites — OriginateReport's action and Output's Location
+branch — re-authored `fix report LocationReport LocationReport(payload)` and regenerated on that
+one line each. No engine change. LocationReportTest (3) pins the trio, the by-name argument and
+the codec round-trip; the existing OriginateReportTest and OutputProjectionTest pin the two
+regenerated sites unchanged. Parse scope moves to 110 + 24, surface-loss coverage to 134 types;
+the example map stays 37 / 11. Direct run of every discovered suite on October 30: 947 passed, 75
+suites including discovery, zero failed/canceled/ignored/pending/aborted, every headline as stated,
+pending mods actors 0 (the first run stopped at test compilation on an accessor in the new test,
+corrected; no production file changed between runs). Dev's full sbt gate on October 30: 947 / 74, zero failed/canceled/ignored/pending, every headline matching, pending mods actors 0, green on its first run.
+
 ## Next design point — acceptance required
 
-No recommendation is preserved. The remaining inventory for a next point is the eleven example
-differences listed below, the deferred activation recommendation, .dcon migration, and the
-adjacent observation that LocationReport (JSON only, no drake, no factory) is constructed as host
-text at two sites — none of them accepted. Inventory is context, not authorization.
+The recommended next increment, NOT yet accepted: the three sibling reports — aerial
+PositionReport, marine FixReport, ethereal EphemerisReport — by the same pattern, each a drake
+surface with the json factory, its OriginateReport re-authored `X(payload)`, Scala regenerated,
+one test per medium. The four *Intent types share the shape but no definition constructs them
+(only tests do), so they are an observation, not part of the thread. The remaining inventory is
+the eleven example differences listed below, the deferred activation recommendation and .dcon
+migration — none accepted. Inventory is context, not authorization.
 
 Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
 accepts.
@@ -128,8 +151,8 @@ parameter; the second run was green.
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
 | GenDrake | 108/108, 0 missing, 0 extra |
 | Example generation | 37 match, 11 differ, 0 error, 0 missing / 48 (36 / 12 before the Output repair) |
-| Surface losses | 0 fields across 133 types |
-| Parse scope | 110 draco + 23 mods, 0 held back |
+| Surface losses | 0 fields across 134 types (133 before the LocationReport surface) |
+| Parse scope | 110 draco + 24 mods, 0 held back (23 before the LocationReport surface) |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
 | Canonical PON | 80 numbers, 7 differ |
 | Scenario | 23 files, 0 rejected, 0 drifted, 23 clean |
@@ -163,7 +186,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | e241378 | Named construction spells its head as authored; NamedConstructionTest (Claude Code) | 936 / 72 | 2026-10-26-1449 |
 | 9779e39 | Dyn result intercepted as a named construction; bare slot type resolves; Observable `geocentric:` (Claude Code) | 937 / 72 | 2026-10-26-1534 |
 | 112f277 | Construction factory lookup keyed on the applied head; parent-typed slot case (Claude Code) | 938 / 72 | 2026-10-29-0755 |
-| pending | Terrestrial Output's Location branch in its definition; OutputProjectionTest (Claude Code) | 942 / 73 | 2026-10-29-1640 |
+| c5b8089 | Terrestrial Output's Location branch in its definition; OutputProjectionTest (Claude Code) | 942 / 73 | 2026-10-29-1640 |
+| pending | LocationReport json factory; both terrestrial sites construct through it; LocationReportTest (Claude Code) | 947 / 74 | 2026-10-30-1038 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

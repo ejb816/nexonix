@@ -29,7 +29,7 @@ object Output extends App with DracoType {
       msg match {
         case location: Location =>
           val payload: io.circe.Json = io.circe.Json.obj(("type", io.circe.Json.fromString("LOCATION")), ("latitude", io.circe.Json.fromDoubleOrNull(location.latitude)), ("longitude", io.circe.Json.fromDoubleOrNull(location.longitude)), ("elevationMetres", io.circe.Json.fromInt(location.elevationMetres)))
-          val report: LocationReport = new LocationReport { override lazy val typeDefinition: TypeDefinition = LocationReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+          val report: LocationReport = LocationReport(payload)
           consumer(report)
         case _ => ()
       }
