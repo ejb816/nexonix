@@ -18,6 +18,14 @@ the block below.
 
 ## [Unreleased]
 
+- Give aerial `PositionReport`, marine `FixReport` and ethereal `EphemerisReport` the Drake surface
+  and `json` factory terrestrial LocationReport took, regenerate their Scala (which gains `apply`,
+  `Null` and the Dracon-shaped codec), and construct each in its OriginateReport as `X(payload)`,
+  that Scala regenerated on one line each. ReportFactoryTest pins the three trios, the by-name
+  argument and the codec round-trip. Parse scope moves to 110 draco + 27 mods and surface-loss
+  coverage to 137 types; the example map stays 37 match / 11 differ. Every report in the example
+  chain now constructs through its definition.
+
 - Give terrestrial `LocationReport` a Drake surface with a `json` factory and regenerate its
   Scala, which gains `apply`, `Null` and the Dracon-shaped codec; OriginateReport and Output now
   construct it as `LocationReport(payload)` instead of an anonymous host construction, their

@@ -49,8 +49,13 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**956 tests / 75 suites**, verified by Dev on 2026-10-30 for the sibling report factories (record
+`git-record-2026-10-30-1113`): three new focused tests in one added suite and six newly active parser checks, zero failed/canceled/ignored/pending
+tests. Parse scope 110 + 27, surface losses 0 across 137 types; example map 37 match / 11 differ and every
+other headline unchanged, including pending mods actors 0. Three example trios gain their drake surface and
+factory, three re-author one line, no engine change. First full Dev gate green. Before it:
 **947 tests / 74 suites**, verified by Dev on 2026-10-30 for the LocationReport json factory (record
-`git-record-2026-10-30-1038`): three new focused tests in one added suite and two newly active parser
+`git-record-2026-10-30-1038`, committed as e138f04): three new focused tests in one added suite and two newly active parser
 checks, zero failed/canceled/ignored/pending tests. Parse scope 110 + 24, surface
 losses 0 across 134 types; example map 37 match / 11 differ and every other headline unchanged, including
 pending mods actors 0. One example trio gains its drake surface and factory, two re-author one line, no
@@ -240,8 +245,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 37 match, 11 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 134 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 24 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 0 fields across 137 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 27 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -1549,6 +1554,21 @@ The new surface enters the parse scope (110 + 24) and the surface-loss coverage 
 DrakeParseTest checks; the example map stays 37 / 11, the three files being the generator's output (table
 updated in this commit). The first direct run stopped at test compilation on an accessor in the new test
 (`TypeForm.text(valueType.json)`), corrected before the second; Dev's first full gate 947, every headline
-matching, pending mods actors 0. Adjacent, not built: the three sibling
-reports by the same pattern (recommended next); the four *Intent types share the shape but no definition
-constructs them.
+matching, pending mods actors 0; committed and pushed by Dev as e138f04. Adjacent then, built next: the three
+sibling reports by the same pattern; the four *Intent types share the shape but no definition constructs them.
+
+
+**The sibling reports take the json factory (2026-10-30, Claude Code; Dev verified 956 / 75).**
+Dev accepted "Build the three sibling report factories in one increment": aerial PositionReport, marine
+FixReport and ethereal EphemerisReport each gain the surface `type X from <Medium> draco format dracon Dracon`
+with `factory parameters par json Json`, JSON re-canonicalized, companion replaced by the generator's output
+(27 lines added, none removed: `apply`, the Dracon-shaped codec, `Null`), and each medium's OriginateReport
+re-authored `fix report X X(payload)` and regenerated on that one line — all probed with the compiled CLIs
+before the recommendation and built as probed, `DrakeCLI check` clean over the three media. No engine change.
+`ReportFactoryTest` (3) is the 75th suite, one suite because the three definitions are one pattern, each case
+iterating over the three: the trio, the by-name argument, the codec round-trip; the four OriginateReportTests
+pin the regenerated rules unchanged. Every report in the example chain now constructs through its definition,
+closing the thread Output's unbound `location` opened on October 29. The three surfaces enter the parse scope
+(110 + 27) and the surface-loss coverage (137), activating six DrakeParseTest checks; the example map stays
+37 / 11 (table updated in this commit). Direct run 956 / 76 including discovery, green on its first run; Dev's first full gate 956 / 75, every
+headline matching, pending mods actors 0. The four *Intent types remain an observation.

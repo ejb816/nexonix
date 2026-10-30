@@ -11,5 +11,5 @@ rule
     fix depthMetres Int cursor.get[Int]("depthMetres").getOrElse(0)
     fix depthFathoms Int depthMetres * 10000 / 18288
     fix payload io.circe.Json io.circe.Json.obj(("kind", io.circe.Json.fromString("FIX")), ("vessel", io.circe.Json.fromString(vessel)), ("depthFathoms", io.circe.Json.fromInt(depthFathoms)))
-    fix report FixReport new FixReport { override lazy val typeDefinition: TypeDefinition = FixReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+    fix report FixReport FixReport(payload)
     mon consumer(report)

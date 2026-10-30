@@ -18,7 +18,7 @@ object OriginateReport extends App with DracoType {
       lazy val callsign: String = cursor.get[String]("callsign").getOrElse("UNKNOWN")
       lazy val flightLevel: Int = cursor.get[Int]("flightLevel").getOrElse(0)
       lazy val payload: io.circe.Json = io.circe.Json.obj(("message", io.circe.Json.fromString("POSITION")), ("callsign", io.circe.Json.fromString(callsign)), ("altitudeFeet", io.circe.Json.fromInt(flightLevel * 100)))
-      lazy val report: PositionReport = new PositionReport { override lazy val typeDefinition: TypeDefinition = PositionReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+      lazy val report: PositionReport = PositionReport(payload)
       consumer(report)
   }
 

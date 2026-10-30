@@ -1,0 +1,5 @@
+type EphemerisReport from Ethereal draco format dracon Dracon
+  factory
+    parameters
+      par json Json
+domain domains ethereal Ethereal

@@ -18,16 +18,18 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   `git-record-2026-10-26-1534`); **112f277**, the head-keyed factory lookup (record
   `git-record-2026-10-29-0755`), all three committed and pushed by Dev; and **c5b8089**, the
   terrestrial Output repair (record `git-record-2026-10-29-1640`), all four committed and pushed
-  by Dev; then the LocationReport json factory (record `git-record-2026-10-30-1038`), Dev-gated at
-  947 / 74 on October 30 and awaiting Dev's commit and push — inspect `git log -1` and
-  `git status --short` to learn where it stands. Before them a8b5447 (Consumer) and 7495539
+  by Dev; and **e138f04**, the LocationReport json factory (record `git-record-2026-10-30-1038`), Dev-gated
+  at 947 / 74 and committed and pushed by Dev on October 30; then the sibling report factories
+  (record `git-record-2026-10-30-1113`), Dev-gated at 956 / 75 on October 30 and awaiting commit and push —
+  inspect `git log -1` and `git status --short` to learn where they stand. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **947 tests / 74 suites**, October 30, on the LocationReport tree. Zero
-  failed/canceled/ignored/pending tests, parse scope 110 + 24, surface losses 0 across 134 types,
+- Latest Dev-verified gate: **956 tests / 75 suites**, October 30, on the sibling-report tree. Zero
+  failed/canceled/ignored/pending tests, parse scope 110 + 27, surface losses 0 across 137 types,
   example map 37 match / 11 differ, every other headline unchanged, pending mods actors 0. First
   Dev gate green.
 - All accepted implementation work through c5b8089 is complete, verified and committed; the
-  LocationReport factory is built and Dev-gated, with its commit and push the open step.
+  LocationReport factory is committed as e138f04; the sibling report factories are built and
+  Dev-gated, with commit and push the open step.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -101,15 +103,28 @@ suites including discovery, zero failed/canceled/ignored/pending/aborted, every 
 pending mods actors 0 (the first run stopped at test compilation on an accessor in the new test,
 corrected; no production file changed between runs). Dev's full sbt gate on October 30: 947 / 74, zero failed/canceled/ignored/pending, every headline matching, pending mods actors 0, green on its first run.
 
+## The sibling reports take the json factory (accepted and built, October 30)
+
+Dev accepted: "Build the three sibling report factories in one increment". Aerial PositionReport,
+marine FixReport and ethereal EphemerisReport each gain the drake surface with `factory parameters
+par json Json`, JSON re-canonicalized, companion replaced by the generator's output (27 lines
+added, none removed), and each medium's OriginateReport re-authored `fix report X X(payload)` and
+regenerated on that one line. No engine change. ReportFactoryTest (3), one suite iterating over the
+three reports, pins the trios, the by-name argument and the codec round-trip; the four
+OriginateReportTests pin the regenerated rules unchanged. Parse scope moves to 110 + 27,
+surface-loss coverage to 137 types; the example map stays 37 / 11. Every report in the example
+chain now constructs through its definition; the Output thread of October 29 is closed. Direct run of
+every discovered suite on October 30: 956 passed, 76 suites including discovery, zero
+failed/canceled/ignored/pending/aborted, green on its first run, every headline as stated, pending mods
+actors 0. Dev's full sbt gate on October 30: 956 / 75, zero failed/canceled/ignored/pending, every
+headline matching, pending mods actors 0, green on its first run. Commit pending.
+
 ## Next design point — acceptance required
 
-The recommended next increment, NOT yet accepted: the three sibling reports — aerial
-PositionReport, marine FixReport, ethereal EphemerisReport — by the same pattern, each a drake
-surface with the json factory, its OriginateReport re-authored `X(payload)`, Scala regenerated,
-one test per medium. The four *Intent types share the shape but no definition constructs them
-(only tests do), so they are an observation, not part of the thread. The remaining inventory is
-the eleven example differences listed below, the deferred activation recommendation and .dcon
-migration — none accepted. Inventory is context, not authorization.
+No recommendation is preserved. The remaining inventory is the eleven example differences listed
+below, the deferred activation recommendation, .dcon migration, and the observation that the four
+*Intent types share the report shape but are constructed only by tests — none accepted. Inventory
+is context, not authorization.
 
 Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
 accepts.
@@ -151,8 +166,8 @@ parameter; the second run was green.
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
 | GenDrake | 108/108, 0 missing, 0 extra |
 | Example generation | 37 match, 11 differ, 0 error, 0 missing / 48 (36 / 12 before the Output repair) |
-| Surface losses | 0 fields across 134 types (133 before the LocationReport surface) |
-| Parse scope | 110 draco + 24 mods, 0 held back (23 before the LocationReport surface) |
+| Surface losses | 0 fields across 137 types (134 before the sibling surfaces, 133 before LocationReport's) |
+| Parse scope | 110 draco + 27 mods, 0 held back (24 before the sibling surfaces, 23 before LocationReport's) |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
 | Canonical PON | 80 numbers, 7 differ |
 | Scenario | 23 files, 0 rejected, 0 drifted, 23 clean |
@@ -187,7 +202,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 9779e39 | Dyn result intercepted as a named construction; bare slot type resolves; Observable `geocentric:` (Claude Code) | 937 / 72 | 2026-10-26-1534 |
 | 112f277 | Construction factory lookup keyed on the applied head; parent-typed slot case (Claude Code) | 938 / 72 | 2026-10-29-0755 |
 | c5b8089 | Terrestrial Output's Location branch in its definition; OutputProjectionTest (Claude Code) | 942 / 73 | 2026-10-29-1640 |
-| pending | LocationReport json factory; both terrestrial sites construct through it; LocationReportTest (Claude Code) | 947 / 74 | 2026-10-30-1038 |
+| e138f04 | LocationReport json factory; both terrestrial sites construct through it; LocationReportTest (Claude Code) | 947 / 74 | 2026-10-30-1038 |
+| pending commit | PositionReport, FixReport, EphemerisReport json factories; OriginateReports construct through them; ReportFactoryTest (Claude Code) | 956 / 75 | 2026-10-30-1113 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

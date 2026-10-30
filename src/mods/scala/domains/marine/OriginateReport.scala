@@ -19,7 +19,7 @@ object OriginateReport extends App with DracoType {
       lazy val depthMetres: Int = cursor.get[Int]("depthMetres").getOrElse(0)
       lazy val depthFathoms: Int = depthMetres * 10000 / 18288
       lazy val payload: io.circe.Json = io.circe.Json.obj(("kind", io.circe.Json.fromString("FIX")), ("vessel", io.circe.Json.fromString(vessel)), ("depthFathoms", io.circe.Json.fromInt(depthFathoms)))
-      lazy val report: FixReport = new FixReport { override lazy val typeDefinition: TypeDefinition = FixReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+      lazy val report: FixReport = FixReport(payload)
       consumer(report)
   }
 

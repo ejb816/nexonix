@@ -11,5 +11,5 @@ rule
     fix altitudeNauticalMiles Int cursor.get[Int]("altitudeNauticalMiles").getOrElse(0)
     fix altitudeKilometres Int altitudeNauticalMiles * 1852 / 1000
     fix payload io.circe.Json io.circe.Json.obj(("category", io.circe.Json.fromString("EPHEMERIS")), ("object", io.circe.Json.fromString(obj)), ("altitudeKilometres", io.circe.Json.fromInt(altitudeKilometres)))
-    fix report EphemerisReport new EphemerisReport { override lazy val typeDefinition: TypeDefinition = EphemerisReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+    fix report EphemerisReport EphemerisReport(payload)
     mon consumer(report)

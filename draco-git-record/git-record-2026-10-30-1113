@@ -1,0 +1,48 @@
+Give the three sibling reports the json factory and construct them through it
+
+Dev accepted, in these words: "Build the three sibling report factories in one increment" — the
+recommendation being that aerial PositionReport, marine FixReport and ethereal EphemerisReport
+take exactly the factory terrestrial LocationReport took in e138f04: each a drake surface
+`type X from <Medium> draco format dracon Dracon` with `factory parameters par json Json`, its
+JSON re-canonicalized, its hand-written companion replaced by the generator's output, its
+medium's OriginateReport re-authored `fix report X X(payload)` and regenerated, and one
+ReportFactoryTest in the domains package with three cases each iterating over the three.
+
+Probed before recommending, with the compiled CLIs: each generated companion adds 27 lines to the
+hand-written one and removes none — the same `apply(_json: => Json)`, Dracon-shaped encoder and
+decoder, and `Null = apply(Json.Null)` LocationReport gained — and each OriginateReport regenerates
+with exactly one line changed, `lazy val report: X = X(payload)`. Built as probed: three new drake
+surfaces, three JSON files carrying the factory record and nothing else moved, three regenerated
+companions, three OriginateReport trios re-authored on their report line. `DrakeCLI check` over
+aerial, marine and ethereal: surface drift 0, json drift 0 each. No engine change. The four
+OriginateReportTests already pin their Scala by exact agreement, so the regenerated rules are
+gated without a test change.
+
+ReportFactoryTest (3) is one suite, not three, because the three definitions are one pattern:
+each case iterates over the three reports — exact trio agreement (emit, parse, generate, the
+factory's one parameter named json typed Json, parents the medium then Dracon, the companion's
+loaded definition equal to the file's); the by-name argument evaluated zero times until the first
+read of `json`, once after, never again, the instance being its medium's type, Null's json being
+Json.Null; and the codec round-trip for each (`asJson` is `{"json": payload}`, decoding reads the
+report back, an empty object decodes to Json.Null).
+
+With this every report in the example chain — the four media's reports and the World's Location
+sink — constructs through its definition, and the thread that opened with Output's unbound
+`location` on October 29 is closed. The four *Intent types share the report shape but no
+definition constructs them, only tests do; they remain an observation.
+
+Headline moves: three new surfaces enter the parse scope (110 draco + 27 mods) and the surface-loss
+coverage (0 fields across 137 types), activating six DrakeParseTest checks; the example map stays
+37 match / 11 differ, the six changed files being the generator's output. The table in DRACO.md §1
+is updated in this commit.
+
+Verification: every discovered suite run directly on compiled classes with current main, mods and
+test resources on the loader roots — 956 tests passed, 76 suites including the Runner's discovery
+wrapper, zero failed, canceled, ignored, pending or aborted, green on its first run: 947 + the
+three ReportFactoryTest cases + the six DrakeParseTest checks the three surfaces activate.
+Headlines: example map 37 match / 11 differ / 0 error / 0 missing of 48, surface losses 0 across
+137 types, parse scope 110 draco + 27 mods, DomainAspect and DracoAspect 110 sections, GenDrake 108
+of 108, PON 80 / 550 / 42 and canonical 7, scenario 23 clean, forest 1 of 2, CO-DECLARATION
+categorical, pending mods actors 0. Dev's full sbt gate on 2026-10-30: 956 succeeded, 0 failed, canceled,
+ignored or pending, every headline matching, pending mods actors 0 — 956 tests / 75 suites, green on
+its first run.

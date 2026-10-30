@@ -10,5 +10,5 @@ rule
     fix callsign String cursor.get[String]("callsign").getOrElse("UNKNOWN")
     fix flightLevel Int cursor.get[Int]("flightLevel").getOrElse(0)
     fix payload io.circe.Json io.circe.Json.obj(("message", io.circe.Json.fromString("POSITION")), ("callsign", io.circe.Json.fromString(callsign)), ("altitudeFeet", io.circe.Json.fromInt(flightLevel * 100)))
-    fix report PositionReport new PositionReport { override lazy val typeDefinition: TypeDefinition = PositionReport.typeDefinition; override lazy val json: io.circe.Json = payload }
+    fix report PositionReport PositionReport(payload)
     mon consumer(report)
