@@ -1,0 +1,8 @@
+type ConsumeReport
+domain domains marine Marine
+rule
+  pattern
+    variables
+      var report FixReport
+  action
+    mon domains.marine.MarineSink.record(report.json.noSpaces)

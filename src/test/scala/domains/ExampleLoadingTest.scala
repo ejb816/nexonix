@@ -23,8 +23,10 @@ class ExampleLoadingTest extends AnyFunSuite {
     assert(actual.forall(td => !DomainBuilder.isStub(td)))
     assert(encoded(actual) == encoded(authored.map(scope.resolve)))
     assert(encoded(actual) == encoded(examples(reversed)))
-    assert(!scope.ontological(ExampleScope.sink.namePath), "the caller's sink is a binding, not a domain member")
-    assert(!draco.scalatarget.HostBindings.vocabulary.values.exists(_ == ExampleScope.sink))
+    ExampleScope.sinks.foreach { sink =>
+      assert(!scope.ontological(sink.namePath), s"the caller's ${sink.name} is a binding, not a domain member")
+      assert(!draco.scalatarget.HostBindings.vocabulary.values.exists(_ == sink))
+    }
     assert(!scope.ontological(ExampleScope.geodesy.namePath), "the geodesy helper is a caller binding")
     assert(!draco.scalatarget.HostBindings.vocabulary.values.exists(_ == ExampleScope.geodesy))
     val input = actual.find(_.typeName.namePath == "domains.aerial.Input").get

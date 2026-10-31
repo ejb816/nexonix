@@ -1,12 +1,13 @@
 package domains.ethereal
 
 import draco._
-import domains.world.World
+import domains._
+import domains.world._
 
 trait Ethereal extends World
 
-object Ethereal extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Ethereal", _namePackage = Seq ("domains", "ethereal")))
+object Ethereal extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Ethereal", _namePackage = Seq ("domains", "ethereal")))
   lazy val dracoType: Type[Ethereal] = Type[Ethereal] (typeDefinition)
 
   lazy val elementTypeNames: Seq[String] = Seq ("LaunchIntent", "EphemerisReport", "ConsumeReport", "OriginateReport", "Consumer", "Creator")

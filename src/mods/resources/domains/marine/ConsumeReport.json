@@ -6,6 +6,15 @@
       "marine"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Marine",
+      "namePackage": [
+        "domains",
+        "marine"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -22,17 +31,13 @@
       "body": [
         {
           "kind": "Monadic",
-          "value": "domains.marine.MarineSink.record(report.json.noSpaces)"
+          "value": {
+            "()": [
+              "domains.marine.MarineSink.record",
+              "report.json.noSpaces"
+            ]
+          }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Marine",
-      "namePackage": [
-        "domains",
-        "marine"
       ]
     }
   }

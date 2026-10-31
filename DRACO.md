@@ -49,8 +49,14 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**982 tests / 77 suites**, verified by Dev on 2026-10-31 for the example map closed as a gate (record
+`git-record-2026-10-31-1105`, commit pending): no new suite, eight newly active parser checks, zero
+failed/canceled/ignored/pending tests. Parse scope 110 + 37, surface losses 0 across 147 types; example map 48 match /
+0 differ, now ASSERTED and off the table below; every other headline unchanged, including pending mods actors 0. Four
+example trios gain their drake surface with their JSON re-canonicalized, nine companions become the generator's
+output, no engine change. First full Dev gate green. Before it:
 **974 tests / 77 suites**, verified by Dev on 2026-10-31 for the coordinate surfaces and companions (record
-`git-record-2026-10-31-0842`): three new focused tests in one added suite and four newly active parser checks, zero
+`git-record-2026-10-31-0842`, committed as 23333f3): three new focused tests in one added suite and four newly active parser checks, zero
 failed/canceled/ignored/pending tests. Parse scope 110 + 33, surface losses 0 across 143 types; example map 39 match /
 9 differ and every other headline unchanged, including pending mods actors 0. Two example trios gain their drake
 surface and the generator's companion, no JSON or engine change. First full Dev gate green. Before it:
@@ -254,9 +260,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `ExampleDomainsGenTest` | example-domain gen map | 39 match, 9 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 143 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 33 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 0 fields across 147 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 37 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -290,9 +295,12 @@ ahead of JSON. Both Drake and Scala projections were byte-identical before/after
 all 103 current JSON definitions. The full run also confirmed the table above and zero
 mods actors pending Drake authoring in the file-only report.
 
-Two of these have since become ASSERTIONS and are deliberately not listed: the scenario
+Three of these have since become ASSERTIONS and are deliberately not listed: the scenario
 now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports. So
 does `GenDrakeTest`'s `GenDrake runs` line — in the capture grep for visibility, not here.
+And since 2026-10-31 the example-domain gen map, which this table carried from 37 / 11 down to
+39 / 9: `ExampleDomainsGenTest` now asserts 48 match / 0 differ / 0 error / 0 missing over the
+example domains, and its `GEN MAP` line stays in the capture grep for the same reason.
 Moving a measurement into an assertion is the goal; the table should shrink over time.
 
 **Where things are recorded** — distinct artifacts and jobs, do not conflate them:
@@ -351,9 +359,11 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 
 `DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
 effect, transitively: generated output is pinned to the hand-written files, and sbt
-compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
-gap is `ExampleDomainsGenTest`, which reports 39 match / 9 differ over the example domains
-and compiles none of it.
+compiles those. Do not "fix" this by adding compilation — the guarantee holds. Since
+2026-10-31 `ExampleDomainsGenTest` is the same gate over the 48 example definitions under
+`src/mods/resources/domains` — 48 match / 0 differ, asserted — and sbt compiles those files
+too; it was a report-only map, 9 differences at its last reading, until the four ConsumeReport
+trios took their surfaces and the last nine example companions became the generator's output.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
 `src/main/scala/draco/`. Keep it that way. If generated output is wrong, fix the JSON or
@@ -1625,4 +1635,32 @@ The two surfaces enter the parse scope (110 + 33) and the surface-loss coverage 
 DrakeParseTest checks; the example map moves to 39 / 9 (table updated in this commit). Remaining example
 differences, all companion spelling: the three ConsumeReport companions, the five domain objects, aerial Input.
 Direct run 974 / 78 including discovery, green on its first run; Dev's first full gate 974 / 77, every headline
-matching, pending mods actors 0. Commit pending when this was written.
+matching, pending mods actors 0. Committed and pushed by Dev as 23333f3.
+
+
+**The example map closes and becomes a gate (2026-10-31, Claude Code; Dev verified 982 / 77).** Dev accepted
+"Accepted, build it" on the recommendation that the nine remaining example differences — all companion spelling:
+the three ConsumeReport companions (ethereal, marine, terrestrial: `with DracoType` and `override`), the five domain
+objects (Aerial, Ethereal, Marine, Terrestrial, World: the same two words, `import domains._` and the wildcard world
+import) and aerial Input (`elementTypeNames`, the unused private `knowledge` Creator carries, lazy bindings in
+`receive`) — be closed in one increment: the four ConsumeReports, which had no drake surface, take the surface
+`DrakeCLI emit` renders (`type ConsumeReport`, the domain line, `rule` with one `var report <Report>` and a `mon`
+action), their JSON RE-CANONICALIZED by parsing it back — the host-opaque action string becomes a call tree, aerial's
+`ctx.getRuntime().get("consumed")` a nested one, and the aspect keys take the canonical order — with the Scala
+generated from either JSON identical; the nine companions are replaced by the generator's output; and
+`ExampleDomainsGenTest`, a report-only discovery map since 2026-06-23, is tightened into the gate its own comment
+named — zero differ, zero error, zero missing, asserted — so the example-map row leaves the §1 table, the third
+measurement to become an assertion. Probed with the compiled CLIs before the recommendation (all nine generated
+companions compile against the current classes, the ConsumeReport round-trip as described) and built as probed:
+`DrakeCLI check` clean over the five media. No engine change, no new suite. Aerial ConsumeReport's companion
+already matched and regenerates byte-identical from the re-canonicalized JSON; Input's `knowledge` registers the
+domain's two rules and is never evaluated, and its two bindings become `lazy val`, drake.dlt EVALUATION's default.
+The four surfaces enter the parse scope (110 + 37) and the surface-loss coverage (147), activating eight
+DrakeParseTest checks (table updated in this commit). After this every example definition under
+`src/mods/resources/domains` is a trio or a JSON-only type whose companion is the generator's output, and the
+example inventory the October sessions worked through is empty; deferred activation and the .dcon migration
+remain, neither accepted. THE FIRST DIRECT RUN FAILED ONE TEST, ExampleLoadingTest's all-48 resolution: the treed actions name
+`domains.<medium>.<Medium>Sink.record`, and resolution knew only AerialSink, bound by the example caller on 2026-10-23
+when Consumer's action was a tree; `ExampleScope` now binds the four sinks by qualified name, the same decision, and
+the loading test checks each is a binding, not a member. Second direct run 982 / 78 including discovery, green, every headline as stated; Dev's first full gate 982 / 77 on
+2026-10-31, every headline matching, pending mods actors 0. Commit pending.

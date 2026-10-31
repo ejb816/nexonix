@@ -7,21 +7,28 @@ DRACO.md), DEVELOPMENT_HANDOFF.md and the shared documentation skill at
 sources/codex-2026-10-22-to-26-audit.md for the Codex session's decisions and coverage.
 Inspect git status/log; preserve uncommitted documentation. No private agent memory is required.
 
-Latest Dev-verified increment, commit PENDING when this was written: aerial Position and
+Latest Dev-verified increment (commit pending): the example generate map closes and becomes a gate — the four
+ConsumeReport types (aerial, ethereal, marine, terrestrial) take their drake surfaces with their JSON
+re-canonicalized, the last nine hand-written example companions (three ConsumeReports, five domain
+objects, aerial Input) are replaced by the generator's output, and ExampleDomainsGenTest asserts
+48 match / 0 differ (record git-record-2026-10-31-1105); gated by me at 982 tests / 77 suites on
+October 31, zero failures or aborts, parse scope 110 + 37, surface losses 0 across 147 types, the
+example-map row off the DRACO.md table, pending mods actors 0; my commit pending.
+
+Before it: aerial Position and
 terrestrial Location take their drake surfaces and the generator's companions (the inferred codec),
 CoordinateProjectionTest added (record git-record-2026-10-31-0842); gated by me at 974 tests / 77
 suites on October 31, zero failures or aborts, parse scope 110 + 33, surface losses 0 across 143 types,
-example map 39 / 9, pending mods actors 0. If `git log -1` shows a commit after 3a3cbfc, I committed
-it; otherwise the commit is still owed.
+example map 39 / 9, pending mods actors 0, committed and pushed by me as 23333f3.
 
-Latest Dev-verified increment: the four Intent types (aerial FlightIntent,
+Before it: the four Intent types (aerial FlightIntent,
 marine VoyageIntent, ethereal LaunchIntent, terrestrial MarchIntent) take the json factory, their
 Scala regenerated, the eight test construction sites re-authored `X(payload)`, IntentFactoryTest
 added (record git-record-2026-10-30-2014); gated by me at 967 tests / 76 suites on October 31, zero
 failures or aborts, parse scope 110 + 31, surface losses 0 across 141 types, example map 37 / 11,
 pending mods actors 0, committed and pushed by me as 3a3cbfc.
 
-Latest Dev-verified increment: the three sibling reports (aerial PositionReport, marine
+Before it: the three sibling reports (aerial PositionReport, marine
 FixReport, ethereal EphemerisReport) take the json factory, their Scala regenerated, their
 OriginateReports constructing `X(payload)`, ReportFactoryTest added (record
 git-record-2026-10-30-1113); gated by me at 956 tests / 75 suites on October 30, zero failures or aborts,
@@ -46,10 +53,11 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-NOTHING IS PRESERVED AS A RECOMMENDATION. The inventory for a next point is in the handoff: the
-nine remaining example differences (all companion spelling: three ConsumeReport companions, five
-domain objects, aerial Input), deferred activation and .dcon migration — none accepted. Bring one point as a recommendation for my acceptance or correction
-before building.
+NOTHING IS PRESERVED AS A RECOMMENDATION. The example inventory is empty: every example definition
+is a trio or a JSON-only type whose companion is the generator's output, and the generate map is a
+gate. What remains is in the handoff: deferred activation and .dcon migration, neither accepted, and
+the unswept example bodies as an observation. Bring one point as a recommendation for my acceptance
+or correction before building.
 
 Keep to one design point per reply, one recommendation with accept-or-correct, and build only
 what I accept. Do not run sbt, commit or push; hand over path-scoped commands and wait for my

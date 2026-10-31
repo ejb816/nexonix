@@ -6,6 +6,15 @@
       "ethereal"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Ethereal",
+      "namePackage": [
+        "domains",
+        "ethereal"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -22,17 +31,13 @@
       "body": [
         {
           "kind": "Monadic",
-          "value": "domains.ethereal.EtherealSink.record(report.json.noSpaces)"
+          "value": {
+            "()": [
+              "domains.ethereal.EtherealSink.record",
+              "report.json.noSpaces"
+            ]
+          }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Ethereal",
-      "namePackage": [
-        "domains",
-        "ethereal"
       ]
     }
   }

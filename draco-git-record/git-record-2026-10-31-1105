@@ -1,0 +1,65 @@
+Close the example generate map and make it a gate
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being that the nine remaining
+example differences be closed in one increment and ExampleDomainsGenTest tightened from a report into
+a gate: the four ConsumeReport rules (aerial, ethereal, marine, terrestrial) take the drake surface the
+emitter renders, with their JSON re-canonicalized from it; the nine hand-written companions whose only
+difference from the generator's output is spelling are replaced by that output; and the test asserts
+zero differ, zero error and zero missing over the 48 example definitions, as DracoGenTest does for the
+main corpus, its row leaving the DRACO.md headline table.
+
+What the nine differences were, read from the map after 23333f3: the three ConsumeReport companions
+(ethereal, marine, terrestrial) lacked `with DracoType` and `override`; the five domain objects (Aerial,
+Ethereal, Marine, Terrestrial, World) lacked the same two words and spelled their imports by hand
+(`import domains.world.World` for the generator's `import domains._` and `import domains.world._`);
+aerial Input lacked the actor convention Creator carries — `elementTypeNames`, a private `knowledge`
+registering the domain's two rules and never evaluated, and its two strict bindings in `receive` as
+`lazy val`, drake.dlt EVALUATION's default. Nothing a definition carries was missing from any of them.
+
+Probed with the compiled CLIs before the recommendation, built as probed. `DrakeCLI emit` renders each
+ConsumeReport surface — `type ConsumeReport`, the domain line, `rule` with `pattern variables var report
+<Report>` and an `action` of one `mon` line (aerial's adds the `loc consumed [String]+` binding). Parsing
+the surface back RE-CANONICALIZES the JSON: the host-opaque action string `domains.marine.MarineSink.record(
+report.json.noSpaces)` becomes the call tree `{"()": [...]}`, aerial's `ctx.getRuntime().get("consumed")` a
+nested one, and the aspect keys take the canonical order (domainAspect before ruleAspect). The Scala
+generated from the re-canonicalized JSON equals the Scala generated from the committed JSON for all four,
+and aerial ConsumeReport's companion, which already matched, regenerates byte-identical. The nine
+regenerated companions equal the probe's output and compiled against the current classes in the probe.
+`DrakeCLI check` over aerial, ethereal, marine, terrestrial and world: surface drift 0, json drift 0,
+skipped 0. No engine change, no new suite.
+
+ExampleDomainsGenTest was a report-only discovery map from 2026-06-23 (91e4a7c), charting the gap between
+the hand-written example companions and the generator as it closed: 11 differences after the Output
+repair of 2026-10-29, 9 after the coordinate companions of 2026-10-31, zero now. Its comment named this
+step — "Once the gaps close, tighten it into a gate (assert zero DIFF) like DracoGenTest" — and it now
+does, keeping the per-type report in its log and the GEN MAP console line, which stays in the capture
+grep for visibility as GenDrake's does. It is the third measurement in the table to become an assertion,
+after the scenario and GenDrake.
+
+THE FIRST DIRECT RUN FAILED ONE TEST, and the failure is the re-canonicalization's one consequence: with
+the ConsumeReport actions treed, NameResolution reads the leaf `domains.terrestrial.TerrestrialSink.record`
+and knew no `domains.terrestrial.TerrestrialSink` — the sinks are hand-written helpers, not definitions,
+and the example caller (`ExampleScope`) bound only AerialSink, the one Consumer's already-treed action
+names, under the 2026-10-23 decision that the sink is supplied explicitly by the caller. The same decision
+covers the other three: `ExampleScope.sinks` binds the four by qualified name, and ExampleLoadingTest
+checks each is a binding, not a domain member, where it checked AerialSink alone. Nothing else moved; the
+second direct run was green.
+
+Headline moves: the four surfaces enter the parse scope (110 draco + 37 mods) and the surface-loss
+coverage (0 fields across 147 types), activating eight DrakeParseTest checks; the example map reads
+48 match / 0 differ / 0 error / 0 missing and is asserted, so its row leaves the DRACO.md §1 table
+(updated in this commit). After this every definition under src/mods/resources/domains is a trio or a
+JSON-only type whose companion is the generator's output; the example inventory the October sessions
+worked through is empty. Remaining, neither accepted: deferred activation; .dcon. The example bodies are
+unswept (spelled as authored, no `uses` records), an observation.
+
+Verification: every discovered suite run directly on compiled classes with current main, mods and test
+resources on the loader roots — first run 981 passed, 1 failed (ExampleLoadingTest, above), 78 suites;
+after the sink bindings, second run 982 tests passed, 78 suites including the Runner's discovery wrapper,
+zero failed, canceled, ignored, pending or aborted: 974 + the eight DrakeParseTest checks the four
+surfaces activate. Headlines: example map 48 match / 0 differ / 0 error / 0 missing of 48 (asserted),
+surface losses 0 across 147 types, parse scope 110 draco + 37 mods, DomainAspect and DracoAspect 110
+sections, GenDrake 108 of 108, PON 80 / 550 / 42 and canonical 7, scenario 23 clean, forest 1 of 2,
+CO-DECLARATION categorical, pending mods actors 0. Dev's full sbt gate on 2026-10-31: 982 succeeded,
+0 failed, canceled, ignored or pending, every headline matching, pending mods actors 0 — 982 tests / 77
+suites, green on its first run.

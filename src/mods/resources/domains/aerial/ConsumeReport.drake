@@ -1,0 +1,9 @@
+type ConsumeReport
+domain domains aerial Aerial
+rule
+  pattern
+    variables
+      var report PositionReport
+  action
+    loc consumed [String]+ ctx.getRuntime().get("consumed")
+    mon add(consumed, report.json.noSpaces)

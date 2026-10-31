@@ -22,16 +22,16 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   at 947 / 74 and committed and pushed by Dev on October 30; then the sibling report factories
   (record `git-record-2026-10-30-1113`), Dev-gated at 956 / 75 and committed and pushed by Dev as **8540341** on October 30; then the Intent json factories (record
   `git-record-2026-10-30-2014`), Dev-gated at 967 / 76 and committed and pushed by Dev as **3a3cbfc** on October 31; then the coordinate surfaces and companions (record
-  `git-record-2026-10-31-0842`), Dev-gated at 974 / 77 on October 31, commit PENDING when this was written —
+  `git-record-2026-10-31-0842`), Dev-gated at 974 / 77 and committed and pushed by Dev as **23333f3** on October 31; then the
+  example map closed as a gate (record `git-record-2026-10-31-1105`), Dev-gated at 982 / 77 on October 31, commit pending —
   inspect `git log -1` and `git status --short` to learn where they stand. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **974 tests / 77 suites**, October 31, on the coordinate tree. Zero
-  failed/canceled/ignored/pending tests, parse scope 110 + 33, surface losses 0 across 143 types,
-  example map 39 match / 9 differ, every other headline unchanged, pending mods actors 0. First
-  Dev gate green.
-- All accepted implementation work through 3a3cbfc is complete, verified and committed. The coordinate
-  increment is built and Dev-gated but not yet committed: two new `.drake` files, two
-  companions and CoordinateProjectionTest sit in the tree with this documentation refresh and the record.
+- Latest Dev-verified gate: **982 tests / 77 suites**, October 31, on the example-gate tree (record
+  `git-record-2026-10-31-1105`, commit pending): zero failed/canceled/ignored/pending tests, parse scope
+  110 + 37, surface losses 0 across 147 types, example map 48 match / 0 differ and now asserted, every
+  other headline unchanged, pending mods actors 0. Before it 974 / 77 on the coordinate tree (23333f3).
+- All accepted implementation work through 23333f3 is committed; the example-gate increment is built
+  and Dev-gated in the tree, awaiting Dev's commit with this documentation.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -154,16 +154,39 @@ Parse scope moves to 110 + 33, surface-loss coverage to 143 types, the example m
 every discovered suite on October 31: 974 passed, 78 suites including discovery, zero
 failed/canceled/ignored/pending/aborted, every headline as stated, pending mods actors 0. Dev's full sbt
 gate on October 31: 974 / 77, zero failed/canceled/ignored/pending, every headline matching, pending mods
-actors 0, green on its first run. Commit pending when this was written.
+actors 0, green on its first run. Committed and pushed by Dev as 23333f3.
+
+## The example map closes and becomes a gate (accepted and built, October 31; Dev verified 982 / 77, commit pending)
+
+Dev accepted: "Accepted, build it". The nine remaining example differences were all companion spelling — the
+three ConsumeReport companions (ethereal, marine, terrestrial: `with DracoType` and `override`), the five domain
+objects (Aerial, Ethereal, Marine, Terrestrial, World: the same, `import domains._` and the wildcard world
+import) and aerial Input (`elementTypeNames`, the unused private `knowledge` Creator carries, lazy bindings in
+`receive`) — and the four ConsumeReports had no drake surface. Built as probed with the compiled CLIs: the four
+ConsumeReport surfaces are the emitter's rendering (`type ConsumeReport`, the domain line, `rule` with one `var
+report <Report>` and a `mon` action), their JSON re-canonicalized by parsing them back (the host-opaque action
+string becomes a call tree, aerial's `ctx.getRuntime().get("consumed")` a nested one; the aspect keys take the
+canonical order), the Scala generated from either JSON identical, aerial's companion regenerating byte-identical;
+the nine companions are the generator's output; `DrakeCLI check` is clean over the five media. ExampleDomainsGenTest,
+report-only since 2026-06-23, now asserts zero differ, zero error and zero missing over the 48 example definitions,
+and the example-map row leaves the DRACO.md table, the third measurement to become an assertion. No engine change,
+no new suite. Parse scope moves to 110 + 37, surface-loss coverage to 147 types, eight DrakeParseTest checks
+activate. The first direct run failed ExampleLoadingTest's all-48 resolution: the treed ConsumeReport actions name the
+three sibling sinks, and resolution knew only AerialSink (bound by ExampleScope on October 23); ExampleScope now
+binds the four sinks by qualified name and the loading test checks each is a binding, not a member. Second direct
+run of every discovered suite on October 31: 982 passed, 78 suites including discovery, zero
+failed/canceled/ignored/pending/aborted, every headline as stated, pending mods actors 0. Dev's full sbt gate on
+October 31: 982 succeeded, zero failed/canceled/ignored/pending, every headline matching, pending mods actors 0 —
+982 / 77, green on its first run. Commit pending.
 
 ## Next design point — acceptance required
 
-NOTHING IS PRESERVED AS A RECOMMENDATION. The remaining inventory is nine example differences, all
-companion spelling: the three ConsumeReport companions (ethereal, marine, terrestrial: `with
-DracoType` and `override` only), the five domain objects (Aerial, Ethereal, Marine, Terrestrial, World:
-`with DracoType`, `override`, import spelling), aerial Input (`elementTypeNames`, `knowledge`, strict
-bindings), the deferred activation recommendation and .dcon migration — none accepted. Inventory is
-context, not authorization.
+Nothing is raised. The example inventory the October sessions worked through is empty: every definition under
+`src/mods/resources/domains` is a trio or a JSON-only type whose companion is the generator's output, and the
+generate map is a gate. What remains deferred, neither accepted: the activation recommendation (an explicitly
+supplied Assembly of held actor definitions with factory-supplied constructor bindings, Codex, 2026-10-15) and the
+.dcon migration. The example bodies are unswept (no `uses` records, spelled as authored), an observation.
+Inventory is context, not authorization.
 
 Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
 accepts.
@@ -204,9 +227,9 @@ parameter; the second run was green.
 | DomainAspect | 110 complete, 1 parameterized included, 0 skipped |
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
 | GenDrake | 108/108, 0 missing, 0 extra |
-| Example generation | 39 match, 9 differ, 0 error, 0 missing / 48 (37 / 11 before the coordinate companions, 36 / 12 before the Output repair) |
-| Surface losses | 0 fields across 143 types (141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
-| Parse scope | 110 draco + 33 mods, 0 held back (31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
+| Example generation | 48 match, 0 differ, 0 error, 0 missing / 48 — ASSERTED since October 31 (39 / 9 before the ConsumeReport trios and nine companions, 37 / 11 before the coordinate companions, 36 / 12 before the Output repair) |
+| Surface losses | 0 fields across 147 types (143 before the ConsumeReport surfaces, 141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
+| Parse scope | 110 draco + 37 mods, 0 held back (33 before the ConsumeReport surfaces, 31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
 | Canonical PON | 80 numbers, 7 differ |
 | Scenario | 23 files, 0 rejected, 0 drifted, 23 clean |
@@ -214,8 +237,9 @@ parameter; the second run was green.
 | Subtype visibility | CO-DECLARATION DROPS THE FACT |
 | Pending mods actors | 0; file-only target/test-output/DrakeGenTest.log |
 
-Do not infer the last row from console output. The example map remains report-only;
-individual repaired types now have exact projection and behavior gates.
+Do not infer the last row from console output. The example map is a gate since October 31
+(ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
+have exact projection and behavior gates.
 
 ## Completed session ledger
 
@@ -244,7 +268,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | e138f04 | LocationReport json factory; both terrestrial sites construct through it; LocationReportTest (Claude Code) | 947 / 74 | 2026-10-30-1038 |
 | 8540341 | PositionReport, FixReport, EphemerisReport json factories; OriginateReports construct through them; ReportFactoryTest (Claude Code) | 956 / 75 | 2026-10-30-1113 |
 | 3a3cbfc | FlightIntent, VoyageIntent, LaunchIntent, MarchIntent json factories; eight test sites construct through them; IntentFactoryTest (Claude Code) | 967 / 76 | 2026-10-30-2014 |
-| pending | Position and Location drake surfaces and generated companions with inferred codecs; CoordinateProjectionTest (Claude Code) | 974 / 77 | 2026-10-31-0842 |
+| 23333f3 | Position and Location drake surfaces and generated companions with inferred codecs; CoordinateProjectionTest (Claude Code) | 974 / 77 | 2026-10-31-0842 |
+| pending | Four ConsumeReport drake surfaces with JSON re-canonicalized; nine companions the generator's output; ExampleDomainsGenTest a gate (Claude Code) | 982 / 77, Dev-gated, commit pending | 2026-10-31-1105 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

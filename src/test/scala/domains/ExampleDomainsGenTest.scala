@@ -9,19 +9,18 @@ import scala.io.Source
 import scala.jdk.CollectionConverters._
 import scala.util.{Try, Using}
 
-/** Discovery map (intentionally NON-FAILING): generate Scala from every JSON-backed
-  * type in the `src/mods` example domains (aerial / terrestrial / marine / ethereal /
-  * world / sentient) and compare to the committed hand-written `.scala`, to chart
-  * exactly which example types already generate cleanly and which still need the
-  * actor-emission fold (factory `actorType(ref)`, the `session.set` seed, the rule-RHS
-  * send) and the transform-as-rules work.
+/** Example-domain gate: generate Scala from every JSON-backed type in the `src/mods`
+  * example domains (aerial / terrestrial / marine / ethereal / world / sentient) and
+  * require it to equal the committed `.scala`, whitespace-normalized, as `DracoGenTest`
+  * does for the main corpus.
   *
-  * Unlike `DracoGenTest`, this does not `fail()` on a mismatch — the example domains
-  * are deliberately hand-written ahead of the Generator, so most types are expected to
-  * differ today. It writes a per-type MATCH/DIFF/ERROR/MISSING report (with full diffs)
-  * to `target/test-output/ExampleDomainsGenTest.log` and a one-line summary to the
-  * console. Once the gaps close, tighten it into a gate (assert zero DIFF) like
-  * `DracoGenTest`.
+  * This was a report-only discovery map from 2026-06-23 until 2026-10-31: the example
+  * domains were hand-written ahead of the Generator, and the map charted the gap as
+  * it closed — 11 differences on 2026-10-29, 9 on 2026-10-31, zero once the four
+  * ConsumeReport trios took their surfaces and the last nine companions became the
+  * generator's output. It still writes the per-type MATCH/DIFF/ERROR/MISSING report
+  * (with full diffs) to `target/test-output/ExampleDomainsGenTest.log` and the one-line
+  * summary to the console; the summary is now a gate, not a measurement.
   *
   * The walker reads only `.json`; types with no JSON (Sinks, Geodesy, EgoActor) are
   * not example *definitions* and are out of scope by construction.
@@ -86,7 +85,7 @@ class ExampleDomainsGenTest extends AnyFunSuite with PersistentTestLog {
     "\n        hand-written" + " " * 48 + "| generated\n" + rows.mkString("\n")
   }
 
-  test("example-domain generate-vs-handwritten map (report only, non-failing)") {
+  test("every example-domain definition generates its committed Scala (gate)") {
     val rps = discover()
     var matched = 0; var differ = 0; var errored = 0; var missing = 0
 
@@ -113,10 +112,11 @@ class ExampleDomainsGenTest extends AnyFunSuite with PersistentTestLog {
 
     val total = rps.size
     log.info(f"%nSUMMARY: $matched%d MATCH / $differ%d DIFF / $errored%d ERROR / $missing%d MISSING  (of $total%d JSON-backed types)")
-    console.info(f"  EXAMPLE-DOMAIN GEN MAP: $matched%d match, $differ%d differ, $errored%d error, $missing%d missing (of $total%d) — details in the log")
+    console.info(f"  EXAMPLE-DOMAIN GEN MAP: $matched%d match, $differ%d differ, $errored%d error, $missing%d missing (of $total%d) — asserted zero differ; details in the log")
 
-    // Discovery scaffold: assert only that the walk found definitions. Per-type diffs
-    // live in this suite's log. Harden to `assert(differ == 0)` once the gaps close.
     assert(total > 0, "no example-domain JSON discovered under src/mods/resources/domains")
+    assert(missing == 0, s"$missing example definition(s) have no committed Scala — see the log")
+    assert(errored == 0, s"$errored example definition(s) failed to load or generate — see the log")
+    assert(differ == 0, s"$differ example definition(s) generate Scala that differs from the committed file — see the log")
   }
 }

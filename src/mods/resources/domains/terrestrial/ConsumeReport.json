@@ -6,6 +6,15 @@
       "terrestrial"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Terrestrial",
+      "namePackage": [
+        "domains",
+        "terrestrial"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -22,17 +31,13 @@
       "body": [
         {
           "kind": "Monadic",
-          "value": "domains.terrestrial.TerrestrialSink.record(report.json.noSpaces)"
+          "value": {
+            "()": [
+              "domains.terrestrial.TerrestrialSink.record",
+              "report.json.noSpaces"
+            ]
+          }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Terrestrial",
-      "namePackage": [
-        "domains",
-        "terrestrial"
       ]
     }
   }

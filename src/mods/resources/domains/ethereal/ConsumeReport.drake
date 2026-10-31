@@ -1,0 +1,8 @@
+type ConsumeReport
+domain domains ethereal Ethereal
+rule
+  pattern
+    variables
+      var report EphemerisReport
+  action
+    mon domains.ethereal.EtherealSink.record(report.json.noSpaces)

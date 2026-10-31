@@ -1,0 +1,8 @@
+type ConsumeReport
+domain domains terrestrial Terrestrial
+rule
+  pattern
+    variables
+      var report LocationReport
+  action
+    mon domains.terrestrial.TerrestrialSink.record(report.json.noSpaces)

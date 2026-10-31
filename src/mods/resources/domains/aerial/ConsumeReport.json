@@ -6,6 +6,15 @@
       "aerial"
     ]
   },
+  "domainAspect": {
+    "typeName": {
+      "name": "Aerial",
+      "namePackage": [
+        "domains",
+        "aerial"
+      ]
+    }
+  },
   "ruleAspect": {
     "pattern": {
       "kind": "Pattern",
@@ -28,7 +37,21 @@
               "String"
             ]
           },
-          "value": "ctx.getRuntime().get(\"consumed\")"
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ctx.getRuntime"
+                    ]
+                  },
+                  "get"
+                ]
+              },
+              "\"consumed\""
+            ]
+          }
         },
         {
           "kind": "Monadic",
@@ -40,15 +63,6 @@
             ]
           }
         }
-      ]
-    }
-  },
-  "domainAspect": {
-    "typeName": {
-      "name": "Aerial",
-      "namePackage": [
-        "domains",
-        "aerial"
       ]
     }
   }

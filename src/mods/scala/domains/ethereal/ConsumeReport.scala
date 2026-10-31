@@ -1,4 +1,3 @@
-
 package domains.ethereal
 
 import draco._
@@ -7,8 +6,8 @@ import org.evrete.api.{Knowledge, RhsContext}
 
 trait ConsumeReport
 
-object ConsumeReport extends App {
-  lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ConsumeReport", _namePackage = Seq ("domains", "ethereal")))
+object ConsumeReport extends App with DracoType {
+  override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ConsumeReport", _namePackage = Seq ("domains", "ethereal")))
   lazy val dracoType: Type[ConsumeReport] = Type[ConsumeReport] (typeDefinition)
   lazy val domainType: Domain[Ethereal] = Domain[Ethereal] (typeDefinition)
 

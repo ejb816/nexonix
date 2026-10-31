@@ -18,6 +18,18 @@ the block below.
 
 ## [Unreleased]
 
+- Close the example generate map and make it a gate: the four `ConsumeReport` rules (aerial, ethereal,
+  marine, terrestrial) gain the Drake surfaces the emitter renders from their JSON, that JSON
+  re-canonicalized from the surface (the action string becomes a call tree; the generated Scala is
+  unchanged), and the last nine hand-written example companions — three ConsumeReports, the five
+  domain objects Aerial, Ethereal, Marine, Terrestrial and World, and aerial Input — are replaced by
+  the generator's output, which differs only in `with DracoType`, `override`, imports and Input's actor
+  convention. ExampleDomainsGenTest, report-only since 2026-06-23, now asserts 48 match / 0 differ /
+  0 error / 0 missing over every example definition, as DracoGenTest does for the main corpus, and its
+  row leaves the DRACO.md headline table. Parse scope moves to 110 draco + 37 mods and surface-loss
+  coverage to 147 types. The example caller scope in the tests binds the three sibling sinks as it already
+  bound AerialSink, the treed actions now naming them. No engine change.
+
 - Give aerial `Position` and terrestrial `Location`, the two coordinate types of the example chain,
   the Drake surfaces the emitter renders from their JSON, and replace their hand-written companions
   with the generator's output, which adds the codec inferred from their three elements: each field
