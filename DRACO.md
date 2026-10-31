@@ -49,8 +49,13 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**974 tests / 77 suites**, verified by Dev on 2026-10-31 for the coordinate surfaces and companions (record
+`git-record-2026-10-31-0842`): three new focused tests in one added suite and four newly active parser checks, zero
+failed/canceled/ignored/pending tests. Parse scope 110 + 33, surface losses 0 across 143 types; example map 39 match /
+9 differ and every other headline unchanged, including pending mods actors 0. Two example trios gain their drake
+surface and the generator's companion, no JSON or engine change. First full Dev gate green. Before it:
 **967 tests / 76 suites**, verified by Dev on 2026-10-31 for the Intent json factories (record
-`git-record-2026-10-30-2014`): three new focused tests in one added suite and eight newly active parser checks, zero failed/canceled/ignored/pending
+`git-record-2026-10-30-2014`, committed as 3a3cbfc): three new focused tests in one added suite and eight newly active parser checks, zero failed/canceled/ignored/pending
 tests. Parse scope 110 + 31, surface losses 0 across 141 types; example map 37 match / 11 differ and every
 other headline unchanged, including pending mods actors 0. Four example trios gain their drake surface and
 factory, eight test sites re-author one construction, no engine change. First full Dev gate green. Before it:
@@ -249,9 +254,9 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `ExampleDomainsGenTest` | example-domain gen map | 37 match, 11 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 141 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 31 mods in, 0 held back |
+| `ExampleDomainsGenTest` | example-domain gen map | 39 match, 9 differ, 0 error, 0 missing (of 48) |
+| `DrakeParseTest` | drake surface losses | 0 fields across 143 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 33 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -347,7 +352,7 @@ Three suites pin the corpus. Knowing which one failed tells you what is actually
 `DracoGenTest` compares **text and never compiles**. It is nonetheless a compile check in
 effect, transitively: generated output is pinned to the hand-written files, and sbt
 compiles those. Do not "fix" this by adding compilation — the guarantee holds. The real
-gap is `ExampleDomainsGenTest`, which reports 37 match / 11 differ over the example domains
+gap is `ExampleDomainsGenTest`, which reports 39 match / 9 differ over the example domains
 and compiles none of it.
 
 `comparisonOnlyExcluded` is `Map.empty`: no hand-written customisation remains under
@@ -1598,4 +1603,26 @@ chain — four intents, four reports, the World's Location sink — now construc
 from the report thread remains preserved. The four surfaces enter the parse scope (110 + 31) and the surface-loss
 coverage (141), activating eight DrakeParseTest checks; the example map stays 37 / 11 (table updated in this
 commit). Direct run 967 / 77 including discovery, green on its first run; Dev's first full gate 967 / 76 on 2026-10-31,
-every headline matching, pending mods actors 0. Commit pending when this was written.
+every headline matching, pending mods actors 0. Committed and pushed by Dev as 3a3cbfc.
+
+
+**Position and Location take their surfaces and the generator's companions (2026-10-31, Claude Code; Dev verified
+974 / 77).** Dev accepted "Accepted, build it" on the recommendation that aerial Position and
+terrestrial Location — the two coordinate types of the example chain, and of the eleven example differences the
+two whose companions lacked something the DEFINITION carries rather than companion spelling — take their drake
+surfaces as the emitter renders them (`type Position from Aerial`, three `fix` elements, a factory with three
+defaulted `par` lines) and have their hand-written companions replaced by the generator's output, which differs
+only by the codec inferred from the elements: 21 lines, `encoder` writing the three fields by name, `decoder`
+reading each through `Option` with the factory default for a missing field, and the imports — Cartesian's
+accepted inferred codecs of 2026-10-25 being the precedent. Probed with the compiled CLIs before the
+recommendation: parsing each emitted surface reproduces the committed JSON byte for byte, so no JSON moves;
+trait, loader line, kind-vals, `apply` and `Null` are unchanged, so Input, world Consumer and five tests
+construct as before. Built as probed, `DrakeCLI check` clean over both media; no engine change.
+`CoordinateProjectionTest` (3) is the 77th suite, each case iterating over the two: the trio (with the element
+names and the three defaults), the lazy once-evaluated arguments with Null and an omitted argument at zero, the
+codec (three fields by name, an empty object to the defaults, a lone third field, an invalid latitude refused).
+The two surfaces enter the parse scope (110 + 33) and the surface-loss coverage (143), activating four
+DrakeParseTest checks; the example map moves to 39 / 9 (table updated in this commit). Remaining example
+differences, all companion spelling: the three ConsumeReport companions, the five domain objects, aerial Input.
+Direct run 974 / 78 including discovery, green on its first run; Dev's first full gate 974 / 77, every headline
+matching, pending mods actors 0. Commit pending when this was written.

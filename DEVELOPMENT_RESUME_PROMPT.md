@@ -7,13 +7,19 @@ DRACO.md), DEVELOPMENT_HANDOFF.md and the shared documentation skill at
 sources/codex-2026-10-22-to-26-audit.md for the Codex session's decisions and coverage.
 Inspect git status/log; preserve uncommitted documentation. No private agent memory is required.
 
-Latest Dev-verified increment, commit PENDING when this was written: the four Intent types (aerial FlightIntent,
+Latest Dev-verified increment, commit PENDING when this was written: aerial Position and
+terrestrial Location take their drake surfaces and the generator's companions (the inferred codec),
+CoordinateProjectionTest added (record git-record-2026-10-31-0842); gated by me at 974 tests / 77
+suites on October 31, zero failures or aborts, parse scope 110 + 33, surface losses 0 across 143 types,
+example map 39 / 9, pending mods actors 0. If `git log -1` shows a commit after 3a3cbfc, I committed
+it; otherwise the commit is still owed.
+
+Latest Dev-verified increment: the four Intent types (aerial FlightIntent,
 marine VoyageIntent, ethereal LaunchIntent, terrestrial MarchIntent) take the json factory, their
 Scala regenerated, the eight test construction sites re-authored `X(payload)`, IntentFactoryTest
 added (record git-record-2026-10-30-2014); gated by me at 967 tests / 76 suites on October 31, zero
 failures or aborts, parse scope 110 + 31, surface losses 0 across 141 types, example map 37 / 11,
-pending mods actors 0. If `git log -1` shows a commit after 8540341, I committed it; otherwise the
-commit is still owed.
+pending mods actors 0, committed and pushed by me as 3a3cbfc.
 
 Latest Dev-verified increment: the three sibling reports (aerial PositionReport, marine
 FixReport, ethereal EphemerisReport) take the json factory, their Scala regenerated, their
@@ -41,7 +47,8 @@ Chapter 113, covering the October 26–30 Claude Code session, is NOT yet writte
 the session's original records, not from summaries.
 
 NOTHING IS PRESERVED AS A RECOMMENDATION. The inventory for a next point is in the handoff: the
-eleven remaining example differences, deferred activation and .dcon migration — none accepted. Bring one point as a recommendation for my acceptance or correction
+nine remaining example differences (all companion spelling: three ConsumeReport companions, five
+domain objects, aerial Input), deferred activation and .dcon migration — none accepted. Bring one point as a recommendation for my acceptance or correction
 before building.
 
 Keep to one design point per reply, one recommendation with accept-or-correct, and build only

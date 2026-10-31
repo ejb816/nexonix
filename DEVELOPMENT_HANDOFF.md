@@ -2,7 +2,7 @@
 
 Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code;
 refreshed by Claude Code through October 30 after the named-construction repairs, the
-terrestrial Output repair and the report and intent json factories.
+terrestrial Output repair, the report and intent json factories and the coordinate surfaces.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -21,17 +21,17 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   by Dev; and **e138f04**, the LocationReport json factory (record `git-record-2026-10-30-1038`), Dev-gated
   at 947 / 74 and committed and pushed by Dev on October 30; then the sibling report factories
   (record `git-record-2026-10-30-1113`), Dev-gated at 956 / 75 and committed and pushed by Dev as **8540341** on October 30; then the Intent json factories (record
-  `git-record-2026-10-30-2014`), Dev-gated at 967 / 76 on October 31, commit PENDING when this was written —
+  `git-record-2026-10-30-2014`), Dev-gated at 967 / 76 and committed and pushed by Dev as **3a3cbfc** on October 31; then the coordinate surfaces and companions (record
+  `git-record-2026-10-31-0842`), Dev-gated at 974 / 77 on October 31, commit PENDING when this was written —
   inspect `git log -1` and `git status --short` to learn where they stand. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **967 tests / 76 suites**, October 31, on the Intent-factory tree. Zero
-  failed/canceled/ignored/pending tests, parse scope 110 + 31, surface losses 0 across 141 types,
-  example map 37 match / 11 differ, every other headline unchanged, pending mods actors 0. First
+- Latest Dev-verified gate: **974 tests / 77 suites**, October 31, on the coordinate tree. Zero
+  failed/canceled/ignored/pending tests, parse scope 110 + 33, surface losses 0 across 143 types,
+  example map 39 match / 9 differ, every other headline unchanged, pending mods actors 0. First
   Dev gate green.
-- All accepted implementation work through 8540341 is complete, verified and committed. The Intent
-  json factories are built and Dev-gated but not yet committed: four new `.drake`
-  files, four JSON files, four companions, eight test files and IntentFactoryTest sit in the tree
-  with this documentation refresh and the record.
+- All accepted implementation work through 3a3cbfc is complete, verified and committed. The coordinate
+  increment is built and Dev-gated but not yet committed: two new `.drake` files, two
+  companions and CoordinateProjectionTest sit in the tree with this documentation refresh and the record.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -137,12 +137,32 @@ constructs through its definition; the *Intent observation of the report records
 every discovered suite on October 30: 967 passed, 77 suites including discovery, zero
 failed/canceled/ignored/pending/aborted, every headline as stated, pending mods actors 0. Dev's full sbt
 gate on October 31: 967 / 76, zero failed/canceled/ignored/pending, every headline matching, pending mods
+actors 0, green on its first run. Committed and pushed by Dev as 3a3cbfc.
+
+## Position and Location take their surfaces and the generator's companions (accepted and built, October 31; Dev verified 974 / 77)
+
+Dev accepted: "Accepted, build it". Aerial Position and terrestrial Location take the drake surfaces
+`DrakeCLI emit` renders from their JSON (`type Position from Aerial`, three `fix` elements, a factory with
+three defaulted parameters); parsing each back reproduces the committed JSON byte for byte, so no JSON
+moves. Their hand-written companions are replaced by the generator's output, which differs only by the
+codec inferred from the elements (21 lines: encoder by field name, decoder with the factory default for a
+missing field, the imports), Cartesian's accepted inferred codecs of October 25 being the precedent; trait,
+loader line, kind-vals, `apply` and `Null` are unchanged, so Input, world Consumer and five tests construct
+as before. No engine change. CoordinateProjectionTest (3), one suite iterating over the two, pins the trios,
+the lazy defaulted factory and Null, and the codec with missing-field defaults and an invalid value refused.
+Parse scope moves to 110 + 33, surface-loss coverage to 143 types, the example map to 39 / 9. Direct run of
+every discovered suite on October 31: 974 passed, 78 suites including discovery, zero
+failed/canceled/ignored/pending/aborted, every headline as stated, pending mods actors 0. Dev's full sbt
+gate on October 31: 974 / 77, zero failed/canceled/ignored/pending, every headline matching, pending mods
 actors 0, green on its first run. Commit pending when this was written.
 
 ## Next design point — acceptance required
 
-NOTHING IS PRESERVED AS A RECOMMENDATION. The remaining inventory is the eleven example differences
-listed below, the deferred activation recommendation and .dcon migration — none accepted. Inventory is
+NOTHING IS PRESERVED AS A RECOMMENDATION. The remaining inventory is nine example differences, all
+companion spelling: the three ConsumeReport companions (ethereal, marine, terrestrial: `with
+DracoType` and `override` only), the five domain objects (Aerial, Ethereal, Marine, Terrestrial, World:
+`with DracoType`, `override`, import spelling), aerial Input (`elementTypeNames`, `knowledge`, strict
+bindings), the deferred activation recommendation and .dcon migration — none accepted. Inventory is
 context, not authorization.
 
 Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
@@ -184,9 +204,9 @@ parameter; the second run was green.
 | DomainAspect | 110 complete, 1 parameterized included, 0 skipped |
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
 | GenDrake | 108/108, 0 missing, 0 extra |
-| Example generation | 37 match, 11 differ, 0 error, 0 missing / 48 (36 / 12 before the Output repair) |
-| Surface losses | 0 fields across 141 types (137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
-| Parse scope | 110 draco + 31 mods, 0 held back (27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
+| Example generation | 39 match, 9 differ, 0 error, 0 missing / 48 (37 / 11 before the coordinate companions, 36 / 12 before the Output repair) |
+| Surface losses | 0 fields across 143 types (141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
+| Parse scope | 110 draco + 33 mods, 0 held back (31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
 | Canonical PON | 80 numbers, 7 differ |
 | Scenario | 23 files, 0 rejected, 0 drifted, 23 clean |
@@ -223,7 +243,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | c5b8089 | Terrestrial Output's Location branch in its definition; OutputProjectionTest (Claude Code) | 942 / 73 | 2026-10-29-1640 |
 | e138f04 | LocationReport json factory; both terrestrial sites construct through it; LocationReportTest (Claude Code) | 947 / 74 | 2026-10-30-1038 |
 | 8540341 | PositionReport, FixReport, EphemerisReport json factories; OriginateReports construct through them; ReportFactoryTest (Claude Code) | 956 / 75 | 2026-10-30-1113 |
-| pending | FlightIntent, VoyageIntent, LaunchIntent, MarchIntent json factories; eight test sites construct through them; IntentFactoryTest (Claude Code) | 967 / 76 | 2026-10-30-2014 |
+| 3a3cbfc | FlightIntent, VoyageIntent, LaunchIntent, MarchIntent json factories; eight test sites construct through them; IntentFactoryTest (Claude Code) | 967 / 76 | 2026-10-30-2014 |
+| pending | Position and Location drake surfaces and generated companions with inferred codecs; CoordinateProjectionTest (Claude Code) | 974 / 77 | 2026-10-31-0842 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

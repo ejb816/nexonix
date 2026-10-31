@@ -823,7 +823,7 @@ and the handoff correction. The
 [latest retrieval audit](draco-dev-journal/sources/codex-2026-10-22-to-26-audit.md) preserves
 42 completed Codex exchanges plus the open journal-recovery acceptance, and recovers the prior
 Claude handoff close. Historical Status sections remain intact. The current code checkpoint
-is the Intent json factories of October 30 (record git-record-2026-10-30-2014), verified at 967 tests / 76 suites on October 31, commit pending; before it the sibling report factories, 8540341, verified at 956 tests / 75 suites, and the LocationReport json factory, e138f04, 947 tests / 74 suites, both on October 30.
+is the coordinate surfaces and companions of October 31 (record git-record-2026-10-31-0842), verified at 974 tests / 77 suites on October 31, commit pending; before it the Intent json factories, 3a3cbfc, verified at 967 tests / 76 suites on October 31, the sibling report factories, 8540341, verified at 956 tests / 75 suites, and the LocationReport json factory, e138f04, 947 tests / 74 suites, both on October 30.
 That repair closed the recommendation the handoff had preserved as unaccepted.
 [The resumption prompt](DEVELOPMENT_RESUME_PROMPT.md) and [handoff](DEVELOPMENT_HANDOFF.md) are
 shared by Codex and Claude Code. The following
@@ -869,7 +869,7 @@ previously omitted members were added to their already-declared owners on Octobe
 Five domain surfaces were added, with reciprocal membership and trio checks. All four audited OriginateReport conversions (Aerial, Marine, Terrestrial and Ethereal) now live in their definitions; exact
 projection checks and runtime cases pin their generated Scala, defaults and callback
 behavior, including integer truncation toward zero for positive and negative inputs. The example generation comparison is
-37 matches / 11 differences after the Output repair of October 29 (Consumer brought it to 36 / 12), unchanged by the LocationReport factory of October 30 and the sibling report factories that followed, whose changed files are the generator's output; the remaining bodies are unswept.
+39 matches / 9 differences after the Position and Location companions of October 31 took the generator's inferred codecs (37 / 11 after the Output repair of October 29, 36 / 12 after Consumer); the report and intent json factories of October 30 left it unchanged, their changed files being the generator's output; the remaining differences are companion spelling, and the remaining bodies are unswept.
 See EXAMPLE_DOMAIN_AUDIT.md for the pre-change evidence and remaining gaps.
 
 Example loading now supplies an explicit caller scope: the canonical dependencies and six
@@ -905,7 +905,7 @@ ignored; lazy provider capture and inert signal behavior are covered by actor ch
 
 The October 26 development checkpoint is in [DEVELOPMENT_HANDOFF.md](DEVELOPMENT_HANDOFF.md),
 with a copyable opening prompt in [DEVELOPMENT_RESUME_PROMPT.md](DEVELOPMENT_RESUME_PROMPT.md)
-for either Codex or Claude Code. Last verified implementation: the sibling report factories of October 30 (8540341), 956 tests / 75 suites; the Intent json factories built the same day were verified at 967 tests / 76 suites on October 31, commit pending.
+for either Codex or Claude Code. Last verified implementation: the sibling report factories of October 30 (8540341), 956 tests / 75 suites; the Intent json factories were verified at 967 tests / 76 suites and committed as 3a3cbfc on October 31; the Position and Location surfaces and companions built that day were verified at 974 tests / 77 suites, commit pending.
 The named-construction qualification repair preserved there was accepted and built the same day.
 Journal chapters 105–112 cover the subsequent session, sourced from original Codex messages
 that survive both observed compactions, with the prior Claude closing exchange also recovered.

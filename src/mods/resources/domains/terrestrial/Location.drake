@@ -1,0 +1,11 @@
+type Location from Terrestrial
+  elements
+    fix latitude Double
+    fix longitude Double
+    fix elevationMetres Int
+  factory
+    parameters
+      par latitude Double 0.0
+      par longitude Double 0.0
+      par elevationMetres Int 0
+domain domains terrestrial Terrestrial

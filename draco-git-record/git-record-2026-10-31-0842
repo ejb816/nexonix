@@ -1,0 +1,48 @@
+Give Position and Location their drake surfaces and the generator's companions
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being that aerial Position
+and terrestrial Location, the two coordinate types of the example chain, take their drake surfaces
+as the emitter writes them, have their hand-written companions replaced by the generator's output,
+and gain one CoordinateProjectionTest in the domains package iterating over the two: trio agreement,
+lazy defaults and Null, the codec round-trip with missing-field defaults.
+
+Why these two: of the eleven example differences the generate map reported after 3a3cbfc, nine are
+companion spelling (`with DracoType`, `override`, imports, Input's actor convention); Position and
+Location were the two whose companions lacked something the definition carries — the codec the
+generator infers from three fixed elements with defaulted factory parameters, exactly the gap
+Cartesian closed on 2026-10-25 when its inferred coordinate codecs were accepted. Neither had a
+drake surface.
+
+Probed before recommending, with the compiled CLIs: `DrakeCLI emit` renders each surface from its
+JSON — `type Position from Aerial`, three `fix` elements, `factory parameters` with three defaulted
+`par` lines, the domain line — and parsing it back reproduces the committed JSON byte for byte, so
+the JSON does not move; the generator's companion differs from the hand-written one only by the
+inferred codec, 21 lines: `implicit lazy val encoder` writing the three fields by name, `implicit
+lazy val decoder` reading each through `Option` with the factory default for a missing field, and
+the imports `domains._`, `io.circe.{Decoder, Encoder, Json}`, `io.circe.syntax.EncoderOps`. Trait,
+loader line, kind-vals, `apply` and `Null` are unchanged, so every caller — Input's Position
+construction, world Consumer's Location construction, five tests — is untouched. Built as probed:
+two surfaces placed from the emitter's rendering, two companions regenerated, `DrakeCLI check`
+over aerial and terrestrial: surface drift 0, json drift 0. No engine change, no JSON change.
+
+CoordinateProjectionTest (3) is one suite, each case iterating over the two: exact trio agreement
+(emit, parse, generate, the three element names, the three factory defaults, the companion's
+loaded definition equal to the file's); the factory's arguments lazy and evaluated once on first
+read, Null and an omitted argument at zero; and the inferred codec writing the three fields by name,
+reading them back onto the companion's definition, decoding an empty object to the three defaults,
+a lone third field to the defaults plus that field, and refusing an invalid latitude.
+
+Headline moves: the two surfaces enter the parse scope (110 draco + 33 mods) and the surface-loss
+coverage (0 fields across 143 types), activating four DrakeParseTest checks; the example map moves
+to 39 match / 9 differ, the two companions now being the generator's output. The table in DRACO.md
+§1 is updated in this commit. Remaining after this: the three ConsumeReport companions, the five
+domain objects and aerial Input, all companion spelling; deferred activation; .dcon.
+
+Verification: every discovered suite run directly on compiled classes with current main, mods and
+test resources on the loader roots — 974 tests passed, 78 suites including the Runner's discovery
+wrapper, zero failed, canceled, ignored, pending or aborted, green on its first run: 967 + the three
+CoordinateProjectionTest cases + the four DrakeParseTest checks the two surfaces activate.
+Headlines: example map 39 match / 9 differ / 0 error / 0 missing of 48, surface losses 0 across 143
+types, parse scope 110 draco + 33 mods, DomainAspect and DracoAspect 110 sections, GenDrake 108 of
+108, PON 80 / 550 / 42 and canonical 7, scenario 23 clean, forest 1 of 2, CO-DECLARATION
+categorical, pending mods actors 0. Dev's full sbt gate on 2026-10-31: 974 succeeded, 0 failed, canceled, ignored or pending, every headline matching, pending mods actors 0 — 974 tests / 77 suites, green on its first run.

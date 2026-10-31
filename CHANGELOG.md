@@ -18,6 +18,14 @@ the block below.
 
 ## [Unreleased]
 
+- Give aerial `Position` and terrestrial `Location`, the two coordinate types of the example chain,
+  the Drake surfaces the emitter renders from their JSON, and replace their hand-written companions
+  with the generator's output, which adds the codec inferred from their three elements: each field
+  written by name, a missing field read as the factory default. JSON, callers and `apply` are
+  unchanged. CoordinateProjectionTest pins the two trios, the lazy defaulted factory and the codec.
+  The example map moves to 39 match / 9 differ, parse scope to 110 draco + 33 mods and surface-loss
+  coverage to 143 types.
+
 - Give the four Intent types — aerial `FlightIntent`, marine `VoyageIntent`, ethereal `LaunchIntent`,
   terrestrial `MarchIntent` — the Drake surface and `json` factory the four reports took, and regenerate
   their Scala, which gains `apply`, `Null` and the Dracon-shaped codec. The eight tests that seeded a
