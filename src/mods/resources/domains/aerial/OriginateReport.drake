@@ -1,11 +1,14 @@
 type OriginateReport
+uses [
+  draco format dracon Dracon
+]
 domain domains aerial Aerial
 rule
   pattern
     variables
       var intent FlightIntent
   action
-    fix consumer (draco.format.dracon.Dracon -> ()) ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
+    fix consumer (Dracon -> ()) ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
     fix cursor io.circe.HCursor intent.json.hcursor
     fix callsign String cursor.get[String]("callsign").getOrElse("UNKNOWN")
     fix flightLevel Int cursor.get[Int]("flightLevel").getOrElse(0)

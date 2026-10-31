@@ -1,5 +1,7 @@
 package domains.aerial
 
+import domains.world.World
+
 import draco._
 import domains._
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
@@ -21,13 +23,13 @@ object Input extends App with DracoType {
     k
   }
 
-  def actorType(_worldConsumer: => domains.world.World => Unit): ActorType = new Actor[draco.format.dracon.Dracon] {
+  def actorType(_worldConsumer: => World => Unit): ActorType = new Actor[draco.format.dracon.Dracon] {
     override lazy val typeDefinition: TypeDefinition = Input.typeDefinition
-    lazy val worldConsumer: domains.world.World => Unit = _worldConsumer
+    lazy val worldConsumer: World => Unit = _worldConsumer
 
     override def receive(ctx: TypedActorContext[draco.format.dracon.Dracon], msg: draco.format.dracon.Dracon): Behavior[draco.format.dracon.Dracon] = {
       lazy val cursor: io.circe.HCursor = msg.json.hcursor
-      lazy val position: domains.aerial.Position = Position(_latitude = cursor.get[Double]("latitude").getOrElse(0.0), _longitude = cursor.get[Double]("longitude").getOrElse(0.0), _altitudeFeet = cursor.get[Int]("altitudeFeet").getOrElse(0))
+      lazy val position: Position = Position(_latitude = cursor.get[Double]("latitude").getOrElse(0.0), _longitude = cursor.get[Double]("longitude").getOrElse(0.0), _altitudeFeet = cursor.get[Int]("altitudeFeet").getOrElse(0))
       worldConsumer(position)
       Behaviors.same[draco.format.dracon.Dracon]
     }

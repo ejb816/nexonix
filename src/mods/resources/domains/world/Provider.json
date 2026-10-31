@@ -6,6 +6,14 @@
       "world"
     ]
   },
+  "uses": [
+    {
+      "name": "ActorType",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -14,7 +22,7 @@
           "draco"
         ],
         "typeParameters": [
-          "domains.world.World"
+          "World"
         ]
       }
     ],
@@ -27,7 +35,7 @@
           "name": "target",
           "valueType": {
             "->": [
-              "domains.world.World",
+              "World",
               {
                 "(,)": [
                 ]

@@ -6,6 +6,22 @@
       "ethereal"
     ]
   },
+  "uses": [
+    {
+      "name": "ActorType",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
   "dracoAspect": {
     "factory": {
       "kind": "Factory",
@@ -16,7 +32,7 @@
           "name": "consumer",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
+              "Dracon",
               {
                 "(,)": [
                 ]

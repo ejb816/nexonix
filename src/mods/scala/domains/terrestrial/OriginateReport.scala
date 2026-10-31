@@ -1,5 +1,7 @@
 package domains.terrestrial
 
+import draco.format.dracon.Dracon
+
 import draco._
 import domains._
 import org.evrete.api.{Knowledge, RhsContext}
@@ -13,7 +15,7 @@ object OriginateReport extends App with DracoType {
 
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val intent: MarchIntent = ctx.get[MarchIntent]("$intent")
-      lazy val consumer: draco.format.dracon.Dracon => Unit = ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
+      lazy val consumer: Dracon => Unit = ctx.getRuntime().get[Dracon => Unit]("consumer")
       lazy val cursor: io.circe.HCursor = intent.json.hcursor
       lazy val unit: String = cursor.get[String]("unit").getOrElse("UNKNOWN")
       lazy val elevationFeet: Int = cursor.get[Int]("elevationFeet").getOrElse(0)

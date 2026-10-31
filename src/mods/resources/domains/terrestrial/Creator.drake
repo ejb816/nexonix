@@ -1,7 +1,11 @@
 type Creator
   factory ActorType
     parameters
-      par consumer (draco.format.dracon.Dracon -> ())
+      par consumer (Dracon -> ())
+uses [
+  draco ActorType
+  draco format dracon Dracon
+]
 domain domains terrestrial Terrestrial
 actor
   messageType draco format dracon Dracon

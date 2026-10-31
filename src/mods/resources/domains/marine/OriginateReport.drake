@@ -1,11 +1,14 @@
 type OriginateReport
+uses [
+  draco format dracon Dracon
+]
 domain domains marine Marine
 rule
   pattern
     variables
       var intent VoyageIntent
   action
-    fix consumer (draco.format.dracon.Dracon -> ()) ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
+    fix consumer (Dracon -> ()) ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
     fix cursor io.circe.HCursor intent.json.hcursor
     fix vessel String cursor.get[String]("vessel").getOrElse("UNKNOWN")
     fix depthMetres Int cursor.get[Int]("depthMetres").getOrElse(0)

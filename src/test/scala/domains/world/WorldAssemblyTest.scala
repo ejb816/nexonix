@@ -1,6 +1,7 @@
 package domains.world
 
 import draco._
+import draco.TypeForm.DraconValueTypeText
 import io.circe.{Json, parser}
 import org.apache.pekko.actor.typed.{ActorRef, ActorSystem, Behavior}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
@@ -80,6 +81,32 @@ class WorldAssemblyTest extends AnyFunSuite {
 
   test("the five-member, two-message-type World service validates without a Pekko context") {
     assert(AssemblyValidator.validate(worldService) == Seq.empty)
+  }
+
+  test("the validator compares a consumer's message type with the actor's by identity through the definition's record") {
+    // Since the example sweep of 2026-10-31 the definitions spell a draco name in the compact form: Input's
+    // `worldConsumer` reads `World -> ()` with domains.world.World in its record, world Consumer's `provider`
+    // reads `World -> ()` bare in its own package with no record entry, Output's `consumer` reads `Dracon -> ()`
+    // with draco.format.dracon.Dracon recorded — while the actors' message types are anchors the carrier holds
+    // in full (the surface elides Provider's own-package `messageType World`). Compared as text, the three
+    // compact parameters met none of them; by identity all do.
+    def parameter(td: TypeDefinition, name: String): String =
+      td.dracoAspect.factory.parameters.find(_.name == name).get.valueType.text
+    def receives(td: TypeDefinition): String = td.actorAspect.fold(ActorAspect.Null, (a: ActorAspect) => a).messageType.namePath
+    val input    = domains.aerial.Input.typeDefinition
+    val consumer = domains.world.Consumer.typeDefinition
+    val provider = domains.world.Provider.typeDefinition
+    val output   = domains.terrestrial.Output.typeDefinition
+    assert(parameter(input, "worldConsumer") == "World -> ()" && input.uses.map(_.namePath) == Seq("domains.world.World", "draco.ActorType"))
+    assert(parameter(consumer, "provider") == "World -> ()" && !consumer.uses.exists(_.name == "World"))
+    assert(parameter(output, "consumer") == "Dracon -> ()" && output.uses.map(_.namePath).contains("draco.format.dracon.Dracon"))
+    assert(Seq(consumer, provider, output).map(receives) == Seq.fill(3)("domains.world.World"))
+    assert(receives(domains.terrestrial.Consumer.typeDefinition) == "draco.format.dracon.Dracon")
+    assert(AssemblyValidator.validate(worldService) == Seq.empty)
+    // A mismatch is reported with both identities in full, whatever either definition's spelling.
+    val crossed = Assembly(_members = worldService.members, _bindings = Seq(Binding(Output, "consumer", WProvider)), _entry = Input)
+    assert(AssemblyValidator.validate(crossed) == Seq(
+      "binding 'domains.terrestrial.Output.consumer' expects a consumer of draco.format.dracon.Dracon but 'domains.world.Provider' receives domains.world.World"))
   }
 
   test("the validator catches a binding wired to the wrong message type") {

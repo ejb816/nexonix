@@ -1,5 +1,7 @@
 package domains.ethereal
 
+import draco.format.dracon.Dracon
+
 import draco._
 import domains._
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
@@ -21,21 +23,21 @@ object Creator extends App with DracoType {
     k
   }
 
-  def actorType(_consumer: => draco.format.dracon.Dracon => Unit): ActorType = new Actor[draco.format.dracon.Dracon] {
+  def actorType(_consumer: => Dracon => Unit): ActorType = new Actor[Dracon] {
     override lazy val typeDefinition: TypeDefinition = Creator.typeDefinition
-    lazy val consumer: draco.format.dracon.Dracon => Unit = _consumer
+    lazy val consumer: Dracon => Unit = _consumer
 
-    override def receive(ctx: TypedActorContext[draco.format.dracon.Dracon], msg: draco.format.dracon.Dracon): Behavior[draco.format.dracon.Dracon] = {
+    override def receive(ctx: TypedActorContext[Dracon], msg: Dracon): Behavior[Dracon] = {
       lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
       session.set("consumer", consumer)
       session.insert(Seq(msg): _*)
       session.fire()
       session.close()
-      Behaviors.same[draco.format.dracon.Dracon]
+      Behaviors.same[Dracon]
     }
 
-    override def receiveSignal(ctx: TypedActorContext[draco.format.dracon.Dracon], signal: Signal): Behavior[draco.format.dracon.Dracon] = {
-      Behaviors.same[draco.format.dracon.Dracon]
+    override def receiveSignal(ctx: TypedActorContext[Dracon], signal: Signal): Behavior[Dracon] = {
+      Behaviors.same[Dracon]
     }
   }
 }

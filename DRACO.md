@@ -49,8 +49,13 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**983 tests / 77 suites**, verified by Dev on 2026-10-31 for the example body sweep (record `git-record-2026-10-31-1436`,
+commit pending): one added test in WorldAssemblyTest, no new suite, zero failed/canceled/ignored/pending tests. Parse scope 110 + 37, surface losses 0 across 147 types, the
+example gate 48 match / 0 differ; every headline unchanged, including pending mods actors 0. Twelve example trios
+take the compact form with their `uses` records, surfaces re-emitted and Scala regenerated; `AssemblyValidator`
+compares message types by identity, the one engine change. First full Dev gate green. Before it:
 **982 tests / 77 suites**, verified by Dev on 2026-10-31 for the example map closed as a gate (record
-`git-record-2026-10-31-1105`, commit pending): no new suite, eight newly active parser checks, zero
+`git-record-2026-10-31-1105`, committed as 7be1497): no new suite, eight newly active parser checks, zero
 failed/canceled/ignored/pending tests. Parse scope 110 + 37, surface losses 0 across 147 types; example map 48 match /
 0 differ, now ASSERTED and off the table below; every other headline unchanged, including pending mods actors 0. Four
 example trios gain their drake surface with their JSON re-canonicalized, nine companions become the generator's
@@ -1068,7 +1073,7 @@ questions are CLOSED by that session (two-stage loading, the unit type, the host
 records, formals in the aspect). The next design point is OPEN and unaccepted: Presence-typed role slots so a
 present-empty rule or actor survives the carrier, with the two authored-ahead surfaces (BodyElement, ActorAspect)
 re-canonicalized as plain types and their exhibit moved into a round-trip test. Activation and .dcon migration
-remain deferred; the example domains remain unswept.
+remain deferred; the example domains remained unswept until 2026-10-31 (below).
 
 **#51 continuation.** The issue's priority-next label was scoped to the derivation edge
 completed in August; it is not evidence that every proposal in its older comments remains
@@ -1170,7 +1175,10 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
 - **Expression vocabulary has more than two consumers.** Alongside Drake and DracoGenerator,
   the SourceContract prototype and its tests carry operator cases. Retiring the `if` node
   passed scoped probes but failed two SourceContractTest cases in the first full run
-  (chapter 81). Search every consumer and retain the full-suite gate.
+  (chapter 81). Search every consumer and retain the full-suite gate. The TYPE vocabulary has a
+  third consumer too: `AssemblyValidator` read a consumer's message type as text, caught by the
+  unit type on 2026-10-21 and by the compact spellings of the example sweep on 2026-10-31, when it
+  began comparing by identity through the definition's record.
 - **Evrete** compiles conditions as Java at runtime: fully qualified class names required.
   Working memory is boxed — rule variables use `classOf[Integer]`, not `classOf[Int]`.
   A single-fact insert needs `Seq(fact): _*`. Tuple facts need a `forEach` declaration.
@@ -1663,4 +1671,37 @@ remain, neither accepted. THE FIRST DIRECT RUN FAILED ONE TEST, ExampleLoadingTe
 `domains.<medium>.<Medium>Sink.record`, and resolution knew only AerialSink, bound by the example caller on 2026-10-23
 when Consumer's action was a tree; `ExampleScope` now binds the four sinks by qualified name, the same decision, and
 the loading test checks each is a binding, not a member. Second direct run 982 / 78 including discovery, green, every headline as stated; Dev's first full gate 982 / 77 on
-2026-10-31, every headline matching, pending mods actors 0. Commit pending.
+2026-10-31, every headline matching, pending mods actors 0. Committed and pushed by Dev as 7be1497.
+
+
+**The example bodies are swept and the validator compares by identity (2026-10-31, Claude Code; Dev verified 983 / 77).** Dev accepted "Accepted, build it" on the recommendation that the twelve example definitions the
+compact form changes — the four Creators, the four OriginateReports, aerial Input, terrestrial Output, world Consumer and
+Provider, the one part of the corpus the October 21 sweep left out — be swept as that corpus was: JSON compacted with
+`uses` records, drake surfaces re-emitted, Scala regenerated and pinned by the example gate, the other 36 untouched;
+together with `AssemblyValidator` comparing a consumer's message type with the actor's by IDENTITY through the
+definition's record instead of by text, and one assembly test over a compact definition. MEASURED before recommending,
+with a probe compacting all 48 through the example caller scope: `draco.format.dracon.Dracon` shortens to `Dracon` in
+the Creators' and Output's consumer parameter and the OriginateReports' binding (the host text inside
+`ctx.getRuntime().get[…]` keeps its spelling); `domains.world.World` to `World` in Input's `worldConsumer` (recorded)
+and in Consumer's and Provider's parameter and `Actor(World)` header (own package, unrecorded); Position and Location
+in Consumer's case branch and Input's binding; the factory's `ActorType`, recorded as the dreams records carry it;
+anchors — Output's `messageType domains world World`, every derivation — stay in full. Built as probed: the surfaces
+are `Drake.emit` of the compact form with a `uses` section, the JSON `DrakeCLI parse` of each new surface (equal to
+the probe's compact JSON, so the round trip holds), the Scala `GeneratorCLI generate` over the current resources —
+two to eight lines per file, the selective imports gained and the qualified spellings shortened, unscoped and scoped
+generation byte-identical for all 48 — and `DrakeCLI check` clean over the five media. THE VALIDATOR compared
+`m.text` with `messageType.namePath` as strings, the third consumer of the type vocabulary (§6); over the swept tree
+the old one fails both assembly suites with five errors of the shape "expects a consumer of World but receives
+domains.world.World". Now `identity(td, text)` resolves through `NameResolution.recorded(td)`, completes a bare result
+with the definition's own package (the compact form's convention for a bare name) and both sides compare by
+`namePath`, parameters free, as definitions are keyed; nothing is loaded or discovered. The actor's message type is an
+anchor the carrier holds in full (the surface elides Provider's own-package `messageType World`), so the completion is
+exercised today only on the consumer side — the new WorldAssemblyTest case's first focused run failed on the test's
+own assertion that it reads bare, corrected before the direct run. WorldAssemblyTest +1 pins the three compact
+spellings with their records, the actors' identities, the clean service and a crossed binding reported in full. No
+headline moves: twelve surfaces re-emitted, none added. After this every definition in the corpus is in the compact
+form but the five sentient JSON-only types (Direction, Ego, Lean, Percept, Waypoint) whose tuple value type is the
+pre-tree string `"(Double, Double)"` and which alone fail `parse(emit(td)) == td` — an observation, not recommended;
+deferred activation and .dcon remain, neither accepted. Direct run 983 / 78 including discovery, green on its first
+run, every headline as stated; Dev's first full gate 983 / 77 on 2026-10-31, every headline matching, pending mods
+actors 0. Commit pending.

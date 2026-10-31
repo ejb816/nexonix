@@ -6,7 +6,7 @@ import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.Knowledge
 
-trait Provider extends Actor[domains.world.World]
+trait Provider extends Actor[World]
 
 object Provider extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Provider", _namePackage = Seq ("domains", "world")))
@@ -16,9 +16,9 @@ object Provider extends App with DracoType {
 
   private lazy val knowledge: Knowledge = Rule.knowledgeService.newKnowledge("Provider")
 
-  def actorType(_target: => domains.world.World => Unit): ActorType = new Actor[World] {
+  def actorType(_target: => World => Unit): ActorType = new Actor[World] {
     override lazy val typeDefinition: TypeDefinition = Provider.typeDefinition
-    lazy val target: domains.world.World => Unit = _target
+    lazy val target: World => Unit = _target
 
     override def receive(ctx: TypedActorContext[World], msg: World): Behavior[World] = {
       target(msg)

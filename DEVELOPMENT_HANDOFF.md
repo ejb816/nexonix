@@ -23,15 +23,22 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   (record `git-record-2026-10-30-1113`), Dev-gated at 956 / 75 and committed and pushed by Dev as **8540341** on October 30; then the Intent json factories (record
   `git-record-2026-10-30-2014`), Dev-gated at 967 / 76 and committed and pushed by Dev as **3a3cbfc** on October 31; then the coordinate surfaces and companions (record
   `git-record-2026-10-31-0842`), Dev-gated at 974 / 77 and committed and pushed by Dev as **23333f3** on October 31; then the
-  example map closed as a gate (record `git-record-2026-10-31-1105`), Dev-gated at 982 / 77 on October 31, commit pending —
+  example map closed as a gate (record `git-record-2026-10-31-1105`), Dev-gated at 982 / 77 and committed and pushed by Dev as **7be1497** on October 31; then the
+  example body sweep with the validator's identity comparison (record `git-record-2026-10-31-1436`), Dev-gated at 983 / 77 on October 31, commit PENDING —
   inspect `git log -1` and `git status --short` to learn where they stand. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **982 tests / 77 suites**, October 31, on the example-gate tree (record
-  `git-record-2026-10-31-1105`, commit pending): zero failed/canceled/ignored/pending tests, parse scope
-  110 + 37, surface losses 0 across 147 types, example map 48 match / 0 differ and now asserted, every
-  other headline unchanged, pending mods actors 0. Before it 974 / 77 on the coordinate tree (23333f3).
-- All accepted implementation work through 23333f3 is committed; the example-gate increment is built
-  and Dev-gated in the tree, awaiting Dev's commit with this documentation.
+- Latest Dev-verified gate: **983 tests / 77 suites**, October 31, on the example-sweep tree (record
+  `git-record-2026-10-31-1436`, commit pending): zero failed/canceled/ignored/pending tests, parse scope
+  110 + 37, surface losses 0 across 147 types, example gate 48 match / 0 differ, every other headline
+  unchanged, pending mods actors 0. Before it 982 / 77 on the example-gate tree (7be1497).
+- In the tree, Dev-gated at 983 / 77 on October 31 but NOT yet committed: the example body sweep —
+  twelve example trios in the compact form with `uses` records (surfaces re-emitted, JSON re-canonicalized,
+  Scala regenerated), `AssemblyValidator` comparing message types by identity, WorldAssemblyTest +1, the
+  record `git-record-2026-10-31-1436`, the CHANGELOG entry and this documentation. Direct run October 31:
+  983 / 78 including discovery, zero failed/canceled/ignored/pending/aborted, every headline unchanged,
+  pending mods actors 0. Dev's full sbt gate on October 31: 983 succeeded, zero failed/canceled/ignored/pending,
+  every headline matching, pending mods actors 0 — 983 / 77, green on its first run.
+- All accepted implementation work through 7be1497 is committed and pushed.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -156,7 +163,7 @@ failed/canceled/ignored/pending/aborted, every headline as stated, pending mods 
 gate on October 31: 974 / 77, zero failed/canceled/ignored/pending, every headline matching, pending mods
 actors 0, green on its first run. Committed and pushed by Dev as 23333f3.
 
-## The example map closes and becomes a gate (accepted and built, October 31; Dev verified 982 / 77, commit pending)
+## The example map closes and becomes a gate (accepted and built, October 31; Dev verified 982 / 77, committed as 7be1497)
 
 Dev accepted: "Accepted, build it". The nine remaining example differences were all companion spelling — the
 three ConsumeReport companions (ethereal, marine, terrestrial: `with DracoType` and `override`), the five domain
@@ -177,16 +184,49 @@ binds the four sinks by qualified name and the loading test checks each is a bin
 run of every discovered suite on October 31: 982 passed, 78 suites including discovery, zero
 failed/canceled/ignored/pending/aborted, every headline as stated, pending mods actors 0. Dev's full sbt gate on
 October 31: 982 succeeded, zero failed/canceled/ignored/pending, every headline matching, pending mods actors 0 —
-982 / 77, green on its first run. Commit pending.
+982 / 77, green on its first run. Committed and pushed by Dev as 7be1497.
+
+## The example bodies are swept and the validator compares by identity (accepted and built, October 31; Dev verified 983 / 77, commit pending)
+
+Dev accepted: "Accepted, build it" on the point raised after 7be1497 — sweep the example bodies as the canonical
+corpus was swept on October 21, the one part of the corpus that sweep left out. MEASURED first with a probe over the
+compiled classes, compacting all 48 example definitions through the example caller scope (ExampleScope's identities
+and bindings): twelve change and gain a record — the four Creators and four OriginateReports, aerial Input,
+terrestrial Output, world Consumer and Provider — `draco.format.dracon.Dracon` to `Dracon` (the host text inside
+`ctx.getRuntime().get[…]` keeps its spelling), `domains.world.World` to `World` (recorded in Input, own-package bare
+in Consumer and Provider including their `Actor(World)` header), Position and Location in Consumer's branch and
+Input's binding, and the factory's `ActorType` recorded as the dreams records carry it; anchors (Output's
+`messageType domains world World`, every derivation) stay in full; the other 36 are unchanged. Built as probed: the
+twelve surfaces are `Drake.emit` of the compact form with a `uses` section, the JSON `DrakeCLI parse` of each new
+surface (equal to the probe's compact JSON), the Scala `GeneratorCLI generate` over the current resources — two to
+eight lines per file (Creators +8/−6, Input +5/−3, OriginateReports +3/−1, Output +4/−2, Consumer +8/−5, Provider
++3/−3), selective imports gained and the qualified spellings shortened, unscoped and scoped generation byte-identical
+for all 48 — `DrakeCLI check` clean over the five media. ONE ENGINE CHANGE: `AssemblyValidator` compared a consumer
+parameter's message type with the actor's by TEXT (`m.text` against `messageType.namePath`); run over the swept tree
+for the record, the old validator fails both assembly suites with five errors of the shape "expects a consumer of
+World but receives domains.world.World". Now `identity(td, text)` resolves a name through `NameResolution.recorded(td)`
+(the definition's own record as the scope, the generator's reading of a recorded definition), completes a bare result
+with the definition's own package (the compact form's convention for a bare name), and both sides compare by
+`namePath` — name and package, parameters free, as definitions are keyed; nothing is loaded or discovered. The actor's
+message type is a TypeName anchor the carrier holds in full (the surface elides Provider's own-package `messageType
+World`), so the completion is exercised today only on the consumer side. WorldAssemblyTest +1 pins the three compact
+spellings with their records, the actors' identities, the clean service and a crossed binding reported with both
+identities in full; its first focused run failed on the test's own assertion that Provider's message type reads bare,
+corrected before the direct run. No headline moves: twelve surfaces re-emitted, none added. Direct run of every
+discovered suite on October 31: 983 passed, 78 suites including discovery, zero failed/canceled/ignored/pending/aborted,
+green on its first run, every headline as stated, pending mods actors 0. Dev's full sbt gate on October 31: 983
+succeeded, zero failed/canceled/ignored/pending, every headline matching, pending mods actors 0 — 983 / 77, green on
+its first run. Commit pending.
 
 ## Next design point — acceptance required
 
-Nothing is raised. The example inventory the October sessions worked through is empty: every definition under
-`src/mods/resources/domains` is a trio or a JSON-only type whose companion is the generator's output, and the
-generate map is a gate. What remains deferred, neither accepted: the activation recommendation (an explicitly
-supplied Assembly of held actor definitions with factory-supplied constructor bindings, Codex, 2026-10-15) and the
-.dcon migration. The example bodies are unswept (no `uses` records, spelled as authored), an observation.
-Inventory is context, not authorization.
+None raised yet (Claude Code, 2026-10-31, after the example sweep). After the sweep every definition in the corpus is
+in the compact form but the five sentient JSON-only types. OBSERVED, not recommended: Direction, Ego, Lean, Percept and
+Waypoint carry a tuple value type as a STRING (`"(Double, Double)"`), the pre-tree form of 2026-09-17, so they alone
+fail `parse(emit(td)) == td`; nothing re-canonicalized them because the sentient domain has no drake surfaces.
+Deferred, neither accepted: the activation recommendation (an explicitly supplied Assembly of held actor definitions
+with factory-supplied constructor bindings, Codex, 2026-10-15) and the .dcon migration. Inventory is context, not
+authorization.
 
 Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
 accepts.
@@ -237,6 +277,9 @@ parameter; the second run was green.
 | Subtype visibility | CO-DECLARATION DROPS THE FACT |
 | Pending mods actors | 0; file-only target/test-output/DrakeGenTest.log |
 
+The example sweep's direct run (October 31, record 2026-10-31-1436): 983 / 78 including discovery, every
+row above unchanged; Dev's full gate 983 / 77 on October 31, every row matching.
+
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
 have exact projection and behavior gates.
@@ -269,7 +312,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 8540341 | PositionReport, FixReport, EphemerisReport json factories; OriginateReports construct through them; ReportFactoryTest (Claude Code) | 956 / 75 | 2026-10-30-1113 |
 | 3a3cbfc | FlightIntent, VoyageIntent, LaunchIntent, MarchIntent json factories; eight test sites construct through them; IntentFactoryTest (Claude Code) | 967 / 76 | 2026-10-30-2014 |
 | 23333f3 | Position and Location drake surfaces and generated companions with inferred codecs; CoordinateProjectionTest (Claude Code) | 974 / 77 | 2026-10-31-0842 |
-| pending | Four ConsumeReport drake surfaces with JSON re-canonicalized; nine companions the generator's output; ExampleDomainsGenTest a gate (Claude Code) | 982 / 77, Dev-gated, commit pending | 2026-10-31-1105 |
+| 7be1497 | Four ConsumeReport drake surfaces with JSON re-canonicalized; nine companions the generator's output; ExampleDomainsGenTest a gate (Claude Code) | 982 / 77 | 2026-10-31-1105 |
+| pending | Twelve example trios in the compact form with `uses` records (surfaces re-emitted, JSON re-canonicalized, Scala regenerated); AssemblyValidator compares message types by identity; WorldAssemblyTest +1 (Claude Code) | 983 / 77 | 2026-10-31-1436 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
@@ -312,8 +356,14 @@ EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a curren
   the same way, with the plain expression as its fallback.
 - Scoped canonical generation and TypeName formal/actual separation remain as documented in
   DRACO.md and chapters 100–104. Rebuilds must preserve uses and typeParameters. Companions
-  load unscoped; recorded resolution is applied during generation. Do not sweep examples by
-  assuming scoped and unscoped spellings are identical.
+  load unscoped; recorded resolution is applied during generation. The examples were swept on
+  October 31 only after a probe showed scoped and unscoped generation byte-identical for all 48.
+- `AssemblyValidator` compares a consumer parameter's message type with the actor's by IDENTITY
+  (name and package, parameters free): each name is resolved through its own definition's record
+  (`NameResolution.recorded`), a bare result completed with that definition's package — the compact
+  form's convention — and nothing is loaded or discovered. Any further consumer of the type
+  vocabulary must read names the same way; text comparison broke at the unit type and again at
+  the example sweep.
 
 The 11 remaining example differences after the Output repair are:
 aerial/Aerial, aerial/Input, aerial/Position; ethereal/ConsumeReport, ethereal/Ethereal;

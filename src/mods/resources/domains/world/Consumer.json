@@ -6,6 +6,28 @@
       "world"
     ]
   },
+  "uses": [
+    {
+      "name": "Position",
+      "namePackage": [
+        "domains",
+        "aerial"
+      ]
+    },
+    {
+      "name": "Location",
+      "namePackage": [
+        "domains",
+        "terrestrial"
+      ]
+    },
+    {
+      "name": "ActorType",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  ],
   "dracoAspect": {
     "derivation": [
       {
@@ -14,7 +36,7 @@
           "draco"
         ],
         "typeParameters": [
-          "domains.world.World"
+          "World"
         ]
       }
     ],
@@ -27,7 +49,7 @@
           "name": "provider",
           "valueType": {
             "->": [
-              "domains.world.World",
+              "World",
               {
                 "(,)": [
                 ]
@@ -54,7 +76,7 @@
         {
           "kind": "Case",
           "name": "position",
-          "valueType": "domains.aerial.Position",
+          "valueType": "Position",
           "body": [
             {
               "kind": "Fixed",
@@ -103,10 +125,10 @@
             {
               "kind": "Fixed",
               "name": "location",
-              "valueType": "domains.terrestrial.Location",
+              "valueType": "Location",
               "value": {
                 "()": [
-                  "domains.terrestrial.Location",
+                  "Location",
                   "coordinates._1",
                   "coordinates._2",
                   {

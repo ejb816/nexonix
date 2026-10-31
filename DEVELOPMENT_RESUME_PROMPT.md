@@ -7,13 +7,23 @@ DRACO.md), DEVELOPMENT_HANDOFF.md and the shared documentation skill at
 sources/codex-2026-10-22-to-26-audit.md for the Codex session's decisions and coverage.
 Inspect git status/log; preserve uncommitted documentation. No private agent memory is required.
 
-Latest Dev-verified increment (commit pending): the example generate map closes and becomes a gate — the four
+In the tree, gated by me at 983 tests / 77 suites on October 31 and awaiting my commit: the example body sweep — the twelve example definitions
+the compact form changes (four Creators, four OriginateReports, aerial Input, terrestrial Output, world
+Consumer and Provider) compacted with their `uses` records, their drake surfaces re-emitted and their
+Scala regenerated with selective imports, the other 36 unchanged; AssemblyValidator comparing a
+consumer's message type with the actor's by identity through the definition's record instead of by
+text; WorldAssemblyTest +1 (record git-record-2026-10-31-1436). Direct run of every discovered suite on
+October 31: 983 tests / 78 suites including discovery, zero failures or aborts, every headline unchanged
+(parse scope 110 + 37, surface losses 0 across 147 types, example gate 48 / 0, pending mods actors 0).
+My full gate matched the direct run with every headline unchanged; after the commit the next related point is open.
+
+Latest Dev-verified increment: the example generate map closes and becomes a gate — the four
 ConsumeReport types (aerial, ethereal, marine, terrestrial) take their drake surfaces with their JSON
 re-canonicalized, the last nine hand-written example companions (three ConsumeReports, five domain
 objects, aerial Input) are replaced by the generator's output, and ExampleDomainsGenTest asserts
 48 match / 0 differ (record git-record-2026-10-31-1105); gated by me at 982 tests / 77 suites on
 October 31, zero failures or aborts, parse scope 110 + 37, surface losses 0 across 147 types, the
-example-map row off the DRACO.md table, pending mods actors 0; my commit pending.
+example-map row off the DRACO.md table, pending mods actors 0, committed and pushed by me as 7be1497.
 
 Before it: aerial Position and
 terrestrial Location take their drake surfaces and the generator's companions (the inferred codec),
@@ -53,11 +63,12 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-NOTHING IS PRESERVED AS A RECOMMENDATION. The example inventory is empty: every example definition
-is a trio or a JSON-only type whose companion is the generator's output, and the generate map is a
-gate. What remains is in the handoff: deferred activation and .dcon migration, neither accepted, and
-the unswept example bodies as an observation. Bring one point as a recommendation for my acceptance
-or correction before building.
+The example sweep above was raised and accepted on 2026-10-31; nothing from it remains open. Observed
+only, not recommended: five sentient definitions (Direction, Ego, Lean, Percept, Waypoint, JSON-only)
+carry a tuple value type as the pre-tree string "(Double, Double)" and alone fail the drake round-trip;
+the sentient domain has no surfaces. Deferred, neither accepted: activation and the .dcon migration. The
+details are in the handoff. Bring one point as a recommendation for my acceptance or correction before
+building.
 
 Keep to one design point per reply, one recommendation with accept-or-correct, and build only
 what I accept. Do not run sbt, commit or push; hand over path-scoped commands and wait for my

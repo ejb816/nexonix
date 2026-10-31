@@ -1,11 +1,14 @@
 type OriginateReport
+uses [
+  draco format dracon Dracon
+]
 domain domains ethereal Ethereal
 rule
   pattern
     variables
       var intent LaunchIntent
   action
-    fix consumer (draco.format.dracon.Dracon -> ()) ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
+    fix consumer (Dracon -> ()) ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
     fix cursor io.circe.HCursor intent.json.hcursor
     fix obj String cursor.get[String]("object").getOrElse("UNKNOWN")
     fix altitudeNauticalMiles Int cursor.get[Int]("altitudeNauticalMiles").getOrElse(0)

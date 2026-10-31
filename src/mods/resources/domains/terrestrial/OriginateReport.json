@@ -6,6 +6,16 @@
       "terrestrial"
     ]
   },
+  "uses": [
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
   "domainAspect": {
     "typeName": {
       "name": "Terrestrial",
@@ -34,7 +44,7 @@
           "name": "consumer",
           "valueType": {
             "->": [
-              "draco.format.dracon.Dracon",
+              "Dracon",
               {
                 "(,)": [
                 ]

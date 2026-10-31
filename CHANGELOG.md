@@ -18,6 +18,16 @@ the block below.
 
 ## [Unreleased]
 
+- Sweep the example bodies: the twelve example definitions the compact form changes — the four
+  `Creator`s, the four `OriginateReport`s, aerial `Input`, terrestrial `Output`, world `Consumer` and
+  `Provider` — now spell the draco names of other packages short with a `uses` record and their own
+  package bare, as the canonical corpus has since 2026-10-21; their Drake surfaces are re-emitted, their
+  JSON re-canonicalized and their Scala regenerated with selective imports (two to eight lines each),
+  the other 36 unchanged. `AssemblyValidator` compares a consumer parameter's message type with the
+  actor's by identity — name and package, resolved through each definition's own record — instead of
+  by text, which the shortened spellings would have failed; WorldAssemblyTest pins it. No headline
+  moves.
+
 - Close the example generate map and make it a gate: the four `ConsumeReport` rules (aerial, ethereal,
   marine, terrestrial) gain the Drake surfaces the emitter renders from their JSON, that JSON
   re-canonicalized from the surface (the action string becomes a call tree; the generated Scala is

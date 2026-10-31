@@ -1,5 +1,7 @@
 package domains.terrestrial
 
+import draco.format.dracon.Dracon
+
 import draco._
 import domains._
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
@@ -21,9 +23,9 @@ object Output extends App with DracoType {
     k
   }
 
-  def actorType(_consumer: => draco.format.dracon.Dracon => Unit): ActorType = new Actor[domains.world.World] {
+  def actorType(_consumer: => Dracon => Unit): ActorType = new Actor[domains.world.World] {
     override lazy val typeDefinition: TypeDefinition = Output.typeDefinition
-    lazy val consumer: draco.format.dracon.Dracon => Unit = _consumer
+    lazy val consumer: Dracon => Unit = _consumer
 
     override def receive(ctx: TypedActorContext[domains.world.World], msg: domains.world.World): Behavior[domains.world.World] = {
       msg match {

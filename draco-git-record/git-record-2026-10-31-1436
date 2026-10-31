@@ -1,0 +1,82 @@
+Sweep the example bodies and compare assembly message types by identity
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being that the twelve example
+definitions the compact form changes be swept as the canonical corpus was swept on 2026-10-21 (their
+JSON compacted with `uses` records, their drake surfaces re-emitted, their Scala regenerated and pinned
+by the example gate, the other 36 untouched), together with `AssemblyValidator` comparing a consumer's
+message type with the actor's by IDENTITY through the definition's record instead of by text, and one
+assembly test over a compact definition. No other engine change.
+
+What the sweep is. The October 21 sweep compacted 132 definitions — every main definition and the
+staged dreams and service definitions — and left the example domains out, so they were the one part of
+the corpus still spelled as authored: an unswept file gains its imports only under a scope, the
+asymmetry the sweep removed elsewhere. MEASURED before recommending, with a probe over the compiled
+classes compacting all 48 example definitions through the example caller scope (ExampleScope's
+identities and bindings): twelve change and gain a record — the four Creators, the four OriginateReports,
+aerial Input, terrestrial Output, world Consumer and Provider — and 36 are unchanged, spelling only
+own-package and host names. What shortens: `draco.format.dracon.Dracon` to `Dracon` in the Creators' and
+Output's consumer parameter and the OriginateReports' consumer binding (the host text inside
+`ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]` keeps its spelling, being host-opaque);
+`domains.world.World` to `World` in Input's `worldConsumer` (another package, recorded) and in
+Consumer's and Provider's parameter and `Actor(World)` header (own package, bare and unrecorded);
+`domains.aerial.Position` and `domains.terrestrial.Location` in Consumer's case branch and Input's
+binding; and the factory's result `ActorType`, recorded as `draco ActorType`, as the dreams Editor's and
+Initialization's records already carry it. Anchors stay in full: Output's `messageType domains world
+World`, every derivation line, the domain pointers.
+
+Built as probed. The twelve drake surfaces are `Drake.emit` of the compact form, each with its `uses`
+section between the type section and the domain line; the twelve JSON files are re-canonicalized by
+`DrakeCLI parse` of the new surfaces, structurally equal to the probe's `compactJson` for every one, so
+the round trip holds; the twelve Scala files are `GeneratorCLI generate` over the current resources,
+byte-identical to the probe's unscoped generation, and the scoped generation is byte-identical to the
+unscoped for all 48; the 36 others regenerate as committed. `DrakeCLI check` over aerial, ethereal,
+marine, terrestrial and world: surface drift 0, json drift 0, skipped 0. The Scala moves two to eight
+lines per file — the Creators +8/−6, Input +5/−3, the OriginateReports +3/−1, Output +4/−2, Consumer
++8/−5, Provider +3/−3 — the selective imports gained (`Dracon`, `World`, `Position`, `Location`) and the
+qualified spellings shortened; Output keeps `new Actor[domains.world.World]`, its message type being an
+anchor. Every file is still the generator's output and ExampleDomainsGenTest still asserts 48 match.
+
+The validator. `AssemblyValidator.validate` compared the consumer arrow's operand with the actor's
+message type as TEXT — `m.text` against `messageType.namePath` — the third consumer of the type
+vocabulary beside the two renderers, where the unit type caught on 2026-10-21 (DRACO.md §6). Over the
+swept tree the OLD validator fails both assembly suites, run for the record: WorldAssemblyTest's
+service reports four errors ("binding 'domains.aerial.Input.worldConsumer' expects a consumer of World
+but 'domains.world.Consumer' receives domains.world.World", the same for Consumer.provider and
+Provider.target, and "Output.consumer expects a consumer of Dracon but 'domains.terrestrial.Consumer'
+receives draco.format.dracon.Dracon") and AerialAssemblyTest's chain one. Now `identity(td, text)`
+resolves a name through `NameResolution.recorded(td)` — the definition's own record as the scope, the
+reading the generator gives a recorded definition — and completes a bare result with the definition's
+own package, the compact form's convention for a bare name; both sides pass through it, the consumer's
+operand through the from-definition and the actor's message type through the to-definition, and the
+two identities are compared by `namePath`: name and package, parameters free, as definitions are keyed.
+Nothing is loaded or discovered. The actor's message type is a TypeName anchor the carrier holds in
+full — the surface elides Provider's own-package `messageType World`, the JSON carries
+`domains.world.World` — so the completion is exercised today only on the consumer side. The error
+message spells both identities in full. The validator's own `fold` default took a named lambda where it
+had taken Predef's `identity`, which the new method shadows.
+
+WorldAssemblyTest +1, the one assembly test over a compact definition: it pins the three compact
+spellings and their records — Input's `World -> ()` with the record [domains.world.World,
+draco.ActorType], Consumer's `World -> ()` with no record entry for World, Output's `Dracon -> ()` with
+Dracon recorded — the three World-receiving actors' message types all `domains.world.World` and
+terrestrial Consumer's `draco.format.dracon.Dracon`, the five-member service validating clean, and a
+crossed binding (Output's consumer to Provider) reported with both identities in full. Its first focused
+run failed on the test's own assertion that Provider's message type reads bare `World`: the carrier
+holds the anchor in full; corrected before the direct run. AerialAssemblyTest and the existing World
+cases pass unchanged.
+
+Headline moves: none. Twelve existing surfaces are re-emitted and no surface is added, so parse scope
+stays 110 draco + 37 mods, surface losses 0 across 147 types, the example gate 48 match / 0 differ.
+After this every definition in the corpus but the five sentient JSON-only types with pre-tree tuple
+strings is in the compact form. Those five — Direction, Ego, Lean, Percept, Waypoint — carry a tuple
+value type as the string `"(Double, Double)"`, the form before type-form trees of 2026-09-17, and alone
+fail `parse(emit(td)) == td`; the sentient domain has no drake surfaces, so nothing re-canonicalized
+them. An observation, not recommended. Deferred, neither accepted: activation; the .dcon migration.
+
+Verification: every discovered suite run directly on compiled classes with current main, mods and test
+resources on the loader roots — 983 tests passed, 78 suites including the Runner's discovery wrapper,
+zero failed, canceled, ignored, pending or aborted, green on its first run: 982 + the one WorldAssemblyTest
+case. Headlines: example map 48 match / 0 differ / 0 error / 0 missing of 48 (asserted), surface losses 0
+across 147 types, parse scope 110 draco + 37 mods, DomainAspect and DracoAspect 110 sections, GenDrake
+108 of 108, PON 80 / 550 / 42 and canonical 7, scenario 23 clean, forest 1 of 2, CO-DECLARATION
+categorical, pending mods actors 0. Dev's full sbt gate on 2026-10-31: 983 succeeded, 0 failed, canceled, ignored or pending, every headline matching, pending mods actors 0 — 983 tests / 77 suites, green on its first run. Commit pending.

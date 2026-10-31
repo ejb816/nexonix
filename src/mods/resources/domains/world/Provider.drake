@@ -1,7 +1,10 @@
-type Provider from draco Actor(domains.world.World)
+type Provider from draco Actor(World)
   factory ActorType
     parameters
-      par target (domains.world.World -> ())
+      par target (World -> ())
+uses [
+  draco ActorType
+]
 domain domains world World
 actor
   messageType World

@@ -14,8 +14,9 @@ import io.circe.Json
   *   - `from` and `to` are declared members of the assembly (so is `entry`);
   *   - `from`'s factory declares a construction parameter named `param`;
   *   - that parameter's type is `ActorRef[M]`;
-  *   - `M` matches the message type of `to` (the actuator of its `Actor[M]`
-  *     derivation).
+  *   - `M` matches the message type of `to` (the actor aspect's `messageType`) by
+  *     IDENTITY — name and package, read through each definition's own resolution
+  *     record, so the compact spelling of one side meets the full spelling of the other.
   *
   * `validate` returns the list of problems found; an empty list means the
   * assembly is well-formed. Nothing here touches the actor runtime.
@@ -35,7 +36,7 @@ object AssemblyValidator {
     * fallback, for definitions not yet migrated (DracoGenerator.actorMessageType makes
     * the same choice, and for the same reason). */
   private def messageType(td: TypeDefinition): Option[String] =
-    Some(td.actorAspect.fold(ActorAspect.Null, identity).messageType)
+    Some(td.actorAspect.fold(ActorAspect.Null, (a: ActorAspect) => a).messageType)
       .filter(_.name.nonEmpty)
       .map(_.namePath)
       .orElse(
@@ -43,6 +44,21 @@ object AssemblyValidator {
           .find(_.name == "Actor")
           .flatMap(_.typeParameters.headOption).map(_.text))
       .map(_.trim)
+
+  /** A message type's IDENTITY — name and package, parameters free, as definitions are keyed
+    * (2026-10-31; compared as text before, the third consumer of the type vocabulary beside the two
+    * renderers, as the unit type found it on 2026-10-21). A definition spells a draco name in the
+    * COMPACT form since the corpus sweep of 2026-10-21 and the example sweep of 2026-10-31: a name of
+    * another package short and recorded in `uses`, an own-package name bare and unrecorded — so a
+    * consumer's `Dracon -> ()` and an actor's `messageType draco format dracon Dracon` are one
+    * identity, and world Consumer's `World -> ()` is Provider's bare `messageType World`. The
+    * definition's own record is the scope, `NameResolution.recorded`, the reading the generator gives
+    * a recorded definition; a name the record does not know is completed with the definition's own
+    * package, the compact form's convention for a bare name. Nothing is loaded or discovered. */
+  private def identity(td: TypeDefinition, text: String): String = {
+    val resolved = NameResolution.recorded(td).resolveName(text.trim)
+    if (resolved.namePackage.isEmpty) TypeName(resolved.name, td.typeName.namePackage).namePath else resolved.namePath
+  }
 
   def validate(assembly: Assembly): Seq[String] = {
     val memberNames: Set[String] = assembly.members.map(_.namePath).toSet
@@ -70,11 +86,11 @@ object AssemblyValidator {
             case None =>
               errors += s"parameter '${b.param}' of '${b.from.namePath}' is '${param.valueType.text}', not a consumer (M -> ())"
             case Some(refInner) =>
-              messageType(toTd) match {
+              messageType(toTd).map(identity(toTd, _)) match {
                 case None =>
                   errors += s"binding target '${b.to.namePath}' is not an Actor[_] (no message type to satisfy '${b.param}')"
-                case Some(msg) if msg != refInner =>
-                  errors += s"binding '${b.from.namePath}.${b.param}' expects a consumer of $refInner but '${b.to.namePath}' receives $msg"
+                case Some(msg) if msg != identity(fromTd, refInner) =>
+                  errors += s"binding '${b.from.namePath}.${b.param}' expects a consumer of ${identity(fromTd, refInner)} but '${b.to.namePath}' receives $msg"
                 case Some(_) => // matched
               }
           }

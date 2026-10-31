@@ -1,11 +1,14 @@
 type OriginateReport
+uses [
+  draco format dracon Dracon
+]
 domain domains terrestrial Terrestrial
 rule
   pattern
     variables
       var intent MarchIntent
   action
-    fix consumer (draco.format.dracon.Dracon -> ()) ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
+    fix consumer (Dracon -> ()) ctx.getRuntime().get[draco.format.dracon.Dracon => Unit]("consumer")
     fix cursor io.circe.HCursor intent.json.hcursor
     fix unit String cursor.get[String]("unit").getOrElse("UNKNOWN")
     fix elevationFeet Int cursor.get[Int]("elevationFeet").getOrElse(0)

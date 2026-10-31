@@ -6,6 +6,21 @@
       "aerial"
     ]
   },
+  "uses": [
+    {
+      "name": "World",
+      "namePackage": [
+        "domains",
+        "world"
+      ]
+    },
+    {
+      "name": "ActorType",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  ],
   "dracoAspect": {
     "factory": {
       "kind": "Factory",
@@ -16,7 +31,7 @@
           "name": "worldConsumer",
           "valueType": {
             "->": [
-              "domains.world.World",
+              "World",
               {
                 "(,)": [
                 ]
@@ -49,7 +64,7 @@
         {
           "kind": "Fixed",
           "name": "position",
-          "valueType": "domains.aerial.Position",
+          "valueType": "Position",
           "value": {
             "()": [
               "Position",
