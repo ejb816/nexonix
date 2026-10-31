@@ -21,10 +21,7 @@ class MarineChainTest extends AnyFunSuite {
       "vessel"      -> Json.fromString(vessel),
       "depthMetres" -> Json.fromInt(depthMetres)
     )
-    new VoyageIntent {
-      override lazy val typeDefinition: TypeDefinition = VoyageIntent.typeDefinition
-      override val json: Json = payload
-    }
+    VoyageIntent(payload)
   }
 
   test("Creator originates a FixReport from a VoyageIntent (depthMetres -> depthFathoms) and the Consumer records it") {

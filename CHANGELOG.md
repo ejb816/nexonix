@@ -18,6 +18,14 @@ the block below.
 
 ## [Unreleased]
 
+- Give the four Intent types — aerial `FlightIntent`, marine `VoyageIntent`, ethereal `LaunchIntent`,
+  terrestrial `MarchIntent` — the Drake surface and `json` factory the four reports took, and regenerate
+  their Scala, which gains `apply`, `Null` and the Dracon-shaped codec. The eight tests that seeded a
+  medium with an anonymous host construction now construct `X(payload)`. IntentFactoryTest pins the four
+  trios, the by-name argument and the codec round-trip. Parse scope moves to 110 draco + 31 mods and
+  surface-loss coverage to 141 types; the example map stays 37 match / 11 differ. Every message in the
+  example chain now constructs through its definition.
+
 - Give aerial `PositionReport`, marine `FixReport` and ethereal `EphemerisReport` the Drake surface
   and `json` factory terrestrial LocationReport took, regenerate their Scala (which gains `apply`,
   `Null` and the Dracon-shaped codec), and construct each in its OriginateReport as `X(payload)`,

@@ -21,10 +21,7 @@ class TerrestrialChainTest extends AnyFunSuite {
       "unit"          -> Json.fromString(unit),
       "elevationFeet" -> Json.fromInt(elevationFeet)
     )
-    new MarchIntent {
-      override lazy val typeDefinition: TypeDefinition = MarchIntent.typeDefinition
-      override val json: Json = payload
-    }
+    MarchIntent(payload)
   }
 
   test("Creator originates a LocationReport from a MarchIntent (elevationFeet -> elevationMetres) and the Consumer records it") {

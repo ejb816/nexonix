@@ -23,7 +23,18 @@
           "dracon"
         ]
       }
-    ]
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "LaunchIntent",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "json",
+          "valueType": "Json"
+        }
+      ]
+    }
   },
   "domainAspect": {
     "typeName": {

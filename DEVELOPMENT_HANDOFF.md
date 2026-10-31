@@ -1,8 +1,8 @@
 # Development Handoff
 
 Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code;
-refreshed by Claude Code through October 29 after the named-construction repairs and the
-terrestrial Output repair.
+refreshed by Claude Code through October 30 after the named-construction repairs, the
+terrestrial Output repair and the report and intent json factories.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -20,16 +20,18 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   terrestrial Output repair (record `git-record-2026-10-29-1640`), all four committed and pushed
   by Dev; and **e138f04**, the LocationReport json factory (record `git-record-2026-10-30-1038`), Dev-gated
   at 947 / 74 and committed and pushed by Dev on October 30; then the sibling report factories
-  (record `git-record-2026-10-30-1113`), Dev-gated at 956 / 75 on October 30 and awaiting commit and push —
+  (record `git-record-2026-10-30-1113`), Dev-gated at 956 / 75 and committed and pushed by Dev as **8540341** on October 30; then the Intent json factories (record
+  `git-record-2026-10-30-2014`), Dev-gated at 967 / 76 on October 31, commit PENDING when this was written —
   inspect `git log -1` and `git status --short` to learn where they stand. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **956 tests / 75 suites**, October 30, on the sibling-report tree. Zero
-  failed/canceled/ignored/pending tests, parse scope 110 + 27, surface losses 0 across 137 types,
+- Latest Dev-verified gate: **967 tests / 76 suites**, October 31, on the Intent-factory tree. Zero
+  failed/canceled/ignored/pending tests, parse scope 110 + 31, surface losses 0 across 141 types,
   example map 37 match / 11 differ, every other headline unchanged, pending mods actors 0. First
   Dev gate green.
-- All accepted implementation work through c5b8089 is complete, verified and committed; the
-  LocationReport factory is committed as e138f04; the sibling report factories are built and
-  Dev-gated, with commit and push the open step.
+- All accepted implementation work through 8540341 is complete, verified and committed. The Intent
+  json factories are built and Dev-gated but not yet committed: four new `.drake`
+  files, four JSON files, four companions, eight test files and IntentFactoryTest sit in the tree
+  with this documentation refresh and the record.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -117,14 +119,31 @@ chain now constructs through its definition; the Output thread of October 29 is 
 every discovered suite on October 30: 956 passed, 76 suites including discovery, zero
 failed/canceled/ignored/pending/aborted, green on its first run, every headline as stated, pending mods
 actors 0. Dev's full sbt gate on October 30: 956 / 75, zero failed/canceled/ignored/pending, every
-headline matching, pending mods actors 0, green on its first run. Commit pending.
+headline matching, pending mods actors 0, green on its first run. Committed and pushed by Dev as 8540341.
+
+## The four Intent types take the json factory (accepted and built, October 30; Dev verified 967 / 76 on October 31)
+
+Dev accepted: "Accepted, build it". Aerial FlightIntent, marine VoyageIntent, ethereal LaunchIntent and
+terrestrial MarchIntent — each medium's entry message, the fact its OriginateReport joins — gain the drake
+surface `type X from <Medium> draco format dracon Dracon` with `factory parameters par json Json`, JSON
+re-canonicalized (the factory record only), companion replaced by the generator's output (25 lines and two
+imports added, none removed). The eight test sites that built an intent as `new X { override lazy val
+typeDefinition …; override (lazy) val json = … }` — the four OriginateReportTests, the marine, ethereal and
+terrestrial chain tests, AerialAssemblyTest — now construct `X(payload)`. No engine change; no definition
+constructs an intent (Creator's messageType is Dracon). IntentFactoryTest (3), one suite iterating over the
+four, pins the trios, the by-name argument and the codec round-trip. Parse scope moves to 110 + 31,
+surface-loss coverage to 141 types; the example map stays 37 / 11. Every message in the example chain now
+constructs through its definition; the *Intent observation of the report records is closed. Direct run of
+every discovered suite on October 30: 967 passed, 77 suites including discovery, zero
+failed/canceled/ignored/pending/aborted, every headline as stated, pending mods actors 0. Dev's full sbt
+gate on October 31: 967 / 76, zero failed/canceled/ignored/pending, every headline matching, pending mods
+actors 0, green on its first run. Commit pending when this was written.
 
 ## Next design point — acceptance required
 
-No recommendation is preserved. The remaining inventory is the eleven example differences listed
-below, the deferred activation recommendation, .dcon migration, and the observation that the four
-*Intent types share the report shape but are constructed only by tests — none accepted. Inventory
-is context, not authorization.
+NOTHING IS PRESERVED AS A RECOMMENDATION. The remaining inventory is the eleven example differences
+listed below, the deferred activation recommendation and .dcon migration — none accepted. Inventory is
+context, not authorization.
 
 Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
 accepts.
@@ -166,8 +185,8 @@ parameter; the second run was green.
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
 | GenDrake | 108/108, 0 missing, 0 extra |
 | Example generation | 37 match, 11 differ, 0 error, 0 missing / 48 (36 / 12 before the Output repair) |
-| Surface losses | 0 fields across 137 types (134 before the sibling surfaces, 133 before LocationReport's) |
-| Parse scope | 110 draco + 27 mods, 0 held back (24 before the sibling surfaces, 23 before LocationReport's) |
+| Surface losses | 0 fields across 141 types (137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
+| Parse scope | 110 draco + 31 mods, 0 held back (27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
 | Canonical PON | 80 numbers, 7 differ |
 | Scenario | 23 files, 0 rejected, 0 drifted, 23 clean |
@@ -203,7 +222,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 112f277 | Construction factory lookup keyed on the applied head; parent-typed slot case (Claude Code) | 938 / 72 | 2026-10-29-0755 |
 | c5b8089 | Terrestrial Output's Location branch in its definition; OutputProjectionTest (Claude Code) | 942 / 73 | 2026-10-29-1640 |
 | e138f04 | LocationReport json factory; both terrestrial sites construct through it; LocationReportTest (Claude Code) | 947 / 74 | 2026-10-30-1038 |
-| pending commit | PositionReport, FixReport, EphemerisReport json factories; OriginateReports construct through them; ReportFactoryTest (Claude Code) | 956 / 75 | 2026-10-30-1113 |
+| 8540341 | PositionReport, FixReport, EphemerisReport json factories; OriginateReports construct through them; ReportFactoryTest (Claude Code) | 956 / 75 | 2026-10-30-1113 |
+| pending | FlightIntent, VoyageIntent, LaunchIntent, MarchIntent json factories; eight test sites construct through them; IntentFactoryTest (Claude Code) | 967 / 76 | 2026-10-30-2014 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

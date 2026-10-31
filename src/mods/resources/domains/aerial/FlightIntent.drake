@@ -1,0 +1,5 @@
+type FlightIntent from Aerial draco format dracon Dracon
+  factory
+    parameters
+      par json Json
+domain domains aerial Aerial

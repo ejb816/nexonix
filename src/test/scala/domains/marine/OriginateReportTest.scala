@@ -26,10 +26,7 @@ class OriginateReportTest extends AnyFunSuite {
       val knowledge = Rule.knowledgeService.newKnowledge("MarineOriginate" + depth)
       OriginateReport.ruleType.pattern(knowledge)
       val session = knowledge.newStatefulSession()
-      val intent = new VoyageIntent {
-        override lazy val typeDefinition: TypeDefinition = VoyageIntent.typeDefinition
-        override lazy val json: Json = input
-      }
+      val intent = VoyageIntent(input)
       try {
         session.set("consumer", consumer)
         session.insert(Seq(intent): _*)

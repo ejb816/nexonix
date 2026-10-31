@@ -44,10 +44,7 @@ class AerialAssemblyTest extends AnyFunSuite {
       "callsign"    -> Json.fromString(callsign),
       "flightLevel" -> Json.fromInt(flightLevel)
     )
-    new FlightIntent {
-      override lazy val typeDefinition: TypeDefinition = FlightIntent.typeDefinition
-      override val json: Json = payload
-    }
+    FlightIntent(payload)
   }
 
   test("the Aerial chain assembly validates without a Pekko context") {

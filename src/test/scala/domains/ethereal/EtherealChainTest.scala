@@ -21,10 +21,7 @@ class EtherealChainTest extends AnyFunSuite {
       "object"                -> Json.fromString(obj),
       "altitudeNauticalMiles" -> Json.fromInt(altitudeNauticalMiles)
     )
-    new LaunchIntent {
-      override lazy val typeDefinition: TypeDefinition = LaunchIntent.typeDefinition
-      override val json: Json = payload
-    }
+    LaunchIntent(payload)
   }
 
   test("Creator originates an EphemerisReport from a LaunchIntent (nauticalMiles -> kilometres) and the Consumer records it") {

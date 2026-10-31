@@ -25,10 +25,7 @@ class OriginateReportTest extends AnyFunSuite {
       val knowledge = Rule.knowledgeService.newKnowledge("AerialOriginate" + altitude)
       OriginateReport.ruleType.pattern(knowledge)
       val session = knowledge.newStatefulSession()
-      val intent = new FlightIntent {
-        override lazy val typeDefinition: TypeDefinition = FlightIntent.typeDefinition
-        override lazy val json: Json = input
-      }
+      val intent = FlightIntent(input)
       try {
         session.set("consumer", consumer)
         session.insert(Seq(intent): _*)

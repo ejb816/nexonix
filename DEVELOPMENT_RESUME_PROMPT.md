@@ -7,11 +7,19 @@ DRACO.md), DEVELOPMENT_HANDOFF.md and the shared documentation skill at
 sources/codex-2026-10-22-to-26-audit.md for the Codex session's decisions and coverage.
 Inspect git status/log; preserve uncommitted documentation. No private agent memory is required.
 
-Latest Dev-verified increment, awaiting commit and push: the three sibling reports (aerial PositionReport, marine
+Latest Dev-verified increment, commit PENDING when this was written: the four Intent types (aerial FlightIntent,
+marine VoyageIntent, ethereal LaunchIntent, terrestrial MarchIntent) take the json factory, their
+Scala regenerated, the eight test construction sites re-authored `X(payload)`, IntentFactoryTest
+added (record git-record-2026-10-30-2014); gated by me at 967 tests / 76 suites on October 31, zero
+failures or aborts, parse scope 110 + 31, surface losses 0 across 141 types, example map 37 / 11,
+pending mods actors 0. If `git log -1` shows a commit after 8540341, I committed it; otherwise the
+commit is still owed.
+
+Latest Dev-verified increment: the three sibling reports (aerial PositionReport, marine
 FixReport, ethereal EphemerisReport) take the json factory, their Scala regenerated, their
 OriginateReports constructing `X(payload)`, ReportFactoryTest added (record
 git-record-2026-10-30-1113); gated by me at 956 tests / 75 suites on October 30, zero failures or aborts,
-parse scope 110 + 27, surface losses 0 across 137 types, example map 37 / 11, pending mods actors 0. Check `git status --short` and `git log -1` for where it stands.
+parse scope 110 + 27, surface losses 0 across 137 types, example map 37 / 11, pending mods actors 0, committed and pushed by me as 8540341.
 
 Before it: terrestrial LocationReport's drake surface with a
 `json` factory, its Scala regenerated, OriginateReport and Output constructing it as
@@ -29,13 +37,11 @@ surface losses across 133 types, parse scope 110 draco + 23 mods, file-only pend
 a8b5447 (Consumer) and the documentation handoff 7495539. All accepted implementation work is
 done; the named-construction thread is closed.
 
-Chapter 113, covering the October 26–29 Claude Code session, is NOT yet written; source it from
+Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
 NOTHING IS PRESERVED AS A RECOMMENDATION. The inventory for a next point is in the handoff: the
-eleven remaining example differences, deferred activation, .dcon migration, and the adjacent
-observation that LocationReport (JSON only, no factory) is constructed as host text at two
-sites — none accepted. Bring one point as a recommendation for my acceptance or correction
+eleven remaining example differences, deferred activation and .dcon migration — none accepted. Bring one point as a recommendation for my acceptance or correction
 before building.
 
 Keep to one design point per reply, one recommendation with accept-or-correct, and build only

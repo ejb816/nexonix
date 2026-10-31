@@ -1,0 +1,57 @@
+Give the four Intent types the json factory and construct them through it
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being that the four
+Intent types, aerial FlightIntent, marine VoyageIntent, ethereal LaunchIntent and terrestrial
+MarchIntent, take the json factory the four reports took: each a drake surface
+`type X from <Medium> draco format dracon Dracon` with `factory parameters par json Json`, its JSON
+re-canonicalized, its hand-written companion replaced by the generator's output, the eight test
+sites that construct an intent as host text re-authored `X(payload)`, and one IntentFactoryTest
+in the domains package with the three ReportFactoryTest cases iterating over the four.
+
+Why the intents: they are each medium's entry message, the fact its OriginateReport joins, and
+they were the one remaining shape of the kind the report thread repaired — derived from the medium
+and Dracon, no elements, no factory, no drake surface, constructed only by tests, as
+`new X { override lazy val typeDefinition …; override (lazy) val json = … }`. A Haskell target
+needs their constructor as much as the reports'.
+
+Probed before recommending, with the compiled CLIs on FlightIntent: the surface parses, emits back
+clean, adds only the factory record to the JSON and 25 lines to the companion — `apply(_json: =>
+Json)`, the Dracon-shaped encoder and decoder, `Null = apply(Json.Null)` — plus the two circe
+imports, none removed. Built as probed over the four: four new drake surfaces, four JSON files
+carrying the factory record and nothing else moved, four regenerated companions. `DrakeCLI check`
+over aerial, marine, ethereal and terrestrial: surface drift 0, json drift 0 each. No engine
+change, no definition site changed (no definition constructs an intent; Creator's messageType is
+Dracon).
+
+The eight test sites — the four OriginateReportTests (`override lazy val json = input`), the
+marine, ethereal and terrestrial chain tests and AerialAssemblyTest (`override val json = payload`,
+strict) — each lose their anonymous construction for the one-line call. The strict sites change
+nothing observable: the payload at each is an already-built value, and the factory's by-name
+binding captures an immutable Json, which also survives the actor boundary AerialAssemblyTest
+sends it across.
+
+IntentFactoryTest (3) is one suite, not four, because the four definitions are one pattern: each
+case iterates over the four intents — exact trio agreement (emit, parse, generate, the factory's
+one parameter named json typed Json, parents the medium then Dracon, the companion's loaded
+definition equal to the file's); the by-name argument evaluated zero times until the first read
+of `json`, once after, never again, the instance being its medium's type, Null's json being
+Json.Null; and the codec round-trip for each (`asJson` is `{"json": payload}`, decoding reads the
+intent back, an empty object decodes to Json.Null).
+
+With this every message in the example chain — the four intents, the four reports and the World's
+Location sink — constructs through its definition. The *Intent observation of the two report
+records is closed; nothing from the report thread remains preserved.
+
+Headline moves: four new surfaces enter the parse scope (110 draco + 31 mods) and the surface-loss
+coverage (0 fields across 141 types), activating eight DrakeParseTest checks; the example map stays
+37 match / 11 differ, the four changed companions being the generator's output. The table in
+DRACO.md §1 is updated in this commit.
+
+Verification: every discovered suite run directly on compiled classes with current main, mods and
+test resources on the loader roots — 967 tests passed, 77 suites including the Runner's discovery
+wrapper, zero failed, canceled, ignored, pending or aborted, green on its first run: 956 + the
+three IntentFactoryTest cases + the eight DrakeParseTest checks the four surfaces activate.
+Headlines: example map 37 match / 11 differ / 0 error / 0 missing of 48, surface losses 0 across
+141 types, parse scope 110 draco + 31 mods, DomainAspect and DracoAspect 110 sections, GenDrake 108
+of 108, PON 80 / 550 / 42 and canonical 7, scenario 23 clean, forest 1 of 2, CO-DECLARATION
+categorical, pending mods actors 0. Dev's full sbt gate on 2026-10-31: 967 succeeded, 0 failed, canceled, ignored or pending, every headline matching, pending mods actors 0 — 967 tests / 76 suites, green on its first run.

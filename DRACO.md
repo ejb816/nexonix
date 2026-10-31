@@ -49,8 +49,13 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**967 tests / 76 suites**, verified by Dev on 2026-10-31 for the Intent json factories (record
+`git-record-2026-10-30-2014`): three new focused tests in one added suite and eight newly active parser checks, zero failed/canceled/ignored/pending
+tests. Parse scope 110 + 31, surface losses 0 across 141 types; example map 37 match / 11 differ and every
+other headline unchanged, including pending mods actors 0. Four example trios gain their drake surface and
+factory, eight test sites re-author one construction, no engine change. First full Dev gate green. Before it:
 **956 tests / 75 suites**, verified by Dev on 2026-10-30 for the sibling report factories (record
-`git-record-2026-10-30-1113`): three new focused tests in one added suite and six newly active parser checks, zero failed/canceled/ignored/pending
+`git-record-2026-10-30-1113`, committed as 8540341): three new focused tests in one added suite and six newly active parser checks, zero failed/canceled/ignored/pending
 tests. Parse scope 110 + 27, surface losses 0 across 137 types; example map 37 match / 11 differ and every
 other headline unchanged, including pending mods actors 0. Three example trios gain their drake surface and
 factory, three re-author one line, no engine change. First full Dev gate green. Before it:
@@ -245,8 +250,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `ExampleDomainsGenTest` | example-domain gen map | 37 match, 11 differ, 0 error, 0 missing (of 48) |
-| `DrakeParseTest` | drake surface losses | 0 fields across 137 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 27 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 0 fields across 141 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 31 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -1571,4 +1576,26 @@ pin the regenerated rules unchanged. Every report in the example chain now const
 closing the thread Output's unbound `location` opened on October 29. The three surfaces enter the parse scope
 (110 + 27) and the surface-loss coverage (137), activating six DrakeParseTest checks; the example map stays
 37 / 11 (table updated in this commit). Direct run 956 / 76 including discovery, green on its first run; Dev's first full gate 956 / 75, every
-headline matching, pending mods actors 0. The four *Intent types remain an observation.
+headline matching, pending mods actors 0. Committed and pushed by Dev as 8540341. The four *Intent types remained an
+observation until the next increment.
+
+
+**The four Intent types take the json factory (2026-10-30, Claude Code; Dev verified 967 / 76 on 2026-10-31).**
+Dev accepted "Accepted, build it" on the recommendation that aerial FlightIntent, marine VoyageIntent, ethereal
+LaunchIntent and terrestrial MarchIntent — each medium's entry message, the fact its OriginateReport joins, and the
+one remaining shape of the kind the report thread repaired: medium + Dracon, no elements, no factory, no surface,
+constructed only by tests as host text — take the json factory the reports took: the surface `type X from <Medium>
+draco format dracon Dracon` with `factory parameters par json Json`, JSON re-canonicalized (the factory record and
+nothing else), companion replaced by the generator's output (25 lines and two imports added, none removed: `apply`,
+the Dracon-shaped codec, `Null`), the eight test sites — the four OriginateReportTests, the marine, ethereal and
+terrestrial chain tests and AerialAssemblyTest — re-authored `X(payload)`, probed on FlightIntent with the compiled
+CLIs before the recommendation and built as probed, `DrakeCLI check` clean over the four media. No engine change
+and no definition site: no definition constructs an intent, Creator's messageType being Dracon. The four strict
+`override val json` sites change nothing observable, each payload being an already-built value the by-name binding
+captures. `IntentFactoryTest` (3) is the 76th suite, one suite because the four definitions are one pattern, each
+case iterating over the four: the trio, the by-name argument, the codec round-trip. Every message in the example
+chain — four intents, four reports, the World's Location sink — now constructs through its definition; nothing
+from the report thread remains preserved. The four surfaces enter the parse scope (110 + 31) and the surface-loss
+coverage (141), activating eight DrakeParseTest checks; the example map stays 37 / 11 (table updated in this
+commit). Direct run 967 / 77 including discovery, green on its first run; Dev's first full gate 967 / 76 on 2026-10-31,
+every headline matching, pending mods actors 0. Commit pending when this was written.
