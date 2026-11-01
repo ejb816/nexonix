@@ -49,8 +49,15 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1005 tests / 77 suites**, verified by Dev on 2026-10-31 for the sentient surfaces (record `git-record-2026-10-31-1938`,
+commit pending): 22 newly active DrakeParseTest checks, no new suite, zero failed/canceled/ignored/pending tests. Parse
+scope 110 + 48, surface losses 0 across 158 types, the example gate 48 match / 0 differ; every other headline unchanged,
+including pending mods actors 0. Eleven sentient trios take their drake surfaces, five JSON re-canonicalized, Percept and
+Waypoint spelling `domains.sentient.Distance` in full after one accepted correction, eleven companions the generator's
+output; no engine change. The direct run before the correction had passed 1004 of 1005, the one failure the ambiguity
+the tree exposed; after it 1005 / 78 including discovery. First full Dev gate green. Before it:
 **983 tests / 77 suites**, verified by Dev on 2026-10-31 for the example body sweep (record `git-record-2026-10-31-1436`,
-commit pending): one added test in WorldAssemblyTest, no new suite, zero failed/canceled/ignored/pending tests. Parse scope 110 + 37, surface losses 0 across 147 types, the
+committed as ded1b5b): one added test in WorldAssemblyTest, no new suite, zero failed/canceled/ignored/pending tests. Parse scope 110 + 37, surface losses 0 across 147 types, the
 example gate 48 match / 0 differ; every headline unchanged, including pending mods actors 0. Twelve example trios
 take the compact form with their `uses` records, surfaces re-emitted and Scala regenerated; `AssemblyValidator`
 compares message types by identity, the one engine change. First full Dev gate green. Before it:
@@ -265,8 +272,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `DrakeParseTest` | drake surface losses | 0 fields across 147 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 37 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 0 fields across 158 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 48 mods in, 0 held back |
 | `DrakeGenTest` | mods actors pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -1179,6 +1186,11 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   third consumer too: `AssemblyValidator` read a consumer's message type as text, caught by the
   unit type on 2026-10-21 and by the compact spellings of the example sweep on 2026-10-31, when it
   began comparing by identity through the definition's record.
+- **A re-canonicalization that trees a string leaf gives the resolver names it never read.** A host-opaque string
+  (`"(Gaze, Distance)"`, the pre-tree tuple) passes `NameResolution.form` unread; the tree it becomes is resolved leaf
+  by leaf, by UNIQUE lookup with no own-package precedence. The sentient surfaces (2026-10-31) passed emit, parse,
+  `DrakeCLI check` and the generator and failed the two-stage LOADER on `Distance` against `draco.base.Distance`. A probe
+  of a surface change runs `DomainBuilder.load` over the scope too, not the CLIs alone.
 - **Evrete** compiles conditions as Java at runtime: fully qualified class names required.
   Working memory is boxed — rule variables use `classOf[Integer]`, not `classOf[Int]`.
   A single-fact insert needs `Seq(fact): _*`. Tuple facts need a `forEach` declaration.
@@ -1704,4 +1716,40 @@ form but the five sentient JSON-only types (Direction, Ego, Lean, Percept, Waypo
 pre-tree string `"(Double, Double)"` and which alone fail `parse(emit(td)) == td` — an observation, not recommended;
 deferred activation and .dcon remain, neither accepted. Direct run 983 / 78 including discovery, green on its first
 run, every headline as stated; Dev's first full gate 983 / 77 on 2026-10-31, every headline matching, pending mods
-actors 0. Commit pending.
+actors 0. Committed and pushed by Dev as ded1b5b.
+
+
+**The sentient domain takes its drake surfaces (2026-10-31, Claude Code; Dev verified 1005 / 77 after one accepted correction).** Dev accepted
+"Accepted, build it" on the recommendation that the eleven sentient definitions — Sentient, Course, Direction, Distance,
+Effect, Ego, Gaze, Lean, Path, Percept, Waypoint, the one example domain with no drake surface, JSON-only since 2026-06 —
+take the surfaces `DrakeCLI emit` renders, that the five whose derivation argument is a tuple (Direction, Ego, Lean,
+Percept, Waypoint) be re-canonicalized by parsing the surface back, and that the eleven companions be replaced by the
+generator's output. The five alone in the corpus failed `parse(emit(td)) == td`, for one reason: the tuple argument to the
+parent — `Primal((Gaze, Distance))` — sat in the derivation's type parameter as the pre-tree STRING `"(Gaze, Distance)"`,
+the form before type-form trees of 2026-09-17; every other pre-tree value type was re-canonicalized by a sweep that
+parsed its surface, and the sentient domain had none to parse. MEASURED on a scratch copy with the compiled CLIs before
+recommending: eleven surfaces of one or two lines (`type Waypoint from Sentient draco Primal((Gaze, Distance))` and the
+domain line; Sentient's lists its ten members); parsing back reproduces six JSON byte for byte and moves exactly one
+leaf in each of the five, to the Objective `{"(,)": ["Gaze", "Distance"]}`; the Scala from either JSON is
+whitespace-identical to the committed companions (a leading blank line, one more in Distance and Sentient, a trailing
+space on Sentient's trait line — the example gate normalizes whitespace, which is why it never saw them); `DrakeCLI
+check` clean; the compact form changes none of the eleven. Built as probed, the surfaces copied in unchanged, the JSON
+parsed from them, the Scala generated over the current resources; `DrakeCLI check` over the domain: surface drift 0, json
+drift 0. No engine change, no new test: the round trip is what the 22 newly active DrakeParseTest checks assert. The
+eleven surfaces enter the parse scope (110 + 48) and the surface-loss coverage (158 types) (table updated in this
+commit); the example gate stays 48 / 0. Every definition under `src/mods/resources/domains` is now a trio. THE DIRECT RUN FOUND
+what the probe missed: 1004 of 1005 passed, ExampleLoadingTest's all-48 resolution failing on `Ambiguous type 'Distance':
+domains.sentient.Distance, draco.base.Distance` — the string leaf was host-opaque text the resolver never read; the tree
+makes `Distance` a name, and a bare name resolves by unique lookup with no own-package precedence (2026-10-20). The probe
+had run every CLI but not the two-stage loader, the one consumer that resolves type-form leaves (§6). Measured after: the
+whole ontology holds exactly two ambiguous bare anchor parameters, these; spelled `domains.sentient.Distance` in full,
+the sweep's convention for a non-unique simple name (Decoder and Encoder in the Dracon domain), the resolver reads both,
+the surface round-trips, `DrakeCLI check` is clean, and the two companions change one trait line. The compact form of
+either spelling still fails, `anchorParameter` rendering an own-package anchor parameter bare unconditionally where `short`
+checks uniqueness — the next related point, met by no gate. Dev ACCEPTED the correction ("Accepted, build it"): Percept
+and Waypoint spell `Primal((Gaze, domains.sentient.Distance))`, their JSON re-parsed, their companions regenerated on
+the one trait line, no engine change; `DrakeCLI check` clean over the domain. Second direct run 1005 / 78 including
+discovery, green, every headline as stated, pending mods actors 0; Dev's first full gate 1005 / 77 on 2026-10-31, every
+headline matching, pending mods actors 0; commit pending. OBSERVED, not recommended:
+`domains/sentient/EgoActor.scala` is a hand-written actor over Ego with no definition. Deferred activation and .dcon
+remain, neither accepted.

@@ -7,7 +7,7 @@ DRACO.md), DEVELOPMENT_HANDOFF.md and the shared documentation skill at
 sources/codex-2026-10-22-to-26-audit.md for the Codex session's decisions and coverage.
 Inspect git status/log; preserve uncommitted documentation. No private agent memory is required.
 
-In the tree, gated by me at 983 tests / 77 suites on October 31 and awaiting my commit: the example body sweep — the twelve example definitions
+Latest Dev-verified increment: the example body sweep — the twelve example definitions
 the compact form changes (four Creators, four OriginateReports, aerial Input, terrestrial Output, world
 Consumer and Provider) compacted with their `uses` records, their drake surfaces re-emitted and their
 Scala regenerated with selective imports, the other 36 unchanged; AssemblyValidator comparing a
@@ -15,9 +15,9 @@ consumer's message type with the actor's by identity through the definition's re
 text; WorldAssemblyTest +1 (record git-record-2026-10-31-1436). Direct run of every discovered suite on
 October 31: 983 tests / 78 suites including discovery, zero failures or aborts, every headline unchanged
 (parse scope 110 + 37, surface losses 0 across 147 types, example gate 48 / 0, pending mods actors 0).
-My full gate matched the direct run with every headline unchanged; after the commit the next related point is open.
+Gated by me at 983 tests / 77 suites on October 31, every headline matching, committed and pushed by me as ded1b5b.
 
-Latest Dev-verified increment: the example generate map closes and becomes a gate — the four
+Before it: the example generate map closes and becomes a gate — the four
 ConsumeReport types (aerial, ethereal, marine, terrestrial) take their drake surfaces with their JSON
 re-canonicalized, the last nine hand-written example companions (three ConsumeReports, five domain
 objects, aerial Input) are replaced by the generator's output, and ExampleDomainsGenTest asserts
@@ -63,12 +63,19 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-The example sweep above was raised and accepted on 2026-10-31; nothing from it remains open. Observed
-only, not recommended: five sentient definitions (Direction, Ego, Lean, Percept, Waypoint, JSON-only)
-carry a tuple value type as the pre-tree string "(Double, Double)" and alone fail the drake round-trip;
-the sentient domain has no surfaces. Deferred, neither accepted: activation and the .dcon migration. The
-details are in the handoff. Bring one point as a recommendation for my acceptance or correction before
-building.
+IN THE TREE, GATED BY ME, COMMIT PENDING (2026-10-31, after ded1b5b; record git-record-2026-10-31-1938): the
+eleven sentient definitions' drake surfaces, the five tuple derivations (Direction, Ego, Lean, Percept, Waypoint)
+re-canonicalized from the surface, the eleven companions the generator's output — accepted and built. The first
+direct run passed 1004 of 1005: ExampleLoadingTest's all-48 resolution failed on `Ambiguous type 'Distance':
+domains.sentient.Distance, draco.base.Distance` from Percept's and Waypoint's now-treed derivation argument, an
+ambiguity the host-opaque string had hidden. I accepted the correction: those two headers spell
+`domains.sentient.Distance` in full (surface and JSON), their companions regenerated on one trait line, no engine
+change — the sweep's convention for a non-unique simple name. Second direct run 1005 / 78 including discovery,
+green, every headline as expected (parse scope 110 + 48, surface losses 0 across 158 types, example gate 48 / 0,
+pending mods actors 0); my full sbt gate 1005 tests / 77 suites on October 31, zero failures or aborts, every headline
+matching. Next after it, measured: `anchorParameter` in NameResolution renders an own-package anchor
+parameter bare without checking uniqueness, so the compact form of those two cannot read back. Observed only: EgoActor.scala is a hand-written actor with no definition. Deferred,
+neither accepted: activation and the .dcon migration. The details are in the handoff.
 
 Keep to one design point per reply, one recommendation with accept-or-correct, and build only
 what I accept. Do not run sbt, commit or push; hand over path-scoped commands and wait for my

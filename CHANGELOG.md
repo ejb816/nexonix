@@ -18,6 +18,18 @@ the block below.
 
 ## [Unreleased]
 
+- Give the sentient domain its drake surfaces: the eleven sentient definitions (`Sentient`, `Course`,
+  `Direction`, `Distance`, `Effect`, `Ego`, `Gaze`, `Lean`, `Path`, `Percept`, `Waypoint`), the one
+  example domain that was JSON-only, now carry the `.drake` surface the emitter renders; the five whose
+  parent takes a tuple argument (`Direction`, `Ego`, `Lean`, `Percept`, `Waypoint`) are re-canonicalized
+  by parsing the surface back, which moves one leaf each — the pre-tree string `"(Gaze, Distance)"` to the
+  Objective tree — and the eleven companions are the generator's output. `Percept` and `Waypoint`
+  spell their tuple argument `(Gaze, domains.sentient.Distance)` in full, the bare name being ambiguous
+  against `draco.base.Distance` once treed (the host-opaque string had hidden the collision); their
+  companions change one trait line, the other nine by whitespace alone. Every definition in the example
+  tree is now a trio. Parse scope moves to 110 + 48 and surface-loss coverage to 158 types; no engine
+  change.
+
 - Sweep the example bodies: the twelve example definitions the compact form changes — the four
   `Creator`s, the four `OriginateReport`s, aerial `Input`, terrestrial `Output`, world `Consumer` and
   `Provider` — now spell the draco names of other packages short with a `uses` record and their own

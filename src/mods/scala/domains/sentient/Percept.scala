@@ -1,10 +1,9 @@
-
 package domains.sentient
 
 import draco._
 import domains._
 
-trait Percept extends Sentient with Primal[(Gaze, Distance)]
+trait Percept extends Sentient with Primal[(Gaze, domains.sentient.Distance)]
 
 object Percept extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Percept", _namePackage = Seq ("domains", "sentient")))

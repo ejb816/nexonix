@@ -1,4 +1,3 @@
-
 package domains.sentient
 
 import draco._

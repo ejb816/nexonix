@@ -21,7 +21,12 @@
           "draco"
         ],
         "typeParameters": [
-          "(Gaze, Distance)"
+          {
+            "(,)": [
+              "Gaze",
+              "domains.sentient.Distance"
+            ]
+          }
         ]
       }
     ]

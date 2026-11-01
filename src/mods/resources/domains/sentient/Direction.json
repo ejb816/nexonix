@@ -21,7 +21,12 @@
           "draco"
         ],
         "typeParameters": [
-          "(Double, Double)"
+          {
+            "(,)": [
+              "Double",
+              "Double"
+            ]
+          }
         ]
       }
     ]

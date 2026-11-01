@@ -24,21 +24,20 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   `git-record-2026-10-30-2014`), Dev-gated at 967 / 76 and committed and pushed by Dev as **3a3cbfc** on October 31; then the coordinate surfaces and companions (record
   `git-record-2026-10-31-0842`), Dev-gated at 974 / 77 and committed and pushed by Dev as **23333f3** on October 31; then the
   example map closed as a gate (record `git-record-2026-10-31-1105`), Dev-gated at 982 / 77 and committed and pushed by Dev as **7be1497** on October 31; then the
-  example body sweep with the validator's identity comparison (record `git-record-2026-10-31-1436`), Dev-gated at 983 / 77 on October 31, commit PENDING —
+  example body sweep with the validator's identity comparison (record `git-record-2026-10-31-1436`), Dev-gated at 983 / 77 and committed and pushed by Dev as **ded1b5b** on October 31; then the
+  sentient surfaces (record `git-record-2026-10-31-1938`), built and verified directly on October 31 (1005 / 78 after
+  the accepted Distance correction), Dev-gated at 1005 / 77 on October 31, COMMIT PENDING, in the tree —
   inspect `git log -1` and `git status --short` to learn where they stand. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **983 tests / 77 suites**, October 31, on the example-sweep tree (record
-  `git-record-2026-10-31-1436`, commit pending): zero failed/canceled/ignored/pending tests, parse scope
-  110 + 37, surface losses 0 across 147 types, example gate 48 match / 0 differ, every other headline
-  unchanged, pending mods actors 0. Before it 982 / 77 on the example-gate tree (7be1497).
-- In the tree, Dev-gated at 983 / 77 on October 31 but NOT yet committed: the example body sweep —
-  twelve example trios in the compact form with `uses` records (surfaces re-emitted, JSON re-canonicalized,
-  Scala regenerated), `AssemblyValidator` comparing message types by identity, WorldAssemblyTest +1, the
-  record `git-record-2026-10-31-1436`, the CHANGELOG entry and this documentation. Direct run October 31:
-  983 / 78 including discovery, zero failed/canceled/ignored/pending/aborted, every headline unchanged,
-  pending mods actors 0. Dev's full sbt gate on October 31: 983 succeeded, zero failed/canceled/ignored/pending,
-  every headline matching, pending mods actors 0 — 983 / 77, green on its first run.
-- All accepted implementation work through 7be1497 is committed and pushed.
+- Latest Dev-verified gate: **1005 tests / 77 suites**, October 31, on the sentient-surfaces tree (uncommitted, record
+  `git-record-2026-10-31-1938`): zero failed/canceled/ignored/pending tests, parse scope
+  110 + 48, surface losses 0 across 158 types, example gate 48 match / 0 differ, every other headline
+  unchanged, pending mods actors 0. Before it 983 / 77 on the example-sweep tree (ded1b5b).
+- All accepted implementation work through ded1b5b is committed and pushed. The sentient surfaces increment is
+  in the tree uncommitted: eleven new `.drake` files, five re-canonicalized JSON and eleven regenerated companions
+  under `domains/sentient` (Percept and Waypoint spelling `domains.sentient.Distance` in full), its record, the
+  CHANGELOG entry and these documents, verified directly at 1005 / 78 and by Dev's full gate at 1005 / 77, awaiting
+  Dev's commit.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -186,7 +185,7 @@ failed/canceled/ignored/pending/aborted, every headline as stated, pending mods 
 October 31: 982 succeeded, zero failed/canceled/ignored/pending, every headline matching, pending mods actors 0 —
 982 / 77, green on its first run. Committed and pushed by Dev as 7be1497.
 
-## The example bodies are swept and the validator compares by identity (accepted and built, October 31; Dev verified 983 / 77, commit pending)
+## The example bodies are swept and the validator compares by identity (accepted and built, October 31; Dev verified 983 / 77, committed as ded1b5b)
 
 Dev accepted: "Accepted, build it" on the point raised after 7be1497 — sweep the example bodies as the canonical
 corpus was swept on October 21, the one part of the corpus that sweep left out. MEASURED first with a probe over the
@@ -216,17 +215,57 @@ corrected before the direct run. No headline moves: twelve surfaces re-emitted, 
 discovered suite on October 31: 983 passed, 78 suites including discovery, zero failed/canceled/ignored/pending/aborted,
 green on its first run, every headline as stated, pending mods actors 0. Dev's full sbt gate on October 31: 983
 succeeded, zero failed/canceled/ignored/pending, every headline matching, pending mods actors 0 — 983 / 77, green on
-its first run. Commit pending.
+its first run. Committed and pushed by Dev as ded1b5b.
+
+## The sentient domain takes its drake surfaces (accepted and built, October 31; one correction accepted and built; direct run 1005 / 78, Dev verified 1005 / 77, commit pending)
+
+Dev accepted: "Accepted, build it" on the point raised after ded1b5b — give the eleven sentient definitions (Sentient,
+Course, Direction, Distance, Effect, Ego, Gaze, Lean, Path, Percept, Waypoint, the one example domain with no drake
+surface, JSON-only since 2026-06) the surfaces `DrakeCLI emit` renders, re-canonicalize the five whose derivation
+argument is a tuple (Direction, Ego, Lean, Percept, Waypoint) by parsing the surface back, and replace the eleven
+companions with the generator's output. The five alone in the corpus failed `parse(emit(td)) == td`: the tuple argument
+to the parent, `Primal((Gaze, Distance))`, sat in the derivation's type parameter as the pre-tree STRING `"(Gaze,
+Distance)"`, the form before type-form trees of 2026-09-17, and the domain had no surface for any sweep to parse.
+MEASURED on a scratch copy with the compiled CLIs before recommending: eleven surfaces of one or two lines (`type
+Waypoint from Sentient draco Primal((Gaze, Distance))` and the domain line; Sentient's lists its ten members); parsing
+back reproduces six JSON byte for byte and moves exactly one leaf in each of the five, to the Objective `{"(,)": ["Gaze",
+"Distance"]}`; the Scala from either JSON is whitespace-identical to the committed companions (a leading blank line, one
+more in Distance and Sentient, a trailing space on Sentient's trait line — the example gate normalizes whitespace);
+`DrakeCLI check` clean; the compact form changes none of the eleven. Built as probed: the eleven `.drake` files are the
+emitter's output copied in unchanged, the JSON `DrakeCLI parse` of them (six identical, five moved on the one leaf),
+the Scala `GeneratorCLI generate` over the current resources; `DrakeCLI check src/mods/resources/domains/sentient`:
+surface drift 0, json drift 0, skipped 0. No engine change, no new test: the round trip is what the 22 newly active
+DrakeParseTest checks assert. Headline moves: parse scope 110 + 48, surface losses 0 across 158 types; the example gate
+stays 48 / 0. Every definition under `src/mods/resources/domains` is now a trio. THE DIRECT RUN FOUND A DEFECT THE PROBE MISSED:
+1004 of 1005 passed, ExampleLoadingTest's all-48 resolution failing with `Ambiguous type 'Distance':
+domains.sentient.Distance, draco.base.Distance` — the old string leaf was host-opaque text the resolver never read,
+the tree makes `Distance` a name, and a bare name resolves by unique ontology lookup with no own-package precedence
+(Dev, 2026-10-20). The probe ran the emitter, parser, check and generator but not the two-stage loader, the one
+consumer that resolves type-form leaves. Measured after: the whole ontology (182 definitions as authored) holds exactly
+two ambiguous bare anchor parameters, Percept's and Waypoint's; spelled `domains.sentient.Distance` in full (the
+sweep's convention for a non-unique simple name, as Decoder and Encoder are spelled in the Dracon domain) the resolver
+reads both, the surface round-trips byte for byte, `DrakeCLI check` is clean, and the two companions regenerate with one
+trait line changed, `Primal[(Gaze, domains.sentient.Distance)]`. Separately, the COMPACT form of either spelling fails:
+`NameResolution.rewrite`'s `anchorParameter` renders an own-package anchor parameter bare unconditionally where `short`
+checks uniqueness, so `resolve` writes a bare `Distance` that a second read cannot resolve — an engine inconsistency on
+a collision the corpus never presented before, not met by any gate, the next related point. Dev ACCEPTED the correction
+("Accepted, build it"): Percept's and Waypoint's headers read `Primal((Gaze, domains.sentient.Distance))`, their JSON is
+the parse of the new surface (byte-equal to the probe's), their companions regenerate on the one trait line, no engine
+change; `DrakeCLI check` over the domain: surface drift 0, json drift 0. SECOND DIRECT RUN: 1005 tests / 78 suites
+including discovery, zero failed, canceled, ignored, pending or aborted, every headline as stated, pending mods actors 0.
+The record (git-record-2026-10-31-1938) carries the measurements and the correction. OBSERVED, not recommended: `domains/sentient/EgoActor.scala` is a hand-written actor over
+Ego with no definition. Deferred, neither accepted: activation (Codex, 2026-10-15) and the .dcon migration.
 
 ## Next design point — acceptance required
 
-None raised yet (Claude Code, 2026-10-31, after the example sweep). After the sweep every definition in the corpus is
-in the compact form but the five sentient JSON-only types. OBSERVED, not recommended: Direction, Ego, Lean, Percept and
-Waypoint carry a tuple value type as a STRING (`"(Double, Double)"`), the pre-tree form of 2026-09-17, so they alone
-fail `parse(emit(td)) == td`; nothing re-canonicalized them because the sentient domain has no drake surfaces.
-Deferred, neither accepted: the activation recommendation (an explicitly supplied Assembly of held actor definitions
-with factory-supplied constructor bindings, Codex, 2026-10-15) and the .dcon migration. Inventory is context, not
-authorization.
+The sentient increment, with its accepted Distance correction, is Dev-gated at 1005 / 77 and awaits Dev's commit (block in the session;
+the eleven `.drake` files and the record are new and need `git add`). NEXT, measured but not recommended yet:
+`anchorParameter` in `NameResolution.rewrite` renders an own-package anchor parameter bare unconditionally, where `short`
+keeps a body leaf in full when its bare name is not unique across the ontology and vocabulary; so `resolve` writes a bare
+`Distance` into Percept's and Waypoint's resolved form and the compact form of either cannot read back. Today the whole
+ontology has exactly those two positions and no gate compacts the example definitions. Also in view, unmeasured:
+`EgoActor.scala`, the one definition-less actor left in the example tree. Deferred activation and the .dcon migration remain deferred and unaccepted. Inventory
+is context, not authorization.
 
 Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
 accepts.
@@ -268,8 +307,8 @@ parameter; the second run was green.
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
 | GenDrake | 108/108, 0 missing, 0 extra |
 | Example generation | 48 match, 0 differ, 0 error, 0 missing / 48 — ASSERTED since October 31 (39 / 9 before the ConsumeReport trios and nine companions, 37 / 11 before the coordinate companions, 36 / 12 before the Output repair) |
-| Surface losses | 0 fields across 147 types (143 before the ConsumeReport surfaces, 141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
-| Parse scope | 110 draco + 37 mods, 0 held back (33 before the ConsumeReport surfaces, 31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
+| Surface losses | 0 fields across 158 types (147 before the sentient surfaces, 143 before the ConsumeReport surfaces, 141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
+| Parse scope | 110 draco + 48 mods, 0 held back (37 before the sentient surfaces, 33 before the ConsumeReport surfaces, 31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
 | Canonical PON | 80 numbers, 7 differ |
 | Scenario | 23 files, 0 rejected, 0 drifted, 23 clean |
@@ -278,7 +317,12 @@ parameter; the second run was green.
 | Pending mods actors | 0; file-only target/test-output/DrakeGenTest.log |
 
 The example sweep's direct run (October 31, record 2026-10-31-1436): 983 / 78 including discovery, every
-row above unchanged; Dev's full gate 983 / 77 on October 31, every row matching.
+row above unchanged; Dev's full gate 983 / 77 on October 31, every row matching. The sentient surfaces' direct run
+(October 31, record 2026-10-31-1938): first run 1005 tests / 78 including discovery, 1004 passed, ONE FAILED —
+ExampleLoadingTest's all-48 resolution, `Ambiguous type 'Distance': domains.sentient.Distance, draco.base.Distance` from
+Percept's and Waypoint's now-treed derivation argument; second run, after the accepted correction spelling that name in
+full, 1005 / 78, zero failed or aborted, every row above as stated, pending mods actors 0. Dev's full gate 1005 / 77 on
+October 31, green on its first run, every row matching, pending mods actors 0; commit pending.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -313,7 +357,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 3a3cbfc | FlightIntent, VoyageIntent, LaunchIntent, MarchIntent json factories; eight test sites construct through them; IntentFactoryTest (Claude Code) | 967 / 76 | 2026-10-30-2014 |
 | 23333f3 | Position and Location drake surfaces and generated companions with inferred codecs; CoordinateProjectionTest (Claude Code) | 974 / 77 | 2026-10-31-0842 |
 | 7be1497 | Four ConsumeReport drake surfaces with JSON re-canonicalized; nine companions the generator's output; ExampleDomainsGenTest a gate (Claude Code) | 982 / 77 | 2026-10-31-1105 |
-| pending | Twelve example trios in the compact form with `uses` records (surfaces re-emitted, JSON re-canonicalized, Scala regenerated); AssemblyValidator compares message types by identity; WorldAssemblyTest +1 (Claude Code) | 983 / 77 | 2026-10-31-1436 |
+| ded1b5b | Twelve example trios in the compact form with `uses` records (surfaces re-emitted, JSON re-canonicalized, Scala regenerated); AssemblyValidator compares message types by identity; WorldAssemblyTest +1 (Claude Code) | 983 / 77 | 2026-10-31-1436 |
+| (commit pending) | Eleven sentient drake surfaces, five tuple derivations re-canonicalized, Percept and Waypoint spelling Distance in full, eleven companions the generator's output (Claude Code) | direct run 1005 / 78 (first run 1004, corrected); Dev's gate 1005 / 77 on October 31 | 2026-10-31-1938 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

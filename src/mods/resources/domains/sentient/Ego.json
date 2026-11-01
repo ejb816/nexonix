@@ -21,7 +21,12 @@
           "draco"
         ],
         "typeParameters": [
-          "(Percept, Effect)"
+          {
+            "(,)": [
+              "Percept",
+              "Effect"
+            ]
+          }
         ]
       }
     ]

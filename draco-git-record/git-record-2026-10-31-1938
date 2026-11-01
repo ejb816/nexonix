@@ -1,0 +1,101 @@
+Give the sentient domain its drake surfaces and re-canonicalize the five tuple derivations
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being that the eleven sentient
+definitions — Sentient, Course, Direction, Distance, Effect, Ego, Gaze, Lean, Path, Percept, Waypoint, the
+one example domain with no drake surface — take the surfaces `DrakeCLI emit` renders, that the five whose
+derivation argument is a tuple (Direction, Ego, Lean, Percept, Waypoint) be re-canonicalized by parsing the
+surface back, and that the eleven companions be replaced by the generator's output. No engine change, no
+new test.
+
+Why. After the example body sweep of ded1b5b every definition in the corpus was in the compact form except
+the sentient domain, whose eleven definitions were JSON-only: authored in 2026-06 before drake existed as a
+surface, never emitted, never parsed back. Five of them failed `parse(emit(td)) == td` for one reason: a
+tuple argument to the parent — `Primal((Gaze, Distance))`, `Primal((Double, Double))`, `Primal((Percept,
+Effect))` — stored in the derivation's type parameter as the pre-tree STRING `"(Gaze, Distance)"`, the form
+before the parser built type-form trees on 2026-09-17. Every other pre-tree value type in the corpus was
+re-canonicalized by a sweep that parsed its surface; the sentient domain had no surface for a sweep to
+parse, so nothing ever touched these five leaves. The trio rule (DRACO.md §1) is that a type is three
+artifacts that agree; the sentient types were two.
+
+MEASURED before recommending, on a scratch copy with the compiled CLIs: `DrakeCLI emit --write` renders
+eleven surfaces of one or two lines each — `type Waypoint from Sentient draco Primal((Gaze, Distance))`
+and `domain domains sentient Sentient`; Sentient's `type Sentient from domains world World`, its domain
+line and a `types [ … ]` list of its ten members. Parsing each surface back reproduces the committed JSON
+byte for byte in six (Course, Distance, Effect, Gaze, Path, Sentient) and moves exactly ONE leaf in the
+other five, `.dracoAspect.derivation[1].typeParameters[0]`, from the string to the Objective tree
+`{"(,)": ["Gaze", "Distance"]}`; nothing else in any file. The Scala generated from either JSON is
+whitespace-identical to the committed companions, which differ from the generator's output only by a
+leading blank line (and one blank line more in Distance and Sentient; Sentient's trait line carried a
+trailing space) — so the companions were already the generator's output in substance, and the example
+gate's whitespace normalization is why it never saw the difference. `DrakeCLI check` on the finished copy:
+surface drift 0, json drift 0. The compact form changes none of the eleven: every reference is own-package
+or a derivation anchor, so no `uses` record arises.
+
+Built as probed. The eleven `.drake` files are the emitter's output, copied in unchanged; the eleven JSON
+files are `DrakeCLI parse` of those surfaces over the compiled classes — six byte-identical to the
+committed files, five moved on the one leaf each; the eleven `.scala` files are `GeneratorCLI generate`
+over the current resources, replacing the committed companions on whitespace alone. `DrakeCLI check
+src/mods/resources/domains/sentient`: surface drift 0, json drift 0, skipped 0. No other file in the tree
+changes but the four documents carrying ded1b5b's hash and this increment's records.
+
+Headline moves: the eleven surfaces enter the parse scope (110 draco + 48 mods, 0 held back) and the
+surface-loss coverage (0 fields across 158 types), activating 22 DrakeParseTest checks (two per surface:
+`emit(parse(source))` and `parse(emit(td))`); the example gate stays 48 match / 0 differ; every other
+headline is unchanged. After this every definition under `src/mods/resources/domains` is a trio, and every
+definition in the corpus round-trips through its surface. OBSERVED, not recommended:
+`src/mods/scala/domains/sentient/EgoActor.scala` is a hand-written actor over Ego with no definition
+behind it (`object EgoActor extends App`, `def actorType(): ActorType = new Actor[Ego] { … }`) — the one
+definition-less actor left in the example tree. Deferred, neither accepted: activation (the Codex
+recommendation of 2026-10-15); the .dcon migration.
+
+THE DIRECT RUN FOUND A DEFECT THE PROBE HAD NOT. Every discovered suite on compiled classes with current main,
+mods and test resources on the loader roots: 1005 tests, 78 suites including discovery, 1004 passed, ONE failed —
+ExampleLoadingTest's "explicit two-stage loading resolves all 48 example definitions independently of declaration
+order": `Ambiguous type 'Distance': domains.sentient.Distance, draco.base.Distance`, raised by `NameResolution.lookup`
+from the type-form walk of Percept's and Waypoint's derivation argument `(Gaze, Distance)`. The 22 newly active
+DrakeParseTest checks pass; every headline is as stated (surface losses 0 across 158 types, parse scope 110 + 48,
+example gate 48 / 0, GenDrake 108 of 108, aspects 110, PON 80 / 550 / 42 and 7, scenario 23 clean, forest 1 of 2,
+CO-DECLARATION categorical, pending mods actors 0). The cause: the old STRING leaf `"(Gaze, Distance)"` was host-opaque
+text the resolver preserves without reading, so the ambiguity had been in the corpus since the sentient domain was
+authored and never visible; the tree makes `Distance` a name, and a bare name resolves by UNIQUE ontology lookup
+(Dev, 2026-10-20: local bindings, then unique lookup — no own-package precedence), which `draco.base.Distance` denies
+it. The probe that grounded the recommendation ran the emitter, the parser, `DrakeCLI check` and the generator over
+the compiled classes but not the two-stage LOADER, the one consumer that resolves type-form leaves — the gap in the
+measurement, recorded here. MEASURED after the failure: (1) the whole ontology, 182 definitions canonical and
+example as authored, holds exactly TWO ambiguous bare anchor parameters, Percept's and Waypoint's `Distance`; the
+other duplicated simple names (ConsumeReport, Consumer, Creator, OriginateReport across the media; Generator; Value)
+occur in no anchor parameter. (2) Spelled `domains.sentient.Distance` in full in the two headers — the convention the
+2026-10-21 sweep set for a simple name that is not unique across the ontology, Decoder and Encoder in the Dracon
+domain being spelled in full in their own package for the same reason — the resolver reads both, the emitter renders
+`type Waypoint from Sentient draco Primal((Gaze, domains.sentient.Distance))`, `parse(emit)` reproduces the JSON byte
+for byte, `DrakeCLI check` is clean, and the two companions regenerate with ONE line changed, `Primal[(Gaze,
+domains.sentient.Distance)]` for `Primal[(Gaze, Distance)]` — valid Scala in the own package, no import. (3) The
+COMPACT form of either spelling still fails: `NameResolution.rewrite` renders an anchor's type parameter bare in the
+definition's own package unconditionally (`anchorParameter`, 2026-10-21), where the sweep's `short` renders a body leaf
+bare only when the bare name is unique; `resolve` therefore writes `Distance` bare into the resolved definition and a
+second read of it is ambiguous. No test compacts the example definitions and the two-stage loader does not re-read
+its result, so the increment's gate does not meet it; it is an engine inconsistency on a collision the corpus had
+never presented, the next related point. The build stopped there, the tree holding the eleven surfaces, the five
+re-canonicalized JSON and the eleven companions as accepted, for Dev's decision on the correction.
+
+Dev accepted the correction, in these words: "Accepted, build it" — spell `domains.sentient.Distance` in full
+in Percept's and Waypoint's headers, surface and JSON, the two companions regenerated on that one line, no
+engine change. Built as measured: the two surfaces read `type Percept from Sentient draco Primal((Gaze,
+domains.sentient.Distance))` and the same for Waypoint; their JSON is `DrakeCLI parse` of the new surface, byte-equal
+to the probe's; the two companions are `GeneratorCLI generate` over the current resources, each changing the one
+trait line, `Primal[(Gaze, domains.sentient.Distance)]`; `DrakeCLI check src/mods/resources/domains/sentient`:
+surface drift 0, json drift 0, skipped 0. The other nine sentient files are as the first build left them. So the
+increment is: eleven drake surfaces, five JSON re-canonicalized (Direction, Ego and Lean on the tuple leaf alone;
+Percept and Waypoint on the tuple leaf and the full spelling of Distance), eleven companions the generator's output
+(nine whitespace-only, two on one trait line). The compact-form inconsistency in `anchorParameter` stands as
+measured, the next related point, not part of this increment.
+
+Verification: every discovered suite run directly on compiled classes with current main, mods and test
+resources on the loader roots — 1005 tests passed, 78 suites including the Runner's discovery wrapper, zero
+failed, canceled, ignored, pending or aborted, green on its first run after the correction: 983 + the 22 newly
+active DrakeParseTest checks. Headlines: example map 48 match / 0 differ / 0 error / 0 missing of 48 (asserted),
+surface losses 0 across 158 types, parse scope 110 draco + 48 mods, DomainAspect and DracoAspect 110 sections,
+GenDrake 108 of 108, PON 80 / 550 / 42 and canonical 7, scenario 23 clean, forest 1 of 2, CO-DECLARATION
+categorical, pending mods actors 0. Dev's full sbt gate on 2026-10-31: 1005 succeeded, 0 failed, canceled,
+ignored or pending, every headline matching, the file-only pending-actor count 1 (zero pending) — 1005 tests /
+77 suites, green on its first run. Commit pending.

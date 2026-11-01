@@ -1,0 +1,14 @@
+type Sentient from domains world World
+domain domains sentient Sentient
+  types [
+    Direction
+    Distance
+    Course
+    Gaze
+    Percept
+    Lean
+    Effect
+    Waypoint
+    Path
+    Ego
+  ]
