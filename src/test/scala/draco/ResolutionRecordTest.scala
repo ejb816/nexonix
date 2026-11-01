@@ -61,6 +61,32 @@ class ResolutionRecordTest extends AnyFunSuite {
     assert(recorded.resolveName("Unknown").namePath == "Unknown")
   }
 
+  test("an own-package anchor parameter is bare only when its simple name is unique: Percept and Waypoint keep Distance in full and their compact form reads back") {
+    // Until 2026-11-01 the anchor-parameter rule wrote an own-package name bare unconditionally, where a body
+    // leaf is shortened only when unique across the ontology and the vocabulary; `resolve` then turned the
+    // full `domains.sentient.Distance` (5f0e023) back into the bare name the loader had refused as ambiguous
+    // against `draco.base.Distance`, and the compact form of either definition could not read back.
+    val example = new NameResolution(DomainBuilder.identities(domains.ExampleScope.declarations), domains.ExampleScope.bindings)
+    def mods(stem: String): TypeDefinition =
+      parser.parse(Files.readString(Paths.get(s"src/mods/resources/$stem.json"))).toOption.get.as[TypeDefinition].toOption.get
+    Seq("Percept", "Waypoint").foreach { name =>
+      val td = mods(s"domains/sentient/$name")
+      val tuple = DracoAspect.parents(td.dracoAspect).find(_.name == "Primal").get.typeParameters.head.json
+      assert(tuple == parser.parse("{\"(,)\": [\"Gaze\", \"domains.sentient.Distance\"]}").toOption.get, name)
+      assert(TypeDefinition.encoder(example.resolve(td)) == TypeDefinition.encoder(td), s"$name resolves to itself: Gaze bare, Distance in full")
+      val compact = example.compact(td)
+      assert(TypeDefinition.encoder(compact) == TypeDefinition.encoder(td), s"$name's compact form is the committed JSON")
+      assert(TypeDefinition.encoder(example.resolve(compact)) == TypeDefinition.encoder(td), s"$name's compact form reads back")
+      assert(DracoGenerator.generate(td) == DracoGenerator.generate(td, example), s"$name: unscoped and scoped generation agree")
+      assert(DracoGenerator.generate(td) == read(s"src/mods/scala/domains/sentient/$name.scala"), s"$name: the committed companion")
+    }
+    // A unique own-package anchor parameter is still written bare, in the example tree and in the canonical corpus.
+    val ego = mods("domains/sentient/Ego")
+    assert(TypeDefinition.encoder(example.compact(ego)) == TypeDefinition.encoder(ego), "Ego's Holon(Percept, Effect) stays bare")
+    val dictionary = load("draco/TypeDictionary")
+    assert(TypeDefinition.encoder(scope.compact(dictionary)) == TypeDefinition.encoder(dictionary), "TypeDictionary's Dictionary(TypeName, TypeDefinition) stays bare")
+  }
+
   test("a record entry the ontology does not define fails every scoped read") {
     val td = load("draco/TypeName")
     val stale = TypeDefinition(td.typeName, _uses = td.uses :+ TypeName("Vanished", Seq("draco", "elsewhere")), _dracoAspect = td.dracoAspect,

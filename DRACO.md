@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1006 tests / 77 suites**, verified by Dev on 2026-11-01 for the anchor-parameter rule (record `git-record-2026-11-01-0831`,
+commit pending): one added ResolutionRecordTest case, no new suite, zero failed/canceled/ignored/pending tests, every
+headline unchanged, including pending mods actors 0. One conjunct in the resolver, no definition or committed Scala
+change; direct run 1006 / 78 including discovery, green on its first run. First full Dev gate green. Before it:
 **1005 tests / 77 suites**, verified by Dev on 2026-10-31 for the sentient surfaces (record `git-record-2026-10-31-1938`,
-commit pending): 22 newly active DrakeParseTest checks, no new suite, zero failed/canceled/ignored/pending tests. Parse
+committed as 5f0e023): 22 newly active DrakeParseTest checks, no new suite, zero failed/canceled/ignored/pending tests. Parse
 scope 110 + 48, surface losses 0 across 158 types, the example gate 48 match / 0 differ; every other headline unchanged,
 including pending mods actors 0. Eleven sentient trios take their drake surfaces, five JSON re-canonicalized, Percept and
 Waypoint spelling `domains.sentient.Distance` in full after one accepted correction, eleven companions the generator's
@@ -1750,6 +1754,30 @@ checks uniqueness — the next related point, met by no gate. Dev ACCEPTED the c
 and Waypoint spell `Primal((Gaze, domains.sentient.Distance))`, their JSON re-parsed, their companions regenerated on
 the one trait line, no engine change; `DrakeCLI check` clean over the domain. Second direct run 1005 / 78 including
 discovery, green, every headline as stated, pending mods actors 0; Dev's first full gate 1005 / 77 on 2026-10-31, every
-headline matching, pending mods actors 0; commit pending. OBSERVED, not recommended:
+headline matching, pending mods actors 0. Committed and pushed by Dev as 5f0e023. OBSERVED, not recommended:
+`domains/sentient/EgoActor.scala` is a hand-written actor over Ego with no definition. Deferred activation and .dcon
+remain, neither accepted.
+
+
+**An anchor parameter's bare form takes the body leaf's uniqueness rule (2026-11-01, Claude Code; Dev verified 1006 / 77).**
+Dev accepted "Accepted, build it" on the recommendation that `anchorParameter` in `NameResolution.rewrite` apply the
+same judgment as `short`: a local binding keeps its authored spelling, an own-package name is written bare only when
+`short` would shorten it — the simple name unique across the ontology and the host vocabulary — and everything else
+stays in full. The resolver had two rules for spelling a name short: a body leaf through `short` (2026-10-21; Decoder
+and Encoder in the Dracon domain stay in full in their own package), an anchor's type parameter through
+`anchorParameter`, own-package bare with no check. The sentient surfaces (5f0e023) exposed it: the loader refused bare
+`Distance` against `draco.base.Distance`, the correction spelled `domains.sentient.Distance` in full, and `resolve`
+rendered it bare again, so the COMPACT form of Percept and Waypoint — resolve, then re-read — failed on the ambiguity
+the correction had removed; no gate compacts the example definitions, and the example gate generates unscoped. MEASURED
+over all 183 definitions: 33 bare anchor parameters; thirteen own-package (DomainType, TypeDictionary, TypeName,
+TypeDefinition, XML, Dracon twice, Gaze twice, Percept, Effect, World twice), every one unique and no host binding's
+name, so each stays bare; six already in full; twenty formals or host leaves neither rule touches. So no committed JSON
+or Scala moves, and the compact form of the two sentient definitions now equals the committed JSON and reads back. One
+conjunct added to `anchorParameter`; REJECTED dropping the own-package restriction (the 2026-10-21 rule keeps anchors
+readable by the unscoped companions). ResolutionRecordTest +1 over the example caller scope: the two tuples, resolve
+to self, compact to the committed JSON, read back, unscoped equals scoped generation equals the committed companion;
+Ego's and TypeDictionary's unique own-package parameters still bare. Direct run 1006 / 78 including discovery, green on
+its first run, every headline unchanged, pending mods actors 0; Dev's first full gate 1006 / 77 on 2026-11-01, every headline
+matching, pending mods actors 0; commit pending. OBSERVED, not recommended:
 `domains/sentient/EgoActor.scala` is a hand-written actor over Ego with no definition. Deferred activation and .dcon
 remain, neither accepted.

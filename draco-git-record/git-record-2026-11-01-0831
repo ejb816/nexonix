@@ -1,0 +1,52 @@
+Make an anchor parameter's bare form take the body leaf's uniqueness rule
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being that `anchorParameter` in
+`NameResolution.rewrite` apply the same judgment as `short`: a local binding keeps its authored spelling, an
+own-package name is written bare only when `short` would shorten it, everything else stays in full. One engine
+change, no definition or committed Scala change, one new ResolutionRecordTest case.
+
+Why. The resolver had two rules for spelling a name short. A BODY leaf goes through `short` (2026-10-21,
+narrowed with the corpus sweep): the bare name only when the simple name is unique across the ontology AND
+the host vocabulary — Decoder and Encoder in the Dracon domain stay in full in their own package for that
+reason. An ANCHOR's type parameter — the tuple inside `Primal((Gaze, Distance))` — went through
+`anchorParameter`, which wrote an own-package name bare with no such check. The sentient surfaces (5f0e023)
+exposed the asymmetry: the loader had refused bare `Distance` as ambiguous against `draco.base.Distance`, the
+accepted correction spelled `domains.sentient.Distance` in full in Percept's and Waypoint's headers, and the
+resolver then undid it — `resolve` rendered the own-package anchor parameter bare again, so the COMPACT form
+(resolve, then re-read) of either definition failed on the ambiguity the correction had removed. No gate
+caught it: the two-stage loader only reads, and the example gate generates unscoped.
+
+MEASURED before recommending, over all 183 definitions of main and mods: 33 anchor parameters are bare
+names. Thirteen resolve to a definition in the anchor's own package — DomainType and TypeDictionary
+(DomainOntology's Dictionary), TypeName and TypeDefinition (TypeDictionary's), XML, Dracon twice (Value's and
+Dracon's own Format), Gaze twice (Percept, Waypoint), Percept and Effect (Ego's Holon), World twice (Consumer's
+and Provider's Actor) — and every one of the thirteen is unique across the ontology and is no host binding's
+alias or target name, so the uniform rule writes each bare as before. Six are already in full (Dracon, Text
+twice, ScalaTarget, DrakeTarget cross-package; `domains.sentient.Distance` twice), and `short` keeps a
+non-unique name in full, so Percept and Waypoint stay as 5f0e023 spelled them. The remaining twenty are
+formals (S, T, F) or host leaves (Double, Enumeration, String), which the local binding or the vocabulary
+decides and neither rule shortens. So no committed JSON or Scala file moves; the only observable change is
+that the compact form of Percept and Waypoint now equals the committed JSON and reads back.
+
+Built as measured. `anchorParameter` gains one conjunct: the own-package bare form is written only when
+`short(full, local) != full`. REJECTED: dropping the own-package restriction so an anchor parameter could take
+the record's short form — the 2026-10-21 rule keeps anchors readable by the unscoped companions, and this
+point does not touch it.
+
+ResolutionRecordTest +1 (five cases): over the example caller scope (ExampleScope's declarations and
+bindings), Percept and Waypoint carry the tuple `{"(,)": ["Gaze", "domains.sentient.Distance"]}`, resolve to
+themselves (Gaze bare, Distance in full), compact to the committed JSON, read back from the compact form,
+generate the same unscoped and scoped, and generate the committed companion; Ego's `Holon(Percept, Effect)`
+and TypeDictionary's `Dictionary(TypeName, TypeDefinition)` compact to their committed JSON, the unique
+own-package anchor parameter still bare.
+
+Verification: every discovered suite run directly on compiled classes with current main, mods and test
+resources on the loader roots (the direct-run procedure in DEVELOPMENT_HANDOFF.md), 2026-11-01: 1006 tests
+passed, 78 suites including the Runner's discovery wrapper, zero failed, canceled, ignored, pending or
+aborted, green on its first run — 1005 + the one ResolutionRecordTest case. Headlines unchanged: example gate
+48 match / 0 differ / 0 error / 0 missing of 48 (asserted), surface losses 0 across 158 types, parse scope 110
+draco + 48 mods, DomainAspect and DracoAspect 110 sections, GenDrake 108 of 108, PON 80 / 550 / 42 and canonical
+7, scenario 23 clean, forest 1 of 2, CO-DECLARATION categorical, pending mods actors 0. No definition and no
+committed Scala changed. Dev's full sbt gate on 2026-11-01: 1006 succeeded, 0 failed, canceled, ignored or
+pending, every headline matching, the file-only pending-actor count 1 (zero pending) — 1006 tests / 77 suites, green
+on its first run. Commit pending.

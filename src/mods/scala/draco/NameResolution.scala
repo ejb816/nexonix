@@ -143,10 +143,16 @@ final class NameResolution(val ontology: DomainOntology, val bindings: Map[Strin
       }
     }
     // An anchor's type parameters follow the anchor's own convention (2026-10-21): bare in the
-    // definition's own package, in full elsewhere — never the record's short form.
+    // definition's own package, in full elsewhere — never the record's short form. The bare form
+    // takes `short`'s judgment (2026-11-01): only when the simple name is unique across the
+    // ontology and the vocabulary, as a body leaf is shortened — Percept's and Waypoint's
+    // `Distance` against `draco.base.Distance` stays in full, and the compact form reads back.
     val anchorParameter: (String, String, Map[String, String]) => String = (authored, full, local) =>
       if (local.contains(authored)) authored
-      else { val cut = full.lastIndexOf('.'); if (cut >= 0 && full.take(cut).split('.').toSeq == ownerPackage) full.drop(cut + 1) else full }
+      else {
+        val cut = full.lastIndexOf('.')
+        if (cut >= 0 && full.take(cut).split('.').toSeq == ownerPackage && short(full, local) != full) full.drop(cut + 1) else full
+      }
     def reference(j: Json, local: Map[String, String], anchor: Boolean = false): Json = { val _ = anchor
       val c = j.hcursor
       val n = c.get[String]("name").getOrElse("")

@@ -1,8 +1,9 @@
 # Development Handoff
 
 Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code;
-refreshed by Claude Code through October 30 after the named-construction repairs, the
-terrestrial Output repair, the report and intent json factories and the coordinate surfaces.
+refreshed by Claude Code through November 1 after the named-construction repairs, the
+terrestrial Output repair, the report and intent json factories, the coordinate, ConsumeReport and
+sentient surfaces, the example sweep and the anchor-parameter rule.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -26,18 +27,19 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   example map closed as a gate (record `git-record-2026-10-31-1105`), Dev-gated at 982 / 77 and committed and pushed by Dev as **7be1497** on October 31; then the
   example body sweep with the validator's identity comparison (record `git-record-2026-10-31-1436`), Dev-gated at 983 / 77 and committed and pushed by Dev as **ded1b5b** on October 31; then the
   sentient surfaces (record `git-record-2026-10-31-1938`), built and verified directly on October 31 (1005 / 78 after
-  the accepted Distance correction), Dev-gated at 1005 / 77 on October 31, COMMIT PENDING, in the tree —
-  inspect `git log -1` and `git status --short` to learn where they stand. Before them a8b5447 (Consumer) and 7495539
+  the accepted Distance correction), Dev-gated at 1005 / 77 and committed and pushed by Dev as **5f0e023** on October 31 —
+  then the anchor-parameter rule (record `git-record-2026-11-01-0831`), built and verified directly on November 1
+  (1006 / 78), Dev-gated at 1006 / 77 on November 1, COMMIT PENDING, in the tree — inspect `git log -1` and `git status --short` to learn
+  where the tree stands. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **1005 tests / 77 suites**, October 31, on the sentient-surfaces tree (uncommitted, record
-  `git-record-2026-10-31-1938`): zero failed/canceled/ignored/pending tests, parse scope
+- Latest Dev-verified gate: **1006 tests / 77 suites**, November 1, on the anchor-parameter tree (uncommitted, record
+  `git-record-2026-11-01-0831`): zero failed/canceled/ignored/pending tests, parse scope
   110 + 48, surface losses 0 across 158 types, example gate 48 match / 0 differ, every other headline
-  unchanged, pending mods actors 0. Before it 983 / 77 on the example-sweep tree (ded1b5b).
-- All accepted implementation work through ded1b5b is committed and pushed. The sentient surfaces increment is
-  in the tree uncommitted: eleven new `.drake` files, five re-canonicalized JSON and eleven regenerated companions
-  under `domains/sentient` (Percept and Waypoint spelling `domains.sentient.Distance` in full), its record, the
-  CHANGELOG entry and these documents, verified directly at 1005 / 78 and by Dev's full gate at 1005 / 77, awaiting
-  Dev's commit.
+  unchanged, pending mods actors 0. Before it 1005 / 77 on the sentient-surfaces tree (5f0e023).
+- All accepted implementation work through 5f0e023 is committed and pushed. In the tree uncommitted: the
+  anchor-parameter rule — one conjunct in `src/mods/scala/draco/NameResolution.scala`, one ResolutionRecordTest case,
+  its record, the CHANGELOG entry and these documents (which also carry the 5f0e023 fold) — verified directly at
+  1006 / 78 and by Dev's full gate at 1006 / 77, awaiting Dev's commit.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -217,7 +219,7 @@ green on its first run, every headline as stated, pending mods actors 0. Dev's f
 succeeded, zero failed/canceled/ignored/pending, every headline matching, pending mods actors 0 — 983 / 77, green on
 its first run. Committed and pushed by Dev as ded1b5b.
 
-## The sentient domain takes its drake surfaces (accepted and built, October 31; one correction accepted and built; direct run 1005 / 78, Dev verified 1005 / 77, commit pending)
+## The sentient domain takes its drake surfaces (accepted and built, October 31; one correction accepted and built; direct run 1005 / 78, Dev verified 1005 / 77, committed as 5f0e023)
 
 Dev accepted: "Accepted, build it" on the point raised after ded1b5b — give the eleven sentient definitions (Sentient,
 Course, Direction, Distance, Effect, Ego, Gaze, Lean, Path, Percept, Waypoint, the one example domain with no drake
@@ -256,14 +258,32 @@ including discovery, zero failed, canceled, ignored, pending or aborted, every h
 The record (git-record-2026-10-31-1938) carries the measurements and the correction. OBSERVED, not recommended: `domains/sentient/EgoActor.scala` is a hand-written actor over
 Ego with no definition. Deferred, neither accepted: activation (Codex, 2026-10-15) and the .dcon migration.
 
+## An anchor parameter's bare form takes the body leaf's uniqueness rule (accepted and built, November 1; direct run 1006 / 78, Dev verified 1006 / 77, commit pending)
+
+Dev accepted: "Accepted, build it" on the point raised after 5f0e023 — make `anchorParameter` in `NameResolution.rewrite`
+apply the same judgment as `short`: a local binding keeps its authored spelling, an own-package name is written bare
+only when `short` would shorten it (simple name unique across the ontology and the host vocabulary), everything else
+stays in full. The resolver had written an own-package anchor parameter bare unconditionally, so `resolve` turned
+Percept's and Waypoint's `domains.sentient.Distance` (the 5f0e023 correction) back into the bare name the loader had
+refused, and the compact form of either (resolve, then re-read) failed; no gate compacts the example definitions and
+the example gate generates unscoped. MEASURED over all 183 definitions before recommending: 33 bare anchor parameters,
+thirteen own-package (DomainType, TypeDictionary, TypeName, TypeDefinition, XML, Dracon ×2, Gaze ×2, Percept, Effect,
+World ×2) every one unique and no host binding's name, six already in full, twenty formals or host leaves — so no
+committed JSON or Scala changes; the only observable change is that Percept's and Waypoint's compact form equals the
+committed JSON and reads back. BUILT: one conjunct on `anchorParameter` (`short(full, local) != full`);
+ResolutionRecordTest +1 (five cases) over the example caller scope — the two tuples
+`{"(,)": ["Gaze", "domains.sentient.Distance"]}`, resolve to self, compact to the committed JSON, read back, unscoped
+equals scoped generation equals the committed companion; Ego's `Holon(Percept, Effect)` and TypeDictionary's
+`Dictionary(TypeName, TypeDefinition)` still bare. REJECTED: dropping the own-package restriction so an anchor
+parameter could take the record's short form. DIRECT RUN: 1006 tests / 78 suites including discovery, zero failed,
+canceled, ignored, pending or aborted, green on its first run, every headline unchanged, pending mods actors 0. The
+record (git-record-2026-11-01-0831) carries the measurement. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`
+is a hand-written actor over Ego with no definition. Deferred, neither accepted: activation and the .dcon migration.
+
 ## Next design point — acceptance required
 
-The sentient increment, with its accepted Distance correction, is Dev-gated at 1005 / 77 and awaits Dev's commit (block in the session;
-the eleven `.drake` files and the record are new and need `git add`). NEXT, measured but not recommended yet:
-`anchorParameter` in `NameResolution.rewrite` renders an own-package anchor parameter bare unconditionally, where `short`
-keeps a body leaf in full when its bare name is not unique across the ontology and vocabulary; so `resolve` writes a bare
-`Distance` into Percept's and Waypoint's resolved form and the compact form of either cannot read back. Today the whole
-ontology has exactly those two positions and no gate compacts the example definitions. Also in view, unmeasured:
+The anchor-parameter increment is Dev-gated at 1006 / 77 and awaits Dev's commit (block in the session; the record is new
+and needs `git add`). After it nothing from the sentient thread remains preserved. In view, unmeasured and not recommended:
 `EgoActor.scala`, the one definition-less actor left in the example tree. Deferred activation and the .dcon migration remain deferred and unaccepted. Inventory
 is context, not authorization.
 
@@ -322,7 +342,10 @@ row above unchanged; Dev's full gate 983 / 77 on October 31, every row matching.
 ExampleLoadingTest's all-48 resolution, `Ambiguous type 'Distance': domains.sentient.Distance, draco.base.Distance` from
 Percept's and Waypoint's now-treed derivation argument; second run, after the accepted correction spelling that name in
 full, 1005 / 78, zero failed or aborted, every row above as stated, pending mods actors 0. Dev's full gate 1005 / 77 on
-October 31, green on its first run, every row matching, pending mods actors 0; commit pending.
+October 31, green on its first run, every row matching, pending mods actors 0; committed and pushed as 5f0e023. The
+anchor-parameter rule's direct run (November 1, record 2026-11-01-0831): 1006 / 78 including discovery, zero failed or
+aborted, every row above unchanged, pending mods actors 0. Dev's full gate 1006 / 77 on November 1, green on its first
+run, every row matching, pending mods actors 0; commit pending.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -358,7 +381,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 23333f3 | Position and Location drake surfaces and generated companions with inferred codecs; CoordinateProjectionTest (Claude Code) | 974 / 77 | 2026-10-31-0842 |
 | 7be1497 | Four ConsumeReport drake surfaces with JSON re-canonicalized; nine companions the generator's output; ExampleDomainsGenTest a gate (Claude Code) | 982 / 77 | 2026-10-31-1105 |
 | ded1b5b | Twelve example trios in the compact form with `uses` records (surfaces re-emitted, JSON re-canonicalized, Scala regenerated); AssemblyValidator compares message types by identity; WorldAssemblyTest +1 (Claude Code) | 983 / 77 | 2026-10-31-1436 |
-| (commit pending) | Eleven sentient drake surfaces, five tuple derivations re-canonicalized, Percept and Waypoint spelling Distance in full, eleven companions the generator's output (Claude Code) | direct run 1005 / 78 (first run 1004, corrected); Dev's gate 1005 / 77 on October 31 | 2026-10-31-1938 |
+| 5f0e023 | Eleven sentient drake surfaces, five tuple derivations re-canonicalized, Percept and Waypoint spelling Distance in full, eleven companions the generator's output (Claude Code) | direct run 1005 / 78 (first run 1004, corrected); Dev's gate 1005 / 77 on October 31 | 2026-10-31-1938 |
+| (pending) | The anchor-parameter bare form takes `short`'s uniqueness rule; no definition or committed Scala change; ResolutionRecordTest +1 (Claude Code) | direct run 1006 / 78; Dev's gate 1006 / 77 on November 1 | 2026-11-01-0831 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

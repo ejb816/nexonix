@@ -7,7 +7,7 @@ DRACO.md), DEVELOPMENT_HANDOFF.md and the shared documentation skill at
 sources/codex-2026-10-22-to-26-audit.md for the Codex session's decisions and coverage.
 Inspect git status/log; preserve uncommitted documentation. No private agent memory is required.
 
-Latest Dev-verified increment: the example body sweep — the twelve example definitions
+Before it: the example body sweep — the twelve example definitions
 the compact form changes (four Creators, four OriginateReports, aerial Input, terrestrial Output, world
 Consumer and Provider) compacted with their `uses` records, their drake surfaces re-emitted and their
 Scala regenerated with selective imports, the other 36 unchanged; AssemblyValidator comparing a
@@ -63,7 +63,15 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-IN THE TREE, GATED BY ME, COMMIT PENDING (2026-10-31, after ded1b5b; record git-record-2026-10-31-1938): the
+IN THE TREE, GATED BY ME, COMMIT PENDING (2026-11-01, after 5f0e023; record git-record-2026-11-01-0831): the
+anchor-parameter rule — `anchorParameter` in NameResolution writes an own-package type parameter of a derivation record
+bare only when `short` would (simple name unique across the ontology and the host vocabulary), so Percept's and Waypoint's
+`domains.sentient.Distance` survives `resolve` and their compact form reads back; measured over all 183 definitions, no
+other anchor parameter changes, so no definition or committed Scala moves; ResolutionRecordTest +1. Direct run 1006 / 78
+including discovery, green on its first run, every headline unchanged, pending mods actors 0; my full sbt gate 1006 tests /
+77 suites on November 1, zero failures or aborts, every headline matching.
+
+Before it, COMMITTED AND PUSHED BY ME AS 5f0e023 (2026-10-31, after ded1b5b; record git-record-2026-10-31-1938): the
 eleven sentient definitions' drake surfaces, the five tuple derivations (Direction, Ego, Lean, Percept, Waypoint)
 re-canonicalized from the surface, the eleven companions the generator's output — accepted and built. The first
 direct run passed 1004 of 1005: ExampleLoadingTest's all-48 resolution failed on `Ambiguous type 'Distance':
@@ -73,8 +81,7 @@ ambiguity the host-opaque string had hidden. I accepted the correction: those tw
 change — the sweep's convention for a non-unique simple name. Second direct run 1005 / 78 including discovery,
 green, every headline as expected (parse scope 110 + 48, surface losses 0 across 158 types, example gate 48 / 0,
 pending mods actors 0); my full sbt gate 1005 tests / 77 suites on October 31, zero failures or aborts, every headline
-matching. Next after it, measured: `anchorParameter` in NameResolution renders an own-package anchor
-parameter bare without checking uniqueness, so the compact form of those two cannot read back. Observed only: EgoActor.scala is a hand-written actor with no definition. Deferred,
+matching. Observed only: EgoActor.scala is a hand-written actor with no definition. Deferred,
 neither accepted: activation and the .dcon migration. The details are in the handoff.
 
 Keep to one design point per reply, one recommendation with accept-or-correct, and build only

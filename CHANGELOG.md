@@ -18,6 +18,13 @@ the block below.
 
 ## [Unreleased]
 
+- Make an anchor parameter's bare form take the body leaf's uniqueness rule: the resolver writes an
+  own-package type parameter of a derivation record bare only when its simple name is unique across the
+  ontology and the host vocabulary, as it already did for a body leaf. `Percept` and `Waypoint` keep
+  `domains.sentient.Distance` in full under `resolve` and `compact`, so their compact form reads back;
+  every other anchor parameter in the corpus was already unique, so no definition or committed Scala
+  changes. ResolutionRecordTest +1.
+
 - Give the sentient domain its drake surfaces: the eleven sentient definitions (`Sentient`, `Course`,
   `Direction`, `Distance`, `Effect`, `Ego`, `Gaze`, `Lean`, `Path`, `Percept`, `Waypoint`), the one
   example domain that was JSON-only, now carry the `.drake` surface the emitter renders; the five whose
