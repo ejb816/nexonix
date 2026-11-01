@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Assert that the whole corpus is a fixpoint of the compact form: ResolutionRecordTest walks every definition
+  under `src/main/resources` and `src/mods/resources` (183 on 2026-11-01, a lower bound) and asserts, under the
+  canonical scope for draco and the example caller's scope for domains, that its compact form is the definition
+  itself and reads back to the same resolution — the claim the two sweeps measured, now a gate; it would have
+  failed on Percept and Waypoint before the anchor-parameter rule. No engine, definition or committed Scala change.
+
 - Make an anchor parameter's bare form take the body leaf's uniqueness rule: the resolver writes an
   own-package type parameter of a derivation record bare only when its simple name is unique across the
   ontology and the host vocabulary, as it already did for a body leaf. `Percept` and `Waypoint` keep

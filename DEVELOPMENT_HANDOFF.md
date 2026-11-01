@@ -3,7 +3,7 @@
 Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code;
 refreshed by Claude Code through November 1 after the named-construction repairs, the
 terrestrial Output repair, the report and intent json factories, the coordinate, ConsumeReport and
-sentient surfaces, the example sweep and the anchor-parameter rule.
+sentient surfaces, the example sweep, the anchor-parameter rule and the compact fixpoint assertion.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -29,17 +29,18 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   sentient surfaces (record `git-record-2026-10-31-1938`), built and verified directly on October 31 (1005 / 78 after
   the accepted Distance correction), Dev-gated at 1005 / 77 and committed and pushed by Dev as **5f0e023** on October 31 —
   then the anchor-parameter rule (record `git-record-2026-11-01-0831`), built and verified directly on November 1
-  (1006 / 78), Dev-gated at 1006 / 77 on November 1, COMMIT PENDING, in the tree — inspect `git log -1` and `git status --short` to learn
-  where the tree stands. Before them a8b5447 (Consumer) and 7495539
+  (1006 / 78), Dev-gated at 1006 / 77 and committed and pushed by Dev as **ed57aa9** on November 1 — then the compact fixpoint
+  assertion (record `git-record-2026-11-01-1228`), built on November 1, verified directly on November 1 (1007 / 78), Dev-gated at 1007 / 77 on November 1, COMMIT PENDING, in the tree —
+  inspect `git log -1` and `git status --short` to learn where the tree stands. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **1006 tests / 77 suites**, November 1, on the anchor-parameter tree (uncommitted, record
-  `git-record-2026-11-01-0831`): zero failed/canceled/ignored/pending tests, parse scope
+- Latest Dev-verified gate: **1007 tests / 77 suites**, November 1, on the compact-fixpoint tree (uncommitted, record
+  `git-record-2026-11-01-1228`): zero failed/canceled/ignored/pending tests, parse scope
   110 + 48, surface losses 0 across 158 types, example gate 48 match / 0 differ, every other headline
-  unchanged, pending mods actors 0. Before it 1005 / 77 on the sentient-surfaces tree (5f0e023).
-- All accepted implementation work through 5f0e023 is committed and pushed. In the tree uncommitted: the
-  anchor-parameter rule — one conjunct in `src/mods/scala/draco/NameResolution.scala`, one ResolutionRecordTest case,
-  its record, the CHANGELOG entry and these documents (which also carry the 5f0e023 fold) — verified directly at
-  1006 / 78 and by Dev's full gate at 1006 / 77, awaiting Dev's commit.
+  unchanged, pending mods actors 0. Before it 1006 / 77 on the anchor-parameter tree (ed57aa9) and 1005 / 77 on the
+  sentient-surfaces tree (5f0e023).
+- All accepted implementation work through ed57aa9 is committed and pushed. In the tree uncommitted: the compact
+  fixpoint assertion — one ResolutionRecordTest case, its record, the CHANGELOG entry and these documents (which also
+  carry the ed57aa9 fold) — verified directly at 1007 / 78 and by Dev's full gate at 1007 / 77 (every headline matching), awaiting commit.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -258,7 +259,7 @@ including discovery, zero failed, canceled, ignored, pending or aborted, every h
 The record (git-record-2026-10-31-1938) carries the measurements and the correction. OBSERVED, not recommended: `domains/sentient/EgoActor.scala` is a hand-written actor over
 Ego with no definition. Deferred, neither accepted: activation (Codex, 2026-10-15) and the .dcon migration.
 
-## An anchor parameter's bare form takes the body leaf's uniqueness rule (accepted and built, November 1; direct run 1006 / 78, Dev verified 1006 / 77, commit pending)
+## An anchor parameter's bare form takes the body leaf's uniqueness rule (accepted and built, November 1; direct run 1006 / 78, Dev verified 1006 / 77, committed as ed57aa9)
 
 Dev accepted: "Accepted, build it" on the point raised after 5f0e023 — make `anchorParameter` in `NameResolution.rewrite`
 apply the same judgment as `short`: a local binding keeps its authored spelling, an own-package name is written bare
@@ -280,11 +281,36 @@ canceled, ignored, pending or aborted, green on its first run, every headline un
 record (git-record-2026-11-01-0831) carries the measurement. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`
 is a hand-written actor over Ego with no definition. Deferred, neither accepted: activation and the .dcon migration.
 
+## The whole corpus is asserted a fixpoint of the compact form (accepted and built, November 1; Dev verified 1007 / 77, commit pending)
+
+Dev accepted: "Accepted, build it" on the point raised after ed57aa9 — one new ResolutionRecordTest case asserting over
+every definition under `src/main/resources` and `src/mods/resources` that its compact form is the definition itself and
+reads back to the same resolution, the canonical scope (`CanonicalScope.scope`) for draco and the example caller's scope
+(a `NameResolution` over `ExampleScope.declarations` and `ExampleScope.bindings`) for domains. WHY: the record of ed57aa9
+named the gap its defect had passed through — nothing compacts the example definitions, the two-stage loader never
+re-reads its result — and the suite kept that shape after it; the sweeps' claim that every definition is in the compact
+form was measured in their records and asserted nowhere as a whole. MEASURED before recommending, on the compiled classes
+of the ed57aa9 direct run: 183 definitions (the nameless domain's `.json` anchor excluded), 183 whose compact form encodes
+to the definition, 183 whose compact form reads back; on the tree of 5f0e023 the same walk fails on Percept and Waypoint.
+BUILT: the sixth ResolutionRecordTest case — the walk over the two resource roots, the scope chosen by package, the two
+assertions per definition naming the failing stem, the count bounded below at 183 (as the suite's whole-corpus generation
+case bounds the main corpus at 110: a silent loss fails, an added type does not). No engine line, no definition, no
+committed Scala, no new suite; no headline moves. DIRECT RUN: 1007 tests / 78 suites including discovery,
+zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged (parse scope 110 + 48,
+surface losses 0 across 158 types, example gate 48 / 0, GenDrake 108 of 108, aspects 110, PON 80 / 550 / 42 and 7, scenario
+23 clean, forest 1 of 2, CO-DECLARATION categorical), pending mods actors 0. The record (git-record-2026-11-01-1228) carries the
+measurement; the commit also carries the ed57aa9 fold in these documents. OBSERVED, not recommended:
+`domains/sentient/EgoActor.scala`, a hand-written actor over Ego with no definition — referenced nowhere but a test
+comment and a review-ledger row, a June stub modeled on NaturalActor, no test, no assembly, the retired Actor suffix in
+its name; a role-named definition or removal is Dev's decision. Deferred, neither accepted: activation and the .dcon
+migration.
+
 ## Next design point — acceptance required
 
-The anchor-parameter increment is Dev-gated at 1006 / 77 and awaits Dev's commit (block in the session; the record is new
-and needs `git add`). After it nothing from the sentient thread remains preserved. In view, unmeasured and not recommended:
-`EgoActor.scala`, the one definition-less actor left in the example tree. Deferred activation and the .dcon migration remain deferred and unaccepted. Inventory
+The compact fixpoint assertion is built, verified directly at 1007 / 78 and by Dev's full gate at 1007 / 77 with every headline matching, and awaits commit;
+the record is new and needs `git add`. Nothing from the sentient or anchor-parameter threads remains preserved. In view,
+measured and not recommended: `EgoActor.scala`, the one definition-less actor left in the example tree (unreferenced, a
+June stub, the retired Actor suffix in its name) — define under a role name or remove, Dev's decision. Deferred activation and the .dcon migration remain deferred and unaccepted. Inventory
 is context, not authorization.
 
 Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
@@ -345,7 +371,10 @@ full, 1005 / 78, zero failed or aborted, every row above as stated, pending mods
 October 31, green on its first run, every row matching, pending mods actors 0; committed and pushed as 5f0e023. The
 anchor-parameter rule's direct run (November 1, record 2026-11-01-0831): 1006 / 78 including discovery, zero failed or
 aborted, every row above unchanged, pending mods actors 0. Dev's full gate 1006 / 77 on November 1, green on its first
-run, every row matching, pending mods actors 0; commit pending.
+run, every row matching, pending mods actors 0; committed and pushed as ed57aa9. The compact fixpoint assertion's direct
+run (November 1, record 2026-11-01-1228): 1007 / 78 including discovery, zero failed or aborted, green on its first run, every row
+above unchanged, pending mods actors 0. Dev's full gate 1007 / 77 on November 1, green on its first run, every row
+matching, pending mods actors 0; commit pending.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -382,7 +411,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 7be1497 | Four ConsumeReport drake surfaces with JSON re-canonicalized; nine companions the generator's output; ExampleDomainsGenTest a gate (Claude Code) | 982 / 77 | 2026-10-31-1105 |
 | ded1b5b | Twelve example trios in the compact form with `uses` records (surfaces re-emitted, JSON re-canonicalized, Scala regenerated); AssemblyValidator compares message types by identity; WorldAssemblyTest +1 (Claude Code) | 983 / 77 | 2026-10-31-1436 |
 | 5f0e023 | Eleven sentient drake surfaces, five tuple derivations re-canonicalized, Percept and Waypoint spelling Distance in full, eleven companions the generator's output (Claude Code) | direct run 1005 / 78 (first run 1004, corrected); Dev's gate 1005 / 77 on October 31 | 2026-10-31-1938 |
-| (pending) | The anchor-parameter bare form takes `short`'s uniqueness rule; no definition or committed Scala change; ResolutionRecordTest +1 (Claude Code) | direct run 1006 / 78; Dev's gate 1006 / 77 on November 1 | 2026-11-01-0831 |
+| ed57aa9 | The anchor-parameter bare form takes `short`'s uniqueness rule; no definition or committed Scala change; ResolutionRecordTest +1 (Claude Code) | direct run 1006 / 78; Dev's gate 1006 / 77 on November 1 | 2026-11-01-0831 |
+| (pending) | The whole corpus asserted a fixpoint of the compact form over both resource roots; ResolutionRecordTest +1, no engine or corpus change (Claude Code) | direct run 1007 / 78; Dev's gate 1007 / 77 on November 1; commit pending | 2026-11-01-1228 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

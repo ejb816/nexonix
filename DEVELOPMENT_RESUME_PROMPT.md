@@ -63,13 +63,23 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-IN THE TREE, GATED BY ME, COMMIT PENDING (2026-11-01, after 5f0e023; record git-record-2026-11-01-0831): the
+IN THE TREE, GATED BY ME, COMMIT PENDING (2026-11-01, after ed57aa9; record git-record-2026-11-01-1228): the corpus-wide
+compact fixpoint assertion — ResolutionRecordTest +1 (six cases) walks every definition under src/main/resources and
+src/mods/resources (at least 183) and asserts, under the canonical scope for draco and the example caller's scope for
+domains, that its compact form is the definition itself and reads back to the same resolution; the claim the October 21
+and October 31 sweeps measured, now a gate, and the one that would have caught the anchor-parameter inconsistency on the
+5f0e023 tree. No engine, definition or committed Scala change. Direct run 1007 / 78 including discovery, green on its first
+run, every headline unchanged, pending mods actors 0; my full sbt gate 1007 tests / 77 suites on November 1, zero failures or
+aborts, every headline matching.
+
+Before it, COMMITTED AND PUSHED BY ME AS ed57aa9 (2026-11-01, after 5f0e023; record git-record-2026-11-01-0831): the
 anchor-parameter rule — `anchorParameter` in NameResolution writes an own-package type parameter of a derivation record
 bare only when `short` would (simple name unique across the ontology and the host vocabulary), so Percept's and Waypoint's
 `domains.sentient.Distance` survives `resolve` and their compact form reads back; measured over all 183 definitions, no
 other anchor parameter changes, so no definition or committed Scala moves; ResolutionRecordTest +1. Direct run 1006 / 78
 including discovery, green on its first run, every headline unchanged, pending mods actors 0; my full sbt gate 1006 tests /
-77 suites on November 1, zero failures or aborts, every headline matching.
+77 suites on November 1, zero failures or aborts, every headline matching. After it nothing from the sentient thread remains
+preserved; EgoActor.scala stays an observation.
 
 Before it, COMMITTED AND PUSHED BY ME AS 5f0e023 (2026-10-31, after ded1b5b; record git-record-2026-10-31-1938): the
 eleven sentient definitions' drake surfaces, the five tuple derivations (Direction, Ego, Lean, Percept, Waypoint)

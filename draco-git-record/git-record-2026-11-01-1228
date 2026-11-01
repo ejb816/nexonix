@@ -1,0 +1,53 @@
+Assert the whole corpus is a fixpoint of the compact form
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being one new ResolutionRecordTest
+case walking every definition under src/main/resources and src/mods/resources, choosing the resolution scope
+by package, and asserting for each that its compact form encodes to the definition itself and that the
+compact form reads back to the same resolution; no engine change, no definition or committed Scala change,
+no new suite.
+
+Why. The record of ed57aa9 (the anchor-parameter rule) said why its defect met no gate: no test compacts
+the example definitions, and the two-stage loader never re-reads its own result. That was still the shape
+of the suite after ed57aa9. ResolutionRecordTest pinned unscoped equals scoped generation over the main
+corpus, and the compact round trip of four definitions by name (Percept, Waypoint, Ego, TypeDictionary).
+The claim the two sweeps made — 2026-10-21 for the canonical and staged corpus (132 definitions), 2026-10-31
+for the twelve example definitions the compact form changes — that every definition IS the compact form was
+measured in their records and asserted nowhere as a whole. DRACO.md §1 names the goal: a measurement becomes
+an assertion, and the table shrinks.
+
+MEASURED before recommending, on the compiled classes of the ed57aa9 direct run, a probe over every `.json`
+under the two resource roots other than the nameless domain's anchor: 183 definitions; 183 whose compact
+form encodes to the definition itself (`scope.compact(td)` equal to `td`); 183 whose compact form reads back
+(`scope.resolve(compact)` equal to `scope.resolve(td)`). The scope is the one each definition's caller
+supplies — `CanonicalScope.scope` for draco (the canonical identity ontology and HostBindings' vocabulary),
+the example caller's `NameResolution` over `ExampleScope.declarations` and `ExampleScope.bindings` for
+domains. Asserted on the tree of 5f0e023, where Percept and Waypoint spelled `domains.sentient.Distance` in
+full and `anchorParameter` wrote it bare again, this test fails on both; it is the gate the record of
+ed57aa9 found missing.
+
+Built as measured. ResolutionRecordTest gains its sixth case, "the whole corpus is a fixpoint of the compact
+form: every definition under main and mods compacts to itself and reads back": the walk, the two scopes, the
+two assertions per definition each naming the stem that fails, and a lower bound on the count — at least
+183, as the suite's whole-corpus generation case bounds the main corpus at 110 — so a definition cannot drop
+out of the walk silently while an added type does not fail the gate. Nothing else changes: no engine line,
+no definition, no committed Scala. The test reads the resource roots directly, as the suite's other cases
+do, and asks nothing of the classpath.
+
+Also in this commit: the fold of the ed57aa9 hash into DRACO.md, DEVELOPMENT_HANDOFF.md and
+DEVELOPMENT_RESUME_PROMPT.md, written after Dev's commit this morning.
+
+OBSERVED, not recommended, unchanged from the two records before: `src/mods/scala/domains/sentient/EgoActor.scala`
+is a hand-written actor over Ego with no definition — referenced nowhere but a comment in
+ExampleDomainsGenTest and a review-ledger row, a stub from chapter 23 (2026-06) modeled on NaturalActor,
+with no test, no assembly and a name carrying the retired Actor suffix. Whether it takes a role-named
+definition or leaves the tree is Dev's decision. Deferred, neither accepted: activation (the Codex
+recommendation of 2026-10-15); the .dcon migration.
+
+Verification: the focused suite first, ResolutionRecordTest on the compiled classes of the ed57aa9 direct run — 6 of 6,
+green on its first run. Then every discovered suite run directly on freshly compiled classes with current main, mods and
+test resources on the loader roots: 1007 tests / 78 suites including the Runner's discovery wrapper, zero failed,
+canceled, ignored, pending or aborted, green on its first run — 1006 + the one new case. Headlines: example gate 48 match /
+0 differ / 0 error / 0 missing of 48 (asserted), surface losses 0 across 158 types, parse scope 110 draco + 48 mods,
+DomainAspect and DracoAspect 110 sections, GenDrake 108 of 108, PON 80 / 550 / 42 and canonical 7, scenario 23 clean,
+forest 1 of 2, CO-DECLARATION categorical, pending mods actors 0. Dev's full sbt gate on 2026-11-01: 1007 tests / 77
+suites, zero failed, canceled, ignored or pending, every headline matching, pending mods actors 0 — green on its first run.

@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1007 tests / 77 suites**, verified by Dev on 2026-11-01 for the compact fixpoint assertion (record `git-record-2026-11-01-1228`,
+commit pending): one added ResolutionRecordTest case, no new suite, zero failed/canceled/ignored/pending tests, every headline
+unchanged, including pending mods actors 0. No engine, definition or committed Scala change; direct run 1007 / 78 including
+discovery, green on its first run. First full Dev gate green. Before it:
 **1006 tests / 77 suites**, verified by Dev on 2026-11-01 for the anchor-parameter rule (record `git-record-2026-11-01-0831`,
-commit pending): one added ResolutionRecordTest case, no new suite, zero failed/canceled/ignored/pending tests, every
+committed as ed57aa9): one added ResolutionRecordTest case, no new suite, zero failed/canceled/ignored/pending tests, every
 headline unchanged, including pending mods actors 0. One conjunct in the resolver, no definition or committed Scala
 change; direct run 1006 / 78 including discovery, green on its first run. First full Dev gate green. Before it:
 **1005 tests / 77 suites**, verified by Dev on 2026-10-31 for the sentient surfaces (record `git-record-2026-10-31-1938`,
@@ -1778,6 +1782,24 @@ readable by the unscoped companions). ResolutionRecordTest +1 over the example c
 to self, compact to the committed JSON, read back, unscoped equals scoped generation equals the committed companion;
 Ego's and TypeDictionary's unique own-package parameters still bare. Direct run 1006 / 78 including discovery, green on
 its first run, every headline unchanged, pending mods actors 0; Dev's first full gate 1006 / 77 on 2026-11-01, every headline
-matching, pending mods actors 0; commit pending. OBSERVED, not recommended:
+matching, pending mods actors 0. Committed and pushed by Dev as ed57aa9. OBSERVED, not recommended:
 `domains/sentient/EgoActor.scala` is a hand-written actor over Ego with no definition. Deferred activation and .dcon
 remain, neither accepted.
+
+**The whole corpus is asserted a fixpoint of the compact form (2026-11-01, Claude Code; Dev verified 1007 / 77).** Dev accepted
+"Accepted, build it" on the recommendation that the claim the two sweeps made — every definition in the corpus IS the
+compact form (2026-10-21 for the 132 canonical and staged definitions, 2026-10-31 for the twelve example definitions the
+form changes) — become an assertion: one new ResolutionRecordTest case walking every `.json` under `src/main/resources`
+and `src/mods/resources` other than the nameless domain's anchor, the canonical scope for draco and the example caller's
+scope for domains, asserting for each that `compact(td)` encodes to `td` and that `resolve(compact(td))` equals
+`resolve(td)`, with the count bounded below at 183 as the suite bounds the main corpus at 110. The record of ed57aa9 had
+said why its defect met no gate — nothing compacts the example definitions and the loader never re-reads its result —
+and that was still the suite's shape after it; on the tree of 5f0e023 this case fails on Percept and Waypoint. MEASURED
+before recommending on the compiled classes: 183 definitions, 183 fixpoints, 183 reading back. No engine change, no
+definition or committed Scala change, no new suite; nothing moves in the table above. Direct run of every discovered suite on compiled classes with current main,
+mods and test resources on the loader roots: 1007 tests / 78 suites including discovery, zero failed, canceled, ignored,
+pending or aborted, green on its first run, every headline unchanged, pending mods actors 0; Dev's first full gate 1007 / 77
+on 2026-11-01, every headline matching, pending mods actors 0; commit pending. OBSERVED, not
+recommended: `domains/sentient/EgoActor.scala` is a hand-written actor over Ego with no definition, referenced nowhere
+but a test comment and a review-ledger row, a June stub with no test, no assembly and the retired Actor suffix in its
+name — a role-named definition or removal is Dev's decision. Deferred activation and .dcon remain, neither accepted.

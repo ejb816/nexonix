@@ -87,6 +87,29 @@ class ResolutionRecordTest extends AnyFunSuite {
     assert(TypeDefinition.encoder(scope.compact(dictionary)) == TypeDefinition.encoder(dictionary), "TypeDictionary's Dictionary(TypeName, TypeDefinition) stays bare")
   }
 
+  test("the whole corpus is a fixpoint of the compact form: every definition under main and mods compacts to itself and reads back") {
+    // The sweeps of 2026-10-21 (canonical and staged) and 2026-10-31 (example) left every definition in the compact
+    // form — a claim their records measured and nothing asserted as a whole until 2026-11-01. Asserted here, the day
+    // Percept and Waypoint spelled `domains.sentient.Distance` in full (5f0e023) this test would have failed on both,
+    // the anchor-parameter inconsistency ed57aa9 closed. The scope is the one the definition's caller supplies: the
+    // canonical identity ontology for draco, the example caller's for domains.
+    val example = new NameResolution(DomainBuilder.identities(domains.ExampleScope.declarations), domains.ExampleScope.bindings)
+    val roots = Seq("src/main/resources", "src/mods/resources")
+    val definitions = roots.flatMap { root =>
+      Files.walk(Paths.get(root)).iterator().asScala
+        .filter(p => p.toString.endsWith(".json") && p.getFileName.toString != ".json") // the nameless domain's anchor is no definition
+        .map(p => root -> Paths.get(root).relativize(p).toString.stripSuffix(".json")).toSeq
+    }.sorted
+    assert(definitions.size >= 183, s"the corpus holds ${definitions.size} definitions; 183 on 2026-11-01")
+    definitions.foreach { case (root, stem) =>
+      val td = parser.parse(Files.readString(Paths.get(s"$root/$stem.json"))).toOption.get.as[TypeDefinition].toOption.get
+      val scope = if (stem.startsWith("domains")) example else CanonicalScope.scope
+      val compact = scope.compact(td)
+      assert(TypeDefinition.encoder(compact) == TypeDefinition.encoder(td), s"$stem is not its own compact form")
+      assert(TypeDefinition.encoder(scope.resolve(compact)) == TypeDefinition.encoder(scope.resolve(td)), s"$stem's compact form does not read back")
+    }
+  }
+
   test("a record entry the ontology does not define fails every scoped read") {
     val td = load("draco/TypeName")
     val stale = TypeDefinition(td.typeName, _uses = td.uses :+ TypeName("Vanished", Seq("draco", "elsewhere")), _dracoAspect = td.dracoAspect,
