@@ -63,14 +63,23 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-IN THE TREE, GATED BY ME, COMMIT PENDING (2026-11-02, after a31e49b; record git-record-2026-11-02-0907): the mods surface gate —
+IN THE TREE, GATED BY ME AT 1118 / 77, MY COMMIT PENDING (2026-11-02, after 8746ecd; record git-record-2026-11-02-1202): the widened parse scope —
+DrakeParseTest's mods walk covers the whole of src/mods/resources (73 definitions with a surface, where it covered the 48 under
+domains since 2026-09-10), so the 25 staged dreams and service definitions and Yaml are under both round-trip gates and the
+surface-loss measurement; three comments reworded, the by-name pins in the dreams and service suites kept. No engine,
+definition or Scala change. Focused DrakeParseTest 380, direct run 1118 / 78 including discovery, green on its first run; parse
+scope 110 + 73, surface losses 0 across 183 types (the whole corpus), every other headline unchanged, pending mods definitions
+0; my full sbt gate 1118 tests / 77 suites on November 2, zero failures or aborts, every headline matching, pending mods
+definitions 0.
+
+Before it, COMMITTED AND PUSHED BY ME AS 8746ecd (2026-11-02, after a31e49b; record git-record-2026-11-02-0907): the mods surface gate —
 DrakeGenTest's mods section walks the whole of src/mods/resources and pins Drake.emit against every authored .drake there (73,
 where it gated the 12 actors under domains before, calling the rest "a later pass"), its file-only headline counting every mods
 definition lacking a surface (`mods definitions pending .drake authoring (0)`; the grep phrase kept); and draco.format.yaml.Yaml,
 the one definition in the corpus with no drake surface, takes the two lines the emitter renders, its JSON and Scala unchanged. No
 engine change. Focused DrakeGenTest 184, direct run 1068 / 78 including discovery, green on its first run, every headline
 unchanged; my full sbt gate 1068 tests / 77 suites on November 2, zero failures or aborts, every headline matching, pending
-mods definitions 0; the commit block follows.
+mods definitions 0.
 
 Before it, COMMITTED AND PUSHED BY ME AS a31e49b (2026-11-01, after ed57aa9; record git-record-2026-11-01-1228): the corpus-wide
 compact fixpoint assertion — ResolutionRecordTest +1 (six cases) walks every definition under src/main/resources and

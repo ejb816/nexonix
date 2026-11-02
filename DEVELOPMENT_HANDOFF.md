@@ -1,9 +1,10 @@
 # Development Handoff
 
 Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code;
-refreshed by Claude Code through November 1 after the named-construction repairs, the
+refreshed by Claude Code through November 2 after the named-construction repairs, the
 terrestrial Output repair, the report and intent json factories, the coordinate, ConsumeReport and
-sentient surfaces, the example sweep, the anchor-parameter rule and the compact fixpoint assertion.
+sentient surfaces, the example sweep, the anchor-parameter rule, the compact fixpoint assertion, the
+mods surface gate and the widened parse scope.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -31,19 +32,20 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   then the anchor-parameter rule (record `git-record-2026-11-01-0831`), built and verified directly on November 1
   (1006 / 78), Dev-gated at 1006 / 77 and committed and pushed by Dev as **ed57aa9** on November 1 — then the compact fixpoint
   assertion (record `git-record-2026-11-01-1228`), built on November 1, verified directly on November 1 (1007 / 78), Dev-gated at 1007 / 77 and committed and pushed by Dev as **a31e49b** on November 1 — then the mods surface gate with
-  Yaml's surface (record `git-record-2026-11-02-0907`), built and verified directly on November 2 (1068 / 78), Dev-gated at 1068 / 77 on
-  November 2, IN THE TREE, commit pending —
+  Yaml's surface (record `git-record-2026-11-02-0907`), built and verified directly on November 2 (1068 / 78), Dev-gated at 1068 / 77 and committed and
+  pushed by Dev as **8746ecd** on November 2 — then the widened DrakeParseTest mods scope (record
+  `git-record-2026-11-02-1202`), built and verified directly on November 2 (1118 / 78), Dev-gated at 1118 / 77 on November 2, in the tree with Dev's commit pending —
   inspect `git log -1` and `git status --short` to learn where the tree stands. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **1068 tests / 77 suites**, November 2, on the mods-surface-gate tree (uncommitted, record
-  `git-record-2026-11-02-0907`): zero failed/canceled/ignored/pending tests, parse scope
-  110 + 48, surface losses 0 across 158 types, example gate 48 match / 0 differ, every other headline
-  unchanged, pending mods definitions 0. Before it 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
+- Latest Dev-verified gate: **1118 tests / 77 suites**, November 2, on the widened-parse-scope tree (uncommitted, record
+  `git-record-2026-11-02-1202`): zero failed/canceled/ignored/pending tests, parse scope
+  110 + 73, surface losses 0 across 183 types, example gate 48 match / 0 differ, every other headline
+  unchanged, pending mods definitions 0. Before it 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
   anchor-parameter tree (ed57aa9) and 1005 / 77 on the sentient-surfaces tree (5f0e023).
-- All accepted implementation work through a31e49b is committed and pushed. In the tree uncommitted: the mods surface
-  gate (DrakeGenTest's mods section widened and relabeled, `src/mods/resources/draco/format/yaml/Yaml.drake` new), its
-  record, CHANGELOG entry and these documents, which also carry the fold of the a31e49b hash. Dev's full gate passed 1068 / 77
-  on November 2; the commit is pending.
+- All accepted implementation work through 8746ecd is committed and pushed; the tree was clean at that commit. In the
+  tree since, uncommitted, Dev-gated at 1118 / 77 with the commit pending: the widened parse scope — `DrakeParseTest.scala`
+  (the mods walk over the whole mods tree, three comments reworded), its record `git-record-2026-11-02-1202`, the CHANGELOG
+  entry, the two DRACO.md table rows, these documents and the fold of the 8746ecd hash.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -308,7 +310,7 @@ comment and a review-ledger row, a June stub modeled on NaturalActor, no test, n
 its name; a role-named definition or removal is Dev's decision. Deferred, neither accepted: activation and the .dcon
 migration.
 
-## Every mods drake surface is a gate, and Yaml takes its surface (accepted and built, November 2; direct run 1068 / 78, Dev's gate 1068 / 77, commit pending)
+## Every mods drake surface is a gate, and Yaml takes its surface (accepted and built, November 2; direct run 1068 / 78, Dev's gate 1068 / 77, committed as 8746ecd)
 
 Dev accepted: "Accepted, build it" on the point raised after a31e49b. WHY: the fixpoint walk's 183 definitions hold exactly
 one with no drake surface, the staged `draco.format.yaml.Yaml` (kept when YAML authoring was retired, chapter 56; referenced
@@ -332,12 +334,37 @@ definition either way. FOCUSED: DrakeGenTest 184 tests (110 main, 73 mods, the r
 `Main.roots` reads the source root; recompiled into the test class directory it ran, nothing in the tree changed. DIRECT RUN:
 1068 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every
 headline unchanged, pending mods definitions 0. Dev's full gate 1068 / 77 on November 2, green on its first run, every
-headline matching, pending mods definitions 0 (grep count 1); commit pending.
+headline matching, pending mods definitions 0 (grep count 1); committed and pushed by Dev as 8746ecd.
+
+## DrakeParseTest's mods scope widens to the whole mods tree (accepted and built, November 2; Dev verified 1118 / 77, commit pending)
+
+Dev accepted: "Accepted, build it" on the point raised after 8746ecd. WHY: after that commit the emit direction of every
+mods surface is a gate, but the parser's two round-trip gates — `emit(parse(source))` reproduces the surface,
+`parse(emit(td))` reproduces the definition — and the surface-loss measurement still walked `domains` alone, as since the
+actor-emission increment of 2026-09-10; the 25 staged definitions under `src/mods/resources/draco` (the dreams Editor,
+Initialization, the User requests, the service types, Yaml) sat outside all three. DreamsTest, EditorTest, InitializationTest
+and ServiceTest pin 24 of the 25 by hand-listed name, in the emit direction only; ServiceTest compares the parsed JSON with the
+committed JSON for two Service members; Yaml was pinned by nothing in the parse direction, and a hand list admits a staged
+definition silently, as it admitted Yaml. MEASURED before recommending, on the 8746ecd classes, with a scratch copy of the
+suite walking the mods root: 380 tests, zero failed — 73 surface gates (48 before), 72 definition gates (terrestrial Output
+still held out for its inline tuple argument), the reports and structural cases; `drake surface losses: 0 fields across 183
+types` (158 before), the whole corpus and the fixpoint assertion's count; `Drake.parse scope: 110 draco + 73 mods types in`
+(110 + 48 before). BUILT: `modsPaths` walks `modsResourceRoot` itself instead of its `domains` child, the two filters and the
+hold-out unchanged; the class doc, the mods section comment and the loss test's comment say "mods definitions" where they
+said "mods actors", the historical note on why the actors were once outside kept; the by-name pins stay. No engine,
+definition or Scala change, no new suite. The DRACO.md table rows move in this commit: losses 158 → 183 types, scope 110 + 48 →
+110 + 73. Flagged, not recommended: keeping the by-name pins as the coverage — Yaml would need hand-listing and 23 staged
+definitions would still lack the parse direction. FOCUSED: DrakeParseTest 380 (330 before), green on its first run, both
+headlines as measured. DIRECT RUN: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or
+aborted, green on its first run, every other headline unchanged, pending mods definitions 0. DEV'S GATE: 1118 / 77 on
+November 2, zero failed, canceled, ignored or pending, every headline matching, pending mods definitions 0, green on its first
+run. Commit pending.
 
 ## Next design point — acceptance required
 
-The mods surface gate is in the tree, Dev-gated at 1068 / 77, awaiting its commit. After it nothing from the
-sentient, anchor-parameter, compact-fixpoint or mods-surface threads remains preserved. In view,
+The widened parse scope is in the tree, Dev-gated at 1118 / 77 with the commit pending; the mods surface gate before it is
+committed and pushed as 8746ecd at Dev's 1068 / 77 gate. Nothing from the sentient, anchor-parameter, compact-fixpoint,
+mods-surface or parse-scope threads remains preserved. In view,
 measured and not recommended: `EgoActor.scala`, the one definition-less actor left in the example tree (unreferenced, a
 June stub, the retired Actor suffix in its name) — define under a role name or remove, Dev's decision. Deferred activation and the .dcon migration remain deferred and unaccepted. Inventory
 is context, not authorization.
@@ -382,8 +409,8 @@ parameter; the second run was green.
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
 | GenDrake | 108/108, 0 missing, 0 extra |
 | Example generation | 48 match, 0 differ, 0 error, 0 missing / 48 — ASSERTED since October 31 (39 / 9 before the ConsumeReport trios and nine companions, 37 / 11 before the coordinate companions, 36 / 12 before the Output repair) |
-| Surface losses | 0 fields across 158 types (147 before the sentient surfaces, 143 before the ConsumeReport surfaces, 141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
-| Parse scope | 110 draco + 48 mods, 0 held back (37 before the sentient surfaces, 33 before the ConsumeReport surfaces, 31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
+| Surface losses | 0 fields across 183 types (158 before the widened mods scope, 147 before the sentient surfaces, 143 before the ConsumeReport surfaces, 141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
+| Parse scope | 110 draco + 73 mods, 0 held back (48 before the widened mods scope, 37 before the sentient surfaces, 33 before the ConsumeReport surfaces, 31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
 | Canonical PON | 80 numbers, 7 differ |
 | Scenario | 23 files, 0 rejected, 0 drifted, 23 clean |
@@ -406,7 +433,10 @@ above unchanged, pending mods actors 0. Dev's full gate 1007 / 77 on November 1,
 matching, pending mods actors 0; committed and pushed as a31e49b. The mods surface gate's direct run (November 2, record
 2026-11-02-0907): 1068 / 78 including discovery, zero failed or aborted, green on its first run, every row above unchanged
 but the relabeled file-only row, pending mods definitions 0. Dev's full gate 1068 / 77 on November 2, green on its first
-run, every row matching, pending mods definitions 0; commit pending.
+run, every row matching, pending mods definitions 0; committed and pushed as 8746ecd. The widened parse scope's direct run
+(November 2, record 2026-11-02-1202): 1118 / 78 including discovery, zero failed or aborted, green on its first run, the
+surface-loss and parse-scope rows moved as stated above, every other row unchanged, pending mods definitions 0. Dev's full
+gate 1118 / 77 on November 2, green on its first run, every row matching, pending mods definitions 0; commit pending.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -445,7 +475,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 5f0e023 | Eleven sentient drake surfaces, five tuple derivations re-canonicalized, Percept and Waypoint spelling Distance in full, eleven companions the generator's output (Claude Code) | direct run 1005 / 78 (first run 1004, corrected); Dev's gate 1005 / 77 on October 31 | 2026-10-31-1938 |
 | ed57aa9 | The anchor-parameter bare form takes `short`'s uniqueness rule; no definition or committed Scala change; ResolutionRecordTest +1 (Claude Code) | direct run 1006 / 78; Dev's gate 1006 / 77 on November 1 | 2026-11-01-0831 |
 | a31e49b | The whole corpus asserted a fixpoint of the compact form over both resource roots; ResolutionRecordTest +1, no engine or corpus change (Claude Code) | direct run 1007 / 78; Dev's gate 1007 / 77 on November 1 | 2026-11-01-1228 |
-| (in the tree) | DrakeGenTest's mods gate widened to every mods definition and its headline relabeled; `Yaml.drake` the emitter's two lines; no engine, JSON or Scala change (Claude Code) | direct run 1068 / 78; Dev's gate 1068 / 77 on November 2; commit pending | 2026-11-02-0907 |
+| 8746ecd | DrakeGenTest's mods gate widened to every mods definition and its headline relabeled; `Yaml.drake` the emitter's two lines; no engine, JSON or Scala change (Claude Code) | direct run 1068 / 78; Dev's gate 1068 / 77 on November 2 | 2026-11-02-0907 |
+| (in the tree) | DrakeParseTest's mods walk widened to the whole mods tree, three comments reworded; two table rows moved; no engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 2, commit pending | 2026-11-02-1202 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

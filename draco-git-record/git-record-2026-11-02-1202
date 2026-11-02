@@ -1,0 +1,52 @@
+Widen DrakeParseTest's mods scope to the whole mods tree
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being to widen DrakeParseTest's mods walk
+from the example directory to the whole of `src/mods/resources`, the move DrakeGenTest took in 8746ecd, keeping its
+two filters (an authored `.drake`, no unsupported codec clause) and its two gates unchanged, rewording its comments
+from "the mods actors" to the mods definitions, and moving the two §1 table rows in the same commit: parse scope
+110 draco + 73 mods, surface losses 0 across 183 types. No engine, definition or Scala change; no new suite.
+
+Why. After 8746ecd the EMIT direction of every mods surface is a gate, but the parser's two round-trip gates —
+`emit(parse(source))` reproduces the surface, `parse(emit(td))` reproduces the definition — and the surface-loss
+measurement still walked `domains` alone, as they had since the actor-emission increment of 2026-09-10. The 25
+staged definitions under `src/mods/resources/draco` (the dreams Editor, Initialization, the User requests, the
+service types, Yaml) sat outside all three. The dreams and service suites pin 24 of the 25 by hand-listed name,
+and in one direction only: `Drake.emit(definition) == source` and `Drake.emit(Drake.parse(source)) == source`;
+only two Service members have the parsed JSON compared with the committed JSON (ServiceTest), and Yaml, whose
+surface is a day old, is pinned by nothing in the parse direction. A hand list also admits a staged definition
+silently, as it admitted Yaml for the whole of its life; a walk does not.
+
+MEASURED before recommending, on the compiled classes of the 8746ecd direct run, with a scratch copy of the suite
+whose mods walk starts at the mods root: 380 tests, zero failed — 73 `emit(parse(source))` gates (48 before), 72
+`parse(emit(td))` gates (terrestrial Output still held out for its inline tuple argument), the two report tests
+and the structural cases; `drake surface losses: 0 fields across 183 types` (158 before) — the whole corpus, the
+count the compact fixpoint assertion (a31e49b) walks; `Drake.parse scope: 110 draco + 73 mods types in, 0
+codec-aspect + 0 drake-less held back` (110 + 48 before). Fifty newly active checks: 25 in each gate, the staged
+dreams and service definitions and Yaml.
+
+Built as measured. `modsPaths` walks `modsResourceRoot` itself instead of its `domains` child, the two filters and
+the `inlineTupleArgument` hold-out unchanged; the class doc, the mods section comment and the loss test's comment
+say "mods definitions" where they said "mods actors", the historical note on why the actors were once outside the
+walk kept. The hand-listed pins in DreamsTest, EditorTest, InitializationTest and ServiceTest stay as they are.
+The §1 table rows move with this commit (losses 158 → 183 types, scope 110 + 48 → 110 + 73); the expected full
+suite is 1118 tests / 77 suites, 1068 + 50, DrakeParseTest 380.
+
+Flagged with the recommendation, not recommended: leaving the by-name pins as the coverage, which would need Yaml
+added to a hand list and would still leave 23 staged definitions without the parse direction. Also in this
+commit: the fold of the 8746ecd hash into DRACO.md, DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md,
+written after Dev's commit this morning.
+
+OBSERVED, not recommended, unchanged from the records before: `src/mods/scala/domains/sentient/EgoActor.scala`
+is a hand-written actor over Ego with no definition — referenced nowhere but a comment in ExampleDomainsGenTest
+and a review-ledger row, a June stub with no test, no assembly and the retired Actor suffix in its name; a
+role-named definition or removal is Dev's decision. Deferred, neither accepted: activation (the Codex
+recommendation of 2026-10-15); the .dcon migration.
+
+Verification: the focused suite first, DrakeParseTest recompiled against the 8746ecd classes — 380 tests, green
+on its first run, the two headlines as measured. Then every discovered suite run directly on freshly compiled
+classes with current main, mods and test resources on the loader roots: 1118 tests / 78 suites including the
+Runner's discovery wrapper, zero failed, canceled, ignored, pending or aborted, green on its first run — 1068 +
+50, DrakeParseTest 380 and every other suite's count unchanged. Headlines: surface losses 0 across 183 types,
+parse scope 110 draco + 73 mods, example gate 48 match / 0 differ / 0 error / 0 missing of 48 (asserted),
+DomainAspect and DracoAspect 110 sections, GenDrake 108 of 108, PON 80 / 550 / 42 and canonical 7, scenario 23
+clean, forest 1 of 2, CO-DECLARATION categorical, pending mods definitions 0 in the file-only log. Dev's full sbt gate on 2026-11-02: 1118 tests / 77 suites, zero failed, canceled, ignored or pending, every headline matching — surface losses 0 across 183 types, parse scope 110 + 73, every other row as before — pending mods definitions 0 (grep count 1), green on its first run. Commit pending.

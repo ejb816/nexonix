@@ -49,8 +49,13 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**1068 tests / 77 suites**, verified by Dev on 2026-11-02 for the mods surface gate (record `git-record-2026-11-02-0907`, in the
-tree, commit pending): 61 newly active DrakeGenTest checks (60 mods surfaces widened into the gate and Yaml's new one), no new suite,
+**1118 tests / 77 suites**, verified by Dev on 2026-11-02 for the widened parse scope (record `git-record-2026-11-02-1202`,
+commit pending): 50 newly active DrakeParseTest checks (the 25 staged dreams and service definitions
+and Yaml under both round-trip gates), no new suite, parse scope 110 + 73, surface losses 0 across 183 types, every other headline
+unchanged, pending mods definitions 0. No engine, definition or Scala change; direct run 1118 / 78 including discovery, green on its
+first run. First full Dev gate green. Before it:
+**1068 tests / 77 suites**, verified by Dev on 2026-11-02 for the mods surface gate (record `git-record-2026-11-02-0907`,
+committed as 8746ecd): 61 newly active DrakeGenTest checks (60 mods surfaces widened into the gate and Yaml's new one), no new suite,
 zero failed/canceled/ignored/pending tests, every headline unchanged but the relabeled file-only row, pending mods definitions 0. No
 engine, JSON or Scala change; direct run 1068 / 78 including discovery, green on its first run. First full Dev gate green. Before it:
 **1007 tests / 77 suites**, verified by Dev on 2026-11-01 for the compact fixpoint assertion (record `git-record-2026-11-01-1228`,
@@ -284,8 +289,8 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `DrakeParseTest` | drake surface losses | 0 fields across 158 types — type form 0, expression form 0 |
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 48 mods in, 0 held back |
+| `DrakeParseTest` | drake surface losses | 0 fields across 183 types — type form 0, expression form 0 |
+| `DrakeParseTest` | Drake.parse scope | 110 draco + 73 mods in, 0 held back |
 | `DrakeGenTest` | mods definitions pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` (every mods definition since 2026-11-02; actors only before) |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
@@ -1827,7 +1832,27 @@ scope stays 110 + 48, DrakeParseTest's mods scope being the example tree (wideni
 recommended: removing Yaml instead — Dev's decision. Focused DrakeGenTest 184 (110 main, 73 mods, the report), green on its
 first run after a classpath-order abort of the probe harness (the recommendation had expected 1066 from 13 actors; the old scan
 held 12); direct run 1068 / 78 including discovery, green on its first run, every headline unchanged, pending mods definitions 0;
-Dev's first full gate 1068 / 77 on 2026-11-02, every headline matching, pending mods definitions 0; commit pending. OBSERVED,
+Dev's first full gate 1068 / 77 on 2026-11-02, every headline matching, pending mods definitions 0. Committed and pushed by Dev
+as 8746ecd. OBSERVED,
 not recommended:
+`domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's decision. Deferred activation
+and .dcon remain, neither accepted.
+
+**DrakeParseTest's mods scope widens to the whole mods tree (2026-11-02, Claude Code; Dev verified 1118 / 77).**
+Dev accepted "Accepted, build it" on the recommendation that the parser's mods walk take the move DrakeGenTest took in 8746ecd:
+after that commit the EMIT direction of every mods surface was a gate, but `emit(parse(source))`, `parse(emit(td))` and the
+surface-loss measurement still walked `domains` alone, as since 2026-09-10, so the 25 staged definitions under
+`src/mods/resources/draco` — the dreams Editor, Initialization, the User requests, the service types, Yaml — sat outside all
+three; the dreams and service suites pin 24 of them by hand-listed name in the emit direction only, ServiceTest compares the
+parsed JSON for two, and Yaml was pinned by nothing in the parse direction. MEASURED before recommending, a scratch copy of the
+suite walking the mods root on the 8746ecd classes: 380 tests green, 73 surface gates and 72 definition gates (Output still held
+out for its inline tuple argument), surface losses 0 across 183 types — the whole corpus, the fixpoint assertion's count —
+parse scope 110 + 73. BUILT: `modsPaths` walks `modsResourceRoot` itself, the two filters and the hold-out unchanged; three
+comments say "mods definitions" for "mods actors"; the by-name pins stay. No engine, definition or Scala change, no new suite;
+the two table rows move above (losses 158 → 183 types, scope 110 + 48 → 110 + 73). Flagged, not recommended: keeping the by-name
+pins as the coverage, which would need Yaml hand-listed and leave 23 staged definitions without the parse direction. Focused
+DrakeParseTest 380, green on its first run; direct run 1118 / 78 including discovery, green on its first run, every other
+headline unchanged, pending mods definitions 0; Dev's first full gate 1118 / 77 on 2026-11-02, every headline matching, pending mods
+definitions 0. Commit pending. OBSERVED, not recommended:
 `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's decision. Deferred activation
 and .dcon remain, neither accepted.

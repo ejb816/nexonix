@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Widen DrakeParseTest's mods scope to the whole mods tree: the parser's two round-trip gates and the surface-loss
+  measurement walk every definition under `src/mods/resources` with an authored `.drake` (73, where they walked the
+  48 under `domains` before), so the staged dreams and service definitions and Yaml are under `emit(parse(source))`,
+  `parse(emit(td))` and the loss count. Parse scope moves to 110 + 73 and surface-loss coverage to 183 types, the
+  whole corpus; 50 newly active checks, no engine, definition or Scala change.
+
 - Gate every mods drake surface: DrakeGenTest's mods section walks the whole of `src/mods/resources` and pins
   `Drake.emit` against every authored `.drake` there (73 definitions, 61 more than the 12 actors under `domains` it gated before),
   and its file-only headline counts every mods definition lacking a surface, `mods definitions pending .drake

@@ -45,9 +45,10 @@ import scala.util.Using
  *     than a note.
  *
  *  Covered: the plain-type template plus the rule and actor aspects, over TWO corpora
- *  — the draco types and the mods actors. Only unsupported codec clauses are held back —
- *  `Drake.parse` rejects them loudly — and the held-back types are listed by the report
- *  test so the next increment's worklist stays visible. */
+ *  — the draco types and every mods definition with an authored surface (the example tree
+ *  since 2026-09-10, the whole of `src/mods/resources` since 2026-11-02). Only unsupported
+ *  codec clauses are held back — `Drake.parse` rejects them loudly — and the held-back types
+ *  are listed by the report test so the next increment's worklist stays visible. */
 class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
 
   private def deriveDrakePath(resourcePath: String): String =
@@ -162,7 +163,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     }
   }
 
-  // --- The mods actors: the same two gates, on the second corpus ---
+  // --- The mods definitions: the same two gates, on the second corpus ---
   //
   // The draco corpus carries neither named arguments nor call chains — both live in
   // the mods actors, which stayed outside this walk until a nested argument list
@@ -171,6 +172,10 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
   // ends an inner list is no longer the `par` that opens the enclosing list's next
   // argument. aerial/Input — three named arguments, each a two-call chain — is the
   // case that was blocked, and it is now gated as authored rather than in miniature.
+  // The walk covered the example tree alone until 2026-11-02, when it widened to the
+  // whole mods tree as DrakeGenTest's had the day before: the staged dreams and service
+  // definitions and Yaml enter both gates and the loss measurement, so every definition
+  // in the corpus with a surface is under them.
 
   private val modsResourceRoot =
     Paths.get(Main.roots.sourceRoot.resolve(java.net.URI.create("../../mods/resources/")))
@@ -185,11 +190,10 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
   }
 
   /** Every mods definition with an authored .drake and no unsupported codec clause — the same
-   *  scope rule the draco walk uses. */
+   *  scope rule the draco walk uses — over the whole of `src/mods/resources`. */
   private val modsPaths: Seq[String] = {
-    val domainsDir = modsResourceRoot.resolve("domains")
-    if (!Files.isDirectory(domainsDir)) Seq.empty
-    else Using.resource(Files.walk(domainsDir)) { stream =>
+    if (!Files.isDirectory(modsResourceRoot)) Seq.empty
+    else Using.resource(Files.walk(modsResourceRoot)) { stream =>
       stream.iterator.asScala
         .filter(p => Files.isRegularFile(p))
         .map(p => modsResourceRoot.relativize(p).toString.replace('\\', '/'))
@@ -584,7 +588,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         array => array.zipWithIndex.flatMap { case (v, i) => leafPaths(v, s"$path[$i]") }.toSeq,
         obj => obj.toIterable.flatMap { case (k, v) => leafPaths(v, s"$path.$k") }.toSeq)
 
-    // Both corpora, measured together: the mods actors are the only source of named
+    // Both corpora, measured together: the mods definitions are the only source of named
     // arguments, call chains and inline tuples, so leaving them out would understate
     // the tail on exactly the forms the surface is newest at.
     val measured =
