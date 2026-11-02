@@ -204,17 +204,6 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       .filterNot(rp => carriesUnsupportedCodecAspect(loadModsTypeDefinition(rp)))
   }
 
-  /** Held out of gate 2 only. A TUPLE argument carrying an application inside it —
-   *  `par ("type", io.circe.Json.fromString parameters par "LOCATION")` — renders
-   *  INLINE, and an inline `( … )` group is a single token to the lexer, so the
-   *  application within comes back as host-opaque text instead of the `()` tree it
-   *  went out as. The SURFACE still round-trips exactly, so gate 1 covers the file;
-   *  what is lost is structure the surface never spelled apart in the first place.
-   *  Unlike the nested argument list this is not an ambiguity — nothing inside the
-   *  group is even visible to the parser — so brackets do not address it; a
-   *  multi-line tuple form would, and that is a surface question of its own. */
-  private val inlineTupleArgument: Set[String] = Set("domains/terrestrial/Output.json")
-
   modsPaths.foreach { rp =>
     val drakePath = deriveDrakePath(rp)
     test(s"mods $drakePath: emit(parse(source)) reproduces the source") {
@@ -230,7 +219,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     }
   }
 
-  modsPaths.filterNot(inlineTupleArgument).foreach { rp =>
+  modsPaths.foreach { rp =>
     test(s"mods $rp: parse(emit(td)) reproduces the definition") {
       val td       = loadModsTypeDefinition(rp)
       val parsed   = Drake.parse(Drake.emit(td))
@@ -626,7 +615,6 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     log.info(s"carrying an unsupported codec aspect (${codecAspect.size}): ${codecAspect.mkString(", ")}")
     log.info(s"lacking a .drake (${noDrake.size}): ${noDrake.mkString(", ")}")
     log.info(s"mods in scope (${modsPaths.size}): ${modsPaths.mkString(", ")}")
-    log.info(s"mods held out of the JSON gate (${inlineTupleArgument.size}): ${inlineTupleArgument.mkString(", ")}")
     console.info(s"Drake.parse scope: ${parsedPaths.size} draco + ${modsPaths.size} mods types in, " +
       s"${codecAspect.size} codec-aspect + ${noDrake.size} drake-less held back")
     succeed

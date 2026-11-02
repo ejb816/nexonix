@@ -49,8 +49,12 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1119 tests / 77 suites**, verified by Dev on 2026-11-02 for the removed Output hold-out (record `git-record-2026-11-02-1433`,
+commit pending): one newly active DrakeParseTest check (terrestrial Output under `parse(emit(td))`),
+no new suite, every headline unchanged, pending mods definitions 0; no engine, definition or Scala change; direct run 1119 / 78
+including discovery, green on its first run. First full Dev gate green. Before it:
 **1118 tests / 77 suites**, verified by Dev on 2026-11-02 for the widened parse scope (record `git-record-2026-11-02-1202`,
-commit pending): 50 newly active DrakeParseTest checks (the 25 staged dreams and service definitions
+committed as a4ff2c4): 50 newly active DrakeParseTest checks (the 25 staged dreams and service definitions
 and Yaml under both round-trip gates), no new suite, parse scope 110 + 73, surface losses 0 across 183 types, every other headline
 unchanged, pending mods definitions 0. No engine, definition or Scala change; direct run 1118 / 78 including discovery, green on its
 first run. First full Dev gate green. Before it:
@@ -1853,6 +1857,24 @@ the two table rows move above (losses 158 → 183 types, scope 110 + 48 → 110 
 pins as the coverage, which would need Yaml hand-listed and leave 23 staged definitions without the parse direction. Focused
 DrakeParseTest 380, green on its first run; direct run 1118 / 78 including discovery, green on its first run, every other
 headline unchanged, pending mods definitions 0; Dev's first full gate 1118 / 77 on 2026-11-02, every headline matching, pending mods
-definitions 0. Commit pending. OBSERVED, not recommended:
+definitions 0. Committed and pushed by Dev as a4ff2c4. OBSERVED, not recommended:
 `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's decision. Deferred activation
 and .dcon remain, neither accepted.
+
+**The stale Output hold-out leaves DrakeParseTest's definition gate (2026-11-02, Claude Code; Dev verified 1119 / 77).**
+Dev accepted "Accepted, build it" on the recommendation that `inlineTupleArgument` — the one hold-out from `parse(emit(td))`,
+holding terrestrial Output alone since 0acf2da on 2026-08-12 — be removed: the val and its comment, the `filterNot` on the
+definition walk and the file-only "mods held out of the JSON gate" log line. Its comment was true when written: an inline tuple
+argument carrying an application was one token to the lexer, so the application came back as host-opaque text. Two dated changes
+made it false — tuple and collection literals are treed since 2026-09-20 (glued tokens split at depth-zero parentheses and commas
+since 2026-09-16), and Output.json has been `DrakeCLI parse` of its own surface since c5b8089 on 2026-10-29, so the committed
+JSON carries the payload as a full tree and IS the parser's reading. MEASURED before recommending on the a4ff2c4 classes:
+`DrakeCLI parse Output.drake` equals the committed JSON byte for byte, `DrakeCLI check` over the terrestrial directory is
+clean, and a scratch suite with the set emptied passes 381 with Output's definition case green. Built as measured; no engine,
+definition or Scala change, no headline moves — every definition in the corpus with a surface is under both round-trip gates
+with no exception list. Flagged, not recommended: keeping the set as an empty mechanism, dead code guarding a case the parser
+no longer has. Focused DrakeParseTest 381, green on its first run; direct run 1119 / 78 including discovery, green on its first
+run, every headline unchanged, pending mods definitions 0; Dev's first full gate 1119 / 77 on 2026-11-02, every headline matching,
+pending mods definitions 0. Commit pending. OBSERVED, not
+recommended: `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's decision. Deferred
+activation and .dcon remain, neither accepted.

@@ -63,7 +63,16 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-IN THE TREE, GATED BY ME AT 1118 / 77, MY COMMIT PENDING (2026-11-02, after 8746ecd; record git-record-2026-11-02-1202): the widened parse scope —
+IN THE TREE, GATED BY ME AT 1119 / 77, MY COMMIT PENDING (2026-11-02, after a4ff2c4; record git-record-2026-11-02-1433): the removed Output hold-out —
+DrakeParseTest's `inlineTupleArgument` set (terrestrial Output out of `parse(emit(td))` since 2026-08-12 for an inline tuple
+argument the lexer then read as one token) is removed with its filter and file-only log line; the parser has treed tuple
+literals since 2026-09-20 and Output.json has been its own reading since 2026-10-29, so Output round-trips. Every definition
+with a surface is under both round-trip gates with no exception list. No engine, definition or Scala change. Focused
+DrakeParseTest 381, direct run 1119 / 78 including discovery, green on its first run, every headline unchanged, pending mods
+definitions 0; my full sbt gate 1119 tests / 77 suites on November 2, zero failures or aborts, every headline matching, pending
+mods definitions 0.
+
+Before it, COMMITTED AND PUSHED BY ME AS a4ff2c4 (2026-11-02, after 8746ecd; record git-record-2026-11-02-1202): the widened parse scope —
 DrakeParseTest's mods walk covers the whole of src/mods/resources (73 definitions with a surface, where it covered the 48 under
 domains since 2026-09-10), so the 25 staged dreams and service definitions and Yaml are under both round-trip gates and the
 surface-loss measurement; three comments reworded, the by-name pins in the dreams and service suites kept. No engine,

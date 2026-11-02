@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Remove the stale Output hold-out from DrakeParseTest's definition gate: terrestrial Output, held out of
+  `parse(emit(td))` since 2026-08-12 for an inline tuple argument the lexer then read as one token, has round-tripped
+  since tuple literals were treed (2026-09-20) and its JSON became the parser's own reading (2026-10-29); the
+  `inlineTupleArgument` set, its filter and its file-only log line go, and every definition in the corpus with a
+  surface is under both round-trip gates with no exception list. One newly active check, no headline moves, no
+  engine, definition or Scala change.
 - Widen DrakeParseTest's mods scope to the whole mods tree: the parser's two round-trip gates and the surface-loss
   measurement walk every definition under `src/mods/resources` with an authored `.drake` (73, where they walked the
   48 under `domains` before), so the staged dreams and service definitions and Yaml are under `emit(parse(source))`,

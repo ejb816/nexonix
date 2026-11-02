@@ -1,0 +1,44 @@
+Remove the stale Output hold-out from DrakeParseTest's definition gate
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being to remove `inlineTupleArgument` from
+DrakeParseTest: the val and its comment, the `filterNot` on the `parse(emit(td))` walk and the file-only "mods held out
+of the JSON gate" log line, so terrestrial Output enters the definition gate and every definition in the corpus with a
+surface is under both round-trip gates with no exception list. No engine, definition or Scala change.
+
+Why. The hold-out was added at 0acf2da on 2026-08-12 with a comment that was true then: a tuple argument carrying an
+application — Output's `("type", io.circe.Json.fromString("LOCATION"))` — rendered inline, an inline `( … )` group was
+one token to the lexer, and the application inside came back as host-opaque text instead of the `()` tree it went out
+as, so `parse(emit(td))` could not reproduce Output's JSON while the surface itself round-tripped. Two dated changes
+made it false. The parser trees tuple and collection literals since 2026-09-20 and splits a glued token at depth-zero
+parentheses, commas and dots since 2026-09-16, so the group is read, and Output's payload value is a full tree in the
+committed JSON: an application of `io.circe.Json.obj` over four tuples, each holding an application. And since
+c5b8089 on 2026-10-29, when Output's message became a case branch, Output.json has been `DrakeCLI parse` of its own
+surface, so the definition is the parser's reading by construction. The widened scope of a4ff2c4 kept the hold-out
+unchanged and its record said so; it was the one definition of 73 outside the definition gate, and the only entry the
+set ever held.
+
+MEASURED before recommending, on the compiled classes of the a4ff2c4 direct run: `DrakeCLI parse Output.drake` is the
+committed Output.json byte for byte, and `DrakeCLI check` over the terrestrial directory reports surface drift 0, json
+drift 0; a scratch copy of the suite with the set emptied, compiled into the overlay and run focused: 381 tests, zero
+failed, Output's `parse(emit(td))` case green, surface losses 0 across 183 types, parse scope 110 + 73. A grep of the
+corpus finds no other inline tuple argument carrying an application, and the records name no other hold-out.
+
+Built as measured. The three sites go; the report test keeps its other three file-only lines and the console headline.
+Flagged with the recommendation, not recommended: keeping the set as an empty mechanism against a future hold-out —
+dead code guarding a case the parser no longer has; a future exception should be argued when it appears.
+
+OBSERVED, not recommended, unchanged from the records before: `src/mods/scala/domains/sentient/EgoActor.scala` is a
+hand-written actor over Ego with no definition — referenced nowhere but a comment in ExampleDomainsGenTest and a
+review-ledger row, a June stub with no test, no assembly and the retired Actor suffix in its name; a role-named
+definition or removal is Dev's decision. Deferred, neither accepted: activation (the Codex recommendation of
+2026-10-15); the .dcon migration. Also in this commit: the fold of the a4ff2c4 hash into DRACO.md,
+DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md, written after Dev's commit this afternoon.
+
+Verification: the focused suite first, the committed file compiled into the overlay — 381 tests, green on its first run,
+one more than a4ff2c4's 380, Output's definition case the one added. Then every discovered suite on freshly compiled
+classes with current main, mods and test resources on the loader roots: 1119 tests / 78 suites including the Runner's
+discovery wrapper, zero failed, canceled, ignored, pending or aborted, green on its first run — 1118 + 1, DrakeParseTest
+381 and every other suite's count unchanged. Headlines: surface losses 0 across 183 types, parse scope 110 draco + 73
+mods, example gate 48 match / 0 differ / 0 error / 0 missing of 48 (asserted), DomainAspect and DracoAspect 110
+sections, GenDrake 108 of 108, PON 80 / 550 / 42 and canonical 7, scenario 23 clean, forest 1 of 2, CO-DECLARATION
+categorical, pending mods definitions 0 in the file-only log. Dev's full sbt gate on 2026-11-02: 1119 tests / 77 suites, zero failed, canceled, ignored or pending, every headline matching, pending mods definitions 0 (grep count 1), green on its first run. Commit pending.

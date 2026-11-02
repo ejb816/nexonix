@@ -4,7 +4,7 @@ Prepared October 26, 2026 by Codex for a new session in either Codex or Claude C
 refreshed by Claude Code through November 2 after the named-construction repairs, the
 terrestrial Output repair, the report and intent json factories, the coordinate, ConsumeReport and
 sentient surfaces, the example sweep, the anchor-parameter rule, the compact fixpoint assertion, the
-mods surface gate and the widened parse scope.
+mods surface gate, the widened parse scope and the removed Output hold-out.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -34,18 +34,19 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   assertion (record `git-record-2026-11-01-1228`), built on November 1, verified directly on November 1 (1007 / 78), Dev-gated at 1007 / 77 and committed and pushed by Dev as **a31e49b** on November 1 — then the mods surface gate with
   Yaml's surface (record `git-record-2026-11-02-0907`), built and verified directly on November 2 (1068 / 78), Dev-gated at 1068 / 77 and committed and
   pushed by Dev as **8746ecd** on November 2 — then the widened DrakeParseTest mods scope (record
-  `git-record-2026-11-02-1202`), built and verified directly on November 2 (1118 / 78), Dev-gated at 1118 / 77 on November 2, in the tree with Dev's commit pending —
+  `git-record-2026-11-02-1202`), built and verified directly on November 2 (1118 / 78), Dev-gated at 1118 / 77 and committed and pushed by Dev as **a4ff2c4** on November 2 — then the removed Output hold-out
+  (record `git-record-2026-11-02-1433`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 on November 2, in the tree with Dev's commit pending —
   inspect `git log -1` and `git status --short` to learn where the tree stands. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **1118 tests / 77 suites**, November 2, on the widened-parse-scope tree (uncommitted, record
-  `git-record-2026-11-02-1202`): zero failed/canceled/ignored/pending tests, parse scope
+- Latest Dev-verified gate: **1119 tests / 77 suites**, November 2, on the removed-hold-out tree (uncommitted, record
+  `git-record-2026-11-02-1433`): zero failed/canceled/ignored/pending tests, parse scope
   110 + 73, surface losses 0 across 183 types, example gate 48 match / 0 differ, every other headline
-  unchanged, pending mods definitions 0. Before it 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
+  unchanged, pending mods definitions 0. Before it 1118 / 77 on the widened-parse-scope tree (a4ff2c4), 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
   anchor-parameter tree (ed57aa9) and 1005 / 77 on the sentient-surfaces tree (5f0e023).
-- All accepted implementation work through 8746ecd is committed and pushed; the tree was clean at that commit. In the
-  tree since, uncommitted, Dev-gated at 1118 / 77 with the commit pending: the widened parse scope — `DrakeParseTest.scala`
-  (the mods walk over the whole mods tree, three comments reworded), its record `git-record-2026-11-02-1202`, the CHANGELOG
-  entry, the two DRACO.md table rows, these documents and the fold of the 8746ecd hash.
+- All accepted implementation work through a4ff2c4 is committed and pushed; the tree was clean at that commit. In the
+  tree since, uncommitted, Dev-gated at 1119 / 77 with the commit pending: the removed Output hold-out — `DrakeParseTest.scala`
+  (the `inlineTupleArgument` val, comment, filter and log line gone), its record `git-record-2026-11-02-1433`, the CHANGELOG
+  entry, these documents and the fold of the a4ff2c4 hash.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -336,7 +337,7 @@ definition either way. FOCUSED: DrakeGenTest 184 tests (110 main, 73 mods, the r
 headline unchanged, pending mods definitions 0. Dev's full gate 1068 / 77 on November 2, green on its first run, every
 headline matching, pending mods definitions 0 (grep count 1); committed and pushed by Dev as 8746ecd.
 
-## DrakeParseTest's mods scope widens to the whole mods tree (accepted and built, November 2; Dev verified 1118 / 77, commit pending)
+## DrakeParseTest's mods scope widens to the whole mods tree (accepted and built, November 2; Dev verified 1118 / 77, committed as a4ff2c4)
 
 Dev accepted: "Accepted, build it" on the point raised after 8746ecd. WHY: after that commit the emit direction of every
 mods surface is a gate, but the parser's two round-trip gates — `emit(parse(source))` reproduces the surface,
@@ -358,12 +359,31 @@ definitions would still lack the parse direction. FOCUSED: DrakeParseTest 380 (3
 headlines as measured. DIRECT RUN: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or
 aborted, green on its first run, every other headline unchanged, pending mods definitions 0. DEV'S GATE: 1118 / 77 on
 November 2, zero failed, canceled, ignored or pending, every headline matching, pending mods definitions 0, green on its first
-run. Commit pending.
+run. Committed and pushed by Dev as a4ff2c4.
+
+## The stale Output hold-out leaves DrakeParseTest's definition gate (accepted and built, November 2; Dev verified 1119 / 77, commit pending)
+
+Dev accepted: "Accepted, build it" on the point raised after a4ff2c4. WHY: `inlineTupleArgument` held terrestrial Output out
+of `parse(emit(td))` since 0acf2da (2026-08-12), the one definition of 73 outside the definition gate and the only entry the
+set ever held. Its comment was true then — an inline tuple argument carrying an application was one token to the lexer, so
+the application came back as host-opaque text — and false since two dated changes: tuple and collection literals treed on
+2026-09-20 (glued tokens split at depth-zero parentheses and commas since 2026-09-16), and Output.json re-canonicalized from
+its own surface at c5b8089 on 2026-10-29, so the committed JSON carries the payload as a full tree and is the parser's
+reading by construction. MEASURED before recommending, on the a4ff2c4 classes: `DrakeCLI parse Output.drake` equals the
+committed JSON byte for byte; `DrakeCLI check` over the terrestrial directory is clean; a scratch copy of the suite with the
+set emptied, compiled into the overlay, passes 381 with Output's definition case green and both headlines unchanged. BUILT:
+the val and its comment, the `filterNot` on the definition walk and the file-only "mods held out of the JSON gate" log line
+are removed; the report test keeps its other lines and the console headline. No engine, definition or Scala change, no new
+suite, no headline moves. Flagged, not recommended: keeping the set as an empty mechanism against a future hold-out — dead
+code guarding a case the parser no longer has. FOCUSED: DrakeParseTest 381 (380 before), green on its first run. DIRECT RUN:
+1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every
+headline unchanged, pending mods definitions 0. DEV'S GATE: 1119 / 77 on November 2, zero failed, canceled, ignored or
+pending, every headline matching, pending mods definitions 0, green on its first run. Commit pending.
 
 ## Next design point — acceptance required
 
-The widened parse scope is in the tree, Dev-gated at 1118 / 77 with the commit pending; the mods surface gate before it is
-committed and pushed as 8746ecd at Dev's 1068 / 77 gate. Nothing from the sentient, anchor-parameter, compact-fixpoint,
+The removed Output hold-out is in the tree, Dev-gated at 1119 / 77 with the commit pending; the widened parse scope before it is
+committed and pushed as a4ff2c4 at Dev's 1118 / 77 gate, the mods surface gate as 8746ecd at Dev's 1068 / 77 gate. Nothing from the sentient, anchor-parameter, compact-fixpoint,
 mods-surface or parse-scope threads remains preserved. In view,
 measured and not recommended: `EgoActor.scala`, the one definition-less actor left in the example tree (unreferenced, a
 June stub, the retired Actor suffix in its name) — define under a role name or remove, Dev's decision. Deferred activation and the .dcon migration remain deferred and unaccepted. Inventory
@@ -436,7 +456,10 @@ but the relabeled file-only row, pending mods definitions 0. Dev's full gate 106
 run, every row matching, pending mods definitions 0; committed and pushed as 8746ecd. The widened parse scope's direct run
 (November 2, record 2026-11-02-1202): 1118 / 78 including discovery, zero failed or aborted, green on its first run, the
 surface-loss and parse-scope rows moved as stated above, every other row unchanged, pending mods definitions 0. Dev's full
-gate 1118 / 77 on November 2, green on its first run, every row matching, pending mods definitions 0; commit pending.
+gate 1118 / 77 on November 2, green on its first run, every row matching, pending mods definitions 0; committed and pushed as a4ff2c4. The removed Output hold-out's direct run
+(November 2, record 2026-11-02-1433): 1119 / 78 including discovery, zero failed or aborted, green on its first run, every row
+unchanged, pending mods definitions 0. Dev's full gate 1119 / 77 on November 2, green on its first run, every row matching,
+pending mods definitions 0; commit pending.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -476,7 +499,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | ed57aa9 | The anchor-parameter bare form takes `short`'s uniqueness rule; no definition or committed Scala change; ResolutionRecordTest +1 (Claude Code) | direct run 1006 / 78; Dev's gate 1006 / 77 on November 1 | 2026-11-01-0831 |
 | a31e49b | The whole corpus asserted a fixpoint of the compact form over both resource roots; ResolutionRecordTest +1, no engine or corpus change (Claude Code) | direct run 1007 / 78; Dev's gate 1007 / 77 on November 1 | 2026-11-01-1228 |
 | 8746ecd | DrakeGenTest's mods gate widened to every mods definition and its headline relabeled; `Yaml.drake` the emitter's two lines; no engine, JSON or Scala change (Claude Code) | direct run 1068 / 78; Dev's gate 1068 / 77 on November 2 | 2026-11-02-0907 |
-| (in the tree) | DrakeParseTest's mods walk widened to the whole mods tree, three comments reworded; two table rows moved; no engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 2, commit pending | 2026-11-02-1202 |
+| a4ff2c4 | DrakeParseTest's mods walk widened to the whole mods tree, three comments reworded; two table rows moved; no engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 2 | 2026-11-02-1202 |
+| (in the tree) | DrakeParseTest's `inlineTupleArgument` hold-out removed, Output under the definition gate; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2, commit pending | 2026-11-02-1433 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
