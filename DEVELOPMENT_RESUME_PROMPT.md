@@ -63,7 +63,16 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-IN THE TREE, GATED BY ME, COMMIT PENDING (2026-11-01, after ed57aa9; record git-record-2026-11-01-1228): the corpus-wide
+IN THE TREE, GATED BY ME, COMMIT PENDING (2026-11-02, after a31e49b; record git-record-2026-11-02-0907): the mods surface gate —
+DrakeGenTest's mods section walks the whole of src/mods/resources and pins Drake.emit against every authored .drake there (73,
+where it gated the 12 actors under domains before, calling the rest "a later pass"), its file-only headline counting every mods
+definition lacking a surface (`mods definitions pending .drake authoring (0)`; the grep phrase kept); and draco.format.yaml.Yaml,
+the one definition in the corpus with no drake surface, takes the two lines the emitter renders, its JSON and Scala unchanged. No
+engine change. Focused DrakeGenTest 184, direct run 1068 / 78 including discovery, green on its first run, every headline
+unchanged; my full sbt gate 1068 tests / 77 suites on November 2, zero failures or aborts, every headline matching, pending
+mods definitions 0; the commit block follows.
+
+Before it, COMMITTED AND PUSHED BY ME AS a31e49b (2026-11-01, after ed57aa9; record git-record-2026-11-01-1228): the corpus-wide
 compact fixpoint assertion — ResolutionRecordTest +1 (six cases) walks every definition under src/main/resources and
 src/mods/resources (at least 183) and asserts, under the canonical scope for draco and the example caller's scope for
 domains, that its compact form is the definition itself and reads back to the same resolution; the claim the October 21

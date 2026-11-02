@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Gate every mods drake surface: DrakeGenTest's mods section walks the whole of `src/mods/resources` and pins
+  `Drake.emit` against every authored `.drake` there (73 definitions, 61 more than the 12 actors under `domains` it gated before),
+  and its file-only headline counts every mods definition lacking a surface, `mods definitions pending .drake
+  authoring (0)`. `draco.format.yaml.Yaml`, the one definition in the corpus without a drake surface, takes the two
+  lines the emitter renders; its JSON and Scala are unchanged. No engine change.
+
 - Assert that the whole corpus is a fixpoint of the compact form: ResolutionRecordTest walks every definition
   under `src/main/resources` and `src/mods/resources` (183 on 2026-11-01, a lower bound) and asserts, under the
   canonical scope for draco and the example caller's scope for domains, that its compact form is the definition

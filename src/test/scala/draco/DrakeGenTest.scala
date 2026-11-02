@@ -92,39 +92,38 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
     }
   }
 
-  // --- Mods actors: Drake.emit emits the actor aspect ---
+  // --- Mods definitions: Drake.emit matches every authored surface under src/mods/resources ---
   //
-  // The actor corpus lives under src/mods/resources/domains (outside the draco
-  // walk above). This increment covers actor-aspect emission, so only the actor
-  // definitions are gated here — the plain/rule mods types are a later pass. Each
-  // mods actor with an authored .drake gets an exact-match test; the rest are
-  // reported as pending. (terrestrial/Output carries a multi-line host-code body —
-  // the out-of-drake tail — so it stays pending like Value/Primes.)
+  // The staged draco definitions (dreams, service, format/yaml) and the example domains live
+  // under src/mods/resources, outside the draco walk above. From 2026-09-10 to 2026-11-02 only
+  // the ACTOR definitions under domains were gated here, the plain and rule mods types named
+  // "a later pass" that never came; since 2026-11-02 every mods definition with an authored
+  // .drake gets the same exact-match test as the main corpus, and the report-only headline
+  // counts every mods definition still lacking one — zero, Yaml having taken its surface the
+  // same day. The log phrase "pending .drake authoring" is kept, the gate grep reading it.
 
   private val modsResourceRoot =
     Paths.get(Main.roots.sourceRoot.resolve(java.net.URI.create("../../mods/resources/")))
 
-  private def discoverModsActorPaths(): Seq[String] = {
-    val domainsDir = modsResourceRoot.resolve("domains")
-    if (!Files.isDirectory(domainsDir)) Seq.empty
-    else Using.resource(Files.walk(domainsDir)) { stream =>
+  private def discoverModsPaths(): Seq[String] =
+    if (!Files.isDirectory(modsResourceRoot)) Seq.empty
+    else Using.resource(Files.walk(modsResourceRoot)) { stream =>
       stream.iterator.asScala
         .filter(p => Files.isRegularFile(p))
         .map(p => modsResourceRoot.relativize(p).toString.replace('\\', '/'))
         .filter(_.endsWith(".json"))
         .toList
         .sorted
-    }.filter(rp => loadModsTypeDefinition(rp).actorAspect.fold(false, _ => true))
-  }
+    }
 
   private def loadModsTypeDefinition(rp: String): TypeDefinition = {
     val bytes = Files.readAllBytes(modsResourceRoot.resolve(rp))
     parser.parse(new String(bytes)).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
   }
 
-  private val modsActorPaths: Seq[String] = discoverModsActorPaths()
+  private val modsPaths: Seq[String] = discoverModsPaths()
 
-  modsActorPaths.foreach { rp =>
+  modsPaths.foreach { rp =>
     val drakePath = deriveDrakePath(rp)
     if (Files.isRegularFile(modsResourceRoot.resolve(drakePath))) {
       test(s"mods $rp: Drake.emit matches $drakePath (whitespace-normalized)") {
@@ -142,9 +141,9 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
     }
   }
 
-  test("mods actors still lacking a .drake (report only)") {
-    val pending = modsActorPaths.filterNot(rp => Files.isRegularFile(modsResourceRoot.resolve(deriveDrakePath(rp))))
-    log.info(s"mods actors pending .drake authoring (${pending.size}): ${pending.mkString(", ")}")
+  test("mods definitions still lacking a .drake (report only)") {
+    val pending = modsPaths.filterNot(rp => Files.isRegularFile(modsResourceRoot.resolve(deriveDrakePath(rp))))
+    log.info(s"mods definitions pending .drake authoring (${pending.size}): ${pending.mkString(", ")}")
     succeed
   }
 }

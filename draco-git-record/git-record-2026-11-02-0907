@@ -1,0 +1,61 @@
+Gate every mods drake surface and give Yaml its surface
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being to close the later pass
+DrakeGenTest itself named: widen its mods gate from the actor definitions under `domains` to every definition
+under `src/mods/resources` with an authored surface, exact match whitespace-normalized as the main walk already
+does; make its report-only headline count every mods definition lacking a surface, the §1 table row becoming
+"mods definitions pending .drake"; and give `draco.format.yaml.Yaml`, the one definition in the corpus with no
+drake surface, the two lines the emitter renders, so the count stays 0. No engine, JSON or Scala change.
+
+Why. The compact fixpoint assertion (a31e49b) walked 183 definitions: 110 main, 25 staged draco, 48 example.
+Exactly one has no drake surface — the staged `draco.format.yaml.Yaml`, a two-aspect anchor kept when YAML
+authoring was retired (chapter 56), referenced nowhere outside its own trio. It was invisible to every gate for
+one reason, written in DrakeGenTest since the actor-emission increment of 2026-09-10: the mods section scanned
+only `domains` and gated only definitions whose `actorAspect` is Present (12 actors — the dreams Editor, the thirteenth, sits under
+`draco/dreams`, outside the scan), its comment calling the plain and rule mods types "a later pass". That pass never
+came. So the EMIT direction of 60 mods surfaces — the staged dreams and service trios, the Editor among them, the sentient eleven, the five domain objects, the reports, intents and
+coordinates — was pinned by nothing but the hand-run `DrakeCLI check`; DrakeParseTest pins `emit(parse(source))`
+for the example tree only, and DreamsTest, InitializationTest and ServiceTest pin their own surfaces by name. The
+same shape of gap the fixpoint assertion closed the day before: a claim every increment's record made and no
+suite asserted as a whole.
+
+MEASURED before recommending, on the compiled classes of the a31e49b direct run, a probe over every `.json`
+under `src/mods/resources`: 73 definitions (13 actors, 12 of them under `domains`); 72 with a `.drake`; 72 of 72 whose `Drake.emit` equals
+the authored surface byte for byte, 72 normalized; 72 of 72 whose surface parses back to the committed JSON;
+without a surface Yaml alone. Yaml's emitted surface is two lines — `type Yaml from draco format Format(String)`
+and `domain draco format yaml Yaml`, XML's form (`type XML from draco format Format(XML)`) — `parse(emit(td))`
+equals the committed JSON, and `GeneratorCLI generate` reproduces `Yaml.scala` byte for byte. A grep over
+src, scripts, bin and the documents finds Yaml referenced only by its trio and the retirement note.
+
+Built as measured. DrakeGenTest's mods section walks the whole of `src/mods/resources`, drops the actor filter
+and keeps the exact-match test unchanged, so every mods definition with an authored surface is a per-type gate
+— 73 today — and the report-only test is "mods definitions still lacking a .drake", logging `mods definitions
+pending .drake authoring (N)`; the phrase "pending .drake authoring" is kept, the gate grep reading it.
+`Yaml.drake` is written by `DrakeCLI emit --write` over its directory, unedited; `DrakeCLI check
+src/mods/resources` reports surface drift 0, json drift 0, skipped 0, and `DrakeCLI parse Yaml.drake` is the
+committed `Yaml.json` byte for byte. The §1 table row is relabeled in this commit, its value 0. The parse scope
+headline stays 110 + 48: DrakeParseTest's mods scope is the example tree, and widening it is a point of its own.
+
+Flagged with the recommendation, not recommended: removing Yaml instead, YAML authoring being retired and the
+domain unreferenced — Dev's decision; the surface preserves the definition either way. Also in this commit: the
+fold of the a31e49b hash into DRACO.md, DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md, written after
+Dev's commit yesterday afternoon.
+
+OBSERVED, not recommended, unchanged from the records before: `src/mods/scala/domains/sentient/EgoActor.scala`
+is a hand-written actor over Ego with no definition — referenced nowhere but a comment in ExampleDomainsGenTest
+and a review-ledger row, a June stub with no test, no assembly and the retired Actor suffix in its name; a
+role-named definition or removal is Dev's decision. Deferred, neither accepted: activation (the Codex
+recommendation of 2026-10-15); the .dcon migration.
+
+Verification: the focused suite first, DrakeGenTest recompiled against the a31e49b classes — 184 tests, green on
+its first run: 110 main, 73 mods, the report, 61 more than its 123 before (60 surfaces widened into the gate and
+Yaml's). The recommendation had expected 59 and 1066 from a probe that counted 13 actors across the whole mods tree;
+the old scan held the 12 under `domains`, so the widening is 60 and the suite 1068. The first attempt at the focused run aborted before any test, the probe's class directory having been
+placed first on the classpath, where `Main.roots` reads the source root from; recompiling into the test class
+directory, nothing in the tree changed, it ran. Then every discovered suite run directly on freshly compiled
+classes with current main, mods and test resources on the loader roots: 1068 tests / 78 suites including the Runner's
+discovery wrapper, zero failed, canceled, ignored, pending or aborted, green on its first run — 1007 + 61, DrakeGenTest 184
+and every other suite's count unchanged. Headlines: example gate 48 match / 0 differ / 0 error / 0 missing of 48 (asserted),
+surface losses 0 across 158 types, parse scope 110 draco + 48 mods, DomainAspect and DracoAspect 110 sections, GenDrake 108
+of 108, PON 80 / 550 / 42 and canonical 7, scenario 23 clean, forest 1 of 2, CO-DECLARATION categorical, pending mods
+definitions 0 (file-only, the relabeled row). Dev's full sbt gate on 2026-11-02: 1068 tests / 77 suites, zero failed, canceled, ignored or pending, every headline matching, pending mods definitions 0 (grep count 1) — green on its first run. Commit pending.

@@ -1,0 +1,2 @@
+type Yaml from draco format Format(String)
+domain draco format yaml Yaml

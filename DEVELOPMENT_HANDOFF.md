@@ -30,17 +30,20 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   the accepted Distance correction), Dev-gated at 1005 / 77 and committed and pushed by Dev as **5f0e023** on October 31 —
   then the anchor-parameter rule (record `git-record-2026-11-01-0831`), built and verified directly on November 1
   (1006 / 78), Dev-gated at 1006 / 77 and committed and pushed by Dev as **ed57aa9** on November 1 — then the compact fixpoint
-  assertion (record `git-record-2026-11-01-1228`), built on November 1, verified directly on November 1 (1007 / 78), Dev-gated at 1007 / 77 on November 1, COMMIT PENDING, in the tree —
+  assertion (record `git-record-2026-11-01-1228`), built on November 1, verified directly on November 1 (1007 / 78), Dev-gated at 1007 / 77 and committed and pushed by Dev as **a31e49b** on November 1 — then the mods surface gate with
+  Yaml's surface (record `git-record-2026-11-02-0907`), built and verified directly on November 2 (1068 / 78), Dev-gated at 1068 / 77 on
+  November 2, IN THE TREE, commit pending —
   inspect `git log -1` and `git status --short` to learn where the tree stands. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **1007 tests / 77 suites**, November 1, on the compact-fixpoint tree (uncommitted, record
-  `git-record-2026-11-01-1228`): zero failed/canceled/ignored/pending tests, parse scope
+- Latest Dev-verified gate: **1068 tests / 77 suites**, November 2, on the mods-surface-gate tree (uncommitted, record
+  `git-record-2026-11-02-0907`): zero failed/canceled/ignored/pending tests, parse scope
   110 + 48, surface losses 0 across 158 types, example gate 48 match / 0 differ, every other headline
-  unchanged, pending mods actors 0. Before it 1006 / 77 on the anchor-parameter tree (ed57aa9) and 1005 / 77 on the
-  sentient-surfaces tree (5f0e023).
-- All accepted implementation work through ed57aa9 is committed and pushed. In the tree uncommitted: the compact
-  fixpoint assertion — one ResolutionRecordTest case, its record, the CHANGELOG entry and these documents (which also
-  carry the ed57aa9 fold) — verified directly at 1007 / 78 and by Dev's full gate at 1007 / 77 (every headline matching), awaiting commit.
+  unchanged, pending mods definitions 0. Before it 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
+  anchor-parameter tree (ed57aa9) and 1005 / 77 on the sentient-surfaces tree (5f0e023).
+- All accepted implementation work through a31e49b is committed and pushed. In the tree uncommitted: the mods surface
+  gate (DrakeGenTest's mods section widened and relabeled, `src/mods/resources/draco/format/yaml/Yaml.drake` new), its
+  record, CHANGELOG entry and these documents, which also carry the fold of the a31e49b hash. Dev's full gate passed 1068 / 77
+  on November 2; the commit is pending.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -281,7 +284,7 @@ canceled, ignored, pending or aborted, green on its first run, every headline un
 record (git-record-2026-11-01-0831) carries the measurement. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`
 is a hand-written actor over Ego with no definition. Deferred, neither accepted: activation and the .dcon migration.
 
-## The whole corpus is asserted a fixpoint of the compact form (accepted and built, November 1; Dev verified 1007 / 77, commit pending)
+## The whole corpus is asserted a fixpoint of the compact form (accepted and built, November 1; Dev verified 1007 / 77, committed as a31e49b)
 
 Dev accepted: "Accepted, build it" on the point raised after ed57aa9 — one new ResolutionRecordTest case asserting over
 every definition under `src/main/resources` and `src/mods/resources` that its compact form is the definition itself and
@@ -305,10 +308,36 @@ comment and a review-ledger row, a June stub modeled on NaturalActor, no test, n
 its name; a role-named definition or removal is Dev's decision. Deferred, neither accepted: activation and the .dcon
 migration.
 
+## Every mods drake surface is a gate, and Yaml takes its surface (accepted and built, November 2; direct run 1068 / 78, Dev's gate 1068 / 77, commit pending)
+
+Dev accepted: "Accepted, build it" on the point raised after a31e49b. WHY: the fixpoint walk's 183 definitions hold exactly
+one with no drake surface, the staged `draco.format.yaml.Yaml` (kept when YAML authoring was retired, chapter 56; referenced
+nowhere outside its trio), and it was invisible to every gate because DrakeGenTest's mods section — since the actor-emission
+increment of 2026-09-10 — scanned only `domains` and pinned `Drake.emit` against the authored surface for the 12 definitions
+there whose `actorAspect` is Present (the dreams Editor, under `draco/dreams`, sat outside the scan), its headline counting only actors; its comment called the plain and rule mods types "a later
+pass". So the emit direction of 60 mods surfaces was pinned by nothing but the hand-run `DrakeCLI check` (DrakeParseTest pins
+`emit(parse(source))` for the example tree; DreamsTest, InitializationTest and ServiceTest pin their own surfaces by name).
+MEASURED before recommending, on the a31e49b classes, over all 73 mods definitions: 72 with a surface, 72 of 72 emitting it
+byte for byte, 72 of 72 parsing back to the committed JSON, Yaml alone without; Yaml's emitted surface is two lines, `type
+Yaml from draco format Format(String)` and `domain draco format yaml Yaml` (XML's form), parses back to the committed JSON
+byte for byte, and `Yaml.scala` regenerates byte-identical. BUILT: the mods section walks the whole of `src/mods/resources`,
+drops the actor filter, keeps the exact-match test — 73 per-type gates today — and the report-only test is "mods definitions
+still lacking a .drake", logging `mods definitions pending .drake authoring (N)`, the phrase kept so the gate grep still reads
+it; `Yaml.drake` is `DrakeCLI emit --write` over its directory, unedited; `DrakeCLI check src/mods/resources` surface drift 0,
+json drift 0. The DRACO.md table row is relabeled "mods definitions pending `.drake`", value 0. No engine, JSON or Scala
+change; the parse scope stays 110 + 48, DrakeParseTest's mods scope being the example tree — widening it is a point of its
+own, not recommended here. Flagged, not recommended: removing Yaml instead, Dev's decision; the surface preserves the
+definition either way. FOCUSED: DrakeGenTest 184 tests (110 main, 73 mods, the report; 123 before — the recommendation had counted 13 actors and expected 1066), green on its first run
+— the probe harness's first attempt aborted before any test with its class directory first on the classpath, where
+`Main.roots` reads the source root; recompiled into the test class directory it ran, nothing in the tree changed. DIRECT RUN:
+1068 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every
+headline unchanged, pending mods definitions 0. Dev's full gate 1068 / 77 on November 2, green on its first run, every
+headline matching, pending mods definitions 0 (grep count 1); commit pending.
+
 ## Next design point — acceptance required
 
-The compact fixpoint assertion is built, verified directly at 1007 / 78 and by Dev's full gate at 1007 / 77 with every headline matching, and awaits commit;
-the record is new and needs `git add`. Nothing from the sentient or anchor-parameter threads remains preserved. In view,
+The mods surface gate is in the tree, Dev-gated at 1068 / 77, awaiting its commit. After it nothing from the
+sentient, anchor-parameter, compact-fixpoint or mods-surface threads remains preserved. In view,
 measured and not recommended: `EgoActor.scala`, the one definition-less actor left in the example tree (unreferenced, a
 June stub, the retired Actor suffix in its name) — define under a role name or remove, Dev's decision. Deferred activation and the .dcon migration remain deferred and unaccepted. Inventory
 is context, not authorization.
@@ -360,7 +389,7 @@ parameter; the second run was green.
 | Scenario | 23 files, 0 rejected, 0 drifted, 23 clean |
 | Forest | 1 of 2 ash alarms crossed to birch |
 | Subtype visibility | CO-DECLARATION DROPS THE FACT |
-| Pending mods actors | 0; file-only target/test-output/DrakeGenTest.log |
+| Pending mods definitions (actors only before November 2) | 0; file-only target/test-output/DrakeGenTest.log |
 
 The example sweep's direct run (October 31, record 2026-10-31-1436): 983 / 78 including discovery, every
 row above unchanged; Dev's full gate 983 / 77 on October 31, every row matching. The sentient surfaces' direct run
@@ -374,7 +403,10 @@ aborted, every row above unchanged, pending mods actors 0. Dev's full gate 1006 
 run, every row matching, pending mods actors 0; committed and pushed as ed57aa9. The compact fixpoint assertion's direct
 run (November 1, record 2026-11-01-1228): 1007 / 78 including discovery, zero failed or aborted, green on its first run, every row
 above unchanged, pending mods actors 0. Dev's full gate 1007 / 77 on November 1, green on its first run, every row
-matching, pending mods actors 0; commit pending.
+matching, pending mods actors 0; committed and pushed as a31e49b. The mods surface gate's direct run (November 2, record
+2026-11-02-0907): 1068 / 78 including discovery, zero failed or aborted, green on its first run, every row above unchanged
+but the relabeled file-only row, pending mods definitions 0. Dev's full gate 1068 / 77 on November 2, green on its first
+run, every row matching, pending mods definitions 0; commit pending.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -412,7 +444,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | ded1b5b | Twelve example trios in the compact form with `uses` records (surfaces re-emitted, JSON re-canonicalized, Scala regenerated); AssemblyValidator compares message types by identity; WorldAssemblyTest +1 (Claude Code) | 983 / 77 | 2026-10-31-1436 |
 | 5f0e023 | Eleven sentient drake surfaces, five tuple derivations re-canonicalized, Percept and Waypoint spelling Distance in full, eleven companions the generator's output (Claude Code) | direct run 1005 / 78 (first run 1004, corrected); Dev's gate 1005 / 77 on October 31 | 2026-10-31-1938 |
 | ed57aa9 | The anchor-parameter bare form takes `short`'s uniqueness rule; no definition or committed Scala change; ResolutionRecordTest +1 (Claude Code) | direct run 1006 / 78; Dev's gate 1006 / 77 on November 1 | 2026-11-01-0831 |
-| (pending) | The whole corpus asserted a fixpoint of the compact form over both resource roots; ResolutionRecordTest +1, no engine or corpus change (Claude Code) | direct run 1007 / 78; Dev's gate 1007 / 77 on November 1; commit pending | 2026-11-01-1228 |
+| a31e49b | The whole corpus asserted a fixpoint of the compact form over both resource roots; ResolutionRecordTest +1, no engine or corpus change (Claude Code) | direct run 1007 / 78; Dev's gate 1007 / 77 on November 1 | 2026-11-01-1228 |
+| (in the tree) | DrakeGenTest's mods gate widened to every mods definition and its headline relabeled; `Yaml.drake` the emitter's two lines; no engine, JSON or Scala change (Claude Code) | direct run 1068 / 78; Dev's gate 1068 / 77 on November 2; commit pending | 2026-11-02-0907 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
