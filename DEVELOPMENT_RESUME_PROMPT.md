@@ -63,7 +63,17 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-IN THE TREE, GATED BY ME AT 1119 / 77, MY COMMIT PENDING (2026-11-02, after 6a15754; record git-record-2026-11-02-1451): the asserted surface-loss count —
+IN THE TREE, GATED BY ME AT 1119 / 77, MY COMMIT PENDING (2026-11-03, after b321df6; record git-record-2026-11-03-0942): the asserted scenario round-trip —
+ScenarioDrakeTest's report-only check that emitting the parse of each of the 23 forest scenario surfaces reproduces the source
+(23 clean since 2026-08-31, never a rejected or drifted file) now fails naming each rejected or drifted file, its class doc
+corrected (RootInterface's dispatch is two case branches, not host text); with ScenarioGenTest's JSON gate the scenario trio is
+pinned in both directions; its row leaves the DRACO.md table, the fifth measurement to become an assertion; the console line
+stays in the gate grep. A negative probe on a scratch tree (one drifted, one rejected surface) fails exactly that test naming
+both. No test count moves, no engine, definition or Scala change. Focused ScenarioDrakeTest 1, direct run 1119 / 78 including
+discovery, green on its first run, every headline unchanged, pending mods definitions 0. My full sbt gate 1119 tests / 77 suites
+on November 3, zero failures or aborts, every headline matching, pending mods definitions 0.
+
+Before it, COMMITTED AND PUSHED BY ME AS b321df6 (2026-11-02, after 6a15754; record git-record-2026-11-02-1451): the asserted surface-loss count —
 DrakeParseTest's unnormalized round-trip measurement (zero since 2026-10-22, the whole corpus since a4ff2c4, stricter than the
 normalized definition gate) now fails naming each field instead of reporting; its row leaves the DRACO.md table, the fourth
 measurement to become an assertion; the console line stays in the gate grep. A negative probe on a scratch tree (one Action leaf

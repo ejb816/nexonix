@@ -1,10 +1,11 @@
 # Development Handoff
 
 Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code;
-refreshed by Claude Code through November 2 after the named-construction repairs, the
+refreshed by Claude Code through November 3 after the named-construction repairs, the
 terrestrial Output repair, the report and intent json factories, the coordinate, ConsumeReport and
 sentient surfaces, the example sweep, the anchor-parameter rule, the compact fixpoint assertion, the
-mods surface gate, the widened parse scope, the removed Output hold-out and the asserted surface-loss count.
+mods surface gate, the widened parse scope, the removed Output hold-out, the asserted surface-loss count and the
+asserted scenario round-trip.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -36,19 +37,20 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   pushed by Dev as **8746ecd** on November 2 — then the widened DrakeParseTest mods scope (record
   `git-record-2026-11-02-1202`), built and verified directly on November 2 (1118 / 78), Dev-gated at 1118 / 77 and committed and pushed by Dev as **a4ff2c4** on November 2 — then the removed Output hold-out
   (record `git-record-2026-11-02-1433`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 and committed and pushed by Dev as **6a15754** on November 2 — then the asserted surface-loss count
-  (record `git-record-2026-11-02-1451`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 on November 2, in the tree with Dev's commit pending —
+  (record `git-record-2026-11-02-1451`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 and committed and pushed by Dev as **b321df6** on November 2 — then the asserted scenario round-trip
+  (record `git-record-2026-11-03-0942`), built and verified directly on November 3 (1119 / 78), Dev-gated at 1119 / 77 on November 3, in the tree with Dev's commit pending —
   inspect `git log -1` and `git status --short` to learn where the tree stands. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **1119 tests / 77 suites**, November 2, on the asserted-surface-loss tree (uncommitted, record
-  `git-record-2026-11-02-1451`): zero failed/canceled/ignored/pending tests, parse scope
-  110 + 73, surface losses 0 across 183 types (asserted), example gate 48 match / 0 differ, every other headline
-  unchanged, pending mods definitions 0. Before it the same 1119 / 77 on the removed-hold-out tree (6a15754), 1118 / 77 on the widened-parse-scope tree (a4ff2c4), 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
+- Latest Dev-verified gate: **1119 tests / 77 suites**, November 3, on the asserted-scenario-round-trip tree (uncommitted, record
+  `git-record-2026-11-03-0942`): zero failed/canceled/ignored/pending tests, parse scope
+  110 + 73, surface losses 0 across 183 types (asserted), scenario 23 clean (asserted), example gate 48 match / 0 differ, every other headline
+  unchanged, pending mods definitions 0. Before it the same 1119 / 77 on the asserted-surface-loss tree (b321df6) and on the removed-hold-out tree (6a15754), 1118 / 77 on the widened-parse-scope tree (a4ff2c4), 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
   anchor-parameter tree (ed57aa9) and 1005 / 77 on the sentient-surfaces tree (5f0e023).
-- All accepted implementation work through 6a15754 is committed and pushed; the tree was clean at that commit. In the
-  tree since, uncommitted, gated by Dev at 1119 / 77 on November 2 (no count moved) with the commit pending: the asserted surface-loss count —
-  `DrakeParseTest.scala` (the loss test fails on a nonempty list, renamed, comments reworded), its record
-  `git-record-2026-11-02-1451`, the CHANGELOG entry, the DRACO.md table row removed, these documents and the fold of the
-  6a15754 hash.
+- All accepted implementation work through b321df6 is committed and pushed; the tree was clean at that commit. In the
+  tree since, uncommitted, gated by Dev at 1119 / 77 on November 3 (no count moved) with the commit pending: the asserted scenario round-trip —
+  `src/test/scala/scenario/ScenarioDrakeTest.scala` (the round-trip test fails naming each rejected or drifted file, renamed,
+  class doc reworded and corrected), its record `git-record-2026-11-03-0942`, the CHANGELOG entry, the DRACO.md table row
+  removed, these documents and the fold of the b321df6 hash.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -403,12 +405,39 @@ draco/Action.json set to the legacy "Seq()"; gate 2 still passes Action, the ass
 FOCUSED: DrakeParseTest 381, green on its first run. DIRECT RUN: 1119 tests / 78 suites including discovery, zero failed,
 canceled, ignored, pending or aborted, green on its first run, every suite's count unchanged, every headline unchanged, pending
 mods definitions 0. DEV'S GATE: 1119 tests / 77 suites on November 2, zero failed, canceled, ignored or pending, every headline
+matching, pending mods definitions 0, green on its first run. Committed and pushed by Dev as b321df6.
+
+## The scenario round-trip is asserted and leaves the table (accepted and built, November 3; direct run 1119 / 78, Dev's gate 1119 / 77)
+
+Dev accepted: "Accepted, build it" on the point raised after b321df6. WHY: ScenarioDrakeTest (since 0af56fd, 2026-08-27)
+walked the 23 drake surfaces under src/test/resources/scenario, checked that emitting what the parser read reproduces the
+source, whitespace-normalized, logged each file's parsed shape and ended in `succeed`; its class doc called it a worklist for
+the grammar. The worklist was empty at its first reading (22 clean on 2026-08-27; 23 since the scenario became a corpus at
+87a2bb9 on 2026-08-31) and never held a rejected or drifted file through every re-canonicalization that touched the scenario.
+ScenarioGenTest's first gate asserts the JSON direction (each committed .json is the parse of its .drake) and its other four
+the Scala, the accepted rules, the transform shape and the run; neither DrakeGenTest nor DrakeParseTest walks the scenario, so
+the surface direction was the one unasserted leg of that corpus. The class doc was also stale: RootInterface's dispatch has
+been two `case` branches since 12bed84, not a host-opaque Scala `match`. BUILT: the test is renamed "the scenario in today's
+drake: every file parses and round-trips" and fails after its console line naming each rejected file with its error and each
+drifted file; the class doc's report-only paragraph becomes "A gate since 2026-11-03; a worklist before", with the
+RootInterface sentence corrected. DRACO.md: the row leaves the §1 table (which now holds the parse-scope row, the PON pair, the
+file-only DrakeGenTest row and the categorical rete row), the assertions paragraph names the fifth, the "read the report-only numbers"
+rule keeps PON as its one live example. The console headline is unchanged and stays in the gate grep. No test count moves,
+no engine, definition or Scala change. REJECTED: folding the scenario into DrakeParseTest's walk. NEGATIVE PROBE after
+building, on the scratch project tree with copied scenario resources and overlays, run with that tree as the working
+directory (this suite reads `src/test/resources/scenario` relative to the working directory, not from the classpath root the
+corpus suites derive): RootInterface given a redundant parenthesized pair the parser dissolves, birch Compound a stray section
+line; the asserted test fails naming both, `REJECTED birch/Compound.drake: Drake.parse: unexpected section 'whatever' in
+Compound` and `DRIFTED ash/RootInterface.drake`, headline 23 files, 1 rejected, 1 drifted, 21 clean; the real tree untouched.
+FOCUSED: ScenarioDrakeTest 1, green on its first run. DIRECT RUN: 1119 tests / 78 suites including discovery, zero failed,
+canceled, ignored, pending or aborted, green on its first run, every suite's count unchanged, every headline unchanged, pending
+mods definitions 0. DEV'S GATE: 1119 tests / 77 suites on November 3, zero failed, canceled, ignored or pending, every headline
 matching, pending mods definitions 0, green on its first run. Commit pending.
 
 ## Next design point — acceptance required
 
-The asserted surface-loss count is in the tree, gated by Dev at 1119 / 77 with the commit pending; the removed Output hold-out before it
-is committed and pushed as 6a15754 at Dev's 1119 / 77 gate, the widened parse scope as a4ff2c4 at Dev's 1118 / 77 gate, the mods
+The asserted scenario round-trip is in the tree, gated by Dev at 1119 / 77 with the commit pending; the asserted surface-loss count
+before it is committed and pushed as b321df6 at Dev's 1119 / 77 gate, the removed Output hold-out as 6a15754 at Dev's 1119 / 77 gate, the widened parse scope as a4ff2c4 at Dev's 1118 / 77 gate, the mods
 surface gate as 8746ecd at Dev's 1068 / 77 gate. Nothing from the sentient, anchor-parameter, compact-fixpoint,
 mods-surface or parse-scope threads remains preserved. In view,
 measured and not recommended: `EgoActor.scala`, the one definition-less actor left in the example tree (unreferenced, a
@@ -459,7 +488,7 @@ parameter; the second run was green.
 | Parse scope | 110 draco + 73 mods, 0 held back (48 before the widened mods scope, 37 before the sentient surfaces, 33 before the ConsumeReport surfaces, 31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
 | Canonical PON | 80 numbers, 7 differ |
-| Scenario | 23 files, 0 rejected, 0 drifted, 23 clean |
+| Scenario (ASSERTED since 2026-11-03) | 23 files, 0 rejected, 0 drifted, 23 clean |
 | Forest | 1 of 2 ash alarms crossed to birch |
 | Subtype visibility | CO-DECLARATION DROPS THE FACT |
 | Pending mods definitions (actors only before November 2) | 0; file-only target/test-output/DrakeGenTest.log |
@@ -488,7 +517,10 @@ unchanged, pending mods definitions 0. Dev's full gate 1119 / 77 on November 2, 
 pending mods definitions 0; committed and pushed as 6a15754. The asserted surface-loss count's direct run (November 2, record
 2026-11-02-1451): 1119 / 78 including discovery, zero failed or aborted, green on its first run, every row unchanged, the
 surface-loss row now an assertion, pending mods definitions 0; Dev's full gate 1119 / 77 on November 2, every headline matching,
-pending mods definitions 0, commit pending.
+pending mods definitions 0; committed and pushed as b321df6. The asserted scenario round-trip's direct run (November 3, record
+2026-11-03-0942): 1119 / 78 including discovery, zero failed or aborted, green on its first run, every row unchanged, the scenario
+row now an assertion, pending mods definitions 0; Dev's full gate 1119 / 77 on November 3, every headline matching, pending mods
+definitions 0, commit pending.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -530,7 +562,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | 8746ecd | DrakeGenTest's mods gate widened to every mods definition and its headline relabeled; `Yaml.drake` the emitter's two lines; no engine, JSON or Scala change (Claude Code) | direct run 1068 / 78; Dev's gate 1068 / 77 on November 2 | 2026-11-02-0907 |
 | a4ff2c4 | DrakeParseTest's mods walk widened to the whole mods tree, three comments reworded; two table rows moved; no engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 2 | 2026-11-02-1202 |
 | 6a15754 | DrakeParseTest's `inlineTupleArgument` hold-out removed, Output under the definition gate; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2 | 2026-11-02-1433 |
-| (in the tree) | DrakeParseTest's surface-loss measurement asserts zero and its DRACO.md table row leaves; negative probe 380 / 1 on a scratch tree; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2, commit pending | 2026-11-02-1451 |
+| b321df6 | DrakeParseTest's surface-loss measurement asserts zero and its DRACO.md table row leaves; negative probe 380 / 1 on a scratch tree; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2 | 2026-11-02-1451 |
+| (in the tree) | ScenarioDrakeTest's round-trip asserts, naming each rejected or drifted scenario surface, its class doc corrected and its DRACO.md table row gone; negative probe 1 rejected / 1 drifted on a scratch tree; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 3, commit pending | 2026-11-03-0942 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
@@ -601,6 +634,8 @@ steps. Reconstruct only the compile/test procedure below if those files are miss
    exist. If dependencies are absent, request Dev's build rather than running sbt yourself.
 2. Use dedicated clean class directories under target/scala-2.13/, not /tmp. Existing tests
    derive repository resource locations from class locations; /tmp output caused wrong roots.
+   ScenarioDrakeTest and ScenarioGenTest instead read `src/test/resources/scenario` relative to the
+   working directory, so a probe of them against altered resources runs from a scratch project tree.
    Exclude old test/classes from the compiler classpath to avoid silently reusing stale sources.
 3. Overlay src/main/resources, src/mods/resources **and src/test/resources** into the dedicated
    main class root. Exclude its root .json/.drake anchors as sbt does; MinimalTypeTest relies on

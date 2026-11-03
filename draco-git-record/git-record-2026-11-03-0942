@@ -1,0 +1,62 @@
+Assert the scenario round-trip and retire its table row
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being to make ScenarioDrakeTest's round-trip
+test assert: fail after its console line naming each rejected file with its error and each drifted file, drop
+"(report only)" from the test name, reword the class doc from worklist to gate and correct its RootInterface paragraph,
+and retire the row from the DRACO.md §1 table as the fifth measurement to become an assertion, the `scenario in` line
+staying in the gate grep as the others do. No test count moves, no engine, definition or Scala change.
+
+Why. The suite (src/test/scala/scenario/ScenarioDrakeTest.scala, since 0af56fd on 2026-08-27) walks the 23 drake
+surfaces under src/test/resources/scenario and checks that emitting what the parser read reproduces the source,
+whitespace-normalized; it logged each file's parsed shape and ended in `succeed` whatever it found, its class doc
+calling it a worklist for the grammar. Three facts from the tree. The worklist was empty at its first reading — 22
+files clean in the record of 2026-08-27, when the forest was drake alone — and 23 clean since 87a2bb9 on 2026-08-31,
+when the scenario became a corpus; never a rejected or drifted file in any record since, through the call-form,
+type-form, mutable-collection and operator re-canonicalizations that each touched the scenario. ScenarioGenTest's
+first gate asserts the JSON direction (each committed scenario .json is the parse of its .drake) and its other four
+the Scala, the accepted rules, the transform shape and the run; neither DrakeGenTest nor DrakeParseTest walks the
+scenario, so the surface direction — the source back from its own reading — was the one leg of that corpus nothing
+asserted. And the class doc was stale: it said RootInterface's dispatch was a Scala `match` carried as host-opaque
+text that would parse while proving nothing; RootInterface has been two `case` branches since 12bed84, and the
+parsed-shape log shows it as an actor. With the assertion the scenario trio is pinned in both directions, as src/main
+and src/mods are, and the §1 table holds only the parse-scope row, the PON pair, the file-only DrakeGenTest row and the
+categorical rete row (the recommendation's wording left the parse-scope row out; the table never did). Rejected: folding the scenario into DrakeParseTest's walk — the scenario is a test corpus with its own suite
+pair, and its gates belong together there.
+
+MEASURED before recommending: the suite's source and history, the headline in every record from 2026-08-27 on, the
+per-suite log of the b321df6 direct run (23 OK, as parsed: RootInterface actor=true), RootInterface.drake's two case
+branches, ScenarioGenTest's five gates, and that no other suite reads the scenario directory. MEASURED after building,
+a NEGATIVE PROBE on the scratch project tree with copied scenario resources and copied overlays, run with that tree
+as the working directory: ash/RootInterface.drake given a redundant parenthesized pair (`mon (session.fire())`, which
+the parser dissolves and the emitter writes back minimal) and birch/Compound.drake a stray section line (`whatever
+[nonsense`). The asserted test fails naming both — `REJECTED birch/Compound.drake: Drake.parse: unexpected section
+'whatever' in Compound` and `DRIFTED ash/RootInterface.drake: emit(parse(x)) != x — see the pair in the log` — the
+headline reading 23 files, 1 rejected, 1 parsed-but-drifted, 21 clean. The real tree was untouched throughout. The
+probe also settled how THIS suite finds its sources: `Paths.get("src/test/resources/scenario")`, relative to the
+working directory rather than to the classpath root the corpus suites derive — so a probe of it runs from the scratch
+tree, where a probe of DrakeParseTest put the scratch tree first on the classpath.
+
+Built as measured. The test is renamed "the scenario in today's drake: every file parses and round-trips"; after the
+console line it fails on a nonempty rejected or drifted list with each file named (an error for a rejected file, a
+pointer to the logged pair for a drifted one); the class doc's "Report-only" paragraph becomes "A gate since
+2026-11-03; a worklist before", dating the clean readings, naming the two directions the two scenario suites now pin,
+and correcting the RootInterface sentence. The console headline is unchanged and stays in the gate grep. DRACO.md: the
+§1 table loses its ScenarioDrakeTest row, the assertions paragraph names the fifth, and the "read the report-only
+numbers" rule keeps PON discrepancies as its one live example. No engine, definition or Scala change; the per-file
+"as parsed" log stays.
+
+OBSERVED, not recommended, unchanged from the records before: `src/mods/scala/domains/sentient/EgoActor.scala` is a
+hand-written actor over Ego with no definition — referenced nowhere but a comment in ExampleDomainsGenTest and a
+review-ledger row, a June stub with no test, no assembly and the retired Actor suffix in its name; a role-named
+definition or removal is Dev's decision. Deferred, neither accepted: activation (the Codex recommendation of
+2026-10-15); the .dcon migration. Also in this commit: the fold of the b321df6 hash into DRACO.md,
+DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md, written after Dev's commit yesterday evening.
+
+Verification: the focused suite first, the committed file compiled into the overlay — 1 test, green on its first run;
+then the negative probe above. Then every discovered suite on freshly compiled classes with current main, mods and
+test resources on the loader roots: 1119 tests / 78 suites including the Runner's discovery wrapper, zero failed,
+canceled, ignored, pending or aborted, green on its first run — every suite's count unchanged from b321df6. Headlines:
+scenario 23 files, 0 rejected, 0 drifted, 23 clean (now asserted), surface losses 0 across 183 types (asserted), parse
+scope 110 draco + 73 mods, example gate 48 match / 0 differ / 0 error / 0 missing of 48 (asserted), DomainAspect and
+DracoAspect 110 sections, GenDrake 108 of 108, PON 80 / 550 / 42 and canonical 7, forest 1 of 2, CO-DECLARATION
+categorical, pending mods definitions 0 in the file-only log. Dev's full sbt gate on 2026-11-03: 1119 tests / 77 suites, zero failed, canceled, ignored or pending, every headline matching, pending mods definitions 0 (grep count 1), green on its first run. Commit pending.

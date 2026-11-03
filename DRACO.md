@@ -43,15 +43,19 @@ eleven tests on its first run. The one axiom exempt from it is `DracoType.typeDe
 does not extend `App`.
 
 **Read the report-only numbers, not just pass/fail.** Several tests measure rather than
-assert (PON discrepancies, the scenario round-trip; drake surface losses and the example-domain generate map did, until
+assert (PON discrepancies; drake surface losses, the example-domain generate map and the scenario round-trip did, until
 asserted). Two
 real defects in one August session were caught only by reading a headline that moved —
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1119 tests / 77 suites**, verified by Dev on 2026-11-03 for the asserted scenario round-trip (record `git-record-2026-11-03-0942`,
+commit pending): ScenarioDrakeTest's round-trip asserts instead of reporting, no test added, zero failed/canceled/ignored/pending tests,
+every headline unchanged, the scenario row off the table below, pending mods definitions 0; no engine, definition or Scala change; its
+direct run 1119 / 78 including discovery, green on its first run. First full Dev gate green. Before it:
 **1119 tests / 77 suites**, verified by Dev on 2026-11-02 for the asserted surface-loss count (record `git-record-2026-11-02-1451`,
-commit pending): the loss test asserts instead of reporting, no test added, zero failed/canceled/ignored/pending tests, every headline
+committed as b321df6): the loss test asserts instead of reporting, no test added, zero failed/canceled/ignored/pending tests, every headline
 unchanged, the surface-loss row off the table below, pending mods definitions 0; no engine, definition or Scala change; its direct
 run 1119 / 78 including discovery, green on its first run. First full Dev gate green. Before it:
 **1119 tests / 77 suites**, verified by Dev on 2026-11-02 for the removed Output hold-out (record `git-record-2026-11-02-1433`,
@@ -302,7 +306,6 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | `DrakeGenTest` | mods definitions pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` (every mods definition since 2026-11-02; actors only before) |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
-| `ScenarioDrakeTest` | scenario in today's drake | 23 files, 0 rejected, 0 drifted, 23 clean |
 | `SubtypeFactVisibilityTest` | rete subtype visibility | CO-DECLARATION DROPS THE FACT (categorical, not a count) |
 
 A number here disagreeing with a run means one of two things, and both are worth stopping
@@ -332,7 +335,7 @@ ahead of JSON. Both Drake and Scala projections were byte-identical before/after
 all 103 current JSON definitions. The full run also confirmed the table above and zero
 mods actors pending Drake authoring in the file-only report.
 
-Four of these have since become ASSERTIONS and are deliberately not listed: the scenario
+Five of these have since become ASSERTIONS and are deliberately not listed: the scenario
 now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports. So
 does `GenDrakeTest`'s `GenDrake runs` line — in the capture grep for visibility, not here.
 And since 2026-10-31 the example-domain gen map, which this table carried from 37 / 11 down to
@@ -341,6 +344,9 @@ example domains, and its `GEN MAP` line stays in the capture grep for the same r
 And since 2026-11-02 the drake surface losses, which this table carried from 16 fields down to 0: `DrakeParseTest`
 now asserts zero over the whole corpus (183 types) — a definition whose JSON is not the parser's reading of its own
 surface fails the suite, listed by field — and its `surface losses` line stays in the capture grep too.
+And since 2026-11-03 the scenario round-trip, which this table carried at 23 clean from its first reading: `ScenarioDrakeTest`
+now fails naming each scenario surface the parser rejects or the emitter does not reproduce, and its `scenario in` line stays
+in the capture grep too.
 Moving a measurement into an assertion is the goal; the table should shrink over time.
 
 **Where things are recorded** — distinct artifacts and jobs, do not conflate them:
@@ -1903,6 +1909,29 @@ first classpath entry sits under, not from the classpath): one empty-collection 
 the "read the report-only numbers" rule drops surface losses from its examples. Flagged, not recommended: the same move for
 ScenarioDrakeTest's row (23 files, 0 rejected, 0 drifted), a point of its own. Focused DrakeParseTest 381, green on its first run;
 direct run 1119 / 78 including discovery, green on its first run, every suite's count unchanged, every headline unchanged, pending
-mods definitions 0; Dev's first full gate 1119 / 77 on 2026-11-02, every headline matching, pending mods definitions 0. Commit
-pending. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's
-decision. Deferred activation and .dcon remain, neither accepted.
+mods definitions 0; Dev's first full gate 1119 / 77 on 2026-11-02, every headline matching, pending mods definitions 0. Committed
+and pushed by Dev as b321df6. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no
+definition — Dev's decision. Deferred activation and .dcon remain, neither accepted.
+
+**The scenario round-trip is asserted and leaves the table (2026-11-03, Claude Code; Dev verified 1119 / 77).**
+Dev accepted "Accepted, build it" on the recommendation that `ScenarioDrakeTest` — since 0af56fd on 2026-08-27 the report-only
+check that emitting what the parser read of each of the 23 scenario surfaces under `src/test/resources/scenario` reproduces the
+source, whitespace-normalized — become an assertion: the test fails after its console line naming each rejected file with its error
+and each drifted file, drops "(report only)" from its name, and its class doc goes from worklist to gate; the row leaves the §1
+table above, the fifth measurement to become an assertion; the `scenario in` line stays in the gate grep. Three facts carried it:
+the worklist was empty at its first reading (22 clean on 2026-08-27, 23 since the scenario became a corpus at 87a2bb9 on
+2026-08-31) and never held a rejected or drifted file through the re-canonicalizations that touched the scenario; `ScenarioGenTest`'s
+first gate asserts the JSON direction (each committed `.json` is the parse of its `.drake`), and neither DrakeGenTest nor
+DrakeParseTest walks the scenario, so the surface direction was the one unasserted leg of that corpus; and the class doc was stale,
+describing RootInterface's dispatch as a Scala `match` carried as host-opaque text when it has been two `case` branches since
+12bed84. With it the scenario trio is pinned in both directions as src/main and src/mods are, and the table holds the parse-scope row, the PON
+pair, the file-only DrakeGenTest row and the categorical rete row. REJECTED: folding the scenario into DrakeParseTest's walk (a test
+corpus with its own suite pair keeps its gates together). MEASURED after building by a negative probe on the scratch project tree,
+run with that tree as the working directory — this suite reads `src/test/resources/scenario` relative to the working directory,
+not from the classpath root the corpus suites derive: a redundant parenthesized pair in RootInterface (dissolved by the parser,
+written back minimal) and a stray section line in birch Compound; the asserted test fails naming both, 23 files, 1 rejected,
+1 drifted, 21 clean; the real tree untouched. No test count moves, no engine, definition or Scala change. Focused
+ScenarioDrakeTest 1, green on its first run; direct run 1119 / 78 including discovery, green on its first run, every suite's count
+unchanged, every headline unchanged, pending mods definitions 0; Dev's first full gate 1119 / 77 on 2026-11-03, every headline
+matching, pending mods definitions 0. Commit pending. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`, the hand-written
+actor over Ego with no definition — Dev's decision. Deferred activation and .dcon remain, neither accepted.

@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Assert the scenario round-trip: ScenarioDrakeTest, which since 2026-08-27 reported whether each of the forest scenario's
+  drake surfaces is reproduced by emitting its own parse (23 of 23 clean since 2026-08-31), now fails naming each rejected or
+  drifted file; with ScenarioGenTest's JSON gate the scenario trio is pinned in both directions, the row leaves the DRACO.md
+  table as the fifth measurement to become an assertion, and its console line stays in the gate grep. The suite's class doc
+  is corrected (RootInterface's dispatch is two `case` branches, not host text). No test count moves, no engine, definition or
+  Scala change.
 - Assert the drake surface-loss count at zero: DrakeParseTest's unnormalized round-trip measurement, zero since
   2026-10-22 and over the whole corpus since the widened mods scope, now fails naming each field when a definition's
   JSON is not what the parser reads back from its own surface, where it only reported; the row leaves the DRACO.md

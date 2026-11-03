@@ -30,12 +30,17 @@ import scala.util.{Try, Using}
  *     softer gap: the construct is accepted but not carried faithfully, which usually
  *     means the emitter has no spelling for something the parser tolerated.
  *
- *  Report-only. The point is a worklist, not a red suite: everything that fails is a
- *  line item for the grammar, and the count is the measure of how far drake already
- *  reaches. What we already expect to be carried rather than expressed is the dispatch
- *  in `ash/RootInterface.drake` — a Scala `match` smuggled through as host-opaque
- *  text, single-line because a value must be. It will parse. That is precisely the
- *  problem: parsing it proves nothing, since the text projects to no other target. */
+ *  A gate since 2026-11-03; a worklist before. When this suite was written (2026-08-27)
+ *  the point was a count, not a red suite: everything that failed was a line item for
+ *  the grammar, and the count measured how far drake already reached. The worklist was
+ *  empty at its first reading — 22 files clean, 23 since the scenario became a corpus on
+ *  2026-08-31 — and stayed empty through every re-canonicalization that touched the
+ *  scenario, so the test now fails naming each rejected or drifted file. With it the
+ *  scenario trio is pinned in both directions, as `src/main` and `src/mods` are:
+ *  `ScenarioGenTest`'s first gate ties each committed `.json` to the parse of its
+ *  `.drake`, and this one ties the `.drake` to the emit of that parse. (The dispatch in
+ *  `ash/RootInterface.drake`, which this doc once expected to be a Scala `match`
+ *  carried as host-opaque text, has been two `case` branches since `case` was reserved.) */
 class ScenarioDrakeTest extends AnyFunSuite with draco.PersistentTestLog {
 
   private val root: Path = Paths.get("src/test/resources/scenario")
@@ -52,7 +57,7 @@ class ScenarioDrakeTest extends AnyFunSuite with draco.PersistentTestLog {
       .dropWhile(_.isEmpty).reverse.dropWhile(_.isEmpty).reverse.mkString("\n")
   }
 
-  test("the scenario in today's drake: what parses, what round-trips (report only)") {
+  test("the scenario in today's drake: every file parses and round-trips") {
     val files = scenarioFiles
     assume(files.nonEmpty, s"no scenario files under $root")
 
@@ -97,6 +102,13 @@ class ScenarioDrakeTest extends AnyFunSuite with draco.PersistentTestLog {
     console.info(s"scenario in today's drake: ${outcomes.size} files, " +
       s"${rejected.size} rejected, ${drifted.size} parsed-but-drifted, " +
       s"${outcomes.count(o => o.error.isEmpty && o.roundTripped)} clean")
-    succeed
+
+    // Clean since 2026-08-31; asserted since 2026-11-03. A rejected file is a construct the
+    // surface cannot carry; a drifted one is a surface the emitter spells differently from
+    // the author — re-canonicalize it with `DrakeCLI emit --write`, or grow the grammar.
+    if (rejected.nonEmpty || drifted.nonEmpty)
+      fail(s"${rejected.size} scenario files rejected, ${drifted.size} drifted:\n" +
+        (rejected.map(o => s"  REJECTED ${o.path}: ${o.error.get}") ++
+         drifted.map(o => s"  DRIFTED  ${o.path}: emit(parse(x)) != x — see the pair in the log")).mkString("\n"))
   }
 }
