@@ -4,7 +4,7 @@ Prepared October 26, 2026 by Codex for a new session in either Codex or Claude C
 refreshed by Claude Code through November 2 after the named-construction repairs, the
 terrestrial Output repair, the report and intent json factories, the coordinate, ConsumeReport and
 sentient surfaces, the example sweep, the anchor-parameter rule, the compact fixpoint assertion, the
-mods surface gate, the widened parse scope and the removed Output hold-out.
+mods surface gate, the widened parse scope, the removed Output hold-out and the asserted surface-loss count.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -35,18 +35,20 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   Yaml's surface (record `git-record-2026-11-02-0907`), built and verified directly on November 2 (1068 / 78), Dev-gated at 1068 / 77 and committed and
   pushed by Dev as **8746ecd** on November 2 — then the widened DrakeParseTest mods scope (record
   `git-record-2026-11-02-1202`), built and verified directly on November 2 (1118 / 78), Dev-gated at 1118 / 77 and committed and pushed by Dev as **a4ff2c4** on November 2 — then the removed Output hold-out
-  (record `git-record-2026-11-02-1433`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 on November 2, in the tree with Dev's commit pending —
+  (record `git-record-2026-11-02-1433`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 and committed and pushed by Dev as **6a15754** on November 2 — then the asserted surface-loss count
+  (record `git-record-2026-11-02-1451`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 on November 2, in the tree with Dev's commit pending —
   inspect `git log -1` and `git status --short` to learn where the tree stands. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **1119 tests / 77 suites**, November 2, on the removed-hold-out tree (uncommitted, record
-  `git-record-2026-11-02-1433`): zero failed/canceled/ignored/pending tests, parse scope
-  110 + 73, surface losses 0 across 183 types, example gate 48 match / 0 differ, every other headline
-  unchanged, pending mods definitions 0. Before it 1118 / 77 on the widened-parse-scope tree (a4ff2c4), 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
+- Latest Dev-verified gate: **1119 tests / 77 suites**, November 2, on the asserted-surface-loss tree (uncommitted, record
+  `git-record-2026-11-02-1451`): zero failed/canceled/ignored/pending tests, parse scope
+  110 + 73, surface losses 0 across 183 types (asserted), example gate 48 match / 0 differ, every other headline
+  unchanged, pending mods definitions 0. Before it the same 1119 / 77 on the removed-hold-out tree (6a15754), 1118 / 77 on the widened-parse-scope tree (a4ff2c4), 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
   anchor-parameter tree (ed57aa9) and 1005 / 77 on the sentient-surfaces tree (5f0e023).
-- All accepted implementation work through a4ff2c4 is committed and pushed; the tree was clean at that commit. In the
-  tree since, uncommitted, Dev-gated at 1119 / 77 with the commit pending: the removed Output hold-out — `DrakeParseTest.scala`
-  (the `inlineTupleArgument` val, comment, filter and log line gone), its record `git-record-2026-11-02-1433`, the CHANGELOG
-  entry, these documents and the fold of the a4ff2c4 hash.
+- All accepted implementation work through 6a15754 is committed and pushed; the tree was clean at that commit. In the
+  tree since, uncommitted, gated by Dev at 1119 / 77 on November 2 (no count moved) with the commit pending: the asserted surface-loss count —
+  `DrakeParseTest.scala` (the loss test fails on a nonempty list, renamed, comments reworded), its record
+  `git-record-2026-11-02-1451`, the CHANGELOG entry, the DRACO.md table row removed, these documents and the fold of the
+  6a15754 hash.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -361,7 +363,7 @@ aborted, green on its first run, every other headline unchanged, pending mods de
 November 2, zero failed, canceled, ignored or pending, every headline matching, pending mods definitions 0, green on its first
 run. Committed and pushed by Dev as a4ff2c4.
 
-## The stale Output hold-out leaves DrakeParseTest's definition gate (accepted and built, November 2; Dev verified 1119 / 77, commit pending)
+## The stale Output hold-out leaves DrakeParseTest's definition gate (accepted and built, November 2; Dev verified 1119 / 77, committed as 6a15754)
 
 Dev accepted: "Accepted, build it" on the point raised after a4ff2c4. WHY: `inlineTupleArgument` held terrestrial Output out
 of `parse(emit(td))` since 0acf2da (2026-08-12), the one definition of 73 outside the definition gate and the only entry the
@@ -378,12 +380,36 @@ suite, no headline moves. Flagged, not recommended: keeping the set as an empty 
 code guarding a case the parser no longer has. FOCUSED: DrakeParseTest 381 (380 before), green on its first run. DIRECT RUN:
 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every
 headline unchanged, pending mods definitions 0. DEV'S GATE: 1119 / 77 on November 2, zero failed, canceled, ignored or
-pending, every headline matching, pending mods definitions 0, green on its first run. Commit pending.
+pending, every headline matching, pending mods definitions 0, green on its first run. Committed and pushed by Dev as 6a15754.
+
+## The surface-loss count is asserted at zero and leaves the table (accepted and built, November 2; direct run 1119 / 78, Dev's gate 1119 / 77)
+
+Dev accepted: "Accepted, build it" on the point raised after 6a15754. WHY: DrakeParseTest's "measured tail" — the
+unnormalized comparison of every definition's raw encoder leaves with those of `parse(emit(td))`, report-only since the
+parser's first increments — had read zero since b04d81d (2026-10-22, the role-presence re-canonicalization of BodyElement and
+ActorAspect; one field from 2026-09-22, fifteen or sixteen before), covered the whole corpus (183 types) since a4ff2c4, and is
+stricter than gate 2, whose `surfaceCarried` normalization lets a string on one side and a tree on the other pass. Zero means
+every definition's JSON is exactly the parser's reading of its own surface; a measurement with nothing left to measure, whose
+regression a green suite would hide. BUILT: the test is renamed "drake surface losses, unnormalized: none" and fails after its
+console line when the loss list is nonempty, listing each field; section comment and class doc reworded (tail closed
+2026-10-22, asserted since 2026-11-02; a loss means re-canonicalize from the drake). DRACO.md: the row leaves the §1 table, the
+assertions paragraph names the fourth, the "read the report-only numbers" rule drops surface losses. The console headline is
+unchanged and stays in the gate grep. No test count moves, no engine, definition or Scala change. NEGATIVE PROBE after building,
+on a scratch project tree with copied resources and overlays (the suite reads sources from the project root the first classpath
+entry sits under, not from the classpath — a probe class directory alone aborts the Runner): one empty-collection `value` of
+draco/Action.json set to the legacy "Seq()"; gate 2 still passes Action, the asserted test fails naming
+`.dracoAspect.factory.parameters[0].value: "Seq()" -> {"[]":[]}`, 380 / 1, headline `1 fields across 183 types
+[empty-collection spelling: 1]`; the real tree untouched. Flagged, not recommended: the same move for ScenarioDrakeTest's row.
+FOCUSED: DrakeParseTest 381, green on its first run. DIRECT RUN: 1119 tests / 78 suites including discovery, zero failed,
+canceled, ignored, pending or aborted, green on its first run, every suite's count unchanged, every headline unchanged, pending
+mods definitions 0. DEV'S GATE: 1119 tests / 77 suites on November 2, zero failed, canceled, ignored or pending, every headline
+matching, pending mods definitions 0, green on its first run. Commit pending.
 
 ## Next design point — acceptance required
 
-The removed Output hold-out is in the tree, Dev-gated at 1119 / 77 with the commit pending; the widened parse scope before it is
-committed and pushed as a4ff2c4 at Dev's 1118 / 77 gate, the mods surface gate as 8746ecd at Dev's 1068 / 77 gate. Nothing from the sentient, anchor-parameter, compact-fixpoint,
+The asserted surface-loss count is in the tree, gated by Dev at 1119 / 77 with the commit pending; the removed Output hold-out before it
+is committed and pushed as 6a15754 at Dev's 1119 / 77 gate, the widened parse scope as a4ff2c4 at Dev's 1118 / 77 gate, the mods
+surface gate as 8746ecd at Dev's 1068 / 77 gate. Nothing from the sentient, anchor-parameter, compact-fixpoint,
 mods-surface or parse-scope threads remains preserved. In view,
 measured and not recommended: `EgoActor.scala`, the one definition-less actor left in the example tree (unreferenced, a
 June stub, the retired Actor suffix in its name) — define under a role name or remove, Dev's decision. Deferred activation and the .dcon migration remain deferred and unaccepted. Inventory
@@ -429,7 +455,7 @@ parameter; the second run was green.
 | DracoAspect | 110 complete, 0 frozen baselines, 0 skipped |
 | GenDrake | 108/108, 0 missing, 0 extra |
 | Example generation | 48 match, 0 differ, 0 error, 0 missing / 48 — ASSERTED since October 31 (39 / 9 before the ConsumeReport trios and nine companions, 37 / 11 before the coordinate companions, 36 / 12 before the Output repair) |
-| Surface losses | 0 fields across 183 types (158 before the widened mods scope, 147 before the sentient surfaces, 143 before the ConsumeReport surfaces, 141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
+| Surface losses (ASSERTED zero since 2026-11-02) | 0 fields across 183 types (158 before the widened mods scope, 147 before the sentient surfaces, 143 before the ConsumeReport surfaces, 141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
 | Parse scope | 110 draco + 73 mods, 0 held back (48 before the widened mods scope, 37 before the sentient surfaces, 33 before the ConsumeReport surfaces, 31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
 | PON | 80 numbers, 550 expressions, 42 discrepancies |
 | Canonical PON | 80 numbers, 7 differ |
@@ -459,7 +485,10 @@ surface-loss and parse-scope rows moved as stated above, every other row unchang
 gate 1118 / 77 on November 2, green on its first run, every row matching, pending mods definitions 0; committed and pushed as a4ff2c4. The removed Output hold-out's direct run
 (November 2, record 2026-11-02-1433): 1119 / 78 including discovery, zero failed or aborted, green on its first run, every row
 unchanged, pending mods definitions 0. Dev's full gate 1119 / 77 on November 2, green on its first run, every row matching,
-pending mods definitions 0; commit pending.
+pending mods definitions 0; committed and pushed as 6a15754. The asserted surface-loss count's direct run (November 2, record
+2026-11-02-1451): 1119 / 78 including discovery, zero failed or aborted, green on its first run, every row unchanged, the
+surface-loss row now an assertion, pending mods definitions 0; Dev's full gate 1119 / 77 on November 2, every headline matching,
+pending mods definitions 0, commit pending.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -500,7 +529,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | a31e49b | The whole corpus asserted a fixpoint of the compact form over both resource roots; ResolutionRecordTest +1, no engine or corpus change (Claude Code) | direct run 1007 / 78; Dev's gate 1007 / 77 on November 1 | 2026-11-01-1228 |
 | 8746ecd | DrakeGenTest's mods gate widened to every mods definition and its headline relabeled; `Yaml.drake` the emitter's two lines; no engine, JSON or Scala change (Claude Code) | direct run 1068 / 78; Dev's gate 1068 / 77 on November 2 | 2026-11-02-0907 |
 | a4ff2c4 | DrakeParseTest's mods walk widened to the whole mods tree, three comments reworded; two table rows moved; no engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 2 | 2026-11-02-1202 |
-| (in the tree) | DrakeParseTest's `inlineTupleArgument` hold-out removed, Output under the definition gate; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2, commit pending | 2026-11-02-1433 |
+| 6a15754 | DrakeParseTest's `inlineTupleArgument` hold-out removed, Output under the definition gate; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2 | 2026-11-02-1433 |
+| (in the tree) | DrakeParseTest's surface-loss measurement asserts zero and its DRACO.md table row leaves; negative probe 380 / 1 on a scratch tree; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2, commit pending | 2026-11-02-1451 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.

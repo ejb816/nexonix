@@ -1,0 +1,53 @@
+Assert the drake surface-loss count at zero and retire its table row
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being to turn DrakeParseTest's surface-loss
+measurement into an assertion: the test keeps its listing and its console line but fails when the loss count is not
+zero, naming each field as it logs them; the surface-loss row leaves the DRACO.md §1 table, the fourth measurement
+to become an assertion; the `surface losses` line stays in the gate grep for visibility, as `GEN MAP` does. No test
+count moves, no engine, definition or Scala change.
+
+Why. The test — "the measured tail: where the surface is not yet information-complete" since the parser's first
+increments — compares the RAW encoder leaves of a definition with those of `parse(emit(td))`, no normalization,
+and reports the differences by kind. Three facts from the tree. It has read zero since b04d81d on 2026-10-22, when the
+role-presence increment re-canonicalized the last two authored-ahead surfaces (BodyElement, ActorAspect); it read one
+field from 2026-09-22 to then, fifteen or sixteen before. It covers the whole corpus since a4ff2c4 (183 types, the
+fixpoint assertion's count). And it is stricter than the definition gate: gate 2 compares both sides through
+`surfaceCarried`, which spells each `value` and `valueType` as the surface would, so a string on one side and a tree
+on the other pass as equal, while the loss test sees them as a loss. Zero losses means every definition's JSON is
+exactly what the parser reads back from its own emitted surface — the drake-first rule as a number. A measurement
+with nothing left to measure, whose regression a green suite would hide: the case §1 warns about, a headline that
+moves while pass/fail stays green.
+
+MEASURED before recommending: the loss history in DRACO.md's table (0dc4900 to one field, b04d81d to zero), the test's
+comparison against gate 2's, the headline of the 6a15754 direct run (0 fields across 183 types). MEASURED after building,
+a NEGATIVE PROBE on a scratch project tree with copied resources and copied overlays: one empty-collection `value` leaf of
+draco/Action.json set to the legacy string "Seq()"; gate 2 still passes Action (the normalization collapses both spellings
+to `[]`), and the asserted test fails naming the one field — `draco/Action.json
+.dracoAspect.factory.parameters[0].value: "Seq()" -> {"[]":[]}` — 380 passed, 1 failed, the headline reading `1 fields
+across 183 types [empty-collection spelling: 1]`. The real tree was untouched throughout. The probe also settled how the
+suite finds its sources: from the project root the first classpath entry sits under (`target/scala-2.13/<classes>`), not
+from the classpath, so a probe against altered resources needs a scratch project tree, not a scratch class directory.
+
+Built as measured. The test is renamed "drake surface losses, unnormalized: none"; after the console line it fails on a
+nonempty loss list with the fields listed; the section comment and the class doc say the tail is asserted empty since
+2026-11-02 and closed on 2026-10-22, and that a loss means a definition's JSON is not the parser's reading of its own
+surface — re-canonicalize it from the drake. The §1 table loses its first row and its assertions paragraph names the
+fourth; the "read the report-only numbers" rule drops surface losses from its examples. The console headline is unchanged
+and stays in the gate grep. Flagged with the recommendation, not recommended: the same move for ScenarioDrakeTest's row
+(23 files, 0 rejected, 0 drifted), a point of its own.
+
+OBSERVED, not recommended, unchanged from the records before: `src/mods/scala/domains/sentient/EgoActor.scala` is a
+hand-written actor over Ego with no definition — referenced nowhere but a comment in ExampleDomainsGenTest and a
+review-ledger row, a June stub with no test, no assembly and the retired Actor suffix in its name; a role-named
+definition or removal is Dev's decision. Deferred, neither accepted: activation (the Codex recommendation of
+2026-10-15); the .dcon migration. Also in this commit: the fold of the 6a15754 hash into DRACO.md,
+DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md, written after Dev's commit this afternoon.
+
+Verification: the focused suite first, the committed file compiled into the overlay — 381 tests, green on its first run,
+the asserted test among them; then the negative probe above. Then every discovered suite on freshly compiled classes with
+current main, mods and test resources on the loader roots: 1119 tests / 78 suites including the Runner's discovery
+wrapper, zero failed, canceled, ignored, pending or aborted, green on its first run — every suite's count unchanged from
+6a15754. Headlines: surface losses 0 across 183 types (now asserted), parse scope 110 draco + 73 mods, example gate 48
+match / 0 differ / 0 error / 0 missing of 48 (asserted), DomainAspect and DracoAspect 110 sections, GenDrake 108 of 108,
+PON 80 / 550 / 42 and canonical 7, scenario 23 clean, forest 1 of 2, CO-DECLARATION categorical, pending mods definitions 0
+in the file-only log. Dev's full sbt gate on 2026-11-02: 1119 tests / 77 suites, zero failed, canceled, ignored or pending, every headline matching, pending mods definitions 0 (grep count 1), green on its first run. Commit pending.

@@ -43,14 +43,19 @@ eleven tests on its first run. The one axiom exempt from it is `DracoType.typeDe
 does not extend `App`.
 
 **Read the report-only numbers, not just pass/fail.** Several tests measure rather than
-assert (drake surface losses, the example-domain generate map, PON discrepancies). Two
+assert (PON discrepancies, the scenario round-trip; drake surface losses and the example-domain generate map did, until
+asserted). Two
 real defects in one August session were caught only by reading a headline that moved —
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1119 tests / 77 suites**, verified by Dev on 2026-11-02 for the asserted surface-loss count (record `git-record-2026-11-02-1451`,
+commit pending): the loss test asserts instead of reporting, no test added, zero failed/canceled/ignored/pending tests, every headline
+unchanged, the surface-loss row off the table below, pending mods definitions 0; no engine, definition or Scala change; its direct
+run 1119 / 78 including discovery, green on its first run. First full Dev gate green. Before it:
 **1119 tests / 77 suites**, verified by Dev on 2026-11-02 for the removed Output hold-out (record `git-record-2026-11-02-1433`,
-commit pending): one newly active DrakeParseTest check (terrestrial Output under `parse(emit(td))`),
+committed as 6a15754): one newly active DrakeParseTest check (terrestrial Output under `parse(emit(td))`),
 no new suite, every headline unchanged, pending mods definitions 0; no engine, definition or Scala change; direct run 1119 / 78
 including discovery, green on its first run. First full Dev gate green. Before it:
 **1118 tests / 77 suites**, verified by Dev on 2026-11-02 for the widened parse scope (record `git-record-2026-11-02-1202`,
@@ -293,7 +298,6 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `DrakeParseTest` | drake surface losses | 0 fields across 183 types — type form 0, expression form 0 |
 | `DrakeParseTest` | Drake.parse scope | 110 draco + 73 mods in, 0 held back |
 | `DrakeGenTest` | mods definitions pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` (every mods definition since 2026-11-02; actors only before) |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
@@ -328,12 +332,15 @@ ahead of JSON. Both Drake and Scala projections were byte-identical before/after
 all 103 current JSON definitions. The full run also confirmed the table above and zero
 mods actors pending Drake authoring in the file-only report.
 
-Three of these have since become ASSERTIONS and are deliberately not listed: the scenario
+Four of these have since become ASSERTIONS and are deliberately not listed: the scenario
 now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports. So
 does `GenDrakeTest`'s `GenDrake runs` line — in the capture grep for visibility, not here.
 And since 2026-10-31 the example-domain gen map, which this table carried from 37 / 11 down to
 39 / 9: `ExampleDomainsGenTest` now asserts 48 match / 0 differ / 0 error / 0 missing over the
 example domains, and its `GEN MAP` line stays in the capture grep for the same reason.
+And since 2026-11-02 the drake surface losses, which this table carried from 16 fields down to 0: `DrakeParseTest`
+now asserts zero over the whole corpus (183 types) — a definition whose JSON is not the parser's reading of its own
+surface fails the suite, listed by field — and its `surface losses` line stays in the capture grep too.
 Moving a measurement into an assertion is the goal; the table should shrink over time.
 
 **Where things are recorded** — distinct artifacts and jobs, do not conflate them:
@@ -1875,6 +1882,27 @@ definition or Scala change, no headline moves — every definition in the corpus
 with no exception list. Flagged, not recommended: keeping the set as an empty mechanism, dead code guarding a case the parser
 no longer has. Focused DrakeParseTest 381, green on its first run; direct run 1119 / 78 including discovery, green on its first
 run, every headline unchanged, pending mods definitions 0; Dev's first full gate 1119 / 77 on 2026-11-02, every headline matching,
-pending mods definitions 0. Commit pending. OBSERVED, not
+pending mods definitions 0. Committed and pushed by Dev as 6a15754. OBSERVED, not
 recommended: `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's decision. Deferred
 activation and .dcon remain, neither accepted.
+
+**The surface-loss count is asserted at zero and leaves the table (2026-11-02, Claude Code; Dev verified 1119 / 77).**
+Dev accepted "Accepted, build it" on the recommendation that DrakeParseTest's "measured tail" — the unnormalized comparison of
+every definition's raw encoder leaves with those of `parse(emit(td))`, report-only since the parser's first increments — become an
+assertion: the test keeps its listing and console line and fails naming each field when the count is not zero; the row leaves the
+§1 table above, the fourth measurement to become an assertion; the `surface losses` line stays in the gate grep as `GEN MAP` does.
+Three facts carried it: the count has read zero since b04d81d on 2026-10-22 (one field from 2026-09-22, fifteen or sixteen before);
+it covers the whole corpus, 183 types, since a4ff2c4; and it is STRICTER than gate 2, whose `surfaceCarried` spells `value` and
+`valueType` as the surface would, so a string on one side and a tree on the other pass there and count here. Zero losses is the
+drake-first rule as a number: every definition's JSON is exactly the parser's reading of its own surface. MEASURED after building
+by a negative probe on a scratch project tree (copied resources and overlays; the suite reads its sources from the project root the
+first classpath entry sits under, not from the classpath): one empty-collection `value` of draco/Action.json set to the legacy
+"Seq()" — gate 2 still passes Action, the asserted test fails naming `.dracoAspect.factory.parameters[0].value: "Seq()" ->
+{"[]":[]}`, 380 / 1. The real tree untouched. No test count moves, no engine, definition or Scala change; the test is renamed
+"drake surface losses, unnormalized: none", its comments say the tail closed on 2026-10-22 and is asserted since 2026-11-02, and
+the "read the report-only numbers" rule drops surface losses from its examples. Flagged, not recommended: the same move for
+ScenarioDrakeTest's row (23 files, 0 rejected, 0 drifted), a point of its own. Focused DrakeParseTest 381, green on its first run;
+direct run 1119 / 78 including discovery, green on its first run, every suite's count unchanged, every headline unchanged, pending
+mods definitions 0; Dev's first full gate 1119 / 77 on 2026-11-02, every headline matching, pending mods definitions 0. Commit
+pending. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's
+decision. Deferred activation and .dcon remain, neither accepted.

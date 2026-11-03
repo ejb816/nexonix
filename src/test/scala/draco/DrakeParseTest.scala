@@ -13,7 +13,8 @@ import scala.util.Using
  *  DrakeGenTest gates the emitter (JSON -> drake), this gates its inverse,
  *  `Drake.parse` (drake -> JSON).
  *
- *  Two gates, because the drake surface is not yet information-complete:
+ *  Two gates, because the drake surface was not information-complete when they were
+ *  written (over the corpus it has been since 2026-10-22, and the loss test asserts it):
  *
  *  1. SURFACE round-trip — `emit(parse(text)) == text`. Exact, and the
  *     strongest claim the surface itself supports: the parser reconstructs
@@ -40,9 +41,13 @@ import scala.util.Using
  *     expression, so it carries no package to lose and no name to mis-resolve. What
  *     remains unrepresentable is a foreign referent with no operator to spell it:
  *     that would still read as a bare same-package name. The corpus has none, and
- *     the report test below would name it if one arrived.
- *     The report test measures both remaining kinds, so the tail is a number rather
- *     than a note.
+ *     the loss test below would fail naming it if one arrived.
+ *     The loss test measures both remaining kinds, so the tail is a number rather
+ *     than a note — and since 2026-11-02 it ASSERTS that number is zero. The tail closed
+ *     on 2026-10-22, when the role-presence increment re-canonicalized the last two
+ *     authored-ahead surfaces (BodyElement, ActorAspect), and it has covered the whole
+ *     corpus since the mods walk widened; a definition whose JSON is not exactly what
+ *     the parser reads back from its own surface now fails the suite, listed by field.
  *
  *  Covered: the plain-type template plus the rule and actor aspects, over TWO corpora
  *  — the draco types and every mods definition with an authored surface (the example tree
@@ -563,9 +568,9 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       fail("case-head surface did not round-trip." + diffReport(handNorm, roundNorm, "authored", "round-tripped"))
   }
 
-  // --- The measured tail: where the surface is not yet information-complete ---
+  // --- The measured tail, asserted empty: the surface is information-complete over the corpus ---
 
-  test("drake surface losses, unnormalized (report only)") {
+  test("drake surface losses, unnormalized: none") {
     // A `value` — and since the type forms, a `valueType` — is compared WHOLE, never descended into: its whole point is that the
     // same expression may be a string on one side and a tree on the other, and
     // descending would scatter one difference across the tree's leaves — the `.value`
@@ -606,7 +611,11 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
     }
     console.info(s"drake surface losses: ${losses.size} fields across ${measured.size} types " +
       byKind.map { case (kind, entries) => s"[$kind: ${entries.size}]" }.mkString(" "))
-    succeed
+    // Zero since 2026-10-22; asserted since 2026-11-02. A loss means a definition's JSON is not
+    // what the parser reads back from its own surface — re-canonicalize it from the drake.
+    if (losses.nonEmpty)
+      fail(s"${losses.size} drake surface losses across ${measured.size} types:\n" +
+        losses.map { case (rp, key, was, now) => s"  $rp $key: $was -> $now" }.mkString("\n"))
   }
 
   test("types held back from Drake.parse (report only)") {

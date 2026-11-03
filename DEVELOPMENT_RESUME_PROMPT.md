@@ -63,7 +63,16 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-IN THE TREE, GATED BY ME AT 1119 / 77, MY COMMIT PENDING (2026-11-02, after a4ff2c4; record git-record-2026-11-02-1433): the removed Output hold-out —
+IN THE TREE, GATED BY ME AT 1119 / 77, MY COMMIT PENDING (2026-11-02, after 6a15754; record git-record-2026-11-02-1451): the asserted surface-loss count —
+DrakeParseTest's unnormalized round-trip measurement (zero since 2026-10-22, the whole corpus since a4ff2c4, stricter than the
+normalized definition gate) now fails naming each field instead of reporting; its row leaves the DRACO.md table, the fourth
+measurement to become an assertion; the console line stays in the gate grep. A negative probe on a scratch tree (one Action leaf
+as "Seq()") fails exactly that test, 380 / 1. No test count moves, no engine, definition or Scala change. Focused DrakeParseTest
+381, direct run 1119 / 78 including discovery, green on its first run, every headline unchanged, pending mods definitions 0.
+My full sbt gate 1119 tests / 77 suites on November 2, zero failures or aborts, every headline matching, pending mods
+definitions 0.
+
+Before it, COMMITTED AND PUSHED BY ME AS 6a15754 (2026-11-02, after a4ff2c4; record git-record-2026-11-02-1433): the removed Output hold-out —
 DrakeParseTest's `inlineTupleArgument` set (terrestrial Output out of `parse(emit(td))` since 2026-08-12 for an inline tuple
 argument the lexer then read as one token) is removed with its filter and file-only log line; the parser has treed tuple
 literals since 2026-09-20 and Output.json has been its own reading since 2026-10-29, so Output round-trips. Every definition

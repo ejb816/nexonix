@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- Assert the drake surface-loss count at zero: DrakeParseTest's unnormalized round-trip measurement, zero since
+  2026-10-22 and over the whole corpus since the widened mods scope, now fails naming each field when a definition's
+  JSON is not what the parser reads back from its own surface, where it only reported; the row leaves the DRACO.md
+  table, the fourth measurement to become an assertion, and its console line stays in the gate grep. No test count
+  moves, no engine, definition or Scala change.
 - Remove the stale Output hold-out from DrakeParseTest's definition gate: terrestrial Output, held out of
   `parse(emit(td))` since 2026-08-12 for an inline tuple argument the lexer then read as one token, has round-tripped
   since tuple literals were treed (2026-09-20) and its JSON became the parser's own reading (2026-10-29); the
