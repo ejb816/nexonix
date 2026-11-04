@@ -5,7 +5,8 @@ by Claude Code at my direction. First read AGENTS.md/CLAUDE.md (both link to DRA
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD 48f466d on main, pushed; every accepted implementation increment is committed; my last
+STATE: HEAD b79cfc1 on main (the handoff commit, documentation only), pushed, on top of 48f466d, the last
+implementation commit; every accepted implementation increment is committed; my last
 full sbt gate was 1118 tests / 77 suites on November 4, zero failures or aborts, every headline
 matching. The DRACO.md table holds the two suspended PON rows and the categorical rete finding alone.
 Journal coverage reaches chapter 112; the twenty-one commits since (e241378 through 48f466d) are not

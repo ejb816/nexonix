@@ -14,9 +14,9 @@ Read DRACO.md (AGENTS.md and CLAUDE.md are symlinks), this file, and
 editing. Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Then bring Dev ONE recommendation
 with accept-or-correct — the audit below is the proposed next task, and it is NOT yet accepted.
 
-- **Branch** main. **Observed HEAD** 48f466d (November 4, 14:36), pushed to origin/main. **Tree** at this
-  handoff: this file, DEVELOPMENT_RESUME_PROMPT.md, DRACO.md, CHANGELOG.md and the handoff's own
-  record are modified or new (documentation only); nothing else. A later agent inspects, never assumes.
+- **Branch** main. **Observed HEAD** b79cfc1 (November 4, the handoff commit, documentation only; record
+  `git-record-2026-11-04-1446`), pushed to origin/main, on top of 48f466d, the last implementation commit. **Tree** at this
+  handoff: clean but for the fold of b79cfc1 into this bullet, the resume prompt and memory. A later agent inspects, never assumes.
 - **Latest Dev-verified gate:** **1118 tests / 77 suites**, November 4, on the 48f466d tree: zero
   failed/canceled/ignored/pending tests, zero aborted suites, every headline matching — parse scope
   110 draco + 73 mods with 0 held back (asserted), surface losses 0 across 183 types (asserted),
