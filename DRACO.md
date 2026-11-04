@@ -52,8 +52,8 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**1118 tests / 77 suites**, verified by Dev on 2026-11-04 for the asserted parse-scope hold-back (record `git-record-2026-11-04-1414`, in
-the tree, Dev's commit pending): DrakeParseTest's "types held back from Drake.parse" test asserts instead of reporting, over both corpora, no test added or
+**1118 tests / 77 suites**, verified by Dev on 2026-11-04 for the asserted parse-scope hold-back (record `git-record-2026-11-04-1414`,
+committed as 48f466d): DrakeParseTest's "types held back from Drake.parse" test asserts instead of reporting, over both corpora, no test added or
 removed, zero failed/canceled/ignored/pending tests, every headline unchanged, the parse-scope row off the table below, which then holds the suspended PON pair and the
 categorical rete finding alone; no engine, definition or Scala change; its direct run 1118 / 78 including discovery, green on its first run, every
 headline unchanged, every suite's count identical. First full Dev gate green. Before it:
@@ -1206,6 +1206,8 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
+  Last prepared 2026-11-04 at 48f466d, for a new task session in either agent, with the issue-tracker
+  reconciliation audit as the proposed next task (not yet accepted); journal coverage reaches chapter 112.
 - **`CHANGELOG.md`** — **current.** Release blocks through alpha.6 (2026-08-17); `[Unreleased]`
   carries one entry per commit since, written with each commit's record, and was consolidated
   into one section each (Added / Changed / Fixed / Build) with a lead paragraph on 2026-09-09.
@@ -2011,6 +2013,18 @@ discriminator`, `mods domains/sentient/Gaze.json: lacks domains/sentient/Gaze.dr
 added or removed, no engine, definition or Scala change; the test is renamed "types held back from Drake.parse: none, over both
 corpora" and the class doc describes the filters and the assertion instead of a worklist. With it the table holds the suspended PON
 pair and the categorical rete finding alone. Focused DrakeParseTest 381, green on its first run; direct run 1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline;
-Dev's first full gate 1118 / 77 on 2026-11-04, every headline matching. Commit pending. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition —
+Dev's first full gate 1118 / 77 on 2026-11-04, every headline matching. Committed and pushed by Dev as 48f466d on 2026-11-04. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition —
 Dev's decision; the journal reaches chapter 112, twenty commits since a8b5447 unjournaled. Deferred activation and .dcon remain,
 neither accepted.
+
+**Handoff checkpoint (2026-11-04).** Prepared by Claude Code at Dev's direction, in place of executing the audit it describes.
+HEAD 48f466d, pushed; Dev's gate 1118 / 77 on the same tree; every accepted increment committed. Dev raised on November 4 that
+there had been no visibility of interactions with the issue tracker and that the work might not be associated with an
+important issue, or that more important ones might exist. Measured read-only: 34 open issues, no human interaction since
+2026-08-28, the one priority-next label on #51 (closed in fact on 2026-10-22), the November assertion thread answering #62
+(four of its six report-only tests asserted, the PON two suspended) uncited until 1cfc38f, #55 done in fact. The
+recommendation — a read-only reconciliation of all 34 open issues against the tree, reported in conversation, nothing filed,
+closed or commented until Dev says so — met "Correct it first"; the correction is to be asked for in the new session. Journal
+coverage reaches chapter 112 (closing commit 7495539); the twenty-one commits e241378 … 48f466d and their two Claude Code
+session records are unjournaled, named in DEVELOPMENT_HANDOFF.md. EgoActor, activation and .dcon stand as before; PON is
+suspended.

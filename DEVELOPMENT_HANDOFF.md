@@ -1,67 +1,52 @@
 # Development Handoff
 
-Prepared October 26, 2026 by Codex for a new session in either Codex or Claude Code;
-refreshed by Claude Code through November 4 after the named-construction repairs, the
-terrestrial Output repair, the report and intent json factories, the coordinate, ConsumeReport and
-sentient surfaces, the example sweep, the anchor-parameter rule, the compact fixpoint assertion, the
-mods surface gate, the widened parse scope, the removed Output hold-out, the asserted surface-loss count, the
-asserted scenario round-trip, the PON suspension and the mods missing-surface gate and the asserted parse-scope hold-back.
-This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
-this file. Git records, commits and journal chapters retain their historical evidence.
-No destination session has been launched or messaged.
+Prepared November 4, 2026 by Claude Code for a new task session in either Claude Code or Codex,
+at Dev's direction, in place of executing the issue-tracker reconciliation audit it describes
+below. It supersedes the October 26 Codex checkpoint and its November refreshes; the dated
+sections below it are the history of the increments since, kept as written. Git records, commits
+and journal chapters retain their historical evidence. No destination session has been launched
+or messaged, and no private agent memory is required.
 
 ## Start here
 
 Read DRACO.md (AGENTS.md and CLAUDE.md are symlinks), this file, and
-`.draco/skills/update-draco-docs/SKILL.md`. Inspect status and log before editing.
-Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is not required.
+`.draco/skills/update-draco-docs/SKILL.md`. Inspect `git status --short` and `git log -3` before
+editing. Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Then bring Dev ONE recommendation
+with accept-or-correct — the audit below is the proposed next task, and it is NOT yet accepted.
 
-- Branch: main. Code commits this session: **e241378**, the named-construction head repair
-  (record `git-record-2026-10-26-1449`); **9779e39**, the dyn-result increment (record
-  `git-record-2026-10-26-1534`); **112f277**, the head-keyed factory lookup (record
-  `git-record-2026-10-29-0755`), all three committed and pushed by Dev; and **c5b8089**, the
-  terrestrial Output repair (record `git-record-2026-10-29-1640`), all four committed and pushed
-  by Dev; and **e138f04**, the LocationReport json factory (record `git-record-2026-10-30-1038`), Dev-gated
-  at 947 / 74 and committed and pushed by Dev on October 30; then the sibling report factories
-  (record `git-record-2026-10-30-1113`), Dev-gated at 956 / 75 and committed and pushed by Dev as **8540341** on October 30; then the Intent json factories (record
-  `git-record-2026-10-30-2014`), Dev-gated at 967 / 76 and committed and pushed by Dev as **3a3cbfc** on October 31; then the coordinate surfaces and companions (record
-  `git-record-2026-10-31-0842`), Dev-gated at 974 / 77 and committed and pushed by Dev as **23333f3** on October 31; then the
-  example map closed as a gate (record `git-record-2026-10-31-1105`), Dev-gated at 982 / 77 and committed and pushed by Dev as **7be1497** on October 31; then the
-  example body sweep with the validator's identity comparison (record `git-record-2026-10-31-1436`), Dev-gated at 983 / 77 and committed and pushed by Dev as **ded1b5b** on October 31; then the
-  sentient surfaces (record `git-record-2026-10-31-1938`), built and verified directly on October 31 (1005 / 78 after
-  the accepted Distance correction), Dev-gated at 1005 / 77 and committed and pushed by Dev as **5f0e023** on October 31 —
-  then the anchor-parameter rule (record `git-record-2026-11-01-0831`), built and verified directly on November 1
-  (1006 / 78), Dev-gated at 1006 / 77 and committed and pushed by Dev as **ed57aa9** on November 1 — then the compact fixpoint
-  assertion (record `git-record-2026-11-01-1228`), built on November 1, verified directly on November 1 (1007 / 78), Dev-gated at 1007 / 77 and committed and pushed by Dev as **a31e49b** on November 1 — then the mods surface gate with
-  Yaml's surface (record `git-record-2026-11-02-0907`), built and verified directly on November 2 (1068 / 78), Dev-gated at 1068 / 77 and committed and
-  pushed by Dev as **8746ecd** on November 2 — then the widened DrakeParseTest mods scope (record
-  `git-record-2026-11-02-1202`), built and verified directly on November 2 (1118 / 78), Dev-gated at 1118 / 77 and committed and pushed by Dev as **a4ff2c4** on November 2 — then the removed Output hold-out
-  (record `git-record-2026-11-02-1433`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 and committed and pushed by Dev as **6a15754** on November 2 — then the asserted surface-loss count
-  (record `git-record-2026-11-02-1451`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 and committed and pushed by Dev as **b321df6** on November 2 — then the asserted scenario round-trip
-  (record `git-record-2026-11-03-0942`), built and verified directly on November 3 (1119 / 78), Dev-gated at 1119 / 77 and committed and pushed by Dev as **f4b57ae** on November 3 — then the mods missing-surface
-  gate (record `git-record-2026-11-03-1700`), built and verified directly on November 3 (1118 / 78), Dev-gated at 1118 / 77 on November 3 and committed and pushed by Dev as **1cfc38f** on November 4 — then the asserted
-  parse-scope hold-back (record `git-record-2026-11-04-1414`), built and verified directly on November 4 (1118 / 78), Dev-gated at 1118 / 77 on November 4, IN THE TREE,
-  Dev's commit pending —
-  inspect `git log -1` and `git status --short` to learn where the tree stands. Before them a8b5447 (Consumer) and 7495539
-  (the documentation handoff).
-- Latest Dev-verified gate: **1118 tests / 77 suites**, November 4, on the asserted-parse-scope-hold-back tree (in the tree, record
-  `git-record-2026-11-04-1414`): zero failed/canceled/ignored/pending tests, parse scope 110 + 73 with 0 held back (asserted), surface losses 0 across 183 types
-  (asserted), scenario 23 clean (asserted), example gate 48 match / 0 differ, every other headline unchanged, no file-only line. Before it
-  1118 / 77 on the mods-missing-surface-gate tree (1cfc38f),
-  1119 / 77 on the asserted-scenario-round-trip tree (f4b57ae), the same 1119 / 77 on the asserted-surface-loss tree (b321df6) and on the removed-hold-out tree (6a15754), 1118 / 77 on the widened-parse-scope tree (a4ff2c4), 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
-  anchor-parameter tree (ed57aa9) and 1005 / 77 on the sentient-surfaces tree (5f0e023).
-- IN THE TREE, uncommitted: the asserted parse-scope hold-back — `src/test/scala/draco/DrakeParseTest.scala` (the held-back test
-  asserts over both corpora, renamed, class doc reworded), its record `git-record-2026-11-04-1414`, the CHANGELOG entry, the DRACO.md
-  table row removed, these documents and the fold of the 1cfc38f hash. Direct run 1118 / 78, green on its first run; Dev-gated 1118 / 77 on November 4; commit pending.
-- All accepted implementation work through 1cfc38f is committed and pushed (the mods missing-surface gate, its record, the CHANGELOG entry,
-  the DRACO.md table row removed, these documents, the fold of the f4b57ae hash and the record of Dev's PON suspension, six files, November 4);
-  the tree was clean at that commit. The asserted
-  scenario round-trip (f4b57ae) carried `src/test/scala/scenario/ScenarioDrakeTest.scala` (the round-trip test fails naming each
-  rejected or drifted file, renamed, class doc reworded and corrected), its record `git-record-2026-11-03-0942`, the CHANGELOG
-  entry, the DRACO.md table row removed, these documents and the fold of the b321df6 hash.
-- Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
-  verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
-  pending, to be sourced from the session's original records.
+- **Branch** main. **Observed HEAD** 48f466d (November 4, 14:36), pushed to origin/main. **Tree** at this
+  handoff: this file, DEVELOPMENT_RESUME_PROMPT.md, DRACO.md, CHANGELOG.md and the handoff's own
+  record are modified or new (documentation only); nothing else. A later agent inspects, never assumes.
+- **Latest Dev-verified gate:** **1118 tests / 77 suites**, November 4, on the 48f466d tree: zero
+  failed/canceled/ignored/pending tests, zero aborted suites, every headline matching — parse scope
+  110 draco + 73 mods with 0 held back (asserted), surface losses 0 across 183 types (asserted),
+  scenario 23 clean (asserted), example gate 48 match / 0 differ (asserted), GenDrake 108 of 108,
+  DomainAspect and DracoAspect 110 sections, forest 1 of 2, PON 80 / 550 / 42 and 7 differ
+  (suspended measurements), rete CO-DECLARATION DROPS THE FACT. The direct run before it (every
+  discovered suite on compiled classes with main, mods and test resources on the loader roots):
+  1118 / 78 including the Runner's discovery wrapper. The procedure is at the end of this file.
+- **State of the work.** Every accepted implementation increment is committed and pushed; the
+  tree carried nothing but documentation at this handoff. Twenty-one commits since the last
+  journaled commit, all Dev-gated and Dev-committed, all Claude Code sessions (October 26 – November 4):
+  e241378, 9779e39, 112f277 (named construction); c5b8089 (terrestrial Output's Location branch);
+  e138f04, 8540341, 3a3cbfc (json factories: LocationReport, the sibling reports, the four Intents);
+  23333f3 (coordinate surfaces); 7be1497 (example map closed as a gate); ded1b5b (example body sweep,
+  validator identity compare); 5f0e023 (sentient surfaces, one accepted correction); ed57aa9
+  (anchor-parameter rule); a31e49b (compact fixpoint assertion); 8746ecd (every mods surface a gate,
+  Yaml's surface); a4ff2c4 (parse scope widened to the mods tree); 6a15754 (Output hold-out removed);
+  b321df6 (surface losses asserted zero); f4b57ae (scenario round-trip asserted); 1cfc38f (mods
+  missing-surface gate, PON suspension recorded); 48f466d (parse-scope hold-back asserted). The
+  ledger below has each one's record and gate.
+- **Two threads closed, one decision taken.** The example-tree inventory of October (every example
+  definition a trio, every companion the generator's output) is empty. The measurement-to-assertion
+  thread (October 31 – November 4) retired seven report-only figures from the DRACO.md §1 table,
+  which now holds the two PON rows and the categorical rete finding alone. PON development is
+  SUSPENDED by Dev (November 3) until Dev resumes it for integration into `draco.primes.Primes`.
+- **Journal coverage reaches chapter 112**, whose closing commit is 7495539 (October 26). The
+  twenty-one commits above and the two Claude Code sessions that produced them are NOT journaled;
+  see "Journal coverage and handoff integrity" at the end of this file for sources and procedure.
+- **The issue tracker has had no human interaction since August 28** (see the next task). The
+  recent records cite no issue but the last two, which cite #62.
 
 ## Named-construction head repair (accepted and built, October 26)
 
@@ -491,13 +476,56 @@ one test fails, naming both — `draco/Action.json: carries a codec discriminato
 domains/sentient/Gaze.drake` — 377 run, 376 passed, 1 failed (the filters drop four per-type tests); the real tree untouched.
 FOCUSED: DrakeParseTest 381, green on its first run, the console line `110 draco + 73 mods types in, 0 codec-aspect + 0 drake-less
 held back`. DIRECT RUN: 1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline. DEV'S GATE: 1118 tests / 77 suites on November 4, zero failed, canceled, ignored or pending, every headline matching, green on its
-first run. Dev's commit pending.
+first run. Committed and pushed by Dev as 48f466d on November 4.
 
-## Next design point — acceptance required
+## Next task — the issue-tracker reconciliation audit (proposed, NOT yet accepted)
 
-The asserted parse-scope hold-back is in the tree, built, verified directly and Dev-gated at 1118 / 77 on November 4, awaiting Dev's commit; after it the
-DRACO.md table holds the suspended PON pair and the categorical rete finding alone — the measurement-to-assertion thread that
-began with the example map on October 31 has no row left in scope.
+**How it arose (November 4).** Before pasting the 48f466d gate, Dev wrote: "there has been an absence
+of visibility of interactions with the project issue tracking, and it concerns me that what we are
+working on might not be associated with an important issue, or, if it is, there may be more important
+issues that require finding more important tasks for us to work on." Claude Code read the tracker
+(read-only `gh`) and recommended a reconciliation audit; Dev answered "Correct it first", then directed
+this handoff instead of the audit, "including the description of the audit task as part of the hand-off".
+The receiving session restates the task as ONE recommendation and builds only what Dev accepts.
+
+**What the tracker says today (measured November 4, read-only).** 34 open issues at
+github.com/ejb816/nexonix/issues. The last human interaction was a comment on #51 on August 26 and an
+edit of #63 on August 28; every event since is an automatic commit reference (#51 on September 8,
+October 19, 21 and 22; #61 on September 11 and 16), none after October 22. The one `priority-next`
+label sits on #51 (type expressions), whose open questions DRACO.md records as CLOSED by the October
+21–22 session (two-stage loading, the unit type, HostBindings, the swept corpus with `uses` records,
+formals in the aspect); it is still open. #62 ("Report-only tests should assert their expected
+numbers", 2026-08-13) is the issue the November assertion thread answers: of the six report-only tests
+it lists, four are now assertions at zero (example map 7be1497, surface losses b321df6, mods pending
+surfaces 1cfc38f, held-back types 48f466d), and the two PON reports stay measurements under Dev's
+suspension; only the last two records cite it. #55 (three legacy `"Seq()"` values) is done in fact — no
+definition under src/main or src/mods carries the string; the one hit is drake.dlt's prose. Everything
+else is unexamined. Memory and this file hold model-authored readings of several others (#11 Generator
+domain complete 2026-07-21; #58 `case` body element complete 2026-09-07; #42 actor emission; #43 codec
+payload emission 2026-10-18 with the discriminator still unsupported; #12 Dreams, the October Editor
+work) — readings to re-examine against the tree, not findings.
+
+**The task as recommended.** A read-only reconciliation of all 34 open issues against the tree,
+delivered IN CONVERSATION as one batched, prioritized list: for each issue, whether the tree has done
+it, done part of it, or not touched it, with the commit hash, DRACO.md paragraph or source path as
+evidence; which recent increments should have cited which issue; and which open issues are candidates
+for Dev's next priority. Sources: `gh issue view N --repo ejb816/nexonix` for bodies and comments
+(the open set is listed above by number: 63 62 61 59 58 57 55 51 50 49 47 46 43 42 41 36 35 34 33 25
+23 22 21 20 19 16 15 14 13 12 11 5), DRACO.md §3 and its dated paragraphs, the git records, and the
+code. Rules: nothing filed, closed, commented or relabeled until Dev says so — commenting on an
+existing issue needs no approval under DRACO.md §1, but after a two-month silence Dev decides the
+first touch; existing issue prose is prior model reasoning, not Dev's specification (§1); the audit
+reports, Dev prioritizes. Rejected when recommended: picking the next task from the tracker as it
+stands, since its one priority label points at closed work. Dev's "Correct it first" was not
+elaborated before the handoff was requested: the receiving session should expect a correction to the
+scope (all 34 or a subset), the delivery (conversation or a project document) or what may be done to
+the tracker, and ask for it in one sentence before restating.
+
+**Also in view, none recommended.** `domains/sentient/EgoActor.scala`, the one definition-less actor in
+the example tree (unreferenced but by a test comment and a review-ledger row; a June stub with the
+retired Actor suffix) — define under a role name or remove, Dev's decision. The journal gap below.
+Deferred, neither accepted: activation (Codex's recommendation of 2026-10-15) and the .dcon migration.
+PON is suspended. Inventory is context, not authorization.
 
 **PON is suspended (Dev, November 3).** The PON pair (PonCorpusTest's 42 discrepancies and 7 canonical differences) was measured
 after f4b57ae — 19 parse failures and 23 wrong values over a frozen 2026-06-27 document, 2 missing and 5 differing canonicals, both
@@ -506,17 +534,6 @@ instruction: the PON work will eventually be contained in the native `draco.prim
 today, and development is suspended on all PON activity until Dev explicitly resumes it for that integration. Nothing under
 `domains/pon` (suite, evaluator, corpus) is to be touched; its two rows stay in the DRACO.md table as measurements. The
 measurement is recorded in DRACO.md's dated paragraph so it need not be repeated.
-
-The asserted scenario round-trip is committed and pushed as f4b57ae at Dev's 1119 / 77 gate; the asserted surface-loss count
-before it as b321df6 at Dev's 1119 / 77 gate, the removed Output hold-out as 6a15754 at Dev's 1119 / 77 gate, the widened parse scope as a4ff2c4 at Dev's 1118 / 77 gate, the mods
-surface gate as 8746ecd at Dev's 1068 / 77 gate. Nothing from the sentient, anchor-parameter, compact-fixpoint,
-mods-surface or parse-scope threads remains preserved. In view,
-measured and not recommended: `EgoActor.scala`, the one definition-less actor left in the example tree (unreferenced, a
-June stub, the retired Actor suffix in its name) — define under a role name or remove, Dev's decision. Deferred activation and the .dcon migration remain deferred and unaccepted. Inventory
-is context, not authorization.
-
-Receiving agent: bring one point as a recommendation with accept-or-correct; build only what Dev
-accepts.
 
 ## Operating boundaries
 
@@ -596,7 +613,7 @@ row now an assertion, pending mods definitions 0; Dev's full gate 1119 / 77 on N
 definitions 0; committed and pushed as f4b57ae. The mods missing-surface gate's direct run (November 3, record 2026-11-03-1700):
 1118 / 78 including discovery, zero failed or aborted, green on its first run, every row unchanged, DrakeGenTest 184 to 183, no
 file-only line; Dev's full gate 1118 / 77 on November 3, every headline matching; committed and pushed as 1cfc38f on November 4. The asserted
-parse-scope hold-back's direct run (November 4, record 2026-11-04-1414): 1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline; Dev's full gate 1118 / 77 on November 4, every headline matching; commit pending.
+parse-scope hold-back's direct run (November 4, record 2026-11-04-1414): 1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline; Dev's full gate 1118 / 77 on November 4, every headline matching; committed and pushed as 48f466d on November 4.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -641,7 +658,7 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | b321df6 | DrakeParseTest's surface-loss measurement asserts zero and its DRACO.md table row leaves; negative probe 380 / 1 on a scratch tree; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2 | 2026-11-02-1451 |
 | f4b57ae | ScenarioDrakeTest's round-trip asserts, naming each rejected or drifted scenario surface, its class doc corrected and its DRACO.md table row gone; negative probe 1 rejected / 1 drifted on a scratch tree; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 3 | 2026-11-03-0942 |
 | 1cfc38f | DrakeGenTest's mods walk takes the main walk's form, a missing mods surface failing its type's test by path, the report-only file-only pending count retired and its DRACO.md table row gone; negative probe 182 / 1 on a scratch tree; PON suspension recorded; no engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 3 | 2026-11-03-1700 |
-| (in tree) | DrakeParseTest's held-back test asserts zero over both corpora, naming each held-back definition, its DRACO.md table row gone; negative probe 376 / 1 on a scratch tree; no test count, engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 4 | 2026-11-04-1414 |
+| 48f466d | DrakeParseTest's held-back test asserts zero over both corpora, naming each held-back definition, its DRACO.md table row gone; negative probe 376 / 1 on a scratch tree; no test count, engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 4 | 2026-11-04-1414 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
@@ -734,24 +751,31 @@ console grep plus file-only grep only after the direct run passes and headlines 
 
 ## Journal coverage and handoff integrity
 
-DRACO.md and README.md markers now reach **chapter 112**. Read chapters 105–112 and
-`sources/codex-2026-10-22-to-26-audit.md` for this receiving session’s decisions and verification.
-The extract preserves 85 original messages: 43 user (19 assertive, 24 result receipts),
-42 final replies, 42 completed exchanges and the open journal-recovery acceptance. Original
-records survive both observed compactions; no missing original was detected in this bounded
-sequence. The current maintenance pass’s final reply is outside the frozen prefix.
+DRACO.md and README.md markers reach **chapter 112**, whose closing commit is 7495539 (October 26,
+the Codex documentation handoff). Chapters 105–112 and `sources/codex-2026-10-22-to-26-audit.md`
+preserve the Codex session of October 22–26 from original records (85 messages, both compactions
+survived); chapter 105 renders the previous Claude handoff close from
+`sources/claude-2026-10-22-handoff-close.jsonl`. Chapter 112 preserves Dev's correction of the
+premature "handoff ready" claim of October 26.
 
-The previous Claude handoff close is recovered in `sources/claude-2026-10-22-handoff-close.jsonl`
-and rendered in chapter 105: two replies and Dev’s documentation commit/push receipt. The
-prior 55-record extract was verified against source; chapters 100–104’s historical statuses
-remain unchanged. Chapter 104 correctly leaves Presence open at its own historical boundary.
+**Uncovered: the twenty-one commits e241378 … 48f466d (October 26 – November 4) and the two Claude
+Code sessions that produced them.** Chapter 113 onward is unwritten. Sources, on this machine only:
+the session records under `/Users/edwardburke/.claude/projects/-Users-edwardburke-IdeaProjects-nexonix/`
+— `f12792d4-b3c1-4ac3-b8f9-c2853199c07f.jsonl` (first message 2026-10-26 18:17 UTC, last 2026-11-03;
+the named-construction, factory, surface, sweep and assertion increments through f4b57ae) and
+`9e3f32b7-12cf-465c-9205-6fe4da31855e.jsonl` (first message 2026-11-03 20:54 UTC; the PON
+suspension, 1cfc38f, 48f466d and this handoff). Other files in that directory carry recent
+modification times but belong to earlier sessions; identify a source by its first timestamp, not its
+mtime. Both sessions were compacted at least once; the compaction summaries are working context, never
+quotation evidence — recover the original messages from the records, as chapters 93–94 and 105–112
+did (a bounded extract with source identity, sequence, timestamps and hashes under `sources/`, user
+prompts verbatim, final replies near-verbatim, tool results excluded). The git records
+`git-record-2026-10-26-1449` through `git-record-2026-11-04-1414` and the dated DRACO.md paragraphs
+carry each increment's measurements and Dev's acceptance quotes, and support record-backed Status
+summaries where dialogue is not recovered. Journal maintenance is a task of its own and is NOT
+authorized by this handoff; Dev requests it.
 
-The initial October 26 handoff omitted journal maintenance. Dev challenged that omission,
-and accepted recovering the original exchanges here. Chapter 112 preserves that correction.
-No compaction summary was used as quotation evidence. Git records supplement explicitly
-labeled Status notes, including Observable’s failed direct run and subsequent binding fix.
-
-Checks: source-line/timestamp/hash verification, exchange and compaction-boundary checks,
-chapter text/index/link checks, documentation reconciliation, shared symlinks and whitespace.
-Only documentation and bounded dialogue extracts change; no runtime/tests, sbt, commits,
-pushes, new issues or private-memory modifications by Codex. No new implementation gate claimed.
+Checks at this handoff: `git status`/`git log` inspected; DRACO.md, this file, the resume prompt and
+CHANGELOG aligned with 48f466d; the link checker run (both agent links OK); no runtime, test, sbt,
+commit, push, issue or tracker change by the agent. No new implementation gate is claimed beyond Dev's
+1118 / 77 of November 4.

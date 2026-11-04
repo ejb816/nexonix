@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- Prepare the shared handoff (DEVELOPMENT_HANDOFF.md, DEVELOPMENT_RESUME_PROMPT.md) for a new task session in either
+  agent at 48f466d, with the issue-tracker reconciliation audit described as the proposed, not yet accepted, next task:
+  34 open issues, no human interaction since 2026-08-28, the November assertion thread answering #62. Documentation only.
 - Assert DrakeParseTest's held-back count at zero: the report-only test listing the definitions filtered out of the parser's
   round-trip gates (a codec discriminator, no `.drake` surface) now computes both lists over the main and the mods corpus
   and fails naming each held-back path; the row leaves the DRACO.md table as the seventh measurement to become an

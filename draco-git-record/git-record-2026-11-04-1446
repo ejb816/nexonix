@@ -1,0 +1,33 @@
+Prepare the shared handoff for a new task session, with the issue-tracker reconciliation audit as the proposed next task
+
+Dev directed, in these words: "Instead of executing the audit, do a comprehensive hand-off for starting a new task session
+in either Claude Code or Codex, including the description of the audit task as part of the hand-off." Documentation only:
+no engine, definition, Scala, test, sbt, issue or tracker change.
+
+Context. Before pasting the 48f466d gate on 2026-11-04 Dev wrote: "there has been an absence of visibility of interactions
+with the project issue tracking, and it concerns me that what we are working on might not be associated with an important
+issue, or, if it is, there may be more important issues that require finding more important tasks for us to work on."
+Claude Code read the tracker read-only: 34 open issues; the last human interaction a comment on #51 (2026-08-26) and an edit
+of #63 (2026-08-28); every later event an automatic commit reference, none after 2026-10-22; the one priority-next label on
+#51, whose open questions the tree closed on 2026-10-22; #62 the issue the November assertion thread answers (four of its six
+report-only tests now assertions, the two PON reports suspended), uncited until the records of 1cfc38f and 48f466d; #55 done in
+fact. It recommended a read-only reconciliation of all 34 open issues against the tree, reported in conversation as one
+batched, prioritized list with evidence, nothing filed, closed or commented until Dev says so. Dev answered "Correct it first"
+and, asked what to correct, directed this handoff instead; the correction is not yet known, and the handoff says so.
+
+Written. DEVELOPMENT_HANDOFF.md: a new header and "Start here" checkpoint (HEAD 48f466d, the tree, Dev's 1118 / 77 gate and
+the headlines, the twenty-one commits since the last journaled commit, the two closed threads and the PON decision, the
+journal gap, the tracker silence); the "Next design point" section replaced by "Next task — the issue-tracker reconciliation
+audit (proposed, NOT yet accepted)", carrying Dev's words, the tracker measurement, the task as recommended with its sources
+and rules, the expected correction, and the rest of the inventory (EgoActor, the journal, activation, .dcon, PON); the
+"Journal coverage and handoff integrity" section rewritten — coverage to chapter 112 at 7495539, the uncovered range
+e241378 … 48f466d, the two session records that are its sources (identified by first timestamp, not mtime), the extraction
+precedent, and that journal maintenance is not authorized by the handoff. The dated increment sections, operating
+boundaries, evidence, ledger, durable decisions and direct-run procedure stand as written. DEVELOPMENT_RESUME_PROMPT.md: a
+new head — state, the proposed task with Dev's concern and the instruction to ask for the correction first — above the
+unchanged history; the stale chapter-113 sentence removed. DRACO.md: a dated handoff-checkpoint paragraph at the end and the
+§5 documentation-status line for the handoff. CHANGELOG: one entry. The fold of the 48f466d hash into the three documents,
+written after Dev's commit, rides in this commit.
+
+Not done, by design: the audit itself; any journal chapter; any issue comment, label or closure. Checks: link checker
+(AGENTS.md and CLAUDE.md -> DRACO.md OK); git status shows documentation only; no runtime change.
