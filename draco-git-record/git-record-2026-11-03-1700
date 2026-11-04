@@ -1,0 +1,58 @@
+Give the mods drake walk the main walk's gate and retire its file-only pending count
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being to give DrakeGenTest's mods walk the
+main walk's form exactly: a per-type test for every definition under src/mods/resources, failing with the missing
+surface's path when there is none, the report-only test "mods definitions still lacking a .drake" retired with its
+file-only headline, the row leaving the DRACO.md §1 table as the sixth measurement to become an assertion, and the
+trailing `grep -c "pending .drake authoring (0)"` leaving Dev's gate block, since a missing surface now fails the suite
+outright. Test count moves by one, 1119 to 1118; no engine, definition or Scala change.
+
+Why. The two walks of DrakeGenTest differed in shape. The main walk (src/main/resources/draco) creates one test per
+definition and fails it with "missing X.drake" when the surface is absent. The mods walk — since 8746ecd on
+2026-11-02 over every mods definition, actors under domains alone from 2026-09-10 — created a test only for the
+definitions that already had a surface and counted the rest in a log line that always succeeded: "mods definitions
+pending .drake authoring (N)", report-only since 1295a82 on 2026-07-17, written to target/test-output/DrakeGenTest.log
+and to no console, read only by the trailing grep of Dev's gate block (the lone `1` at the end of each pasted gate).
+No other gate sees a missing mods surface: DrakeParseTest's mods walk collects .json for the definition direction and
+.drake for the surface direction, so a definition with no surface simply has no surface test, and the surface-loss
+assertion compares a definition with the parse of its own emission, needing no file. The count has been zero since
+Yaml took its surface in 8746ecd. With PON suspended by Dev's decision earlier today (see DRACO.md's dated paragraph),
+this was the one report-only row left in the table with a settled value.
+
+Rejected: asserting inside the pending test and keeping the headline — two mechanisms for one rule where the main
+walk has one, and a file-only line nobody is obliged to read, the kind of figure the table exists to retire.
+
+MEASURED before recommending: 73 .json and 73 .drake under src/mods/resources, none missing; the main walk's
+`readDrake(...).getOrElse(fail(s"missing $drakePath"))`; the mods walk's guard and report; DrakeParseTest's two
+collections; the headline's history (1295a82, relabeled in 8746ecd). MEASURED after building, a NEGATIVE PROBE on a
+scratch project tree (copied main, mods and test resources, copies of the sbt class directories with the current
+resources overlaid and the hidden anchors removed, the rewritten suite compiled into the copied test classes) with one
+mods surface removed, draco/format/yaml/Yaml.drake: the suite fails exactly one test, `mods draco/format/yaml/Yaml.json:
+Drake.emit matches draco/format/yaml/Yaml.drake` with `missing mods draco/format/yaml/Yaml.drake`, 182 passed, 1 failed.
+The real tree was untouched throughout.
+
+Built as measured. In src/test/scala/draco/DrakeGenTest.scala the mods walk creates a test for every mods .json;
+`readModsDrake` mirrors `readDrake`, and the test fails `missing mods <path>` when it returns nothing; the guard and the
+report-only test are gone; the section comment dates the three states (actors only to 2026-11-02, surfaced definitions
+gated and the rest counted to 2026-11-03, every definition gated since). DRACO.md: the §1 table loses its DrakeGenTest
+row and the sentence introducing the table no longer names a file-only exception; the assertions paragraph names the
+sixth; the lead carries the new count. The CHANGELOG entry, DEVELOPMENT_HANDOFF.md (section, next point, evidence row
+relabeled, ledger row, the procedure's step 6) and DEVELOPMENT_RESUME_PROMPT.md are updated; the handed gate block drops
+its trailing grep.
+
+Also in this commit: the fold of the f4b57ae hash into DRACO.md, DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md,
+written after Dev's commit this morning; and the record of Dev's decision of 2026-11-03 suspending all PON development
+until Dev resumes it for integration into draco.primes.Primes — the measurement of the PON pair (19 parse failures and
+23 wrong values, 2 missing and 5 differing canonicals, constant since 87a2bb9) and the withdrawn recommendation to
+assert it, in DRACO.md's rule, assertions paragraph and dated paragraph, the handoff and the resume prompt. Nothing
+under domains/pon changed.
+
+OBSERVED, not recommended, unchanged from the records before: `src/mods/scala/domains/sentient/EgoActor.scala` is a
+hand-written actor over Ego with no definition — a role-named definition or removal is Dev's decision. Deferred,
+neither accepted: activation (the Codex recommendation of 2026-10-15); the .dcon migration.
+
+Verification: the focused suite first, the rewritten file compiled against the compiled classes of the last direct
+run with current resources overlaid — DrakeGenTest 183 tests (110 main, 73 mods), green on its first run; then the
+negative probe above. Then every discovered suite on freshly compiled classes with current main, mods and test
+resources on the loader roots: 1118 tests / 78 suites including the Runner's discovery wrapper, zero failed, canceled, ignored, pending or aborted, green on its first run — DrakeGenTest 184 to 183 the only per-suite change, every other suite's count unchanged from f4b57ae. Headlines: parse scope 110 draco + 73 mods, surface losses 0 across 183 types (asserted), scenario 23 clean (asserted), example gate 48 match / 0 differ / 0 error / 0 missing of 48 (asserted), DomainAspect and DracoAspect 110 sections each, GenDrake 108 of 108, forest 1 of 2, PON 80 / 550 / 42 and 7 differ (suspended, unchanged), rete CO-DECLARATION DROPS THE FACT; no "pending .drake" line anywhere in the run's log. Dev's full sbt gate on 2026-11-03 (17:28): 1118 tests / 77 suites, zero
+failed, canceled, ignored or pending, every headline matching, green on its first run, no file-only line to read. Commit pending.

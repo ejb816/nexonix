@@ -92,15 +92,17 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
     }
   }
 
-  // --- Mods definitions: Drake.emit matches every authored surface under src/mods/resources ---
+  // --- Mods definitions: Drake.emit matches the authored surface of every definition under src/mods/resources ---
   //
   // The staged draco definitions (dreams, service, format/yaml) and the example domains live
   // under src/mods/resources, outside the draco walk above. From 2026-09-10 to 2026-11-02 only
   // the ACTOR definitions under domains were gated here, the plain and rule mods types named
   // "a later pass" that never came; since 2026-11-02 every mods definition with an authored
-  // .drake gets the same exact-match test as the main corpus, and the report-only headline
-  // counts every mods definition still lacking one — zero, Yaml having taken its surface the
-  // same day. The log phrase "pending .drake authoring" is kept, the gate grep reading it.
+  // .drake gets the same exact-match test as the main corpus. Until 2026-11-03 a definition
+  // WITHOUT a surface was not a failure but a count in a report-only, file-only log line
+  // ("mods definitions pending .drake authoring (N)", zero since Yaml took its surface on
+  // 2026-11-02, read only by a grep over this suite's log); since 2026-11-03 the walk has the
+  // main walk's form exactly — one test per definition, a missing surface failing it by path.
 
   private val modsResourceRoot =
     Paths.get(Main.roots.sourceRoot.resolve(java.net.URI.create("../../mods/resources/")))
@@ -123,27 +125,24 @@ class DrakeGenTest extends AnyFunSuite with PersistentTestLog {
 
   private val modsPaths: Seq[String] = discoverModsPaths()
 
-  modsPaths.foreach { rp =>
-    val drakePath = deriveDrakePath(rp)
-    if (Files.isRegularFile(modsResourceRoot.resolve(drakePath))) {
-      test(s"mods $rp: Drake.emit matches $drakePath (whitespace-normalized)") {
-        val td = loadModsTypeDefinition(rp)
-        assert(td != TypeDefinition.Null, s"failed to parse mods $rp")
-        val authored = new String(Files.readAllBytes(modsResourceRoot.resolve(drakePath)))
-        val genNorm  = normalize(Drake.emit(td))
-        val handNorm = normalize(authored)
-        if (genNorm != handNorm) {
-          log.info(s"\n--- mods $rp: emitted (normalized) ---\n$genNorm")
-          log.info(s"\n--- $drakePath: hand-authored (normalized) ---\n$handNorm")
-          fail(s"mods $rp: emitted drake differs from hand-authored $drakePath.\n" + diffReport(handNorm, genNorm))
-        }
-      }
-    }
+  private def readModsDrake(drakePath: String): Option[String] = {
+    val path = modsResourceRoot.resolve(drakePath)
+    if (Files.isRegularFile(path)) Some(new String(Files.readAllBytes(path))) else None
   }
 
-  test("mods definitions still lacking a .drake (report only)") {
-    val pending = modsPaths.filterNot(rp => Files.isRegularFile(modsResourceRoot.resolve(deriveDrakePath(rp))))
-    log.info(s"mods definitions pending .drake authoring (${pending.size}): ${pending.mkString(", ")}")
-    succeed
+  modsPaths.foreach { rp =>
+    val drakePath = deriveDrakePath(rp)
+    test(s"mods $rp: Drake.emit matches $drakePath (whitespace-normalized)") {
+      val td = loadModsTypeDefinition(rp)
+      assert(td != TypeDefinition.Null, s"failed to parse mods $rp")
+      val authored = readModsDrake(drakePath).getOrElse(fail(s"missing mods $drakePath"))
+      val genNorm  = normalize(Drake.emit(td))
+      val handNorm = normalize(authored)
+      if (genNorm != handNorm) {
+        log.info(s"\n--- mods $rp: emitted (normalized) ---\n$genNorm")
+        log.info(s"\n--- $drakePath: hand-authored (normalized) ---\n$handNorm")
+        fail(s"mods $rp: emitted drake differs from hand-authored $drakePath.\n" + diffReport(handNorm, genNorm))
+      }
+    }
   }
 }

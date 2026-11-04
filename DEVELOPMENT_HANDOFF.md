@@ -4,8 +4,8 @@ Prepared October 26, 2026 by Codex for a new session in either Codex or Claude C
 refreshed by Claude Code through November 3 after the named-construction repairs, the
 terrestrial Output repair, the report and intent json factories, the coordinate, ConsumeReport and
 sentient surfaces, the example sweep, the anchor-parameter rule, the compact fixpoint assertion, the
-mods surface gate, the widened parse scope, the removed Output hold-out, the asserted surface-loss count and the
-asserted scenario round-trip.
+mods surface gate, the widened parse scope, the removed Output hold-out, the asserted surface-loss count, the
+asserted scenario round-trip, the PON suspension and the mods missing-surface gate.
 This checkpoint supersedes the accumulated historical checkpoints in earlier versions of
 this file. Git records, commits and journal chapters retain their historical evidence.
 No destination session has been launched or messaged.
@@ -38,19 +38,23 @@ Use DEVELOPMENT_RESUME_PROMPT.md as the opening prompt. Private agent memory is 
   `git-record-2026-11-02-1202`), built and verified directly on November 2 (1118 / 78), Dev-gated at 1118 / 77 and committed and pushed by Dev as **a4ff2c4** on November 2 — then the removed Output hold-out
   (record `git-record-2026-11-02-1433`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 and committed and pushed by Dev as **6a15754** on November 2 — then the asserted surface-loss count
   (record `git-record-2026-11-02-1451`), built and verified directly on November 2 (1119 / 78), Dev-gated at 1119 / 77 and committed and pushed by Dev as **b321df6** on November 2 — then the asserted scenario round-trip
-  (record `git-record-2026-11-03-0942`), built and verified directly on November 3 (1119 / 78), Dev-gated at 1119 / 77 on November 3, in the tree with Dev's commit pending —
+  (record `git-record-2026-11-03-0942`), built and verified directly on November 3 (1119 / 78), Dev-gated at 1119 / 77 and committed and pushed by Dev as **f4b57ae** on November 3 — then the mods missing-surface
+  gate (record `git-record-2026-11-03-1700`), built and verified directly on November 3 (1118 / 78), Dev-gated at 1118 / 77 on November 3, IN THE TREE,
+  Dev's commit pending —
   inspect `git log -1` and `git status --short` to learn where the tree stands. Before them a8b5447 (Consumer) and 7495539
   (the documentation handoff).
-- Latest Dev-verified gate: **1119 tests / 77 suites**, November 3, on the asserted-scenario-round-trip tree (uncommitted, record
-  `git-record-2026-11-03-0942`): zero failed/canceled/ignored/pending tests, parse scope
-  110 + 73, surface losses 0 across 183 types (asserted), scenario 23 clean (asserted), example gate 48 match / 0 differ, every other headline
-  unchanged, pending mods definitions 0. Before it the same 1119 / 77 on the asserted-surface-loss tree (b321df6) and on the removed-hold-out tree (6a15754), 1118 / 77 on the widened-parse-scope tree (a4ff2c4), 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
+- Latest Dev-verified gate: **1118 tests / 77 suites**, November 3, on the mods-missing-surface-gate tree (in the tree, record
+  `git-record-2026-11-03-1700`): zero failed/canceled/ignored/pending tests, parse scope 110 + 73, surface losses 0 across 183 types
+  (asserted), scenario 23 clean (asserted), example gate 48 match / 0 differ, every other headline unchanged, no file-only line. Before it
+  1119 / 77 on the asserted-scenario-round-trip tree (f4b57ae), the same 1119 / 77 on the asserted-surface-loss tree (b321df6) and on the removed-hold-out tree (6a15754), 1118 / 77 on the widened-parse-scope tree (a4ff2c4), 1068 / 77 on the mods-surface-gate tree (8746ecd), 1007 / 77 on the compact-fixpoint tree (a31e49b), 1006 / 77 on the
   anchor-parameter tree (ed57aa9) and 1005 / 77 on the sentient-surfaces tree (5f0e023).
-- All accepted implementation work through b321df6 is committed and pushed; the tree was clean at that commit. In the
-  tree since, uncommitted, gated by Dev at 1119 / 77 on November 3 (no count moved) with the commit pending: the asserted scenario round-trip —
-  `src/test/scala/scenario/ScenarioDrakeTest.scala` (the round-trip test fails naming each rejected or drifted file, renamed,
-  class doc reworded and corrected), its record `git-record-2026-11-03-0942`, the CHANGELOG entry, the DRACO.md table row
-  removed, these documents and the fold of the b321df6 hash.
+- IN THE TREE, uncommitted: the mods missing-surface gate — `src/test/scala/draco/DrakeGenTest.scala` (the mods walk in the
+  main walk's form, the report-only test gone), its record `git-record-2026-11-03-1700`, the CHANGELOG entry, the DRACO.md
+  table row removed, these documents, the fold of the f4b57ae hash and the record of Dev's PON suspension. Dev-gated 1118 / 77 on November 3; commit pending.
+- All accepted implementation work through f4b57ae is committed and pushed; the tree was clean at that commit. The asserted
+  scenario round-trip (f4b57ae) carried `src/test/scala/scenario/ScenarioDrakeTest.scala` (the round-trip test fails naming each
+  rejected or drifted file, renamed, class doc reworded and corrected), its record `git-record-2026-11-03-0942`, the CHANGELOG
+  entry, the DRACO.md table row removed, these documents and the fold of the b321df6 hash.
 - Journal coverage reaches chapter 112. The October 26 Claude Code session (handoff receipt,
   verification of the reading, the accepted repair) is NOT yet journaled: chapter 113 is
   pending, to be sourced from the session's original records.
@@ -432,12 +436,46 @@ Compound` and `DRIFTED ash/RootInterface.drake`, headline 23 files, 1 rejected, 
 FOCUSED: ScenarioDrakeTest 1, green on its first run. DIRECT RUN: 1119 tests / 78 suites including discovery, zero failed,
 canceled, ignored, pending or aborted, green on its first run, every suite's count unchanged, every headline unchanged, pending
 mods definitions 0. DEV'S GATE: 1119 tests / 77 suites on November 3, zero failed, canceled, ignored or pending, every headline
-matching, pending mods definitions 0, green on its first run. Commit pending.
+matching, pending mods definitions 0, green on its first run. Committed and pushed by Dev as f4b57ae.
+
+## The mods drake walk takes the main walk's gate and its file-only pending count retires (accepted and built, November 3; direct run 1118 / 78, Dev's gate 1118 / 77)
+
+Dev accepted: "Accepted, build it" on the point raised after the PON suspension. WHY: DrakeGenTest's two walks differed in
+shape. The main walk creates one test per definition under src/main/resources/draco and fails it with "missing X.drake" when the
+surface is absent; the mods walk (every mods definition since 8746ecd, actors under domains alone from 2026-09-10) created a
+test only for definitions that already had a surface and counted the rest in "mods definitions pending .drake authoring (N)" —
+report-only since 1295a82 (2026-07-17), written to target/test-output/DrakeGenTest.log and to no console, read only by the
+trailing `grep -c` of Dev's gate block. No other gate sees a missing mods surface (DrakeParseTest's mods walk collects .json
+for the definition direction and .drake for the surface direction; the surface-loss assertion needs no file). The count has
+been zero since Yaml took its surface. BUILT: the mods walk creates a test for every mods .json, `readModsDrake` mirroring
+`readDrake`, the test failing `missing mods <path>`; the guard and the report-only test are gone; the section comment dates
+the three states. DRACO.md: the §1 table loses its DrakeGenTest row (the table now holds the parse-scope row, the suspended
+PON pair and the categorical rete row), the table's lead sentence no longer names a file-only exception, the assertions
+paragraph names the sixth, the lead carries 1118. The gate block drops its trailing grep. Test count 1119 to 1118; no engine,
+definition or Scala change. REJECTED: asserting inside the pending test and keeping the file-only headline. NEGATIVE PROBE
+after building, on a scratch project tree (copied main, mods and test resources; copies of the sbt class directories with the
+current resources overlaid and hidden anchors removed; the rewritten suite compiled into the copied test classes) with
+draco/format/yaml/Yaml.drake removed: exactly one test fails, `mods draco/format/yaml/Yaml.json: Drake.emit matches
+draco/format/yaml/Yaml.drake` with `missing mods draco/format/yaml/Yaml.drake`, 182 passed / 1 failed; the real tree untouched.
+FOCUSED: DrakeGenTest 183 (110 main, 73 mods), green on its first run. DIRECT RUN: 1118 / 78 including discovery, green on its first run, every headline unchanged, DrakeGenTest 184 to 183 the only per-suite change. DEV'S GATE: 1118 tests / 77 suites on November 3, zero failed, canceled, ignored or pending, every headline
+matching, green on its first run, no file-only line to read. Dev's commit pending.
 
 ## Next design point — acceptance required
 
-The asserted scenario round-trip is in the tree, gated by Dev at 1119 / 77 with the commit pending; the asserted surface-loss count
-before it is committed and pushed as b321df6 at Dev's 1119 / 77 gate, the removed Output hold-out as 6a15754 at Dev's 1119 / 77 gate, the widened parse scope as a4ff2c4 at Dev's 1118 / 77 gate, the mods
+The mods missing-surface gate is in the tree, built, verified directly and Dev-gated at 1118 / 77 on November 3, awaiting Dev's commit;
+after it the DRACO.md table holds the parse-scope row (a count that moves legitimately with the corpus), the suspended PON pair
+and the categorical rete finding — no measurement with a tail remains in scope.
+
+**PON is suspended (Dev, November 3).** The PON pair (PonCorpusTest's 42 discrepancies and 7 canonical differences) was measured
+after f4b57ae — 19 parse failures and 23 wrong values over a frozen 2026-06-27 document, 2 missing and 5 differing canonicals, both
+counts constant since 87a2bb9 — and the recommendation to assert them per category and retire the rows was WITHDRAWN on Dev's
+instruction: the PON work will eventually be contained in the native `draco.primes.Primes` domain; it sits in `domains.pon.Pon`
+today, and development is suspended on all PON activity until Dev explicitly resumes it for that integration. Nothing under
+`domains/pon` (suite, evaluator, corpus) is to be touched; its two rows stay in the DRACO.md table as measurements. The
+measurement is recorded in DRACO.md's dated paragraph so it need not be repeated.
+
+The asserted scenario round-trip is committed and pushed as f4b57ae at Dev's 1119 / 77 gate; the asserted surface-loss count
+before it as b321df6 at Dev's 1119 / 77 gate, the removed Output hold-out as 6a15754 at Dev's 1119 / 77 gate, the widened parse scope as a4ff2c4 at Dev's 1118 / 77 gate, the mods
 surface gate as 8746ecd at Dev's 1068 / 77 gate. Nothing from the sentient, anchor-parameter, compact-fixpoint,
 mods-surface or parse-scope threads remains preserved. In view,
 measured and not recommended: `EgoActor.scala`, the one definition-less actor left in the example tree (unreferenced, a
@@ -460,6 +498,8 @@ accepts.
 - New GitHub issues require explicit approval. None created during this session.
 - Definitions move as Drake/JSON/generated-Scala trios. Every val in an App object must be lazy.
   The canonical corpus remains free of comparison exclusions.
+- PON development is SUSPENDED (Dev, November 3) until Dev explicitly resumes it for integration into
+  `draco.primes.Primes`: do not assert, re-baseline or edit PonCorpusTest, `domains.pon.Pon` or the prime-ordinal corpus.
 - Activation and .dcon migration remain deferred. No new transforms, geodesy redesign,
   Haskell target, or wholesale example sweep is authorized. Existing issue prose is prior
   model reasoning, not Dev's specification. Persistence belongs to the consuming project;
@@ -486,12 +526,12 @@ parameter; the second run was green.
 | Example generation | 48 match, 0 differ, 0 error, 0 missing / 48 — ASSERTED since October 31 (39 / 9 before the ConsumeReport trios and nine companions, 37 / 11 before the coordinate companions, 36 / 12 before the Output repair) |
 | Surface losses (ASSERTED zero since 2026-11-02) | 0 fields across 183 types (158 before the widened mods scope, 147 before the sentient surfaces, 143 before the ConsumeReport surfaces, 141 before the coordinate surfaces, 137 before the Intent surfaces, 134 before the sibling surfaces, 133 before LocationReport's) |
 | Parse scope | 110 draco + 73 mods, 0 held back (48 before the widened mods scope, 37 before the sentient surfaces, 33 before the ConsumeReport surfaces, 31 before the coordinate surfaces, 27 before the Intent surfaces, 24 before the sibling surfaces, 23 before LocationReport's) |
-| PON | 80 numbers, 550 expressions, 42 discrepancies |
-| Canonical PON | 80 numbers, 7 differ |
+| PON (SUSPENDED by Dev, November 3; report-only, not to be asserted) | 80 numbers, 550 expressions, 42 discrepancies (19 parse, 23 value, 0 sequence; constant since 87a2bb9) |
+| Canonical PON (same) | 80 numbers, 7 differ (2 missing, 5 differing form) |
 | Scenario (ASSERTED since 2026-11-03) | 23 files, 0 rejected, 0 drifted, 23 clean |
 | Forest | 1 of 2 ash alarms crossed to birch |
 | Subtype visibility | CO-DECLARATION DROPS THE FACT |
-| Pending mods definitions (actors only before November 2) | 0; file-only target/test-output/DrakeGenTest.log |
+| Pending mods definitions (ASSERTED since November 3: a missing mods surface fails its type's test by path; actors only before November 2) | 0 — no file-only line remains |
 
 The example sweep's direct run (October 31, record 2026-10-31-1436): 983 / 78 including discovery, every
 row above unchanged; Dev's full gate 983 / 77 on October 31, every row matching. The sentient surfaces' direct run
@@ -520,7 +560,9 @@ surface-loss row now an assertion, pending mods definitions 0; Dev's full gate 1
 pending mods definitions 0; committed and pushed as b321df6. The asserted scenario round-trip's direct run (November 3, record
 2026-11-03-0942): 1119 / 78 including discovery, zero failed or aborted, green on its first run, every row unchanged, the scenario
 row now an assertion, pending mods definitions 0; Dev's full gate 1119 / 77 on November 3, every headline matching, pending mods
-definitions 0, commit pending.
+definitions 0; committed and pushed as f4b57ae. The mods missing-surface gate's direct run (November 3, record 2026-11-03-1700):
+1118 / 78 including discovery, zero failed or aborted, green on its first run, every row unchanged, DrakeGenTest 184 to 183, no
+file-only line; Dev's full gate 1118 / 77 on November 3, every headline matching; commit pending.
 
 Do not infer the last row from console output. The example map is a gate since October 31
 (ExampleDomainsGenTest asserts zero differ, error and missing); individual repaired types also
@@ -563,7 +605,8 @@ commits and pushes were performed by Dev after his full gate. Records live in dr
 | a4ff2c4 | DrakeParseTest's mods walk widened to the whole mods tree, three comments reworded; two table rows moved; no engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 2 | 2026-11-02-1202 |
 | 6a15754 | DrakeParseTest's `inlineTupleArgument` hold-out removed, Output under the definition gate; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2 | 2026-11-02-1433 |
 | b321df6 | DrakeParseTest's surface-loss measurement asserts zero and its DRACO.md table row leaves; negative probe 380 / 1 on a scratch tree; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 2 | 2026-11-02-1451 |
-| (in the tree) | ScenarioDrakeTest's round-trip asserts, naming each rejected or drifted scenario surface, its class doc corrected and its DRACO.md table row gone; negative probe 1 rejected / 1 drifted on a scratch tree; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 3, commit pending | 2026-11-03-0942 |
+| f4b57ae | ScenarioDrakeTest's round-trip asserts, naming each rejected or drifted scenario surface, its class doc corrected and its DRACO.md table row gone; negative probe 1 rejected / 1 drifted on a scratch tree; no engine, definition or Scala change (Claude Code) | direct run 1119 / 78; Dev gate 1119 / 77 on November 3 | 2026-11-03-0942 |
+| (in tree) | DrakeGenTest's mods walk takes the main walk's form, a missing mods surface failing its type's test by path, the report-only file-only pending count retired and its DRACO.md table row gone; negative probe 182 / 1 on a scratch tree; PON suspension recorded; no engine, definition or Scala change (Claude Code) | direct run 1118 / 78; Dev gate 1118 / 77 on November 3 | 2026-11-03-1700 |
 
 Starting HEAD was 4dcef69, the documentation handoff after 7b1bfea (849 / 60).
 EXAMPLE_DOMAIN_AUDIT.md is a historical read-only audit at 375c513, not a current snapshot.
@@ -647,7 +690,7 @@ steps. Reconstruct only the compile/test procedure below if those files are miss
    Put test classes on Runner's runpath, not the JVM classpath; this matters for isolated runtime
    compilation/class loading. Capture stdout. Existing ZeroMQ tests need local sockets and may
    require sandbox permission. Run every discovered suite, not just a remembered subset.
-6. Check all headlines above, the file-only mods actor line, and git status/diff afterwards.
+6. Check all headlines above and git status/diff afterwards (no file-only line remains since November 3).
    Some tests generate files into source trees; PrimesRulesTest must remain scoped. Never
    revert such output blindly, especially when preserving another agent's edits.
 

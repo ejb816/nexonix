@@ -44,14 +44,21 @@ does not extend `App`.
 
 **Read the report-only numbers, not just pass/fail.** Several tests measure rather than
 assert (PON discrepancies; drake surface losses, the example-domain generate map and the scenario round-trip did, until
-asserted). Two
+asserted). The PON pair stays a measurement by Dev's decision of 2026-11-03: PON development is SUSPENDED until Dev
+explicitly resumes it for integration into the native `draco.primes.Primes` domain (it sits in `domains.pon.Pon` today);
+do not assert, re-baseline or otherwise touch its tests or corpus. Two
 real defects in one August session were caught only by reading a headline that moved —
 new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1118 tests / 77 suites**, verified by Dev on 2026-11-03 for the mods missing-surface gate (record `git-record-2026-11-03-1700`, in
+the tree, Dev's commit pending): DrakeGenTest's mods walk gains a per-type test for every mods definition, failing by path when its
+`.drake` is missing, and its report-only, file-only pending count retires — one test fewer, zero failed/canceled/ignored/pending tests,
+every headline unchanged, the file-only row off the table below and no per-suite log to read; no engine, definition or Scala change;
+its direct run 1118 / 78 including discovery, green on its first run, every headline unchanged, DrakeGenTest 184 to 183 the only per-suite change. First full Dev gate green. Before it:
 **1119 tests / 77 suites**, verified by Dev on 2026-11-03 for the asserted scenario round-trip (record `git-record-2026-11-03-0942`,
-commit pending): ScenarioDrakeTest's round-trip asserts instead of reporting, no test added, zero failed/canceled/ignored/pending tests,
+committed as f4b57ae): ScenarioDrakeTest's round-trip asserts instead of reporting, no test added, zero failed/canceled/ignored/pending tests,
 every headline unchanged, the scenario row off the table below, pending mods definitions 0; no engine, definition or Scala change; its
 direct run 1119 / 78 including discovery, green on its first run. First full Dev gate green. Before it:
 **1119 tests / 77 suites**, verified by Dev on 2026-11-02 for the asserted surface-loss count (record `git-record-2026-11-02-1451`,
@@ -293,8 +300,8 @@ sbt run; all report-only figures matched the then-current baselines. A direct co
 DrakeGenTest, DrakeParseTest, GenDrakeTest); it measured 99 draco types in scope, 109 measured,
 one surface loss, and GenDrake 97 of 97. These
 are the headlines those tests print. They go to the console
-logger, not to the per-suite files, so they have to be caught off stdout — every row below
-except the last `DrakeGenTest` one, which prints only to its per-suite file:
+logger, not to the per-suite files, so they have to be caught off stdout (a file-only `DrakeGenTest` row, the mods
+pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
 sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
@@ -303,7 +310,6 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 | test | headline | baseline |
 |---|---|---|
 | `DrakeParseTest` | Drake.parse scope | 110 draco + 73 mods in, 0 held back |
-| `DrakeGenTest` | mods definitions pending `.drake` | 0 — **file-only**, in `target/test-output/DrakeGenTest.log` (every mods definition since 2026-11-02; actors only before) |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
 | `SubtypeFactVisibilityTest` | rete subtype visibility | CO-DECLARATION DROPS THE FACT (categorical, not a count) |
@@ -335,7 +341,7 @@ ahead of JSON. Both Drake and Scala projections were byte-identical before/after
 all 103 current JSON definitions. The full run also confirmed the table above and zero
 mods actors pending Drake authoring in the file-only report.
 
-Five of these have since become ASSERTIONS and are deliberately not listed: the scenario
+Six of these have since become ASSERTIONS and are deliberately not listed: the scenario
 now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports. So
 does `GenDrakeTest`'s `GenDrake runs` line — in the capture grep for visibility, not here.
 And since 2026-10-31 the example-domain gen map, which this table carried from 37 / 11 down to
@@ -347,7 +353,11 @@ surface fails the suite, listed by field — and its `surface losses` line stays
 And since 2026-11-03 the scenario round-trip, which this table carried at 23 clean from its first reading: `ScenarioDrakeTest`
 now fails naming each scenario surface the parser rejects or the emitter does not reproduce, and its `scenario in` line stays
 in the capture grep too.
-Moving a measurement into an assertion is the goal; the table should shrink over time.
+And since 2026-11-03 the mods pending-surface count, file-only since 2026-07-17 and zero since Yaml took its surface: every mods
+definition's `DrakeGenTest` test fails by path when its `.drake` is missing, as the main walk's always did, and the report-only
+line is retired — nothing in the per-suite log need be read.
+Moving a measurement into an assertion is the goal; the table should shrink over time. The two PON rows are outside
+that goal until Dev resumes PON work (the suspension of 2026-11-03, §1 above and the dated paragraph at the end of this file).
 
 **Where things are recorded** — distinct artifacts and jobs, do not conflate them:
 
@@ -1933,5 +1943,42 @@ written back minimal) and a stray section line in birch Compound; the asserted t
 1 drifted, 21 clean; the real tree untouched. No test count moves, no engine, definition or Scala change. Focused
 ScenarioDrakeTest 1, green on its first run; direct run 1119 / 78 including discovery, green on its first run, every suite's count
 unchanged, every headline unchanged, pending mods definitions 0; Dev's first full gate 1119 / 77 on 2026-11-03, every headline
-matching, pending mods definitions 0. Commit pending. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`, the hand-written
-actor over Ego with no definition — Dev's decision. Deferred activation and .dcon remain, neither accepted.
+matching, pending mods definitions 0. Committed and pushed by Dev as f4b57ae. OBSERVED, not recommended:
+`domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's decision. Deferred activation and
+.dcon remain, neither accepted.
+
+**PON development is suspended (Dev, 2026-11-03).** After f4b57ae the PON pair was the one measurement left in the table
+with a tail, and it was MEASURED before any recommendation: `PonCorpusTest` (src/test/scala/domains/pon, 2026-06-27) runs the
+`domains.pon.Pon` evaluator over the frozen "Prime ordinal 78" document (559 lines, committed once, never changed); the 42
+discrepancies are 19 parse failures (unbalanced parentheses in the document's own text) and 23 wrong values, no sequence
+errors, over 550 expressions and 80 numbers; the 7 canonical differences are 2 numbers with no document canonical (1 and 29) and
+5 whose first expression orders differently from the generator's (40 also evaluating wrong); both counts have stood since the
+table's origin at 87a2bb9. The recommendation — assert both counts exactly per category and retire the two rows, GitHub #62's
+form — was WITHDRAWN on Dev's instruction the same morning: the PON work will eventually be contained in the native
+`draco.primes.Primes` domain; it sits in `domains.pon.Pon` today, and development is SUSPENDED on all PON activity until Dev
+explicitly resumes it, when Dev is ready to integrate it into Primes. Until then the two PON rows stay in the table as
+measurements and nothing under `domains/pon` — suite, evaluator or corpus — is touched. The measurement is recorded here so it
+need not be repeated. The thread moves to the one other report-only row with a settled value, DrakeGenTest's file-only
+pending-surface count.
+
+**The mods drake walk takes the main walk's gate, and its file-only pending count retires (2026-11-03, Claude Code; Dev verified
+1118 / 77).** Dev accepted "Accepted, build it" on the recommendation that DrakeGenTest's mods
+walk take the main walk's form exactly — a per-type test for every definition under `src/mods/resources`, failing with the
+missing surface's path when there is none — and that the report-only test "mods definitions still lacking a .drake" retire with
+its file-only headline, the row leaving the §1 table as the sixth measurement to become an assertion and the trailing
+`grep -c "pending .drake authoring (0)"` leaving the gate block, a missing surface now failing the suite outright. The two walks
+differed in shape: the main walk has always failed a definition whose surface is missing, while the mods walk (every mods
+definition since 8746ecd, actors under `domains` alone from 2026-09-10) created a test only for the definitions that already had
+a surface and counted the rest in a line written to `target/test-output/DrakeGenTest.log` and to no console, report-only since
+1295a82 on 2026-07-17, read only by the trailing grep of Dev's gate block — and no other gate sees a missing mods surface:
+DrakeParseTest's mods walk collects `.json` for the definition direction and `.drake` for the surface direction, and the
+surface-loss assertion needs no file. The count has been zero since Yaml took its surface; with PON suspended it was the one
+report-only row left with a settled value. MEASURED before recommending: 73 `.json`, 73 `.drake`, none missing. REJECTED:
+asserting inside the pending test and keeping the headline — two mechanisms for one rule where the main walk has one, and a
+file-only line nobody is obliged to read. MEASURED after building by a negative probe on a scratch project tree (copied
+resources and class directories, the rewritten suite compiled in) with `draco/format/yaml/Yaml.drake` removed: exactly one test
+fails, Yaml's, with `missing mods draco/format/yaml/Yaml.drake`, 182 / 1; the real tree untouched. Test count moves by one to
+1118; no engine, definition or Scala change. Focused DrakeGenTest 183 (110 main, 73 mods), green on its first run; direct run
+1118 / 78 including discovery, green on its first run, every headline unchanged, DrakeGenTest 184 to 183 the only per-suite change; Dev's first full gate 1118 / 77 on 2026-11-03, every headline matching, no file-only line to read. Commit pending. OBSERVED, not recommended:
+`domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's decision. Deferred activation and
+.dcon remain, neither accepted.

@@ -63,7 +63,20 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-IN THE TREE, GATED BY ME AT 1119 / 77, MY COMMIT PENDING (2026-11-03, after b321df6; record git-record-2026-11-03-0942): the asserted scenario round-trip —
+IN THE TREE, GATED BY ME AT 1118 / 77, MY COMMIT PENDING (2026-11-03, after f4b57ae; record git-record-2026-11-03-1700):
+the mods missing-surface gate — DrakeGenTest's mods walk takes the main walk's form, one test per definition under
+src/mods/resources failing by path when its .drake is missing, the report-only, file-only "pending .drake authoring" count
+retired; its row leaves the DRACO.md table, the sixth measurement to become an assertion, and the gate block no longer greps
+the per-suite log. A negative probe on a scratch tree with Yaml.drake removed fails exactly Yaml's test by path (182 / 1).
+Test count 1119 to 1118; no engine, definition or Scala change. Focused DrakeGenTest 183, green on its first run; direct run
+1118 / 78 including discovery, green on its first run, every headline unchanged, DrakeGenTest 184 to 183 the only per-suite change. My full sbt gate 1118 tests / 77 suites on November 3, zero failures or aborts, every headline matching.
+
+DECIDED BY ME ON 2026-11-03, no commit: after f4b57ae the PON pair was measured (42 = 19 parse failures + 23 wrong values over a
+frozen 2026-06-27 document; 7 = 2 missing + 5 differing canonicals; constant since 87a2bb9) and the recommendation to assert both
+counts per category was WITHDRAWN at my instruction — PON development is suspended until I resume it for integration into
+draco.primes.Primes. The open point moved to DrakeGenTest's file-only pending-surface count.
+
+COMMITTED AND PUSHED BY ME AS f4b57ae (2026-11-03, after b321df6; record git-record-2026-11-03-0942): the asserted scenario round-trip —
 ScenarioDrakeTest's report-only check that emitting the parse of each of the 23 forest scenario surfaces reproduces the source
 (23 clean since 2026-08-31, never a rejected or drifted file) now fails naming each rejected or drifted file, its class doc
 corrected (RootInterface's dispatch is two case branches, not host text); with ScenarioGenTest's JSON gate the scenario trio is
@@ -149,5 +162,8 @@ Before handing over a gate, run every discovered suite on compiled classes with 
 mods and test resources on loader roots, and inspect every report-only headline. The handoff
 records a reproducible direct-run procedure; temporary files are not prerequisites. After each
 verified commit, bring the next related point. Activation and .dcon migration remain deferred.
+PON development is suspended until I explicitly resume it: the PON work (domains.pon.Pon, PonCorpusTest, the
+prime-ordinal corpus) will eventually be contained in the native draco.primes.Primes domain, and nothing under
+domains/pon is to be touched before then; its two report-only rows stay in the DRACO.md table as they are.
 
 Preserve historical Status sections and do not invent dialogue. Keep the shared handoff current.
