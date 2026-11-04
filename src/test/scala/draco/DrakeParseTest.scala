@@ -51,9 +51,13 @@ import scala.util.Using
  *
  *  Covered: the plain-type template plus the rule and actor aspects, over TWO corpora
  *  — the draco types and every mods definition with an authored surface (the example tree
- *  since 2026-09-10, the whole of `src/mods/resources` since 2026-11-02). Only unsupported
- *  codec clauses are held back — `Drake.parse` rejects them loudly — and the held-back types
- *  are listed by the report test so the next increment's worklist stays visible. */
+ *  since 2026-09-10, the whole of `src/mods/resources` since 2026-11-02). Two kinds of
+ *  definition are filtered out of both gates: one carrying a codec discriminator, which
+ *  `Drake.emit` refuses loudly, and one with no drake surface. Until 2026-11-04 the main
+ *  corpus's held-back definitions were listed by a report-only test, a worklist that read
+ *  zero since the table's origin; since 2026-11-04 that test ASSERTS the list is empty over
+ *  BOTH corpora, naming each held-back path — the filters define the scope, the assertion
+ *  says the scope is the whole corpus. */
 class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
 
   private def deriveDrakePath(resourcePath: String): String =
@@ -618,15 +622,33 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
         losses.map { case (rp, key, was, now) => s"  $rp $key: $was -> $now" }.mkString("\n"))
   }
 
-  test("types held back from Drake.parse (report only)") {
-    val codecAspect = allPaths.filter(rp => carriesUnsupportedCodecAspect(loadTypeDefinition(rp)))
-    val noDrake     = allPaths.filter(rp => readDrake(deriveDrakePath(rp)).isEmpty)
+  test("types held back from Drake.parse: none, over both corpora") {
+    val allModsPaths: Seq[String] =
+      if (!Files.isDirectory(modsResourceRoot)) Seq.empty
+      else Using.resource(Files.walk(modsResourceRoot)) { stream =>
+        stream.iterator.asScala
+          .filter(p => Files.isRegularFile(p))
+          .map(p => modsResourceRoot.relativize(p).toString.replace('\\', '/'))
+          .filter(_.endsWith(".json"))
+          .toList
+          .sorted
+      }
+    val codecAspect = allPaths.filter(rp => carriesUnsupportedCodecAspect(loadTypeDefinition(rp))) ++
+      allModsPaths.filter(rp => carriesUnsupportedCodecAspect(loadModsTypeDefinition(rp))).map("mods " + _)
+    val noDrake = allPaths.filter(rp => readDrake(deriveDrakePath(rp)).isEmpty) ++
+      allModsPaths.filter(rp => readModsDrake(deriveDrakePath(rp)).isEmpty).map("mods " + _)
     log.info(s"carrying an unsupported codec aspect (${codecAspect.size}): ${codecAspect.mkString(", ")}")
     log.info(s"lacking a .drake (${noDrake.size}): ${noDrake.mkString(", ")}")
     log.info(s"mods in scope (${modsPaths.size}): ${modsPaths.mkString(", ")}")
     console.info(s"Drake.parse scope: ${parsedPaths.size} draco + ${modsPaths.size} mods types in, " +
       s"${codecAspect.size} codec-aspect + ${noDrake.size} drake-less held back")
-    succeed
+    // Zero since the table's origin (87a2bb9, 2026-08-31); asserted since 2026-11-04. A held-back
+    // definition is one DrakeGenTest already fails — a missing surface by path, a discriminator
+    // through Drake.emit's error — so this names what that suite refuses, instead of dropping it.
+    if (codecAspect.nonEmpty || noDrake.nonEmpty)
+      fail(s"${codecAspect.size + noDrake.size} definitions held back from Drake.parse:\n" +
+        (codecAspect.map(rp => s"  $rp: carries a codec discriminator") ++
+         noDrake.map(rp => s"  $rp: lacks ${deriveDrakePath(rp.stripPrefix("mods "))}")).mkString("\n"))
   }
 
   test("codec payload field lists round-trip in Drake and canonical JSON") {

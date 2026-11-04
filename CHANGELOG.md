@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Assert DrakeParseTest's held-back count at zero: the report-only test listing the definitions filtered out of the parser's
+  round-trip gates (a codec discriminator, no `.drake` surface) now computes both lists over the main and the mods corpus
+  and fails naming each held-back path; the row leaves the DRACO.md table as the seventh measurement to become an
+  assertion, and the `parse scope` console line stays in the gate grep. No test added or removed (1118); no engine,
+  definition or Scala change. With it four of the six report-only tests GitHub #62 lists are assertions; the two PON reports
+  remain measurements under Dev's suspension of 2026-11-03.
 - Give DrakeGenTest's mods walk the main walk's gate: every definition under `src/mods/resources` now has a per-type
   test that fails by path when its `.drake` surface is missing, as the main corpus's always did; the report-only,
   file-only count "mods definitions pending .drake authoring" (zero since 2026-11-02) is retired, its row leaves the

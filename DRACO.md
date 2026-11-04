@@ -43,8 +43,8 @@ eleven tests on its first run. The one axiom exempt from it is `DracoType.typeDe
 does not extend `App`.
 
 **Read the report-only numbers, not just pass/fail.** Several tests measure rather than
-assert (PON discrepancies; drake surface losses, the example-domain generate map and the scenario round-trip did, until
-asserted). The PON pair stays a measurement by Dev's decision of 2026-11-03: PON development is SUSPENDED until Dev
+assert (PON discrepancies; drake surface losses, the example-domain generate map, the scenario round-trip and the parse-scope
+hold-back did, until asserted). The PON pair stays a measurement by Dev's decision of 2026-11-03: PON development is SUSPENDED until Dev
 explicitly resumes it for integration into the native `draco.primes.Primes` domain (it sits in `domains.pon.Pon` today);
 do not assert, re-baseline or otherwise touch its tests or corpus. Two
 real defects in one August session were caught only by reading a headline that moved —
@@ -52,8 +52,13 @@ new corpus data quietly adding to a known tail. See GitHub #62. Until that lands
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**1118 tests / 77 suites**, verified by Dev on 2026-11-03 for the mods missing-surface gate (record `git-record-2026-11-03-1700`, in
-the tree, Dev's commit pending): DrakeGenTest's mods walk gains a per-type test for every mods definition, failing by path when its
+**1118 tests / 77 suites**, verified by Dev on 2026-11-04 for the asserted parse-scope hold-back (record `git-record-2026-11-04-1414`, in
+the tree, Dev's commit pending): DrakeParseTest's "types held back from Drake.parse" test asserts instead of reporting, over both corpora, no test added or
+removed, zero failed/canceled/ignored/pending tests, every headline unchanged, the parse-scope row off the table below, which then holds the suspended PON pair and the
+categorical rete finding alone; no engine, definition or Scala change; its direct run 1118 / 78 including discovery, green on its first run, every
+headline unchanged, every suite's count identical. First full Dev gate green. Before it:
+**1118 tests / 77 suites**, verified by Dev on 2026-11-03 for the mods missing-surface gate (record `git-record-2026-11-03-1700`,
+committed as 1cfc38f): DrakeGenTest's mods walk gains a per-type test for every mods definition, failing by path when its
 `.drake` is missing, and its report-only, file-only pending count retires — one test fewer, zero failed/canceled/ignored/pending tests,
 every headline unchanged, the file-only row off the table below and no per-suite log to read; no engine, definition or Scala change;
 its direct run 1118 / 78 including discovery, green on its first run, every headline unchanged, DrakeGenTest 184 to 183 the only per-suite change. First full Dev gate green. Before it:
@@ -309,7 +314,6 @@ sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse sc
 
 | test | headline | baseline |
 |---|---|---|
-| `DrakeParseTest` | Drake.parse scope | 110 draco + 73 mods in, 0 held back |
 | `PonCorpusTest` | PON corpus | 80 numbers, 550 expressions, 42 discrepancies |
 | `PonCorpusTest` | canonical check | 80 numbers, 7 differ from generated canonical |
 | `SubtypeFactVisibilityTest` | rete subtype visibility | CO-DECLARATION DROPS THE FACT (categorical, not a count) |
@@ -341,7 +345,7 @@ ahead of JSON. Both Drake and Scala projections were byte-identical before/after
 all 103 current JSON definitions. The full run also confirmed the table above and zero
 mods actors pending Drake authoring in the file-only report.
 
-Six of these have since become ASSERTIONS and are deliberately not listed: the scenario
+Seven of these have since become ASSERTIONS and are deliberately not listed: the scenario
 now projects, wires and runs under `ScenarioGenTest`, which fails rather than reports. So
 does `GenDrakeTest`'s `GenDrake runs` line — in the capture grep for visibility, not here.
 And since 2026-10-31 the example-domain gen map, which this table carried from 37 / 11 down to
@@ -356,6 +360,9 @@ in the capture grep too.
 And since 2026-11-03 the mods pending-surface count, file-only since 2026-07-17 and zero since Yaml took its surface: every mods
 definition's `DrakeGenTest` test fails by path when its `.drake` is missing, as the main walk's always did, and the report-only
 line is retired — nothing in the per-suite log need be read.
+And since 2026-11-04 the parse-scope hold-back, which this table carried at 0 from its origin: `DrakeParseTest`'s "types held back"
+test now fails naming each definition its filters drop from the round-trip gates — a codec discriminator, a missing surface — over
+the main and the mods corpus alike (the mods half was never counted before), and its `parse scope` line stays in the capture grep.
 Moving a measurement into an assertion is the goal; the table should shrink over time. The two PON rows are outside
 that goal until Dev resumes PON work (the suspension of 2026-11-03, §1 above and the dated paragraph at the end of this file).
 
@@ -1979,6 +1986,31 @@ file-only line nobody is obliged to read. MEASURED after building by a negative 
 resources and class directories, the rewritten suite compiled in) with `draco/format/yaml/Yaml.drake` removed: exactly one test
 fails, Yaml's, with `missing mods draco/format/yaml/Yaml.drake`, 182 / 1; the real tree untouched. Test count moves by one to
 1118; no engine, definition or Scala change. Focused DrakeGenTest 183 (110 main, 73 mods), green on its first run; direct run
-1118 / 78 including discovery, green on its first run, every headline unchanged, DrakeGenTest 184 to 183 the only per-suite change; Dev's first full gate 1118 / 77 on 2026-11-03, every headline matching, no file-only line to read. Commit pending. OBSERVED, not recommended:
+1118 / 78 including discovery, green on its first run, every headline unchanged, DrakeGenTest 184 to 183 the only per-suite change; Dev's first full gate 1118 / 77 on 2026-11-03, every headline matching, no file-only line to read. Committed and pushed by Dev as 1cfc38f on 2026-11-04. OBSERVED, not recommended:
 `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition — Dev's decision. Deferred activation and
 .dcon remain, neither accepted.
+
+**The parse-scope hold-back is asserted at zero over both corpora, and the row leaves the table (2026-11-04, Claude Code; Dev verified
+1118 / 77).** Dev accepted "Accepted, build it" on the recommendation that DrakeParseTest's report-only test "types
+held back from Drake.parse" assert: compute both held-back lists — a definition carrying a codec discriminator, a definition with no
+drake surface — over the main AND the mods corpus, keep the console line, and fail naming each held-back path when either list is
+nonempty; the row leaves the §1 table as the seventh measurement to become an assertion, the `parse scope` line stays in the gate grep,
+and the two scope filters stay as they are. A CORRECTION first: the record of 1cfc38f had called the parse-scope row a count that moves
+legitimately with the corpus and said no measurement with a tail remained in scope; the "0 held back" at the end of that row IS a tail
+with a settled value, and the next point was it. Three facts carried the recommendation: both hold-back conditions are already failures
+in DrakeGenTest (a missing surface by path, main always and mods since 1cfc38f; a discriminator through `Drake.emit`'s error), so the
+parser suite silently dropped what the emitter suite loudly refuses; the count has been zero since the table's origin at 87a2bb9 — no
+definition in either corpus carries a discriminator (the one hit for the word is CodecAspect.json, where it is an element name) and
+surfaces are complete at 110 of 110 and 73 of 73; and the mods half was never counted, the two lists running over the main paths alone
+while the mods walk applied the same filters. REJECTED: removing the filters as well (they define the scope, unlike the Output hold-out
+of 6a15754 — a point of its own); leaving the row as a corpus count (ResolutionRecordTest already bounds the corpus at 110 and 183).
+MEASURED after building by a negative probe on a scratch project tree, run with that tree as the working directory, with
+`domains/sentient/Gaze.drake` removed and a discriminator added to draco/Action.json: the console line reads `109 draco + 72 mods types
+in, 1 codec-aspect + 1 drake-less held back` and exactly one test fails, naming both — `draco/Action.json: carries a codec
+discriminator`, `mods domains/sentient/Gaze.json: lacks domains/sentient/Gaze.drake` — 376 / 1; the real tree untouched. No test
+added or removed, no engine, definition or Scala change; the test is renamed "types held back from Drake.parse: none, over both
+corpora" and the class doc describes the filters and the assertion instead of a worklist. With it the table holds the suspended PON
+pair and the categorical rete finding alone. Focused DrakeParseTest 381, green on its first run; direct run 1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline;
+Dev's first full gate 1118 / 77 on 2026-11-04, every headline matching. Commit pending. OBSERVED, not recommended: `domains/sentient/EgoActor.scala`, the hand-written actor over Ego with no definition —
+Dev's decision; the journal reaches chapter 112, twenty commits since a8b5447 unjournaled. Deferred activation and .dcon remain,
+neither accepted.

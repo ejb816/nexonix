@@ -1,0 +1,71 @@
+Assert DrakeParseTest's held-back count at zero over both corpora and retire the parse-scope row
+
+Dev accepted, in these words: "Accepted, build it" — the recommendation being that DrakeParseTest's report-only test
+"types held back from Drake.parse" assert: compute both held-back lists (a definition carrying a codec discriminator, a
+definition with no drake surface) over the main AND the mods corpus, keep the console line, and fail naming each
+held-back path when either list is nonempty; the row leaves the DRACO.md §1 table as the seventh measurement to become an
+assertion, the `parse scope` line stays in the gate grep as the others do, and the two scope filters stay as they are.
+No test added or removed: 1118 stays 1118. No engine, definition or Scala change.
+
+Why. After 1cfc38f the table read "110 draco + 73 mods in, 0 held back", and the previous record had called the row a
+count that moves legitimately with the corpus — wrong, and corrected in conversation: the "0 held back" is a tail with a
+settled value, printed by a test that always succeeded. The test counted two kinds of definition the suite filters out
+of both round-trip gates. Both are already failures in DrakeGenTest: a missing surface fails that suite's walk by path
+(main always, mods since 1cfc38f), and a discriminator stops `Drake.emit` with an error ("codec discriminator not yet
+emitted"), so the type's emit test fails. The parser suite silently dropped what the emitter suite loudly refuses. The
+count has been zero since the table's origin at 87a2bb9: no definition in either corpus carries a discriminator (the one
+hit for the word is draco/CodecAspect.json, where it is an ELEMENT NAME), and surfaces are complete at 110 of 110 and 73
+of 73. And the mods half was never counted: the two lists were computed over the main paths alone, while the mods walk
+applied the same two filters, so a mods definition they dropped reached no headline at all.
+
+Rejected: removing the two filters as well (a point of its own — they define the scope rather than exempt a known
+case, unlike the Output hold-out of 6a15754); leaving the row as a count that moves with the corpus (the in-scope counts
+are already bounded below by ResolutionRecordTest, 110 and 183, and the tail was the only part of the row that measured
+anything).
+
+MEASURED before recommending: `carriesUnsupportedCodecAspect` (discriminator nonEmpty) and `readDrake(...).isEmpty` as
+the filters on `parsedPaths`, and `readModsDrake`/`carriesUnsupportedCodecAspect` on `modsPaths`; the report test's two
+lists over `allPaths` only; `Drake.emit`'s `sys.error` on a discriminator (Drake.scala); grep for "discriminator" over
+all three resource trees (CodecAspect.json alone, as an element); 110 / 110 and 73 / 73 json / drake. MEASURED after
+building, a NEGATIVE PROBE on a scratch project tree (copied main, mods and test resources; copies of the direct-run
+class directories with those resources overlaid and the hidden anchors removed; the rewritten suite compiled into the
+copied test classes; the probe run with the scratch tree as the working directory and its class directories first on
+the classpath) with `domains/sentient/Gaze.drake` removed and `"codecAspect": {"discriminator": "tag"}` added to
+draco/Action.json: the console line reads `109 draco + 72 mods types in, 1 codec-aspect + 1 drake-less held back`, and
+exactly one test fails — "types held back from Drake.parse: none, over both corpora" — naming both,
+`draco/Action.json: carries a codec discriminator` and `mods domains/sentient/Gaze.json: lacks
+domains/sentient/Gaze.drake`; 377 run, 376 passed, 1 failed (four per-type tests fewer, the filters having dropped the
+two definitions). The real tree was untouched throughout.
+
+Built as measured. In src/test/scala/draco/DrakeParseTest.scala the test is renamed "types held back from Drake.parse:
+none, over both corpora"; it walks the mods root for every `.json` (the same walk `modsPaths` takes, before its filters),
+appends the mods held-back paths prefixed "mods " to each list, keeps its three log lines and the console line unchanged
+in form, and fails listing each held-back definition with its reason; a comment dates the zero (87a2bb9) and the
+assertion (2026-11-04) and says why the parser suite names what DrakeGenTest refuses. The class doc's last paragraph
+describes the two filters and the assertion instead of a "worklist". DRACO.md: the §1 table loses its DrakeParseTest row,
+leaving the suspended PON pair and the categorical rete finding; the assertions paragraph counts seven and names this
+one; the rule paragraph lists the parse-scope hold-back among the measurements that were asserted; the lead carries the
+gate. The CHANGELOG entry, DEVELOPMENT_HANDOFF.md (header, chain, state, section, next point, evidence row, evidence
+paragraph, ledger row) and DEVELOPMENT_RESUME_PROMPT.md are updated.
+
+GitHub #62 ("Report-only tests should assert their expected numbers, not just print them", 2026-08-13) is the issue this
+thread answers, uncited in its six earlier records: of the six report-only tests it lists, four are now assertions — the
+example map (7be1497), the surface losses (b321df6), the mods pending surfaces (1cfc38f) and, with this commit, the held-back
+types — each at ZERO rather than at the per-category nonzero baselines the issue proposed, the tails having been driven to
+zero first; the two PON reports remain measurements under Dev's suspension of 2026-11-03. The issue itself is untouched:
+commenting or closing it is for Dev to say.
+
+Also in this commit: the fold of the 1cfc38f hash into DRACO.md, DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md,
+written after Dev's commit this morning.
+
+OBSERVED, not recommended, unchanged from the records before: `src/mods/scala/domains/sentient/EgoActor.scala` is a
+hand-written actor over Ego with no definition — a role-named definition or removal is Dev's decision. The journal
+reaches chapter 112; twenty commits since a8b5447 are not yet journaled. Deferred, neither accepted: activation (the
+Codex recommendation of 2026-10-15); the .dcon migration.
+
+Verification: the focused suite first, the rewritten file compiled against the compiled classes of the last direct run
+with current resources overlaid — DrakeParseTest 381, green on its first run, the console line `110 draco + 73 mods types
+in, 0 codec-aspect + 0 drake-less held back`; then the negative probe above. Then every discovered suite on freshly
+compiled classes with current main, mods and test resources on the loader roots: 1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline. Dev's full sbt
+gate on 2026-11-04: 1118 tests / 77 suites, zero failed, canceled, ignored or pending, every headline matching, green on its first
+run. Commit pending.

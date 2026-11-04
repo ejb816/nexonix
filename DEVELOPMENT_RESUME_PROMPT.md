@@ -63,7 +63,17 @@ done; the named-construction thread is closed.
 Chapter 113, covering the October 26–30 Claude Code session, is NOT yet written; source it from
 the session's original records, not from summaries.
 
-IN THE TREE, GATED BY ME AT 1118 / 77, MY COMMIT PENDING (2026-11-03, after f4b57ae; record git-record-2026-11-03-1700):
+IN THE TREE, GATED BY ME AT 1118 / 77, MY COMMIT PENDING (2026-11-04, after 1cfc38f; record git-record-2026-11-04-1414): the asserted parse-scope
+hold-back — DrakeParseTest's report-only test "types held back from Drake.parse" now computes both held-back lists (a codec
+discriminator, no .drake surface) over the main and the mods corpus and fails naming each held-back path; its row leaves
+the DRACO.md table as the seventh measurement to become an assertion, leaving the suspended PON pair and the categorical
+rete finding alone; the parse scope console line stays in the gate grep; the two scope filters stay. Both conditions were
+already failures in DrakeGenTest; the count has been zero since 87a2bb9; the mods half was never counted. A negative probe on a
+scratch tree (Gaze.drake removed, a discriminator added to Action.json) fails exactly that test naming both (376 / 1). No test
+added or removed (1118); no engine, definition or Scala change. Focused DrakeParseTest 381, green on its first run; direct run
+1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline. My full sbt gate 1118 tests / 77 suites on November 4, zero failures or aborts, every headline matching.
+
+COMMITTED AND PUSHED BY ME AS 1cfc38f ON 2026-11-04 (gated at 1118 / 77 on 2026-11-03, after f4b57ae; record git-record-2026-11-03-1700):
 the mods missing-surface gate — DrakeGenTest's mods walk takes the main walk's form, one test per definition under
 src/mods/resources failing by path when its .drake is missing, the report-only, file-only "pending .drake authoring" count
 retired; its row leaves the DRACO.md table, the sixth measurement to become an assertion, and the gate block no longer greps
