@@ -1,0 +1,161 @@
+Reconcile the GitHub backlog and integrate issue tracking into the shared development workflow
+
+Dev accepted the reconciliation audit, then approved the proposed full batch in these words:
+"I approve your recommendation". Observed branch main, HEAD 3dfed24, starting tree clean.
+Read all 32 open issues and comments against current source and commit history through 48f466d.
+The preceding handoff said 34 but listed 32; this is a count correction, not evidence of missing issues.
+
+Applied: 32 evidence/status comments, eight closures, removal of #51's stale priority-next label.
+No new priority assigned, no new issue, original issue bodies/comments retained. #57 and #46 are
+closed NOT_PLANNED as superseded proposals, not falsely reported as implementations. #51's old
+flat-parameter proposal was superseded by later accepted type forms/formal representation.
+PON remains suspended; #62 remains open for that remainder. Activation and .dcon remain deferred.
+
+Action receipts (each comment records scope, evidence and remaining work):
+
+#61: closed, completed/reconciled
+https://github.com/ejb816/nexonix/issues/61#issuecomment-6643189363
+Completed: the parser reads operators by fixity, lambdas, calls and collection forms; the dyn result marker retired. Evidence: 665926e, a5d2f5b, 8e59cbe, and b321df6 (zero unnormalized surface losses asserted). The old opaque-span description is historical.
+
+#55: closed, completed/reconciled
+https://github.com/ejb816/nexonix/issues/55#issuecomment-6643190438
+Completed: a recursive read-only scan of all JSON under src/main/resources and src/mods/resources found no string leaf equal to "Seq()". DrakeParseTest now asserts zero unnormalized surface losses (b321df6), protecting this direction of canonicalization.
+
+#42: closed, completed/reconciled
+https://github.com/ejb816/nexonix/issues/42#issuecomment-6643191196
+Completed: terrestrial Output carries its Location branch in its definition (c5b8089), then constructs LocationReport through its declared factory (e138f04). Every mods surface is gated (8746ecd); every missing surface fails its per-type test (1cfc38f). The multiline host-code tail described here is gone.
+
+#41: closed, completed/reconciled
+https://github.com/ejb816/nexonix/issues/41#issuecomment-6643192035
+Completed through explicit, reciprocal membership rather than treating discovery as the authority. 1d69df1 made example-domain membership reciprocal for sixteen existing definitions; src/test/scala/domains/ExampleMembershipTest.scala gates consistency. Subsequent companion regeneration and the all-48 ExampleDomainsGenTest gate (7be1497) cover the resulting projection.
+
+#15: closed, completed/reconciled
+https://github.com/ejb816/nexonix/issues/15#issuecomment-6643193176
+Completed: GETTING_STARTED_TARGET_SCALA.md supplies toolchain setup, authoring, projection, execution and commands. GETTING_STARTED_TARGET_HASKELL.md and GETTING_STARTED_TARGET_TYPESCRIPT.md distinguish planned targets from the realized Scala target. This closure records delivery of the introductory guide, not fresh verification of every external installation instruction.
+
+#51: closed, completed/reconciled
+https://github.com/ejb816/nexonix/issues/51#issuecomment-6643193922
+Reconciled as completed/superseded by the accepted implementation. Type forms are trees (f4113d2, 49fc734), method formals are structured (a13ad38), the Scala host vocabulary is definition-backed (44a5005), resolution is recorded in uses (773b6d9), and formals live in DracoAspect while TypeName carries actuals (7b1bfea). The old flat TypeParameter proposal did NOT land as written; later accepted representation supersedes it. DRACO.md records the October 21–22 closure of the open questions. Removing the stale priority-next label; this does not designate a new priority or authorize broader portability work.
+
+#57: closed, superseded
+https://github.com/ejb816/nexonix/issues/57#issuecomment-6643194877
+Superseded by the accepted role/transform architecture (8239d08, 1cb3578). Drake now derives Source, but the proposed Generator(L <: Source) is not the current model: draco.Generator(T) represents the transform, and draco.generator.Generator is a domain anchor. Closing as superseded, not claiming the proposed bound was implemented.
+
+#46: closed, superseded
+https://github.com/ejb816/nexonix/issues/46#issuecomment-6643207155
+Superseded in both parts. LocationReport and sibling reports now construct through explicit factories (e138f04, 8540341), eliminating the concrete factory-less construction gap described here. General anonymous-new projection was NOT implemented. The former format/json/Value implementation was replaced by Dracon selection (db7e7a8, d169b0e); src/main/resources/draco/format/dracon/Value.drake carries the current native calls. Closing the obsolete proposal does not authorize a general anonymous-construction feature.
+
+#62: open
+https://github.com/ejb816/nexonix/issues/62#issuecomment-6643208160
+Partially complete; remaining work SUSPENDED by Dev on 2026-11-03. Four listed non-PON measurements are enforced: example map (7be1497), unnormalized surface losses (b321df6), missing mods surfaces per type (1cfc38f), and held-back parser types over both corpora (48f466d). Additional recent gates cover the whole-corpus compact fixpoint and scenario round-trip. The two PON reports deliberately remain measurements: 80 numbers / 550 expressions / 42 discrepancies, and 7 canonical differences. Do not assert, rebaseline or edit PON tests, evaluator or corpus until Dev explicitly resumes integration into draco.primes.Primes. Keep open for that suspended remainder; the original requirement to assert all six is not satisfied.
+
+#43: open
+https://github.com/ejb816/nexonix/issues/43#issuecomment-6643208566
+Partially complete: codec payload lists round-trip (f97c913; DrakeParseTest codec payload cases). Remaining: codec discriminator surface syntax; src/mods/scala/draco/Drake.scala explicitly rejects a nonempty discriminator. Encoder/decoder selector designs remain deferred in drake.dlt; do not present them as implemented or accepted new work.
+
+#58: open
+https://github.com/ejb816/nexonix/issues/58#issuecomment-6643208958
+Partially complete, with the old Pattern-based design superseded by the Case body element. Typed/default message branches are implemented (12bed84; world Consumer a8b5447). General start/signal dispatch is not established: DracoGenerator.actorBehavior still wraps signal handling in a hardcoded PostStop branch. Keep open with those limits, rather than claiming all three lifecycle slots support the proposal.
+
+#59: open
+https://github.com/ejb816/nexonix/issues/59#issuecomment-6643209362
+Partially complete: Case branches in a single-parameter dyn body generate typed/default dispatch; see DracoGenerator.dynScrutinee/caseDispatch and definition-backed TypeName.equals (12bed84). Literal and destructuring patterns from this issue are not implemented. The broad self-hosting proposal remains open; host-language matches in the procedural engine are not evidence of native pattern support.
+
+#63: open
+https://github.com/ejb816/nexonix/issues/63#issuecomment-6643209795
+Partially complete. Provider forwarding (3648806) and Consumer conversion (a8b5447) now originate in their definitions; the forest scenario has definition/projection/runtime gates in ScenarioGenTest. This is not completion of the full design: payload/tag relationships, closedness and an inheritance-related fact-set lint still require explicit reconciliation/design. Consumer currently converts inline; do not claim it implements the entire fact-production requirement. SubtypeFactVisibilityTest still records CO-DECLARATION DROPS THE FACT. Existing comments correcting the original routing rationale remain authoritative history.
+
+#50: open
+https://github.com/ejb816/nexonix/issues/50#issuecomment-6643210155
+Partially complete: explicit-root cleanup landed (324556c; later compact sweeps preserve canonical projection). The second item remains: DracoGenerator.spelledSource still emits a bare trait for the rule-only branch, e.g. src/main/scala/draco/Completeness.scala. Keep open for that distinction; no trait change is authorized by this reconciliation.
+
+#47: open
+https://github.com/ejb816/nexonix/issues/47#issuecomment-6643210529
+Partially complete: TypeLoader.isStub exists in the main definition/Scala trio, but DomainBuilder.isStub and Completeness still duplicate the aspect-emptiness predicate. DerivationResolvable now tests ontology membership, so its old load-in-condition description is obsolete. Remaining scope is consolidation against current callers, not blindly restoring the old three-call-site design.
+
+#49: open
+https://github.com/ejb816/nexonix/issues/49#issuecomment-6643210919
+Keep open as design debt. Capability type vocabulary has advanced, but session configuration is still host-bound; the Editor definition explicitly constructs an Evrete CONTINUOUS session. Evaluation-discipline inference is not implemented. The rolled-back configuration-domain attempt remains retracted; this update does not revive it or authorize an inference implementation. Distinguish type vocabulary from session configuration and the separate deferred actor-activation recommendation.
+
+#11: open
+https://github.com/ejb816/nexonix/issues/11#issuecomment-6643211198
+Foundation implemented; broader work remains. Current structure is draco.Generator(T), the draco.generator domain, and GenDrake/GenScala transform domains, with the procedural DracoGenerator implementation retained. Evidence: 1cb3578, fc2537f and current generator definitions. Replace the old Generator[L]/per-language capability sketch as a current-state description; native per-operation transformation/self-hosting and executable non-Scala targets are not complete.
+
+#12: open
+https://github.com/ejb816/nexonix/issues/12#issuecomment-6643211548
+Substantial implementation now exists: staged Dreams/Editor/User (f54da3f), accepted ontology authoring and validation (462cde6 onward), CRUD (799e9ae, f4336a4, 78bff9d), initialization (6869e47), and explicit Generate/Generated (9185f1a). EditorTest, DreamsTest and InitializationTest gate the current behavior. Keep open pending explicit remaining acceptance scope; this broad brief alone does not establish that the whole Dreams vision is finished. Actor activation remains deferred.
+
+#33: open
+https://github.com/ejb816/nexonix/issues/33#issuecomment-6643211901
+Still unimplemented: src/mods/scala/scripts has no element-of.scala. Refresh the proposed canonical four-domain scan and retired .rule/.actor suffix assumptions against explicit domain declarations and current identity/membership APIs before implementation. No implementation or priority assignment is authorized here.
+
+#34: open
+https://github.com/ejb816/nexonix/issues/34#issuecomment-6643212306
+Still unimplemented: src/mods/scala/scripts has no type-graph.scala. The proposed scan set and reference representations need updating against current explicit ontology/derivation APIs. Retain as tooling backlog, without treating the old example census as current.
+
+#35: open
+https://github.com/ejb816/nexonix/issues/35#issuecomment-6643212653
+Still unimplemented: src/mods/scala/scripts has no probe-import.scala. The generator is now DracoGenerator, with explicit host bindings and recorded name resolution. Any future diagnostic should explain that current pipeline; the old Generator.typeImports/instance vocabulary is historical.
+
+#36: open
+https://github.com/ejb816/nexonix/issues/36#issuecomment-6643212998
+Still unimplemented: src/mods/scala/scripts has no stats.scala. The four-domain/52-element snapshot is illustrative historical prose, not a current baseline. Scope any implementation against explicit current domain declarations and corpus roots.
+
+#25: open
+https://github.com/ejb816/nexonix/issues/25#issuecomment-6643213313
+Still open: the Sentient trio surfaces and regenerated companions landed in 5f0e023, but that was canonicalization, not the perception/effect loop. Ego, Percept and Effect definitions still lack the proposed factories; EgoActor is a handwritten logging stub with no definition. No functioning percept-to-effect rule loop or observable effect path is established. The Holon API/message-type choices remain design decisions.
+
+#19: open
+https://github.com/ejb816/nexonix/issues/19#issuecomment-6643213636
+Still open. The 5f0e023 Sentient surface/companion sweep preserved the existing Primal/Holon modeling; it did not resolve this semantic question. Current Direction/Lean/Percept/Waypoint/Ego definitions retain the composite derivations. Do not count canonicalization as semantic cleanup.
+
+#5: open
+https://github.com/ejb816/nexonix/issues/5#issuecomment-6643213997
+Still open. Current Sentient definitions do not introduce the proposed Direction.Value/Lean.Value inner wrappers. 5f0e023 provided surfaces and generated companions while preserving the model. This update does not endorse an unreviewed wrapper design.
+
+#16: open
+https://github.com/ejb816/nexonix/issues/16#issuecomment-6643214295
+Keep open pending an explicit requirements-to-example comparison and write-up. World/media actor chains, the forest scenario and staged Service work are relevant evidence, but their existence alone does not prove ANION requirements. No new feature work follows automatically from this documentation issue.
+
+#13: open
+https://github.com/ejb816/nexonix/issues/13#issuecomment-6643214788
+Keep exploratory. ORION.md names the five patterns and src/main/scala/draco/dreams/orion contains skeletal traits; these are not a completed interaction model or MessageDomain design. Refresh references to retired reference-frame architecture when the design is next accepted for work.
+
+#14: open
+https://github.com/ejb816/nexonix/issues/14#issuecomment-6643215167
+Keep exploratory and nonblocking. No executable Lean target was found in the source audit. Generator foundations and the language-neutral design discussion do not establish Lean realization. No priority or implementation approval is implied.
+
+#20: open
+https://github.com/ejb816/nexonix/issues/20#issuecomment-6643215503
+Keep roadmap. GETTING_STARTED_TARGET_HASKELL.md is a target design sketch, not an executable Haskell projection. Scala remains the realized language target. Generator foundation progress should not be confused with a completed second-language backend.
+
+#21: open
+https://github.com/ejb816/nexonix/issues/21#issuecomment-6643216139
+Keep roadmap. Generator domains and transforms have advanced (1cb3578, fc2537f), but Scala remains the only executable language target. GenDrake emits a definition surface, not proof that Haskell/Lean target compilation and semantic parity exist. Refresh the old architecture/dependency wording before activating this roadmap.
+
+#22: open
+https://github.com/ejb816/nexonix/issues/22#issuecomment-6643216687
+Keep roadmap; publication readiness is not verified by this source audit. The issue's alpha.2/API-era prerequisites are historical and need refresh against current releases/build configuration. This reconciliation does not claim Maven Central publication, signing setup, CI reliability or a production release dry run has been verified.
+
+#23: open
+https://github.com/ejb816/nexonix/issues/23#issuecomment-6643217310
+Keep roadmap. Current actor examples and staged Service work do not deliver the deployed Orion system described here: pattern-wide implementations, supervision/failure behavior and a unified observability surface remain outstanding. Refresh dependencies after #13/#16 are scoped; no activation is authorized by this update.
+
+Workflow: DRACO.md now requires the owning issue/current scope before each increment recommendation,
+issue references in the git-record/change summary, and an evidence/status update after Dev's verified
+commit; a missing owner is surfaced, not silently turned into a new issue. Reassess priority against
+the reconciled backlog. Close/relabel within authorization. DEVELOPMENT_HANDOFF.md has the current
+checkpoint above the historical handoff; DEVELOPMENT_RESUME_PROMPT.md no longer asks to approve the
+audit. README.md and CHANGELOG.md summarize the tracker/workflow update. Journal chapters and
+chapter-112 synchronization markers are unchanged; no private memory edits.
+
+Verification: fresh gh issue list --state all confirmed all 32 posted comment URLs, the eight intended
+states/reasons, 24 remaining open issues, and no priority-next label on #51. The first closure attempt
+for #57 used the wrong CLI spelling not_planned; it failed before closure. Resumed with "not planned"
+and skipped all comments already recorded, avoiding duplicates. Shared link checker passed; git diff
+--check passed. Only documentation changed locally. No engine/definition/Scala/test changes; no sbt,
+compile, test run, commit or push. No new gate claimed: latest Dev full gate remains 1118 / 77 at
+48f466d on November 4. Documentation is uncommitted; Dev performs the commit/push.
+
+Next: Dev reviews/commits this documentation, then one issue-backed next-priority recommendation
+for accept-or-correct. No implementation or replacement priority has been accepted.

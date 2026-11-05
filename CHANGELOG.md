@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- Reconcile the 32 open GitHub issues against current source/history with Dev-approved evidence comments,
+  eight closures and removal of #51's stale priority label; 24 remain open. Add issue ownership and
+  post-verification tracker updates to the shared development workflow; refresh the handoff. Documentation/tracker only.
+
 - Prepare the shared handoff (DEVELOPMENT_HANDOFF.md, DEVELOPMENT_RESUME_PROMPT.md) for a new task session in either
   agent at 48f466d, with the issue-tracker reconciliation audit described as the proposed, not yet accepted, next task:
   34 open issues, no human interaction since 2026-08-28, the November assertion thread answering #62. Documentation only.

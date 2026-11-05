@@ -911,3 +911,10 @@ Journal chapters 105–112 cover the subsequent session, sourced from original C
 that survive both observed compactions, with the prior Claude closing exchange also recovered.
 The [source audit](draco-dev-journal/sources/codex-2026-10-22-to-26-audit.md) states the frozen
 boundary and exclusions; chapter 112 preserves the journal omission and its correction.
+
+
+Issue tracking was reconciled on November 4, 2026: 32 open issues reviewed, eight closed with
+Dev's approval, 24 retained with current status/evidence. The shared development workflow in
+[DRACO.md](DRACO.md) now checks issue ownership before each increment and updates the issue after
+Dev's verified commit. See [DEVELOPMENT_HANDOFF.md](DEVELOPMENT_HANDOFF.md) for the current checkpoint;
+this tracker update does not advance the journal's chapter-112 coverage.

@@ -7,7 +7,32 @@ sections below it are the history of the increments since, kept as written. Git 
 and journal chapters retain their historical evidence. No destination session has been launched
 or messaged, and no private agent memory is required.
 
-## Start here
+## Current checkpoint — tracker reconciliation (Codex, November 4, 2026)
+
+This checkpoint supersedes the proposed audit and opening instructions below; older sections remain
+historical. Dev accepted the audit, then approved the complete proposed tracker/workflow batch with
+"I approve your recommendation". Observed branch main, HEAD 3dfed24; starting tree clean.
+
+- Audited all **32** open GitHub issues, including comments, against source and commits. The earlier
+  handoff's 34 was a count error; its explicit issue list contained 32.
+- Applied 32 reconciliation comments; closed #61, #55, #42, #41, #15 and #51 as completed/reconciled,
+  and #57/#46 as superseded. Removed #51's stale priority-next label. **24 issues remain open**;
+  no replacement priority assigned and no new issue created. Original bodies/comments preserved.
+- Partial work remains explicit: #43 discriminator syntax, #58 lifecycle dispatch, #59 richer patterns,
+  #63 broader payload/closedness/lint scope, #50 rule traits, #47 predicate duplication, #49 discipline,
+  #11 generator realization and #12 remaining Dreams acceptance scope. #62's PON remainder is suspended.
+- DRACO.md now requires an issue/scope check before recommending an increment, issue references in
+  the git-record/change summary, and an evidence update after Dev's verified commit. Missing ownership
+  is surfaced to Dev; it does not authorize a new issue. See git-record-2026-11-04-1658 for action detail.
+- Local changes are documentation only: DRACO.md, this handoff, DEVELOPMENT_RESUME_PROMPT.md,
+  CHANGELOG.md, README.md and the new git record. Not committed or pushed by Codex. No new runtime/test changes;
+  no fresh compile or suite run. Latest Dev gate remains 1118 / 77 at 48f466d on November 4.
+- Journal coverage remains chapter 112; no journal chapters or coverage markers advanced.
+- **Next action:** Dev reviews/commits the documentation. Then bring one evidence-backed priority
+  recommendation from the reconciled 24-issue backlog for accept-or-correct; no implementation task
+  or replacement priority is accepted yet. Do not repeat the audit approval question below.
+
+## Historical handoff — start here
 
 Read DRACO.md (AGENTS.md and CLAUDE.md are symlinks), this file, and
 `.draco/skills/update-draco-docs/SKILL.md`. Inspect `git status --short` and `git log -3` before

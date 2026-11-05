@@ -27,6 +27,16 @@ out, a decision is deferred, or a bug is noticed in passing, *surface it in conv
 does not need approval. The backlog grows faster than it drains, and an unprompted issue
 buries the few that matter.
 
+**Issue tracking is part of each development increment (Dev approved, 2026-11-04).**
+Before recommending an increment, inspect the owning GitHub issue and its current remaining scope,
+compare it with the tree and recent verified work, and state the issue link in the recommendation.
+If no existing issue fits, surface the gap to Dev; creating an issue still needs explicit approval.
+Cite the owning issue in the git-record and change summary. After Dev reports the verified commit,
+update the existing issue with the commit, implemented behavior, test provenance and remaining scope;
+close or relabel only within Dev's authorization. Reassess the next priority against the reconciled
+backlog rather than inheriting an old label. Keep suspended/deferred work explicit. Historical
+model-authored proposals are evidence to re-examine, not new specifications or implementation approval.
+
 **Definitions move as a trio.** A type is three artifacts that must agree:
 `src/main/resources/<pkg>/X.drake` (the Source — drake is the definition language),
 `src/main/resources/<pkg>/X.json` (the normative form the drake parses to, a bootstrap carrier
@@ -48,7 +58,7 @@ hold-back did, until asserted). The PON pair stays a measurement by Dev's decisi
 explicitly resumes it for integration into the native `draco.primes.Primes` domain (it sits in `domains.pon.Pon` today);
 do not assert, re-baseline or otherwise touch its tests or corpus. Two
 real defects in one August session were caught only by reading a headline that moved —
-new corpus data quietly adding to a known tail. See GitHub #62. Until that lands, a green
+new corpus data quietly adding to a known tail. See GitHub #62 for the enforced non-PON gates and the suspended remainder. A green
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
@@ -2028,3 +2038,17 @@ closed or commented until Dev says so — met "Correct it first"; the correction
 coverage reaches chapter 112 (closing commit 7495539); the twenty-one commits e241378 … 48f466d and their two Claude Code
 session records are unjournaled, named in DEVELOPMENT_HANDOFF.md. EgoActor, activation and .dcon stand as before; PON is
 suspended.
+
+
+**Issue-tracker reconciliation (2026-11-04, Codex; approved by Dev).** Read all 32 currently open
+issues and their comments against the source and commit history at 3dfed24 (implementation through
+48f466d). The prior handoff said 34 but listed 32; this audit does not infer two missing issues.
+Dev approved eight closures: #61, #55, #42, #41, #15 and #51 completed/reconciled; #57 and #46
+superseded (their proposed implementations did not land as written). #51's old flat TypeParameter
+proposal is superseded by type forms, structured formals and the formal/actual split; its stale
+priority-next label is removed without assigning a successor. The other 24 receive evidence/status
+comments and remain open; #62's PON remainder remains suspended. #43 retains discriminator syntax;
+#58/#59 retain their broader dispatch/pattern gaps; #63 is partial, not closed merely because Consumer
+and Provider are generated. The shared workflow now ties each accepted increment to its owning
+issue and updates it after Dev's verified commit. No new issue, runtime change or new test gate.
+Full action evidence is in git-record-2026-11-04-1658; journal coverage stays at chapter 112.

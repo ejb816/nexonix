@@ -5,25 +5,23 @@ by Claude Code at my direction. First read AGENTS.md/CLAUDE.md (both link to DRA
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD b79cfc1 on main (the handoff commit, documentation only), pushed, on top of 48f466d, the last
+STATE: observed HEAD 3dfed24 on main; the reconciliation documentation is uncommitted. This follows
+the handoff commits b79cfc1 and 3dfed24, on top of 48f466d, the last
 implementation commit; every accepted implementation increment is committed; my last
 full sbt gate was 1118 tests / 77 suites on November 4, zero failures or aborts, every headline
 matching. The DRACO.md table holds the two suspended PON rows and the categorical rete finding alone.
 Journal coverage reaches chapter 112; the twenty-one commits since (e241378 through 48f466d) are not
 journaled — the handoff names the sources.
 
-THE PROPOSED NEXT TASK, NOT YET ACCEPTED: an issue-tracker reconciliation audit. On November 4 I
-raised that there has been no visibility of interactions with the project issue tracking, and that
-what we are working on might not be associated with an important issue, or that more important issues
-may exist. Claude Code measured the tracker read-only: 34 open issues, no human interaction since
-August 28, the one priority-next label on #51 whose questions the tree closed on October 22, the
-November assertion thread answering #62 uncited until its last two records, #55 done in fact. It
-recommended a read-only reconciliation of all 34 open issues against the tree, delivered in
-conversation as one batched, prioritized list with evidence per issue, nothing filed, closed or
-commented until I say so. I answered "Correct it first" and then asked for this handoff instead. Begin
-by asking me, in one sentence, what to correct in that recommendation (its scope, its delivery, or
-what may be done to the tracker), restate it once, and build only what I accept. The handoff's "Next
-task" section has the full description and the open-issue numbers.
+CURRENT TASK STATUS (Codex, November 4): the issue-tracker audit and its proposed updates were
+accepted, then Dev approved the full reconciliation batch. All 32 originally open issues received
+status/evidence comments; eight closed (#61, #55, #42, #41, #15, #51 completed/reconciled; #57, #46
+superseded), leaving 24 open. #51's priority-next label was removed; no replacement priority assigned.
+The earlier handoff's count of 34 was incorrect. DRACO.md now integrates issue ownership, evidence
+and post-commit status updates into daily development. See the CURRENT checkpoint at the top of
+DEVELOPMENT_HANDOFF.md and git-record-2026-11-04-1658. No new issue or implementation was authorized.
+Review/commit the documentation with Dev, then bring one next-priority recommendation from the
+reconciled backlog for accept-or-correct. Do not ask again what to correct in the old audit proposal.
 
 HISTORY of the increments since the October 26 handoff follows, newest first; the details are in the
 handoff's dated sections and git records.
