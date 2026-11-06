@@ -1,27 +1,45 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
-This is a November 4, 2026 handoff for a new task session in either Claude Code or Codex, prepared
-by Claude Code at my direction. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+This is a November 6, 2026 handoff for a new Claude Code session, prepared by Claude Code at my
+direction after an aborted handoff to Codex. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: observed HEAD 3dfed24 on main; the reconciliation documentation is uncommitted. This follows
-the handoff commits b79cfc1 and 3dfed24, on top of 48f466d, the last
-implementation commit; every accepted implementation increment is committed; my last
-full sbt gate was 1118 tests / 77 suites on November 4, zero failures or aborts, every headline
-matching. The DRACO.md table holds the two suspended PON rows and the categorical rete finding alone.
-Journal coverage reaches chapter 112; the twenty-one commits since (e241378 through 48f466d) are not
-journaled — the handoff names the sources.
+STATE: observed local HEAD 2b9cfd5 on main (the Codex session's documentation commit, which I executed
+on November 5); origin/main was at 3dfed24 when this prompt was written, so 2b9cfd5 may or may not be
+pushed — inspect, do not assume. The last implementation commit is 48f466d; every accepted
+implementation increment is committed; my last full sbt gate was 1118 tests / 77 suites on November 4,
+zero failures or aborts, every headline matching. The DRACO.md table holds the two suspended PON rows
+and the categorical rete finding alone. Journal coverage reaches chapter 112; the commits since
+(e241378 through 48f466d and the documentation commits after) are not journaled — the handoff names
+the sources.
 
-CURRENT TASK STATUS (Codex, November 4): the issue-tracker audit and its proposed updates were
-accepted, then Dev approved the full reconciliation batch. All 32 originally open issues received
-status/evidence comments; eight closed (#61, #55, #42, #41, #15, #51 completed/reconciled; #57, #46
-superseded), leaving 24 open. #51's priority-next label was removed; no replacement priority assigned.
-The earlier handoff's count of 34 was incorrect. DRACO.md now integrates issue ownership, evidence
-and post-commit status updates into daily development. See the CURRENT checkpoint at the top of
-DEVELOPMENT_HANDOFF.md and git-record-2026-11-04-1658. No new issue or implementation was authorized.
-Review/commit the documentation with Dev, then bring one next-priority recommendation from the
-reconciled backlog for accept-or-correct. Do not ask again what to correct in the old audit proposal.
+WHAT HAPPENED (November 4–5). The November 4 handoff proposed an issue-tracker reconciliation audit as
+the next task, to be restated after I corrected it. The Codex session that received it did not ask
+for the correction: in one session it ran the audit, proposed closing issues and commenting on all
+of them, took my "I approve your recommendation" as approval of the whole batch, and ACTED ON THE
+TRACKER — 32 status/evidence comments, eight closures (#61, #55, #42, #41, #15, #51 as completed or
+reconciled; #57, #46 as superseded, "not planned"), #51's priority-next label removed — then wrote a
+new operating rule into DRACO.md §1 ("Issue tracking is part of each development increment"), a
+"Current checkpoint" at the top of DEVELOPMENT_HANDOFF.md, a README paragraph and the record
+git-record-2026-11-04-1658, and handed me commit commands, which I executed as 2b9cfd5. I DO NOT
+TRUST THAT RESULT. It also corrected one thing rightly: the open-issue count was 32, not the 34 my
+handoff said.
+
+YOUR FIRST TASK: an independent, read-only verification of the Codex reconciliation, reported here
+before anything else happens on the tracker. For each of the eight closures, check the closure
+comment's claim against the tree and the git history and say whether the closure is justified, is
+partly justified with remaining scope the comment hides, or is wrong. For each of the 24 status
+comments, check that its stated evidence exists and its "remaining" scope is accurate. Check the
+label removal on #51 and the new DRACO.md §1 rule against what I actually approved (the record quotes
+only "I approve your recommendation"; the rule's content was Codex's proposal). Known discrepancies to
+start from: DRACO.md §3 still says "Parse is a measurement tool, not yet an authoring path (GitHub
+#61)" while #61 is closed, so one side is wrong; the commit hashes the comments cite all exist, and
+ExampleMembershipTest, the three GETTING_STARTED files and the scripts directory the comments name
+are as described (Claude Code spot-checked these on November 6, nothing more). Deliver ONE
+recommendation with accept-or-correct — which closures to reopen, which comments to correct, whether
+the §1 rule stands as written — and post, reopen, relabel or edit nothing until I say so. Only then
+bring a next-priority recommendation from the reconciled backlog, with its owning issue named.
 
 HISTORY of the increments since the October 26 handoff follows, newest first; the details are in the
 handoff's dated sections and git records.

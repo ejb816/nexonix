@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- Refresh the shared handoff after the aborted Codex handoff: the next Claude Code session's first task is a
+  read-only verification of the tracker reconciliation committed as 2b9cfd5 (eight closures, 32 comments, the new
+  DRACO.md §1 rule), which Dev does not trust; nothing on the tracker changes until Dev decides. Documentation only.
 - Reconcile the 32 open GitHub issues against current source/history with Dev-approved evidence comments,
   eight closures and removal of #51's stale priority label; 24 remain open. Add issue ownership and
   post-verification tracker updates to the shared development workflow; refresh the handoff. Documentation/tracker only.

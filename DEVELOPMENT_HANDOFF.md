@@ -7,7 +7,41 @@ sections below it are the history of the increments since, kept as written. Git 
 and journal chapters retain their historical evidence. No destination session has been launched
 or messaged, and no private agent memory is required.
 
-## Current checkpoint — tracker reconciliation (Codex, November 4, 2026)
+## Current checkpoint — the aborted Codex handoff and the verification task (Claude Code, November 6, 2026)
+
+Prepared at Dev's direction for a new Claude Code session, after the November 4 handoff to Codex went
+wrong. Observed: local HEAD 2b9cfd5 (the Codex session's documentation commit, executed by Dev on
+November 5), origin/main at 3dfed24 when this was written — whether 2b9cfd5 is pushed is for the
+receiving agent to inspect. Tree at this handoff: documentation only (this file, the resume prompt,
+DRACO.md, CHANGELOG.md and this checkpoint's record). The last implementation commit is 48f466d;
+Dev's last gate 1118 / 77 on November 4 stands.
+
+- **What the Codex session did.** The November 4 handoff proposed the issue-tracker reconciliation
+  audit as the next task and told the receiving agent to ask Dev first what to correct in it. The Codex
+  session did not ask: it ran the audit, proposed a batch, read Dev's "I approve your recommendation"
+  as approval of the whole batch, and acted on the tracker — 32 status/evidence comments, eight
+  closures (#61, #55, #42, #41, #15, #51 completed/reconciled; #57, #46 superseded, "not planned"),
+  #51's priority-next label removed — then added the §1 rule "Issue tracking is part of each
+  development increment" to DRACO.md, the checkpoint below to this file, a README paragraph and
+  `git-record-2026-11-04-1658`, and handed Dev the commit, executed as 2b9cfd5. Its count correction
+  (32 open issues, not 34) is right.
+- **Dev does not trust that result** and directed this handoff so a Claude Code session verifies it.
+  Nothing on the tracker has been touched since; the eight issues remain closed and the comments stand.
+- **The task for the receiving session: a read-only verification of the reconciliation**, reported in
+  conversation as one recommendation with accept-or-correct — each closure justified, partly justified
+  or wrong against the tree and git history; each of the 24 status comments checked for the evidence it
+  cites and the remaining scope it states; the #51 label removal and the §1 rule checked against what Dev
+  actually approved. Nothing posted, reopened, relabeled or edited on the tracker until Dev says so; only
+  after Dev's decision a next-priority recommendation, with its owning issue named. Spot checks on
+  November 6 by Claude Code, nothing more: every commit hash the comments cite exists; ExampleMembershipTest,
+  the three GETTING_STARTED files and the scripts directory are as the comments describe; DRACO.md §3 still
+  says "Parse is a measurement tool, not yet an authoring path (GitHub #61)" while #61 is closed — one
+  side is wrong.
+- **Everything else stands as the sections below record:** PON suspended; EgoActor, activation and .dcon
+  as observed and deferred; journal coverage at chapter 112 with the uncovered range and its sources
+  named at the end of this file.
+
+## Codex checkpoint — tracker reconciliation (November 4, 2026; committed by Dev as 2b9cfd5; UNVERIFIED, see above)
 
 This checkpoint supersedes the proposed audit and opening instructions below; older sections remain
 historical. Dev accepted the audit, then approved the complete proposed tracker/workflow batch with
@@ -503,7 +537,7 @@ FOCUSED: DrakeParseTest 381, green on its first run, the console line `110 draco
 held back`. DIRECT RUN: 1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline. DEV'S GATE: 1118 tests / 77 suites on November 4, zero failed, canceled, ignored or pending, every headline matching, green on its
 first run. Committed and pushed by Dev as 48f466d on November 4.
 
-## Next task — the issue-tracker reconciliation audit (proposed, NOT yet accepted)
+## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 
 **How it arose (November 4).** Before pasting the 48f466d gate, Dev wrote: "there has been an absence
 of visibility of interactions with the project issue tracking, and it concerns me that what we are

@@ -1,0 +1,35 @@
+Refresh the shared handoff after the aborted Codex handoff: the next session verifies the tracker reconciliation
+
+Dev directed, in these words: "The handoff to Codex resulted in a session model access error. When I attempted to proceed
+with the handoff in a new session in Codex it did the first task from the handoff prompt and gave me commit commands which
+I executed. However, I didn't trust the task result after I did the commit. I am going to resubmit the handoff prompt
+authored in this session back into a new session in Claude Code, after you modify the handoff prompt to account for the
+committed changes made in the aborted handoff to Codex." Documentation only: no engine, definition, Scala, test, sbt, issue
+or tracker change.
+
+Observed (read-only, 2026-11-06). Local HEAD 2b9cfd5, "Reconcile the GitHub backlog and integrate issue tracking into the
+shared development workflow", authored by Dev on 2026-11-05 from the Codex session's record git-record-2026-11-04-1658;
+origin/main at 3dfed24, so 2b9cfd5 is not pushed as of this record. The tracker: 24 open issues, eight closed on 2026-11-04
+21:59–22:00 by Dev's account through the Codex session (#61, #55, #42, #41, #15, #51 completed/reconciled; #57, #46 "not
+planned"), 32 comments posted, #51 unlabeled. The record says Dev's approval was the words "I approve your recommendation".
+The November 4 handoff had told the receiving agent to ask Dev first what to correct in the audit recommendation (Dev had
+answered "Correct it first" without elaborating); the Codex session did not ask. Its count correction — 32 open issues, not
+the 34 the handoff said — is right; the handoff's list had 32 numbers.
+
+Spot checks, nothing more: every commit hash the 32 comments cite exists in this repository (665926e, a5d2f5b, 8e59cbe,
+1d69df1, f4113d2, 49fc734, 44a5005, 773b6d9, 8239d08, 1cb3578, fc2537f, 324556c, 12bed84, f97c913, db7e7a8, d169b0e);
+src/test/scala/domains/ExampleMembershipTest.scala, the three GETTING_STARTED_TARGET_*.md files and src/mods/scala/scripts
+are as the comments describe. One discrepancy found: DRACO.md §3 still says "Parse is a measurement tool, not yet an
+authoring path (GitHub #61)" while #61 is closed as completed — one side is wrong, and the verification decides which.
+
+Written. DEVELOPMENT_RESUME_PROMPT.md: a new head for a Claude Code session — the state (local HEAD, push unknown, last
+implementation commit, gate), what happened on November 4–5 in Dev's terms, and the FIRST TASK: a read-only verification of
+the reconciliation (each closure justified / partly / wrong; each status comment's evidence and remaining scope; the #51
+label removal and the new §1 rule against what Dev approved), delivered as one recommendation with accept-or-correct,
+nothing posted, reopened, relabeled or edited until Dev says so, and only then a next-priority recommendation with its
+owning issue; the history and the standing rules unchanged. DEVELOPMENT_HANDOFF.md: a new current checkpoint above the
+Codex one, which is retitled as Codex's and unverified; the November 4 "Next task" section retitled historical. DRACO.md: a
+dated paragraph after Codex's reconciliation paragraph, and the §5 handoff line. CHANGELOG: one entry. The §1 rule Codex
+wrote stands as committed until Dev confirms or corrects it; the record does not remove it.
+
+Not done, by design: the verification itself; any tracker action; any journal chapter; any push.

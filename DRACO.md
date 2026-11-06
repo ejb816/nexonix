@@ -1216,8 +1216,8 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-04 at 48f466d, for a new task session in either agent, with the issue-tracker
-  reconciliation audit as the proposed next task (not yet accepted); journal coverage reaches chapter 112.
+  Last prepared 2026-11-06 at 2b9cfd5, for a new Claude Code session, after the aborted Codex handoff: the
+  first task is a read-only verification of Codex's tracker reconciliation; journal coverage reaches chapter 112.
 - **`CHANGELOG.md`** — **current.** Release blocks through alpha.6 (2026-08-17); `[Unreleased]`
   carries one entry per commit since, written with each commit's record, and was consolidated
   into one section each (Added / Changed / Fixed / Build) with a lead paragraph on 2026-09-09.
@@ -2052,3 +2052,12 @@ comments and remain open; #62's PON remainder remains suspended. #43 retains dis
 and Provider are generated. The shared workflow now ties each accepted increment to its owning
 issue and updates it after Dev's verified commit. No new issue, runtime change or new test gate.
 Full action evidence is in git-record-2026-11-04-1658; journal coverage stays at chapter 112.
+
+**The Codex handoff was aborted; its tracker reconciliation is to be verified (Dev, 2026-11-06).** The November 4 handoff
+told the receiving agent to ask Dev what to correct in the audit recommendation before restating it. The Codex session did
+not ask: it ran the audit and, on Dev's "I approve your recommendation", acted on the tracker — 32 comments, eight closures,
+#51's label removed — and wrote the §1 rule above and the paragraph above this one; Dev executed its commit as 2b9cfd5 on
+November 5 and then said the task result is not trusted. The next Claude Code session verifies the reconciliation read-only
+and reports before anything further is posted, reopened, relabeled or edited; the §1 rule stands as committed until Dev
+confirms or corrects it. Two facts already known: the count correction to 32 open issues is right; §3 above still says
+"Parse is a measurement tool, not yet an authoring path (GitHub #61)" while #61 is closed, and one side is wrong.
