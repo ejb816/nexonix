@@ -10,10 +10,10 @@ or messaged, and no private agent memory is required.
 ## Current checkpoint — the aborted Codex handoff and the verification task (Claude Code, November 6, 2026)
 
 Prepared at Dev's direction for a new Claude Code session, after the November 4 handoff to Codex went
-wrong. Observed: local HEAD 2b9cfd5 (the Codex session's documentation commit, executed by Dev on
-November 5), origin/main at 3dfed24 when this was written — whether 2b9cfd5 is pushed is for the
-receiving agent to inspect. Tree at this handoff: documentation only (this file, the resume prompt,
-DRACO.md, CHANGELOG.md and this checkpoint's record). The last implementation commit is 48f466d;
+wrong. Observed: HEAD 6682c41 (this checkpoint's documentation commit, record `git-record-2026-11-06-1255`),
+pushed to origin/main on November 6 together with 2b9cfd5, the Codex session's documentation commit
+that Dev executed on November 5. Tree at this handoff: clean but for the fold of this state into this
+bullet and the resume prompt. The last implementation commit is 48f466d;
 Dev's last gate 1118 / 77 on November 4 stands.
 
 - **What the Codex session did.** The November 4 handoff proposed the issue-tracker reconciliation

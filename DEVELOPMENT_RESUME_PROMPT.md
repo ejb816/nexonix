@@ -5,9 +5,9 @@ direction after an aborted handoff to Codex. First read AGENTS.md/CLAUDE.md (bot
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: observed local HEAD 2b9cfd5 on main (the Codex session's documentation commit, which I executed
-on November 5); origin/main was at 3dfed24 when this prompt was written, so 2b9cfd5 may or may not be
-pushed — inspect, do not assume. The last implementation commit is 48f466d; every accepted
+STATE: HEAD 6682c41 on main, pushed to origin/main on November 6 (this handoff's documentation commit, on
+top of 2b9cfd5, the Codex session's documentation commit, which I executed on November 5 and pushed with
+it). Inspect git status/log anyway. The last implementation commit is 48f466d; every accepted
 implementation increment is committed; my last full sbt gate was 1118 tests / 77 suites on November 4,
 zero failures or aborts, every headline matching. The DRACO.md table holds the two suspended PON rows
 and the categorical rete finding alone. Journal coverage reaches chapter 112; the commits since
