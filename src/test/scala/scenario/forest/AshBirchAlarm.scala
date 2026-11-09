@@ -4,7 +4,7 @@ import draco._
 import scenario._
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait AshBirchAlarm
+trait AshBirchAlarm extends DracoType
 
 object AshBirchAlarm extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("AshBirchAlarm", _namePackage = Seq ("scenario", "forest")))

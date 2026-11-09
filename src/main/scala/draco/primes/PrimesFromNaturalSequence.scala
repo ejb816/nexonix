@@ -3,7 +3,7 @@ package draco.primes
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait PrimesFromNaturalSequence
+trait PrimesFromNaturalSequence extends DracoType
 
 object PrimesFromNaturalSequence extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("PrimesFromNaturalSequence", _namePackage = Seq ("draco", "primes")))

@@ -5,7 +5,7 @@ import domains._
 import org.evrete.api.{Knowledge, RhsContext}
 import scala.collection.mutable
 
-trait ConsumeReport
+trait ConsumeReport extends DracoType
 
 object ConsumeReport extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ConsumeReport", _namePackage = Seq ("domains", "aerial")))

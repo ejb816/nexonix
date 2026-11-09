@@ -2,7 +2,7 @@ package draco
 
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait Uniqueness
+trait Uniqueness extends DracoType
 
 object Uniqueness extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Uniqueness", _namePackage = Seq ("draco")))

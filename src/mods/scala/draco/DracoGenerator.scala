@@ -2364,13 +2364,12 @@ object DracoGenerator extends App {
          |""".stripMargin
     } else if (isRule(td)) {
       val imports = ruleImports(td)
-      val ruleName = td.typeName.name
       s"""
          |package ${td.typeName.namePackage.mkString(".")}
          |
          |$imports
          |
-         |trait $ruleName
+         |${traitDeclaration(td)}
          |
          |${ruleGlobal(td)}
          |""".stripMargin

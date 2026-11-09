@@ -4,7 +4,7 @@ import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 import scala.collection.mutable
 
-trait EmissionReceived
+trait EmissionReceived extends DracoType
 
 object EmissionReceived extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("EmissionReceived", _namePackage = Seq ("draco", "generator")))

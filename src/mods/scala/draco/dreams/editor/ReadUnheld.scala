@@ -6,7 +6,7 @@ import draco.dreams._
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait ReadUnheld
+trait ReadUnheld extends DracoType
 
 object ReadUnheld extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("ReadUnheld", _namePackage = Seq ("draco", "dreams", "editor")))

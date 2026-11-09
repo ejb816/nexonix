@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- Every generated rule trait derives `DracoType`: the rule-only branch of `DracoGenerator.spelledSource` renders its trait
+  through `traitDeclaration` like every other branch instead of a hard-coded bare `trait X`, so the trait agrees with the
+  rooted companion and the loader; the 23 rule-only Scala files in the corpus, the two forest scenario rules under the test
+  tree and the test-written TupleFact.scala change one line each (`trait X extends DracoType`). Closes GitHub #50 item 2,
+  the issue's last remaining scope. No definition or JSON change; no test count or headline moves.
 - Verify the November 4 tracker reconciliation read-only, accepted by Dev: all eight closures stand, two comments are
   corrected by follow-up (#50 cited the wrong commit for item 1; #46's Value tree is completed, not superseded), nothing is
   reopened or relabeled. Dev re-decides the DRACO.md §1 issue-tracking rule (the owning-issue check and the record citation

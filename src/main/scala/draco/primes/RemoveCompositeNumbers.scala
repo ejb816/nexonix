@@ -3,7 +3,7 @@ package draco.primes
 import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait RemoveCompositeNumbers
+trait RemoveCompositeNumbers extends DracoType
 
 object RemoveCompositeNumbers extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("RemoveCompositeNumbers", _namePackage = Seq ("draco", "primes")))

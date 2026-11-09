@@ -1,15 +1,42 @@
 # Development Handoff
 
-Prepared November 8, 2026 by Claude Code after the verification of the tracker reconciliation, for a
-new session in either agent. It supersedes the November 6 and November 4 checkpoints below, which stay as
-written as the history of this handoff; the dated sections below them are the history of the increments,
+Prepared November 9, 2026 by Claude Code after the #50 item 2 increment (every generated rule trait derives
+DracoType), for a new session in either agent. It supersedes the November 8, November 6 and November 4 checkpoints
+below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the reconciliation verified, the backlog reconciled (Claude Code, November 8, 2026)
+## Current checkpoint — the first increment from the reconciled backlog: rule traits derive DracoType (Claude Code, November 9, 2026)
 
-Observed: HEAD 40d02df on main, equal to origin/main (the November 6 fold commit); tree clean before this
-documentation change (record `git-record-2026-11-08-0924`). The last implementation commit is 48f466d; Dev's last gate
+Observed: HEAD 7d4ae0a on main (the November 8 documentation commit); the tree holds this increment, uncommitted, with
+the fold of 7d4ae0a into this file, the resume prompt and DRACO.md §5 that November 8 left uncommitted. Whether 7d4ae0a
+is pushed was not checked (read-only git only). The last implementation commit is 48f466d; Dev's last gate 1118 / 77 on
+November 4 stood until Dev gated this tree on November 9: 1118, zero failures, every headline matching, green on its first run; the commit follows.
+
+- **Done this session.** The one next-priority recommendation from the 24 open issues was GitHub #50 item 2 (owning issue
+  inspected first, per §1): the rule-only branch of `DracoGenerator.spelledSource` hard-coded a bare `trait X` while every
+  other branch renders its trait through `traitDeclaration`, so the trait contradicted the rooted companion. Dev accepted
+  ("Accepted, build it"). Built: the branch calls `traitDeclaration(td)`; the 23 rule-only Scala files (five draco
+  validation rules, three primes rules, Emit, EmissionReceived, five editor rules, eight example rules) change one line
+  each to `trait X extends DracoType`, applied as the recompiled engine renders them, and so do the two forest scenario
+  rules under src/test pinned by ScenarioGenTest and `org/nexonix/rules/rete/rules/TupleFact.scala`, which
+  TupleFactReteTest writes through the engine on every run — 26 generated files, one line each (25 of 25 with a definition
+  on disk whitespace-identical from `GeneratorCLI generate` on the recompiled classes). No definition, JSON or hand-written
+  test change. Direct run of every discovered suite: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically).
+- **Next action:** Dev commits (record `git-record-2026-11-09-1005`; the gate is green). On the verified commit the #50
+  thread closes: one comment citing the commit and the closure, when Dev says so; the backlog goes to 23. Then ONE
+  recommendation on the next candidate, GitHub #47 — the stub predicate (TypeLoader.isStub by name, DomainBuilder.isStub by
+  definition, Completeness's four inline conditions, six scripts) consolidated into one definition-backed place — as a
+  design point first (where it lives), for accept-or-correct.
+- **Not done, by design:** no tracker action; no journal chapter; no push. The docs point from November 8 stands:
+  GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
+- **Everything else stands as the sections below record.**
+
+## Previous checkpoint — the reconciliation verified, the backlog reconciled (Claude Code, November 8, 2026; done, see above)
+
+Observed: HEAD 7d4ae0a on main, this checkpoint's documentation commit (record `git-record-2026-11-08-0924`), committed
+by Dev on November 8 on top of 40d02df, the pushed November 6 fold commit; the tree was clean after it, and whether 7d4ae0a
+is pushed is to be checked on resumption. The last implementation commit is 48f466d; Dev's last gate
 1118 / 77 on November 4 stands. Agent links and the skill are as DRACO.md §5 describes.
 
 - **Done this session.** The read-only verification of the Codex reconciliation (2b9cfd5) was delivered as one
@@ -562,6 +589,29 @@ FOCUSED: DrakeParseTest 381, green on its first run, the console line `110 draco
 held back`. DIRECT RUN: 1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline. DEV'S GATE: 1118 tests / 77 suites on November 4, zero failed, canceled, ignored or pending, every headline matching, green on its
 first run. Committed and pushed by Dev as 48f466d on November 4.
 
+## Every generated rule trait derives DracoType (accepted and built, November 9; direct run 1118 / 78; Dev's gate 1118 green)
+
+Dev accepted: "Accepted, build it". OWNING ISSUE: GitHub #50; item 1 landed in b93e3a1 and eafc649
+(2026-07-29), item 2 is this increment, the issue's last scope. WHY: the rule-only branch of `DracoGenerator.spelledSource`
+hard-coded `trait $ruleName` while the composed, actor, domain, object-only and leaf branches spell their trait through
+`traitDeclaration` (modules modifier, header formals, `typeExtends` with the rooted parent, element body); the companion beside
+it is rooted (`object X extends App with DracoType` when the loaded chain reaches DracoType), so two of a rule definition's three
+projections showed the root and the trait contradicted it. MEASURED: exactly 23 rule-only definitions, none with elements,
+globals, formals, factory, derivation or modules, so the rendering is exactly `trait X extends DracoType`; every file already
+imports `draco._`; nothing instantiates a rule trait; no test pins a bare rule header; `Rule[T]` has no bound. The two other
+bare traits under src (draco.dreams.Service, domains.sentient.EgoActor) are hand-written scaffolds without a definition, untouched.
+BUILT: one engine line (and the unused `ruleName` binding removed); 23 corpus files, one line each, plus the test corpus the same
+way — the two forest scenario rules (AshBirchAlarm, BirchAlarmReceived) pinned by ScenarioGenTest, and TupleFact.scala, which
+TupleFactReteTest writes through the engine on every run (26 generated files in all; NaturalActor, bare and definition-less, untouched).
+ENGINE-CHANGE PROTOCOL: the engine and the changed files recompiled with scalac into the direct-run overlay; `GeneratorCLI
+generate` from the recompiled classes whitespace-identical to all 25 committed files with a definition on disk; the gates (DracoGenTest for the ten main rules, ExampleDomainsGenTest for the
+eight example rules, EditorTest's trio tests for the five editor rules, GenerateAndCompileTest, PrimesRulesTest writing the
+three primes rules through the engine into src/main) are the check. No definition, JSON or test change; no count or headline
+moves. FIRST DIRECT RUN: the probe put the test class directory on the JVM classpath as well as the runpath, against step 5 of
+the procedure below, so the scenario definitions sat at two loader roots and ScenarioGenTest's three loading tests failed on the
+unique-root requirement — 1115 / 3, a harness error, every other suite green, every headline as expected; it also surfaced the two
+scenario rules the measurement over src/main and src/mods had not counted. SECOND DIRECT RUN, test classes on the runpath alone: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically). DEV'S GATE: 1118 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Record `git-record-2026-11-09-1005`.
+
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 
 **How it arose (November 4).** Before pasting the 48f466d gate, Dev wrote: "there has been an absence
@@ -824,7 +874,10 @@ steps. Reconstruct only the compile/test procedure below if those files are miss
    Then compile all src/test/scala into the dedicated test directory using the same classpath.
 5. Run `java -Xmx3g -cp <classes>:<jars> org.scalatest.tools.Runner -o -R <test-classes>`.
    Put test classes on Runner's runpath, not the JVM classpath; this matters for isolated runtime
-   compilation/class loading. Capture stdout. Existing ZeroMQ tests need local sockets and may
+   compilation/class loading, and for the loader roots: the test class directory carries the test
+   resources, so on the JVM classpath it is a second root for every scenario definition and
+   ScenarioGenTest's three loading tests fail on `DefinitionPath`'s unique-root requirement (seen on
+   November 9, 1115 / 3, a harness error). Capture stdout. Existing ZeroMQ tests need local sockets and may
    require sandbox permission. Run every discovered suite, not just a remembered subset.
 6. Check all headlines above and git status/diff afterwards (no file-only line remains since November 3).
    Some tests generate files into source trees; PrimesRulesTest must remain scoped. Never

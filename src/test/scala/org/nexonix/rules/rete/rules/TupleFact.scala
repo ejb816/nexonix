@@ -7,7 +7,7 @@ import org.nexonix._
 import org._
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait TupleFact
+trait TupleFact extends DracoType
 
 object TupleFact extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("TupleFact", _namePackage = Seq ("org", "nexonix", "rules", "rete", "rules")))

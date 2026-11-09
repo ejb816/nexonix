@@ -2,7 +2,7 @@ package draco
 
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait Completeness
+trait Completeness extends DracoType
 
 object Completeness extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Completeness", _namePackage = Seq ("draco")))

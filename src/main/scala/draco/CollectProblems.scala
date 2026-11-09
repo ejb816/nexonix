@@ -3,7 +3,7 @@ package draco
 import org.evrete.api.{Knowledge, RhsContext}
 import scala.collection.mutable
 
-trait CollectProblems
+trait CollectProblems extends DracoType
 
 object CollectProblems extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("CollectProblems", _namePackage = Seq ("draco")))

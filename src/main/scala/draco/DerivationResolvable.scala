@@ -2,7 +2,7 @@ package draco
 
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait DerivationResolvable
+trait DerivationResolvable extends DracoType
 
 object DerivationResolvable extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("DerivationResolvable", _namePackage = Seq ("draco")))

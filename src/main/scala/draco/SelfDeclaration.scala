@@ -2,7 +2,7 @@ package draco
 
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait SelfDeclaration
+trait SelfDeclaration extends DracoType
 
 object SelfDeclaration extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("SelfDeclaration", _namePackage = Seq ("draco")))

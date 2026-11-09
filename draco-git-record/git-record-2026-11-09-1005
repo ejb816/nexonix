@@ -1,0 +1,74 @@
+Render the rule-only trait through traitDeclaration, so every generated rule trait derives DracoType (closes #50 item 2)
+
+Dev accepted, in the words "Accepted, build it", the one next-priority recommendation brought from the reconciled backlog
+of 24 open issues after the verification of 2026-11-08. OWNING ISSUE: https://github.com/ejb816/nexonix/issues/50,
+"Generator: align rule traits with the root parent" — item 1 (the DracoType strip from the explicit derivation lists,
+Dev's uniform-root decision of 2026-07-29) landed in b93e3a1 and eafc649; item 2, the November 4 status comment's
+remaining scope ("DracoGenerator.spelledSource still emits a bare trait for the rule-only branch"), is this commit.
+With it the issue has no remaining scope.
+
+WHY. The rule-only branch of `DracoGenerator.spelledSource` hard-coded `trait $ruleName` while every other branch
+(composed, actor, domain, object-only, leaf) spells its trait through `traitDeclaration`, which renders the modules
+modifier, the header formals, the derivation (`typeExtends`, the rooted parent included) and the element body. The
+companion beside it is rooted — `ruleGlobal` emits `object X extends App with DracoType` when the loaded chain reaches
+DracoType — so of a rule definition's three projections two showed the root and the trait contradicted it.
+`TypeLoader.rooted` has meant "absent derivation derives DracoType" for every definition since 2026-07-27; a rule was
+the one kind whose trait did not say so.
+
+MEASURED before recommending, on the tree at 7d4ae0a: the branch covers exactly 23 definitions, every rule-only type
+in the corpus — the five draco validation rules (CollectProblems, Completeness, DerivationResolvable, SelfDeclaration,
+Uniqueness), the three primes rules (AddNaturalSequence, PrimesFromNaturalSequence, RemoveCompositeNumbers),
+gendrake.Emit and generator.EmissionReceived, the five editor rules (CreateHeld, DeleteUnheld, GenerateRequested,
+ReadUnheld, UpdateUnheld) and the eight example rules (ConsumeReport and OriginateReport in aerial, ethereal, marine and
+terrestrial). None carries elements, globals, header formals, a factory, a derivation or modules, so `traitDeclaration`
+renders each as exactly one line, `trait X extends DracoType`; every one of the 23 files already imports `draco._`, as the
+actor files that spell `trait Creator extends DracoType` do. Nothing instantiates a rule trait (no `new <RuleTrait>`), no
+test pins a bare rule header (MinimalTypeTest's "expected a bare trait" is a stub type on the leaf path), and
+`Rule[T]` has no bound, so this is a projection alignment, not a compile fix. The two other bare `trait X` lines under
+src — draco.dreams.Service and domains.sentient.EgoActor — are hand-written scaffolds with no definition, untouched.
+
+BUILT. One engine change: the rule branch calls `traitDeclaration(td)` in place of the literal, and the now-unused
+`ruleName` binding goes with it. The 23 generated files change one line each, applied as the engine renders them;
+the gates are the check. The TEST CORPUS follows the same way: the two forest scenario rules under
+src/test/scala/scenario/forest (AshBirchAlarm, BirchAlarmReceived), pinned by ScenarioGenTest's "every scenario
+definition projects to the Scala committed beside it", take the same line; and TupleFactReteTest, which writes
+`org/nexonix/rules/rete/rules/TupleFact.scala` through the engine on every run, rewrote it with the line during the
+direct run — 26 generated Scala files in all, one line each, the engine's output. The one other bare trait under
+src/test, domains.natural.NaturalActor, has no definition and is untouched. No definition or JSON changes; no test
+source changes other than those generated files; no test count or headline moves.
+
+THE ENGINE-CHANGE PROTOCOL (DRACO.md §4): the compiled engine cannot regenerate its own change, so the engine was
+recompiled with scalac into the direct-run overlay together with the 23 corpus files and the three test-tree files
+(every file compiles with the new line), and `GeneratorCLI generate` from the recompiled classes was compared with
+each committed file that has a definition on disk — 25 of 25 whitespace-identical (TupleFact's definition is built by
+its test, which wrote the file itself). DracoGenTest pins the ten main rules, ExampleDomainsGenTest the eight example rules, EditorTest's
+trio tests the five editor rules, GenerateAndCompileTest compiles the main corpus' output, and PrimesRulesTest writes
+the three primes rules through the engine into src/main (the direct run left the tree with the intended changes only).
+
+DIRECT RUN of every discovered suite on compiled classes with current main, mods and test resources on the loader roots
+(the overlay rebuilt from target/scala-2.13/classes and test-classes, the hidden root anchors removed). The FIRST run
+put the test class directory on the JVM classpath as well as the Runner's runpath, against the recorded procedure, so
+the scenario definitions sat at two loader roots and ScenarioGenTest's three loading tests failed on `DefinitionPath`'s
+unique-root requirement — a probe-harness error, not a tree defect: 1115 / 3, every other suite green, every headline
+as expected. It also showed the two scenario rules the first measurement had not counted (the test corpus is outside
+`src`'s main and mods walks). SECOND run, test classes on the runpath alone, the two scenario files updated:
+1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically).
+Dev's first full gate on 2026-11-09: 1118 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run.
+
+REJECTED: leaving the bare trait and documenting it as a convention (it contradicts the rooted companion and the
+loader); changing the companion instead (it already matches the definition). OBSERVED, not recommended: the scalac
+warning "companion is a trait, which means no static forwarder can be generated" on every `object X extends App`
+whose companion is a trait, present before and after this change and inherent to the companion convention.
+
+DOCUMENTATION in this commit: DRACO.md (§3's role paragraph says a rule's trait derives the root like every other
+trait; the §5 handoff line; a dated paragraph), CHANGELOG (one entry), DEVELOPMENT_HANDOFF.md (a new current
+checkpoint, a dated section for the increment, the November 8 checkpoint retitled as previous), DEVELOPMENT_RESUME_PROMPT.md
+(a new head). The fold of 7d4ae0a into the handoff, the resume prompt and DRACO.md §5, uncommitted since November 8,
+rides here. Under the re-decided §1 rule the thread closes on Dev's verified commit: one comment on #50 citing it, and
+the closure, when Dev says so. Next candidate: GitHub #47, the stub predicate consolidated into one definition-backed
+place — a design point first (where it lives), then the build.
+
+Not done, by design: no tracker action yet; no journal chapter (coverage stays at chapter 112); no push. PON suspended;
+activation and .dcon deferred; EgoActor observed only.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

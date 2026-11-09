@@ -1,14 +1,15 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
-This is a November 8, 2026 handoff for a new session in either agent, prepared by Claude Code after the
-verification of the tracker reconciliation. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+This is a November 9, 2026 handoff for a new session in either agent, prepared by Claude Code after the
+#50 item 2 increment (every generated rule trait derives DracoType). First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD is this handoff's documentation commit on main (record git-record-2026-11-08-0924), on top of 40d02df,
-which was pushed to origin/main on November 6. Inspect git status/log anyway. The last implementation commit is
-48f466d; every accepted implementation increment is committed; my last full sbt gate was 1118 tests / 77 suites on
-November 4, zero failures or aborts, every headline matching. The DRACO.md table holds the two suspended PON rows
+STATE: at the handoff HEAD was 7d4ae0a on main (the November 8 documentation commit) and the tree held the #50 item 2
+increment uncommitted (record git-record-2026-11-09-1005), gated green by me on November 9 (1118 tests, zero failures, every headline matching) and awaiting my commit; if the log shows that commit on
+top of 7d4ae0a, the increment is committed and the first task below moves on. Inspect git status/log anyway and check what is
+pushed. The last implementation commit before it is 48f466d; my last full sbt gate was 1118 tests / 77 suites on November 4,
+zero failures or aborts, every headline matching; the increment's direct run is in the handoff. The DRACO.md table holds the two suspended PON rows
 and the categorical rete finding alone. Journal coverage reaches chapter 112; the commits since (e241378 through
 48f466d and the documentation commits after) are not journaled — the handoff names the sources.
 
@@ -24,10 +25,19 @@ written when a thread closes or when I ask, not after every commit. DRACO.md §3
 path (GitHub #61 is closed and was right); the "#51 continuation" paragraph is historical. The backlog is 24 open
 issues, reconciled.
 
-YOUR FIRST TASK: bring ONE next-priority recommendation from the reconciled backlog, with its owning issue named
-and its current remaining scope checked against the tree and the recent verified work, for accept-or-correct. Do
-not restart the audit, and touch nothing on the tracker before I decide. A docs point already surfaced and not
-acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
+WHAT HAPPENED (November 9). The first recommendation from the reconciled backlog was GitHub #50 item 2 and I accepted it:
+the rule-only branch of DracoGenerator.spelledSource rendered a bare `trait X` while every other branch renders its trait
+through traitDeclaration, so a rule's trait contradicted its rooted companion; now the branch calls traitDeclaration and
+the 23 rule-only Scala files say `trait X extends DracoType`, one line each, the recompiled engine's output. No definition,
+JSON or test change; no count or headline moves. On my verified commit the #50 thread closes with one comment and the
+closure, when I say so; the backlog goes to 23.
+
+YOUR FIRST TASK: if the increment is committed and I have closed #50, bring ONE recommendation on the next candidate,
+GitHub #47 — the stub predicate (TypeLoader.isStub by name, DomainBuilder.isStub by definition, Completeness's four inline
+conditions, six scripts) consolidated into one definition-backed place — as a design point first (where it lives), with
+its remaining scope checked against the tree, for accept-or-correct. If the increment is not yet committed, hand me the
+gate and commit block from the handoff first. Touch nothing on the tracker before I decide. A docs point already
+surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 
 HISTORY of the increments since the October 26 handoff follows, newest first; the details are in the
 handoff's dated sections and git records.

@@ -5,7 +5,7 @@ import scenario._
 import org.evrete.api.{Knowledge, RhsContext}
 import scala.collection.mutable
 
-trait BirchAlarmReceived
+trait BirchAlarmReceived extends DracoType
 
 object BirchAlarmReceived extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("BirchAlarmReceived", _namePackage = Seq ("scenario", "forest")))

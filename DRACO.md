@@ -467,7 +467,9 @@ Compact by intent. Architecture detail belongs in `README.md` once that file is 
 
 **Role is presence, not name.** A type is a rule because it carries a `ruleAspect`, an
 actor because it carries an `actorAspect`. Generated objects take the bare authored name —
-no `Rule` or `Actor` suffix, and no `.rule`/`.actor` filename suffix.
+no `Rule` or `Actor` suffix, and no `.rule`/`.actor` filename suffix. Every generated trait,
+a rule's included since 2026-11-09 (GitHub #50), is spelled by `traitDeclaration` and so derives
+the rooted parent: `trait Completeness extends DracoType` beside `object Completeness extends App with DracoType`.
 
 **`TypeElement`** is a sealed family of **twelve** kinds — Fixed, Mutable, Dynamic, Local,
 Parameter, Monadic, Condition, Action, Pattern, Variable, Factory, Case — all extending
@@ -1222,9 +1224,9 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-08 at 40d02df, after the verification of Codex's tracker reconciliation (accepted by Dev;
-  two comments corrected, nothing reopened, the §1 rule re-decided): the next task is one next-priority recommendation
-  from the reconciled backlog of 24 open issues; journal coverage reaches chapter 112.
+  Last prepared 2026-11-09 after the #50 item 2 increment (record `git-record-2026-11-09-1005`, Dev's gate 1118 green, commit pending): every
+  generated rule trait derives DracoType; the issue closes on Dev's verified commit, the backlog going to 23; the next
+  candidate is GitHub #47, the stub predicate consolidated; journal coverage reaches chapter 112.
 - **`CHANGELOG.md`** — **current.** Release blocks through alpha.6 (2026-08-17); `[Unreleased]`
   carries one entry per commit since, written with each commit's record, and was consolidated
   into one section each (Added / Changed / Fixed / Build) with a lead paragraph on 2026-09-09.
@@ -2096,3 +2098,28 @@ historical; README's caveat that lambdas, conditionals and operators "come back 
 corrected with it. Documentation and two tracker comments only; no engine, definition, Scala or test change; the gate 1118 / 77
 at 48f466d stands. Next, after Dev's commit: one next-priority recommendation from the reconciled backlog of 24 open issues,
 its owning issue named. EgoActor observed only; activation and .dcon deferred; PON suspended.
+
+**Every generated rule trait derives DracoType (2026-11-09, Claude Code; GitHub #50 closed on Dev's verified commit).** The first
+increment recommended from the reconciled backlog under the re-decided §1 rule, its owning issue inspected first: #50's item 1 (the
+DracoType strip from explicit derivation lists, Dev's uniform-root decision of 2026-07-29) landed in b93e3a1 and eafc649; item 2, the
+November 4 status comment's remaining scope, was the rule-only branch of `DracoGenerator.spelledSource` hard-coding `trait $ruleName`
+while every other branch spells its trait through `traitDeclaration` — so `trait Completeness` sat bare beside `object Completeness
+extends App with DracoType`, two of a rule definition's three projections showing the root and the third contradicting it. Dev
+accepted "Accepted, build it". MEASURED before recommending: the branch covers exactly the 23 rule-only definitions in the corpus (the
+five draco validation rules, the three primes rules, gendrake.Emit, generator.EmissionReceived, the five editor rules, the eight
+example ConsumeReport and OriginateReport rules); none carries elements, globals, formals, a factory, a derivation or modules, so
+`traitDeclaration` renders each as exactly `trait X extends DracoType`; every file already imports `draco._`; nothing instantiates a
+rule trait, no test pins a bare rule header, `Rule[T]` has no bound. BUILT: the branch calls `traitDeclaration(td)` and the unused
+`ruleName` binding goes; the 23 files change one line each, applied as the engine renders them, and so do the two forest scenario
+rules under src/test (AshBirchAlarm, BirchAlarmReceived — the test corpus, outside the main and mods walks the measurement covered,
+pinned by ScenarioGenTest) and `org/nexonix/rules/rete/rules/TupleFact.scala`, which TupleFactReteTest writes through the engine on
+every run: 26 generated files, one line each. The §4 two-run protocol was met in one: the engine recompiled with scalac into the
+direct-run overlay, `GeneratorCLI generate` from it whitespace-identical to all 25 committed files with a definition on disk, the
+gates (DracoGenTest, ExampleDomainsGenTest, EditorTest's trios, ScenarioGenTest, GenerateAndCompileTest, PrimesRulesTest and
+TupleFactReteTest writing through the engine) the check. No definition, JSON or hand-written test change; no test count or headline
+moves. The three other bare traits under src, draco.dreams.Service, domains.sentient.EgoActor and the test tree's NaturalActor, are
+hand-written scaffolds with no definition, untouched. The first direct run put the test class directory on the JVM classpath as well
+as the runpath, against the recorded procedure, and ScenarioGenTest's three loading tests failed on two loader roots — a harness
+error (1115 / 3), which also surfaced the two scenario rules. Second direct run: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically). Dev's first full gate on 2026-11-09: 1118 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Next candidate: GitHub #47, the stub predicate (TypeLoader.isStub by name, DomainBuilder.isStub by
+definition, Completeness's four inline conditions, six scripts) consolidated into one definition-backed place — a design point for
+Dev first. EgoActor observed only; activation and .dcon deferred; PON suspended.

@@ -9,7 +9,7 @@ import draco._
 import org.evrete.api.{Knowledge, RhsContext}
 import scala.collection.mutable
 
-trait GenerateRequested
+trait GenerateRequested extends DracoType
 
 object GenerateRequested extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("GenerateRequested", _namePackage = Seq ("draco", "dreams", "editor")))

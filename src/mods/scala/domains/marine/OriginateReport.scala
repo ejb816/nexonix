@@ -6,7 +6,7 @@ import draco._
 import domains._
 import org.evrete.api.{Knowledge, RhsContext}
 
-trait OriginateReport
+trait OriginateReport extends DracoType
 
 object OriginateReport extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("OriginateReport", _namePackage = Seq ("domains", "marine")))
