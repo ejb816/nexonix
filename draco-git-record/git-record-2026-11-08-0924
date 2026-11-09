@@ -1,0 +1,52 @@
+Verify the tracker reconciliation: eight closures stand, two comments corrected, the §1 rule re-decided
+
+Dev accepted, in one word: "Accept", the recommendation the independent read-only verification of the Codex
+reconciliation (2b9cfd5, record git-record-2026-11-04-1658) delivered. Documentation and two tracker comments only:
+no engine, definition, Scala, test or sbt change; nothing reopened, relabeled or edited on the tracker.
+
+Observed (read-only, 2026-11-08): HEAD 40d02df on main, equal to origin/main, tree clean; the tracker as the
+November 6 record left it, 24 open, eight closed on 2026-11-04, nothing since. The open count of 32 was right.
+
+Findings. All eight closures are justified against the tree and the git history. #61: the dyn result marker retired
+(a5d2f5b), operators by fixity and the lambda (665926e), no host-opaque expression form left (8e59cbe); Condition
+carries value alone, so the issue's lexical scan has nothing to scan; opaque spans remain only for host-bound text
+the issue allowed. #55: no "Seq()" string leaf under src/main, src/mods or src/test resources; the one hit is
+drake.dlt prose. #42: Output's branch is single-line values and LocationReport(payload); the remaining "new" host
+text constructs host types (KnowledgeService, URL, File, NameResolution). #41: each of the six example domains
+lists exactly its package siblings; ExampleMembershipTest has two tests. #15: the three guides exist; the Scala
+guide's authoring section still presents JSON as what is authored, a docs point, not a reopen. #51: the six cited
+commits (f4113d2, 49fc734, a13ad38, 44a5005, 773b6d9, 7b1bfea) are what the comment says; the August 26 open items
+were settled by Objective trees and Dracon actuals; the label removal fits a closed issue. #57: fix 1 at 8239d08;
+ScalaTarget derives Target, so the proposed bound's premise is gone. #46: closure right, reason wrong for part 3.
+All 24 status comments cite evidence that exists and state remaining scope accurately; every engine claim was read
+in the source (Drake.scala's discriminator rejection, the hard-coded PostStop branch, caseDispatch's four head
+forms, the bare trait Completeness, DomainBuilder.isStub and Completeness's conditions duplicating
+TypeLoader.isStub, Editor.drake naming Evrete's activation mode, six scripts and none of the four proposed, the
+orion traits, Ego/Percept/Effect without factories, EgoActor, the sentient composite derivations). One error: #50
+credits 324556c (2026-08-25, the #51 foreign-derivation change) with item 1, which landed on 2026-07-29 in b93e3a1
+and eafc649; item 2's remaining scope (the bare rule trait) is right.
+
+The §1 rule. Its content was Codex's proposal, approved as part of a batch by the line "I approve your
+recommendation" after Dev had answered "Correct it first" to the audit, and labelled "Dev approved"; no transcript
+of that session is in the repository, so the approval cannot be verified beyond the record's quote. It mandated a
+tracker comment after every verified commit, model-authored prose per increment against the spirit of the
+backlog rule above it.
+
+Acted on, after acceptance. Two correcting follow-up comments, posted with gh:
+#50 https://github.com/ejb816/nexonix/issues/50#issuecomment-6722652914 — the commit for item 1; item 2 stands.
+#46 https://github.com/ejb816/nexonix/issues/46#issuecomment-6722653101 — part 3 completed, not superseded; format/dracon/Value.drake is a full native tree.
+DRACO.md: the §1 rule re-decided in Dev's form (the owning-issue check and the record citation stay; a comment on
+the owning issue when a thread closes or when Dev asks, not per commit), its header dated 2026-11-08; §3's "Parse
+is a measurement tool, not yet an authoring path (GitHub #61)" corrected — parse is the authoring path, the
+issue's side was right; the "#51 continuation" paragraph marked historical; the §5 handoff line; a dated paragraph
+with the findings. README.md: the parser caveat (lambdas, conditionals and operators "come back as opaque text",
+false since 2026-09-21) corrected; the reconciliation paragraph aligned with the re-decided rule. CHANGELOG: one
+entry. DEVELOPMENT_HANDOFF.md: a new current checkpoint, the November 6 one retitled as previous and done.
+DEVELOPMENT_RESUME_PROMPT.md: a new head whose first task is one next-priority recommendation from the reconciled
+backlog with its owning issue named.
+
+Not done, by design: any further tracker action; any journal chapter (coverage stays at chapter 112); any
+implementation; any push. The gate 1118 / 77 at 48f466d stands. PON suspended; activation and .dcon deferred;
+EgoActor observed only.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

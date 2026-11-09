@@ -1,13 +1,38 @@
 # Development Handoff
 
-Prepared November 4, 2026 by Claude Code for a new task session in either Claude Code or Codex,
-at Dev's direction, in place of executing the issue-tracker reconciliation audit it describes
-below. It supersedes the October 26 Codex checkpoint and its November refreshes; the dated
-sections below it are the history of the increments since, kept as written. Git records, commits
-and journal chapters retain their historical evidence. No destination session has been launched
-or messaged, and no private agent memory is required.
+Prepared November 8, 2026 by Claude Code after the verification of the tracker reconciliation, for a
+new session in either agent. It supersedes the November 6 and November 4 checkpoints below, which stay as
+written as the history of this handoff; the dated sections below them are the history of the increments,
+kept as written. Git records, commits and journal chapters retain their historical evidence. No
+destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the aborted Codex handoff and the verification task (Claude Code, November 6, 2026)
+## Current checkpoint — the reconciliation verified, the backlog reconciled (Claude Code, November 8, 2026)
+
+Observed: HEAD 40d02df on main, equal to origin/main (the November 6 fold commit); tree clean before this
+documentation change (record `git-record-2026-11-08-0924`). The last implementation commit is 48f466d; Dev's last gate
+1118 / 77 on November 4 stands. Agent links and the skill are as DRACO.md §5 describes.
+
+- **Done this session.** The read-only verification of the Codex reconciliation (2b9cfd5) was delivered as one
+  recommendation and Dev accepted it ("Accept"). All eight closures are justified against the tree and the git
+  history (#61, #55, #42, #41, #15, #51, #57, #46). All 24 status comments cite evidence that exists and state
+  remaining scope accurately; every engine claim was checked in the source. Two defects: #50 credits 324556c with
+  item 1, which landed in b93e3a1 / eafc649 on 2026-07-29; #46 calls part 3 superseded when `format/dracon/Value.drake`
+  is a full native tree, so it is completed. After acceptance one correcting follow-up comment was posted on each
+  (https://github.com/ejb816/nexonix/issues/50#issuecomment-6722652914, https://github.com/ejb816/nexonix/issues/46#issuecomment-6722653101). Nothing reopened, relabeled or edited; #51's label stays removed. The §1 rule was re-decided by Dev:
+  the owning-issue check and the citation in the record stay, the per-commit tracker comment softens to thread close
+  or Dev's request, re-dated 2026-11-08. DRACO.md §3's "parse is a measurement tool" sentence is corrected (parse is
+  the authoring path; #61's side was right), the "#51 continuation" paragraph is marked historical, README's parser
+  caveat and reconciliation paragraph are aligned, and DRACO.md carries a dated paragraph with the findings.
+- **One docs point surfaced, not acted on:** GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as
+  what is authored and drake as a human-facing surface, the reverse of practice since September. A refresh is Dev's call.
+- **Not done, by design:** no tracker action beyond the two comments; no journal chapter; no implementation; no push.
+- **Next action:** Dev commits this documentation. Then ONE next-priority recommendation from the reconciled backlog of
+  24 open issues, its owning issue named and its remaining scope checked against the tree, for accept-or-correct. No
+  candidate is assessed yet. #62's PON remainder is suspended; activation and .dcon deferred; EgoActor observed only.
+- **Everything else stands as the sections below record:** journal coverage at chapter 112 with the uncovered range and
+  its sources named at the end of this file.
+
+## Previous checkpoint — the aborted Codex handoff and the verification task (Claude Code, November 6, 2026; done, see above)
 
 Prepared at Dev's direction for a new Claude Code session, after the November 4 handoff to Codex went
 wrong. Observed: HEAD 6682c41 (this checkpoint's documentation commit, record `git-record-2026-11-06-1255`),

@@ -27,15 +27,18 @@ out, a decision is deferred, or a bug is noticed in passing, *surface it in conv
 does not need approval. The backlog grows faster than it drains, and an unprompted issue
 buries the few that matter.
 
-**Issue tracking is part of each development increment (Dev approved, 2026-11-04).**
+**Issue tracking is part of each development increment (proposed by Codex on 2026-11-04 and approved in a
+one-line batch; re-decided by Dev in this form on 2026-11-08).**
 Before recommending an increment, inspect the owning GitHub issue and its current remaining scope,
 compare it with the tree and recent verified work, and state the issue link in the recommendation.
 If no existing issue fits, surface the gap to Dev; creating an issue still needs explicit approval.
-Cite the owning issue in the git-record and change summary. After Dev reports the verified commit,
-update the existing issue with the commit, implemented behavior, test provenance and remaining scope;
-close or relabel only within Dev's authorization. Reassess the next priority against the reconciled
-backlog rather than inheriting an old label. Keep suspended/deferred work explicit. Historical
-model-authored proposals are evidence to re-examine, not new specifications or implementation approval.
+Cite the owning issue in the git-record and change summary. A comment on the owning issue is written
+when a thread closes or when Dev asks for one, NOT after every verified commit: the record and the
+CHANGELOG already carry each commit, and a comment per commit is the model-authored tracker prose the
+rule above guards against. Close or relabel only within Dev's authorization. Reassess the next
+priority against the reconciled backlog rather than inheriting an old label. Keep suspended/deferred
+work explicit. Historical model-authored proposals are evidence to re-examine, not new specifications
+or implementation approval.
 
 **Definitions move as a trio.** A type is three artifacts that must agree:
 `src/main/resources/<pkg>/X.drake` (the Source — drake is the definition language),
@@ -576,8 +579,10 @@ minimal pair by its own target's fixity (2026-09-21) — so an authored redundan
 re-canonicalization. `=>` is never a drake token: it is the Scala target's spelling of the lambda node. The JSON corpus is re-canonicalized from the drake after each parser step (`DrakeCLI parse
 X.drake > X.json` with the compiled parser; 2026-09-16 for calls, 2026-09-17 for type forms, 2026-09-21 for operators and lambdas). BodyElement and ActorAspect were re-canonicalized
 on 2026-10-22, removing the last two exceptions; format/json/Value came off the list on
-2026-09-21 when its conditionals became `guard(c).ifThenElse(t, e)`. Parse is a measurement tool, not
-yet an authoring path (GitHub #61).
+2026-09-21 when its conditionals became `guard(c).ifThenElse(t, e)`. Parse IS the authoring path: a surface is
+authored in drake and its JSON is `DrakeCLI parse` of it, as every trio of the October sessions was; GitHub #61 was
+closed on 2026-11-04, and this sentence said "a measurement tool, not yet an authoring path" until the verification of
+2026-11-08 found it the stale side.
 
 **Tiers.** `src/main/scala` is definition-backed. `src/mods/scala` compiles into the same
 package tree and holds the hand-written engine: `DracoGenerator`, `GeneratorCLI`, `Drake`,
@@ -1143,13 +1148,14 @@ present-empty rule or actor survives the carrier, with the two authored-ahead su
 re-canonicalized as plain types and their exhibit moved into a round-trip test. Activation and .dcon migration
 remain deferred; the example domains remained unswept until 2026-10-31 (below).
 
-**#51 continuation.** The issue's priority-next label was scoped to the derivation edge
-completed in August; it is not evidence that every proposal in its older comments remains
-current. Type-form trees, neutral collection operators, Presence/Text and Dracon supersede
-parts of that discussion. Structured method formals close its name-overflow gap. After this
-increment's gate and commit, return to #51's remaining formal/actual representation and
-neutral vocabulary questions with one design point for Dev; do not end at commit confirmation
-or silently adopt the old flat TypeParameter migration. Activation and .dcon remain deferred.
+**#51 continuation (historical).** After the method-formals increment of 2026-10-19 this paragraph told the
+next session to return to #51's remaining formal/actual representation and neutral vocabulary questions with
+one design point for Dev, and not to adopt the old flat TypeParameter migration. The October 21–22 session did
+so and closed them — two-stage loading, the unit type, HostBindings, the resolution record, the swept corpus,
+formals in the aspect (the handoff checkpoint of 2026-10-22 above) — and the issue was closed on the tracker on
+2026-11-04 with its priority-next label removed, a closure verified on 2026-11-08. Type-form trees, structured
+formals and the formal/actual split supersede the old proposal; no session returns to it. Activation and .dcon
+remain deferred.
 
 **Deferred activation (Dev, 2026-10-15).** Dev asked to preserve Codex's unaccepted recommendation:
 start an explicitly supplied Assembly of held actor definitions, using factory-supplied executable
@@ -1216,8 +1222,9 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-06 at 2b9cfd5, for a new Claude Code session, after the aborted Codex handoff: the
-  first task is a read-only verification of Codex's tracker reconciliation; journal coverage reaches chapter 112.
+  Last prepared 2026-11-08 at 40d02df, after the verification of Codex's tracker reconciliation (accepted by Dev;
+  two comments corrected, nothing reopened, the §1 rule re-decided): the next task is one next-priority recommendation
+  from the reconciled backlog of 24 open issues; journal coverage reaches chapter 112.
 - **`CHANGELOG.md`** — **current.** Release blocks through alpha.6 (2026-08-17); `[Unreleased]`
   carries one entry per commit since, written with each commit's record, and was consolidated
   into one section each (Added / Changed / Fixed / Build) with a lead paragraph on 2026-09-09.
@@ -2061,3 +2068,31 @@ November 5 and then said the task result is not trusted. The next Claude Code se
 and reports before anything further is posted, reopened, relabeled or edited; the §1 rule stands as committed until Dev
 confirms or corrects it. Two facts already known: the count correction to 32 open issues is right; §3 above still says
 "Parse is a measurement tool, not yet an authoring path (GitHub #61)" while #61 is closed, and one side is wrong.
+
+**The reconciliation verified; two comments corrected, the §1 rule re-decided (2026-11-08, Claude Code; Dev accepted).**
+The read-only verification the November 6 handoff asked for was delivered as one recommendation and Dev accepted it in one
+word, "Accept". FINDINGS. All eight closures are justified against the tree and the git history: #61 (the dyn `=` marker
+retired at a5d2f5b, operators by fixity and the lambda at 665926e, no host-opaque expression form left at 8e59cbe, `Condition`
+carrying `value` alone so the issue's lexical scan has nothing to scan); #55 (no `"Seq()"` leaf under main, mods or test; the
+only hit is drake.dlt prose); #42 (Output's branch is single-line values and a factory call; the `new` host text left in the
+corpus constructs host types only); #41 (each of the six example domains lists exactly its package siblings); #15 (the three
+guides exist — the Scala guide's authoring section still describes JSON as what is authored, a docs refresh point, not a
+reopen); #51 (the six cited commits are what the comment says; the August 26 open items were settled by Objective trees and
+Dracon actuals; the label removal fits a closed issue); #57 (fix 1 at 8239d08; ScalaTarget derives Target, so the bound's
+premise is gone; "not planned" right); #46 (closure right, reason wrong for part 3). All 24 status comments cite evidence that
+exists and state remaining scope accurately — every engine claim was checked in the source (the discriminator rejection in
+Drake.scala, the hard-coded PostStop branch, caseDispatch's four head forms, the bare `trait Completeness`, the duplicated
+stub judgments, Editor.drake naming Evrete's activation mode, six scripts and none of the four proposed, the orion traits, the
+factory-less sentient three, EgoActor, the composite derivations) — with ONE error: #50 credits 324556c (the 2026-08-25
+foreign-derivation change for #51) with item 1, which landed on 2026-07-29 in b93e3a1 and eafc649; item 2's remaining scope
+is right. ACTED ON, after acceptance: one correcting follow-up comment each on #50 (the commit) and #46 (part 3 completed,
+not superseded — `format/dracon/Value.drake` is a full native tree); no issue reopened, nothing relabeled, no comment edited;
+#51's label stays removed. THE §1 RULE: its content was Codex's proposal, approved as part of a batch by the one line "I
+approve your recommendation" after Dev had said "Correct it first" to the audit, and labelled "Dev approved"; no transcript of
+that session is in the repository. Dev re-decided it on 2026-11-08 in the form §1 now carries: the owning-issue check and the
+citation in the record stay; the per-commit tracker update softens to a comment when a thread closes or when Dev asks. THE
+STALE PASSAGES: §3 now says parse is the authoring path (the #61 side was right); the "#51 continuation" paragraph is marked
+historical; README's caveat that lambdas, conditionals and operators "come back as opaque text" (false since 2026-09-21) is
+corrected with it. Documentation and two tracker comments only; no engine, definition, Scala or test change; the gate 1118 / 77
+at 48f466d stands. Next, after Dev's commit: one next-priority recommendation from the reconciled backlog of 24 open issues,
+its owning issue named. EgoActor observed only; activation and .dcon deferred; PON suspended.

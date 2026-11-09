@@ -217,10 +217,12 @@ nothing foreign: it is the nameless domain, draco's default package. Value types
 
 Emission (`Drake.emit`) and parsing (`Drake.parse`) are mutual inverses, gated in both
 directions across the corpus. A call is written `f(a, b)`, positional arguments first, then
-`name:value`, an omitted parameter taking its declared default. One caveat for authors: **the
-parser builds expression trees only for calls, tuples, `++`, collection literals, and every type form.** Lambdas,
-conditionals and infix operators come back as opaque text, so parsing is an authoring path for
-structure and a measurement tool for the rest.
+`name:value`, an omitted parameter taking its declared default. The parser builds expression trees for
+calls, tuples, collection literals, the infix operator layer (read by Haskell's Prelude fixities), the lambda
+`\p -> body` and every type form; a conditional is the `ifThenElse` call on a `Presence`, not a keyword. Only a
+run with a several-token operand that is none of these — a host `if`, a `new`, a block — stays whole as
+host-opaque text. Parsing is the authoring path: a definition's JSON is `DrakeCLI parse` of its surface, and the
+parser suite asserts that over the whole corpus.
 
 **Evaluation is lazy by default.** Every binding a body evaluates and every parameter is
 call-by-need — evaluated at most once, on first use, and never if unused, as in Haskell — and a
@@ -914,7 +916,9 @@ boundary and exclusions; chapter 112 preserves the journal omission and its corr
 
 
 Issue tracking was reconciled on November 4, 2026: 32 open issues reviewed, eight closed with
-Dev's approval, 24 retained with current status/evidence. The shared development workflow in
-[DRACO.md](DRACO.md) now checks issue ownership before each increment and updates the issue after
-Dev's verified commit. See [DEVELOPMENT_HANDOFF.md](DEVELOPMENT_HANDOFF.md) for the current checkpoint;
-this tracker update does not advance the journal's chapter-112 coverage.
+Dev's approval, 24 retained with current status/evidence. The reconciliation was verified read-only
+on November 8: every closure stands, two comments were corrected by follow-up (#50, #46), nothing was
+reopened. The shared development workflow in [DRACO.md](DRACO.md) checks issue ownership before each
+increment and cites it in the commit's record; the issue itself is updated when a thread closes or
+when Dev asks. See [DEVELOPMENT_HANDOFF.md](DEVELOPMENT_HANDOFF.md) for the current checkpoint;
+neither tracker step advances the journal's chapter-112 coverage.

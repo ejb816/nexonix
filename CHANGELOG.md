@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- Verify the November 4 tracker reconciliation read-only, accepted by Dev: all eight closures stand, two comments are
+  corrected by follow-up (#50 cited the wrong commit for item 1; #46's Value tree is completed, not superseded), nothing is
+  reopened or relabeled. Dev re-decides the DRACO.md §1 issue-tracking rule (the owning-issue check and the record citation
+  stay; a tracker comment at thread close or on request, not per commit); DRACO.md §3 and README no longer call parsing a
+  measurement tool, and the "#51 continuation" paragraph is historical. Documentation and two tracker comments only.
 - Refresh the shared handoff after the aborted Codex handoff: the next Claude Code session's first task is a
   read-only verification of the tracker reconciliation committed as 2b9cfd5 (eight closures, 32 comments, the new
   DRACO.md §1 rule), which Dev does not trust; nothing on the tracker changes until Dev decides. Documentation only.

@@ -1,45 +1,33 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
-This is a November 6, 2026 handoff for a new Claude Code session, prepared by Claude Code at my
-direction after an aborted handoff to Codex. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+This is a November 8, 2026 handoff for a new session in either agent, prepared by Claude Code after the
+verification of the tracker reconciliation. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD 6682c41 on main, pushed to origin/main on November 6 (this handoff's documentation commit, on
-top of 2b9cfd5, the Codex session's documentation commit, which I executed on November 5 and pushed with
-it). Inspect git status/log anyway. The last implementation commit is 48f466d; every accepted
-implementation increment is committed; my last full sbt gate was 1118 tests / 77 suites on November 4,
-zero failures or aborts, every headline matching. The DRACO.md table holds the two suspended PON rows
-and the categorical rete finding alone. Journal coverage reaches chapter 112; the commits since
-(e241378 through 48f466d and the documentation commits after) are not journaled — the handoff names
-the sources.
+STATE: HEAD is this handoff's documentation commit on main (record git-record-2026-11-08-0924), on top of 40d02df,
+which was pushed to origin/main on November 6. Inspect git status/log anyway. The last implementation commit is
+48f466d; every accepted implementation increment is committed; my last full sbt gate was 1118 tests / 77 suites on
+November 4, zero failures or aborts, every headline matching. The DRACO.md table holds the two suspended PON rows
+and the categorical rete finding alone. Journal coverage reaches chapter 112; the commits since (e241378 through
+48f466d and the documentation commits after) are not journaled — the handoff names the sources.
 
-WHAT HAPPENED (November 4–5). The November 4 handoff proposed an issue-tracker reconciliation audit as
-the next task, to be restated after I corrected it. The Codex session that received it did not ask
-for the correction: in one session it ran the audit, proposed closing issues and commenting on all
-of them, took my "I approve your recommendation" as approval of the whole batch, and ACTED ON THE
-TRACKER — 32 status/evidence comments, eight closures (#61, #55, #42, #41, #15, #51 as completed or
-reconciled; #57, #46 as superseded, "not planned"), #51's priority-next label removed — then wrote a
-new operating rule into DRACO.md §1 ("Issue tracking is part of each development increment"), a
-"Current checkpoint" at the top of DEVELOPMENT_HANDOFF.md, a README paragraph and the record
-git-record-2026-11-04-1658, and handed me commit commands, which I executed as 2b9cfd5. I DO NOT
-TRUST THAT RESULT. It also corrected one thing rightly: the open-issue count was 32, not the 34 my
-handoff said.
+WHAT HAPPENED (November 4–8). The Codex session of November 4 reconciled the tracker without asking me what to
+correct first — 32 status comments, eight closures (#61, #55, #42, #41, #15, #51 completed or reconciled; #57, #46
+superseded), #51's priority-next label removed, a new DRACO.md §1 rule — and I committed its documentation as
+2b9cfd5 before deciding I did not trust the result. A Claude Code session verified it read-only on November 8 and I
+accepted its recommendation: all eight closures stand; all 24 status comments cite evidence that exists; two
+comments were corrected by follow-up (#50 cited the wrong commit for item 1, which is b93e3a1 / eafc649 of
+2026-07-29; #46's part 3 is completed, not superseded); nothing was reopened or relabeled. I re-decided the §1
+rule: the owning-issue check before a recommendation and the citation in the record stay; a tracker comment is
+written when a thread closes or when I ask, not after every commit. DRACO.md §3 now says parse is the authoring
+path (GitHub #61 is closed and was right); the "#51 continuation" paragraph is historical. The backlog is 24 open
+issues, reconciled.
 
-YOUR FIRST TASK: an independent, read-only verification of the Codex reconciliation, reported here
-before anything else happens on the tracker. For each of the eight closures, check the closure
-comment's claim against the tree and the git history and say whether the closure is justified, is
-partly justified with remaining scope the comment hides, or is wrong. For each of the 24 status
-comments, check that its stated evidence exists and its "remaining" scope is accurate. Check the
-label removal on #51 and the new DRACO.md §1 rule against what I actually approved (the record quotes
-only "I approve your recommendation"; the rule's content was Codex's proposal). Known discrepancies to
-start from: DRACO.md §3 still says "Parse is a measurement tool, not yet an authoring path (GitHub
-#61)" while #61 is closed, so one side is wrong; the commit hashes the comments cite all exist, and
-ExampleMembershipTest, the three GETTING_STARTED files and the scripts directory the comments name
-are as described (Claude Code spot-checked these on November 6, nothing more). Deliver ONE
-recommendation with accept-or-correct — which closures to reopen, which comments to correct, whether
-the §1 rule stands as written — and post, reopen, relabel or edit nothing until I say so. Only then
-bring a next-priority recommendation from the reconciled backlog, with its owning issue named.
+YOUR FIRST TASK: bring ONE next-priority recommendation from the reconciled backlog, with its owning issue named
+and its current remaining scope checked against the tree and the recent verified work, for accept-or-correct. Do
+not restart the audit, and touch nothing on the tracker before I decide. A docs point already surfaced and not
+acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 
 HISTORY of the increments since the October 26 handoff follows, newest first; the details are in the
 handoff's dated sections and git records.
