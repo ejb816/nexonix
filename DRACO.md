@@ -65,7 +65,12 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**1119 tests / 77 suites**, verified by Dev on 2026-11-09 for the one stub predicate (record `git-record-2026-11-09-1139`, committed
+**1127 tests / 78 suites**, verified by Dev on 2026-11-09 for the FactDisjointness rule (record `git-record-2026-11-09-1231`,
+committed as 995fade): a core rule refusing a domain whose rules declare fact types related by derivation (GitHub #63 constraint 4),
+one corpus type added (parse scope 111 + 73, surface losses 0 across 184 types, 111 aspect sections, GenDrake 109 of 109), eight
+tests added (five per-type gates and FactDisjointnessRulesTest's three, the 78th suite), zero failed/canceled/ignored/pending tests,
+no engine change; its direct run 1127 / 79 including discovery, green on its second run (the first failed eleven tests of the
+increment's own making, corrected). First full Dev gate green. Before it: **1119 tests / 77 suites**, verified by Dev on 2026-11-09 for the one stub predicate (record `git-record-2026-11-09-1139`, committed
 as 929c850): `TypeDefinition.isStub` is the one definition of "stub", TypeLoader, Completeness, DomainBuilder, eleven tests and six
 scripts referencing it; TypeDefinitionTest +1, zero failed/canceled/ignored/pending tests, every headline unchanged; three trios
 re-authored and regenerated, no engine change; its direct run 1119 / 78 including discovery, green on its first run. First full Dev
@@ -1235,7 +1240,7 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-09 after the #63 constraint-4 increment (record `git-record-2026-11-09-1231`, commit pending): the
+  Last prepared 2026-11-09 after the #63 constraint-4 increment (record `git-record-2026-11-09-1231`, committed by Dev as 995fade after his gate of 1127 green): the
   FactDisjointness rule guards the co-declaration hazard at definition time; #63 stays open for its grammar points. Before it,
   the same day, after the #47 increment (record `git-record-2026-11-09-1139`, committed by Dev as 929c850 after his gate of 1119 green): the stub predicate is
   `TypeDefinition.isStub`, one definition; #47 closed on the tracker the same day at Dev's instruction, 22 issues open; #50 closed the same
@@ -2177,6 +2182,6 @@ Editor firing it beside the five core rules; five JSON re-canonicalized and five
 scope 111 + 73, surface losses 0 across 184 types, 111 aspect sections, GenDrake 109 of 109. The first direct run failed eleven tests, all in the increment: the split had named `java.util.regex.Pattern`,
 a host class outside the HostBindings vocabulary, which every resolution path over TypeDefinition's body refused (the character class
 `"[.]"` replaces it — a definition body names no host class); EditorTest's registered-rule count is eleven; Editor.scala, generated
-mid-update, takes the canonical `draco.FactDisjointness` spelling. Second direct run: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only. Dev's gate pending. Next: one
+mid-update, takes the canonical `draco.FactDisjointness` spelling. Second direct run: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-09: 1127 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; committed by Dev as 995fade. Next: one
 recommendation from the 22 open issues, its owning issue named. EgoActor and scripts/inspect-type.scala observed only; activation and
 .dcon deferred; PON suspended.

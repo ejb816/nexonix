@@ -8,9 +8,11 @@ destination session has been launched or messaged, and no private agent memory i
 
 ## Current checkpoint — the third increment from the reconciled backlog: the FactDisjointness rule (Claude Code, November 9, 2026)
 
-Observed: HEAD a6a0f96 on main (the fold of 929c850 and the #47 closure); the tree holds this increment, uncommitted.
-Whether d026cd3, d8de334, 929c850 and a6a0f96 are pushed is to be checked on resumption. Dev's gate on 929c850
-(1119 / 77, green) stands until Dev gates this tree.
+Observed: HEAD 995fade on main, this increment's commit (record `git-record-2026-11-09-1231`), committed by Dev on
+November 9 on top of a6a0f96 after his gate (1127 tests, zero failures, every headline matching, green on its first run);
+the tree was clean after it but for this fold. Whether the day's commits (d026cd3, d8de334, 929c850, a6a0f96, 995fade) are
+pushed is to be checked on resumption. 995fade is the last implementation commit and Dev's gate on it is the current
+baseline: **1127 tests / 78 suites**.
 
 - **Done this session.** The recommendation on GitHub #63 constraint 4 was accepted ("Accepted, build it"): a core rule,
   `draco.FactDisjointness`, refusing a domain whose rules declare fact types related by derivation, the hazard
@@ -19,7 +21,7 @@ Whether d026cd3, d8de334, 929c850 and a6a0f96 are pushed is to be checked on res
   (a rule's declared fact types as identities through its record), `DomainOntology.ancestors` / `relatedFactTypes`, the
   rule's trio, Draco listing it, the Editor firing it beside the five core rules; five JSON re-canonicalized, five Scala
   regenerated, `DrakeCLI check` clean; FactDisjointnessRulesTest (3) the 78th suite; one corpus type added. The first direct run failed eleven tests, all in the increment (a host regex class in the drake body, the EditorTest rule count, a mid-update Editor spelling), corrected; the second run: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only.
-- **Next action:** Dev runs the full gate and commits (record `git-record-2026-11-09-1231`). #63 stays open for its grammar
+- **Next action:** #63 stays open for its grammar
   points (payload and tag relationships, closedness); no comment until the thread closes or Dev asks. Then ONE
   recommendation from the 22 open issues, its owning issue named, for accept-or-correct.
 - **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (recorded with the #47 increment).
@@ -669,7 +671,7 @@ change, so no two-run protocol. OBSERVED, not fixed: scripts/inspect-type.scala 
 the host-Json `expression`), seen when the six scripts were compiled against the new classes; the other five compile.
 DIRECT RUN: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only. DEV'S GATE: 1119 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 929c850; #47 closed on the tracker the same day on Dev's instruction. Record `git-record-2026-11-09-1139`.
 
-## FactDisjointness: the co-declaration hazard becomes a definition-time rule (accepted and built, November 9; direct run 1127 / 79 on its second run; Dev's gate pending)
+## FactDisjointness: the co-declaration hazard becomes a definition-time rule (accepted and built, November 9; direct run 1127 / 79 on its second run; Dev's gate 1127 / 78, committed as 995fade)
 
 Dev accepted: "Accepted, build it". OWNING ISSUE: GitHub #63, constraint 4 ("No two rules in one domain may declare fact types
 related by inheritance"); the grammar points of the issue stay open. WHY: the table's categorical row — co-declared types from one
@@ -692,7 +694,7 @@ surface losses 0 across 184 types, 111 aspect sections, GenDrake 109 of 109. FIR
 body refused (eight tests across DomainLoadingTest, ExampleLoadingTest, ResolutionRecordTest, DracoGenTest, GenerateAndCompileTest);
 EditorTest's registered-rule count moved from ten to eleven; and Editor.scala, generated while the overlay was mid-update, spelled
 the new line bare where the canonical scope spells `draco.FactDisjointness` like the other core rules — all three corrected,
-focused reruns green. SECOND DIRECT RUN: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only. Record `git-record-2026-11-09-1231`.
+focused reruns green. SECOND DIRECT RUN: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only. DEV'S GATE: 1127 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 995fade. Record `git-record-2026-11-09-1231`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 
