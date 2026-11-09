@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- The stub predicate has one definition: `TypeDefinition.isStub`, a global on the definition type in the form of the
+  aspects' `isEmpty`, true when all four role and structure aspects are empty. `TypeLoader.isStub` (by name), the
+  Completeness rule (one condition instead of four), `DomainBuilder` (its own `isStub` removed), eleven test sites and the
+  six inspection scripts reference it; semantics unchanged. Closes GitHub #47. TypeDefinitionTest +1 (1119).
 - Every generated rule trait derives `DracoType`: the rule-only branch of `DracoGenerator.spelledSource` renders its trait
   through `traitDeclaration` like every other branch instead of a hard-coded bare `trait X`, so the trait agrees with the
   rooted companion and the loader; the 23 rule-only Scala files in the corpus, the two forest scenario rules under the test

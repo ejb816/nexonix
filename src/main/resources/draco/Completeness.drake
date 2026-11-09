@@ -5,9 +5,6 @@ rule
     variables
       var td TypeDefinition
     conditions
-      con DracoAspect.isEmpty(td.dracoAspect)
-      con DomainAspect.isEmpty(td.domainAspect)
-      con td.ruleAspect.fold(true, \aspect -> false)
-      con td.actorAspect.fold(true, \aspect -> false)
+      con TypeDefinition.isStub(td)
   action
     mon ctx.insert(Problem(td.typeName, s"member ${td.typeName.name} is declared but unauthored (no JSON on disk)"))

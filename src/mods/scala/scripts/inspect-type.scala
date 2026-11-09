@@ -28,12 +28,9 @@ object InspectType {
     val td = DracoGenerator.loadType(TypeName(name, _namePackage = pkg))
 
     // DracoGenerator.loadType returns a placeholder (input typeName, all aspects empty)
-    // when the resource is missing — not TypeDefinition.Null. Detect via aspect emptiness.
+    // when the resource is missing — not TypeDefinition.Null; TypeDefinition.isStub says so.
     val loaded =
-      !DracoAspect.isEmpty(td.dracoAspect) ||
-      !DomainAspect.isEmpty(td.domainAspect) ||
-      td.ruleAspect.fold(false, _ => true) ||
-      td.actorAspect.fold(false, _ => true)
+      !TypeDefinition.isStub(td)
 
     if (!loaded) {
       System.err.println(s"error: no TypeDefinition found for ${pkg.mkString(".")}.$name")

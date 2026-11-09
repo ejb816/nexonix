@@ -94,7 +94,7 @@ class DerivationResolvableRulesTest extends AnyFunSuite {
       TypeDefinition(TypeName("Candidate", _namePackage = pkg),
         _domainAspect = DomainAspect(TypeName("Candidate", _namePackage = pkg), Seq("Root", "Leaf"))),
       Seq(root, leaf))
-    assert(!DomainBuilder.isStub(candidate.typeDictionary(root.typeName)), "core populates from supplied members")
+    assert(!TypeDefinition.isStub(candidate.typeDictionary(root.typeName)), "core populates from supplied members")
 
     val resolved = problemsFrom(DomainBuilder.ontology(draco, candidate), Seq(leaf))
     assert(resolved.isEmpty, s"Leaf should resolve through the candidate's own ontology; got ${resolved.map(_.message)}")

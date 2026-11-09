@@ -41,7 +41,7 @@ class DomainLoadingTest extends AnyFunSuite {
     val identities = DomainBuilder.identities(canonical)
     val full = DomainOntology(populated)
     assert(identities.kvMap.size == canonical.size)
-    assert(identities.kvMap.keys.forall(_.typeDictionary.elementTypes.forall(DomainBuilder.isStub)), "stage one holds placeholders only")
+    assert(identities.kvMap.keys.forall(_.typeDictionary.elementTypes.forall(TypeDefinition.isStub)), "stage one holds placeholders only")
     assert(definitionsOf(identities).map(_.typeName.namePath) == definitionsOf(full).map(_.typeName.namePath),
       "the same identities, keyed bare — parameters compose references, not definitions — with placeholders for bodies")
     val byIdentity = new NameResolution(identities, hostVocabulary)
@@ -59,7 +59,7 @@ class DomainLoadingTest extends AnyFunSuite {
     assert(loaded.kvMap.size == canonical.size && reversed.kvMap.size == canonical.size)
     assert(encoded(definitionsOf(loaded)) == expected, "stage two is the resolution of the unscoped load")
     assert(encoded(definitionsOf(reversed)) == expected, "order-independent")
-    assert(definitionsOf(loaded).forall(td => !DomainBuilder.isStub(td)), "every declared member has a definition")
+    assert(definitionsOf(loaded).forall(td => !TypeDefinition.isStub(td)), "every declared member has a definition")
     canonical.foreach(d => assert(loaded.holds(d), d.namePath))
     assert(loaded.defines(typeName("draco.format.dracon.Dracon")) && loaded.defines(typeName("draco.TypeName")))
     assert(loaded.defines(typeName("draco.Local")), "Local is a Draco member, resolved by the ontology, not a binding")

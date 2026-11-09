@@ -64,8 +64,8 @@ class DreamsTest extends AnyFunSuite {
     assert(DracoAspect.isEmpty(definitionAt("draco/dreams/Dreams").dracoAspect))
     assert(td.ruleAspect.fold(true, _ => false) && td.actorAspect.fold(true, _ => false) && CodecAspect.isEmpty(td.codecAspect))
     val loaded = DomainBuilder.define("Dreams", Seq("draco", "dreams"))
-    assert(!DomainBuilder.isStub(loaded.typeDefinition))
-    assert(loaded.typeDictionary.elementTypes.forall(m => !DomainBuilder.isStub(m)))
+    assert(!TypeDefinition.isStub(loaded.typeDefinition))
+    assert(loaded.typeDictionary.elementTypes.forall(m => !TypeDefinition.isStub(m)))
     assert(DomainBuilder.validate(loaded).isEmpty)
     assert(DomainBuilder.generate("Dreams", Seq("draco", "dreams")).keySet == Set(td.typeName, Initialization.typeDefinition.typeName))
   }
@@ -93,7 +93,7 @@ class DreamsTest extends AnyFunSuite {
     Seq(Read, Delete).foreach(m => assert(m.typeDefinition.dracoAspect.elements.map(_.name) == Seq("domain", "proposal", "subject", "contents"),
       "a Read or Delete names one domain and knows what it proposes and reports on"))
     val loaded = DomainBuilder.define("User", userPkg)
-    assert(loaded.typeDictionary.elementTypes.forall(m => !DomainBuilder.isStub(m)))
+    assert(loaded.typeDictionary.elementTypes.forall(m => !TypeDefinition.isStub(m)))
     assert(DomainBuilder.validate(loaded).isEmpty)
     assert(DomainBuilder.generate("User", userPkg).keySet ==
       Set(td.typeName, Create.typeDefinition.typeName, Delete.typeDefinition.typeName, Generate.typeDefinition.typeName, Latent.typeDefinition.typeName,

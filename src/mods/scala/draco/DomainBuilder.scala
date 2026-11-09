@@ -36,14 +36,6 @@ object DomainBuilder {
   private def loadMember(name: String, namePackage: Seq[String]): TypeDefinition =
     DracoGenerator.loadType(TypeName(name, _namePackage = namePackage))
 
-  /** True when a loaded TD came back empty — named in the dictionary but with no
-    * JSON on disk. Such members still generate, as a skeleton. */
-  def isStub(td: TypeDefinition): Boolean =
-    DracoAspect.isEmpty(td.dracoAspect) &&
-      DomainAspect.isEmpty(td.domainAspect) &&
-      td.ruleAspect.fold(true, _ => false) &&
-      td.actorAspect.fold(true, _ => false)
-
   /** Define a domain from its resources: load its own definition, then load
     * every member named in `domainAspect.elementTypeNames`, and return the
     * concrete `Domain` core builds from them — its `typeDictionary` populated
@@ -68,7 +60,7 @@ object DomainBuilder {
   private def declared(declarations: Seq[TypeName], path: DefinitionPath): Seq[TypeDefinition] =
     declarations.map { d =>
       val td = loadFrom(path, d)
-      require(!isStub(td), s"draco: declared domain ${d.namePath} has no definition at the supplied roots")
+      require(!TypeDefinition.isStub(td), s"draco: declared domain ${d.namePath} has no definition at the supplied roots")
       require(td.domainAspect.typeName.namePath == td.typeName.namePath,
         s"draco: ${d.namePath} is not a domain: it declares ${td.domainAspect.typeName.namePath}")
       td
@@ -156,7 +148,7 @@ object DomainBuilder {
     val members = domain.typeDictionary.elementTypes
 
     val completeness: Seq[String] = members.collect {
-      case m if isStub(m) =>
+      case m if TypeDefinition.isStub(m) =>
         s"member ${m.typeName.name} is declared but unauthored (no JSON on disk)"
     }
 
@@ -164,7 +156,7 @@ object DomainBuilder {
       DracoAspect.parents(m.dracoAspect)
         .filter(_.namePackage.headOption.contains("draco"))
         .collect {
-          case anc if isStub(DracoGenerator.loadType(anc)) =>
+          case anc if TypeDefinition.isStub(DracoGenerator.loadType(anc)) =>
             s"member ${m.typeName.name} derives from ${anc.namePath}, " +
               s"which does not resolve to a definition"
         }

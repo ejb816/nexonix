@@ -69,5 +69,5 @@ object TypeDefinition extends App with DracoType {
     _codecAspect = CodecAspect.Null
   )
 
-
+  lazy val isStub: TypeDefinition => Boolean = td => DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && td.ruleAspect.fold(true, aspect => false) && td.actorAspect.fold(true, aspect => false)
 }

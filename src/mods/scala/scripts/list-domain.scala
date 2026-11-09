@@ -27,12 +27,9 @@ object ListDomain {
     val pkg  = args.drop(1).toSeq
 
     // DracoGenerator.loadType returns a placeholder (input typeName, all aspects empty)
-    // when the resource is missing — not TypeDefinition.Null. Detect via aspect emptiness.
+    // when the resource is missing — not TypeDefinition.Null; TypeDefinition.isStub says so.
     def loaded(td: TypeDefinition): Boolean =
-      !DracoAspect.isEmpty(td.dracoAspect) ||
-      !DomainAspect.isEmpty(td.domainAspect) ||
-      td.ruleAspect.fold(false, _ => true) ||
-      td.actorAspect.fold(false, _ => true)
+      !TypeDefinition.isStub(td)
 
     val td = DracoGenerator.loadType(TypeName(name, _namePackage = pkg))
     if (!loaded(td)) {

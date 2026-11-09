@@ -39,10 +39,7 @@ object ListDomains {
       else args.toSeq.map(parseFqn)
 
     def loaded(td: TypeDefinition): Boolean =
-      !DracoAspect.isEmpty(td.dracoAspect) ||
-      !DomainAspect.isEmpty(td.domainAspect) ||
-      td.ruleAspect.fold(false, _ => true) ||
-      td.actorAspect.fold(false, _ => true)
+      !TypeDefinition.isStub(td)
 
     println("Known domains:")
     println()

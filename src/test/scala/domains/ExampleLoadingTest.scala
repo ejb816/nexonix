@@ -20,7 +20,7 @@ class ExampleLoadingTest extends AnyFunSuite {
       domain.typeDefinition +: domain.typeDictionary.elementTypes
     }.sortBy(_.typeName.namePath)
     assert(actual.size == 48 && actual.map(_.typeName.namePath).distinct.size == 48)
-    assert(actual.forall(td => !DomainBuilder.isStub(td)))
+    assert(actual.forall(td => !TypeDefinition.isStub(td)))
     assert(encoded(actual) == encoded(authored.map(scope.resolve)))
     assert(encoded(actual) == encoded(examples(reversed)))
     ExampleScope.sinks.foreach { sink =>

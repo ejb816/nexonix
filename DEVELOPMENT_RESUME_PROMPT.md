@@ -1,14 +1,14 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
 This is a November 9, 2026 handoff for a new session in either agent, prepared by Claude Code after the
-#50 item 2 increment (every generated rule trait derives DracoType). First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+#47 increment (the stub predicate as TypeDefinition.isStub), the second from the reconciled backlog that day. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD is d026cd3 on main, the #50 item 2 increment (record git-record-2026-11-09-1005), gated by me on November 9
-(1118 tests, zero failures, every headline matching, green on its first run) and committed on top of 7d4ae0a; check whether
-both are pushed. Inspect git status/log anyway. It is the last implementation commit and my gate on it is the current
-baseline; the increment's direct run is in the handoff. The DRACO.md table holds the two suspended PON rows
+STATE: at the handoff HEAD was d8de334 on main (the fold of d026cd3, the #50 item 2 increment gated by me at 1118 green) and
+the tree held the #47 increment uncommitted (record git-record-2026-11-09-1139), awaiting my full gate and commit; if the log
+shows that commit on top of d8de334, it is committed and the first task below moves on. Inspect git status/log anyway and check
+what is pushed. The direct runs are in the handoff. The DRACO.md table holds the two suspended PON rows
 and the categorical rete finding alone. Journal coverage reaches chapter 112; the commits since (e241378 through
 48f466d and the documentation commits after) are not journaled — the handoff names the sources.
 
@@ -31,10 +31,15 @@ the 23 rule-only Scala files say `trait X extends DracoType`, one line each, the
 JSON or test change; no count or headline moves. On my verified commit the #50 thread closes with one comment and the
 closure, when I say so; the backlog goes to 23.
 
-YOUR FIRST TASK: if I have closed #50 (one comment citing d026cd3, then the closure, on my word), bring ONE recommendation on the next candidate,
-GitHub #47 — the stub predicate (TypeLoader.isStub by name, DomainBuilder.isStub by definition, Completeness's four inline
-conditions, six scripts) consolidated into one definition-backed place — as a design point first (where it lives), with
-its remaining scope checked against the tree, for accept-or-correct. If #50 is still open, the thread close is the first step, on my word. Touch nothing on the tracker before I decide. A docs point already
+WHAT HAPPENED (November 9, second increment). I accepted the #47 design point — the one stub predicate is a global
+`isStub` on TypeDefinition, the aspects' isEmpty form — and it was built: TypeLoader.isStub delegates by name, Completeness has
+one condition, DomainBuilder's copy is gone, eleven test sites and six scripts say TypeDefinition.isStub, TypeDefinitionTest +1
+(1119). Observed, not fixed, my decision: scripts/inspect-type.scala has not compiled since 2026-10-17. #50 is closed on the
+tracker (one comment citing d026cd3); #47 closes on my verified commit the same way, when I say so; 22 issues then remain.
+
+YOUR FIRST TASK: if the #47 increment is committed and closed, bring ONE recommendation from the 22 open issues, its owning
+issue named and its remaining scope checked against the tree, for accept-or-correct. If it is not yet committed, hand me the
+gate and commit block from the handoff first. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 
 HISTORY of the increments since the October 26 handoff follows, newest first; the details are in the

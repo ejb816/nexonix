@@ -34,8 +34,7 @@ type TypeLoader
       parameters
         par typeName TypeName
       body
-        loc td TypeDefinition loadType(typeName)
-        fix value Boolean DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && td.ruleAspect.fold(true, \aspect -> false) && td.actorAspect.fold(true, \aspect -> false)
+        fix value Boolean TypeDefinition.isStub(loadType(typeName))
     ]
 uses [
   draco drake Absent

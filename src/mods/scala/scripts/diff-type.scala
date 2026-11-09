@@ -67,10 +67,7 @@ object DiffType {
     val pkg  = args.drop(1).toSeq
 
     def loaded(td: TypeDefinition): Boolean =
-      !DracoAspect.isEmpty(td.dracoAspect) ||
-      !DomainAspect.isEmpty(td.domainAspect) ||
-      td.ruleAspect.fold(false, _ => true) ||
-      td.actorAspect.fold(false, _ => true)
+      !TypeDefinition.isStub(td)
 
     val td = DracoGenerator.loadType(TypeName(name, _namePackage = pkg))
     if (!loaded(td)) {

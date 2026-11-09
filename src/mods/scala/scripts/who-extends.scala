@@ -38,10 +38,7 @@ object WhoExtends {
     val targetKey  = targetTn.namePath
 
     def loaded(td: TypeDefinition): Boolean =
-      !DracoAspect.isEmpty(td.dracoAspect) ||
-      !DomainAspect.isEmpty(td.domainAspect) ||
-      td.ruleAspect.fold(false, _ => true) ||
-      td.actorAspect.fold(false, _ => true)
+      !TypeDefinition.isStub(td)
 
     // True iff `tn`, or any transitive ancestor via dracoAspect.derivation, has
     // namePath == target. Cycle-protected via the per-call seen set.

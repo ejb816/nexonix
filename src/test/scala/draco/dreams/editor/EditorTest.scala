@@ -117,7 +117,7 @@ class EditorTest extends AnyFunSuite {
     assert(td.ruleAspect.fold(true, _ => false))
     val loaded = DomainBuilder.define("Editor", Seq("draco", "dreams", "editor"))
     assert(DomainBuilder.validate(loaded).isEmpty)
-    assert(loaded.typeDictionary.elementTypes.forall(m => !DomainBuilder.isStub(m)))
+    assert(loaded.typeDictionary.elementTypes.forall(m => !TypeDefinition.isStub(m)))
   }
 
   test("Actual derives User's Response, so Editor depends on User and User never on Editor") {
@@ -200,7 +200,7 @@ class EditorTest extends AnyFunSuite {
     val domain = actual.domain
     assert(domain.typeDefinition.typeName == fresh)
     assert(domain.typeDictionary.size == 2)
-    assert(domain.typeDictionary.elementTypes.forall(m => !DomainBuilder.isStub(m)), "members are the supplied definitions, not placeholders")
+    assert(domain.typeDictionary.elementTypes.forall(m => !TypeDefinition.isStub(m)), "members are the supplied definitions, not placeholders")
     assert(DracoAspect.parents(domain.typeDictionary(TypeName("Leaf", pkg)).dracoAspect).map(_.name) == Seq("Root"))
   }
 

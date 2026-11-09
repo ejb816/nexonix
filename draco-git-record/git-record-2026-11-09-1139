@@ -1,0 +1,58 @@
+The stub predicate has one definition: TypeDefinition.isStub, referenced by TypeLoader, Completeness, DomainBuilder and the scripts (closes #47)
+
+Dev accepted, in the words "Accepted, build it", the design-point recommendation brought after the #50 close.
+OWNING ISSUE: https://github.com/ejb816/nexonix/issues/47, "Promote isStub to a shared main-tree predicate" — its
+November 4 status comment names the remaining scope as consolidation against current callers, not the restoration of
+the old three-site design, and that is what this commit does. With it the issue has no remaining scope.
+
+WHY. The invariant "a definition with all four role and structure aspects empty is a stub — declared, not authored"
+was spelled in five places and owned by none: TypeLoader.isStub (by name: load, then the four tests inline),
+DomainBuilder.isStub in the mods tier (by definition, the same four lines; four internal sites, eleven test sites),
+Completeness's rule (the same four tests as four `con` lines, four `where` clauses), and six scripts (the same test
+negated by hand as "loaded"). DerivationResolvable, which the issue named in July, no longer carries it; it tests
+ontology membership since 2026-10-09.
+
+THE DESIGN POINT, accepted: the one definition lives on TypeDefinition itself, as the global
+`fix isStub (TypeDefinition -> Boolean)` with a lambda value — exactly the form DracoAspect.isEmpty and
+DomainAspect.isEmpty already take, the type that owns the shape owning the test of it; in Haskell
+`isStub :: TypeDefinition -> Bool` in the TypeDefinition module. REJECTED: naming it isEmpty to match the aspects (a stub
+has a name and may carry a record, and "stub" is the word every caller and DRACO.md use); defining it as equality with
+`TypeDefinition(td.typeName)` (it would reclassify a definition carrying only a codec aspect or a `uses` record, a
+semantic change the issue does not ask for). Semantics are unchanged: the four-aspect conjunction, codec aspect and
+record ignored, as every site had it; both stub shapes the system makes — the loader's typeName-only stub and the
+dictionary's placeholder, each `TypeDefinition(name)` — satisfy it.
+
+BUILT. TypeDefinition.drake gains a `globals` section with the one line; TypeLoader.drake's isStub body is
+`TypeDefinition.isStub(loadType(typeName))`, the by-name convenience the engine calls at its two codec-eligibility
+sites kept, its `loc` gone; Completeness.drake's four conditions are one, `con TypeDefinition.isStub(td)`. The three
+JSON are `DrakeCLI parse` of their surfaces and the three Scala `GeneratorCLI generate` of the JSON, on the compiled
+engine of d026cd3 (no engine change, so no two-run protocol): TypeDefinition's companion gains `lazy val isStub:
+TypeDefinition => Boolean`, TypeLoader's isStub is one line, Completeness renders one `w0` and one `where`.
+DomainBuilder.isStub is removed and its three internal sites say TypeDefinition.isStub; so do the eleven test sites
+(ExampleLoadingTest, CompletenessRulesTest, MinimalTypeTest, DomainLoadingTest ×2, EditorTest ×2,
+DerivationResolvableRulesTest, DreamsTest ×3) and the six scripts (inspect-type, list-domain, diff-type,
+derivation-chain, who-extends, list-domains), whose "loaded" is `!TypeDefinition.isStub(td)`. `grep DomainBuilder.isStub`
+over src finds nothing. TypeDefinitionTest +1: a bare name is a stub, Null is a stub, a record alone does not authorize,
+and an element, a domain pointer, a present-empty rule aspect and a present-empty actor aspect each make a definition.
+`DrakeCLI check src/main/resources`: surface drift 0, json drift 0. Test count 1118 to 1119.
+
+OBSERVED, not fixed (outside the accepted scope; Dev's decision): scripts/inspect-type.scala has not compiled since the
+core-tree migration of 2026-10-17 — line 65 passes a Dracon `e.value` to `DracoGenerator.expression`, which takes the
+host Json — and nothing gated it, the scripts being compiled by the `mods` subproject alone; the other five scripts
+compile against the new classes with the one-line change.
+
+DIRECT RUN of every discovered suite on compiled classes with current main, mods and test resources on the loader roots
+(the overlay of d026cd3 with the regenerated and re-pointed files compiled in, test classes on the Runner's runpath alone):
+1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only.
+
+DOCUMENTATION in this commit: DRACO.md (§3's loading paragraph names the predicate; the §5 handoff line; a dated
+paragraph), CHANGELOG (one entry), DEVELOPMENT_HANDOFF.md (a new current checkpoint, a dated section, the November 9
+#50 checkpoint retitled as previous), DEVELOPMENT_RESUME_PROMPT.md (a new head). The record of the #50 closure in the
+three continuity documents, uncommitted since this morning, rides here. Under the §1 rule the #47 thread closes on Dev's
+verified commit: one comment citing it, and the closure, when Dev says so. Next: one recommendation from the 22 that
+would remain, its owning issue named.
+
+Not done, by design: no tracker action yet; no journal chapter (coverage stays at chapter 112); no push. PON suspended;
+activation and .dcon deferred; EgoActor observed only.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

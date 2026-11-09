@@ -117,7 +117,64 @@
           "value": "CodecAspect.Null"
         }
       ]
-    }
+    },
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "isStub",
+        "valueType": {
+          "->": [
+            "TypeDefinition",
+            "Boolean"
+          ]
+        },
+        "value": {
+          "\\": [
+            "td",
+            {
+              "&&": [
+                {
+                  "()": [
+                    "DracoAspect.isEmpty",
+                    "td.dracoAspect"
+                  ]
+                },
+                {
+                  "()": [
+                    "DomainAspect.isEmpty",
+                    "td.domainAspect"
+                  ]
+                },
+                {
+                  "()": [
+                    "td.ruleAspect.fold",
+                    "true",
+                    {
+                      "\\": [
+                        "aspect",
+                        "false"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "()": [
+                    "td.actorAspect.fold",
+                    "true",
+                    {
+                      "\\": [
+                        "aspect",
+                        "false"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
   },
   "domainAspect": {
     "typeName": {

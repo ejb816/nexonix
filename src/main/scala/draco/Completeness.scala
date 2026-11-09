@@ -8,10 +8,7 @@ object Completeness extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Completeness", _namePackage = Seq ("draco")))
   lazy val dracoType: Type[Completeness] = Type[Completeness] (typeDefinition)
   lazy val domainType: Domain[Draco] = Domain[Draco] (typeDefinition)
-  def w0(td: TypeDefinition): Boolean = DracoAspect.isEmpty(td.dracoAspect)
-  def w1(td: TypeDefinition): Boolean = DomainAspect.isEmpty(td.domainAspect)
-  def w2(td: TypeDefinition): Boolean = td.ruleAspect.fold(true, aspect => false)
-  def w3(td: TypeDefinition): Boolean = td.actorAspect.fold(true, aspect => false)
+  def w0(td: TypeDefinition): Boolean = TypeDefinition.isStub(td)
   private lazy val action: RhsContext => Unit = (ctx: RhsContext) => {
       val td: TypeDefinition = ctx.get[TypeDefinition]("$td")
       ctx.insert(Problem(td.typeName, s"member ${td.typeName.name} is declared but unauthored (no JSON on disk)"))
@@ -25,9 +22,6 @@ object Completeness extends App with DracoType {
       "$td", classOf[TypeDefinition]
     )
     .where("draco.Completeness.w0($td)")
-    .where("draco.Completeness.w1($td)")
-    .where("draco.Completeness.w2($td)")
-    .where("draco.Completeness.w3($td)")
     .execute (action(_))
     .build()
   }

@@ -1,12 +1,32 @@
 # Development Handoff
 
-Prepared November 9, 2026 by Claude Code after the #50 item 2 increment (every generated rule trait derives
-DracoType), for a new session in either agent. It supersedes the November 8, November 6 and November 4 checkpoints
-below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
+Prepared November 9, 2026 by Claude Code after the #47 increment (the stub predicate as `TypeDefinition.isStub`),
+for a new session in either agent. It supersedes the #50 checkpoint of the same morning and the November 8, November 6
+and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the first increment from the reconciled backlog: rule traits derive DracoType (Claude Code, November 9, 2026)
+## Current checkpoint — the second increment from the reconciled backlog: one stub predicate (Claude Code, November 9, 2026)
+
+Observed: HEAD d8de334 on main (the fold of d026cd3); the tree holds this increment, uncommitted, with the record of the
+#50 closure in this file, the resume prompt and DRACO.md §5 that the morning left uncommitted. Whether d026cd3 and d8de334
+are pushed is to be checked on resumption. Dev's gate on d026cd3 (1118, green) stands until Dev gates this tree.
+
+- **Done this session.** The recommendation on GitHub #47 was brought as a design point (where the one stub predicate
+  lives) and Dev accepted it ("Accepted, build it"): a global `fix isStub (TypeDefinition -> Boolean)` on TypeDefinition, the
+  aspects' `isEmpty` form. Built: TypeDefinition, TypeLoader and Completeness re-authored in drake, JSON re-canonicalized,
+  Scala regenerated on the d026cd3 engine (no engine change); DomainBuilder's copy removed and its three sites, eleven test
+  sites and six scripts re-pointed; TypeDefinitionTest +1. Semantics unchanged. Direct run of every discovered suite: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only.
+- **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (a Dracon value passed to the
+  engine's host-Json `expression`); the scripts compile under the `mods` subproject alone, so no gate sees it. Dev's decision.
+- **Next action:** Dev runs the full gate and commits (record `git-record-2026-11-09-1139`). On the verified commit the #47
+  thread closes: one comment citing the commit and the closure, when Dev says so; the backlog goes to 22. Then ONE
+  recommendation from the 22, its owning issue named, for accept-or-correct.
+- **Not done, by design:** no tracker action; no journal chapter; no push. The docs point from November 8 stands
+  (GETTING_STARTED_TARGET_SCALA.md's authoring section).
+- **Everything else stands as the sections below record.**
+
+## Previous checkpoint — the first increment from the reconciled backlog: rule traits derive DracoType (Claude Code, November 9, 2026; done, see above)
 
 Observed: HEAD d026cd3 on main, this increment's commit (record `git-record-2026-11-09-1005`), committed by Dev on
 November 9 on top of 7d4ae0a after his gate (1118, zero failures, every headline matching, green on its first run); the
@@ -23,8 +43,8 @@ is the last implementation commit; Dev's gate on it is the current baseline.
   TupleFactReteTest writes through the engine on every run — 26 generated files, one line each (25 of 25 with a definition
   on disk whitespace-identical from `GeneratorCLI generate` on the recompiled classes). No definition, JSON or hand-written
   test change. Direct run of every discovered suite: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically).
-- **Next action:** the #50 thread closes on d026cd3: one comment citing the commit and the closure, when Dev says so; the
-  backlog goes to 23. Then ONE
+- **Thread closed.** On Dev's instruction ("Please close #50") one comment citing d026cd3 was posted (https://github.com/ejb816/nexonix/issues/50#issuecomment-6745150195) and the issue closed as completed on November 9; 23 issues open. The fold commit is d8de334.
+- **Next action:** ONE recommendation on GitHub #47 as a design point first, below. Then ONE
   recommendation on the next candidate, GitHub #47 — the stub predicate (TypeLoader.isStub by name, DomainBuilder.isStub by
   definition, Completeness's four inline conditions, six scripts) consolidated into one definition-backed place — as a
   design point first (where it lives), for accept-or-correct.
@@ -610,7 +630,22 @@ three primes rules through the engine into src/main) are the check. No definitio
 moves. FIRST DIRECT RUN: the probe put the test class directory on the JVM classpath as well as the runpath, against step 5 of
 the procedure below, so the scenario definitions sat at two loader roots and ScenarioGenTest's three loading tests failed on the
 unique-root requirement — 1115 / 3, a harness error, every other suite green, every headline as expected; it also surfaced the two
-scenario rules the measurement over src/main and src/mods had not counted. SECOND DIRECT RUN, test classes on the runpath alone: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically). DEV'S GATE: 1118 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as d026cd3 on November 9. Record `git-record-2026-11-09-1005`.
+scenario rules the measurement over src/main and src/mods had not counted. SECOND DIRECT RUN, test classes on the runpath alone: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically). DEV'S GATE: 1118 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as d026cd3 on November 9, folded as d8de334; #50 closed on the tracker the same day on Dev's instruction. Record `git-record-2026-11-09-1005`.
+
+## The stub predicate has one definition, TypeDefinition.isStub (accepted and built, November 9; direct run 1119 / 78; Dev's gate pending)
+
+Dev accepted: "Accepted, build it", on a design point brought first. OWNING ISSUE: GitHub #47; its November 4 status names the
+remaining scope as consolidation against current callers. WHY: the four-aspect stub test was spelled in five places and owned by
+none — TypeLoader.isStub by name, DomainBuilder.isStub by definition (three internal sites, eleven test sites), Completeness's four
+`con` lines, six scripts negating it by hand; DerivationResolvable no longer carries it. THE DESIGN POINT: a global `fix isStub
+(TypeDefinition -> Boolean)` on TypeDefinition, exactly DracoAspect.isEmpty's and DomainAspect.isEmpty's form — the type that owns
+the shape owns the test of it; TypeLoader's by-name isStub kept as the engine's convenience, delegating; Completeness one
+condition; DomainBuilder's copy removed; every site says TypeDefinition.isStub. REJECTED: `isEmpty` as the name; equality with
+`TypeDefinition(td.typeName)` (a semantic change). BUILT as accepted: the three trios through the compiled CLIs on the d026cd3
+engine, `DrakeCLI check` clean; DomainBuilder, eleven test lines, six scripts re-pointed; TypeDefinitionTest +1 (1119). No engine
+change, so no two-run protocol. OBSERVED, not fixed: scripts/inspect-type.scala has not compiled since 2026-10-17 (Dracon value to
+the host-Json `expression`), seen when the six scripts were compiled against the new classes; the other five compile.
+DIRECT RUN: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only. Record `git-record-2026-11-09-1139`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 

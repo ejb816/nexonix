@@ -28,47 +28,8 @@
           "kind": "Condition",
           "value": {
             "()": [
-              "DracoAspect.isEmpty",
-              "td.dracoAspect"
-            ]
-          }
-        },
-        {
-          "kind": "Condition",
-          "value": {
-            "()": [
-              "DomainAspect.isEmpty",
-              "td.domainAspect"
-            ]
-          }
-        },
-        {
-          "kind": "Condition",
-          "value": {
-            "()": [
-              "td.ruleAspect.fold",
-              "true",
-              {
-                "\\": [
-                  "aspect",
-                  "false"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "kind": "Condition",
-          "value": {
-            "()": [
-              "td.actorAspect.fold",
-              "true",
-              {
-                "\\": [
-                  "aspect",
-                  "false"
-                ]
-              }
+              "TypeDefinition.isStub",
+              "td"
             ]
           }
         }

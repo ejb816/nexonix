@@ -33,12 +33,9 @@ object DerivationChain {
     }
 
     // DracoGenerator.loadType returns a placeholder (input typeName, all aspects empty)
-    // when the resource is missing — not TypeDefinition.Null. Detect via aspect emptiness.
+    // when the resource is missing — not TypeDefinition.Null; TypeDefinition.isStub says so.
     def loaded(td: TypeDefinition): Boolean =
-      !DracoAspect.isEmpty(td.dracoAspect) ||
-      !DomainAspect.isEmpty(td.domainAspect) ||
-      td.ruleAspect.fold(false, _ => true) ||
-      td.actorAspect.fold(false, _ => true)
+      !TypeDefinition.isStub(td)
 
     def walk(tn: TypeName, depth: Int, seen: mutable.Set[String]): Unit = {
       val key = tn.namePath

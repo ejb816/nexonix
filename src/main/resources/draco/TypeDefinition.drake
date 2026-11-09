@@ -11,6 +11,8 @@ type TypeDefinition from Aspects
       par ruleAspect Presence(RuleAspect) Absent()
       par actorAspect Presence(ActorAspect) Absent()
       par codecAspect CodecAspect CodecAspect.Null
+  globals
+    fix isStub (TypeDefinition -> Boolean) \td -> DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && td.ruleAspect.fold(true, \aspect -> false) && td.actorAspect.fold(true, \aspect -> false)
 uses [
   draco drake Absent
   draco drake Presence

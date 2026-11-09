@@ -80,6 +80,19 @@ class TypeDefinitionTest extends AnyFunSuite with PersistentTestLog {
     log.info(DracoGenerator.generate(minimal))
   }
 
+  // The stub predicate has one definition since 2026-11-09 (GitHub #47): a global on TypeDefinition,
+  // which TypeLoader.isStub, Completeness, DomainBuilder and the scripts all reference.
+  test("TypeDefinition.isStub: a bare name is a stub, any present aspect is not") {
+    val name = TypeName(_name = "Ghost", _namePackage = Seq("foo", "bar"))
+    assert(TypeDefinition.isStub(TypeDefinition(name)), "a typeName-only definition is a stub")
+    assert(TypeDefinition.isStub(TypeDefinition.Null), "the Null definition is a stub")
+    assert(TypeDefinition.isStub(TypeDefinition(name, _uses = Seq(name))), "the resolution record does not authorize a definition")
+    assert(!TypeDefinition.isStub(TypeDefinition(name, _dracoAspect = DracoAspect(_elements = Seq(Fixed("x", Json.fromString("Int")))))), "an element makes a definition")
+    assert(!TypeDefinition.isStub(TypeDefinition(name, _domainAspect = DomainAspect(_typeName = name))), "a domain pointer makes a definition")
+    assert(!TypeDefinition.isStub(TypeDefinition(name, _ruleAspect = draco.drake.Present(RuleAspect.Null))), "a present rule aspect makes a definition, even empty")
+    assert(!TypeDefinition.isStub(TypeDefinition(name, _actorAspect = draco.drake.Present(ActorAspect.Null))), "a present actor aspect makes a definition, even empty")
+  }
+
   test("TypeDefinition with globalElements only") {
     val withGlobals = TypeDefinition(
       _typeName = TypeName(

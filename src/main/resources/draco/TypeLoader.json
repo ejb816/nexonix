@@ -335,56 +335,16 @@
         ],
         "body": [
           {
-            "kind": "Local",
-            "name": "td",
-            "valueType": "TypeDefinition",
-            "value": {
-              "()": [
-                "loadType",
-                "typeName"
-              ]
-            }
-          },
-          {
             "kind": "Fixed",
             "name": "value",
             "valueType": "Boolean",
             "value": {
-              "&&": [
+              "()": [
+                "TypeDefinition.isStub",
                 {
                   "()": [
-                    "DracoAspect.isEmpty",
-                    "td.dracoAspect"
-                  ]
-                },
-                {
-                  "()": [
-                    "DomainAspect.isEmpty",
-                    "td.domainAspect"
-                  ]
-                },
-                {
-                  "()": [
-                    "td.ruleAspect.fold",
-                    "true",
-                    {
-                      "\\": [
-                        "aspect",
-                        "false"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "()": [
-                    "td.actorAspect.fold",
-                    "true",
-                    {
-                      "\\": [
-                        "aspect",
-                        "false"
-                      ]
-                    }
+                    "loadType",
+                    "typeName"
                   ]
                 }
               ]

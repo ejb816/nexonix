@@ -31,7 +31,7 @@ class MinimalTypeTest extends AnyFunSuite with PersistentTestLog {
 
   test("loadType(TypeName.Null) returns the identity TypeDefinition") {
     val identity = TypeLoader.loadType(TypeName.Null)
-    assert(DomainBuilder.isStub(identity), "the identity type carries no aspects")
+    assert(TypeDefinition.isStub(identity), "the identity type carries no aspects")
     assert(identity.typeName.name.isEmpty, "the identity type is nameless")
   }
 

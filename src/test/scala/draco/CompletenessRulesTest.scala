@@ -76,7 +76,7 @@ class CompletenessRulesTest extends AnyFunSuite {
   test("Completeness fires exactly one Problem for a deliberately-stubbed member") {
     val stub: TypeDefinition =
       TypeLoader.loadType(TypeName("Nonexistent", _namePackage = Seq("draco")))
-    assert(DomainBuilder.isStub(stub),
+    assert(TypeDefinition.isStub(stub),
       "a TypeName with no JSON on disk should load as an empty (stub) TypeDefinition")
 
     val problems = problemsFrom(Seq(stub))
