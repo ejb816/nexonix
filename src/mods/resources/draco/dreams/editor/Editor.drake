@@ -11,6 +11,7 @@ uses [
   draco Completeness
   draco DerivationResolvable
   draco DomainOntology
+  draco FactDisjointness
   draco Problem
   draco Rule
   draco SelfDeclaration
@@ -38,6 +39,7 @@ actor
     mon SelfDeclaration.ruleType.pattern(rules)
     mon DerivationResolvable.ruleType.pattern(rules)
     mon Uniqueness.ruleType.pattern(rules)
+    mon FactDisjointness.ruleType.pattern(rules)
     mon CollectProblems.ruleType.pattern(rules)
     mon CreateHeld.ruleType.pattern(rules)
     mon UpdateUnheld.ruleType.pattern(rules)

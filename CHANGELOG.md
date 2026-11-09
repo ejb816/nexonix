@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- `draco.FactDisjointness`, a core validation rule: a domain whose rules declare two fact types related by derivation is
+  refused with a Problem naming the pair, since the rules engine silently drops a fact two declared types could receive
+  (GitHub #63, constraint 4). `TypeDefinition.factTypes` reads a rule's declared fact types as identities through its
+  resolution record; `DomainOntology.ancestors` and `relatedFactTypes` walk the derivation edges. EditorTest counts eleven registered rules. Draco lists the rule and
+  the Editor fires it beside the five core rules. FactDisjointnessRulesTest (3) is new; one corpus type added (parse scope
+  111 + 73, GenDrake 109 of 109).
 - The stub predicate has one definition: `TypeDefinition.isStub`, a global on the definition type in the form of the
   aspects' `isEmpty`, true when all four role and structure aspects are empty. `TypeLoader.isStub` (by name), the
   Completeness rule (one condition instead of four), `DomainBuilder` (its own `isStub` removed), eleven test sites and the

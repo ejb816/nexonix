@@ -13,6 +13,20 @@ type TypeDefinition from Aspects
       par codecAspect CodecAspect CodecAspect.Null
   globals
     fix isStub (TypeDefinition -> Boolean) \td -> DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && td.ruleAspect.fold(true, \aspect -> false) && td.actorAspect.fold(true, \aspect -> false)
+    dyn identity TypeName [
+      parameters
+        par td TypeDefinition
+        par text String
+      body
+        fix parts [String] text.split("[.]").toSeq
+        fix value TypeName guard(parts.size > 1).ifThenElse(TypeName(parts.last, parts.init), presence(td.uses.find(\recorded -> recorded.name == text)).fold(TypeName(text, td.typeName.namePackage), \recorded -> recorded))
+    ]
+    dyn factTypes [TypeName] [
+      parameters
+        par td TypeDefinition
+      body
+        fix value [TypeName] td.ruleAspect.fold([], \aspect -> aspect.pattern.variables.map(\variable -> variable.valueType.textOrEmpty.fold("", \text -> text)).filter(\text -> text.nonEmpty).map(\text -> identity(td, text)))
+    ]
 uses [
   draco drake Absent
   draco drake Presence

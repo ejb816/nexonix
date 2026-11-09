@@ -44,6 +44,20 @@ type DomainOntology from Dictionary(DomainType, TypeDictionary)
       body
         fix value Presence(DomainType) presence(kvMap.keys.find(\domain -> domain.typeDefinition.typeName.namePath == typeName.namePath))
     ]
+    dyn ancestors [TypeName] [
+      parameters
+        par typeName TypeName
+      body
+        fix parents [TypeName] derivations.filter(\edge -> edge.child.namePath == typeName.namePath).map(\edge -> edge.parent)
+        fix value [TypeName] parents ++ parents.flatMap(\parent -> ancestors(parent))
+    ]
+    dyn relatedFactTypes [(TypeName, TypeName)] [
+      parameters
+        par domain DomainType
+      body
+        fix facts [TypeName] domain.typeDictionary.elementTypes.flatMap(\member -> TypeDefinition.factTypes(member)).distinct
+        fix value [(TypeName, TypeName)] facts.flatMap(\fact -> ancestors(fact).filter(\ancestor -> facts.exists(\other -> other.namePath == ancestor.namePath)).map(\ancestor -> (fact, ancestor)))
+    ]
   factory
     parameters
       par domains [DomainType] []

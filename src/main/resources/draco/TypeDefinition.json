@@ -173,6 +173,219 @@
             }
           ]
         }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "identity",
+        "valueType": "TypeName",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "td",
+            "valueType": "TypeDefinition"
+          },
+          {
+            "kind": "Parameter",
+            "name": "text",
+            "valueType": "String"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "parts",
+            "valueType": {
+              "[]": [
+                "String"
+              ]
+            },
+            "value": {
+              ".": [
+                {
+                  "()": [
+                    "text.split",
+                    "\"[.]\""
+                  ]
+                },
+                "toSeq"
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "TypeName",
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "guard",
+                        {
+                          ">": [
+                            "parts.size",
+                            "1"
+                          ]
+                        }
+                      ]
+                    },
+                    "ifThenElse"
+                  ]
+                },
+                {
+                  "()": [
+                    "TypeName",
+                    "parts.last",
+                    "parts.init"
+                  ]
+                },
+                {
+                  "()": [
+                    {
+                      ".": [
+                        {
+                          "()": [
+                            "presence",
+                            {
+                              "()": [
+                                "td.uses.find",
+                                {
+                                  "\\": [
+                                    "recorded",
+                                    {
+                                      "==": [
+                                        "recorded.name",
+                                        "text"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "fold"
+                      ]
+                    },
+                    {
+                      "()": [
+                        "TypeName",
+                        "text",
+                        "td.typeName.namePackage"
+                      ]
+                    },
+                    {
+                      "\\": [
+                        "recorded",
+                        "recorded"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "factTypes",
+        "valueType": {
+          "[]": [
+            "TypeName"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "td",
+            "valueType": "TypeDefinition"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "TypeName"
+              ]
+            },
+            "value": {
+              "()": [
+                "td.ruleAspect.fold",
+                {
+                  "[]": [
+                  ]
+                },
+                {
+                  "\\": [
+                    "aspect",
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                {
+                                  ".": [
+                                    {
+                                      "()": [
+                                        "aspect.pattern.variables.map",
+                                        {
+                                          "\\": [
+                                            "variable",
+                                            {
+                                              "()": [
+                                                "variable.valueType.textOrEmpty.fold",
+                                                "\"\"",
+                                                {
+                                                  "\\": [
+                                                    "text",
+                                                    "text"
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    "filter"
+                                  ]
+                                },
+                                {
+                                  "\\": [
+                                    "text",
+                                    "text.nonEmpty"
+                                  ]
+                                }
+                              ]
+                            },
+                            "map"
+                          ]
+                        },
+                        {
+                          "\\": [
+                            "text",
+                            {
+                              "()": [
+                                "identity",
+                                "td",
+                                "text"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
       }
     ]
   },

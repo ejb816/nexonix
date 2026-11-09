@@ -98,7 +98,7 @@ class EditorTest extends AnyFunSuite {
     assert(!td.actorAspect.fold(ActorAspect.Null, identity).message.body.exists(_.isInstanceOf[Case]), "no dispatch in the actor: which rule matches is the dispatch")
     assert(td.dracoAspect.globalElements.isEmpty, "no judgment in the actor: the rules judge")
     val fired = td.actorAspect.fold(ActorAspect.Null, identity).start.body.map(e => TypeForm.text(e.valueType) + " " + e.value.noSpaces).count(_.contains("ruleType.pattern"))
-    assert(fired == 10, s"five core rules and five Editor rules build the knowledge; got $fired")
+    assert(fired == 11, s"six core rules and five Editor rules build the knowledge; got $fired")
     Seq(CreateHeld, UpdateUnheld, ReadUnheld, DeleteUnheld, GenerateRequested).foreach(r => assert(r.typeDefinition.ruleAspect.fold(false, _ => true)))
     assert(Accepted.typeDefinition.ruleAspect.fold(true, _ => false) && Accepted.typeDefinition.dracoAspect.elements.map(_.name) == Seq("ontology"))
     val request = TypeName("Request", Seq("draco", "dreams", "user"))

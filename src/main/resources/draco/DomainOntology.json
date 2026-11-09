@@ -386,6 +386,227 @@
             }
           }
         ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "ancestors",
+        "valueType": {
+          "[]": [
+            "TypeName"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "typeName",
+            "valueType": "TypeName"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "parents",
+            "valueType": {
+              "[]": [
+                "TypeName"
+              ]
+            },
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "derivations.filter",
+                        {
+                          "\\": [
+                            "edge",
+                            {
+                              "==": [
+                                "edge.child.namePath",
+                                "typeName.namePath"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "map"
+                  ]
+                },
+                {
+                  "\\": [
+                    "edge",
+                    "edge.parent"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "TypeName"
+              ]
+            },
+            "value": {
+              "++": [
+                "parents",
+                {
+                  "()": [
+                    "parents.flatMap",
+                    {
+                      "\\": [
+                        "parent",
+                        {
+                          "()": [
+                            "ancestors",
+                            "parent"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "relatedFactTypes",
+        "valueType": {
+          "[]": [
+            {
+              "(,)": [
+                "TypeName",
+                "TypeName"
+              ]
+            }
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "domain",
+            "valueType": "DomainType"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Fixed",
+            "name": "facts",
+            "valueType": {
+              "[]": [
+                "TypeName"
+              ]
+            },
+            "value": {
+              ".": [
+                {
+                  "()": [
+                    "domain.typeDictionary.elementTypes.flatMap",
+                    {
+                      "\\": [
+                        "member",
+                        {
+                          "()": [
+                            "TypeDefinition.factTypes",
+                            "member"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "distinct"
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                {
+                  "(,)": [
+                    "TypeName",
+                    "TypeName"
+                  ]
+                }
+              ]
+            },
+            "value": {
+              "()": [
+                "facts.flatMap",
+                {
+                  "\\": [
+                    "fact",
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                {
+                                  ".": [
+                                    {
+                                      "()": [
+                                        "ancestors",
+                                        "fact"
+                                      ]
+                                    },
+                                    "filter"
+                                  ]
+                                },
+                                {
+                                  "\\": [
+                                    "ancestor",
+                                    {
+                                      "()": [
+                                        "facts.exists",
+                                        {
+                                          "\\": [
+                                            "other",
+                                            {
+                                              "==": [
+                                                "other.namePath",
+                                                "ancestor.namePath"
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            "map"
+                          ]
+                        },
+                        {
+                          "\\": [
+                            "ancestor",
+                            {
+                              "(,)": [
+                                "fact",
+                                "ancestor"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
       }
     ],
     "factory": {

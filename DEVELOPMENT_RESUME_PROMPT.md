@@ -1,16 +1,14 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
 This is a November 9, 2026 handoff for a new session in either agent, prepared by Claude Code after the
-#47 increment (the stub predicate as TypeDefinition.isStub), the second from the reconciled backlog that day. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+#63 constraint-4 increment (the FactDisjointness rule), the third from the reconciled backlog that day. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD is 929c850 on main, the #47 increment (record git-record-2026-11-09-1139), gated by me on November 9 (1119 tests,
-zero failures, every headline matching, green on its first run) and committed on top of d8de334, the fold of d026cd3 (the #50
-item 2 increment, gated at 1118). My gate on 929c850 is the current baseline, 1119 tests / 77 suites. Check whether these are
-pushed; inspect git status/log anyway. The direct runs are in the handoff. The DRACO.md table holds the two suspended PON rows
-and the categorical rete finding alone. Journal coverage reaches chapter 112; the commits since (e241378 through
-48f466d and the documentation commits after) are not journaled — the handoff names the sources.
+STATE: at the handoff HEAD was a6a0f96 on main (the fold of 929c850, the #47 increment gated by me at 1119 / 77 green) and
+the tree held the #63 constraint-4 increment uncommitted (record git-record-2026-11-09-1231), awaiting my full gate and
+commit; if the log shows that commit on top of a6a0f96, it is committed and the first task below moves on. Inspect git
+status/log anyway and check what is pushed. The direct runs are in the handoff.
 
 WHAT HAPPENED (November 4–8). The Codex session of November 4 reconciled the tracker without asking me what to
 correct first — 32 status comments, eight closures (#61, #55, #42, #41, #15, #51 completed or reconciled; #57, #46
@@ -37,9 +35,13 @@ one condition, DomainBuilder's copy is gone, eleven test sites and six scripts s
 (1119). Observed, not fixed, my decision: scripts/inspect-type.scala has not compiled since 2026-10-17. #50 is closed on the
 tracker (one comment citing d026cd3); #47 closes on my verified commit the same way, when I say so; 22 issues then remain.
 
-#47 is closed on the tracker (my instruction, one comment citing 929c850); 22 issues are open.
+#47 is closed on the tracker (my instruction, one comment citing 929c850); 22 issues are open. WHAT HAPPENED (November 9,
+third increment): I accepted a core rule for #63's constraint 4 — draco.FactDisjointness refuses a domain whose rules declare
+fact types related by derivation, the hazard SubtypeFactVisibilityTest measures — built with no engine change
+(TypeDefinition.factTypes through the record, DomainOntology.ancestors, the rule listed by Draco and fired by the Editor;
+FactDisjointnessRulesTest +3, one corpus type). #63 stays open for its grammar points; no tracker comment until I say so.
 
-YOUR FIRST TASK: bring ONE recommendation from the 22 open issues, its owning issue named and its remaining scope checked
+YOUR FIRST TASK: if the #63 increment is committed, bring ONE recommendation from the 22 open issues, its owning issue named and its remaining scope checked
 against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 

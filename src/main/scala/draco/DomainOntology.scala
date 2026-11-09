@@ -33,6 +33,16 @@ trait DomainOntology extends Dictionary[DomainType, TypeDictionary] {
     lazy val typeName: TypeName = _typeName
     (kvMap.keys.find(domain => domain.typeDefinition.typeName.namePath == typeName.namePath) match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
   }
+  def ancestors(_typeName: => TypeName): Seq[TypeName] = {
+    lazy val typeName: TypeName = _typeName
+    lazy val parents: Seq[TypeName] = derivations.filter(edge => edge.child.namePath == typeName.namePath).map(edge => edge.parent)
+    parents ++ parents.flatMap(parent => ancestors(parent))
+  }
+  def relatedFactTypes(_domain: => DomainType): Seq[(TypeName, TypeName)] = {
+    lazy val domain: DomainType = _domain
+    lazy val facts: Seq[TypeName] = domain.typeDictionary.elementTypes.flatMap(member => TypeDefinition.factTypes(member)).distinct
+    facts.flatMap(fact => ancestors(fact).filter(ancestor => facts.exists(other => other.namePath == ancestor.namePath)).map(ancestor => (fact, ancestor)))
+  }
 }
 
 object DomainOntology extends App with DracoType {

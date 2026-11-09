@@ -41,6 +41,7 @@ object Editor extends App with DracoType {
     draco.SelfDeclaration.ruleType.pattern(rules)
     draco.DerivationResolvable.ruleType.pattern(rules)
     draco.Uniqueness.ruleType.pattern(rules)
+    draco.FactDisjointness.ruleType.pattern(rules)
     draco.CollectProblems.ruleType.pattern(rules)
     CreateHeld.ruleType.pattern(rules)
     UpdateUnheld.ruleType.pattern(rules)

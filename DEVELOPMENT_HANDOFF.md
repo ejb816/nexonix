@@ -1,12 +1,32 @@
 # Development Handoff
 
-Prepared November 9, 2026 by Claude Code after the #47 increment (the stub predicate as `TypeDefinition.isStub`),
-for a new session in either agent. It supersedes the #50 checkpoint of the same morning and the November 8, November 6
+Prepared November 9, 2026 by Claude Code after the #63 constraint-4 increment (the FactDisjointness rule), for a new
+session in either agent. It supersedes the #47 and #50 checkpoints of the same day and the November 8, November 6
 and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the second increment from the reconciled backlog: one stub predicate (Claude Code, November 9, 2026)
+## Current checkpoint — the third increment from the reconciled backlog: the FactDisjointness rule (Claude Code, November 9, 2026)
+
+Observed: HEAD a6a0f96 on main (the fold of 929c850 and the #47 closure); the tree holds this increment, uncommitted.
+Whether d026cd3, d8de334, 929c850 and a6a0f96 are pushed is to be checked on resumption. Dev's gate on 929c850
+(1119 / 77, green) stands until Dev gates this tree.
+
+- **Done this session.** The recommendation on GitHub #63 constraint 4 was accepted ("Accepted, build it"): a core rule,
+  `draco.FactDisjointness`, refusing a domain whose rules declare fact types related by derivation, the hazard
+  SubtypeFactVisibilityTest measures (the engine drops the insert silently) and the corpus was safe from by shape only
+  (measured: 23 rules in 9 domains, none related). Built with no engine change: `TypeDefinition.identity` / `factTypes`
+  (a rule's declared fact types as identities through its record), `DomainOntology.ancestors` / `relatedFactTypes`, the
+  rule's trio, Draco listing it, the Editor firing it beside the five core rules; five JSON re-canonicalized, five Scala
+  regenerated, `DrakeCLI check` clean; FactDisjointnessRulesTest (3) the 78th suite; one corpus type added. The first direct run failed eleven tests, all in the increment (a host regex class in the drake body, the EditorTest rule count, a mid-update Editor spelling), corrected; the second run: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only.
+- **Next action:** Dev runs the full gate and commits (record `git-record-2026-11-09-1231`). #63 stays open for its grammar
+  points (payload and tag relationships, closedness); no comment until the thread closes or Dev asks. Then ONE
+  recommendation from the 22 open issues, its owning issue named, for accept-or-correct.
+- **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (recorded with the #47 increment).
+- **Not done, by design:** no tracker action; no journal chapter; no push.
+- **Everything else stands as the sections below record.**
+
+## Previous checkpoint — the second increment from the reconciled backlog: one stub predicate (Claude Code, November 9, 2026; done, see above)
 
 Observed: HEAD 929c850 on main, this increment's commit (record `git-record-2026-11-09-1139`), committed by Dev on
 November 9 on top of d8de334 after his gate (1119 tests, zero failures, every headline matching, green on its first run);
@@ -648,6 +668,31 @@ engine, `DrakeCLI check` clean; DomainBuilder, eleven test lines, six scripts re
 change, so no two-run protocol. OBSERVED, not fixed: scripts/inspect-type.scala has not compiled since 2026-10-17 (Dracon value to
 the host-Json `expression`), seen when the six scripts were compiled against the new classes; the other five compile.
 DIRECT RUN: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only. DEV'S GATE: 1119 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 929c850; #47 closed on the tracker the same day on Dev's instruction. Record `git-record-2026-11-09-1139`.
+
+## FactDisjointness: the co-declaration hazard becomes a definition-time rule (accepted and built, November 9; direct run 1127 / 79 on its second run; Dev's gate pending)
+
+Dev accepted: "Accepted, build it". OWNING ISSUE: GitHub #63, constraint 4 ("No two rules in one domain may declare fact types
+related by inheritance"); the grammar points of the issue stay open. WHY: the table's categorical row — co-declared types from one
+hierarchy and Evrete resolves neither, skips the insert, logs a warning — was guarded by nothing; MEASURED over the whole corpus,
+25 domains, 9 with rules, 23 rules, no related pair (siblings per medium, a disjoint taxonomy in Draco, six request types in the
+Editor whose shared parents no rule declares). THE DESIGN: a definition-time rule owned by draco as Uniqueness is, joining
+`var d DomainType` with `var o DomainOntology`, one Problem naming the domain and every pair in which a declared fact type is an
+ancestor of another through the derivation edges; a variable's type text read as an identity through the member's record (dotted →
+path, bare → `uses`, else own-package). REJECTED: DomainBuilder.validate (the Editor does not run it); a check at knowledge
+construction. BUILT, no engine change: TypeDefinition.identity and factTypes as globals beside isStub (the split is the character class `"[.]"` — no
+escaped backslash in a drake string and no host class name in the body); DomainOntology.ancestors (recursive over derivations, by namePath) and
+relatedFactTypes; FactDisjointness.drake with `con o.relatedFactTypes(d).nonEmpty` and an action binding the pairs as "X derives Y";
+Draco's types list and the Editor's `uses` and start block; five JSON re-canonicalized and five Scala regenerated through the
+compiled CLIs on the a6a0f96 classes; `DrakeCLI check` clean over main and mods. The rule passes its own lint (DomainType and
+DomainOntology, both already declared in Draco's session, unrelated). FactDisjointnessRulesTest (3): canonical ontology zero
+Problems; siblings pass, a type and its parent refused naming "example.lint.C derives example.lint.A"; record over own package,
+dotted as path, a plain type declares nothing — green on its first focused run. One corpus type added: parse scope 111 + 73,
+surface losses 0 across 184 types, 111 aspect sections, GenDrake 109 of 109. FIRST DIRECT RUN 1116 / 11, three causes in the increment: the split had named
+`java.util.regex.Pattern`, a host class outside the HostBindings vocabulary, which every NameResolution path over TypeDefinition's
+body refused (eight tests across DomainLoadingTest, ExampleLoadingTest, ResolutionRecordTest, DracoGenTest, GenerateAndCompileTest);
+EditorTest's registered-rule count moved from ten to eleven; and Editor.scala, generated while the overlay was mid-update, spelled
+the new line bare where the canonical scope spells `draco.FactDisjointness` like the other core rules — all three corrected,
+focused reruns green. SECOND DIRECT RUN: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only. Record `git-record-2026-11-09-1231`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 

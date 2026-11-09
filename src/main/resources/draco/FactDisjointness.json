@@ -1,0 +1,106 @@
+{
+  "typeName": {
+    "name": "FactDisjointness",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  },
+  "ruleAspect": {
+    "pattern": {
+      "kind": "Pattern",
+      "variables": [
+        {
+          "kind": "Variable",
+          "name": "d",
+          "valueType": "DomainType"
+        },
+        {
+          "kind": "Variable",
+          "name": "o",
+          "valueType": "DomainOntology"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "Condition",
+          "value": {
+            ".": [
+              {
+                "()": [
+                  "o.relatedFactTypes",
+                  "d"
+                ]
+              },
+              "nonEmpty"
+            ]
+          }
+        }
+      ]
+    },
+    "action": {
+      "kind": "Action",
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "pairs",
+          "valueType": {
+            "[]": [
+              "String"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "o.relatedFactTypes",
+                      "d"
+                    ]
+                  },
+                  "map"
+                ]
+              },
+              {
+                "\\": [
+                  "pair",
+                  {
+                    "++": [
+                      "pair._1.namePath",
+                      "\" derives \"",
+                      "pair._2.namePath"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Monadic",
+          "value": {
+            "()": [
+              "ctx.insert",
+              {
+                "()": [
+                  "Problem",
+                  "d.typeDefinition.typeName",
+                  "s\"rules of ${d.typeDefinition.typeName.namePath} declare fact types related by derivation: ${pairs.mkString(\"",
+                  "\")}\""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

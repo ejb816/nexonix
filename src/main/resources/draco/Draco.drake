@@ -30,6 +30,7 @@ domain draco Draco
     DracoAspect
     DracoType
     Dynamic
+    FactDisjointness
     Factory
     Fixed
     Generator

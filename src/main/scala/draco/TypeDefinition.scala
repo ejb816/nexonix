@@ -70,4 +70,14 @@ object TypeDefinition extends App with DracoType {
   )
 
   lazy val isStub: TypeDefinition => Boolean = td => DracoAspect.isEmpty(td.dracoAspect) && DomainAspect.isEmpty(td.domainAspect) && td.ruleAspect.fold(true, aspect => false) && td.actorAspect.fold(true, aspect => false)
+  def identity(_td: => TypeDefinition, _text: => String): TypeName = {
+    lazy val td: TypeDefinition = _td
+    lazy val text: String = _text
+    lazy val parts: Seq[String] = text.split("[.]").toSeq
+    (if (parts.size > 1) draco.drake.Present[Unit](()) else Absent[Unit]()).ifThenElse(TypeName(parts.last, parts.init), (td.uses.find(recorded => recorded.name == text) match { case Some(v) => draco.drake.Present(v); case None => Absent() }).fold(TypeName(text, td.typeName.namePackage), recorded => recorded))
+  }
+  def factTypes(_td: => TypeDefinition): Seq[TypeName] = {
+    lazy val td: TypeDefinition = _td
+    td.ruleAspect.fold(Seq.empty, aspect => aspect.pattern.variables.map(variable => variable.valueType.textOrEmpty.fold("", text => text)).filter(text => text.nonEmpty).map(text => identity(td, text)))
+  }
 }

@@ -1235,7 +1235,9 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-09 after the #47 increment (record `git-record-2026-11-09-1139`, committed by Dev as 929c850 after his gate of 1119 green): the stub predicate is
+  Last prepared 2026-11-09 after the #63 constraint-4 increment (record `git-record-2026-11-09-1231`, commit pending): the
+  FactDisjointness rule guards the co-declaration hazard at definition time; #63 stays open for its grammar points. Before it,
+  the same day, after the #47 increment (record `git-record-2026-11-09-1139`, committed by Dev as 929c850 after his gate of 1119 green): the stub predicate is
   `TypeDefinition.isStub`, one definition; #47 closed on the tracker the same day at Dev's instruction, 22 issues open; #50 closed the same
   morning (d026cd3); journal coverage reaches chapter 112.
 - **`CHANGELOG.md`** — **current.** Release blocks through alpha.6 (2026-08-17); `[Unreleased]`
@@ -1284,7 +1286,10 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   operation skipped"). Nothing throws. A single rule declared anywhere up the chain works fine —
   `SubtypeFactVisibilityTest` measures both halves. The corpus is safe only by shape: each medium's
   session declares SIBLINGS (`PositionReport` + `FlightIntent`), and draco's validation session a
-  disjoint taxonomy (`Problem` / `TypeDefinition` / `DomainType`). GitHub #63.
+  disjoint taxonomy (`Problem` / `TypeDefinition` / `DomainType`). GitHub #63. Since 2026-11-09 the
+  shape is a rule: `draco.FactDisjointness` refuses, in the Editor's validation session, a domain whose
+  rules declare fact types related by derivation, naming the pair. The runtime finding itself stays
+  measured by `SubtypeFactVisibilityTest` (the table's categorical row).
 - **Actors** are thin membranes: `session.insert(msg); session.fire(); Behaviors.same`.
   `Rule.knowledgeService` is a singleton; Knowledge is per domain, Session per actor.
 - **circe 0.14.1 has no `java.net.URI` codec** — the codec gate excludes parameters whose
@@ -2154,3 +2159,24 @@ scripts/inspect-type.scala has not compiled since the core-tree migration of 202
 host-Json `expression`), gated by nothing since the scripts compile under the `mods` subproject alone — Dev's decision. Direct run: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-09: 1119 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; committed by Dev as 929c850; #47 closed the same day on Dev's instruction ("Close #47") with one comment citing 929c850; 22 issues open.
 Next: one recommendation from the 22 issues that remain, its owning issue named. EgoActor observed only; activation and .dcon
 deferred; PON suspended.
+
+**FactDisjointness: the co-declaration hazard becomes a definition-time rule (2026-11-09, Claude Code; GitHub #63 constraint 4; the
+issue stays open).** The third increment from the reconciled backlog. The table's one categorical row (SubtypeFactVisibilityTest:
+two declared fact types from one hierarchy in one knowledge and the engine drops the insert with a logged warning, §6) was guarded
+by nothing: MEASURED over the whole corpus before recommending, 25 domains, 9 with rules, 23 rules, no domain whose declared fact
+types are related by derivation — each medium two siblings, Draco a disjoint taxonomy, the Editor six request types whose shared
+parents no rule declares. Dev accepted "Accepted, build it" on a definition-time rule owned by draco as Uniqueness is:
+`draco.FactDisjointness` joins `var d DomainType` with `var o DomainOntology` and inserts one Problem naming the domain and every
+pair in which one declared fact type is an ancestor of another through the ontology's derivation edges; a variable's type text is
+read as an identity through the member's record (dotted → path, bare → `uses` by simple name, else own-package), the reading
+AssemblyValidator applies in mods, now in core. REJECTED: a lint in DomainBuilder's validate (the Editor does not run it); a check at
+knowledge construction (after acceptance). BUILT with no engine change: `TypeDefinition.identity` and `factTypes` (globals beside
+isStub), `DomainOntology.ancestors` (recursive over `derivations`) and `relatedFactTypes`, the rule's trio, Draco listing it and the
+Editor firing it beside the five core rules; five JSON re-canonicalized and five Scala regenerated through the compiled CLIs,
+`DrakeCLI check` clean. The rule passes its own lint. FactDisjointnessRulesTest (3) is the 78th suite. One corpus type added: parse
+scope 111 + 73, surface losses 0 across 184 types, 111 aspect sections, GenDrake 109 of 109. The first direct run failed eleven tests, all in the increment: the split had named `java.util.regex.Pattern`,
+a host class outside the HostBindings vocabulary, which every resolution path over TypeDefinition's body refused (the character class
+`"[.]"` replaces it — a definition body names no host class); EditorTest's registered-rule count is eleven; Editor.scala, generated
+mid-update, takes the canonical `draco.FactDisjointness` spelling. Second direct run: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only. Dev's gate pending. Next: one
+recommendation from the 22 open issues, its owning issue named. EgoActor and scripts/inspect-type.scala observed only; activation and
+.dcon deferred; PON suspended.
