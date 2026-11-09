@@ -20,6 +20,13 @@
         "format",
         "dracon"
       ]
+    },
+    {
+      "name": "StatefulSession",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
     }
   ],
   "dracoAspect": {
@@ -59,7 +66,7 @@
         {
           "kind": "Fixed",
           "name": "session",
-          "valueType": "org.evrete.api.StatefulSession",
+          "valueType": "StatefulSession",
           "value": {
             "()": [
               "knowledge.newStatefulSession"

@@ -81,6 +81,20 @@
         "dreams",
         "user"
       ]
+    },
+    {
+      "name": "Knowledge",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
+    },
+    {
+      "name": "StatefulSession",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
     }
   ],
   "dracoAspect": {
@@ -277,7 +291,7 @@
         {
           "kind": "Fixed",
           "name": "session",
-          "valueType": "org.evrete.api.StatefulSession",
+          "valueType": "StatefulSession",
           "value": {
             "()": [
               "rules.newStatefulSession",
@@ -488,7 +502,7 @@
         {
           "kind": "Fixed",
           "name": "rules",
-          "valueType": "org.evrete.api.Knowledge",
+          "valueType": "Knowledge",
           "value": {
             "()": [
               "Rule.knowledgeService.newKnowledge",

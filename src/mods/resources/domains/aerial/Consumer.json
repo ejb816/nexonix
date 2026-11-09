@@ -6,6 +6,15 @@
       "aerial"
     ]
   },
+  "uses": [
+    {
+      "name": "StatefulSession",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
+    }
+  ],
   "domainAspect": {
     "typeName": {
       "name": "Aerial",
@@ -84,7 +93,7 @@
         {
           "kind": "Fixed",
           "name": "session",
-          "valueType": "org.evrete.api.StatefulSession",
+          "valueType": "StatefulSession",
           "value": {
             "()": [
               "knowledge.newStatefulSession"

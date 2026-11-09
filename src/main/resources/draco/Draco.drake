@@ -2,6 +2,9 @@ type Draco
   factory ActorType
     parameters
       par problems [Problem]+
+uses [
+  draco rete StatefulSession
+]
 domain draco Draco
   types [
     Action
@@ -66,7 +69,7 @@ domain draco Draco
 actor
   messageType DracoType
   start
-    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+    fix session StatefulSession knowledge.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
     mon session.set("problems", problems)
   message
     mon session.insert(Seq(msg): _*)

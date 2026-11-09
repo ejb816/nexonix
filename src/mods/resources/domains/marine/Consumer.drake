@@ -1,9 +1,12 @@
 type Consumer
+uses [
+  draco rete StatefulSession
+]
 domain domains marine Marine
 actor
   messageType draco format dracon Dracon
   message
-    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
+    fix session StatefulSession knowledge.newStatefulSession()
     mon session.insert(Seq(msg): _*)
     mon session.fire()
     mon session.close()

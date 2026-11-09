@@ -565,7 +565,7 @@
             },
             {
               "(,)": [
-                "\"StatefulSession\"",
+                "\"org.evrete.api.StatefulSession\"",
                 {
                   "()": [
                     "TypeName",

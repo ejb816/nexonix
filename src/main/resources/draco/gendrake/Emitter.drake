@@ -5,12 +5,13 @@ type Emitter
 uses [
   draco ActorType
   draco generator Emission
+  draco rete StatefulSession
 ]
 domain draco gendrake GenDrake
 actor
   messageType draco TypeDefinition
   start
-    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
+    fix session StatefulSession knowledge.newStatefulSession()
     mon session.set("received", received)
   message
     mon session.insert(Seq(msg): _*)

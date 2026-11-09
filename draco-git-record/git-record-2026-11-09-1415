@@ -1,0 +1,56 @@
+Definitions name the draco.rete wrap types for Evrete's session and knowledge; StatefulSession gains its import row (GitHub #49, the vocabulary half)
+
+Dev accepted, in the words "Accepted, build it", the recommendation brought after the FactDisjointness increment.
+OWNING ISSUE: https://github.com/ejb816/nexonix/issues/49, "draco.rete capability domain" — its July attempt was rolled
+back for putting Evrete CONFIGURATION into a new main-tree domain, and its 2026-07-28 review and 2026-07-31 cross-link
+set the principled axis: wrapped TYPE NAMES in main with the binding in mods (WHAT), configuration left as host glue
+(HOW). The November 4 status says "distinguish type vocabulary from session configuration". This commit is the type
+vocabulary alone; the retracted configuration domain is not revived, and the issue stays open for its large track
+(capability declarations on the wrap types, the evaluation discipline, the enum).
+
+WHY. MEASURED before recommending: twelve definitions spelled `org.evrete.api.StatefulSession` in full in their actor
+`start` blocks (Draco, gendrake Emitter, the Editor, TransformBinding, the four example Creators, the four example
+Consumers) and three spelled `org.evrete.api.Knowledge` in full (Primes, the Editor, TransformBinding); the wrap type
+`draco.rete.StatefulSession` had no reference in the corpus, while Rule and RuleType have named the wrap types
+`Knowledge` and `RhsContext` bare, recorded in `uses`, since the record landed, and the generator realizes a draco.rete
+wrap type as the Evrete class through its host-import table. A probe through the compiled CLIs found the one gap: a bare
+`StatefulSession` reached the Scala verbatim with no import — the host-import table had rows for Knowledge,
+KnowledgeService and RhsContext and none for StatefulSession — and HostBindings keyed StatefulSession BARE where it
+keys Knowledge QUALIFIED, the convention for a name a draco type shadows (the ontology wins the bare form).
+
+BUILT. One engine row: `"StatefulSession" -> "import org.evrete.api.StatefulSession"` in `externalTypeImports`.
+HostBindings re-keys its StatefulSession entry `org.evrete.api.StatefulSession`, as Knowledge is keyed (its JSON and
+Scala regenerated). Fourteen definitions re-authored: the twelve session slots say `StatefulSession`, the three knowledge
+slots say `Knowledge`, each recording `draco rete StatefulSession` and/or `draco rete Knowledge` in `uses` — exactly
+Rule's form — Draco and the four Consumers gaining their first `uses` section. Fourteen JSON are `DrakeCLI parse` of their
+surfaces; fourteen Scala are `GeneratorCLI generate` on the recompiled engine: each declared type goes bare and the file
+gains `import org.evrete.api.StatefulSession` (twelve) or `import org.evrete.api.Knowledge` (three; the Editor's moves
+from the actor frame to the import block), no duplicate import anywhere. `DrakeCLI check` clean over main and mods. No
+definition semantics change; no test added or removed; no headline moves. After it every Evrete TYPE named in a
+definition body is a draco.rete wrap type — Knowledge, RhsContext, StatefulSession, the three of the eleven
+third-party types the 2026-07-31 cross-link counted.
+
+WHAT STAYS, deliberately: `org.evrete.api.ActivationMode.CONTINUOUS` in Draco and the Editor (a configuration VALUE,
+the HOW the review said not to quarantine one line at a time), `new KnowledgeService()` in Rule and `Rule.knowledgeService`,
+the session methods (`newStatefulSession`, `set`, `insert`, `fire`, `close`) as host members of the wrap type; the wrap
+types declare no capabilities. That is #49's large track and wants its own deliberate start. REJECTED: any new domain or
+session-construction wrapper (the rolled-back shape); introducing a capability for the enum sites (the speculative
+surface the issue warns against).
+
+THE ENGINE-CHANGE PROTOCOL (DRACO.md §4) was met in one run: the engine recompiled with scalac into the direct-run
+overlay before the fourteen files were generated from it, the fourteen compiled against it.
+
+DIRECT RUN of every discovered suite on compiled classes with current main, mods and test resources on the loader roots
+(test classes on the Runner's runpath alone):
+1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only.
+
+DOCUMENTATION in this commit: DRACO.md (§5 handoff line; a dated paragraph), README.md (the "leaves" residue row: the
+Evrete types are the wrap types since this commit; the pekko types remain), CHANGELOG (one entry), DEVELOPMENT_HANDOFF.md
+(a new current checkpoint, a dated section, the #63 checkpoint retitled as previous), DEVELOPMENT_RESUME_PROMPT.md (a new
+head). #49 stays open; under the §1 rule no comment until the thread closes or Dev asks. Next: one recommendation from
+the 22 open issues, its owning issue named.
+
+Not done, by design: no tracker action; no journal chapter (coverage stays at chapter 112); no push. PON suspended;
+activation and .dcon deferred; EgoActor and scripts/inspect-type.scala observed only.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

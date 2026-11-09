@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- Definitions name the `draco.rete` wrap types for the rules engine's session and knowledge: the twelve actor `start`
+  blocks that spelled `org.evrete.api.StatefulSession` and the three that spelled `org.evrete.api.Knowledge` say
+  `StatefulSession` and `Knowledge` with the wrap types recorded in `uses`, as Rule has since the record landed; the
+  generator's host-import table gains StatefulSession's row and HostBindings keys it qualified. Every Evrete type a
+  definition names is now a wrap type (GitHub #49, the type-vocabulary half; configuration stays host glue). Fourteen
+  Scala files regenerate with the bare type and its import; no test or headline moves.
 - `draco.FactDisjointness`, a core validation rule: a domain whose rules declare two fact types related by derivation is
   refused with a Problem naming the pair, since the rules engine silently drops a fact two declared types could receive
   (GitHub #63, constraint 4). `TypeDefinition.factTypes` reads a rule's declared fact types as identities through its

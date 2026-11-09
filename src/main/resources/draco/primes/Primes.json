@@ -12,6 +12,13 @@
       "namePackage": [
         "draco"
       ]
+    },
+    {
+      "name": "Knowledge",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
     }
   ],
   "dracoAspect": {
@@ -19,7 +26,7 @@
       {
         "kind": "Fixed",
         "name": "knowledge",
-        "valueType": "org.evrete.api.Knowledge",
+        "valueType": "Knowledge",
         "value": {
           "()": [
             "Rule.knowledgeService.newKnowledge",

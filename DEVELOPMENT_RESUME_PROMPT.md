@@ -1,14 +1,14 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
 This is a November 9, 2026 handoff for a new session in either agent, prepared by Claude Code after the
-#63 constraint-4 increment (the FactDisjointness rule), the third from the reconciled backlog that day. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+rete wrap-type spelling (GitHub #49's vocabulary half), the fourth increment from the reconciled backlog that day. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD is 995fade on main, the #63 constraint-4 increment (record git-record-2026-11-09-1231), gated by me on November 9
-(1127 tests, zero failures, every headline matching, green on its first run) and committed on top of a6a0f96. My gate on
-995fade is the current baseline, 1127 tests / 78 suites. Check whether the day's commits are pushed; inspect git status/log
-anyway. The direct runs are in the handoff.
+STATE: at the handoff HEAD was a3b52a7 on main (the fold of 995fade, the #63 constraint-4 increment gated by me at 1127 / 78
+green) and the tree held the #49 vocabulary increment uncommitted (record git-record-2026-11-09-1415), awaiting my full gate
+and commit; if the log shows that commit on top of a3b52a7, it is committed and the first task below moves on. Inspect git
+status/log anyway and check what is pushed. The direct runs are in the handoff.
 
 WHAT HAPPENED (November 4–8). The Codex session of November 4 reconciled the tracker without asking me what to
 correct first — 32 status comments, eight closures (#61, #55, #42, #41, #15, #51 completed or reconciled; #57, #46
@@ -41,7 +41,12 @@ fact types related by derivation, the hazard SubtypeFactVisibilityTest measures 
 (TypeDefinition.factTypes through the record, DomainOntology.ancestors, the rule listed by Draco and fired by the Editor;
 FactDisjointnessRulesTest +3, one corpus type). #63 stays open for its grammar points; no tracker comment until I say so.
 
-YOUR FIRST TASK: bring ONE recommendation from the 22 open issues, its owning issue named and its remaining scope checked
+WHAT HAPPENED (November 9, fourth increment): I accepted #49's type-vocabulary half — the twelve actor start blocks naming
+org.evrete.api.StatefulSession and the three naming org.evrete.api.Knowledge now name the draco.rete wrap types bare with uses
+records, as Rule does; the generator gained StatefulSession's import row and HostBindings keys it qualified. Configuration
+(the ActivationMode enum, KnowledgeService, the session methods) stays host glue; #49 stays open for that track.
+
+YOUR FIRST TASK: if the #49 increment is committed, bring ONE recommendation from the 22 open issues, its owning issue named and its remaining scope checked
 against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 

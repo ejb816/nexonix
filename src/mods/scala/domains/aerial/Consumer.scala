@@ -5,6 +5,7 @@ import domains._
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.Knowledge
+import org.evrete.api.StatefulSession
 import scala.collection.mutable
 
 trait Consumer extends DracoType
@@ -25,7 +26,7 @@ object Consumer extends App with DracoType {
   def actorType(): ActorType = new Actor[draco.format.dracon.Dracon] {
     override lazy val typeDefinition: TypeDefinition = Consumer.typeDefinition
 
-    lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
+    lazy val session: StatefulSession = knowledge.newStatefulSession()
     lazy val consumed: mutable.Buffer[String] = mutable.Buffer.empty[String]
     session.set("consumed", consumed)
 

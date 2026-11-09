@@ -5,6 +5,15 @@
       "draco"
     ]
   },
+  "uses": [
+    {
+      "name": "StatefulSession",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
+    }
+  ],
   "dracoAspect": {
     "factory": {
       "kind": "Factory",
@@ -138,7 +147,7 @@
         {
           "kind": "Fixed",
           "name": "session",
-          "valueType": "org.evrete.api.StatefulSession",
+          "valueType": "StatefulSession",
           "value": {
             "()": [
               "knowledge.newStatefulSession",

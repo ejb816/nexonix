@@ -1,6 +1,6 @@
 type Primes
   elements
-    fix knowledge org.evrete.api.Knowledge Rule.knowledgeService.newKnowledge("Primes")
+    fix knowledge Knowledge Rule.knowledgeService.newKnowledge("Primes")
   globals
     dyn filter [Int] [
       parameters
@@ -36,6 +36,7 @@ type Primes
     ]
 uses [
   draco Rule
+  draco rete Knowledge
 ]
 domain draco primes Primes
   types [

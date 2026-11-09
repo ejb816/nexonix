@@ -4,6 +4,8 @@ import draco.generator.Emission
 
 import draco.dreams._
 import draco._
+import org.evrete.api.Knowledge
+import org.evrete.api.StatefulSession
 import scala.collection.mutable
 
 trait TransformBinding extends DracoType {
@@ -33,10 +35,10 @@ trait TransformBinding extends DracoType {
     require(nameBindings.map(_._1).distinct.size == nameBindings.size, "duplicate name binding")
     lazy val resolutionScope: draco.NameResolution = new draco.NameResolution(ontology, nameBindings.toMap)
     val resolved: Seq[draco.TypeDefinition] = definitions.map(resolutionScope.resolve)
-    lazy val knowledge: org.evrete.api.Knowledge = draco.Rule.knowledgeService.newKnowledge("Generate")
+    lazy val knowledge: Knowledge = draco.Rule.knowledgeService.newKnowledge("Generate")
     rules.foreach(r => r._2.pattern(knowledge))
     lazy val received: mutable.Buffer[Emission] = scala.collection.mutable.ArrayBuffer()
-    lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
+    lazy val session: StatefulSession = knowledge.newStatefulSession()
     try { session.set("received", received); session.set("nameResolution", resolutionScope); session.insert(resolved.toSeq: _*); session.fire(); require(received.size == definitions.size, "transform did not emit once per definition"); received.toSeq } finally session.close()
   }
 }

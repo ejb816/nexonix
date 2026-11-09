@@ -32,10 +32,10 @@ type TransformBinding
         mon require(nameBindings.map(_._1).distinct.size == nameBindings.size, "duplicate name binding")
         fix resolutionScope draco.NameResolution new draco.NameResolution(ontology, nameBindings.toMap)
         now fix resolved [TypeDefinition] definitions.map(resolutionScope.resolve)
-        fix knowledge org.evrete.api.Knowledge Rule.knowledgeService.newKnowledge("Generate")
+        fix knowledge Knowledge Rule.knowledgeService.newKnowledge("Generate")
         mon rules.foreach(\r -> r._2.pattern(knowledge))
         fix received [Emission]+ scala.collection.mutable.ArrayBuffer()
-        fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
+        fix session StatefulSession knowledge.newStatefulSession()
         fix value [Emission] try { session.set("received", received); session.set("nameResolution", resolutionScope); session.insert(resolved.toSeq: _*); session.fire(); require(received.size == definitions.size, "transform did not emit once per definition"); received.toSeq } finally session.close()
     ]
   factory
@@ -54,5 +54,7 @@ uses [
   draco TypeName
   draco drake Text
   draco generator Emission
+  draco rete Knowledge
+  draco rete StatefulSession
 ]
 domain draco dreams editor Editor

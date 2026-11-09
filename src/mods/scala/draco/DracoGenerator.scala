@@ -2023,6 +2023,7 @@ object DracoGenerator extends App {
     "Consumer"            -> "import java.util.function.Consumer",
     "Knowledge"           -> "import org.evrete.api.Knowledge",
     "RhsContext"          -> "import org.evrete.api.RhsContext",
+    "StatefulSession"     -> "import org.evrete.api.StatefulSession",
     "ExtensibleBehavior"  -> "import org.apache.pekko.actor.typed.ExtensibleBehavior",
     "Json"                -> "import io.circe.Json",
     "Decoder"             -> "import io.circe.Decoder"

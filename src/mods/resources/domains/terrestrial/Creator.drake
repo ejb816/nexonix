@@ -5,12 +5,13 @@ type Creator
 uses [
   draco ActorType
   draco format dracon Dracon
+  draco rete StatefulSession
 ]
 domain domains terrestrial Terrestrial
 actor
   messageType draco format dracon Dracon
   message
-    fix session org.evrete.api.StatefulSession knowledge.newStatefulSession()
+    fix session StatefulSession knowledge.newStatefulSession()
     mon session.set("consumer", consumer)
     mon session.insert(Seq(msg): _*)
     mon session.fire()

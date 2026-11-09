@@ -7,6 +7,7 @@ import domains._
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.evrete.api.Knowledge
+import org.evrete.api.StatefulSession
 
 trait Creator extends DracoType
 
@@ -28,7 +29,7 @@ object Creator extends App with DracoType {
     lazy val consumer: Dracon => Unit = _consumer
 
     override def receive(ctx: TypedActorContext[Dracon], msg: Dracon): Behavior[Dracon] = {
-      lazy val session: org.evrete.api.StatefulSession = knowledge.newStatefulSession()
+      lazy val session: StatefulSession = knowledge.newStatefulSession()
       session.set("consumer", consumer)
       session.insert(Seq(msg): _*)
       session.fire()

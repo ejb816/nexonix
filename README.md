@@ -464,7 +464,7 @@ that becomes feasible; this list exists so the leaks are visible rather than ass
 | **[scala]** Codec realization | `CodecAspect` is neutral (discriminator and payload-field names), but codec derivation is expressed in one host library's encoder/decoder pair | a serialization capability domain, projected per target |
 | **[scala]** Rule-evaluation binding | conditions are compiled by the host rule engine at runtime, requiring fully qualified names, and working memory boxes primitives | `draco.rete` as a capability domain expressing evaluation *discipline*, not one engine's configuration |
 | **[scala]** Actor behaviour binding | an actor's parameters are neutral (`(M -> Unit)`) and the assembly holds the host's references, but the minted actor's template is a host actor library's behaviour | an actor capability domain — the host library integrated through drake definitions with implementations in the Scala target |
-| **[scala]** The leaves | `String`, `Int`, `Json`, `URI` and the evrete and pekko types are the host's names wherever a value type names them | draco-owned names for the primitives and wrap types for the libraries, spelled per target |
+| **[scala]** The leaves | `String`, `Int`, `Json`, `URI` and the pekko types are the host's names wherever a value type names them; the evrete types are the `draco.rete` wrap types in every definition since 2026-11-09, their Scala realization the Evrete class | draco-owned names for the primitives and wrap types for the libraries, spelled per target |
 | **[scala]** Structural-identity members | `TypeName`'s identity comparison is authored as host-named members | a declared property — "this type's identity is structural" — that each target projects its own way |
 | **[scala]** Host codecs for parameterized families | a parameterized closed family (`Presence(T)`) has no serialization, because the host codec cannot be named without its parameter | the codec aspect defining the default codec in drake, per type, projected per target |
 
@@ -660,8 +660,9 @@ directions:
   last conditionals became `guard(c).ifThenElse(t, e)`, and the two block bodies became a
   dyn-with-body (TypeLoader.isStub) and `bracket` (2026-09-22). No expression form remains; the
   typed binder and the leaves do.
-- **The leaves** — the host's names for the primitives and the rule-engine and actor-library types,
-  the last host residue in the corpus, each needing a draco-owned or wrap form.
+- **The leaves** — the host's names for the primitives and the actor-library types, the last host
+  residue in the corpus, each needing a draco-owned or wrap form; the rule-engine types are the
+  `draco.rete` wrap types in every definition since 2026-11-09.
 - **Target-side aspect types** — the Draco and domain sections now have definition-backed
   layout and mapping in the live Drake emitter. Their explicit type and element rendering
   dependencies, the remaining aspects, and the Scala target transforms remain to be developed.

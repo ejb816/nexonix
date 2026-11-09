@@ -6,6 +6,15 @@
       "marine"
     ]
   },
+  "uses": [
+    {
+      "name": "StatefulSession",
+      "namePackage": [
+        "draco",
+        "rete"
+      ]
+    }
+  ],
   "domainAspect": {
     "typeName": {
       "name": "Marine",
@@ -22,7 +31,7 @@
         {
           "kind": "Fixed",
           "name": "session",
-          "valueType": "org.evrete.api.StatefulSession",
+          "valueType": "StatefulSession",
           "value": {
             "()": [
               "knowledge.newStatefulSession"

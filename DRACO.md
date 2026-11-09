@@ -1240,7 +1240,9 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-09 after the #63 constraint-4 increment (record `git-record-2026-11-09-1231`, committed by Dev as 995fade after his gate of 1127 green): the
+  Last prepared 2026-11-09 after the rete wrap-type spelling (record `git-record-2026-11-09-1415`, commit pending): every Evrete type a
+  definition names is a `draco.rete` wrap type; #49 stays open for configuration and capabilities. Before it, the same day, after
+  the #63 constraint-4 increment (record `git-record-2026-11-09-1231`, committed by Dev as 995fade after his gate of 1127 green): the
   FactDisjointness rule guards the co-declaration hazard at definition time; #63 stays open for its grammar points. Before it,
   the same day, after the #47 increment (record `git-record-2026-11-09-1139`, committed by Dev as 929c850 after his gate of 1119 green): the stub predicate is
   `TypeDefinition.isStub`, one definition; #47 closed on the tracker the same day at Dev's instruction, 22 issues open; #50 closed the same
@@ -2185,3 +2187,19 @@ a host class outside the HostBindings vocabulary, which every resolution path ov
 mid-update, takes the canonical `draco.FactDisjointness` spelling. Second direct run: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-09: 1127 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; committed by Dev as 995fade. Next: one
 recommendation from the 22 open issues, its owning issue named. EgoActor and scripts/inspect-type.scala observed only; activation and
 .dcon deferred; PON suspended.
+
+**Definitions name the draco.rete wrap types; StatefulSession gains its import row (2026-11-09, Claude Code; GitHub #49's vocabulary
+half, the issue open).** The fourth increment from the reconciled backlog. #49's July attempt was rolled back for putting Evrete
+CONFIGURATION into a new main-tree domain; its review set the axis — wrapped TYPE NAMES in main with the binding in mods (WHAT),
+configuration as host glue (HOW). MEASURED before recommending: twelve actor `start` blocks spelled `org.evrete.api.StatefulSession`
+in full and three spelled `org.evrete.api.Knowledge`, while `draco.rete.StatefulSession` had no reference and Rule and RuleType had
+named `Knowledge` and `RhsContext` bare with `uses` records since 2026-10-21; a CLI probe found the one gap — no host-import row for
+StatefulSession, and HostBindings keying it bare where Knowledge is keyed qualified. Dev accepted "Accepted, build it". BUILT: one
+engine row in `externalTypeImports`; HostBindings re-keyed `org.evrete.api.StatefulSession`; fourteen definitions re-authored with
+`StatefulSession` / `Knowledge` bare and `draco rete …` in `uses` (Draco and the four Consumers gaining their first record); fourteen
+JSON re-parsed and fourteen Scala regenerated on the recompiled engine, each declared type bare with its import, `DrakeCLI check`
+clean. Every Evrete type a definition body names is now a wrap type. WHAT STAYS: `ActivationMode.CONTINUOUS` (Draco, Editor), `new
+KnowledgeService()`, the session methods — configuration and glue, the large #49 track. REJECTED: a new domain or session wrapper
+(the rolled-back shape); a capability for the enum sites (speculative surface). No test or headline moves. Direct run: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only. Dev's gate pending. Next:
+one recommendation from the 22 open issues. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON
+suspended.

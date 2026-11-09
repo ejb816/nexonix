@@ -4,10 +4,11 @@ import draco.dreams.user.Response
 
 import draco.dreams._
 import draco._
+import org.evrete.api.Knowledge
+import org.evrete.api.StatefulSession
 import scala.collection.mutable
 import org.apache.pekko.actor.typed.{Behavior, Signal, TypedActorContext}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
-import org.evrete.api.Knowledge
 
 trait Editor extends DracoType
 
@@ -36,7 +37,7 @@ object Editor extends App with DracoType {
     lazy val ontology: draco.DomainOntology => Unit = _ontology
     lazy val transforms: Seq[TransformBinding] = _transforms
 
-    lazy val rules: org.evrete.api.Knowledge = draco.Rule.knowledgeService.newKnowledge("Editor")
+    lazy val rules: Knowledge = draco.Rule.knowledgeService.newKnowledge("Editor")
     draco.Completeness.ruleType.pattern(rules)
     draco.SelfDeclaration.ruleType.pattern(rules)
     draco.DerivationResolvable.ruleType.pattern(rules)
@@ -59,7 +60,7 @@ object Editor extends App with DracoType {
       lazy val definitions: Seq[draco.TypeDefinition] = provisional.keys.toSeq.flatMap(domain => domain.typeDictionary.elementTypes.prepended(domain.typeDefinition))
       lazy val problems: mutable.Buffer[draco.Problem] = scala.collection.mutable.ArrayBuffer()
       lazy val responses: mutable.Buffer[Seq[draco.Problem] => Response] = scala.collection.mutable.ArrayBuffer()
-      lazy val session: org.evrete.api.StatefulSession = rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
+      lazy val session: StatefulSession = rules.newStatefulSession(org.evrete.api.ActivationMode.CONTINUOUS)
       session.set("problems", problems)
       session.set("transforms", transforms)
       session.set("responses", responses)
