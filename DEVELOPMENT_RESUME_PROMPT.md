@@ -5,10 +5,10 @@ This is a November 9, 2026 handoff for a new session in either agent, prepared b
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: at the handoff HEAD was d8de334 on main (the fold of d026cd3, the #50 item 2 increment gated by me at 1118 green) and
-the tree held the #47 increment uncommitted (record git-record-2026-11-09-1139), awaiting my full gate and commit; if the log
-shows that commit on top of d8de334, it is committed and the first task below moves on. Inspect git status/log anyway and check
-what is pushed. The direct runs are in the handoff. The DRACO.md table holds the two suspended PON rows
+STATE: HEAD is 929c850 on main, the #47 increment (record git-record-2026-11-09-1139), gated by me on November 9 (1119 tests,
+zero failures, every headline matching, green on its first run) and committed on top of d8de334, the fold of d026cd3 (the #50
+item 2 increment, gated at 1118). My gate on 929c850 is the current baseline, 1119 tests / 77 suites. Check whether these are
+pushed; inspect git status/log anyway. The direct runs are in the handoff. The DRACO.md table holds the two suspended PON rows
 and the categorical rete finding alone. Journal coverage reaches chapter 112; the commits since (e241378 through
 48f466d and the documentation commits after) are not journaled — the handoff names the sources.
 
@@ -37,9 +37,10 @@ one condition, DomainBuilder's copy is gone, eleven test sites and six scripts s
 (1119). Observed, not fixed, my decision: scripts/inspect-type.scala has not compiled since 2026-10-17. #50 is closed on the
 tracker (one comment citing d026cd3); #47 closes on my verified commit the same way, when I say so; 22 issues then remain.
 
-YOUR FIRST TASK: if the #47 increment is committed and closed, bring ONE recommendation from the 22 open issues, its owning
-issue named and its remaining scope checked against the tree, for accept-or-correct. If it is not yet committed, hand me the
-gate and commit block from the handoff first. Touch nothing on the tracker before I decide. A docs point already
+#47 is closed on the tracker (my instruction, one comment citing 929c850); 22 issues are open.
+
+YOUR FIRST TASK: bring ONE recommendation from the 22 open issues, its owning issue named and its remaining scope checked
+against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 
 HISTORY of the increments since the October 26 handoff follows, newest first; the details are in the

@@ -65,6 +65,15 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1119 tests / 77 suites**, verified by Dev on 2026-11-09 for the one stub predicate (record `git-record-2026-11-09-1139`, committed
+as 929c850): `TypeDefinition.isStub` is the one definition of "stub", TypeLoader, Completeness, DomainBuilder, eleven tests and six
+scripts referencing it; TypeDefinitionTest +1, zero failed/canceled/ignored/pending tests, every headline unchanged; three trios
+re-authored and regenerated, no engine change; its direct run 1119 / 78 including discovery, green on its first run. First full Dev
+gate green. Before it: **1118 tests / 77 suites**, verified by Dev on 2026-11-09 for the rooted rule trait (record
+`git-record-2026-11-09-1005`, committed as d026cd3): the rule-only branch of DracoGenerator renders its trait through
+traitDeclaration, 26 generated rule files one line each, no test added or removed, every headline unchanged; its direct run 1118 / 78
+including discovery, green on its second run (the first put the test classes on the JVM classpath, a harness error). First full Dev
+gate green. Before it:
 **1118 tests / 77 suites**, verified by Dev on 2026-11-04 for the asserted parse-scope hold-back (record `git-record-2026-11-04-1414`,
 committed as 48f466d): DrakeParseTest's "types held back from Drake.parse" test asserts instead of reporting, over both corpora, no test added or
 removed, zero failed/canceled/ignored/pending tests, every headline unchanged, the parse-scope row off the table below, which then holds the suspended PON pair and the
@@ -1226,8 +1235,8 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-09 after the #47 increment (record `git-record-2026-11-09-1139`, commit pending): the stub predicate is
-  `TypeDefinition.isStub`, one definition; #47 closes on Dev's verified commit, the backlog going to 22; #50 closed the same
+  Last prepared 2026-11-09 after the #47 increment (record `git-record-2026-11-09-1139`, committed by Dev as 929c850 after his gate of 1119 green): the stub predicate is
+  `TypeDefinition.isStub`, one definition; #47 closed on the tracker the same day at Dev's instruction, 22 issues open; #50 closed the same
   morning (d026cd3); journal coverage reaches chapter 112.
 - **`CHANGELOG.md`** — **current.** Release blocks through alpha.6 (2026-08-17); `[Unreleased]`
   carries one entry per commit since, written with each commit's record, and was consolidated
@@ -2142,6 +2151,6 @@ and the dictionary's placeholder, satisfy it. BUILT as accepted: three trios re-
 their Scala `GeneratorCLI generate` on the d026cd3 engine (no engine change); `DrakeCLI check` clean; TypeDefinitionTest +1 (a bare
 name and Null are stubs, a record alone does not authorize, each aspect present makes a definition). OBSERVED, not fixed:
 scripts/inspect-type.scala has not compiled since the core-tree migration of 2026-10-17 (a Dracon `e.value` passed to the engine's
-host-Json `expression`), gated by nothing since the scripts compile under the `mods` subproject alone — Dev's decision. Direct run: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only. Dev's gate pending.
+host-Json `expression`), gated by nothing since the scripts compile under the `mods` subproject alone — Dev's decision. Direct run: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-09: 1119 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; committed by Dev as 929c850; #47 closed the same day on Dev's instruction ("Close #47") with one comment citing 929c850; 22 issues open.
 Next: one recommendation from the 22 issues that remain, its owning issue named. EgoActor observed only; activation and .dcon
 deferred; PON suspended.

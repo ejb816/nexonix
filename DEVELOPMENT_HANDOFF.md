@@ -8,9 +8,10 @@ destination session has been launched or messaged, and no private agent memory i
 
 ## Current checkpoint — the second increment from the reconciled backlog: one stub predicate (Claude Code, November 9, 2026)
 
-Observed: HEAD d8de334 on main (the fold of d026cd3); the tree holds this increment, uncommitted, with the record of the
-#50 closure in this file, the resume prompt and DRACO.md §5 that the morning left uncommitted. Whether d026cd3 and d8de334
-are pushed is to be checked on resumption. Dev's gate on d026cd3 (1118, green) stands until Dev gates this tree.
+Observed: HEAD 929c850 on main, this increment's commit (record `git-record-2026-11-09-1139`), committed by Dev on
+November 9 on top of d8de334 after his gate (1119 tests, zero failures, every headline matching, green on its first run);
+the tree was clean after it but for this fold. Whether d026cd3, d8de334 and 929c850 are pushed is to be checked on
+resumption. 929c850 is the last implementation commit and Dev's gate on it is the current baseline: **1119 tests / 77 suites**.
 
 - **Done this session.** The recommendation on GitHub #47 was brought as a design point (where the one stub predicate
   lives) and Dev accepted it ("Accepted, build it"): a global `fix isStub (TypeDefinition -> Boolean)` on TypeDefinition, the
@@ -19,8 +20,9 @@ are pushed is to be checked on resumption. Dev's gate on d026cd3 (1118, green) s
   sites and six scripts re-pointed; TypeDefinitionTest +1. Semantics unchanged. Direct run of every discovered suite: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only.
 - **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (a Dracon value passed to the
   engine's host-Json `expression`); the scripts compile under the `mods` subproject alone, so no gate sees it. Dev's decision.
-- **Next action:** Dev runs the full gate and commits (record `git-record-2026-11-09-1139`). On the verified commit the #47
-  thread closes: one comment citing the commit and the closure, when Dev says so; the backlog goes to 22. Then ONE
+- **Thread closed.** On Dev's instruction ("Close #47") one comment citing 929c850 was posted (https://github.com/ejb816/nexonix/issues/47#issuecomment-6745941000) and the issue closed as completed on November 9; 22 issues open.
+- **Next action:** ONE recommendation from the 22 open issues, its owning issue named and its remaining scope checked against
+  the tree, for accept-or-correct. Then ONE
   recommendation from the 22, its owning issue named, for accept-or-correct.
 - **Not done, by design:** no tracker action; no journal chapter; no push. The docs point from November 8 stands
   (GETTING_STARTED_TARGET_SCALA.md's authoring section).
@@ -632,7 +634,7 @@ the procedure below, so the scenario definitions sat at two loader roots and Sce
 unique-root requirement — 1115 / 3, a harness error, every other suite green, every headline as expected; it also surfaced the two
 scenario rules the measurement over src/main and src/mods had not counted. SECOND DIRECT RUN, test classes on the runpath alone: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically). DEV'S GATE: 1118 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as d026cd3 on November 9, folded as d8de334; #50 closed on the tracker the same day on Dev's instruction. Record `git-record-2026-11-09-1005`.
 
-## The stub predicate has one definition, TypeDefinition.isStub (accepted and built, November 9; direct run 1119 / 78; Dev's gate pending)
+## The stub predicate has one definition, TypeDefinition.isStub (accepted and built, November 9; direct run 1119 / 78; Dev's gate 1119 / 77, committed as 929c850)
 
 Dev accepted: "Accepted, build it", on a design point brought first. OWNING ISSUE: GitHub #47; its November 4 status names the
 remaining scope as consolidation against current callers. WHY: the four-aspect stub test was spelled in five places and owned by
@@ -645,7 +647,7 @@ condition; DomainBuilder's copy removed; every site says TypeDefinition.isStub. 
 engine, `DrakeCLI check` clean; DomainBuilder, eleven test lines, six scripts re-pointed; TypeDefinitionTest +1 (1119). No engine
 change, so no two-run protocol. OBSERVED, not fixed: scripts/inspect-type.scala has not compiled since 2026-10-17 (Dracon value to
 the host-Json `expression`), seen when the six scripts were compiled against the new classes; the other five compile.
-DIRECT RUN: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only. Record `git-record-2026-11-09-1139`.
+DIRECT RUN: 1119 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; TypeDefinitionTest the one suite whose count moves (+1); the tree afterwards held the intended changes only. DEV'S GATE: 1119 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 929c850; #47 closed on the tracker the same day on Dev's instruction. Record `git-record-2026-11-09-1139`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 
