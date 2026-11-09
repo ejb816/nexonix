@@ -8,10 +8,10 @@ destination session has been launched or messaged, and no private agent memory i
 
 ## Current checkpoint — the first increment from the reconciled backlog: rule traits derive DracoType (Claude Code, November 9, 2026)
 
-Observed: HEAD 7d4ae0a on main (the November 8 documentation commit); the tree holds this increment, uncommitted, with
-the fold of 7d4ae0a into this file, the resume prompt and DRACO.md §5 that November 8 left uncommitted. Whether 7d4ae0a
-is pushed was not checked (read-only git only). The last implementation commit is 48f466d; Dev's last gate 1118 / 77 on
-November 4 stood until Dev gated this tree on November 9: 1118, zero failures, every headline matching, green on its first run; the commit follows.
+Observed: HEAD d026cd3 on main, this increment's commit (record `git-record-2026-11-09-1005`), committed by Dev on
+November 9 on top of 7d4ae0a after his gate (1118, zero failures, every headline matching, green on its first run); the
+tree was clean after it but for this fold. Whether d026cd3 and 7d4ae0a are pushed is to be checked on resumption. d026cd3
+is the last implementation commit; Dev's gate on it is the current baseline.
 
 - **Done this session.** The one next-priority recommendation from the 24 open issues was GitHub #50 item 2 (owning issue
   inspected first, per §1): the rule-only branch of `DracoGenerator.spelledSource` hard-coded a bare `trait X` while every
@@ -23,8 +23,8 @@ November 4 stood until Dev gated this tree on November 9: 1118, zero failures, e
   TupleFactReteTest writes through the engine on every run — 26 generated files, one line each (25 of 25 with a definition
   on disk whitespace-identical from `GeneratorCLI generate` on the recompiled classes). No definition, JSON or hand-written
   test change. Direct run of every discovered suite: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically).
-- **Next action:** Dev commits (record `git-record-2026-11-09-1005`; the gate is green). On the verified commit the #50
-  thread closes: one comment citing the commit and the closure, when Dev says so; the backlog goes to 23. Then ONE
+- **Next action:** the #50 thread closes on d026cd3: one comment citing the commit and the closure, when Dev says so; the
+  backlog goes to 23. Then ONE
   recommendation on the next candidate, GitHub #47 — the stub predicate (TypeLoader.isStub by name, DomainBuilder.isStub by
   definition, Completeness's four inline conditions, six scripts) consolidated into one definition-backed place — as a
   design point first (where it lives), for accept-or-correct.
@@ -589,7 +589,7 @@ FOCUSED: DrakeParseTest 381, green on its first run, the console line `110 draco
 held back`. DIRECT RUN: 1118 / 78 including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged, every suite's count identical to the 1118 baseline. DEV'S GATE: 1118 tests / 77 suites on November 4, zero failed, canceled, ignored or pending, every headline matching, green on its
 first run. Committed and pushed by Dev as 48f466d on November 4.
 
-## Every generated rule trait derives DracoType (accepted and built, November 9; direct run 1118 / 78; Dev's gate 1118 green)
+## Every generated rule trait derives DracoType (accepted and built, November 9; direct run 1118 / 78; Dev's gate 1118 / 77, committed as d026cd3)
 
 Dev accepted: "Accepted, build it". OWNING ISSUE: GitHub #50; item 1 landed in b93e3a1 and eafc649
 (2026-07-29), item 2 is this increment, the issue's last scope. WHY: the rule-only branch of `DracoGenerator.spelledSource`
@@ -610,7 +610,7 @@ three primes rules through the engine into src/main) are the check. No definitio
 moves. FIRST DIRECT RUN: the probe put the test class directory on the JVM classpath as well as the runpath, against step 5 of
 the procedure below, so the scenario definitions sat at two loader roots and ScenarioGenTest's three loading tests failed on the
 unique-root requirement — 1115 / 3, a harness error, every other suite green, every headline as expected; it also surfaced the two
-scenario rules the measurement over src/main and src/mods had not counted. SECOND DIRECT RUN, test classes on the runpath alone: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically). DEV'S GATE: 1118 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Record `git-record-2026-11-09-1005`.
+scenario rules the measurement over src/main and src/mods had not counted. SECOND DIRECT RUN, test classes on the runpath alone: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline unchanged — example gate 48 match / 0 differ, surface losses 0 across 183 types, parse scope 110 + 73 with 0 held back, scenario 23 clean, GenDrake 108 of 108, both aspect probes 110 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only (the direct run's PrimesRulesTest and TupleFactReteTest rewrote their files identically). DEV'S GATE: 1118 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as d026cd3 on November 9. Record `git-record-2026-11-09-1005`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 

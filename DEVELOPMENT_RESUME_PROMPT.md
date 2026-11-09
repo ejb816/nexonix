@@ -5,11 +5,10 @@ This is a November 9, 2026 handoff for a new session in either agent, prepared b
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: at the handoff HEAD was 7d4ae0a on main (the November 8 documentation commit) and the tree held the #50 item 2
-increment uncommitted (record git-record-2026-11-09-1005), gated green by me on November 9 (1118 tests, zero failures, every headline matching) and awaiting my commit; if the log shows that commit on
-top of 7d4ae0a, the increment is committed and the first task below moves on. Inspect git status/log anyway and check what is
-pushed. The last implementation commit before it is 48f466d; my last full sbt gate was 1118 tests / 77 suites on November 4,
-zero failures or aborts, every headline matching; the increment's direct run is in the handoff. The DRACO.md table holds the two suspended PON rows
+STATE: HEAD is d026cd3 on main, the #50 item 2 increment (record git-record-2026-11-09-1005), gated by me on November 9
+(1118 tests, zero failures, every headline matching, green on its first run) and committed on top of 7d4ae0a; check whether
+both are pushed. Inspect git status/log anyway. It is the last implementation commit and my gate on it is the current
+baseline; the increment's direct run is in the handoff. The DRACO.md table holds the two suspended PON rows
 and the categorical rete finding alone. Journal coverage reaches chapter 112; the commits since (e241378 through
 48f466d and the documentation commits after) are not journaled — the handoff names the sources.
 
@@ -32,11 +31,10 @@ the 23 rule-only Scala files say `trait X extends DracoType`, one line each, the
 JSON or test change; no count or headline moves. On my verified commit the #50 thread closes with one comment and the
 closure, when I say so; the backlog goes to 23.
 
-YOUR FIRST TASK: if the increment is committed and I have closed #50, bring ONE recommendation on the next candidate,
+YOUR FIRST TASK: if I have closed #50 (one comment citing d026cd3, then the closure, on my word), bring ONE recommendation on the next candidate,
 GitHub #47 — the stub predicate (TypeLoader.isStub by name, DomainBuilder.isStub by definition, Completeness's four inline
 conditions, six scripts) consolidated into one definition-backed place — as a design point first (where it lives), with
-its remaining scope checked against the tree, for accept-or-correct. If the increment is not yet committed, hand me the
-gate and commit block from the handoff first. Touch nothing on the tracker before I decide. A docs point already
+its remaining scope checked against the tree, for accept-or-correct. If #50 is still open, the thread close is the first step, on my word. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 
 HISTORY of the increments since the October 26 handoff follows, newest first; the details are in the
