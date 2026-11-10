@@ -18,6 +18,12 @@ the block below.
 
 ## [Unreleased]
 
+- The `uses` record and the codec section of the drake surface are emitted by definitions: `draketarget.UsesText` /
+  `gendrake.UsesOf` and `draketarget.CodecAspectText` / `gendrake.CodecAspectOf`, with `Drake.emit` delegating (GitHub #11).
+  All six sections of the surface are now definition-backed and every surface is byte-identical; the emitter keeps the
+  section order, the codec guards and the element renderer. UsesAndCodecTest (5) is new and reproduces all 85 records and
+  4 codec sections; four corpus types added (parse scope 119 + 73, GenDrake 117 of 117); the gate grep gains `Uses over`
+  and `CodecAspect over`.
 - The actor section of the drake surface is emitted by definitions: `draketarget.ActorAspectText` owns its layout (the
   message type, then the `start`, `message` and `signal` blocks) and `gendrake.ActorAspectOf` maps a definition onto it,
   with `Drake.emit` delegating (GitHub #11). Every surface is byte-identical. ActorAspectTest (5) is new and reproduces

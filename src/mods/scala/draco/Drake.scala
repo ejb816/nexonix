@@ -366,6 +366,13 @@ object Drake {
   private[draco] def actorAspectText (td: TypeDefinition) : String =
     draco.gendrake.ActorAspectOf(td, typeParameterSurface(_), elementLines(_, _)).value
 
+  /** The resolution record and the codec section are definition-backed too (2026-11-10,
+    * GitHub #11): draketarget.UsesText / gendrake.UsesOf and draketarget.CodecAspectText /
+    * gendrake.CodecAspectOf. With them no section's layout is written in this emitter; what
+    * stays here is the order of the sections, the codec guards and the element renderer. */
+  private[draco] def usesText (td: TypeDefinition) : String = draco.gendrake.UsesOf(td).value
+  private[draco] def codecAspectText (td: TypeDefinition) : String = draco.gendrake.CodecAspectOf(td).value
+
   /** Emit the .drake surface for a TypeDefinition (the drake.dlt TEMPLATE:
     * plain-type sections + domain + rule + actor + codec payload). Codec discriminator
     * syntax remains unsupported and is rejected rather than dropped. */
@@ -384,10 +391,9 @@ object Drake {
     // The RESOLUTION RECORD (2026-10-21): `uses [ … ]`, a section of its own between the type
     // section and the domain line — the identities the bodies name by their short form, each in
     // the anchor spelling, package words then the name. Written by the compact form, never by
-    // hand; elided when empty.
-    val uses =
-      if (td.uses.isEmpty) Seq.empty
-      else "uses [" +: td.uses.map(tn => "  " + (tn.namePackage :+ tn.name).mkString(" ")) :+ "]"
+    // hand; elided when empty. Definition-backed, see usesText.
+    val recordText = usesText(td)
+    val uses = if (recordText.isEmpty) Seq.empty else Seq(recordText)
 
     // Section layout and aspect mapping are definition-backed. Type-parameter
     // spelling remains an explicit dependency on this target's type-form renderer.
@@ -407,7 +413,10 @@ object Drake {
     val payload = td.codecAspect.payload
     require(payload.distinct.size == payload.size, s"Drake.emit: duplicate payload field in ${td.typeName.name}")
     require(payload.forall(_.matches("[A-Za-z_][A-Za-z0-9_]*")), s"Drake.emit: invalid payload field in ${td.typeName.name}")
-    val codec = if (payload.isEmpty) Seq.empty else Seq("codec", s"  payload [${payload.mkString(", ")}]")
+    // The two guards above stay here: they refuse before anything renders. The layout is
+    // definition-backed, see codecAspectText.
+    val codecText = codecAspectText(td)
+    val codec = if (codecText.isEmpty) Seq.empty else Seq(codecText)
     (typeSection ++ uses ++ domain ++ rule ++ actor ++ codec).mkString("", "\n", "\n")
   }
 

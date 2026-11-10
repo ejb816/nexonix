@@ -7,4 +7,6 @@ domain draco draketarget DrakeTarget
     DracoAspectText
     RuleAspectText
     ActorAspectText
+    UsesText
+    CodecAspectText
   ]

@@ -1,0 +1,14 @@
+type UsesOf from draco draketarget UsesText
+  factory
+    parameters
+      par definition TypeDefinition
+    body
+      loc definition TypeDefinition _definition
+      loc rendered UsesText UsesText(definition.uses.map(\name -> join(" ", name.namePackage ++ [name.name])))
+      fix value Text rendered.value
+uses [
+  draco TypeDefinition
+  draco drake Text
+  draco draketarget UsesText
+]
+domain draco gendrake GenDrake

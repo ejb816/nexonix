@@ -1,0 +1,48 @@
+The uses record and the codec section of the drake surface are definition-backed; no section layout is left in Drake.emit (GitHub #11)
+
+Dev accepted, in the words "Accepted, build it", the next related point after the actor section (8b127aa), with the
+record's pair named for the surface keyword as proposed (UsesText / UsesOf). OWNING ISSUE:
+https://github.com/ejb816/nexonix/issues/11, the generator domain; this is the last increment of the thread that moved
+the drake surface's sections out of the hand-written emitter one at a time — domain (2026-09-22), type (2026-09-28),
+rule and actor (2026-11-10), and now the record and the codec section. The issue stays open: the emitter still owns the
+order of the sections, the codec guards and the element renderer, and the Scala target's transforms are untouched.
+
+MEASURED before recommending: the `uses` rendering was three emitter lines and 81 definitions carried a record; the
+codec rendering was four lines with two validity checks and the discriminator refusal, and four definitions carry a
+payload (TypeName, DracoAspect, TypeElement, TypeParameter). Both are list renderings with no layout decisions.
+
+BUILT, two pairs in the established shape. `draco.draketarget.UsesText` (from Surface): `identities` as already-spelled
+lines, the bracketed list one identity per line, nothing when empty. `draco.gendrake.UsesOf`: each identity of the
+definition's `uses` spelled as package words then the name. `draco.draketarget.CodecAspectText`: `fields`, rendered
+`codec` / `payload [a, b]`, nothing when empty. `draco.gendrake.CodecAspectOf`: the definition's
+`codecAspect.payload`. DrakeTarget and GenDrake list the four. `Drake.emit` delegates through `private[draco]
+usesText(td)` and `codecAspectText(td)`. THE GUARDS STAY in the emitter, where they refuse before anything renders: a
+duplicate payload field, a malformed one, a codec discriminator (drake has no failure form; inventing one is a design
+point of its own). GENERATION ORDER followed the gotcha recorded with 8b127aa: the two layout types were generated and
+COMPILED into the overlay first, then their four referrers generated — all six files stable on regeneration, the
+references in their canonical full spelling on the first pass. Six JSON are `DrakeCLI parse` of their surfaces; with
+the new emitter `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods — every surface
+byte-identical. UsesAndCodecTest (5) is the 82nd suite: the two layouts and their empty forms; a definition's record
+and payload through the live emitter and back, with the three guards still refusing; EVERY record and codec section
+of the main and mods corpus reproduced (192 definitions, 85 records, 4 codec sections; console lines `Uses over the
+corpus: …` and `CodecAspect over the corpus: …` added to the gate grep); the running Emit rule emitting both. Four
+corpus types added: parse scope 119 + 73, surface losses 0 across 192 types, 119 aspect sections, GenDrake 117 of 117.
+REJECTED: folding the guards into the transforms; `ResolutionRecordText` as the record's name (it reads against the
+existing ResolutionRecordTest, which tests the name resolver).
+
+DIRECT RUN of every discovered suite on compiled classes with current main, mods and test resources on the loader roots
+(test classes on the Runner's runpath alone):
+1183 tests / 83 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 192 types, parse scope 119 + 73 with 0 held back, host text 21 leaves of 2186 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 117 of 117, the domain and draco aspect probes 119 complete, rule 24 and actor 15 sections over 192 definitions, `Uses over the corpus: 192 definitions, 85 records reproduced, 0 skipped`, `CodecAspect over the corpus: 192 definitions, 4 codec sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the twenty-five new tests are UsesAndCodecTest's five and the five per-type gates of each of the four new definitions; the tree afterwards held the intended changes only.
+
+DOCUMENTATION in this commit: DRACO.md (the gate grep gains `Uses over` and `CodecAspect over`; §3's aspect paragraph
+covers all six sections; the §5 handoff line; a dated paragraph), README.md (the target-side aspect bullet), CHANGELOG
+(one entry), DEVELOPMENT_HANDOFF.md (a new current checkpoint, a dated section, the actor-section checkpoint retitled
+as previous), DEVELOPMENT_RESUME_PROMPT.md (a new head). The fold of 8b127aa, its gate and its push, uncommitted since,
+rides here. No tracker action: #11 stays open. Next on this thread, each a design question of its own: the order of
+the sections as a definition, the element renderer the transforms call back into, the codec guards' failure form.
+
+Not done, by design: no tracker action; no journal chapter (coverage stays at chapter 112). PON suspended; activation
+and .dcon deferred; EgoActor and scripts/inspect-type.scala observed only; whether generation should consult compiled
+classes (DRACO.md §6) is Dev's decision.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

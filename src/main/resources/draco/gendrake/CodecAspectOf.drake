@@ -1,0 +1,14 @@
+type CodecAspectOf from draco draketarget CodecAspectText
+  factory
+    parameters
+      par definition TypeDefinition
+    body
+      loc definition TypeDefinition _definition
+      loc rendered CodecAspectText CodecAspectText(definition.codecAspect.payload)
+      fix value Text rendered.value
+uses [
+  draco TypeDefinition
+  draco drake Text
+  draco draketarget CodecAspectText
+]
+domain draco gendrake GenDrake

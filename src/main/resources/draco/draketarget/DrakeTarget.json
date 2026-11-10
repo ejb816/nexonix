@@ -30,7 +30,9 @@
       "DomainAspectText",
       "DracoAspectText",
       "RuleAspectText",
-      "ActorAspectText"
+      "ActorAspectText",
+      "UsesText",
+      "CodecAspectText"
     ]
   }
 }

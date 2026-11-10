@@ -1,0 +1,104 @@
+{
+  "typeName": {
+    "name": "CodecAspectText",
+    "namePackage": [
+      "draco",
+      "draketarget"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "CodecAspectText",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "fields",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_fields.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              "\"\"",
+              {
+                "()": [
+                  "join",
+                  "\"\\n\"",
+                  {
+                    "[]": [
+                      "\"codec\"",
+                      {
+                        "++": [
+                          "\"  payload [\"",
+                          {
+                            "()": [
+                              "join",
+                              "\", \"",
+                              "_fields"
+                            ]
+                          },
+                          "\"]\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}

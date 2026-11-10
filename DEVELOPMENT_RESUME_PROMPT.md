@@ -1,13 +1,13 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
 This is a November 10, 2026 handoff for a new session in either agent, prepared by Claude Code after the
-definition-backed actor section (GitHub #11), the seventh increment since the tracker reconciliation. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+definition-backed record and codec sections (GitHub #11), the eighth increment since the tracker reconciliation. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: at the handoff HEAD was 1c96d63 on main, equal to origin/main (the rule-section increment, gated by me at 1143 / 80
-green and pushed on November 10). The tree held the actor-section increment uncommitted (record git-record-2026-11-10-1120),
-awaiting my full gate, commit and push; if the log shows that commit on top of 1c96d63, it is committed. Every commit block
+STATE: at the handoff HEAD was 8b127aa on main, equal to origin/main (the actor-section increment, gated by me at 1158 / 81
+green and pushed on November 10). The tree held the record-and-codec increment uncommitted (record git-record-2026-11-10-1221),
+awaiting my full gate, commit and push; if the log shows that commit on top of 8b127aa, it is committed. Every commit block
 handed to me ends with a push block. Inspect git status/log anyway. The direct runs are in the handoff.
 
 WHAT HAPPENED (November 4–8). The Codex session of November 4 reconciled the tracker without asking me what to
@@ -59,8 +59,14 @@ WHAT HAPPENED (November 10, third increment): I accepted the actor section the s
 gendrake.ActorAspectOf, Drake.emit delegating, every surface byte-identical, ActorAspectTest +5, two corpus types. Four of the
 drake surface's six sections are definition-backed; the uses record and the codec payload are still the engine's.
 
-YOUR FIRST TASK: if the actor-section increment is committed and pushed, bring the next related point under GitHub #11 — the
-uses record and the codec payload together, the emitter's last two sections — as ONE recommendation; otherwise finish that commit first, or bring ONE recommendation, its owning issue named and its remaining scope checked
+WHAT HAPPENED (November 10, fourth increment): I accepted the uses record and the codec section the same way —
+draketarget.UsesText / gendrake.UsesOf and draketarget.CodecAspectText / gendrake.CodecAspectOf, Drake.emit delegating and
+keeping its guards, UsesAndCodecTest +5, four corpus types. All six sections of the drake surface are definition-backed.
+A new DRACO.md section 6 gotcha records that a referrer of a NEW definition must be generated after that definition is compiled.
+
+YOUR FIRST TASK: if the record-and-codec increment is committed and pushed, bring ONE recommendation — the next design
+question on this thread (the section order as a definition, the element renderer, the guards' failure form) or another of the
+22 open issues; otherwise finish that commit first, its owning issue named and its remaining scope checked
 against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 

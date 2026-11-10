@@ -1,0 +1,116 @@
+{
+  "typeName": {
+    "name": "UsesText",
+    "namePackage": [
+      "draco",
+      "draketarget"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "UsesText",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "identities",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_identities.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              "\"\"",
+              {
+                "()": [
+                  "join",
+                  "\"\\n\"",
+                  {
+                    "++": [
+                      {
+                        "[]": [
+                          "\"uses [\""
+                        ]
+                      },
+                      {
+                        "()": [
+                          "_identities.map",
+                          {
+                            "\\": [
+                              "entry",
+                              {
+                                "++": [
+                                  "\"  \"",
+                                  "entry"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "[]": [
+                          "\"]\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}

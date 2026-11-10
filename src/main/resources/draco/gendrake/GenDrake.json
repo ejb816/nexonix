@@ -40,6 +40,8 @@
       "DracoAspectOf",
       "RuleAspectOf",
       "ActorAspectOf",
+      "UsesOf",
+      "CodecAspectOf",
       "Emit",
       "Emitter"
     ],

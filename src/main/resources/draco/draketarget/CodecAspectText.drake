@@ -1,0 +1,10 @@
+type CodecAspectText from Surface
+  factory
+    parameters
+      par fields [Text] []
+    body
+      fix value Text guard(_fields.isEmpty).ifThenElse("", join("\n", ["codec", "  payload [" ++ join(", ", _fields) ++ "]"]))
+uses [
+  draco drake Text
+]
+domain draco draketarget DrakeTarget

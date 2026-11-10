@@ -1,0 +1,10 @@
+type UsesText from Surface
+  factory
+    parameters
+      par identities [Text] []
+    body
+      fix value Text guard(_identities.isEmpty).ifThenElse("", join("\n", ["uses ["] ++ _identities.map(\entry -> "  " ++ entry) ++ ["]"]))
+uses [
+  draco drake Text
+]
+domain draco draketarget DrakeTarget

@@ -1,0 +1,87 @@
+{
+  "typeName": {
+    "name": "CodecAspectOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "CodecAspectText",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "CodecAspectText",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "CodecAspectOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "definition",
+          "valueType": "TypeDefinition",
+          "value": "_definition"
+        },
+        {
+          "kind": "Local",
+          "name": "rendered",
+          "valueType": "CodecAspectText",
+          "value": {
+            "()": [
+              "CodecAspectText",
+              "definition.codecAspect.payload"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": "rendered.value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

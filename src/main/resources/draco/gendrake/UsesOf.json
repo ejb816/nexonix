@@ -1,0 +1,112 @@
+{
+  "typeName": {
+    "name": "UsesOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "UsesText",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "UsesText",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "UsesOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "definition",
+          "valueType": "TypeDefinition",
+          "value": "_definition"
+        },
+        {
+          "kind": "Local",
+          "name": "rendered",
+          "valueType": "UsesText",
+          "value": {
+            "()": [
+              "UsesText",
+              {
+                "()": [
+                  "definition.uses.map",
+                  {
+                    "\\": [
+                      "name",
+                      {
+                        "()": [
+                          "join",
+                          "\" \"",
+                          {
+                            "++": [
+                              "name.namePackage",
+                              {
+                                "[]": [
+                                  "name.name"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": "rendered.value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

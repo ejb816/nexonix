@@ -65,6 +65,12 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1158 tests / 81 suites**, verified by Dev on 2026-11-10 for the definition-backed actor section (record `git-record-2026-11-10-1120`,
+committed as 8b127aa, pushed): `draketarget.ActorAspectText` and `gendrake.ActorAspectOf` render the drake surface's actor section
+with `Drake.emit` delegating, every surface byte-identical; fifteen tests added (ActorAspectTest's five, the 81st suite, and five
+per-type gates for each of the two new corpus types); parse scope 115 + 73, surface losses 0 across 188 types, 115 aspect sections,
+GenDrake 113 of 113, the `ActorAspect over` line in the gate grep; its direct run 1158 / 82 including discovery, green on its second
+run (the first failed two tests on a referrer generated before its new referent was compiled, §6). First full Dev gate green. Before it:
 **1143 tests / 80 suites**, verified by Dev on 2026-11-10 for the definition-backed rule section (record `git-record-2026-11-10-1107`,
 committed as 1c96d63, pushed): `draketarget.RuleAspectText` and `gendrake.RuleAspectOf` render the drake surface's rule section with
 `Drake.emit` delegating, every surface byte-identical; fifteen tests added (RuleAspectTest's five, the 80th suite, and five per-type
@@ -351,7 +357,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -654,9 +660,13 @@ dependency DracoAspectOf receives. `Drake.emit` delegates through `ruleAspectTex
 crossed the same day: `draketarget.ActorAspectText` (the `actor` head, the `messageType` line, the
 `start` / `message` / `signal` blocks) and `gendrake.ActorAspectOf` (the message type spelled as the
 type section spells a reference — own package bare, else package words — with type-parameter spelling
-and element rendering as explicit dependencies), through `actorAspectText`. Four of the surface's
-sections are definition-backed; the `uses` record and the codec payload are still the engine's
-(GitHub #11). Drake output only, as above.
+and element rendering as explicit dependencies), through `actorAspectText`. The RECORD and the CODEC
+section followed, also that day: `draketarget.UsesText` / `gendrake.UsesOf` (the bracketed list, each
+identity as package words then the name) and `draketarget.CodecAspectText` / `gendrake.CodecAspectOf`
+(the payload list), through `usesText` and `codecAspectText`. ALL SIX sections of the surface are
+definition-backed; `Drake.emit` keeps the order of the sections, the codec guards (a duplicate or
+malformed payload field, a discriminator — refused before anything renders) and the element renderer
+the transforms call back into (GitHub #11). Drake output only, as above.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `dracon`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
@@ -1271,7 +1281,9 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-10 after the definition-backed actor section (record `git-record-2026-11-10-1120`, commit pending):
+  Last prepared 2026-11-10 after the definition-backed record and codec sections (record `git-record-2026-11-10-1221`, commit pending): all six
+  sections of the drake surface are rendered by definitions, #11 open. Before it, the same day, after the definition-backed actor
+  section (record `git-record-2026-11-10-1120`, committed by Dev as 8b127aa after his gate of 1158 green, pushed):
   `ActorAspectText` and `ActorAspectOf` render the drake surface's actor section, #11 open, `uses` and codec next. Before it, the
   same day, after the definition-backed rule section (record `git-record-2026-11-10-1107`, committed by Dev as 1c96d63 after his gate of 1143 green, pushed):
   `RuleAspectText` and `RuleAspectOf` render the drake surface's rule section, #11 open, the actor section next. Before it, the same
@@ -2289,6 +2301,20 @@ GenDrake 113 of 113; the gate grep gains `ActorAspect over`. REJECTED: actor, `u
 spelled its reference bare where the gate spells it in full — the engine's `shadowedByHost` asks the classpath whether an imported
 package holds a name, so a referrer of a NEW definition generates differently before and after that definition is compiled (the
 true cause, too, of the Editor line recorded on 2026-11-09 as "generated mid-update"); regenerated after compilation, the file is
-canonical (§6). Second direct run: 1158 tests / 82 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 188 types, parse scope 115 + 73 with 0 held back, host text 21 leaves of 2149 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 113 of 113, the domain and draco aspect probes 115 complete, `RuleAspect over the corpus: 188 definitions, 24 rule sections`, `ActorAspect over the corpus: 188 definitions, 15 actor sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are ActorAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only. Dev's gate pending. Next
+canonical (§6). Second direct run: 1158 tests / 82 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 188 types, parse scope 115 + 73 with 0 held back, host text 21 leaves of 2149 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 113 of 113, the domain and draco aspect probes 115 complete, `RuleAspect over the corpus: 188 definitions, 24 rule sections`, `ActorAspect over the corpus: 188 definitions, 15 actor sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are ActorAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-10: 1158 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; committed by Dev as 8b127aa and pushed the same day (1c96d63..8b127aa). Next
 related point: the `uses` record and the codec payload together, the emitter's last two sections. EgoActor and
 scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The record and the codec section of the drake surface are definition-backed; no section layout is left in the emitter
+(2026-11-10, Claude Code; GitHub #11, the issue open).** The next related point after 8b127aa and the last of this thread.
+MEASURED: `uses` was three emitter lines over 81 definitions, the codec payload four lines over four definitions, with two validity
+checks and the discriminator refusal. Dev accepted "Accepted, build it", the record's pair named for its keyword. BUILT:
+`draketarget.UsesText` / `gendrake.UsesOf` and `draketarget.CodecAspectText` / `gendrake.CodecAspectOf`, listed by DrakeTarget and
+GenDrake; `Drake.emit` delegates through `usesText` and `codecAspectText` and KEEPS its guards. The generation order of the §6
+gotcha was followed — layout types generated and compiled first, then their referrers — and all six files were stable on
+regeneration. `DrakeCLI check` reads drift 0 over main and mods. UsesAndCodecTest (5) is the 82nd suite and reproduces all 85
+records and 4 codec sections. Four corpus types added: parse scope 119 + 73, surface losses 0 across 192 types, 119 aspect sections,
+GenDrake 117 of 117; the gate grep gains `Uses over` and `CodecAspect over`. REJECTED: the guards inside the transforms (drake has
+no failure form yet); `ResolutionRecordText` as the name. Direct run: 1183 tests / 83 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 192 types, parse scope 119 + 73 with 0 held back, host text 21 leaves of 2186 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 117 of 117, the domain and draco aspect probes 119 complete, rule 24 and actor 15 sections over 192 definitions, `Uses over the corpus: 192 definitions, 85 records reproduced, 0 skipped`, `CodecAspect over the corpus: 192 definitions, 4 codec sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the twenty-five new tests are UsesAndCodecTest's five and the five per-type gates of each of the four new definitions; the tree afterwards held the intended changes only. Dev's gate pending. Next on this thread, each a design question: the
+order of the sections as a definition, the element renderer, the guards' failure form. EgoActor and scripts/inspect-type.scala
+observed only; activation and .dcon deferred; PON suspended.
