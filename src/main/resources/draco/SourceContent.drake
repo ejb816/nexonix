@@ -10,6 +10,6 @@ type SourceContent
     body
       loc sourceURI URI _sourceRoot.resolve(URI.create(_logicalPath))
       fix source BufferedSource scala.io.Source.fromFile(sourceURI)
-      fix sourceLines [String] try source.getLines().toSeq finally source.close()
+      fix sourceLines [String] bracket(source, \s -> s.close(), \s -> s.getLines().toSeq)
       fix sourceString String sourceLines.mkString("\n")
 domain draco Draco

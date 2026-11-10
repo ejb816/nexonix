@@ -1,0 +1,52 @@
+Bound the host text in definition values: three leaves re-authored in drake, the rest asserted as a named seam list
+
+Dev accepted, in the words "Accepted, build it", the recommendation brought after the rete wrap-type increment.
+OWNING ISSUE: none exactly, surfaced to Dev with the recommendation and no new issue requested. The nearest is
+https://github.com/ejb816/nexonix/issues/59, which names this tail as the metric that must not move the wrong way and
+whose one remaining client in the definition corpus (Dracon's tuple destructure) is among the leaves below; #61, which
+retired the host-opaque expression FORMS, is closed. The README's residue row "host-opaque value strings" is what
+this bounds. #59 stays open.
+
+WHY. The five endogenous candidates were read first: #59's literal and destructuring patterns have exactly one client
+in the definitions, the rest of that issue being the self-hosting of the hand-written engine; #58 and #43 have none
+(no actor needs a second signal, no definition carries a discriminator). So the residue was MEASURED directly, every
+string leaf under a `value` in the main and mods corpus: 1984 leaves, 24 carrying the Scala target's own syntax — a
+`=>` or placeholder lambda, `try`, `new`, a host `if`, a brace block — in 14 definitions (one a false positive, the
+word "match" inside a quoted message). All but three sat where host realization IS the content: the Dracon wrapper,
+CirceCodecs, the DefinitionPath carrier, Rule's knowledge service, the circe decode in CLI and TypeLoader, the runtime
+lookup in the four OriginateReports, TransformBinding's guarded run. The three outside were a Scala lambda in
+ActorAspect's `isEmpty` (`aa => …`, kept as host text when the surface was re-canonicalized on 2026-10-22) and a
+`try … finally` in CLI and in SourceContent. Nothing kept the list from growing.
+
+BUILT. ActorAspect's lambda is the drake `\aa -> …`, as DracoAspect writes its own; its Scala is byte-identical. CLI's
+and SourceContent's `try … finally` are `bracket(source, \s -> s.close(), \s -> …)`, the form TypeLoader has carried
+since 2026-09-22, CLI's separate `loc source` folded into the call; each Scala file changes on that one binding, the
+same try and finally around a bound source. Three JSON are `DrakeCLI parse` of their surfaces, the Scala `GeneratorCLI
+generate`, `DrakeCLI check` clean; PROBED before the recommendation on a scratch copy and built as probed. No engine
+change. HostTextTest (1) is new, the 79th suite: it walks every definition under src/main/resources and
+src/mods/resources (at least 184), takes every string leaf under a `value` (type slots excepted, quoted text read as a
+literal), and asserts that a leaf carrying host syntax sits only in a definition on its named seam list, at the count
+recorded for it — eleven definitions, 21 leaves with the gate's final detector (the recommendation said 20: a
+placeholder `_._1` in TransformBinding the first measurement's pattern missed). A leaf anywhere else fails naming the
+file and the leaf; a seam whose count moved fails either way, so the list cannot grow silently and the commit that
+shrinks it updates it. Its console line, `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11
+named seams`, joins the gate grep. NEGATIVE PROBE on a scratch tree with the committed ActorAspect and CLI carriers
+restored: the test fails naming `src/main/resources/draco/ActorAspect.json: aa => …`, 23 leaves, 1 outside; the real
+tree untouched. The first compile of the new test stopped on the JSON fold's inferred type, corrected before its
+first run. REJECTED: re-authoring the seam leaves in this increment (each is a seam decision of its own; the
+destructuring one is #59's grammar); walking the test corpus (the scenario is pinned by its own suite pair).
+
+DIRECT RUN of every discovered suite on compiled classes with current main, mods and test resources on the loader roots
+(test classes on the Runner's runpath alone):
+1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only.
+
+DOCUMENTATION in this commit: DRACO.md (the gate grep gains `host text`; §3's caveat names the bound; the §5 handoff
+line; a dated paragraph), README.md (the residue row carries the count and the gate), CHANGELOG (one entry),
+DEVELOPMENT_HANDOFF.md (a new current checkpoint, a dated section, the #49 checkpoint retitled as previous),
+DEVELOPMENT_RESUME_PROMPT.md (a new head). No tracker action: no issue closes. Next: one recommendation from the 22
+open issues or the seam list, its owning issue named.
+
+Not done, by design: no tracker action; no journal chapter (coverage stays at chapter 112); no push. PON suspended;
+activation and .dcon deferred; EgoActor and scripts/inspect-type.scala observed only.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

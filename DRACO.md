@@ -340,7 +340,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -598,7 +598,11 @@ host-opaque string in *drake* form, which `DracoGenerator.expression` would pass
 Scala, so the parser never hands the engine a tree with the wrong scope. A parenthesized group
 holding an expression the parser reads DISSOLVES into its tree, and each renderer writes back the
 minimal pair by its own target's fixity (2026-09-21) — so an authored redundant pair does not survive
-re-canonicalization. `=>` is never a drake token: it is the Scala target's spelling of the lambda node. The JSON corpus is re-canonicalized from the drake after each parser step (`DrakeCLI parse
+re-canonicalization. `=>` is never a drake token: it is the Scala target's spelling of the lambda node. Host text that still
+carries the target's own syntax in a value — a `=>` or placeholder lambda, `try`, `new`, a host `if`, a block — is bounded
+since 2026-11-10: `HostTextTest` asserts it sits only in eleven named SEAM definitions (the Dracon wrapper, CirceCodecs,
+DefinitionPath, Rule's knowledge service, the circe decode in CLI and TypeLoader, the four OriginateReports' runtime lookup,
+TransformBinding), 21 leaves of 1997, at recorded counts; a new one elsewhere fails by file and leaf. The JSON corpus is re-canonicalized from the drake after each parser step (`DrakeCLI parse
 X.drake > X.json` with the compiled parser; 2026-09-16 for calls, 2026-09-17 for type forms, 2026-09-21 for operators and lambdas). BodyElement and ActorAspect were re-canonicalized
 on 2026-10-22, removing the last two exceptions; format/json/Value came off the list on
 2026-09-21 when its conditionals became `guard(c).ifThenElse(t, e)`. Parse IS the authoring path: a surface is
@@ -1244,7 +1248,9 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-09 after the rete wrap-type spelling (record `git-record-2026-11-09-1415`, committed by Dev as 2804904 after his gate of 1127 green): every Evrete type a
+  Last prepared 2026-11-10 after the host-text bound (record `git-record-2026-11-10-1050`, commit pending): three host-text
+  leaves re-authored in drake and the remaining 21 asserted as a named seam list by `HostTextTest`. Before it, on 2026-11-09,
+  after the rete wrap-type spelling (record `git-record-2026-11-09-1415`, committed by Dev as 2804904 after his gate of 1127 green): every Evrete type a
   definition names is a `draco.rete` wrap type; #49 stays open for configuration and capabilities. Before it, the same day, after
   the #63 constraint-4 increment (record `git-record-2026-11-09-1231`, committed by Dev as 995fade after his gate of 1127 green): the
   FactDisjointness rule guards the co-declaration hazard at definition time; #63 stays open for its grammar points. Before it,
@@ -2207,3 +2213,19 @@ KnowledgeService()`, the session methods — configuration and glue, the large #
 (the rolled-back shape); a capability for the enum sites (speculative surface). No test or headline moves. Direct run: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-09: 1127 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; committed by Dev as 2804904. Next:
 one recommendation from the 22 open issues. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON
 suspended.
+
+**The host text in definition values is bounded by an asserted seam list (2026-11-10, Claude Code; no owning issue, nearest GitHub
+#59, open).** The fifth increment since the reconciliation. The remaining endogenous candidates were read first and found without
+clients in the definitions (#58, #43) or with one (#59's destructuring, in Dracon), so the residue was MEASURED: 1984 string leaves
+under a `value` across main and mods, 24 carrying the Scala target's syntax in 14 definitions, all but three at seams where host
+realization is the content. Dev accepted "Accepted, build it" on re-authoring the three and asserting the rest. BUILT: ActorAspect's
+`aa => …` is the drake lambda `\aa -> …` (Scala byte-identical); CLI's and SourceContent's `try … finally` are `bracket`, TypeLoader's
+form since 2026-09-22 (one binding each in Scala); three JSON re-parsed, `DrakeCLI check` clean, no engine change. `HostTextTest` (1),
+the 79th suite, walks every definition under src/main/resources and src/mods/resources and asserts that a value leaf carrying host
+syntax — a `=>` or placeholder lambda, `try`, `new`, a host `if`, `match`, a brace, quoted text read as a literal — sits only in one
+of eleven named seam definitions at its recorded count (21 leaves of 1997; the recommendation's 20 missed a placeholder `_._1` in
+TransformBinding); a leaf elsewhere fails by file and leaf, a seam whose count moved fails either way. Its console line joins the
+gate grep (§1). A negative probe on a scratch tree with the old ActorAspect and CLI carriers restored fails naming ActorAspect's leaf.
+REJECTED: re-authoring seam leaves here (each a seam decision; the destructuring one is #59's grammar); walking the test corpus.
+Direct run: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only. Dev's gate pending. Next: one recommendation from the 22 open issues or the seam list. EgoActor and scripts/inspect-type.scala
+observed only; activation and .dcon deferred; PON suspended.

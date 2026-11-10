@@ -1,14 +1,14 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
-This is a November 9, 2026 handoff for a new session in either agent, prepared by Claude Code after the
-rete wrap-type spelling (GitHub #49's vocabulary half), the fourth increment from the reconciled backlog that day. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+This is a November 10, 2026 handoff for a new session in either agent, prepared by Claude Code after the
+host-text bound (HostTextTest and three re-authored leaves), the fifth increment since the tracker reconciliation. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD is 2804904 on main, the #49 vocabulary increment (record git-record-2026-11-09-1415), gated by me on November 9
-(1127 tests, zero failures, every headline matching, green on its first run) and committed on top of a3b52a7. My gate on
-2804904 is the current baseline, 1127 tests / 78 suites. Check whether the day's commits are pushed; inspect git status/log
-anyway. The direct runs are in the handoff.
+STATE: at the handoff HEAD was 3e87527 on main (the fold of 2804904, the #49 vocabulary increment gated by me at 1127 / 78
+green) and the tree held the host-text increment uncommitted (record git-record-2026-11-10-1050), awaiting my full gate and
+commit; if the log shows that commit on top of 3e87527, it is committed and the first task below moves on. Inspect git
+status/log anyway and check what is pushed. The direct runs are in the handoff.
 
 WHAT HAPPENED (November 4–8). The Codex session of November 4 reconciled the tracker without asking me what to
 correct first — 32 status comments, eight closures (#61, #55, #42, #41, #15, #51 completed or reconciled; #57, #46
@@ -46,7 +46,12 @@ org.evrete.api.StatefulSession and the three naming org.evrete.api.Knowledge now
 records, as Rule does; the generator gained StatefulSession's import row and HostBindings keys it qualified. Configuration
 (the ActivationMode enum, KnowledgeService, the session methods) stays host glue; #49 stays open for that track.
 
-YOUR FIRST TASK: bring ONE recommendation from the 22 open issues, its owning issue named and its remaining scope checked
+WHAT HAPPENED (November 10): the remaining endogenous issues had no client in the definitions (#58, #43) or one (#59), so
+the host-text residue was measured and I accepted bounding it: three host-text leaves re-authored in drake (ActorAspect's
+lambda, CLI's and SourceContent's try/finally as bracket) and HostTextTest asserting the remaining 21 leaves sit only in
+eleven named seam definitions. The gate grep gains the `host text` line. No issue owns it; none was opened.
+
+YOUR FIRST TASK: if the host-text increment is committed, bring ONE recommendation from the 22 open issues or the seam list, its owning issue named and its remaining scope checked
 against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 

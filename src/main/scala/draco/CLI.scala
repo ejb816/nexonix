@@ -12,8 +12,7 @@ object CLI extends DracoType {
 
   def load(_path: => String): TypeDefinition = {
     lazy val path: String = _path
-    lazy val source: scala.io.BufferedSource = scala.io.Source.fromFile(path)
-    lazy val text: String = try source.mkString finally source.close()
+    lazy val text: String = { val s = scala.io.Source.fromFile(path); try s.mkString finally s.close() }
     io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
   }
   def version: Unit = println("Draco 2.0.0-alpha.1")

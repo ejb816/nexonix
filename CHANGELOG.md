@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- The host text left in definition values is bounded: `HostTextTest` asserts that a value leaf carrying the Scala target's
+  syntax (a `=>` or placeholder lambda, `try`, `new`, a host `if`, a brace block) sits only in one of eleven named seam
+  definitions, at a recorded count (21 leaves of 1997), failing by file and leaf otherwise. The three such leaves outside
+  the seams are re-authored in drake: ActorAspect's lambda, and CLI's and SourceContent's `try … finally` as `bracket`.
+  One test added (1128); the gate grep gains the `host text` line.
 - Definitions name the `draco.rete` wrap types for the rules engine's session and knowledge: the twelve actor `start`
   blocks that spelled `org.evrete.api.StatefulSession` and the three that spelled `org.evrete.api.Knowledge` say
   `StatefulSession` and `Knowledge` with the wrap types recorded in `uses`, as Rule has since the record landed; the

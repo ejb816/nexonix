@@ -78,7 +78,37 @@
               "String"
             ]
           },
-          "value": "try source.getLines().toSeq finally source.close()"
+          "value": {
+            "()": [
+              "bracket",
+              "source",
+              {
+                "\\": [
+                  "s",
+                  {
+                    "()": [
+                      "s.close"
+                    ]
+                  }
+                ]
+              },
+              {
+                "\\": [
+                  "s",
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "s.getLines"
+                        ]
+                      },
+                      "toSeq"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
           "kind": "Fixed",

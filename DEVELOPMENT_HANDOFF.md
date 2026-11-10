@@ -1,12 +1,31 @@
 # Development Handoff
 
-Prepared November 9, 2026 by Claude Code after the rete wrap-type spelling (GitHub #49's vocabulary half), for a new
-session in either agent. It supersedes the #63, #47 and #50 checkpoints of the same day and the November 8, November 6
+Prepared November 10, 2026 by Claude Code after the host-text bound (HostTextTest and three re-authored leaves), for a new
+session in either agent. It supersedes the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
 and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the fourth increment from the reconciled backlog: the rete wrap types named (Claude Code, November 9, 2026)
+## Current checkpoint — the host text in definition values bounded (Claude Code, November 10, 2026)
+
+Observed: HEAD 3e87527 on main (the fold of 2804904); the tree holds this increment, uncommitted. Whether the commits of
+November 9 and this fold are pushed is to be checked on resumption. Dev's gate on 2804904 (1127 / 78, green) stands until
+Dev gates this tree.
+
+- **Done this session.** The remaining endogenous candidates were read against the tree and found without clients in the
+  definitions (#58, #43) or with one (#59), so the host-text residue was measured instead: 24 value leaves of 1984 carried
+  the Scala target's syntax, three of them outside the target seams. Dev accepted ("Accepted, build it"): ActorAspect's
+  lambda is drake's `\aa -> …`, CLI's and SourceContent's `try … finally` are `bracket`; `HostTextTest` asserts the
+  remaining 21 leaves sit only in eleven named seam definitions at recorded counts, failing by file and leaf otherwise.
+  No engine change; one test added; the gate grep gains `host text`. No issue owns it exactly (nearest #59, open); none
+  was requested. Direct run of every discovered suite: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only.
+- **Next action:** Dev runs the full gate and commits (record `git-record-2026-11-10-1050`). Then ONE recommendation from
+  the 22 open issues or the seam list, its owning issue named, for accept-or-correct.
+- **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (recorded with the #47 increment).
+- **Not done, by design:** no tracker action; no journal chapter; no push.
+- **Everything else stands as the sections below record.**
+
+## Previous checkpoint — the fourth increment from the reconciled backlog: the rete wrap types named (Claude Code, November 9, 2026; done, see above)
 
 Observed: HEAD 2804904 on main, this increment's commit (record `git-record-2026-11-09-1415`), committed by Dev on
 November 9 on top of a3b52a7 after his gate (1127 tests, zero failures, every headline matching, green on its first run);
@@ -731,6 +750,21 @@ no host-import row — and HostBindings keying it bare where Knowledge is keyed 
 duplicate), `DrakeCLI check` clean over main and mods. WHAT STAYS: `ActivationMode.CONTINUOUS`, `new KnowledgeService()`, the
 session methods. REJECTED: a new domain or session wrapper; a capability for the enum sites. No test or headline moves.
 DIRECT RUN: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only. DEV'S GATE: 1127 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 2804904. Record `git-record-2026-11-09-1415`.
+
+## The host text in definition values is bounded by an asserted seam list (accepted and built, November 10; direct run 1128 / 80; Dev's gate pending)
+
+Dev accepted: "Accepted, build it". OWNING ISSUE: none exactly, surfaced with the recommendation; nearest GitHub #59 (its tail
+metric; its one corpus client is Dracon's destructure), which stays open. MEASURED: 1984 string leaves under a `value` in main and
+mods, 24 carrying host syntax in 14 definitions (one a quoted-message false positive), three outside the seams — ActorAspect's
+`aa => …`, CLI's and SourceContent's `try … finally`. BUILT: the lambda as `\aa -> …` (Scala byte-identical), the two as
+`bracket(source, \s -> s.close(), \s -> …)` (one binding each), JSON re-parsed, `DrakeCLI check` clean, no engine change;
+`HostTextTest` (1) walks both corpora, reads every string leaf under a `value` (type slots excepted, quoted text a literal) and
+asserts host syntax only in the eleven named seams at their recorded counts — CLI 1, TypeLoader 1, Rule 1, Dracon 5, DefinitionPath
+3, CirceCodecs 2, the four OriginateReports 1 each, TransformBinding 4: 21 leaves of 1997. Console line `host text in values: …`
+added to the gate grep. NEGATIVE PROBE on a scratch tree (the suite reads the corpus relative to the working directory) with the old
+ActorAspect and CLI carriers: fails naming ActorAspect's leaf, 23 leaves, 1 outside. The test's first compile stopped on the JSON
+fold's inferred type, corrected before its first run. REJECTED: re-authoring seam leaves here; walking the test corpus.
+DIRECT RUN: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only. Record `git-record-2026-11-10-1050`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 

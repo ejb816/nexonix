@@ -20,7 +20,7 @@ object SourceContent extends App with DracoType {
   ) : SourceContent = new SourceContent {
     lazy val sourceURI: URI = _sourceRoot.resolve(URI.create(_logicalPath))
     override lazy val source: BufferedSource = scala.io.Source.fromFile(sourceURI)
-    override lazy val sourceLines: Seq[String] = try source.getLines().toSeq finally source.close()
+    override lazy val sourceLines: Seq[String] = { val s = source; try s.getLines().toSeq finally s.close() }
     override lazy val sourceString: String = sourceLines.mkString("\n")
     override lazy val typeDefinition: TypeDefinition = SourceContent.typeDefinition
   }

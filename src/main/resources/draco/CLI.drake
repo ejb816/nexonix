@@ -4,8 +4,7 @@ type CLI(L)
       parameters
         par path String
       body
-        loc source scala.io.BufferedSource scala.io.Source.fromFile(path)
-        loc text String try source.mkString finally source.close()
+        loc text String bracket(scala.io.Source.fromFile(path), \s -> s.close(), \s -> s.mkString)
         fix value TypeDefinition io.circe.parser.parse(text).flatMap(_.as[TypeDefinition]).getOrElse(TypeDefinition.Null)
     ]
     dyn version () [

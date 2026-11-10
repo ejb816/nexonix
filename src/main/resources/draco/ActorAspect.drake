@@ -11,5 +11,5 @@ type ActorAspect
       par signal Action Action.Null
       par start Action Action.Null
   globals
-    fix isEmpty (ActorAspect -> Boolean) aa => aa.message.body.isEmpty && aa.signal.body.isEmpty && aa.start.body.isEmpty
+    fix isEmpty (ActorAspect -> Boolean) \aa -> aa.message.body.isEmpty && aa.signal.body.isEmpty && aa.start.body.isEmpty
 domain draco Draco

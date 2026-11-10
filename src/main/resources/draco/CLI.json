@@ -26,20 +26,35 @@
         "body": [
           {
             "kind": "Local",
-            "name": "source",
-            "valueType": "scala.io.BufferedSource",
-            "value": {
-              "()": [
-                "scala.io.Source.fromFile",
-                "path"
-              ]
-            }
-          },
-          {
-            "kind": "Local",
             "name": "text",
             "valueType": "String",
-            "value": "try source.mkString finally source.close()"
+            "value": {
+              "()": [
+                "bracket",
+                {
+                  "()": [
+                    "scala.io.Source.fromFile",
+                    "path"
+                  ]
+                },
+                {
+                  "\\": [
+                    "s",
+                    {
+                      "()": [
+                        "s.close"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "\\": [
+                    "s",
+                    "s.mkString"
+                  ]
+                }
+              ]
+            }
           },
           {
             "kind": "Fixed",
