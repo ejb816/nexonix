@@ -8,9 +8,11 @@ destination session has been launched or messaged, and no private agent memory i
 
 ## Current checkpoint — the fourth increment from the reconciled backlog: the rete wrap types named (Claude Code, November 9, 2026)
 
-Observed: HEAD a3b52a7 on main (the fold of 995fade); the tree holds this increment, uncommitted. Whether the day's
-commits (d026cd3, d8de334, 929c850, a6a0f96, 995fade, a3b52a7) are pushed is to be checked on resumption. Dev's gate on
-995fade (1127 / 78, green) stands until Dev gates this tree.
+Observed: HEAD 2804904 on main, this increment's commit (record `git-record-2026-11-09-1415`), committed by Dev on
+November 9 on top of a3b52a7 after his gate (1127 tests, zero failures, every headline matching, green on its first run);
+the tree was clean after it but for this fold. Whether the day's commits (d026cd3, d8de334, 929c850, a6a0f96, 995fade,
+a3b52a7, 2804904) are pushed is to be checked on resumption. 2804904 is the last implementation commit and Dev's gate on
+it is the current baseline: **1127 tests / 78 suites**.
 
 - **Done this session.** The recommendation on GitHub #49's type-vocabulary half was accepted ("Accepted, build it"): the
   twelve actor `start` blocks spelling `org.evrete.api.StatefulSession` and the three spelling `org.evrete.api.Knowledge`
@@ -18,7 +20,7 @@ commits (d026cd3, d8de334, 929c850, a6a0f96, 995fade, a3b52a7) are pushed is to 
   StatefulSession row (one engine line) and HostBindings keys it qualified like Knowledge. Fourteen JSON re-parsed, fourteen
   Scala regenerated on the recompiled engine (bare type plus import), `DrakeCLI check` clean. Configuration stays host glue
   (the ActivationMode enum, KnowledgeService, the session methods); #49 stays open for that track. Direct run of every discovered suite: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only.
-- **Next action:** Dev runs the full gate and commits (record `git-record-2026-11-09-1415`). Then ONE recommendation from
+- **Next action:** ONE recommendation from
   the 22 open issues, its owning issue named, for accept-or-correct.
 - **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (recorded with the #47 increment).
 - **Not done, by design:** no tracker action; no journal chapter; no push.
@@ -714,7 +716,7 @@ EditorTest's registered-rule count moved from ten to eleven; and Editor.scala, g
 the new line bare where the canonical scope spells `draco.FactDisjointness` like the other core rules — all three corrected,
 focused reruns green. SECOND DIRECT RUN: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the eight new tests are the five per-type gates for FactDisjointness and the three of FactDisjointnessRulesTest; the tree afterwards held the intended changes only. DEV'S GATE: 1127 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 995fade. Record `git-record-2026-11-09-1231`.
 
-## Definitions name the draco.rete wrap types (accepted and built, November 9; direct run 1127 / 79; Dev's gate pending)
+## Definitions name the draco.rete wrap types (accepted and built, November 9; direct run 1127 / 79; Dev's gate 1127 / 78, committed as 2804904)
 
 Dev accepted: "Accepted, build it". OWNING ISSUE: GitHub #49, the type-vocabulary half its 2026-07-28 review and 2026-07-31
 cross-link set as the principled axis (wrapped type names in main, binding in mods — WHAT; configuration stays host glue — HOW);
@@ -728,7 +730,7 @@ no host-import row — and HostBindings keying it bare where Knowledge is keyed 
 `import org.evrete.api.StatefulSession`, three `import org.evrete.api.Knowledge`, the Editor's moving from the actor frame; no
 duplicate), `DrakeCLI check` clean over main and mods. WHAT STAYS: `ActivationMode.CONTINUOUS`, `new KnowledgeService()`, the
 session methods. REJECTED: a new domain or session wrapper; a capability for the enum sites. No test or headline moves.
-DIRECT RUN: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only. Record `git-record-2026-11-09-1415`.
+DIRECT RUN: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only. DEV'S GATE: 1127 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 2804904. Record `git-record-2026-11-09-1415`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 
