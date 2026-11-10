@@ -65,6 +65,11 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1128 tests / 79 suites**, verified by Dev on 2026-11-10 for the host-text bound (record `git-record-2026-11-10-1050`, committed as
+e2ca0be): `HostTextTest`, the one added test and suite, asserts that host syntax in definition values sits only in eleven named seam
+definitions (21 leaves of 1997), three leaves outside them re-authored in drake; its `host text` line joins the gate grep below; no
+engine change, every other headline unchanged; its direct run 1128 / 80 including discovery, green on its first run. First full Dev
+gate green. Before it:
 **1127 tests / 78 suites**, verified by Dev on 2026-11-09 for the rete wrap-type spelling (record `git-record-2026-11-09-1415`,
 committed as 2804904): fourteen definitions name `draco.rete.StatefulSession` and `draco.rete.Knowledge` in place of the Evrete
 paths, one engine row (the StatefulSession import) and HostBindings re-keyed, no test added or removed, every headline unchanged; its
@@ -1248,7 +1253,7 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-10 after the host-text bound (record `git-record-2026-11-10-1050`, commit pending): three host-text
+  Last prepared 2026-11-10 after the host-text bound (record `git-record-2026-11-10-1050`, committed by Dev as e2ca0be after his gate of 1128 green): three host-text
   leaves re-authored in drake and the remaining 21 asserted as a named seam list by `HostTextTest`. Before it, on 2026-11-09,
   after the rete wrap-type spelling (record `git-record-2026-11-09-1415`, committed by Dev as 2804904 after his gate of 1127 green): every Evrete type a
   definition names is a `draco.rete` wrap type; #49 stays open for configuration and capabilities. Before it, the same day, after
@@ -2227,5 +2232,5 @@ of eleven named seam definitions at its recorded count (21 leaves of 1997; the r
 TransformBinding); a leaf elsewhere fails by file and leaf, a seam whose count moved fails either way. Its console line joins the
 gate grep (§1). A negative probe on a scratch tree with the old ActorAspect and CLI carriers restored fails naming ActorAspect's leaf.
 REJECTED: re-authoring seam leaves here (each a seam decision; the destructuring one is #59's grammar); walking the test corpus.
-Direct run: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only. Dev's gate pending. Next: one recommendation from the 22 open issues or the seam list. EgoActor and scripts/inspect-type.scala
+Direct run: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-10: 1128 tests, zero failed, canceled, ignored or pending, every headline matching, the new host-text line as expected, green on its first run; committed by Dev as e2ca0be. Next: one recommendation from the 22 open issues or the seam list. EgoActor and scripts/inspect-type.scala
 observed only; activation and .dcon deferred; PON suspended.

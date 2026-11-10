@@ -8,9 +8,14 @@ destination session has been launched or messaged, and no private agent memory i
 
 ## Current checkpoint — the host text in definition values bounded (Claude Code, November 10, 2026)
 
-Observed: HEAD 3e87527 on main (the fold of 2804904); the tree holds this increment, uncommitted. Whether the commits of
-November 9 and this fold are pushed is to be checked on resumption. Dev's gate on 2804904 (1127 / 78, green) stands until
-Dev gates this tree.
+Observed: HEAD e2ca0be on main, this increment's commit (record `git-record-2026-11-10-1050`), committed by Dev on
+November 10 on top of 3e87527 after his gate (1128 tests, zero failures, every headline matching, green on its first run);
+the tree was clean after it but for this fold. e2ca0be is the last implementation commit and Dev's gate on it is the
+current baseline: **1128 tests / 79 suites**. PUSH STATE, read on November 10 with `git ls-remote`: origin/main was at
+40d02df (pushed November 6) and local main ten commits ahead — 7d4ae0a, d026cd3, d8de334, 929c850, a6a0f96, 995fade,
+a3b52a7, 2804904, 3e87527, e2ca0be; no handed-over block has contained a push, which is Dev's (DRACO.md §1). The closing
+comments on #50 and #47 cite d026cd3 and 929c850, which resolve on GitHub only once pushed. A push block was handed to
+Dev with this fold; check `git status -sb` on resumption.
 
 - **Done this session.** The remaining endogenous candidates were read against the tree and found without clients in the
   definitions (#58, #43) or with one (#59), so the host-text residue was measured instead: 24 value leaves of 1984 carried
@@ -19,7 +24,7 @@ Dev gates this tree.
   remaining 21 leaves sit only in eleven named seam definitions at recorded counts, failing by file and leaf otherwise.
   No engine change; one test added; the gate grep gains `host text`. No issue owns it exactly (nearest #59, open); none
   was requested. Direct run of every discovered suite: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only.
-- **Next action:** Dev runs the full gate and commits (record `git-record-2026-11-10-1050`). Then ONE recommendation from
+- **Next action:** Dev pushes. Then ONE recommendation from
   the 22 open issues or the seam list, its owning issue named, for accept-or-correct.
 - **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (recorded with the #47 increment).
 - **Not done, by design:** no tracker action; no journal chapter; no push.
@@ -751,7 +756,7 @@ duplicate), `DrakeCLI check` clean over main and mods. WHAT STAYS: `ActivationMo
 session methods. REJECTED: a new domain or session wrapper; a capability for the enum sites. No test or headline moves.
 DIRECT RUN: 1127 tests / 79 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical; the tree afterwards held the intended changes only. DEV'S GATE: 1127 tests on November 9, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 2804904. Record `git-record-2026-11-09-1415`.
 
-## The host text in definition values is bounded by an asserted seam list (accepted and built, November 10; direct run 1128 / 80; Dev's gate pending)
+## The host text in definition values is bounded by an asserted seam list (accepted and built, November 10; direct run 1128 / 80; Dev's gate 1128 / 79, committed as e2ca0be)
 
 Dev accepted: "Accepted, build it". OWNING ISSUE: none exactly, surfaced with the recommendation; nearest GitHub #59 (its tail
 metric; its one corpus client is Dracon's destructure), which stays open. MEASURED: 1984 string leaves under a `value` in main and
@@ -764,7 +769,7 @@ asserts host syntax only in the eleven named seams at their recorded counts — 
 added to the gate grep. NEGATIVE PROBE on a scratch tree (the suite reads the corpus relative to the working directory) with the old
 ActorAspect and CLI carriers: fails naming ActorAspect's leaf, 23 leaves, 1 outside. The test's first compile stopped on the JSON
 fold's inferred type, corrected before its first run. REJECTED: re-authoring seam leaves here; walking the test corpus.
-DIRECT RUN: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only. Record `git-record-2026-11-10-1050`.
+DIRECT RUN: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only. DEV'S GATE: 1128 tests on November 10, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as e2ca0be. Record `git-record-2026-11-10-1050`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 
