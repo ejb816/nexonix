@@ -1,0 +1,128 @@
+{
+  "typeName": {
+    "name": "DefinitionText",
+    "namePackage": [
+      "draco",
+      "draketarget"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DefinitionText",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "typeSection",
+          "valueType": "Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "usesSection",
+          "valueType": "Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "domainSection",
+          "valueType": "Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "ruleSection",
+          "valueType": "Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "actorSection",
+          "valueType": "Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "codecSection",
+          "valueType": "Text",
+          "value": "\"\""
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "sections",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "[]": [
+              "_typeSection",
+              "_usesSection",
+              "_domainSection",
+              "_ruleSection",
+              "_actorSection",
+              "_codecSection"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": {
+            "++": [
+              {
+                "()": [
+                  "join",
+                  "\"\\n\"",
+                  {
+                    "()": [
+                      "sections.filter",
+                      {
+                        "\\": [
+                          "section",
+                          "section.nonEmpty"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "\"\\n\""
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}

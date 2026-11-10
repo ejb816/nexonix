@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- The assembly of the drake surface is emitted by definitions: `draketarget.DefinitionText` owns the order of the six
+  sections and their joining, `gendrake.DefinitionOf` composes the six section transforms from a definition, and
+  `Drake.emit` is its three guards and one call (GitHub #11). Every surface is byte-identical. DefinitionTextTest (5) is
+  new and reproduces all 194 surfaces of the corpus whole; two corpus types added (parse scope 121 + 73, GenDrake 119 of
+  119); the gate grep gains `Definition over`.
 - The development journal is current: chapters 113–127 cover October 26 – November 10 (the 39 commits e241378 … c70d6b8 and
   the handoff 043f578), written from the original Claude Code and Codex session records with four extracts and audits under
   `draco-dev-journal/sources/`. One historical statement is corrected from the originals: the Codex session of November 4

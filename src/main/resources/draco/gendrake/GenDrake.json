@@ -42,6 +42,7 @@
       "ActorAspectOf",
       "UsesOf",
       "CodecAspectOf",
+      "DefinitionOf",
       "Emit",
       "Emitter"
     ],

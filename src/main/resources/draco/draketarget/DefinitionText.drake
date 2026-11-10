@@ -1,0 +1,16 @@
+type DefinitionText from Surface
+  factory
+    parameters
+      par typeSection Text ""
+      par usesSection Text ""
+      par domainSection Text ""
+      par ruleSection Text ""
+      par actorSection Text ""
+      par codecSection Text ""
+    body
+      loc sections [Text] [_typeSection, _usesSection, _domainSection, _ruleSection, _actorSection, _codecSection]
+      fix value Text join("\n", sections.filter(\section -> section.nonEmpty)) ++ "\n"
+uses [
+  draco drake Text
+]
+domain draco draketarget DrakeTarget

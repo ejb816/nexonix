@@ -1,0 +1,30 @@
+type DefinitionOf from draco draketarget DefinitionText
+  factory
+    parameters
+      par definition TypeDefinition
+      par parameterText (Dracon -> Text)
+      par formText (Dracon -> Text)
+      par slotText (Dracon -> Text)
+      par elementText ((TypeElement, Int) -> [Text])
+    body
+      loc definition TypeDefinition _definition
+      loc parameterText (Dracon -> Text) _parameterText
+      loc formText (Dracon -> Text) _formText
+      loc slotText (Dracon -> Text) _slotText
+      loc elementText ((TypeElement, Int) -> [Text]) _elementText
+      loc typeSection DracoAspectOf DracoAspectOf(definition, parameterText, formText, slotText, elementText)
+      loc usesSection UsesOf UsesOf(definition)
+      loc domainSection DomainAspectOf DomainAspectOf(definition, parameterText)
+      loc ruleSection RuleAspectOf RuleAspectOf(definition, elementText)
+      loc actorSection ActorAspectOf ActorAspectOf(definition, parameterText, elementText)
+      loc codecSection CodecAspectOf CodecAspectOf(definition)
+      loc rendered DefinitionText DefinitionText(typeSection.value, usesSection.value, domainSection.value, ruleSection.value, actorSection.value, codecSection.value)
+      fix value Text rendered.value
+uses [
+  draco TypeDefinition
+  draco TypeElement
+  draco drake Text
+  draco draketarget DefinitionText
+  draco format dracon Dracon
+]
+domain draco gendrake GenDrake

@@ -1,0 +1,282 @@
+{
+  "typeName": {
+    "name": "DefinitionOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeElement",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "DefinitionText",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "DefinitionText",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "DefinitionOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "parameterText",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "formText",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "slotText",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "elementText",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "TypeElement",
+                  "Int"
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "definition",
+          "valueType": "TypeDefinition",
+          "value": "_definition"
+        },
+        {
+          "kind": "Local",
+          "name": "parameterText",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": "_parameterText"
+        },
+        {
+          "kind": "Local",
+          "name": "formText",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": "_formText"
+        },
+        {
+          "kind": "Local",
+          "name": "slotText",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": "_slotText"
+        },
+        {
+          "kind": "Local",
+          "name": "elementText",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "TypeElement",
+                  "Int"
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": "_elementText"
+        },
+        {
+          "kind": "Local",
+          "name": "typeSection",
+          "valueType": "DracoAspectOf",
+          "value": {
+            "()": [
+              "DracoAspectOf",
+              "definition",
+              "parameterText",
+              "formText",
+              "slotText",
+              "elementText"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "usesSection",
+          "valueType": "UsesOf",
+          "value": {
+            "()": [
+              "UsesOf",
+              "definition"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "domainSection",
+          "valueType": "DomainAspectOf",
+          "value": {
+            "()": [
+              "DomainAspectOf",
+              "definition",
+              "parameterText"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "ruleSection",
+          "valueType": "RuleAspectOf",
+          "value": {
+            "()": [
+              "RuleAspectOf",
+              "definition",
+              "elementText"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "actorSection",
+          "valueType": "ActorAspectOf",
+          "value": {
+            "()": [
+              "ActorAspectOf",
+              "definition",
+              "parameterText",
+              "elementText"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "codecSection",
+          "valueType": "CodecAspectOf",
+          "value": {
+            "()": [
+              "CodecAspectOf",
+              "definition"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "rendered",
+          "valueType": "DefinitionText",
+          "value": {
+            "()": [
+              "DefinitionText",
+              "typeSection.value",
+              "usesSection.value",
+              "domainSection.value",
+              "ruleSection.value",
+              "actorSection.value",
+              "codecSection.value"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": "rendered.value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

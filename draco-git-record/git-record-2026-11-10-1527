@@ -1,0 +1,65 @@
+The assembly of the drake surface is definition-backed: DefinitionText and DefinitionOf, Drake.emit its three guards and one call (GitHub #11)
+
+Dev accepted, in the words "Accepted, build it", the recommendation preserved unaccepted at the November 10 handoff and
+brought again after the journal was made current (d815338). OWNING ISSUE: https://github.com/ejb816/nexonix/issues/11,
+the generator domain, open; inspected before recommending — its one comment (the November 4 reconciliation) says the
+foundation exists and native per-operation transformation is not complete. The six section transforms of November 10
+are progress on that; this is the next step of the same thread. The issue stays open.
+
+MEASURED before recommending, in Drake.scala at c70d6b8: with all six sections definition-backed, `emit` still did
+three things by hand — refused a codec discriminator and a duplicate or malformed payload field; called the six section
+transforms in a fixed order; dropped the empty results and joined the rest with line breaks and one at the end. The
+second and third are mapping and layout, what the gendrake / draketarget pairs own for each section.
+
+BUILT, one pair in the established shape. `draco.draketarget.DefinitionText` (from Surface): six section texts, each
+defaulting to empty, in the order type, `uses`, domain, rule, actor, codec; the non-empty ones joined by a line break,
+one line break at the end (so six empty sections are the one line break the old emitter also wrote).
+`draco.gendrake.DefinitionOf`: a definition and the four rendering dependencies DracoAspectOf already receives —
+type-parameter, type-form and value-type-slot spelling `(Dracon -> Text)`, element rendering
+`((TypeElement, Int) -> [Text])` — composing DracoAspectOf, UsesOf, DomainAspectOf, RuleAspectOf, ActorAspectOf and
+CodecAspectOf, each bound as a local and read through `.value`. DrakeTarget and GenDrake list the two. `Drake.emit` is
+the three guards, moved together to its head, and `definitionText(td)`, a `private[draco]` entry point as the section
+transforms have; the per-section entry points stay, their tests calling them. THE GUARDS STAY in the emitter: drake
+has no failure form for a transform to carry them. GENERATION ORDER followed DRACO.md §6: DefinitionText generated and
+COMPILED into the overlay, then DefinitionOf and the two domain objects generated; all four files stable on
+regeneration after everything was compiled. Four JSON are `DrakeCLI parse` of their surfaces; with the new emitter
+`DrakeCLI check` reads surface drift 0, json drift 0 over main and over mods — every surface byte-identical.
+`DefinitionTextTest` (5) is the 83rd suite: the layout (order, empty sections dropped, the closing line break, all
+empty); each section argument read once and only when the surface is read; a definition through the live emitter equal
+to its six section transforms joined, read back, the three guards still refusing; EVERY surface of the main and mods
+corpus reproduced whole (194 surfaces from 518 sections; console line `Definition over the corpus: …`, added to the
+gate grep); the running Emit rule emitting the assembled surface. Two corpus types added: parse scope 121 + 73, surface
+losses 0 across 194 types, 121 aspect sections, GenDrake 119 of 119, 87 records. No engine change beyond the emitter's
+body. REJECTED: the guards inside DefinitionOf (no failure form in drake); starting the renderer track in this
+increment (the element, expression and type-form renderers, about 380 lines of Drake.scala, are a design discussion
+about the surface itself).
+
+The new test's first focused run failed one of its five on the TEST's own assertion — it compared the read-back name
+with the package, and a surface with no domain line reads back with none — corrected before the full run.
+
+DIRECT RUN of every discovered suite on compiled classes with current main, mods and test resources on the loader roots
+(test classes on the Runner's runpath alone): 1198 tests / 84 suites including discovery, zero failed, canceled,
+ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0
+across 194 types, parse scope 121 + 73 with 0 held back, host text 21 leaves of 2237 in the 11 named seams and 0
+outside, scenario 23 clean, GenDrake 119 of 119, the domain and draco aspect probes 121 complete, rule 24 and actor 15
+sections over 194 definitions, `Uses over the corpus: 194 definitions, 87 records reproduced`, `CodecAspect over the
+corpus: 194 definitions, 4 codec sections reproduced`, `Definition over the corpus: 194 surfaces reproduced whole from
+518 sections, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are
+DefinitionTextTest's five and the five per-type gates of each new definition; the tree afterwards held the intended
+changes only. The overlay recompiled the changed engine file and the new and regenerated definitions; the other test
+classes ran as Dev's last gate compiled them.
+
+DEV'S GATE: 1198 tests on November 10, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run (the pasted output carries no Suites line; 83 is the direct run's count less discovery).
+
+DOCUMENTATION in this commit: DRACO.md (the baseline, the gate grep gaining `Definition over`, §3's aspect paragraph,
+the §5 handoff line, a dated paragraph), README.md (the target-side aspect bullet), CHANGELOG (one entry),
+DEVELOPMENT_HANDOFF.md (a new current checkpoint), DEVELOPMENT_RESUME_PROMPT.md (state and a new paragraph). The fold of
+d815338, its commit and push, uncommitted since, rides here. No tracker action: #11 stays open. Next on this thread,
+each a design question of its own and none accepted: the element, expression and type-form renderers; a failure form
+for the guards; whether generation should consult compiled classes (DRACO.md §6).
+
+Not done, by design: no tracker action; no journal chapter (coverage stays at chapter 127; this session is the
+uncovered stretch). PON suspended; activation and .dcon deferred; EgoActor, scripts/inspect-type.scala and the Scala
+guide's authoring section observed only.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

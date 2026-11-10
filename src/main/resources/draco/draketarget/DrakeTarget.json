@@ -32,7 +32,8 @@
       "RuleAspectText",
       "ActorAspectText",
       "UsesText",
-      "CodecAspectText"
+      "CodecAspectText",
+      "DefinitionText"
     ]
   }
 }

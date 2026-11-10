@@ -65,6 +65,12 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1198 tests / 83 suites**, verified by Dev on 2026-11-10 for the definition-backed assembly of the drake surface (record
+`git-record-2026-11-10-1527`): `draketarget.DefinitionText` and `gendrake.DefinitionOf` own the order and joining of the six
+sections, `Drake.emit` is its three guards and one call, every surface byte-identical; fifteen tests added (DefinitionTextTest's
+five, the 83rd suite, and five per-type gates for each of the two new corpus types); parse scope 121 + 73, surface losses 0 across
+194 types, 121 aspect sections, GenDrake 119 of 119, the `Definition over` line in the gate grep; its direct run 1198 / 84
+including discovery, green on its first run. First full Dev gate green. Before it:
 **1183 tests / 82 suites**, verified by Dev on 2026-11-10 for the definition-backed record and codec sections (record
 `git-record-2026-11-10-1221`, committed as c70d6b8, pushed): `UsesText` / `UsesOf` and `CodecAspectText` / `CodecAspectOf` render the
 last two sections `Drake.emit` wrote itself, so all six sections of the drake surface are definition-backed and every surface is
@@ -364,7 +370,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -671,9 +677,13 @@ and element rendering as explicit dependencies), through `actorAspectText`. The 
 section followed, also that day: `draketarget.UsesText` / `gendrake.UsesOf` (the bracketed list, each
 identity as package words then the name) and `draketarget.CodecAspectText` / `gendrake.CodecAspectOf`
 (the payload list), through `usesText` and `codecAspectText`. ALL SIX sections of the surface are
-definition-backed; `Drake.emit` keeps the order of the sections, the codec guards (a duplicate or
-malformed payload field, a discriminator — refused before anything renders) and the element renderer
-the transforms call back into (GitHub #11). Drake output only, as above.
+definition-backed. The ASSEMBLY crossed last, the same day: `draketarget.DefinitionText` owns the
+order of the six sections and their joining (the empty ones dropped, one line break between the rest,
+one at the end) and `gendrake.DefinitionOf` composes the six section transforms from a definition and
+the four rendering dependencies DracoAspectOf receives, through `definitionText`. `Drake.emit` is its
+three guards (a duplicate or malformed payload field, a discriminator — refused before anything
+renders) and that one call; what stays hand-written on the drake side is the guards and the
+renderers the transforms call back into (GitHub #11). Drake output only, as above.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `dracon`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
@@ -1288,7 +1298,8 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-10 after the JOURNAL UPDATE (record `git-record-2026-11-10-1343`): chapters 113–127 written from the four
+  Last prepared 2026-11-10 after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
+  `DefinitionText` and `DefinitionOf`, `Drake.emit` its guards and one call, #11 open. Before it, the same day, after the JOURNAL UPDATE (record `git-record-2026-11-10-1343`): chapters 113–127 written from the four
   original session records, coverage current through 043f578; the assembly recommendation is still preserved unaccepted. Before it,
   the same day, as a HANDOFF TO A NEW SESSION at Dev's direction (record `git-record-2026-11-10-1237`): the journal,
   39 commits behind at chapter 112, was the receiving session's first task.
@@ -2362,3 +2373,23 @@ each increment. Documentation only: no engine, definition, Scala or test change,
 c70d6b8 stands. Preserved and NOT accepted, as before: the assembly of the drake surface as a definition. EgoActor,
 scripts/inspect-type.scala and the Scala guide's authoring section stand as observed; activation and .dcon are deferred; PON is
 suspended.
+
+**The assembly of the drake surface is definition-backed; the emitter is its guards and one call (2026-11-10, Claude Code;
+GitHub #11, the issue open).** The recommendation preserved unaccepted at the handoff, brought again after the journal was
+current. MEASURED: with all six sections crossed, `Drake.emit` still called the six transforms in order, dropped the empty
+results and joined the rest — mapping and layout. Dev accepted "Accepted, build it". BUILT: `draketarget.DefinitionText` (six
+section texts in the order type, `uses`, domain, rule, actor, codec; the non-empty joined by a line break, one at the end) and
+`gendrake.DefinitionOf` (a definition and the four rendering dependencies DracoAspectOf receives, composing the six section
+transforms), listed by DrakeTarget and GenDrake; `Drake.emit` keeps its three guards and calls `private[draco]
+definitionText`. The §6 generation order was followed and all four generated files were stable. `DrakeCLI check` reads drift 0
+over main and mods. DefinitionTextTest (5) is the 83rd suite and reproduces all 194 surfaces whole. Two corpus types added:
+parse scope 121 + 73, surface losses 0 across 194 types, 121 aspect sections, GenDrake 119 of 119; the gate grep gains
+`Definition over`. REJECTED: the guards inside the transform (drake has no failure form); the renderer track in this
+increment. Direct run: 1198 tests / 84 suites including discovery, zero failed, canceled, ignored, pending or aborted, green
+on its first run; every headline as expected — example gate 48 / 0, host text 21 leaves of 2237 in the 11 named seams and 0
+outside, scenario 23 clean, rule 24 and actor 15 sections, 87 records and 4 codec sections over 194 definitions, `Definition
+over the corpus: 194 surfaces reproduced whole from 518 sections, 0 skipped`, the PON pair 42 and 7 as suspended, the rete
+finding categorical; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-10: 1198 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Next on this thread, each a design
+question and none accepted: the element, expression and type-form renderers; a failure form for the guards; whether
+generation should consult compiled classes (§6). The journal is current through chapter 127; this session is its one
+uncovered stretch. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

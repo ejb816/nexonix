@@ -8,12 +8,35 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the journal is current through chapter 127 (Claude Code, November 10, 2026)
+## Current checkpoint — the assembly of the drake surface is definition-backed (Claude Code, November 10, 2026; direct run 1198 / 84; Dev's gate 1198 / 83)
+
+Same session as the journal checkpoint below. After d815338 Dev said "Yes, recommend" and then "Accepted, build it" to the one
+recommendation: OWNING ISSUE GitHub #11 (open; stays open). Record `git-record-2026-11-10-1527`.
+
+- **Built.** `draketarget.DefinitionText` (the six section texts in the order type, `uses`, domain, rule, actor, codec; the
+  non-empty ones joined by a line break, one at the end) and `gendrake.DefinitionOf` (a definition and the four rendering
+  dependencies DracoAspectOf receives, composing the six section transforms), listed by DrakeTarget and GenDrake. `Drake.emit`
+  is its three guards and `definitionText(td)`. Four JSON parsed from their surfaces, four Scala files generated in the §6
+  order and stable on regeneration; `DrakeCLI check` drift 0 over main and mods. `DefinitionTextTest` (5) is the 83rd suite.
+- **Evidence.** Direct run of every discovered suite: 1198 tests / 84 suites including discovery, zero failed, canceled,
+  ignored, pending or aborted, green on its first run. Headlines: example gate 48 / 0, surface losses 0 across 194 types, parse
+  scope 121 + 73 with 0 held back, host text 21 leaves of 2237 in the 11 named seams, scenario 23 clean, GenDrake 119 of 119,
+  domain and draco aspect probes 121, rule 24, actor 15, 87 records, 4 codec sections, `Definition over the corpus: 194
+  surfaces reproduced whole from 518 sections, 0 skipped`, PON 42 and 7 as suspended, the rete finding categorical. The tree
+  afterwards held the intended changes only. Dev's first full gate on November 10: 1198 tests, zero failed, canceled, ignored or pending, every headline matching, green on
+  its first run. The baseline is **1198 tests / 83 suites**. Commit and push: handed to Dev with the record; check `git log`.
+- **Rejected.** The guards inside the transform (drake has no failure form); the renderer track in this increment.
+- **Next, none accepted, each a design question:** the element, expression and type-form renderers (about 380 lines of
+  Drake.scala); a failure form for the guards; whether generation should consult compiled classes (DRACO.md §6).
+- **Journal.** Current through chapter 127; this session (the scope confirmation, the journal update, this increment) is the
+  one uncovered stretch.
+
+## Earlier the same session — the journal is current through chapter 127 (Claude Code, November 10, 2026)
 
 Observed on receipt: HEAD 043f578 on main, the handoff's documentation commit on c70d6b8, tree clean, local main level with the
 local origin/main ref. Dev's gate on c70d6b8 stays the baseline: **1183 tests / 82 suites**. This session changed
-documentation only; its tree holds the journal update, uncommitted until Dev runs the blocks handed over (record
-`git-record-2026-11-10-1343`).
+documentation only: the journal update, committed and pushed by Dev as d815338 on November 10 (record
+`git-record-2026-11-10-1343`, 30 files, 043f578..d815338).
 
 - **Scope, confirmed by Dev before writing ("Accept").** Chapters 113–127, strictly chronological, no session skipped:
   113–119 from Claude record `f12792d4` (October 26 – November 3), 120 and 122 from `9e3f32b7` (November 3–6), 121 from the

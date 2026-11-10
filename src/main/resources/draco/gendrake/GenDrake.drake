@@ -11,6 +11,7 @@ domain draco gendrake GenDrake
     ActorAspectOf
     UsesOf
     CodecAspectOf
+    DefinitionOf
     Emit
     Emitter
   ]

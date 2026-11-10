@@ -5,7 +5,7 @@ refreshed the same day after the journal was brought current. First read AGENTS.
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD should be the journal commit (record git-record-2026-11-10-1343) on top of the handoff commit 043f578 and c70d6b8, pushed —
+STATE: HEAD should be the journal commit d815338 (record git-record-2026-11-10-1343), or a fold commit above it, on top of the handoff commit 043f578 and c70d6b8, pushed —
 check with `git status -sb` and `git log`. c70d6b8 is the last implementation commit; my full sbt gate on it, 1183 tests /
 82 suites with every headline matching, is the baseline. Every commit block handed to me ends with a push block. The gate
 grep is the one in DRACO.md section 1.
@@ -76,7 +76,13 @@ draketarget.UsesText / gendrake.UsesOf and draketarget.CodecAspectText / gendrak
 keeping its guards, UsesAndCodecTest +5, four corpus types. All six sections of the drake surface are definition-backed.
 A new DRACO.md section 6 gotcha records that a referrer of a NEW definition must be generated after that definition is compiled.
 
-WHEN DEVELOPMENT RESUMES: bring ONE recommendation — the assembly above, or another of the 22 open issues — with its owning
+WHAT HAPPENED (November 10, fifth increment, after the journal): I accepted the assembly as a definition —
+draketarget.DefinitionText owning the order and joining of the six sections, gendrake.DefinitionOf composing the six
+transforms, Drake.emit its three guards and one call, DefinitionTextTest +5, two corpus types (record
+git-record-2026-11-10-1527). My full gate on it passed, 1198 tests with every headline matching: that is the baseline
+now, 1198 tests / 83 suites. Check `git log` for its commit above d815338.
+
+WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 

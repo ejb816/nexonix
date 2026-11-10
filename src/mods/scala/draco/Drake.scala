@@ -369,7 +369,8 @@ object Drake {
   /** The resolution record and the codec section are definition-backed too (2026-11-10,
     * GitHub #11): draketarget.UsesText / gendrake.UsesOf and draketarget.CodecAspectText /
     * gendrake.CodecAspectOf. With them no section's layout is written in this emitter; what
-    * stays here is the order of the sections, the codec guards and the element renderer. */
+    * stayed here then was the order of the sections, the codec guards and the element renderer;
+    * the order crossed the same day, see definitionText. */
   private[draco] def usesText (td: TypeDefinition) : String = draco.gendrake.UsesOf(td).value
   private[draco] def codecAspectText (td: TypeDefinition) : String = draco.gendrake.CodecAspectOf(td).value
 
@@ -383,42 +384,25 @@ object Drake {
     if (scope == null) emit(td) else emit(td, scope)
 
   def emit (td: TypeDefinition) : String = {
+    // The three guards stay here: they refuse before anything renders, and drake has no
+    // failure form for a transform to carry them.
     if (td.codecAspect.discriminator.nonEmpty)
       sys.error(s"Drake.emit: codec discriminator not yet emitted: ${td.typeName.name}")
-
-    val dracoText = dracoAspectText(td)
-    val typeSection = if (dracoText.isEmpty) Seq.empty else Seq(dracoText)
-    // The RESOLUTION RECORD (2026-10-21): `uses [ … ]`, a section of its own between the type
-    // section and the domain line — the identities the bodies name by their short form, each in
-    // the anchor spelling, package words then the name. Written by the compact form, never by
-    // hand; elided when empty. Definition-backed, see usesText.
-    val recordText = usesText(td)
-    val uses = if (recordText.isEmpty) Seq.empty else Seq(recordText)
-
-    // Section layout and aspect mapping are definition-backed. Type-parameter
-    // spelling remains an explicit dependency on this target's type-form renderer.
-    val domainText = draco.gendrake.DomainAspectOf(td, typeParameterSurface(_)).value
-    val domain = if (domainText.isEmpty) Seq.empty else Seq(domainText)
-
-    // rule aspect (drake.dlt: `rule` head, then `pattern` { variables, conditions }
-    // and `action` body) — definition-backed, see ruleAspectText.
-    val ruleText = ruleAspectText(td)
-    val rule = if (ruleText.isEmpty) Seq.empty else Seq(ruleText)
-
-    // actor aspect (drake.dlt: `actor` head, the message type the ASPECT carries, then the
-    // start / message / signal blocks) — definition-backed, see actorAspectText.
-    val actorText = actorAspectText(td)
-    val actor = if (actorText.isEmpty) Seq.empty else Seq(actorText)
-
     val payload = td.codecAspect.payload
     require(payload.distinct.size == payload.size, s"Drake.emit: duplicate payload field in ${td.typeName.name}")
     require(payload.forall(_.matches("[A-Za-z_][A-Za-z0-9_]*")), s"Drake.emit: invalid payload field in ${td.typeName.name}")
-    // The two guards above stay here: they refuse before anything renders. The layout is
-    // definition-backed, see codecAspectText.
-    val codecText = codecAspectText(td)
-    val codec = if (codecText.isEmpty) Seq.empty else Seq(codecText)
-    (typeSection ++ uses ++ domain ++ rule ++ actor ++ codec).mkString("", "\n", "\n")
+    definitionText(td)
   }
+
+  /** The ASSEMBLY of the surface is definition-backed (2026-11-10, GitHub #11):
+    * draketarget.DefinitionText owns the order of the six sections — type, `uses`, domain, rule,
+    * actor, codec — and their joining (the empty ones dropped, one line break between the rest,
+    * one at the end); gendrake.DefinitionOf composes the six section transforms from a
+    * definition. The four rendering dependencies are this target's renderers, passed explicitly
+    * as the section transforms receive them. What stays hand-written in this emitter is the
+    * guards above and those renderers. */
+  private[draco] def definitionText (td: TypeDefinition) : String =
+    draco.gendrake.DefinitionOf(td, typeParameterSurface(_), drakeType(_), typeSurface(_), elementLines(_, _)).value
 
   // --- Parsing (.drake surface -> JSON TypeDefinition) ---
   //
