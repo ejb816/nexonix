@@ -6,4 +6,5 @@ domain draco draketarget DrakeTarget
     DomainAspectText
     DracoAspectText
     RuleAspectText
+    ActorAspectText
   ]

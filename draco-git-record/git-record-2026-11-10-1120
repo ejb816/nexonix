@@ -1,0 +1,60 @@
+The actor section of the drake surface is definition-backed: ActorAspectText and ActorAspectOf, Drake.emit delegating (GitHub #11)
+
+Dev accepted, in the words "Accepted, build it", the next related point after the rule section (1c96d63). OWNING ISSUE:
+https://github.com/ejb816/nexonix/issues/11, the generator domain, whose remaining scope is native per-operation
+transformation; after the rule section three of the drake surface's sections were still hand-written in `Drake.emit` —
+actor, `uses` and codec. This commit is the actor section; the issue stays open.
+
+MEASURED before recommending: the actor block was about seventeen emitter lines and 15 definitions carry one (Draco and
+the gendrake Emitter in main, thirteen in mods); 77 carry a `uses` record, 4 a codec payload. It has one thing the rule
+section did not, the message-type line — a type reference spelled bare in the actor's own package and with its package
+words elsewhere — and DracoAspectOf already carries that spelling rule for parents, so nothing new was designed.
+
+BUILT in the shape of the three precedents. `draco.draketarget.ActorAspectText` (from Surface) owns the LAYOUT:
+`messageReference`, then `start`, `message` and `signal` as already-rendered lines, and `present` (default true); the
+`actor` head, the `messageType` line when there is a reference, each block elided when its body is empty; a present
+actor with nothing in it is the one line, an absent one renders nothing and, the arguments being by-name behind
+`guard(_present)`, evaluates nothing. `draco.gendrake.ActorAspectOf` (from ActorAspectText) is the MAPPING: presence
+read with `fold`; `appliedName` and `reference` as DracoAspectOf writes them (own package bare, else package words,
+type parameters through `parameterText (Dracon -> Text)`), an unnamed message type rendering no line; the three bodies
+at level 2 through `elementText ((TypeElement, Int) -> [Text])`. DrakeTarget and GenDrake list the two. `Drake.emit`
+delegates through `private[draco] actorAspectText(td)`, beside `ruleAspectText`; its hand-written block, the local
+`reference` helper that served only it, and the emitter's `typeRef` helper — left without a caller, the transforms
+spelling every reference now — are gone. Four JSON are `DrakeCLI parse` of their surfaces, four Scala `GeneratorCLI
+generate` on a settled overlay, the emitter recompiled against them; with the new emitter `DrakeCLI check` reads
+surface drift 0, json drift 0 over main and mods — every surface byte-identical. ActorAspectTest (5) is the 81st
+suite: the layout in canonical order with each elision; role as presence; the message type bare in the own package
+and qualified elsewhere, through the live emitter and back; EVERY actor section of the main and mods corpus reproduced
+and no other definition gaining one (188 definitions, 15 actor sections, console line `ActorAspect over the corpus: …`
+added to the gate grep); the running Emit rule emitting it. Two corpus types added: parse scope 115 + 73, surface
+losses 0 across 188 types, 115 aspect sections, GenDrake 113 of 113; RuleAspectTest's walk reads 188 definitions.
+REJECTED: taking actor, `uses` and codec in one increment (the actor section is the only one of the three with layout
+decisions).
+
+DIRECT RUN of every discovered suite on compiled classes with current main, mods and test resources on the loader roots
+(test classes on the Runner's runpath alone). THE FIRST DIRECT RUN FAILED TWO TESTS, 1156 / 2, one cause: ActorAspectOf.scala had been generated before
+ActorAspectText's class was compiled into the overlay, and it spelled `rendered: ActorAspectText = ActorAspectText(…)`
+bare where the gate's generation spells `draco.draketarget.ActorAspectText` in full (DracoGenTest's per-type gate and
+ResolutionRecordTest's unscoped-equals-scoped assertion). The mechanism was isolated, not guessed: the engine's
+`shadowedByHost` asks the CLASSPATH (`Class.forName`) whether an imported package already holds a simple name, so the
+same definition generates the bare spelling with that class hidden and the full one with it present — confirmed both
+ways with the CLI. Regenerated after the class existed, the file is the canonical one; the three other regenerated
+files were identical. This is also the true cause of the Editor line recorded on 2026-11-09 as "generated
+mid-update" (FactDisjointness's class did not exist at Editor's first generation). RuleAspectOf was unaffected, its
+spelling being full with or without the class. OBSERVED, not changed: generation that consults compiled classes is
+an engine property worth a decision of its own — sbt's gate always runs with every class compiled, so the gate is
+deterministic there, but a referrer of a NEW definition must be regenerated after that definition is compiled.
+Focused rerun green (DracoGenTest, ResolutionRecordTest, ActorAspectTest: 209 / 0). SECOND RUN:
+1158 tests / 82 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 188 types, parse scope 115 + 73 with 0 held back, host text 21 leaves of 2149 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 113 of 113, the domain and draco aspect probes 115 complete, `RuleAspect over the corpus: 188 definitions, 24 rule sections`, `ActorAspect over the corpus: 188 definitions, 15 actor sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are ActorAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only.
+
+DOCUMENTATION in this commit: DRACO.md (the gate grep gains `ActorAspect over`; §3's aspect paragraph covers the actor
+section; the §5 handoff line; a dated paragraph), README.md (the target-side aspect bullet), CHANGELOG (one entry),
+DEVELOPMENT_HANDOFF.md (a new current checkpoint, a dated section, the rule-section checkpoint retitled as previous),
+DEVELOPMENT_RESUME_PROMPT.md (a new head). The fold of 1c96d63, its gate and its push, uncommitted since, rides here.
+No tracker action: #11 stays open. Next related point: the `uses` record and the codec payload, the emitter's last two
+sections, together.
+
+Not done, by design: no tracker action; no journal chapter (coverage stays at chapter 112). PON suspended; activation
+and .dcon deferred; EgoActor and scripts/inspect-type.scala observed only.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

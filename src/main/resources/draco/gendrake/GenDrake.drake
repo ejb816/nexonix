@@ -8,6 +8,7 @@ domain draco gendrake GenDrake
     DomainAspectOf
     DracoAspectOf
     RuleAspectOf
+    ActorAspectOf
     Emit
     Emitter
   ]

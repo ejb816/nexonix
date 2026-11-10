@@ -1,0 +1,396 @@
+{
+  "typeName": {
+    "name": "ActorAspectOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "ActorAspect",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeElement",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeName",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "ActorAspectText",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "ActorAspectText",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ActorAspectOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "parameterText",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "elementText",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "TypeElement",
+                  "Int"
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "definition",
+          "valueType": "TypeDefinition",
+          "value": "_definition"
+        },
+        {
+          "kind": "Local",
+          "name": "parameterText",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": "_parameterText"
+        },
+        {
+          "kind": "Local",
+          "name": "elementText",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "TypeElement",
+                  "Int"
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": "_elementText"
+        },
+        {
+          "kind": "Local",
+          "name": "present",
+          "valueType": "Boolean",
+          "value": {
+            "()": [
+              "definition.actorAspect.fold",
+              "false",
+              {
+                "\\": [
+                  "aspect",
+                  "true"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "aspect",
+          "valueType": "ActorAspect",
+          "value": {
+            "()": [
+              "definition.actorAspect.fold",
+              "ActorAspect.Null",
+              {
+                "\\": [
+                  "aspect",
+                  "aspect"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "appliedName",
+          "valueType": {
+            "->": [
+              "TypeName",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "name",
+              {
+                "++": [
+                  "name.name",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              "name.typeParameters.isEmpty"
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      "\"\"",
+                      {
+                        "++": [
+                          "\"(\"",
+                          {
+                            "()": [
+                              "join",
+                              "\", \"",
+                              {
+                                "()": [
+                                  "name.typeParameters.map",
+                                  "parameterText"
+                                ]
+                              }
+                            ]
+                          },
+                          "\")\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "reference",
+          "valueType": {
+            "->": [
+              "TypeName",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "name",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "name.name.isEmpty"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  "\"\"",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              {
+                                "==": [
+                                  "name.namePackage",
+                                  "definition.typeName.namePackage"
+                                ]
+                              }
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      {
+                        "()": [
+                          "appliedName",
+                          "name"
+                        ]
+                      },
+                      {
+                        "()": [
+                          "join",
+                          "\" \"",
+                          {
+                            "++": [
+                              "name.namePackage",
+                              {
+                                "[]": [
+                                  {
+                                    "()": [
+                                      "appliedName",
+                                      "name"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "rendered",
+          "valueType": "ActorAspectText",
+          "value": {
+            "()": [
+              "ActorAspectText",
+              {
+                "()": [
+                  "reference",
+                  "aspect.messageType"
+                ]
+              },
+              {
+                "()": [
+                  "aspect.start.body.flatMap",
+                  {
+                    "\\": [
+                      "element",
+                      {
+                        "()": [
+                          "elementText",
+                          "element",
+                          "2"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  "aspect.message.body.flatMap",
+                  {
+                    "\\": [
+                      "element",
+                      {
+                        "()": [
+                          "elementText",
+                          "element",
+                          "2"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  "aspect.signal.body.flatMap",
+                  {
+                    "\\": [
+                      "element",
+                      {
+                        "()": [
+                          "elementText",
+                          "element",
+                          "2"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "present"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": "rendered.value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

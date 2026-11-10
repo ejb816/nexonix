@@ -247,12 +247,6 @@ object Drake {
   private[draco] def typeParameterSurface (parameter: Json) : String =
     if (TypeForm.isTree(parameter)) drakeType(parameter) else parameter.text
 
-  /** TypeName reference on the drake surface: name with type parameters in the
-    * ( ) type-application form — Map[K, V]'s TypeName -> Map(K, V). */
-  private def typeRef (tn: TypeName) : String =
-    if (tn.typeParameters.isEmpty) tn.name
-    else s"${tn.name}(${tn.typeParameters.map(value => typeParameterSurface(value)).mkString(", ")})"
-
   /** A dyn-with-body opens its own sub-block; its container needs [ ]. */
   private def opensBlock (element: TypeElement) : Boolean = element match {
     case d: Dynamic => d.parameters.nonEmpty || d.body.nonEmpty
@@ -365,6 +359,13 @@ object Drake {
   private[draco] def ruleAspectText (td: TypeDefinition) : String =
     draco.gendrake.RuleAspectOf(td, elementLines(_, _)).value
 
+  /** The actor section is definition-backed too (2026-11-10, GitHub #11): the layout is
+    * draketarget.ActorAspectText, the mapping gendrake.ActorAspectOf — the message type in
+    * the package-relative spelling the type section's references take, then the three
+    * blocks. Type-parameter spelling and element rendering stay this target's. */
+  private[draco] def actorAspectText (td: TypeDefinition) : String =
+    draco.gendrake.ActorAspectOf(td, typeParameterSurface(_), elementLines(_, _)).value
+
   /** Emit the .drake surface for a TypeDefinition (the drake.dlt TEMPLATE:
     * plain-type sections + domain + rule + actor + codec payload). Codec discriminator
     * syntax remains unsupported and is rejected rather than dropped. */
@@ -388,11 +389,6 @@ object Drake {
       if (td.uses.isEmpty) Seq.empty
       else "uses [" +: td.uses.map(tn => "  " + (tn.namePackage :+ tn.name).mkString(" ")) :+ "]"
 
-    // Actor message references retain the same package-relative spelling.
-    def reference (tn: TypeName) : String =
-      if (tn.namePackage == td.typeName.namePackage) typeRef(tn)
-      else (tn.namePackage :+ typeRef(tn)).mkString(" ")
-
     // Section layout and aspect mapping are definition-backed. Type-parameter
     // spelling remains an explicit dependency on this target's type-form renderer.
     val domainText = draco.gendrake.DomainAspectOf(td, typeParameterSurface(_)).value
@@ -403,25 +399,10 @@ object Drake {
     val ruleText = ruleAspectText(td)
     val rule = if (ruleText.isEmpty) Seq.empty else Seq(ruleText)
 
-    // actor aspect (drake.dlt: `actor` head, then start / message / signal action
-    // blocks — construction / receive / receiveSignal). Each block's body sits one
-    // indent level deeper, same shape as the rule `action` body. A block elides when
-    // its action carries no body (an actor typically populates only some of the three).
-    val actor =
-      if (td.actorAspect.fold(true, _ => false)) Seq.empty
-      else {
-        val aa = td.actorAspect.fold(ActorAspect.Null, identity)
-        def block(keyword: String, action: Action): Seq[String] =
-          if (action.body.isEmpty) Seq.empty
-          else s"  $keyword" +: action.body.flatMap(elementLines(_, 2))
-        // The message type is the actor's `T`, carried by the ASPECT rather than by
-        // an Actor[T] derivation. It must reach the drake surface or the projection
-        // loses it entirely once the transitional derivation is dropped.
-        val messageType =
-          if (aa.messageType.name.isEmpty) Seq.empty
-          else Seq(s"  messageType ${reference(aa.messageType)}")
-        "actor" +: (messageType ++ block("start", aa.start) ++ block("message", aa.message) ++ block("signal", aa.signal))
-      }
+    // actor aspect (drake.dlt: `actor` head, the message type the ASPECT carries, then the
+    // start / message / signal blocks) — definition-backed, see actorAspectText.
+    val actorText = actorAspectText(td)
+    val actor = if (actorText.isEmpty) Seq.empty else Seq(actorText)
 
     val payload = td.codecAspect.payload
     require(payload.distinct.size == payload.size, s"Drake.emit: duplicate payload field in ${td.typeName.name}")
@@ -957,7 +938,7 @@ object Drake {
       case (op, Seq (p, b)) => Json.obj (op.trim -> Json.arr (typeForm (p), typeForm (b)))
     }
 
-  /** A type reference as typeRef spells it: name plus ( ) type parameters. The
+  /** A type reference as the emitter's transforms spell it: name plus ( ) type parameters. The
     * surface carries no package here — a bare reference means the referring type's
     * own package, and `resolved` supplies it once the domain line has been read. */
   private def parseRef (token: String) : TypeName = {

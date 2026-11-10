@@ -1,0 +1,18 @@
+type ActorAspectText from Surface
+  factory
+    parameters
+      par messageReference Text ""
+      par start [Text] []
+      par message [Text] []
+      par signal [Text] []
+      par present Boolean true
+    body
+      loc typeLines [Text] guard(_messageReference.isEmpty).ifThenElse([], ["  messageType " ++ _messageReference])
+      loc startLines [Text] guard(_start.isEmpty).ifThenElse([], ["  start"] ++ _start)
+      loc messageLines [Text] guard(_message.isEmpty).ifThenElse([], ["  message"] ++ _message)
+      loc signalLines [Text] guard(_signal.isEmpty).ifThenElse([], ["  signal"] ++ _signal)
+      fix value Text guard(_present).ifThenElse(join("\n", ["actor"] ++ typeLines ++ startLines ++ messageLines ++ signalLines), "")
+uses [
+  draco drake Text
+]
+domain draco draketarget DrakeTarget

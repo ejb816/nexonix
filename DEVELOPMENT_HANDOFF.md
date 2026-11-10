@@ -1,24 +1,44 @@
 # Development Handoff
 
-Prepared November 10, 2026 by Claude Code after the definition-backed rule section (GitHub #11), for a new
-session in either agent. It supersedes the host-text checkpoint of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
+Prepared November 10, 2026 by Claude Code after the definition-backed actor section (GitHub #11), for a new
+session in either agent. It supersedes the rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
 and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the rule section of the drake surface is definition-backed (Claude Code, November 10, 2026)
+## Current checkpoint — the actor section of the drake surface is definition-backed (Claude Code, November 10, 2026)
 
-Observed: HEAD 2f75d5a on main, equal to origin/main (Dev's push of November 10, read back with `git ls-remote`); the tree
-holds this increment, uncommitted, with the record of that push in this file, the resume prompt and DRACO.md. Dev's gate on
-e2ca0be (1128 / 79, green) stands until Dev gates this tree.
+Observed: HEAD 1c96d63 on main, equal to origin/main (pushed by Dev on November 10, read back with `git ls-remote`); the tree
+holds this increment, uncommitted, with the fold of 1c96d63 in this file, the resume prompt and DRACO.md. Dev's gate on
+1c96d63 (1143 / 80, green) stands until Dev gates this tree.
+
+- **Done this session.** The next related point under GitHub #11 was accepted ("Accepted, build it"): the actor section of
+  `Drake.emit` is rendered by `draketarget.ActorAspectText` (layout) and `gendrake.ActorAspectOf` (mapping), the emitter
+  delegating through `actorAspectText`; its local `reference` helper and the callerless `typeRef` are removed. Every
+  surface is byte-identical (`DrakeCLI check` drift 0 over main and mods). ActorAspectTest (5) reproduces all 15 actor
+  sections; two corpus types added; the gate grep gains `ActorAspect over`. Four of the surface's six sections are now
+  definition-backed. #11 stays open. The first direct run failed two tests on one cause — a referrer generated before its
+  new referent was compiled (DRACO.md §6, new gotcha) — corrected by regenerating. Second direct run of every discovered suite: 1158 tests / 82 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 188 types, parse scope 115 + 73 with 0 held back, host text 21 leaves of 2149 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 113 of 113, the domain and draco aspect probes 115 complete, `RuleAspect over the corpus: 188 definitions, 24 rule sections`, `ActorAspect over the corpus: 188 definitions, 15 actor sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are ActorAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only.
+- **Next action:** Dev runs the full gate, commits (record `git-record-2026-11-10-1120`) and pushes — the blocks handed over
+  end with the push. Then the next related point: the `uses` record and the codec payload together, as ONE recommendation.
+- **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (recorded with the #47 increment).
+- **Not done, by design:** no tracker action; no journal chapter.
+- **Everything else stands as the sections below record.**
+
+## Previous checkpoint — the rule section of the drake surface is definition-backed (Claude Code, November 10, 2026; done, see above)
+
+Observed: HEAD 1c96d63 on main, this increment's commit (record `git-record-2026-11-10-1107`), committed by Dev on
+November 10 on top of 2f75d5a after his gate (1143 tests, zero failures, every headline matching, green on its first run)
+and PUSHED the same day (`2f75d5a..1c96d63`; origin/main equal to local main, read back with `git ls-remote`). The tree was
+clean after it but for this fold. Dev's gate on 1c96d63 is the current baseline: **1143 tests / 80 suites**.
 
 - **Done this session.** The recommendation under GitHub #11 was accepted ("Accepted, build it"): the rule section of
   `Drake.emit`, hand-written until now, is rendered by `draketarget.RuleAspectText` (layout) and `gendrake.RuleAspectOf`
   (mapping), the shape of the type and domain sections' pairs; the emitter delegates through `ruleAspectText`. Every surface
   is byte-identical (`DrakeCLI check` drift 0 over main and mods with the new emitter). RuleAspectTest (5) reproduces all 24
   rule sections of the corpus; two corpus types added; the gate grep gains `RuleAspect over`. #11 stays open. Direct run of every discovered suite: 1143 tests / 81 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 186 types, parse scope 113 + 73 with 0 held back, host text 21 leaves of 2057 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 111 of 111, the domain and draco aspect probes 113 complete, `RuleAspect over the corpus: 186 definitions, 24 rule sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are RuleAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only.
-- **Next action:** Dev runs the full gate, commits (record `git-record-2026-11-10-1107`) and pushes — the blocks handed over
-  end with the push. Then the next related point: the actor section by the same pattern, as ONE recommendation.
+- **Next action:** the next related point, the actor section by the same pattern, as ONE recommendation (brought to Dev on
+  November 10 after the push; see the resume prompt for whether it was accepted).
 - **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (recorded with the #47 increment).
 - **Not done, by design:** no tracker action; no journal chapter.
 - **Everything else stands as the sections below record.**
@@ -789,7 +809,7 @@ ActorAspect and CLI carriers: fails naming ActorAspect's leaf, 23 leaves, 1 outs
 fold's inferred type, corrected before its first run. REJECTED: re-authoring seam leaves here; walking the test corpus.
 DIRECT RUN: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only. DEV'S GATE: 1128 tests on November 10, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as e2ca0be. Record `git-record-2026-11-10-1050`.
 
-## The rule section of the drake surface is definition-backed (accepted and built, November 10; direct run 1143 / 81; Dev's gate pending)
+## The rule section of the drake surface is definition-backed (accepted and built, November 10; direct run 1143 / 81; Dev's gate 1143 / 80, committed as 1c96d63, pushed)
 
 Dev accepted: "Accepted, build it". OWNING ISSUE: GitHub #11 (native per-operation transformation remains; the issue stays open).
 WHY: of the drake surface's sections the type and domain crossed to definitions on 2026-09-28 and 2026-09-22; rule, actor, `uses`
@@ -802,7 +822,22 @@ level 2 through `elementText ((TypeElement, Int) -> [Text])`; DrakeTarget and Ge
 them; `DrakeCLI check` drift 0 over main and mods. RuleAspectTest (5): layout and elisions; role as presence; a definition through
 the live emitter and back; all 24 corpus rule sections over 186 definitions; the running Emit rule. Two corpus types: parse scope
 113 + 73, surface losses 0 across 186 types, 113 aspect sections, GenDrake 111 of 111. REJECTED: rule and actor together.
-DIRECT RUN: 1143 tests / 81 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 186 types, parse scope 113 + 73 with 0 held back, host text 21 leaves of 2057 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 111 of 111, the domain and draco aspect probes 113 complete, `RuleAspect over the corpus: 186 definitions, 24 rule sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are RuleAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only. Record `git-record-2026-11-10-1107`.
+DIRECT RUN: 1143 tests / 81 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 186 types, parse scope 113 + 73 with 0 held back, host text 21 leaves of 2057 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 111 of 111, the domain and draco aspect probes 113 complete, `RuleAspect over the corpus: 186 definitions, 24 rule sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are RuleAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only. DEV'S GATE: 1143 tests on November 10, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 1c96d63 and pushed. Record `git-record-2026-11-10-1107`.
+
+## The actor section of the drake surface is definition-backed (accepted and built, November 10; direct run 1158 / 82 on its second run; Dev's gate pending)
+
+Dev accepted: "Accepted, build it". OWNING ISSUE: GitHub #11, open. MEASURED: about seventeen emitter lines; 15 definitions with
+an actor section (2 main, 13 mods); 77 with a record, 4 with a codec payload. BUILT: `draketarget.ActorAspectText` from Surface —
+`messageReference`, `start`, `message`, `signal` as rendered lines, `present` default true, the `messageType` line and each block
+elided when empty, absent rendering nothing and evaluating nothing; `gendrake.ActorAspectOf` from ActorAspectText — presence by
+`fold`, `appliedName` and `reference` as DracoAspectOf writes them (own package bare, else package words; an unnamed message type
+no line), bodies at level 2 through `elementText`; DrakeTarget and GenDrake list them; `Drake.emit` delegates through
+`private[draco] actorAspectText(td)`, the block's local `reference` and the callerless `typeRef` removed. Four JSON re-parsed, four
+Scala regenerated on a settled overlay, the emitter recompiled; `DrakeCLI check` drift 0 over main and mods. ActorAspectTest (5):
+layout and elisions; role as presence; the message type bare and qualified through the live emitter and back; all 15 corpus actor
+sections over 188 definitions; the running Emit rule. Two corpus types: parse scope 115 + 73, surface losses 0 across 188 types,
+115 aspect sections, GenDrake 113 of 113. REJECTED: actor, `uses` and codec together. FIRST DIRECT RUN 1156 / 2, one cause: ActorAspectOf.scala was generated before ActorAspectText's class was compiled into the overlay and spelled the reference bare where the gate spells `draco.draketarget.ActorAspectText` in full; the engine's `shadowedByHost` consults the classpath (`Class.forName`), confirmed both ways with the CLI — regenerate a referrer of a new definition AFTER compiling that definition (now a DRACO.md §6 gotcha; also the real cause of the Editor line of November 9). Focused rerun 209 / 0. SECOND DIRECT RUN: 1158 tests / 82 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 188 types, parse scope 115 + 73 with 0 held back, host text 21 leaves of 2149 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 113 of 113, the domain and draco aspect probes 115 complete, `RuleAspect over the corpus: 188 definitions, 24 rule sections`, `ActorAspect over the corpus: 188 definitions, 15 actor sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are ActorAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only. Record
+`git-record-2026-11-10-1120`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 

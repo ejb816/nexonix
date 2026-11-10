@@ -29,7 +29,8 @@
       "DomainLine",
       "DomainAspectText",
       "DracoAspectText",
-      "RuleAspectText"
+      "RuleAspectText",
+      "ActorAspectText"
     ]
   }
 }

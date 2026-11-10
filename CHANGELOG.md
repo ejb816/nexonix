@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- The actor section of the drake surface is emitted by definitions: `draketarget.ActorAspectText` owns its layout (the
+  message type, then the `start`, `message` and `signal` blocks) and `gendrake.ActorAspectOf` maps a definition onto it,
+  with `Drake.emit` delegating (GitHub #11). Every surface is byte-identical. ActorAspectTest (5) is new and reproduces
+  all 15 actor sections of the corpus; two corpus types added (parse scope 115 + 73, GenDrake 113 of 113); the gate grep
+  gains `ActorAspect over`. Four of the surface's sections are now definition-backed; `uses` and codec remain.
 - The rule section of the drake surface is emitted by definitions: `draketarget.RuleAspectText` owns its layout and
   `gendrake.RuleAspectOf` maps a definition onto it, with `Drake.emit` delegating as it does for the type and domain
   sections (GitHub #11). Every surface is byte-identical. RuleAspectTest (5) is new and reproduces all 24 rule sections of
