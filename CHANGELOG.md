@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- Hand off to a new session at c70d6b8 (gate 1183 / 82, pushed): the journal, which ends at chapter 112 and is 39 commits and
+  four sessions behind, is the receiving session's first task, with its sources named in DEVELOPMENT_HANDOFF.md; the
+  recommendation to make the drake surface's assembly a definition is preserved unaccepted. Documentation only.
 - The `uses` record and the codec section of the drake surface are emitted by definitions: `draketarget.UsesText` /
   `gendrake.UsesOf` and `draketarget.CodecAspectText` / `gendrake.CodecAspectOf`, with `Drake.emit` delegating (GitHub #11).
   All six sections of the surface are now definition-backed and every surface is byte-identical; the emitter keeps the

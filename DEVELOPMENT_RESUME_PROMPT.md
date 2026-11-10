@@ -1,14 +1,28 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
-This is a November 10, 2026 handoff for a new session in either agent, prepared by Claude Code after the
-definition-backed record and codec sections (GitHub #11), the eighth increment since the tracker reconciliation. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+This is a November 10, 2026 handoff for a NEW SESSION in either agent, prepared by Claude Code when I called it: the
+session's context had reached 75% and the journal was several sessions behind. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: at the handoff HEAD was 8b127aa on main, equal to origin/main (the actor-section increment, gated by me at 1158 / 81
-green and pushed on November 10). The tree held the record-and-codec increment uncommitted (record git-record-2026-11-10-1221),
-awaiting my full gate, commit and push; if the log shows that commit on top of 8b127aa, it is committed. Every commit block
-handed to me ends with a push block. Inspect git status/log anyway. The direct runs are in the handoff.
+STATE: HEAD should be the handoff's documentation commit (record git-record-2026-11-10-1237) on top of c70d6b8, pushed —
+check with `git status -sb` and `git log`. c70d6b8 is the last implementation commit; my full sbt gate on it, 1183 tests /
+82 suites with every headline matching, is the baseline. Every commit block handed to me ends with a push block. The gate
+grep is the one in DRACO.md section 1.
+
+YOUR FIRST TASK IS THE JOURNAL. draco-dev-journal ends at chapter 112 (closing commit 7495539, October 26). Thirty-nine
+commits and four sessions since are unjournaled: three Claude Code session records and the Codex rollouts of November 4–5,
+all on this machine and named with their timestamps in DEVELOPMENT_HANDOFF.md under "Journal coverage and handoff
+integrity". Read that section and DRACO.md section 7 ("Transcript integrity at handoff"), then CONFIRM THE SCOPE WITH ME
+before writing — which sessions, in what order, roughly how many chapters. Recover original messages, never compaction
+summaries; my prompts verbatim, replies near-verbatim; a bounded extract and an audit under draco-dev-journal/sources/.
+Do not skip the older sessions to reach the newer ones. No development increment before the journal is current unless I say so.
+
+AFTER THE JOURNAL, development resumes. Preserved and NOT accepted: the assembly of the drake surface as a definition
+(draketarget.DefinitionText owning the order of the six sections, gendrake.DefinitionOf composing the six transforms,
+Drake.emit reduced to its three guards and one call), recommended to me on November 10 and unanswered because I called
+the handoff. Behind it, each a design question and none accepted: the element, expression and type-form renderers; a
+failure form for the codec guards; whether generation should consult compiled classes (DRACO.md section 6).
 
 WHAT HAPPENED (November 4–8). The Codex session of November 4 reconciled the tracker without asking me what to
 correct first — 32 status comments, eight closures (#61, #55, #42, #41, #15, #51 completed or reconciled; #57, #46
@@ -64,10 +78,8 @@ draketarget.UsesText / gendrake.UsesOf and draketarget.CodecAspectText / gendrak
 keeping its guards, UsesAndCodecTest +5, four corpus types. All six sections of the drake surface are definition-backed.
 A new DRACO.md section 6 gotcha records that a referrer of a NEW definition must be generated after that definition is compiled.
 
-YOUR FIRST TASK: if the record-and-codec increment is committed and pushed, bring ONE recommendation — the next design
-question on this thread (the section order as a definition, the element renderer, the guards' failure form) or another of the
-22 open issues; otherwise finish that commit first, its owning issue named and its remaining scope checked
-against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
+WHEN DEVELOPMENT RESUMES: bring ONE recommendation — the assembly above, or another of the 22 open issues — with its owning
+issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 
 HISTORY of the increments since the October 26 handoff follows, newest first; the details are in the

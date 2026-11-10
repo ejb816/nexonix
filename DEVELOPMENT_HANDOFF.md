@@ -1,16 +1,54 @@
 # Development Handoff
 
-Prepared November 10, 2026 by Claude Code after the definition-backed record and codec sections (GitHub #11), for a new
-session in either agent. It supersedes the actor-section, rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
+Prepared November 10, 2026 by Claude Code at Dev's direction, for a NEW SESSION in either agent: Dev called the handoff when
+this session's context reached 75%, with the journal several sessions behind. It supersedes the record-and-codec, actor-section, rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
 and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — all six sections of the drake surface are definition-backed (Claude Code, November 10, 2026)
+## Current checkpoint — handoff to a new session; the journal is the first task (Claude Code, November 10, 2026)
 
-Observed: HEAD 8b127aa on main, equal to origin/main (pushed by Dev on November 10, read back with `git ls-remote`); the tree
-holds this increment, uncommitted, with the fold of 8b127aa in this file, the resume prompt and DRACO.md. Dev's gate on
-8b127aa (1158 / 81, green) stands until Dev gates this tree.
+Dev, November 10: "It is time for a handoff to a new session. The session context just reached 75% and I am not confident that
+the draco-dev-journal can update and create chapters in the current session. It doesn't seem the draco-dev-journal has been
+updated or added to for few sessions."
+
+Observed: HEAD c70d6b8 on main, equal to origin/main (read back with `git ls-remote` on November 10); the tree held only
+this handoff's documentation, which Dev commits and pushes with the blocks handed over (record `git-record-2026-11-10-1237`).
+Dev's gate on c70d6b8 is the baseline: **1183 tests / 82 suites**, every headline matching. The gate grep is the one in
+DRACO.md §1; it gained five lines this session (`host text`, `RuleAspect over`, `ActorAspect over`, `Uses over`,
+`CodecAspect over`).
+
+- **The session, in one line each.** 7d4ae0a the Codex reconciliation verified; d026cd3 every rule trait rooted (#50 closed);
+  929c850 `TypeDefinition.isStub` (#47 closed); 995fade the FactDisjointness rule (#63 constraint 4, issue open); 2804904 the
+  draco.rete wrap types named (#49 vocabulary half, issue open); e2ca0be the host-text bound and HostTextTest; 1c96d63,
+  8b127aa, c70d6b8 the rule, actor, record and codec sections of the drake surface as definition-backed transforms (#11,
+  issue open) — all six sections. Each was accepted by Dev, gated by Dev's full sbt run and committed by Dev; the dated
+  sections below and the git records carry the measurements. 22 issues are open.
+- **FIRST TASK for the receiving session: the journal.** Coverage ends at chapter 112 (closing commit 7495539, October 26);
+  39 commits and four sessions are unjournaled. The sources and the procedure are in *Journal coverage and handoff integrity*
+  at the end of this file. It was not attempted here: this session's own record is one of the sources, and its context was
+  three-quarters full.
+- **Preserved, NOT accepted.** After c70d6b8 the next recommendation was brought and met the handoff instruction instead of
+  an answer: the ASSEMBLY of the drake surface as a definition — `draketarget.DefinitionText` owning the order of the six
+  sections (type, `uses`, domain, rule, actor, codec; non-empty ones joined, one trailing newline) and `gendrake.DefinitionOf`
+  composing the six transforms with DracoAspectOf's four rendering dependencies, `Drake.emit` reduced to its three guards and
+  one call, two corpus types. It is a proposal. Behind it, each a design question and none accepted: the element, expression
+  and type-form renderers (about 380 lines of `Drake.scala`, the real remaining mass of #11's drake side); a failure form
+  for the codec guards; whether generation should consult compiled classes (`shadowedByHost`, DRACO.md §6).
+- **Standing practice changed this session.** Every commit block handed to Dev ends with a push block; nothing was pushed
+  between November 6 and November 10 because no block contained one. Generate a new definition, COMPILE it, then generate
+  its referrers (§6).
+- **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17; GETTING_STARTED_TARGET_SCALA.md's
+  authoring section still presents JSON as what is authored; EgoActor is a hand-written actor with no definition.
+- **Deferred or suspended, unchanged:** activation; the .dcon migration; PON (nothing under domains/pon is touched).
+- **Everything else stands as the sections below record.**
+
+## Previous checkpoint — all six sections of the drake surface are definition-backed (Claude Code, November 10, 2026; done, see above)
+
+Observed: HEAD c70d6b8 on main, this increment's commit (record `git-record-2026-11-10-1221`), committed by Dev on
+November 10 on top of 8b127aa after his gate (1183 tests, zero failures, every headline matching, green on its first run)
+and PUSHED the same day (`8b127aa..c70d6b8`; origin/main equal to local main, read back with `git ls-remote`). The tree was
+clean after it but for this fold. Dev's gate on c70d6b8 is the current baseline: **1183 tests / 82 suites**.
 
 - **Done this session.** The next related point under GitHub #11 was accepted ("Accepted, build it"): the `uses` record and
   the codec section, the last two the emitter rendered itself, are `draketarget.UsesText` / `gendrake.UsesOf` and
@@ -18,8 +56,7 @@ holds this increment, uncommitted, with the fold of 8b127aa in this file, the re
   and keeping its three guards. Every surface is byte-identical. UsesAndCodecTest (5) reproduces all 85 records and 4 codec
   sections; four corpus types added; the gate grep gains `Uses over` and `CodecAspect over`. The generation order of the new
   §6 gotcha was followed and held. #11 stays open. Direct run of every discovered suite: 1183 tests / 83 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 192 types, parse scope 119 + 73 with 0 held back, host text 21 leaves of 2186 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 117 of 117, the domain and draco aspect probes 119 complete, rule 24 and actor 15 sections over 192 definitions, `Uses over the corpus: 192 definitions, 85 records reproduced, 0 skipped`, `CodecAspect over the corpus: 192 definitions, 4 codec sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the twenty-five new tests are UsesAndCodecTest's five and the five per-type gates of each of the four new definitions; the tree afterwards held the intended changes only.
-- **Next action:** Dev runs the full gate, commits (record `git-record-2026-11-10-1221`) and pushes — the blocks handed over end with the
-  push. Then ONE recommendation: either the next design question on this thread (the section order as a definition, the
+- **Next action:** ONE recommendation: either the next design question on this thread (the section order as a definition, the
   element renderer, the guards' failure form) or another issue of the 22, its owning issue named.
 - **Open for Dev, surfaced not filed:** whether generation should consult compiled classes at all (`shadowedByHost`, §6).
 - **Observed, not fixed:** `scripts/inspect-type.scala` has not compiled since 2026-10-17 (recorded with the #47 increment).
@@ -860,7 +897,7 @@ sections over 188 definitions; the running Emit rule. Two corpus types: parse sc
 115 aspect sections, GenDrake 113 of 113. REJECTED: actor, `uses` and codec together. FIRST DIRECT RUN 1156 / 2, one cause: ActorAspectOf.scala was generated before ActorAspectText's class was compiled into the overlay and spelled the reference bare where the gate spells `draco.draketarget.ActorAspectText` in full; the engine's `shadowedByHost` consults the classpath (`Class.forName`), confirmed both ways with the CLI — regenerate a referrer of a new definition AFTER compiling that definition (now a DRACO.md §6 gotcha; also the real cause of the Editor line of November 9). Focused rerun 209 / 0. SECOND DIRECT RUN: 1158 tests / 82 suites including discovery, zero failed, canceled, ignored, pending or aborted, green; every headline as expected — example gate 48 / 0, surface losses 0 across 188 types, parse scope 115 + 73 with 0 held back, host text 21 leaves of 2149 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 113 of 113, the domain and draco aspect probes 115 complete, `RuleAspect over the corpus: 188 definitions, 24 rule sections`, `ActorAspect over the corpus: 188 definitions, 15 actor sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are ActorAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only. DEV'S GATE: 1158 tests on November 10, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as 8b127aa and pushed. Record
 `git-record-2026-11-10-1120`.
 
-## The record and the codec section are definition-backed; no section layout is left in the emitter (accepted and built, November 10; direct run 1183 / 83; Dev's gate pending)
+## The record and the codec section are definition-backed; no section layout is left in the emitter (accepted and built, November 10; direct run 1183 / 83; Dev's gate 1183 / 82, committed as c70d6b8, pushed)
 
 Dev accepted: "Accepted, build it", the record's pair named UsesText / UsesOf as proposed. OWNING ISSUE: GitHub #11, open.
 MEASURED: `uses` three emitter lines over 81 definitions; codec payload four lines over four definitions (TypeName, DracoAspect,
@@ -872,7 +909,7 @@ four; `Drake.emit` delegates through `private[draco] usesText` and `codecAspectT
 0 over main and mods. UsesAndCodecTest (5): the two layouts; a definition through the live emitter and back with the three guards
 still refusing; all 85 records and 4 codec sections over 192 definitions; the running Emit rule. Four corpus types: parse scope
 119 + 73, surface losses 0 across 192 types, 119 aspect sections, GenDrake 117 of 117. REJECTED: guards inside the transforms;
-`ResolutionRecordText`. DIRECT RUN: 1183 tests / 83 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 192 types, parse scope 119 + 73 with 0 held back, host text 21 leaves of 2186 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 117 of 117, the domain and draco aspect probes 119 complete, rule 24 and actor 15 sections over 192 definitions, `Uses over the corpus: 192 definitions, 85 records reproduced, 0 skipped`, `CodecAspect over the corpus: 192 definitions, 4 codec sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the twenty-five new tests are UsesAndCodecTest's five and the five per-type gates of each of the four new definitions; the tree afterwards held the intended changes only. Record `git-record-2026-11-10-1221`.
+`ResolutionRecordText`. DIRECT RUN: 1183 tests / 83 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 192 types, parse scope 119 + 73 with 0 held back, host text 21 leaves of 2186 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 117 of 117, the domain and draco aspect probes 119 complete, rule 24 and actor 15 sections over 192 definitions, `Uses over the corpus: 192 definitions, 85 records reproduced, 0 skipped`, `CodecAspect over the corpus: 192 definitions, 4 codec sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the twenty-five new tests are UsesAndCodecTest's five and the five per-type gates of each of the four new definitions; the tree afterwards held the intended changes only. DEV'S GATE: 1183 tests on November 10, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Committed by Dev as c70d6b8 and pushed. Record `git-record-2026-11-10-1221`.
 
 ## Next task as proposed on November 4 — the issue-tracker reconciliation audit (HISTORICAL: executed by Codex without the correction step, see the current checkpoint)
 
@@ -1157,24 +1194,36 @@ survived); chapter 105 renders the previous Claude handoff close from
 `sources/claude-2026-10-22-handoff-close.jsonl`. Chapter 112 preserves Dev's correction of the
 premature "handoff ready" claim of October 26.
 
-**Uncovered: the twenty-one commits e241378 … 48f466d (October 26 – November 4) and the two Claude
-Code sessions that produced them.** Chapter 113 onward is unwritten. Sources, on this machine only:
-the session records under `/Users/edwardburke/.claude/projects/-Users-edwardburke-IdeaProjects-nexonix/`
-— `f12792d4-b3c1-4ac3-b8f9-c2853199c07f.jsonl` (first message 2026-10-26 18:17 UTC, last 2026-11-03;
-the named-construction, factory, surface, sweep and assertion increments through f4b57ae) and
-`9e3f32b7-12cf-465c-9205-6fe4da31855e.jsonl` (first message 2026-11-03 20:54 UTC; the PON
-suspension, 1cfc38f, 48f466d and this handoff). Other files in that directory carry recent
-modification times but belong to earlier sessions; identify a source by its first timestamp, not its
-mtime. Both sessions were compacted at least once; the compaction summaries are working context, never
-quotation evidence — recover the original messages from the records, as chapters 93–94 and 105–112
-did (a bounded extract with source identity, sequence, timestamps and hashes under `sources/`, user
-prompts verbatim, final replies near-verbatim, tool results excluded). The git records
-`git-record-2026-10-26-1449` through `git-record-2026-11-04-1414` and the dated DRACO.md paragraphs
-carry each increment's measurements and Dev's acceptance quotes, and support record-backed Status
-summaries where dialogue is not recovered. Journal maintenance is a task of its own and is NOT
-authorized by this handoff; Dev requests it.
+**Uncovered as of November 10: the thirty-nine commits e241378 … c70d6b8 (October 26 – November 10), this handoff's commit
+after them, and the four sessions that produced them.** Chapter 113 onward is unwritten; the last commit that touched
+`draco-dev-journal/` is 7495539. Sources, on this machine only: the session records under
+`/Users/edwardburke/.claude/projects/-Users-edwardburke-IdeaProjects-nexonix/`, identified by FIRST timestamp (UTC), not mtime:
 
-Checks at this handoff: `git status`/`git log` inspected; DRACO.md, this file, the resume prompt and
-CHANGELOG aligned with 48f466d; the link checker run (both agent links OK); no runtime, test, sbt,
-commit, push, issue or tracker change by the agent. No new implementation gate is claimed beyond Dev's
-1118 / 77 of November 4.
+| record | first .. last message (UTC) | size | what it holds |
+|---|---|---|---|
+| `f12792d4-b3c1-4ac3-b8f9-c2853199c07f.jsonl` | 2026-10-26 18:17 .. 2026-11-03 20:54 | 47 MB | Claude Code: e241378 … f4b57ae (named construction, json factories, example map and sweep, sentient surfaces, the first assertions) |
+| `9e3f32b7-12cf-465c-9205-6fe4da31855e.jsonl` | 2026-11-03 20:54 .. 2026-11-07 02:10 | 8 MB | Claude Code: the PON suspension, 1cfc38f, 48f466d, the November 4 handoff, the November 6 handoff after the aborted Codex one (6682c41, 40d02df) |
+| `1cf64c57-6ed5-4b94-9b2e-faf865e8fdc0.jsonl` | 2026-11-07 02:10 .. 2026-11-10 | 13 MB | Claude Code: the reconciliation verified (7d4ae0a) and the nine increments d026cd3 … c70d6b8, this handoff |
+| `/Users/edwardburke/.codex/sessions/2026/11/04/` and `…/11/05/` (several `rollout-*.jsonl`) | 2026-11-04 15:44 local onward | — | Codex: the tracker reconciliation (2b9cfd5); not opened by Claude Code, only listed |
+
+All three Claude records were compacted (compaction markers are present in each); a compaction summary is working context,
+never quotation evidence.
+
+Procedure, as chapters 93–94 and 105–112 followed it (DRACO.md §7, *Transcript integrity at handoff*, and the journal's own
+Introduction): recover the ORIGINAL message records, not summaries; preserve a bounded project-local extract under
+`draco-dev-journal/sources/` with source identity, sequence, timestamps, text hashes and explicit exclusions, and an audit
+beside it; Dev's prompts verbatim, final replies near-verbatim, tool results excluded; report user and reply counts and
+paired exchanges separately; label Claude and Codex distinctly; preserve corrections (this session's include the harness
+error of d026cd3, the eleven failures of 995fade, the mislabelled "mid-update" cause corrected at 8b127aa, and Dev's
+question about the missing pushes). Do not skip the older sessions to reach the newer ones. `draco-dev-journal/tools/`
+holds the earlier extraction scripts. The git records `git-record-2026-10-26-1449` through `git-record-2026-11-10-1237`
+and the dated DRACO.md paragraphs carry each increment's measurements and Dev's acceptance quotes, and support
+record-backed Status summaries where dialogue is not recovered. Update the chapter index when chapters are added; advance
+the `draco-docs-synced-through` markers only after the new chapters are reviewed against DRACO.md and README.md.
+**Dev named the journal as the next session's task on November 10; the first step there is to confirm the scope with Dev
+(which sessions, how many chapters) before writing.**
+
+Checks at this handoff (November 10): `git status`/`git log` inspected; origin/main read with `git ls-remote` and equal to
+local main at c70d6b8; DRACO.md, this file, the resume prompt and CHANGELOG aligned with c70d6b8; the journal directory and
+the session-record directories listed, not opened beyond their timestamps; no runtime, test, sbt, commit, push, issue or
+tracker change by the agent in preparing it. No implementation gate is claimed beyond Dev's 1183 / 82 of November 10.

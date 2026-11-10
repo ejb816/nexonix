@@ -1,0 +1,33 @@
+Hand off to a new session at c70d6b8: the journal is the first task, 39 commits behind; the assembly recommendation preserved unaccepted
+
+Prepared by Claude Code on 2026-11-10 at Dev's direction: "It is time for a handoff to a new session. The session context
+just reached 75% and I am not confident that the draco-dev-journal can update and create chapters in the current session.
+It doesn't seem the draco-dev-journal has been updated or added to for few sessions." Documentation only: no engine,
+definition, Scala or test change; no sbt; no tracker action.
+
+STATE. HEAD c70d6b8 on main, equal to origin/main (Dev's push of November 10, read back with `git ls-remote`). Dev's
+gate on c70d6b8 is the baseline: 1183 tests / 82 suites, every headline matching. This commit carries the fold of that
+hash, gate and push into DRACO.md sections 1 and 5, the handoff and the resume prompt, uncommitted since, together with
+the handoff itself.
+
+WHAT THE SESSION DID (November 8–10, one Claude Code session, compacted more than once). Verified the Codex tracker
+reconciliation (7d4ae0a). Then nine increments, each accepted by Dev, gated by Dev's full sbt run and committed by Dev:
+d026cd3 the rooted rule trait (#50, closed), 929c850 TypeDefinition.isStub (#47, closed), 995fade the FactDisjointness
+rule (#63 constraint 4), 2804904 the draco.rete wrap types named (#49's vocabulary half), e2ca0be the host-text bound
+with HostTextTest, 1c96d63 / 8b127aa / c70d6b8 the rule, actor, record and codec sections of the drake surface as
+definition-backed transforms (#11) — all six sections now. Twenty-two issues are open.
+
+THE JOURNAL, measured for this handoff. Coverage ends at chapter 112, whose closing commit is 7495539 (October 26). The
+last commit that touched draco-dev-journal/ is that one. Since it: 39 commits, e241378 through c70d6b8, across four
+sessions, none journaled. Dev is right that several sessions have passed. The original records are on this machine:
+three Claude Code session files and the Codex rollouts of November 4–5, named with their first and last timestamps in
+DEVELOPMENT_HANDOFF.md. The journal is the receiving session's FIRST task, by Dev's instruction in this handoff, and it
+is not attempted here: this session's own record is among the sources and its context is three-quarters full.
+
+PRESERVED, NOT ACCEPTED. The recommendation brought after c70d6b8 — the assembly of the drake surface as a definition
+(draketarget.DefinitionText owning the order of the six sections, gendrake.DefinitionOf composing the six transforms,
+Drake.emit reduced to its three guards and one call) — met the handoff instruction instead of an acceptance. It is a
+proposal, not a decision. So are the three design questions behind it (the element, expression and type-form renderers;
+a failure form for the guards; whether generation should consult compiled classes).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
