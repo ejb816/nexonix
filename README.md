@@ -821,13 +821,20 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 112: role presence, executable empty roles, example membership
+Journal coverage reaches chapter 127 (November 10, 2026). Chapters 113–127 cover the work from
+the named-construction repairs of October 26 through the six definition-backed sections of the
+drake surface on November 10, including the Codex tracker reconciliation of November 4–5 and its
+verification. Four retrieval audits under `draco-dev-journal/sources/` (three Claude Code records
+and the Codex rollouts) state their boundaries and exclusions. The latest code checkpoint is
+c70d6b8, verified by Dev at 1183 tests / 82 suites; DRACO.md section 1 and DEVELOPMENT_HANDOFF.md
+carry the current baseline. Before these, chapters 105–112 cover role presence, executable empty
+roles, example membership
 and loading, four conversion-rule repairs, Cartesian and Observable, Provider and Consumer,
 and the handoff correction. The
-[latest retrieval audit](draco-dev-journal/sources/codex-2026-10-22-to-26-audit.md) preserves
+[earlier retrieval audit](draco-dev-journal/sources/codex-2026-10-22-to-26-audit.md) preserves
 42 completed Codex exchanges plus the open journal-recovery acceptance, and recovers the prior
-Claude handoff close. Historical Status sections remain intact. The current code checkpoint
-is the example body sweep with the assembly validator's identity comparison on October 31 (record git-record-2026-10-31-1436), verified by Dev at 983 tests / 77 suites and committed as ded1b5b; before it the example map closed as a gate on October 31 (record git-record-2026-10-31-1105), verified by Dev at 982 tests / 77 suites and committed as 7be1497, the coordinate surfaces and companions, 23333f3, verified at 974 tests / 77 suites, and the Intent json factories, 3a3cbfc, verified at 967 tests / 76 suites, both on October 31, then the sibling report factories, 8540341, verified at 956 tests / 75 suites, and the LocationReport json factory, e138f04, 947 tests / 74 suites, both on October 30.
+Claude handoff close. Historical Status sections remain intact. An earlier code checkpoint
+was the example body sweep with the assembly validator's identity comparison on October 31 (record git-record-2026-10-31-1436), verified by Dev at 983 tests / 77 suites and committed as ded1b5b; before it the example map closed as a gate on October 31 (record git-record-2026-10-31-1105), verified by Dev at 982 tests / 77 suites and committed as 7be1497, the coordinate surfaces and companions, 23333f3, verified at 974 tests / 77 suites, and the Intent json factories, 3a3cbfc, verified at 967 tests / 76 suites, both on October 31, then the sibling report factories, 8540341, verified at 956 tests / 75 suites, and the LocationReport json factory, e138f04, 947 tests / 74 suites, both on October 30.
 That repair closed the recommendation the handoff had preserved as unaccepted.
 [The resumption prompt](DEVELOPMENT_RESUME_PROMPT.md) and [handoff](DEVELOPMENT_HANDOFF.md) are
 shared by Codex and Claude Code. The following
@@ -858,7 +865,7 @@ figure unchanged: Create and Update as verbs over the abstract Latent shape, and
 moved into four Editor-domain rules over an Accepted fact, the actor thinned to a membrane and codec
 eligibility made transitive.
 
-<!-- draco-docs-synced-through: chapter 112 -->
+<!-- draco-docs-synced-through: chapter 127 -->
 
 Role slots now carry `Presence(RuleAspect)` and `Presence(ActorAspect)`. The containing
 record omits an Absent field and writes a Present aspect directly as its existing JSON

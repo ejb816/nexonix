@@ -1,0 +1,54 @@
+Bring the journal current: chapters 113–127 from the original session records, with four extracts and audits
+
+Written by Claude Code on 2026-11-10 in the session that received the handoff of 043f578, whose first task this was. Dev
+confirmed the scope before anything was written ("Accept"): chapters 113–127, strictly chronological, no session skipped,
+the short Codex troubleshooting conversation of November 5 included. Documentation only: no engine, definition, Scala or
+test change; no sbt; no tracker action. The gate 1183 / 82 at c70d6b8 stands.
+
+COVERAGE. The 39 commits e241378 … c70d6b8 and the handoff commit 043f578, October 26 – November 10.
+  113–119  Claude Code record f12792d4 (October 26 – November 3): the named-construction repairs, the report and intent
+           factories, the example map as a gate, the body sweep, the sentient surfaces, the anchor-parameter rule, the
+           fixpoint assertion, four gates over the mods corpus, the scenario assertion, the PON measurement.
+  120, 122 Claude Code record 9e3f32b7 (November 3–6): PON suspended, 1cfc38f, 48f466d, Dev's tracker concern, "Correct it
+           first", the November 4 handoff; then the aborted Codex handoff.
+  121      The Codex rollouts of November 4–5: the tracker reconciliation (2b9cfd5), the model error, the troubleshooting
+           conversation.
+  123–127  Claude Code record 1cf64c57 (November 7–10): the reconciliation verified, #50 and #47, FactDisjointness, the rete
+           wrap types, the host-text bound, Dev's question about the missing pushes, the six drake sections, the handoff.
+
+EVIDENCE. Four bounded extracts with audits under draco-dev-journal/sources/: 231 records — 116 Dev messages, one pasted
+attachment, one interrupt marker, 113 final replies; 113 completed exchanges and one interrupted prompt. Every record
+carries its source line, UTC time and the SHA-256 of its untrimmed text. All 212 Claude records were re-read from their
+physical source lines after the extracts were written and matched on timestamp, uuid and hash; every assertive prompt and
+final reply was checked present in its chapter; the message sequences alternate without a gap. 23 distinct compaction
+boundaries are observed in the Claude records (one carried into the next record); originals survive on both sides of each
+and no compaction summary supplies a quotation. Dev's prompts are verbatim; final replies are verbatim apart from outer
+whitespace, paste wrapper tags, repository-local link destinations (222 links checked, all resolving) and one level of
+heading depth; Dev's 60 pasted command results are delegated-action notes generated from the pastes by pattern, with the
+full pastes kept in the extracts. Tools, reasoning, intermediate progress and wrappers are excluded. The chapters were
+generated from the records; their Status sections are sourced maintenance summaries.
+
+A CORRECTION THE ORIGINALS FORCED. The November 6 handoff, DRACO.md's November 6 paragraph and the resume prompt said
+the Codex session of November 4 did not ask Dev what to correct before reconciling the tracker. The Codex rollout shows
+its first reply was that question (2026-11-04T20:46:28Z); Dev answered with the concern about tracker integration,
+replied "Accept" to the restated recommendation and "I approve your recommendation" to the batch. "Did not ask" was
+Claude Code's inference, written without the rollouts. Chapter 121 reproduces the sequence; DRACO.md carries a dated
+correction beside the original sentence; the resume prompt's sentence is restated; the November 6 handoff checkpoint stays
+as written, as history. Whether the exchange met the handoff's instruction is Dev's judgment. Dev's distrust of the result
+and the November 8 verification are unchanged.
+
+TWO FACTS FOR FUTURE RECORDS. Dev's pasted gate output carries the Tests line and the headlines, never a Suites line, so
+a suite count attributed to Dev's gate is the direct run's count less its discovery wrapper. Several of Dev's short
+answers are button replies to a next-step question that is a tool call, not reply text; the chapters give each such
+question in a context note with its source line.
+
+DOCUMENTS. draco-dev-journal: chapters 113–127, the introduction (count, the November 10 integrity checkpoint, fifteen
+index entries), four extracts and four audits. DRACO.md: section 5's currency lines, the dated correction, a closing
+paragraph, the synced-through marker at chapter 127. README.md: the journal-coverage paragraph and marker.
+DEVELOPMENT_HANDOFF.md: a current checkpoint above the previous one, and the coverage section. DEVELOPMENT_RESUME_PROMPT.md:
+the journal is current; development resumes when Dev says so. CHANGELOG.md: one entry.
+
+NOT COVERED: this session's own exchanges. PRESERVED, NOT ACCEPTED, as before: the assembly of the drake surface as a
+definition (GitHub #11). No issue was opened, commented on or changed.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 112 chapters of development sessions between March 22 and October 26, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 127 chapters of development sessions between March 22 and November 10, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -10,6 +10,19 @@ chapters 105–112. Original records survive both observed compactions. A separa
 Claude extract closes the prior handoff boundary. The journal includes the initial premature
 handoff claim, Dev’s challenge and Codex’s correction; this repair’s final reply lies outside
 the frozen prefix. Bounded recoverability does not establish completeness beyond that prefix.
+
+**November 10 integrity checkpoint:** Chapters 113–127 were written in one pass on November 10
+from four sources: three Claude Code session records
+([October 26 – November 3](sources/claude-2026-10-26-to-11-03-audit.md),
+[November 3–6](sources/claude-2026-11-03-to-06-audit.md),
+[November 7–10](sources/claude-2026-11-07-to-10-audit.md)) and the
+[Codex rollouts of November 4–5](sources/codex-2026-11-04-to-05-audit.md). Together they hold
+231 records: 116 Dev messages, one pasted attachment, one interrupt marker and 113 final replies,
+with 113 completed exchanges. Twenty-three distinct compaction boundaries are observed across the three
+Claude records (one is carried into the next record) and original messages survive on both sides of each; no compaction summary
+supplies a quotation. Chapter 121 preserves a correction: the Codex session's first reply asked
+Dev what to correct, where the November 6 handoff said it had not asked. Where one of Dev's short
+answers was a button reply, the chapter gives the question it answered in a context note.
 
 **September 30 integrity checkpoint:** The [retrieval audit](sources/codex-2026-09-23-to-30-audit.md)
 preserves source times and order for 26 complete written exchanges plus the open audit
@@ -609,3 +622,63 @@ Provider forwarding lands at 3648806 (925/70), Consumer conversion at a8b5447 (9
 ### [Chapter 112 - The Handoff and the Missing Journal](draco-dev-chapter-112.md)
 
 Dev requests a full handoff, notices the unchanged journal, and challenges the deferral. Codex acknowledges the omission; Dev accepts original-message recovery in this session. The original messages are recoverable across both logged compactions.
+
+### [Chapter 113 - The Named-Construction Head, the Dyn Result and the Head-Keyed Lookup](draco-dev-chapter-113.md)
+
+Claude Code receives the Codex handoff. Three generator repairs land: the named-construction head at e241378 (936), the dyn result at 9779e39 (937), the head-keyed lookup at 112f277 (938). Dev corrects a command block that omitted the change of directory.
+
+### [Chapter 114 - Output's Location Branch and the Report Factories](draco-dev-chapter-114.md)
+
+Terrestrial Output's Location branch lands at c5b8089 (942); LocationReport's json factory at e138f04 (947); the three sibling reports at 8540341 (956).
+
+### [Chapter 115 - The Intent Factories, the Coordinate Surfaces and the Example Map as a Gate](draco-dev-chapter-115.md)
+
+The Intent factories land at 3a3cbfc (967), the coordinate surfaces at 23333f3 (974), and the example map closes as an asserted gate at 7be1497 (982).
+
+### [Chapter 116 - The Example Body Sweep and the Sentient Surfaces](draco-dev-chapter-116.md)
+
+The example body sweep and identity comparison land at ded1b5b (983). The sentient surfaces' direct run finds an ambiguity the probe missed; Dev accepts the correction and 5f0e023 lands (1005).
+
+### [Chapter 117 - The Anchor-Parameter Rule and the Compact Fixpoint](draco-dev-chapter-117.md)
+
+The anchor-parameter rule lands at ed57aa9 (1006) and the corpus-wide compact fixpoint assertion at a31e49b (1007).
+
+### [Chapter 118 - Four Gates Over the Mods Corpus](draco-dev-chapter-118.md)
+
+Four increments in a day: the mods surface gate at 8746ecd (1068), the widened parse scope at a4ff2c4 (1118), the Output hold-out removed at 6a15754 (1119), the surface-loss count asserted at b321df6 (1119).
+
+### [Chapter 119 - The Scenario Assertion and the PON Measurement](draco-dev-chapter-119.md)
+
+The scenario round-trip is asserted at f4b57ae (1119). The PON pair is measured and an assertion recommended; Dev's instruction suspending PON arrives and is interrupted at a compaction boundary.
+
+### [Chapter 120 - PON Suspended, Two More Assertions, and the Tracker Concern](draco-dev-chapter-120.md)
+
+Dev suspends PON. The mods missing-surface gate lands at 1cfc38f and the asserted hold-back at 48f466d (1118). Dev raises the missing issue-tracker visibility, answers "Correct it first", then directs a handoff (b79cfc1, 3dfed24).
+
+### [Chapter 121 - The Codex Session: the Tracker Reconciliation and the Model Error](draco-dev-chapter-121.md)
+
+Codex asks what to correct, reconciles the tracker on Dev's acceptance and approval (2b9cfd5), and stops answering on a model error. A second Codex conversation diagnoses it.
+
+### [Chapter 122 - The Aborted Codex Handoff](draco-dev-chapter-122.md)
+
+Dev reports the error and the untrusted result. Claude Code rewrites the resume prompt for a read-only verification (6682c41, 40d02df).
+
+### [Chapter 123 - Verifying the Reconciliation](draco-dev-chapter-123.md)
+
+A new session verifies the reconciliation; Dev accepts; two tracker comments are corrected and the §1 rule is re-decided (7d4ae0a).
+
+### [Chapter 124 - Rooted Rule Traits and the One Stub Predicate](draco-dev-chapter-124.md)
+
+Rule traits derive DracoType at d026cd3 (1118) and #50 closes; `TypeDefinition.isStub` lands at 929c850 (1119) and #47 closes.
+
+### [Chapter 125 - FactDisjointness and the Rete Wrap Types](draco-dev-chapter-125.md)
+
+FactDisjointness lands at 995fade (1127) after a first direct run with eleven failures; the rete wrap types are named at 2804904 (1127).
+
+### [Chapter 126 - The Host-Text Bound, the Missing Pushes and the Rule Section](draco-dev-chapter-126.md)
+
+The host-text bound lands at e2ca0be (1128). Dev asks when the commits are pushed; eleven go up. The rule section becomes definition-backed at 1c96d63 (1143).
+
+### [Chapter 127 - The Actor, Record and Codec Sections, and the Handoff](draco-dev-chapter-127.md)
+
+The actor section lands at 8b127aa (1158), the record and codec sections at c70d6b8 (1183): all six drake sections are definition-backed. Dev calls the handoff (043f578).

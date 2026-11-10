@@ -1,12 +1,45 @@
 # Development Handoff
 
-Prepared November 10, 2026 by Claude Code at Dev's direction, for a NEW SESSION in either agent: Dev called the handoff when
-this session's context reached 75%, with the journal several sessions behind. It supersedes the record-and-codec, actor-section, rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
+Refreshed November 10, 2026 by Claude Code in the session that RECEIVED the handoff below and did its first task: the
+journal is current through chapter 127. The checkpoint that follows this paragraph's section was prepared earlier the same day
+by the previous Claude Code session, at Dev's direction, for a NEW SESSION in either agent: Dev called the handoff when
+that session's context reached 75%, with the journal several sessions behind. It supersedes the record-and-codec, actor-section, rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
 and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — handoff to a new session; the journal is the first task (Claude Code, November 10, 2026)
+## Current checkpoint — the journal is current through chapter 127 (Claude Code, November 10, 2026)
+
+Observed on receipt: HEAD 043f578 on main, the handoff's documentation commit on c70d6b8, tree clean, local main level with the
+local origin/main ref. Dev's gate on c70d6b8 stays the baseline: **1183 tests / 82 suites**. This session changed
+documentation only; its tree holds the journal update, uncommitted until Dev runs the blocks handed over (record
+`git-record-2026-11-10-1343`).
+
+- **Scope, confirmed by Dev before writing ("Accept").** Chapters 113–127, strictly chronological, no session skipped:
+  113–119 from Claude record `f12792d4` (October 26 – November 3), 120 and 122 from `9e3f32b7` (November 3–6), 121 from the
+  Codex rollouts of November 4–5 including the short troubleshooting conversation, 123–127 from `1cf64c57` (November 7–10).
+- **Evidence.** Four bounded extracts and audits under `draco-dev-journal/sources/`: 231 records, 116 Dev messages, 113 final
+  replies, 113 completed exchanges, one interrupted prompt. All 212 Claude records were re-read from their physical source
+  lines and matched on timestamp, uuid and text hash; every assertive prompt and final reply was checked present in its
+  chapter. 23 distinct compaction boundaries; no summary supplies a quotation. Dev's 60 pasted results are delegated-action
+  notes generated from the pastes; the full pastes are in the extracts.
+- **A correction the originals forced.** The Codex session's FIRST reply (2026-11-04T20:46:28Z) asked "What should I correct
+  in the proposed issue-tracker reconciliation audit". Dev answered with the concern about tracker integration, replied
+  "Accept" to the restated recommendation and "I approve your recommendation" to the batch. The November 6 checkpoint below,
+  DRACO.md's November 6 paragraph and the resume prompt said Codex did not ask; that was Claude Code's inference without the
+  rollouts. DRACO.md carries a dated correction; the November 6 checkpoint below stays as written, as history. Dev's distrust
+  of the result is Dev's own statement and is unchanged, as is the November 8 verification.
+- **Two facts for future records.** Dev's pasted gate output never carries a `Suites:` line (the grep filters for `Tests:`),
+  so a suite count attributed to Dev's gate is the direct run's less discovery. Several of Dev's short answers ("Accepted,
+  build it", "Correct it first", "Yes, both") are button replies to a next-step question that is a tool call, not reply text.
+- **Markers.** `draco-docs-synced-through` is chapter 127 in DRACO.md and README.md: each chapter's Status and closing
+  recommendation was read against both files. The chapters were generated from the records, not read line by line in full.
+- **Not covered:** this session's own exchanges (the scope confirmation and this update), which belong to a later chapter.
+- **NEXT, when Dev says development resumes:** ONE recommendation with its owning issue named — the assembly of the drake
+  surface as a definition (preserved, NOT accepted, GitHub #11), or another of the 22 open issues. Nothing on the tracker
+  before Dev decides.
+
+## Previous checkpoint — handoff to a new session; the journal was the first task (Claude Code, November 10, 2026; done, see above)
 
 Dev, November 10: "It is time for a handoff to a new session. The session context just reached 75% and I am not confident that
 the draco-dev-journal can update and create chapters in the current session. It doesn't seem the draco-dev-journal has been
@@ -1194,9 +1227,11 @@ survived); chapter 105 renders the previous Claude handoff close from
 `sources/claude-2026-10-22-handoff-close.jsonl`. Chapter 112 preserves Dev's correction of the
 premature "handoff ready" claim of October 26.
 
-**Uncovered as of November 10: the thirty-nine commits e241378 … c70d6b8 (October 26 – November 10), this handoff's commit
-after them, and the four sessions that produced them.** Chapter 113 onward is unwritten; the last commit that touched
-`draco-dev-journal/` is 7495539. Sources, on this machine only: the session records under
+**Covered on November 10: chapters 113–127**, the thirty-nine commits e241378 … c70d6b8 and the handoff commit 043f578, from
+the four sources below. Extracts and audits: `sources/claude-2026-10-26-to-11-03`, `sources/claude-2026-11-03-to-06`,
+`sources/claude-2026-11-07-to-10`, `sources/codex-2026-11-04-to-05` (each a `.jsonl` and an `-audit.md`). Uncovered: the
+session that wrote them (November 10, from Dev's "Accept" of the scope onward). The paragraphs below are the previous
+session's description of the sources, kept as written. Sources, on this machine only: the session records under
 `/Users/edwardburke/.claude/projects/-Users-edwardburke-IdeaProjects-nexonix/`, identified by FIRST timestamp (UTC), not mtime:
 
 | record | first .. last message (UTC) | size | what it holds |

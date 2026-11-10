@@ -1273,12 +1273,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 104 on 2026-10-22.
+Current documentation was reconciled through journal chapter 127 on 2026-11-10.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 104 on
-  2026-10-22.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 127 on
+  2026-11-10.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -1288,8 +1288,10 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-10 as a HANDOFF TO A NEW SESSION at Dev's direction (record `git-record-2026-11-10-1237`): the journal,
-  39 commits behind at chapter 112, is the receiving session's first task; the assembly recommendation is preserved unaccepted.
+  Last prepared 2026-11-10 after the JOURNAL UPDATE (record `git-record-2026-11-10-1343`): chapters 113–127 written from the four
+  original session records, coverage current through 043f578; the assembly recommendation is still preserved unaccepted. Before it,
+  the same day, as a HANDOFF TO A NEW SESSION at Dev's direction (record `git-record-2026-11-10-1237`): the journal,
+  39 commits behind at chapter 112, was the receiving session's first task.
   Before it, the same day, after the definition-backed record and codec sections (record `git-record-2026-11-10-1221`, committed by Dev as c70d6b8 after his gate of 1183 green, pushed): all six
   sections of the drake surface are rendered by definitions, #11 open. Before it, the same day, after the definition-backed actor
   section (record `git-record-2026-11-10-1120`, committed by Dev as 8b127aa after his gate of 1158 green, pushed):
@@ -1503,7 +1505,7 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 112 -->
+<!-- draco-docs-synced-through: chapter 127 -->
 
 **Role presence increment (2026-10-22, Codex; Dev verified 857 / 61).** Dev accepted Presence-typed
 rule/actor slots and their field-level encoding. Absent omits the key; Present writes its
@@ -2156,7 +2158,7 @@ not ask: it ran the audit and, on Dev's "I approve your recommendation", acted o
 #51's label removed — and wrote the §1 rule above and the paragraph above this one; Dev executed its commit as 2b9cfd5 on
 November 5 and then said the task result is not trusted. The next Claude Code session verifies the reconciliation read-only
 and reports before anything further is posted, reopened, relabeled or edited; the §1 rule stands as committed until Dev
-confirms or corrects it. Two facts already known: the count correction to 32 open issues is right; §3 above still says
+confirms or corrects it. [CORRECTED 2026-11-10 from the original Codex record, journal chapter 121: the Codex session's first reply DID ask what to correct; Dev answered with the concern about tracker integration, replied "Accept" to the restated recommendation and "I approve your recommendation" to the batch. "Did not ask" above was Claude Code's inference of November 6, made without the Codex rollouts; Dev's distrust of the result is Dev's own statement and stands.] Two facts already known: the count correction to 32 open issues is right; §3 above still says
 "Parse is a measurement tool, not yet an authoring path (GitHub #61)" while #61 is closed, and one side is wrong.
 
 **The reconciliation verified; two comments corrected, the §1 rule re-decided (2026-11-08, Claude Code; Dev accepted).**
@@ -2342,3 +2344,21 @@ for the guards, and whether generation should consult compiled classes — each 
 session: every handed-over commit block ends with a push block, and a referrer of a new definition is generated after that
 definition is compiled (§6). EgoActor, scripts/inspect-type.scala and the Scala guide's authoring section stand as observed;
 activation and .dcon are deferred; PON is suspended.
+
+**The journal is current through chapter 127 (2026-11-10, Claude Code; Dev confirmed the scope with "Accept").** The receiving
+session's first task. Chapters 113–127 cover the 39 commits e241378 … c70d6b8 and the handoff commit 043f578, strictly in order,
+from ORIGINAL message records: three Claude Code session records (chapters 113–120 and 122–127) and the Codex rollouts of
+November 4–5 (chapter 121), with four bounded extracts and audits under `draco-dev-journal/sources/`. 231 records, 113 completed
+exchanges; all 212 Claude records re-read from their source lines and matched on timestamp, uuid and text hash; 23 distinct compaction
+boundaries, originals on both sides of each, no summary quoted. ONE CORRECTION the originals forced: the Codex session's first
+reply asked Dev what to correct in the audit, where the November 6 paragraph above, the handoff and the resume prompt said it had
+not asked (an inference written without the Codex rollouts); the sequence is in chapter 121 and its audit, and whether it met the
+handoff's instruction is Dev's judgment. Two facts the pastes establish for future records: Dev's pasted gate output carries the
+`Tests:` line and the headlines but never a `Suites:` line, so a suite count attributed to Dev's gate is the direct run's count
+less its discovery wrapper; and several of Dev's short answers are button replies to a next-step question that is a tool call,
+not reply text, which the chapters give in context notes. The `draco-docs-synced-through` markers advance to chapter 127: every
+chapter's Status and closing recommendation was read against this file and README, and the dated paragraphs above already carry
+each increment. Documentation only: no engine, definition, Scala or test change, no sbt, no tracker action; the gate 1183 / 82 at
+c70d6b8 stands. Preserved and NOT accepted, as before: the assembly of the drake surface as a definition. EgoActor,
+scripts/inspect-type.scala and the Scala guide's authoring section stand as observed; activation and .dcon are deferred; PON is
+suspended.

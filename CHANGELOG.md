@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- The development journal is current: chapters 113–127 cover October 26 – November 10 (the 39 commits e241378 … c70d6b8 and
+  the handoff 043f578), written from the original Claude Code and Codex session records with four extracts and audits under
+  `draco-dev-journal/sources/`. One historical statement is corrected from the originals: the Codex session of November 4
+  did ask what to correct before reconciling the tracker. Documentation only.
 - Hand off to a new session at c70d6b8 (gate 1183 / 82, pushed): the journal, which ends at chapter 112 and is 39 commits and
   four sessions behind, is the receiving session's first task, with its sources named in DEVELOPMENT_HANDOFF.md; the
   recommendation to make the drake surface's assembly a definition is preserved unaccepted. Documentation only.

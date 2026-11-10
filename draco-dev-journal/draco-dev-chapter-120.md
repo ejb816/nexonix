@@ -1,0 +1,261 @@
+# Chapter 120 - PON Suspended, Two More Assertions, and the Tracker Concern
+
+**Session date:** November 3–4, 2026
+**Topic:** Dev suspends all PON work; the mods missing-surface gate and the parse-scope hold-back become assertions; Dev raises the absence of issue-tracker visibility, answers the audit recommendation with "Correct it first", and then directs a handoff in place of the audit.
+
+**Provenance:** Original Claude Code session `9e3f32b7-12cf-465c-9205-6fe4da31855e`, extract records 1–22; see the [bounded extract](sources/claude-2026-11-03-to-06.jsonl) and [retrieval audit](sources/claude-2026-11-03-to-06-audit.md). Assertive prompts and completed replies are verbatim apart from surrounding whitespace, the paste wrapper tags, repository-local link destinations and, where a reply carries its own second-level headings, one level of heading depth. Responsive command results are summarized as delegated-action notes; originals remain in the extract. Tools, reasoning, intermediate progress and compaction summaries are excluded. Session dates use America/New_York; timestamps are UTC. Historical command blocks are dialogue, not instructions to execute now. The closing Status is a sourced maintenance summary, not dialogue.
+
+---
+
+**[Dev]** *2026-11-03T20:54:49.131Z; source line 14; extract record 1*
+
+The PON related work will eventually be contained in the draco.primes.Primes domain. Right now it's in domains.pon.Pon and development needs to be suspended on all PON activity until it is explicitly resumed by me, when I am ready to integrate it into the draco native Primes domain.
+
+---
+
+**[Claude]** *2026-11-03T20:58:36.548Z; source line 160; extract record 2*
+
+**PON suspended, recorded.** The recommendation to assert the PON counts is withdrawn. Your instruction is recorded as a decision, not a proposal, in four places:
+
+- **DRACO.md.** The "read the report-only numbers" rule says the PON pair stays a measurement by your decision of 2026-11-03, its eventual home `draco.primes.Primes`, nothing under the PON files to be asserted, re-baselined or touched. The assertions paragraph excludes the two PON rows from the shrink-the-table goal. A dated tail paragraph carries the measurement so it is never repeated: 19 parse failures and 23 wrong values over a frozen June document, 2 missing and 5 differing canonicals, both constant since the table's origin.
+- **DEVELOPMENT_HANDOFF.md.** The next-design-point section opens with the suspension, the operating boundaries gain a PON bullet, and the two evidence rows are marked suspended with their breakdown.
+- **DEVELOPMENT_RESUME_PROMPT.md.** Your standing rules gain the suspension sentence, and a dated no-commit entry records the withdrawn recommendation.
+- **Memory.** A new note holds your words verbatim and the how-to-apply rule.
+
+All three project files are modified and uncommitted, riding with the next record together with the f4b57ae fold. No PON file was touched.
+
+**The next related point, measured.** With PON out of scope, the table holds one other report-only row with a settled value: DrakeGenTest's "mods definitions pending `.drake` authoring", file-only in the per-suite log, zero since Yaml took its surface on November 2. It has been report-only since 1295a82 on 2026-07-17 and is the trailing `grep -c` in your gate block, the `1` at the end of each paste.
+
+- **The two walks differ in shape.** The main walk creates one test per definition and fails it with "missing X.drake" when the surface is absent. The mods walk creates a test only for definitions that already have a surface and reports the rest in a log line that always succeeds.
+- **No other gate sees a missing mods surface.** DrakeParseTest's mods walk collects JSON for the definition gate and drake files for the surface gate, so a JSON with no drake simply has no surface test. The surface-loss assertion compares JSON with the parse of its emission and needs no file.
+- **Today the count is zero.** 73 mods definitions, 73 surfaces.
+
+**Recommendation.** Give the mods walk the main walk's form exactly: a per-type test for every mods definition, failing with the missing surface's path when there is none, and retire the report-only test with its file-only headline. The row leaves the table as the sixth measurement to become an assertion, and the trailing grep leaves the gate block, since a missing surface now fails the suite outright. Test count moves by one to 1118 / 77. No engine, definition or Scala change. A negative probe on the scratch tree, one mods surface removed, confirms the named failure before the gate.
+
+Considered and not recommended: asserting inside the pending test and keeping the headline. That keeps two mechanisms for one rule where the main walk has one, and keeps a file-only line nobody is obliged to read, which is the kind of figure the table exists to retire.
+
+---
+
+*(Context, not dialogue — before this answer the app's next-step box asked “Give the mods walk the main walk's gate, a missing surface failing its type, and retire the file-only report?” with the buttons “Accepted, build it”, “Correct it first”. The question is a tool call at source line 152, outside the reply text, and is not an extract record.)*
+
+**[Dev]** *2026-11-03T21:57:51.239Z; source line 164; extract record 3*
+
+Accepted, build it
+
+---
+
+**[Claude]** *2026-11-03T22:03:35.373Z; source line 320; extract record 4*
+
+**Built as accepted.** The mods walk of DrakeGenTest now has the main walk's form: one test per definition under `src/mods/resources`, and a definition with no `.drake` fails its own test with the missing path. The guard and the report-only "still lacking a .drake" test are gone, so no file-only line remains and the trailing grep leaves your gate block. The section comment dates the three states of the walk.
+
+**Verified.**
+
+- **Focused suite.** DrakeGenTest 183 tests, 110 main and 73 mods, green on its first run.
+- **Negative probe.** On a scratch copy of the project with Yaml's surface removed, exactly one test fails, Yaml's, with the message naming `draco/format/yaml/Yaml.drake`. The real tree was untouched.
+- **Direct run.** Every discovered suite on freshly compiled classes with current main, mods and test resources: 1118 tests / 78 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run. DrakeGenTest 184 to 183 is the only per-suite change. Every headline unchanged, the PON pair included, and no pending line anywhere in the run's log.
+
+**Recorded.** The record is `draco-git-record/git-record-2026-11-03-1700`. The CHANGELOG has its entry. DRACO.md loses the DrakeGenTest table row, its table-lead sentence no longer names a file-only exception, the assertions paragraph counts six, the lead carries the expected count, and a dated tail paragraph follows the PON one. The handoff, resume prompt and memory are current. The same commit will carry the f4b57ae fold and the PON suspension record written earlier today. Nothing under the PON files changed.
+
+**The gate.** Expected 1118 tests / 77 suites with every headline matching; there is no trailing grep any more. Please paste the output:
+
+```bash
+cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+```
+
+On green I will reword the record and documents to verified and hand you the commit block.
+
+---
+
+*(Delegated action — Dev ran the full sbt gate: 1118 tests succeeded, 0 failed, 0 canceled, 0 ignored, 0 pending. Reported headlines: DomainAspect over the corpus: 110 complete sections reproduced, 1 parameterized included, 0 skipped; GenDrake runs: 108 of 108 definitions emitted, 0 missing, 0 not in the corpus; EXAMPLE-DOMAIN GEN MAP: 48 match, 0 differ, 0 error, 0 missing (of 48) — asserted zero differ; details in the log; PON CORPUS: 80 numbers, 550 expressions, 42 discrepancies — details in the log; CANONICAL CHECK: 80 numbers, 7 differ from generated canonical — details in the log; drake surface losses: 0 fields across 183 types; Drake.parse scope: 110 draco + 73 mods types in, 0 codec-aspect + 0 drake-less held back; DracoAspect over the corpus: 110 complete sections reproduced, 0 frozen authored-ahead baselines, 0 skipped; scenario in today's drake: 23 files, 0 rejected, 0 parsed-but-drifted, 23 clean; the forest runs: 1 of 2 ash alarms crossed to birch; rete subtype visibility: CO-DECLARATION DROPS THE FACT — each level works alone, together they see nothing. Source: 2026-11-04T14:05:47.060Z; source line 327; extract record 5. The full pasted text is retained in the extract.)*
+
+---
+
+**[Claude]** *2026-11-04T14:07:22.665Z; source line 392; extract record 6*
+
+**Gate verified.** Your run passed 1118 tests / 77 suites with zero failures and every headline matching, and no file-only line remains to read. The record, DRACO.md, the handoff, the resume prompt and memory now say verified, with your commit pending. Your log's timestamp dates the run to November 3 at 17:28, and the documents carry that date.
+
+**The commit.** Six files, one commit: the rewritten suite, the record, the CHANGELOG entry, DRACO.md, the handoff and the resume prompt. The record is already staged by the IDE, so the add is a no-op there and harmless. The commit is path-scoped and carries the fold of f4b57ae and the PON suspension record with it.
+
+```bash
+cd /Users/edwardburke/IdeaProjects/nexonix && git add draco-git-record/git-record-2026-11-03-1700 && git commit -F draco-git-record/git-record-2026-11-03-1700 --trailer "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>" -- src/test/scala/draco/DrakeGenTest.scala draco-git-record/git-record-2026-11-03-1700 CHANGELOG.md DRACO.md DEVELOPMENT_HANDOFF.md DEVELOPMENT_RESUME_PROMPT.md && git push && git log -1 --oneline && git status --short
+```
+
+Please paste the output. On the hash I fold it into DRACO.md, the handoff and the resume prompt, and then bring the next related point. With PON suspended, the table holds the parse-scope count, the suspended PON pair and the categorical rete finding, so no measurement with a tail remains in scope; the next point will come from the handoff's open inventory rather than the table.
+
+---
+
+*(Delegated action — Dev committed 1cfc38f, “Give the mods drake walk the main walk's gate and retire its file-only pending count” (6 files changed, 222 insertions(+), 53 deletions(-)). Pushed to origin/main: f4b57ae..1cfc38f. Source: 2026-11-04T17:42:59.758Z; source line 396; extract record 7. The full pasted text is retained in the extract.)*
+
+---
+
+**[Claude]** *2026-11-04T17:46:24.097Z; source line 565; extract record 8*
+
+**Committed.** 1cfc38f is on origin/main with six files, and the hash is now folded into DRACO.md, the handoff and the resume prompt. Those three fold edits are the only change in the tree. They ride with the next record, as every fold has.
+
+**A correction to my own last message.** I said no measurement with a tail remained in scope. That was wrong. The parse-scope row reads "110 draco + 73 mods in, 0 held back", and the "0 held back" is a tail with a settled value, printed by a report-only test.
+
+**What I measured.** The test "types held back from Drake.parse (report only)" in DrakeParseTest counts two kinds of definition it excludes from both round-trip gates: one carrying a codec discriminator, and one with no drake surface. Three facts about it:
+
+- **Both conditions are already failures elsewhere.** A missing surface fails DrakeGenTest's walk by path, main since the suite began and mods since 1cfc38f. A discriminator makes the emitter stop with an error, so DrakeGenTest fails that type too. The parser suite silently drops what the emitter suite loudly refuses.
+- **The count has been zero since the table's origin.** No definition in either corpus carries a discriminator. The one hit for the word is CodecAspect.json, where it is an element name, not a codec setting. Surfaces are complete at 110 of 110 and 73 of 73.
+- **The mods half is never counted.** The held-back lists are computed over the main paths only. The mods walk applies the same two filters, but a mods definition they drop would reach no headline at all.
+
+**Recommendation.** The hold-back test asserts: it computes both lists over main and mods, keeps its console line, and fails naming each held-back path when either list is nonempty. The row leaves the DRACO.md table as the seventh measurement to become an assertion, and the "parse scope" line stays in the gate grep as the others do. The two scope filters stay as they are, since they define the scope rather than exempt a known case. No test is added or removed, so the count stays at 1118. Rejected: removing the filters as well, which is a point of its own, and leaving the row as a count that moves with the corpus, since the in-scope counts are already bounded below by ResolutionRecordTest and the tail is the only part of the row that measures anything. After it the table holds only the suspended PON pair and the categorical rete finding.
+
+Also in the open inventory, not recommended: EgoActor stays your decision, and the journal reaches chapter 112 while twenty commits since a8b5447 are unjournaled.
+
+---
+
+*(Context, not dialogue — before this answer the app's next-step box asked “Assert the held-back count at zero over both corpora and retire the parse-scope row?” with the buttons “Accepted, build it”, “Correct it first”. The question is a tool call at source line 552, outside the reply text, and is not an extract record.)*
+
+**[Dev]** *2026-11-04T19:12:04.907Z; source line 569; extract record 9*
+
+Accepted, build it
+
+---
+
+**[Claude]** *2026-11-04T19:18:37.231Z; source line 798; extract record 10*
+
+**Built as accepted.** The hold-back test in DrakeParseTest now computes both lists over the main and the mods corpus and fails naming each held-back definition with its reason. It is renamed "types held back from Drake.parse: none, over both corpora", and the class doc describes the two filters and the assertion instead of a worklist. The console line is unchanged in form, so the gate grep still shows it. The filters stay. No test was added or removed, and nothing in the engine, definitions or generated Scala moved.
+
+**Verification, in order.**
+
+- **Focused suite.** DrakeParseTest 381, green on its first run.
+- **Negative probe.** On a scratch project tree with one mods surface removed and a discriminator added to one main definition, exactly one test fails and names both: the main definition for its discriminator, the mods definition for its missing surface. The real tree was untouched.
+- **Direct run.** Every discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1118 tests / 78 suites including discovery, zero failed or aborted, green on its first run, every headline unchanged, every suite's count identical to the previous run.
+
+**Documents.** The record is written at [git-record-2026-11-04-1414](../draco-git-record/git-record-2026-11-04-1414) and carries the correction of my earlier claim that no tail remained. The CHANGELOG entry, DRACO.md (the rule paragraph, the lead, the table with its DrakeParseTest row gone, the assertions paragraph counting seven, and a dated tail paragraph), the handoff and the resume prompt are updated, and the fold of 1cfc38f rides with this record. The link checker is clean. The table now holds the suspended PON pair and the categorical rete finding alone.
+
+**Your gate.** The block is unchanged from last time:
+
+```bash
+cd /Users/edwardburke/IdeaProjects/nexonix && sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+```
+
+Please paste the whole output. Expected: every headline as before, including the parse-scope line reading 110 draco + 73 mods with 0 held back, and the final line reporting 1118 succeeded with zero failed, canceled, ignored or pending. On green I reword the record and documents to verified and hand you the commit block for six files.
+
+---
+
+**[Dev]** *2026-11-04T19:28:43.583Z; source line 802; extract record 11*
+
+Before I paste the gate output into this prompt, I want to mention that there has been an absence of visibility of interactions with the project issue tracking, and it concerns me that what what we are working on might not be associated with an important issue, or, if it is, there may be more important issues that require finding more important tasks for us to work on.
+
+Here is the pasted gat output:
+
+*(Delegated action, pasted with the prompt above — Dev ran the full sbt gate: 1118 tests succeeded, 0 failed, 0 canceled, 0 ignored, 0 pending. Reported headlines: DomainAspect over the corpus: 110 complete sections reproduced, 1 parameterized included, 0 skipped; GenDrake runs: 108 of 108 definitions emitted, 0 missing, 0 not in the corpus; EXAMPLE-DOMAIN GEN MAP: 48 match, 0 differ, 0 error, 0 missing (of 48) — asserted zero differ; details in the log; PON CORPUS: 80 numbers, 550 expressions, 42 discrepancies — details in the log; CANONICAL CHECK: 80 numbers, 7 differ from generated canonical — details in the log; drake surface losses: 0 fields across 183 types; Drake.parse scope: 110 draco + 73 mods types in, 0 codec-aspect + 0 drake-less held back; DracoAspect over the corpus: 110 complete sections reproduced, 0 frozen authored-ahead baselines, 0 skipped; scenario in today's drake: 23 files, 0 rejected, 0 parsed-but-drifted, 23 clean; the forest runs: 1 of 2 ash alarms crossed to birch; rete subtype visibility: CO-DECLARATION DROPS THE FACT — each level works alone, together they see nothing. Source: 2026-11-04T19:28:43.583Z; source line 802; extract record 11. The full pasted text is retained in the extract.)*
+
+---
+
+**[Claude]** *2026-11-04T19:31:31.159Z; source line 879; extract record 12*
+
+**Gate verified.** Your run passed 1118 tests / 77 suites with zero failures and every headline matching, the parse-scope line now reading zero held back as an assertion. The record, DRACO.md, the handoff, the resume prompt and memory say verified, with your commit pending.
+
+**Your concern is justified, and I checked it against the tracker itself.** Three findings:
+
+- **Nothing human has touched the issues since August 28.** The last comment was on #51 on August 26 and the last edit on #63 two days later. Every event since is an automatic commit reference, the latest on October 22. Two months of work, from the Dreams Editor through the Dracon migration to this assertion thread, left no trace there.
+- **This thread is the work #62 asks for, and no record cited it.** The issue "Report-only tests should assert their expected numbers, not just print them" lists six report-only tests. Four are now assertions, at zero rather than at the nonzero baselines it proposed. The two PON reports remain under your suspension. I have added that citation to this commit's record and CHANGELOG entry so the association is visible before the commit lands. The issue itself is untouched.
+- **The one priority-next label sits on #51, which the tree closed on October 22.** DRACO.md records its open questions as closed by two-stage loading, the unit type, the host vocabulary, the sweep and the formal split. The tracker still shows it open and highest priority, so it cannot answer which open issue matters most. #55 is in the same state: no legacy empty-collection value remains in the corpus, and the issue is open.
+
+The commit first, since the gated work stands on its own. Six files, path-scoped, carrying the fold of 1cfc38f and the #62 citation:
+
+```bash
+cd /Users/edwardburke/IdeaProjects/nexonix && git add draco-git-record/git-record-2026-11-04-1414 && git commit -F draco-git-record/git-record-2026-11-04-1414 --trailer "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>" -- src/test/scala/draco/DrakeParseTest.scala draco-git-record/git-record-2026-11-04-1414 CHANGELOG.md DRACO.md DEVELOPMENT_HANDOFF.md DEVELOPMENT_RESUME_PROMPT.md && git push && git log -1 --oneline && git status --short
+```
+
+Please paste the output. On the hash I fold it into the three documents.
+
+**Recommendation for the concern.** A read-only reconciliation of all 34 open issues against the tree, delivered here as one batched, prioritized list: for each issue, whether the tree has done it, done part of it, or not touched it, with the commit or DRACO.md paragraph as evidence, and which open issues the recent increments should have cited. Nothing filed, closed or commented until you say so. Only after that reading can the priority question be answered from the tracker rather than from my memory of it. Rejected: picking the next task from the tracker as it stands, since its one priority label points at closed work.
+
+---
+
+*(Delegated action — Dev pasted the command line as run, without its output (git add, git commit, git push, git log, git status). Source: 2026-11-04T19:36:52.040Z; source line 883; extract record 13. The full pasted text is retained in the extract.)*
+
+---
+
+**[Claude]** *2026-11-04T19:37:42.656Z; source line 927; extract record 14*
+
+**Committed.** Your commit landed as 48f466d and is on origin/main, with a clean tree. The hash is now folded into DRACO.md, the handoff, the resume prompt and memory. Those three fold edits are the only change in the tree and ride with the next record.
+
+**Where the thread stands.** The DRACO.md table holds the two PON rows, suspended by your decision, and the categorical rete finding. Seven measurements became assertions between October 31 and today, and four of them are the ones GitHub #62 lists. Nothing from the measurement-to-assertion thread remains in scope.
+
+**The recommendation from my last message stands.** A read-only reconciliation of the 34 open issues against the tree, reported here as one batched, prioritized list with evidence per issue, nothing filed, closed or commented until you say so. I have not started it, since it needs your acceptance. Your last message carried the commit block without the output, so if you meant to answer the audit question with it, please say so in a word.
+
+---
+
+*(Context, not dialogue — before this answer the app's next-step box asked “Audit the 34 open issues against the tree, read-only, and report here?” with the buttons “Accepted, audit them”, “Correct it first”. The question is a tool call at source line 921, outside the reply text, and is not an extract record.)*
+
+**[Dev]** *2026-11-04T19:38:51.907Z; source line 931; extract record 15*
+
+Correct it first
+
+---
+
+**[Claude]** *2026-11-04T19:39:04.430Z; source line 936; extract record 16*
+
+Understood. I have not started the audit.
+
+What should change in it? The parts you could correct are its scope (all 34 open issues, or a subset such as the labeled ones), its delivery (a batched list here, or written into a project document), and what I may do with the tracker (read only, or also comment on issues the tree has closed, which needs no approval under the operating rules but which I would not do unasked after a two-month silence). Tell me which, and I will restate the recommendation once before doing anything.
+
+---
+
+**[Dev]** *2026-11-04T19:43:30.949Z; source line 940; extract record 17*
+
+Instead of executing the audit, do a comprehensive hand-off for starting a new task session in either Claude Code or Codex, including the description of the audit task as part of the hand-off
+
+---
+
+**[Claude]** *2026-11-04T19:47:59.109Z; source line 1058; extract record 18*
+
+**Handoff prepared.** The audit was not run. Four documents and a new record carry the checkpoint for a session in either agent.
+
+- [DEVELOPMENT_HANDOFF.md](../DEVELOPMENT_HANDOFF.md) has a new header and Start-here checkpoint: HEAD 48f466d, your 1118 / 77 gate with every headline, the twenty-one Dev-gated commits since the last journaled one, the two closed threads and the PON suspension. The old "Next design point" is replaced by "Next task — the issue-tracker reconciliation audit (proposed, NOT yet accepted)", which quotes your concern, records what the tracker shows today, states the task as I recommended it with its sources, rules and the open-issue numbers, and tells the receiving agent to ask you first what to correct, since your "Correct it first" was not elaborated. The journal section now names the uncovered range and its two session records by first timestamp, with the extraction precedent, and says journal work is not authorized by the handoff.
+- [DEVELOPMENT_RESUME_PROMPT.md](../DEVELOPMENT_RESUME_PROMPT.md) opens with the state and the proposed task in your voice, instructs the new session to ask for the correction in one sentence before restating, and lists the history newest first.
+- DRACO.md gains a dated handoff-checkpoint paragraph and a status line for the handoff in §5. CHANGELOG has one entry. The record is [git-record-2026-11-04-1446](../draco-git-record/git-record-2026-11-04-1446). The fold of 48f466d rides with it. The link checker is clean, and nothing outside documentation changed.
+
+**Not done, by design.** No journal chapter was written. Chapters 113 onward are a task of their own that the handoff describes with its sources. No issue was commented, labeled or closed.
+
+**The commit.** Documentation only, five files, path-scoped:
+
+```bash
+cd /Users/edwardburke/IdeaProjects/nexonix && git add draco-git-record/git-record-2026-11-04-1446 && git commit -F draco-git-record/git-record-2026-11-04-1446 --trailer "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>" -- draco-git-record/git-record-2026-11-04-1446 CHANGELOG.md DRACO.md DEVELOPMENT_HANDOFF.md DEVELOPMENT_RESUME_PROMPT.md && git push && git log -1 --oneline && git status --short
+```
+
+Please paste the output. On the hash I fold it into the handoff's Start-here bullet, and the new session can open from the resume prompt in either tool.
+
+---
+
+*(Delegated action — Dev committed b79cfc1, “Prepare the shared handoff for a new task session, with the issue-tracker reconciliation audit as the proposed next task” (5 files changed, 257 insertions(+), 166 deletions(-)). Pushed to origin/main: 48f466d..b79cfc1. Source: 2026-11-04T19:56:35.012Z; source line 1062; extract record 19. The full pasted text is retained in the extract.)*
+
+---
+
+**[Claude]** *2026-11-04T19:57:18.436Z; source line 1092; extract record 20*
+
+**Committed.** b79cfc1 is on origin/main. The handoff's checkpoint bullet and the resume prompt now name it as HEAD, with 48f466d as the last implementation commit, so the receiving agent reads the current state rather than one commit behind. Memory is updated the same way.
+
+**Where this leaves the project.** Every accepted increment is committed. Your last gate stands at 1118 / 77 on the 48f466d tree. The DRACO.md table holds the two suspended PON rows and the categorical rete finding alone. The journal reaches chapter 112, with the twenty-one commits since and their two session records named as sources in the handoff. The issue-tracker audit is described as the proposed next task, not accepted, and the new session is instructed to ask you first what to correct in it.
+
+**The fold** is two lines in the handoff and the resume prompt. If you want a clean tree for the new session, this commits it without a record of its own, which matches how every earlier fold travelled:
+
+```bash
+cd /Users/edwardburke/IdeaProjects/nexonix && git commit -m "Fold the handoff commit hash into the handoff and resume prompt" --trailer "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>" -- DEVELOPMENT_HANDOFF.md DEVELOPMENT_RESUME_PROMPT.md && git push && git log -1 --oneline && git status --short
+```
+
+Otherwise the next session's first record carries it, as the handoff says. Either way, the opening prompt for the new session, in Claude Code or Codex, is the text of [DEVELOPMENT_RESUME_PROMPT.md](../DEVELOPMENT_RESUME_PROMPT.md).
+
+---
+
+*(Delegated action — Dev committed 3dfed24, “Fold the handoff commit hash into the handoff and resume prompt” (2 files changed, 5 insertions(+), 4 deletions(-)). Pushed to origin/main: b79cfc1..3dfed24. Source: 2026-11-04T19:58:58.555Z; source line 1096; extract record 21. The full pasted text is retained in the extract.)*
+
+---
+
+**[Claude]** *2026-11-04T19:59:25.749Z; source line 1120; extract record 22*
+
+**Done.** The fold is on origin/main as 3dfed24 and the tree is clean. The handoff checkpoint stands at b79cfc1, and the receiving agent is told to read HEAD from git rather than from the document, so the one fold commit above it needs no further chase.
+
+**For the new session**, in Claude Code or Codex: paste the text of [DEVELOPMENT_RESUME_PROMPT.md](../DEVELOPMENT_RESUME_PROMPT.md) as the opening prompt. It will read DRACO.md, the handoff and the documentation skill, confirm the state, and then ask you in one sentence what to correct in the audit recommendation before restating it. Nothing here is pending, and no session has been started from this one.
+
+---
+
+## Status
+
+Dev's decision of November 3: PON development is suspended until Dev resumes it for integration into `draco.primes.Primes`; the per-category recommendation was withdrawn and nothing under `domains/pon` is touched. 1cfc38f (1118 tests) and 48f466d (1118 tests) are committed and pushed by Dev; the DRACO.md table then holds the suspended PON pair and the categorical rete finding alone. For 48f466d Dev pasted the command line without its output. With the second gate Dev raised that the work had no visible connection to the issue tracker. Claude recommended a read-only reconciliation of the open issues; Dev replied "Correct it first"; Claude asked what to change; Dev directed a comprehensive handoff for a new session instead, with the audit described in it. The handoff was committed and pushed as b79cfc1 and folded as 3dfed24. The audit was not run in this session.
