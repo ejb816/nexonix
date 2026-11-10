@@ -663,8 +663,8 @@ directions:
 - **The leaves** — the host's names for the primitives and the actor-library types, the last host
   residue in the corpus, each needing a draco-owned or wrap form; the rule-engine types are the
   `draco.rete` wrap types in every definition since 2026-11-09.
-- **Target-side aspect types** — the Draco and domain sections now have definition-backed
-  layout and mapping in the live Drake emitter. Their explicit type and element rendering
+- **Target-side aspect types** — the Draco and domain sections, and since 2026-11-10 the rule section, have definition-backed
+  layout and mapping in the live Drake emitter; the actor, `uses` and codec sections are still the engine's. Their explicit type and element rendering
   dependencies, the remaining aspects, and the Scala target transforms remain to be developed.
 - **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
   runs through an emitter whose Draco and domain section mappings are definition-backed; the remaining

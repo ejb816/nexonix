@@ -359,6 +359,12 @@ object Drake {
     draco.gendrake.DracoAspectOf(td, typeParameterSurface(_), drakeType(_),
       typeSurface(_), elementLines(_, _)).value
 
+  /** The rule section is definition-backed too (2026-11-10, GitHub #11): the layout is
+    * draketarget.RuleAspectText, the mapping gendrake.RuleAspectOf; element rendering
+    * stays this target's, an explicit dependency. Empty when the definition is no rule. */
+  private[draco] def ruleAspectText (td: TypeDefinition) : String =
+    draco.gendrake.RuleAspectOf(td, elementLines(_, _)).value
+
   /** Emit the .drake surface for a TypeDefinition (the drake.dlt TEMPLATE:
     * plain-type sections + domain + rule + actor + codec payload). Codec discriminator
     * syntax remains unsupported and is rejected rather than dropped. */
@@ -393,27 +399,9 @@ object Drake {
     val domain = if (domainText.isEmpty) Seq.empty else Seq(domainText)
 
     // rule aspect (drake.dlt: `rule` head, then `pattern` { variables, conditions }
-    // and `action` body). variables/conditions are LEAF blocks (var/con open no
-    // sub-block) so sectionLines emits them bracket-free; the action body sits
-    // directly under `action`, one indent level deeper.
-    val rule =
-      if (td.ruleAspect.fold(true, _ => false)) Seq.empty
-      else {
-        val ra = td.ruleAspect.fold(RuleAspect.Null, identity)
-        val variables =
-          if (ra.pattern.variables.isEmpty) Seq.empty
-          else sectionLines("variables", ra.pattern.variables, 2)
-        val conditions =
-          if (ra.pattern.conditions.isEmpty) Seq.empty
-          else sectionLines("conditions", ra.pattern.conditions, 2)
-        val pattern =
-          if (variables.isEmpty && conditions.isEmpty) Seq.empty
-          else "  pattern" +: (variables ++ conditions)
-        val action =
-          if (ra.action.body.isEmpty) Seq.empty
-          else "  action" +: ra.action.body.flatMap(elementLines(_, 2))
-        "rule" +: (pattern ++ action)
-      }
+    // and `action` body) — definition-backed, see ruleAspectText.
+    val ruleText = ruleAspectText(td)
+    val rule = if (ruleText.isEmpty) Seq.empty else Seq(ruleText)
 
     // actor aspect (drake.dlt: `actor` head, then start / message / signal action
     // blocks — construction / receive / receiveSignal). Each block's body sits one

@@ -1,0 +1,223 @@
+{
+  "typeName": {
+    "name": "RuleAspectOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "RuleAspect",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeElement",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "RuleAspectText",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "RuleAspectText",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "RuleAspectOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        },
+        {
+          "kind": "Parameter",
+          "name": "elementText",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "TypeElement",
+                  "Int"
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "definition",
+          "valueType": "TypeDefinition",
+          "value": "_definition"
+        },
+        {
+          "kind": "Local",
+          "name": "elementText",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "TypeElement",
+                  "Int"
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": "_elementText"
+        },
+        {
+          "kind": "Local",
+          "name": "present",
+          "valueType": "Boolean",
+          "value": {
+            "()": [
+              "definition.ruleAspect.fold",
+              "false",
+              {
+                "\\": [
+                  "aspect",
+                  "true"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "aspect",
+          "valueType": "RuleAspect",
+          "value": {
+            "()": [
+              "definition.ruleAspect.fold",
+              "RuleAspect.Null",
+              {
+                "\\": [
+                  "aspect",
+                  "aspect"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "rendered",
+          "valueType": "RuleAspectText",
+          "value": {
+            "()": [
+              "RuleAspectText",
+              {
+                "()": [
+                  "aspect.pattern.variables.flatMap",
+                  {
+                    "\\": [
+                      "variable",
+                      {
+                        "()": [
+                          "elementText",
+                          "variable",
+                          "3"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  "aspect.pattern.conditions.flatMap",
+                  {
+                    "\\": [
+                      "condition",
+                      {
+                        "()": [
+                          "elementText",
+                          "condition",
+                          "3"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  "aspect.action.body.flatMap",
+                  {
+                    "\\": [
+                      "element",
+                      {
+                        "()": [
+                          "elementText",
+                          "element",
+                          "2"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "present"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": "rendered.value"
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

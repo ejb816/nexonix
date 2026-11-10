@@ -1,0 +1,287 @@
+{
+  "typeName": {
+    "name": "RuleAspectText",
+    "namePackage": [
+      "draco",
+      "draketarget"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "RuleAspectText",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "variables",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "conditions",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "action",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "[]": [
+            ]
+          }
+        },
+        {
+          "kind": "Parameter",
+          "name": "present",
+          "valueType": "Boolean",
+          "value": "true"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "variableLines",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_variables.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"    variables\""
+                    ]
+                  },
+                  "_variables"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "conditionLines",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_conditions.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"    conditions\""
+                    ]
+                  },
+                  "_conditions"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "patternLines",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "&&": [
+                          "variableLines.isEmpty",
+                          "conditionLines.isEmpty"
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"  pattern\""
+                    ]
+                  },
+                  "variableLines",
+                  "conditionLines"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "actionLines",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_action.isEmpty"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "++": [
+                  {
+                    "[]": [
+                      "\"  action\""
+                    ]
+                  },
+                  "_action"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "_present"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "()": [
+                  "join",
+                  "\"\\n\"",
+                  {
+                    "++": [
+                      {
+                        "[]": [
+                          "\"rule\""
+                        ]
+                      },
+                      "patternLines",
+                      "actionLines"
+                    ]
+                  }
+                ]
+              },
+              "\"\""
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}

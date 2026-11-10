@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- The rule section of the drake surface is emitted by definitions: `draketarget.RuleAspectText` owns its layout and
+  `gendrake.RuleAspectOf` maps a definition onto it, with `Drake.emit` delegating as it does for the type and domain
+  sections (GitHub #11). Every surface is byte-identical. RuleAspectTest (5) is new and reproduces all 24 rule sections of
+  the corpus; two corpus types added (parse scope 113 + 73, GenDrake 111 of 111); the gate grep gains `RuleAspect over`.
 - The host text left in definition values is bounded: `HostTextTest` asserts that a value leaf carrying the Scala target's
   syntax (a `=>` or placeholder lambda, `try`, `new`, a host `if`, a brace block) sits only in one of eleven named seam
   definitions, at a recorded count (21 leaves of 1997), failing by file and leaf otherwise. The three such leaves outside

@@ -1,15 +1,15 @@
 Continue Draco development in /Users/edwardburke/IdeaProjects/nexonix.
 
 This is a November 10, 2026 handoff for a new session in either agent, prepared by Claude Code after the
-host-text bound (HostTextTest and three re-authored leaves), the fifth increment since the tracker reconciliation. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
+definition-backed rule section (GitHub #11), the sixth increment since the tracker reconciliation. First read AGENTS.md/CLAUDE.md (both link to DRACO.md),
 DEVELOPMENT_HANDOFF.md and the shared documentation skill at .draco/skills/update-draco-docs/SKILL.md.
 Inspect git status/log and preserve any uncommitted documentation. No private agent memory is required.
 
-STATE: HEAD is e2ca0be on main, the host-text increment (record git-record-2026-11-10-1050), gated by me on November 10
-(1128 tests, zero failures, every headline matching, green on its first run) and committed on top of 3e87527. My gate on
-e2ca0be is the current baseline, 1128 tests / 79 suites. On November 10 origin/main was still at 40d02df with local main
-ten commits ahead; no block handed to me had contained a push, and one was handed over with the fold of e2ca0be — check
-`git status -sb` to see whether I ran it. Inspect git status/log anyway. The direct runs are in the handoff.
+STATE: at the handoff HEAD was 2f75d5a on main, equal to origin/main (I pushed on November 10: 40d02df..2f75d5a, eleven
+commits; no block handed to me before that day had contained a push, and every commit block now ends with one). The tree
+held the rule-section increment uncommitted (record git-record-2026-11-10-1107), awaiting my full gate, commit and push; if
+the log shows that commit on top of 2f75d5a, it is committed. My last gate before it was 1128 tests / 79 suites on e2ca0be.
+Inspect git status/log anyway. The direct runs are in the handoff.
 
 WHAT HAPPENED (November 4–8). The Codex session of November 4 reconciled the tracker without asking me what to
 correct first — 32 status comments, eight closures (#61, #55, #42, #41, #15, #51 completed or reconciled; #57, #46
@@ -52,7 +52,12 @@ the host-text residue was measured and I accepted bounding it: three host-text l
 lambda, CLI's and SourceContent's try/finally as bracket) and HostTextTest asserting the remaining 21 leaves sit only in
 eleven named seam definitions. The gate grep gains the `host text` line. No issue owns it; none was opened.
 
-YOUR FIRST TASK: bring ONE recommendation from the 22 open issues or the seam list, its owning issue named and its remaining scope checked
+WHAT HAPPENED (November 10, second increment): I accepted the rule section of the drake surface as a definition-backed
+transform under GitHub #11 — draketarget.RuleAspectText (layout) and gendrake.RuleAspectOf (mapping), Drake.emit delegating,
+every surface byte-identical, RuleAspectTest +5, two corpus types. The actor, uses and codec sections are still the engine's.
+
+YOUR FIRST TASK: if the rule-section increment is committed and pushed, bring the next related point — the actor section by
+the same pattern — as ONE recommendation; otherwise bring ONE recommendation from the 22 open issues or the seam list, its owning issue named and its remaining scope checked
 against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
 surfaced and not acted on: GETTING_STARTED_TARGET_SCALA.md's authoring section still presents JSON as what is authored.
 

@@ -1,0 +1,46 @@
+The rule section of the drake surface is definition-backed: RuleAspectText and RuleAspectOf, Drake.emit delegating (GitHub #11)
+
+Dev accepted, in the words "Accepted, build it", the recommendation brought after the host-text bound. OWNING ISSUE:
+https://github.com/ejb816/nexonix/issues/11, the generator domain — its November 4 status says the foundation is in
+place and "native per-operation transformation/self-hosting" remains. Read against the tree that remainder is concrete
+in the drake emitter: the type section crossed to definitions on 2026-09-28 (DracoAspectText / DracoAspectOf), the
+domain section on 2026-09-22 (DomainAspectText / DomainAspectOf); the rule, actor, `uses` and codec sections were
+still hand-written in `Drake.emit`. This commit is the rule section, the smallest of them; the issue stays open.
+
+MEASURED before recommending: the rule section is about eighteen lines of `Drake.emit` and 24 definitions carry one
+(11 main, 13 mods); 15 carry an actor section, 77 a `uses` record, 4 a codec payload. Its shape is the two precedents'.
+
+BUILT. `draco.draketarget.RuleAspectText` (from Surface) owns the LAYOUT: parameters `variables`, `conditions` and
+`action` as already-rendered lines and `present` (default true); the `rule` head, `pattern` with its `variables` and
+`conditions` blocks, `action` with its body, each block elided when empty — a present rule with nothing in it is the
+one line `rule`, an absent one renders nothing and, the arguments being by-name behind `guard(_present)`, evaluates
+nothing. `draco.gendrake.RuleAspectOf` (from RuleAspectText) is the MAPPING from a TypeDefinition: presence read with
+`fold`, the pattern's variables and conditions rendered at level 3 and the action's body at level 2 through
+`elementText ((TypeElement, Int) -> [Text])`, the same explicit dependency DracoAspectOf receives, so the generated
+main types never call the mods engine. DrakeTarget and GenDrake list the two. `Drake.emit` delegates through a new
+`private[draco] ruleAspectText(td)`, beside `dracoAspectText`; its hand-written block is gone. Four JSON are
+`DrakeCLI parse` of their surfaces, four Scala `GeneratorCLI generate`, the emitter recompiled against them; with the
+new emitter `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods — every surface byte-identical.
+RuleAspectTest (5) is the 80th suite: the layout in canonical order with each elision; role as presence (present-empty
+is `rule`, absent is empty and unevaluated, a present-empty rule survives the surface); a definition's rule through
+the live emitter and back; EVERY rule section of the main and mods corpus reproduced and no other definition gaining
+one (186 definitions, 24 rule sections, console line `RuleAspect over the corpus: …` added to the gate grep); the
+running Emit rule emitting it. Two corpus types added: parse scope 113 + 73, surface losses 0 across 186 types, 113
+aspect sections, GenDrake 111 of 111. The test first named the emitter's private element renderer; the entry point
+`ruleAspectText` replaced that before its first run. REJECTED: rule and actor together (the actor section adds the
+message-type reference and three blocks; one section per increment keeps each gate readable).
+
+DIRECT RUN of every discovered suite on compiled classes with current main, mods and test resources on the loader roots
+(test classes on the Runner's runpath alone):
+1143 tests / 81 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 186 types, parse scope 113 + 73 with 0 held back, host text 21 leaves of 2057 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 111 of 111, the domain and draco aspect probes 113 complete, `RuleAspect over the corpus: 186 definitions, 24 rule sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are RuleAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only.
+
+DOCUMENTATION in this commit: DRACO.md (the gate grep gains `RuleAspect over`; §3 gains a rule-aspect paragraph beside
+the two aspect paragraphs; the §5 handoff line; a dated paragraph), README.md (the target-side aspect bullet), CHANGELOG
+(one entry), DEVELOPMENT_HANDOFF.md (a new current checkpoint, a dated section, the host-text checkpoint retitled as
+previous), DEVELOPMENT_RESUME_PROMPT.md (a new head). The record of the November 10 push, uncommitted since, rides here.
+No tracker action: #11 stays open. Next related point: the actor section by the same pattern.
+
+Not done, by design: no tracker action; no journal chapter (coverage stays at chapter 112). PON suspended; activation
+and .dcon deferred; EgoActor and scripts/inspect-type.scala observed only.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

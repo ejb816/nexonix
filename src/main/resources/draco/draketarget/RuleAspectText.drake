@@ -1,0 +1,17 @@
+type RuleAspectText from Surface
+  factory
+    parameters
+      par variables [Text] []
+      par conditions [Text] []
+      par action [Text] []
+      par present Boolean true
+    body
+      loc variableLines [Text] guard(_variables.isEmpty).ifThenElse([], ["    variables"] ++ _variables)
+      loc conditionLines [Text] guard(_conditions.isEmpty).ifThenElse([], ["    conditions"] ++ _conditions)
+      loc patternLines [Text] guard(variableLines.isEmpty && conditionLines.isEmpty).ifThenElse([], ["  pattern"] ++ variableLines ++ conditionLines)
+      loc actionLines [Text] guard(_action.isEmpty).ifThenElse([], ["  action"] ++ _action)
+      fix value Text guard(_present).ifThenElse(join("\n", ["rule"] ++ patternLines ++ actionLines), "")
+uses [
+  draco drake Text
+]
+domain draco draketarget DrakeTarget

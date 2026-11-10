@@ -1,0 +1,20 @@
+type RuleAspectOf from draco draketarget RuleAspectText
+  factory
+    parameters
+      par definition TypeDefinition
+      par elementText ((TypeElement, Int) -> [Text])
+    body
+      loc definition TypeDefinition _definition
+      loc elementText ((TypeElement, Int) -> [Text]) _elementText
+      loc present Boolean definition.ruleAspect.fold(false, \aspect -> true)
+      loc aspect RuleAspect definition.ruleAspect.fold(RuleAspect.Null, \aspect -> aspect)
+      loc rendered RuleAspectText RuleAspectText(aspect.pattern.variables.flatMap(\variable -> elementText(variable, 3)), aspect.pattern.conditions.flatMap(\condition -> elementText(condition, 3)), aspect.action.body.flatMap(\element -> elementText(element, 2)), present)
+      fix value Text rendered.value
+uses [
+  draco RuleAspect
+  draco TypeDefinition
+  draco TypeElement
+  draco drake Text
+  draco draketarget RuleAspectText
+]
+domain draco gendrake GenDrake

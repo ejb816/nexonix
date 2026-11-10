@@ -38,6 +38,7 @@
       "DomainLineOf",
       "DomainAspectOf",
       "DracoAspectOf",
+      "RuleAspectOf",
       "Emit",
       "Emitter"
     ],

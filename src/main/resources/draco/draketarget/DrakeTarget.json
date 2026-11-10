@@ -28,7 +28,8 @@
       "Surface",
       "DomainLine",
       "DomainAspectText",
-      "DracoAspectText"
+      "DracoAspectText",
+      "RuleAspectText"
     ]
   }
 }

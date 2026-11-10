@@ -345,7 +345,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -638,7 +638,15 @@ parameter/type-form/value-type-slot spelling and element-body rendering in Drake
 the generated main types do not depend on mods classes. Super-domain output remains
 in the domain section and owned by DracoAspect. This is Drake output only: the
 Scala generator and GenScala have not been migrated. Rule/actor rendering and codec
-rejection retain their existing behavior.
+rejection retained their existing behavior then; the rule section crossed on 2026-11-10 (next paragraph).
+
+**Rule-aspect generation (2026-11-10).** `draketarget.RuleAspectText` owns the rule section's layout
+(the `rule` head, `pattern` with `variables` and `conditions`, `action`; each block elided when empty,
+a present-empty rule the one line, an absent one nothing) and `gendrake.RuleAspectOf` maps a
+TypeDefinition onto it, taking element rendering as the explicit `(TypeElement, Int) -> [Text]`
+dependency DracoAspectOf receives. `Drake.emit` delegates through `ruleAspectText`. Three of the
+surface's sections are now definition-backed; the actor, `uses` and codec sections are still the
+engine's (GitHub #11). Drake output only, as above.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `dracon`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
@@ -1253,7 +1261,9 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-10 after the host-text bound (record `git-record-2026-11-10-1050`, committed by Dev as e2ca0be after his gate of 1128 green): three host-text
+  Last prepared 2026-11-10 after the definition-backed rule section (record `git-record-2026-11-10-1107`, commit pending):
+  `RuleAspectText` and `RuleAspectOf` render the drake surface's rule section, #11 open, the actor section next. Before it, the same
+  day, after the host-text bound (record `git-record-2026-11-10-1050`, committed by Dev as e2ca0be after his gate of 1128 green, pushed with its fold 2f75d5a the same day — the first push since 40d02df on November 6): three host-text
   leaves re-authored in drake and the remaining 21 asserted as a named seam list by `HostTextTest`. Before it, on 2026-11-09,
   after the rete wrap-type spelling (record `git-record-2026-11-09-1415`, committed by Dev as 2804904 after his gate of 1127 green): every Evrete type a
   definition names is a `draco.rete` wrap type; #49 stays open for configuration and capabilities. Before it, the same day, after
@@ -2234,3 +2244,15 @@ gate grep (§1). A negative probe on a scratch tree with the old ActorAspect and
 REJECTED: re-authoring seam leaves here (each a seam decision; the destructuring one is #59's grammar); walking the test corpus.
 Direct run: 1128 tests / 80 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline unchanged — example gate 48 / 0, surface losses 0 across 184 types, parse scope 111 + 73 with 0 held back, scenario 23 clean, GenDrake 109 of 109, both aspect probes 111 complete, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `host text in values: 21 leaves of 1997 in 11 definitions, 0 outside the 11 named seams`; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-10: 1128 tests, zero failed, canceled, ignored or pending, every headline matching, the new host-text line as expected, green on its first run; committed by Dev as e2ca0be. Next: one recommendation from the 22 open issues or the seam list. EgoActor and scripts/inspect-type.scala
 observed only; activation and .dcon deferred; PON suspended.
+
+**The rule section of the drake surface is definition-backed (2026-11-10, Claude Code; GitHub #11, the issue open).** The sixth
+increment since the reconciliation, on the generator's main line: the type and domain sections of `Drake.emit` crossed to definitions
+in September, and the rule, actor, `uses` and codec sections were still hand-written. MEASURED: the rule section is about eighteen
+lines of the emitter and 24 definitions carry one; 15 carry an actor section, 77 a record, 4 a codec payload. Dev accepted "Accepted,
+build it". BUILT in the precedents' shape: `draketarget.RuleAspectText` (layout, by-name lines behind `guard(_present)`) and
+`gendrake.RuleAspectOf` (mapping, element rendering an explicit dependency), listed by DrakeTarget and GenDrake; `Drake.emit`
+delegates through `private[draco] ruleAspectText`. With the new emitter `DrakeCLI check` reads drift 0 over main and mods, every
+surface byte-identical. RuleAspectTest (5) is the 80th suite and reproduces all 24 rule sections of the corpus. Two corpus types
+added: parse scope 113 + 73, surface losses 0 across 186 types, 113 aspect sections, GenDrake 111 of 111; the gate grep gains
+`RuleAspect over`. REJECTED: rule and actor together. Direct run: 1143 tests / 81 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every headline as expected — example gate 48 / 0, surface losses 0 across 186 types, parse scope 113 + 73 with 0 held back, host text 21 leaves of 2057 in the 11 named seams and 0 outside, scenario 23 clean, GenDrake 111 of 111, the domain and draco aspect probes 113 complete, `RuleAspect over the corpus: 186 definitions, 24 rule sections reproduced, 0 skipped`, the PON pair 42 and 7 as suspended, the rete finding categorical; the fifteen new tests are RuleAspectTest's five and the five per-type gates of each new definition; the tree afterwards held the intended changes only. Dev's gate pending. Next related point: the actor section by the same
+pattern. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
