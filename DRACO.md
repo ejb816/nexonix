@@ -66,7 +66,7 @@ suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
 **1200 tests / 84 suites**, verified by Dev on 2026-11-10 for the single type-form renderer of the drake emitter (record
-`git-record-2026-11-10-1714`): the emitter's string-era type respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest`
+`git-record-2026-11-10-1714`, committed as e8dbd11, pushed): the emitter's string-era type respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest`
 (two tests, the 84th suite) asserting every type leaf in main and mods is a name, its `type leaves` line in the gate grep; one existing
 DracoAspectTest assertion re-stated in tree form; every other headline unchanged; its direct run 1200 / 85 including discovery, green on
 its second run (the first failed that one assertion). First full Dev gate green. Before it:
@@ -1303,7 +1303,7 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`): the emitter's string-era type
+  Last prepared 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
   `DefinitionText` and `DefinitionOf`, `Drake.emit` its guards and one call, #11 open. Before it, the same day, after the JOURNAL UPDATE (record `git-record-2026-11-10-1343`): chapters 113–127 written from the four
@@ -2411,9 +2411,23 @@ is `TypeForm.neutral`; `DrakeCLI check` reads drift 0 over main and mods. `TypeL
 leaf in a type slot is a dotted name, failing by file and leaf otherwise; its `type leaves` line joins the gate grep (§1). ONE
 EXISTING ASSERTION CHANGED: DracoAspectTest pinned the removed behavior — a factory result given as the string "Example[T]"
 respelled and elided — and failed the first direct run; it now gives the result as the tree the parser writes. OBSERVED, left:
-the parser's `parseTypeExpression` has no caller but itself; two test resources (Natural, TupleFact) carry host-spelled types
+the parser's `parseTypeExpression` has no caller but itself (removed 2026-11-11); two test resources (Natural, TupleFact) carry host-spelled types
 and have no surface. REJECTED: the renderer as a definition in this increment. Second direct run: 1200 tests / 85 suites
 including discovery, zero failed, canceled, ignored, pending or aborted; every headline unchanged, and `type leaves: 1585 in 194
-definitions, 0 carrying host type syntax`; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-10: 1200 tests, zero failed, canceled, ignored or pending, every headline matching, the new `type leaves` line as expected, green on its first run; commit pending. THE JOURNAL was brought current through chapter 129 before that commit, at Dev's request ("Update the draco-dev-journal before the commit. I noticed that the session was compacted already."): chapters 128–129 cover this session from its original record — 19 records, 9 completed exchanges, the request itself the open turn, two compaction boundaries with originals on both sides — with one extract and audit under `draco-dev-journal/sources/`; the markers advance to chapter 129. Next on this thread,
+definitions, 0 carrying host type syntax`; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-10: 1200 tests, zero failed, canceled, ignored or pending, every headline matching, the new `type leaves` line as expected, green on its first run; committed by Dev as e8dbd11 and pushed the same day (427442e..e8dbd11), the journal chapters in the same commit. THE JOURNAL was brought current through chapter 129 before that commit, at Dev's request ("Update the draco-dev-journal before the commit. I noticed that the session was compacted already."): chapters 128–129 cover this session from its original record — 19 records, 9 completed exchanges, the request itself the open turn, two compaction boundaries with originals on both sides — with one extract and audit under `draco-dev-journal/sources/`; the markers advance to chapter 129. Next on this thread,
 none accepted: the type-form renderer as a definition; the element and expression renderers; a failure form for the guards.
 EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The parser's dead string-era type converter is removed (2026-11-11, Claude Code; GitHub #11, the issue open).** The next related
+point after e8dbd11, whose record had observed it as left. MEASURED: `parseTypeExpression` in Drake.scala converted drake type
+text back to Scala notation and was called only by itself, every type slot being read through `typeForm` since 2026-09-17;
+`scalaArrow` had no other use. Dev accepted "Accepted, build it". BUILT: both removed; five stale comments corrected in
+Drake.scala and TypeForm.scala (the recommendation said four), two of which still described the retired `mut {T}` as live host
+text and two a string leaf as host text where TypeLeafTest asserts it a name. No definition, JSON, generated Scala or test
+change. The record (`git-record-2026-11-11-1205`) also carries the fold of e8dbd11 into this file, the handoff and the resume
+prompt. Direct run on freshly compiled classes: 1200 tests / 85 suites including discovery, zero failed, canceled, ignored,
+pending or aborted, green on its first run, every headline unchanged; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-11: 1200 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; the
+baseline stays 1200 / 84. Next on this thread, none accepted: the type-form renderer as a definition; the
+element and expression renderers; a failure form for the guards. The journal is current through chapter 129; uncovered is what
+follows Dev's journal request of November 10. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon
+deferred; PON suspended.

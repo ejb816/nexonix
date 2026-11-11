@@ -124,16 +124,11 @@ object Drake {
     args.result()
   }
 
-  /** The function arrow, on each side of the projection. The JSON valueType is a
-    * SCALA type string, so that is the spelling to split it on; drake's own arrow is
-    * `->` — the same token `Drake.expression` already renders for a `->` VALUE node,
-    * and the one drake.dlt names as the "function/type arrow" in Haskell form.
-    *
-    * These were the same token until now: `typeExpression` converted `Seq[T]` to `[T]`
-    * but passed the arrow through, so the drake surface spelled types with Scala's
-    * arrow and values with drake's. Emitter and parser were symmetrically wrong, so the
-    * round-trip never noticed — the corpus is the only place it showed. */
-  private val scalaArrow = " => "
+  /** drake's function arrow in a type expression: `->`, the same token
+    * `Drake.expression` renders for a `->` VALUE node and the one drake.dlt names as
+    * the "function/type arrow" in Haskell form. The Scala target's `=>` is never a
+    * drake token; it is spelled by the generator alone (the parser's string-era
+    * converter back to it was removed on 2026-11-11, its emitter half on 2026-11-10). */
   private val drakeArrow = " -> "
 
   /** Split a type expression on top-level `arrow` occurrences (arrows nested in
@@ -791,45 +786,7 @@ object Drake {
     else token.substring (0, idx) + "[" + token.substring (idx + 1, token.length - 1) + "]"
   }
 
-  /** Invert typeExpression (drake.dlt VALUE-TYPES): [T] -> Seq[T], {T} -> Set[T],
-    * mut {T} -> mutable.Set[T], F(A, B) -> F[A, B], A -> B back to A => B, tuples
-    * recursed, plain names verbatim. A sole parenthesized member is the arrow slot
-    * typeExpressionSlot wraps, not a one-tuple, so it unwraps. */
-  private def parseTypeExpression (expr: String) : String = {
-    val s = expr.trim
-    if (s.isEmpty) s
-    else if (splitTopArrow (s, drakeArrow).size > 1) splitTopArrow (s, drakeArrow).map (parseTypeExpression).mkString (scalaArrow)
-    else if (s.startsWith ("mut {") && s.endsWith ("}")) s"mutable.Set[${parseTypeExpression (s.substring (5, s.length - 1))}]"
-    else if (s.startsWith ("[") && s.endsWith ("]"))     s"Seq[${parseTypeExpression (s.substring (1, s.length - 1))}]"
-    // THE BRACE FAMILY, SPLIT BY ARITY — and the split is transitional, not a rule of
-    // the notation. drake spells a set {T} and a map {K, V}; what differs is how far
-    // each has moved out of the host's syntax. A map is already NEUTRAL in the JSON,
-    // so it is carried through as it stands; a set is still `Set[T]` there, so it is
-    // converted back. When the set follows the map, both arities become verbatim and
-    // this case — with its opposite number in typeExpression — disappears from both
-    // converters, which is what "the corpus states the type in drake's own notation"
-    // will finally mean. Until then, a two-member brace that came back as Set[K, V]
-    // was the standing wrong answer this replaces.
-    else if (s.startsWith ("{") && s.endsWith ("}")) {
-      val members = splitTypeArguments (s.substring (1, s.length - 1)).map (parseTypeExpression)
-      if (members.size == 1) s"Set[${members.head}]" else members.mkString ("{", ", ", "}")
-    }
-    else if (s.startsWith ("(") && s.endsWith (")")) {
-      val members = splitTypeArguments (s.substring (1, s.length - 1))
-      if (members.size == 1) parseTypeExpression (members.head)
-      else members.map (parseTypeExpression).mkString ("(", ", ", ")")
-    }
-    else {
-      val idx = s.indexOf ('(')
-      if (idx < 0 || !s.endsWith (")")) s
-      else {
-        val args = splitTypeArguments (s.substring (idx + 1, s.length - 1)).map (parseTypeExpression)
-        s"${s.substring (0, idx)}[${args.mkString (", ")}]"
-      }
-    }
-  }
-
-  /** Consume a value-type slot. `mut {T}` is the one two-token form. */
+  /** Consume a value-type slot: one token, read as a type-form tree. */
   private def takeValueType (c: Cursor) : Json = typeForm (c.takeText ())
 
   /** A drake type expression as a TYPE-FORM TREE (drake.dlt VALUE-TYPES; TypeForm for
@@ -838,10 +795,9 @@ object Drake {
     * `[T]` / `{T}` / `{K, V}` are the bracket nodes `[]` / `{}` (neutral, no host head); a parenthesized
     * list is Objective, a parenthesized single member the arrow slot's wrapper;
     * `F(A, B)` applies; `()` alone is the empty Objective, the unit type (2026-10-21);
-    * a bare name is Atomic and stays the string it is. The one
-    * form still carried as HOST TEXT is `mut {T}` — `mut` belongs to the element,
-    * not the type (agreed 2026-09-13, not yet built), so its spelling is the
-    * host's until then, exactly as parseTypeExpression wrote it. */
+    * a bare name is Atomic and stays the string it is. No
+    * form is carried as host text: the mutable collections are `[T]+` / `{T}+` /
+    * `{K, V}+` since 2026-09-20, when `mut {T}` retired. */
   private def typeForm (expr: String) : Json = {
     val s = expr.trim
     val arrow = splitTopArrow (s, drakeArrow)

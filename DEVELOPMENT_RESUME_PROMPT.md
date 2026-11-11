@@ -87,8 +87,12 @@ now, 1198 tests / 83 suites. I committed and pushed it as 427442e; HEAD should b
 WHAT HAPPENED (November 10, sixth increment): I accepted one type-form renderer in the drake emitter — the string-era
 respelling removed, sentient Path authored Primal([Waypoint]), TypeLeafTest asserting every type leaf is a name (record
 git-record-2026-11-10-1714). My full gate on it passed, 1200 tests with every headline matching: the baseline is
-now 1200 tests / 84 suites. Check DEVELOPMENT_HANDOFF.md and `git log` for whether its commit is recorded; if not, settle
-that with me first.
+now 1200 tests / 84 suites. I committed it as e8dbd11, with journal chapters 128–129 in the same commit, and pushed it.
+
+WHAT HAPPENED (November 11): I accepted removing the parser's dead string-era type converter (parseTypeExpression and
+scalaArrow in Drake.scala) with five stale comments corrected (record git-record-2026-11-11-1205, which also folds e8dbd11
+into the documents). Its direct run passed 1200 tests with every headline unchanged. Check DEVELOPMENT_HANDOFF.md and
+`git log` for whether my gate and its commit are recorded; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

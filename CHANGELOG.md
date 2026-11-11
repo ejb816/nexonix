@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- The drake parser's unreachable string-era type converter (`parseTypeExpression`, drake type text back to Scala
+  notation) is removed with its `scalaArrow` constant, and five stale comments in Drake.scala and TypeForm.scala are
+  corrected (GitHub #11). No behavior, definition or test change.
 - The drake emitter has one type-form renderer: the string-era respelling of Scala-notation type leaves (`Seq[T]`, `=>`)
   is removed, and a type leaf is written as authored (GitHub #11). The one definition that needed it, sentient Path, is
   authored `Primal([Waypoint])`; its Scala is unchanged. TypeLeafTest (2) is new and asserts that every type leaf in the

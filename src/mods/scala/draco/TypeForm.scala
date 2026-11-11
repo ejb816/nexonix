@@ -10,7 +10,7 @@ import io.circe.Json
   * `{"{}": [K, V]}` (neutral — no host head, 2026-09-18), Morphic `{"->": [S, T]}` binary
   * and right-associative, the bounds `{"<:": [p, b]}` / `{">:": [p, b]}` parameter
   * first. The drake parser trees the four forms since 2026-09-17; a string leaf
-  * inside a tree is still host text (the `mut {T}` tail is the one the corpus keeps).
+  * inside a tree is a NAME (asserted over the corpus by TypeLeafTest since 2026-11-10).
   *
   * Belongs beside `Expression` for the same reason: a question of the tree, not of
   * either target's spelling. Each projection renders the tree its own way —
@@ -33,8 +33,8 @@ object TypeForm {
   /** drake's own spelling of a tree: `[T]` `{T}` `{K, V}` for the bracket nodes,
     * `F(A, B)` an application, `(A, B)` a tuple, `S -> T` an arrow with a
     * Morphic LEFT operand parenthesized (the arrow groups to the right, so only a
-    * left-nested one needs them), `p <: b` / `p >: b` the bounds. String leaves stay
-    * verbatim — they are host text, and only the surface knows how to respell them. */
+    * left-nested one needs them), `p <: b` / `p >: b` the bounds. String leaves are
+    * written verbatim: a leaf is a name, and no renderer respells one. */
   def neutral (valueType: Json) : String = node (valueType) match {
     case None                              => text (valueType)
     case Some (("->", Vector (s, t)))      => s"${morphicOperand (s)} -> ${neutral (t)}"

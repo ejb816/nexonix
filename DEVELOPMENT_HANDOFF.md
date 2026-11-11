@@ -9,7 +9,24 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — one type-form renderer in the drake emitter (Claude Code, November 10, 2026; direct run 1200 / 85; Dev's gate 1200 / 84; commit pending)
+## Current checkpoint — the parser's dead type converter removed (Claude Code, November 11, 2026; direct run 1200 / 85; Dev's gate 1200 green)
+
+Same session, continued November 11. HEAD e8dbd11, pushed (Dev's paste: 427442e..e8dbd11). Dev accepted ("Accepted, build it")
+the next related point under GitHub #11 (open; stays open). Record `git-record-2026-11-11-1205`, which also carries the fold of
+e8dbd11 into the shared documents.
+
+- **Built.** `parseTypeExpression` and `scalaArrow` removed from Drake.scala (unreachable since type-form trees, 2026-09-17);
+  five stale comments corrected in Drake.scala and TypeForm.scala (the recommendation said four). No definition, JSON,
+  generated Scala or test change.
+- **Evidence.** Direct run on freshly compiled classes: 1200 tests / 85 suites including discovery, all green on the first
+  run, every headline unchanged. Dev's first full gate on 2026-11-11: 1200 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; the baseline stays 1200 / 84. Commit pending.
+- **In the tree, uncommitted.** Drake.scala, TypeForm.scala, CHANGELOG.md, DRACO.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** The type-form renderer as a definition; the element and expression renderers; a
+  failure form for the guards. Observed, left: Natural.json and TupleFact.json under src/test carry host-spelled types.
+- **Journal.** Current through chapter 129; uncovered is what follows Dev's journal request of November 10 — the e8dbd11
+  commit exchange and this increment.
+
+## Earlier the same session — one type-form renderer in the drake emitter (Claude Code, November 10, 2026; direct run 1200 / 85; Dev's gate 1200 / 84; committed as e8dbd11, pushed)
 
 Same session. After 427442e Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open).
 Record `git-record-2026-11-10-1714`.
@@ -21,7 +38,7 @@ Record `git-record-2026-11-10-1714`.
   "Example[T]"; it now uses the tree. The first direct run failed on it (1199 / 1).
 - **Evidence.** Second direct run: 1200 tests / 85 suites including discovery, all green, every headline unchanged, `type
   leaves: 1585 in 194 definitions, 0 carrying host type syntax`. Dev's first full gate on November 10: 1200 tests, zero failed,
-  canceled, ignored or pending, every headline matching. The baseline is **1200 tests / 84 suites**; commit pending.
+  canceled, ignored or pending, every headline matching. The baseline is **1200 tests / 84 suites**. Committed by Dev as e8dbd11 with the journal chapters, pushed the same day; `main` and `origin/main` both at e8dbd11, tree clean before this fold.
 - **Journal.** Current through chapter 129, written before the commit at Dev's request after he noticed the session had been
   compacted: chapters 128–129 cover this session from its original record (19 records, 9 completed exchanges, the request the
   open turn; two compaction boundaries, originals on both sides), extract and audit `sources/claude-2026-11-10-session-2`.

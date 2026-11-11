@@ -1,0 +1,41 @@
+Remove the parser's dead string-era type converter; fold e8dbd11 into the shared documents (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+e8dbd11, which removed the emitter's string-era type respelling and observed this function as left.
+
+ACCEPTED by Dev on 2026-11-11: "Accepted, build it", on the recommendation to remove `parseTypeExpression` and
+`scalaArrow` from Drake.scala and correct the stale comments beside them.
+
+MEASURED before recommending: `parseTypeExpression` (Drake.scala) converted drake type text back to Scala notation
+(`[T]` to `Seq[T]`, `->` to `=>`, `mut {T}` to `mutable.Set[T]`); its only callers were its own recursive calls, the
+parser reading every type slot through `typeForm` since 2026-09-17. `scalaArrow` had no other use.
+
+BUILT:
+- src/mods/scala/draco/Drake.scala: `parseTypeExpression` and `scalaArrow` removed (about thirty-five lines of code);
+  three comments corrected — the arrow constant's, `takeValueType`'s and `typeForm`'s, the last two of which still
+  described the retired `mut {T}` as a live host-text form.
+- src/mods/scala/draco/TypeForm.scala: two comments corrected — the header and `neutral`'s doc described a string leaf
+  as host text; a leaf is a name, asserted by TypeLeafTest since e8dbd11.
+  FIVE comments in all; the recommendation said four (the arrow constant's own comment was not counted).
+- No definition, JSON, generated Scala or test change. No behavior change: the removed code was unreachable.
+
+THE FOLD, in the same commit: DRACO.md, DEVELOPMENT_HANDOFF.md and DEVELOPMENT_RESUME_PROMPT.md said "commit pending"
+for the single type-form renderer; they now name e8dbd11, committed and pushed by Dev (427442e..e8dbd11, his paste of
+2026-11-11). A separate fold record written on November 10 (-2236) was never committed and is replaced by this one.
+
+DIRECT RUN (2026-11-11, every discovered suite on freshly compiled classes — all of main, mods and test compiled from
+source — with current main, mods and test resources on the loader roots, test classes on the runpath only):
+1200 tests / 85 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run.
+Every headline unchanged: example gate 48 match / 0 differ; surface losses 0 across 194 types; parse scope 121 + 73
+with 0 held back; host text 21 leaves of 2237 in the 11 named seams, 0 outside; type leaves 1585 in 194 definitions,
+0 carrying host type syntax; scenario 23 clean; GenDrake 119 of 119; domain and draco aspect probes 121 complete; rule
+24, actor 15, 87 records, 4 codec sections over 194 definitions; 194 surfaces reproduced whole from 518 sections; the
+PON pair 42 and 7 as suspended; the rete finding categorical. The tree afterwards held the intended changes only.
+
+DEV'S GATE (2026-11-11): 1200 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run.
+
+Not done, by design: no tracker action; the type-form renderer as a definition, the element and expression renderers
+and a failure form for the guards remain design questions, none accepted; Natural.json and TupleFact.json under
+src/test still carry host-spelled types and have no surface.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
