@@ -822,7 +822,9 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 127 (November 10, 2026). Chapters 113–127 cover the work from
+Journal coverage reaches chapter 129 (November 10, 2026): chapters 128–129 cover the session that wrote
+chapters 113–127 and then built the definition-backed assembly and the single type-form renderer of the
+drake emitter, with their own extract and audit. Chapters 113–127 cover the work from
 the named-construction repairs of October 26 through the six definition-backed sections of the
 drake surface on November 10, including the Codex tracker reconciliation of November 4–5 and its
 verification. Four retrieval audits under `draco-dev-journal/sources/` (three Claude Code records
@@ -866,7 +868,7 @@ figure unchanged: Create and Update as verbs over the abstract Latent shape, and
 moved into four Editor-domain rules over an Accepted fact, the actor thinned to a membrane and codec
 eligibility made transitive.
 
-<!-- draco-docs-synced-through: chapter 127 -->
+<!-- draco-docs-synced-through: chapter 129 -->
 
 Role slots now carry `Presence(RuleAspect)` and `Presence(ActorAspect)`. The containing
 record omits an Absent field and writes a Present aspect directly as its existing JSON

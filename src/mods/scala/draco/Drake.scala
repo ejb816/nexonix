@@ -155,70 +155,23 @@ object Drake {
     parts.result()
   }
 
-  /** JSON valueType string -> drake type expression (drake.dlt VALUE-TYPES, inverted):
-    * Seq[T] -> [T], Set[T] -> {T}, mutable.Set[T] -> mut {T}, F[A, B] -> F(A, B),
-    * (A, B) tuple unchanged (components recursed), A => B arrows recursed on each side
-    * and respelled A -> B, plain names verbatim. */
-  private def typeExpression (valueType: String) : String = {
-    val s = valueType.trim
-    if (s.isEmpty) s
-    else if (splitTopArrow(s, scalaArrow).size > 1)
-      splitTopArrow(s, scalaArrow).map(typeExpression).mkString(drakeArrow)
-    else if (s.startsWith("{") && s.endsWith("}"))
-      // ALREADY NEUTRAL: the corpus states this one in drake's own notation, so there
-      // is nothing to convert but the members. See parseTypeExpression for why the
-      // brace forms are currently split by arity.
-      splitTypeArguments(s.substring(1, s.length - 1)).map(typeExpression).mkString("{", ", ", "}")
-    else if (s.startsWith("(") && s.endsWith(")"))
-      splitTypeArguments(s.substring(1, s.length - 1)).map(typeExpression).mkString("(", ", ", ")")
-    else {
-      val idx = s.indexOf('[')
-      if (idx < 0 || !s.endsWith("]")) s
-      else {
-        val head = s.substring(0, idx)
-        val args = splitTypeArguments(s.substring(idx + 1, s.length - 1)).map(typeExpression)
-        head match {
-          case "Seq" if args.size == 1          => s"[${args.head}]"
-          case "Set" if args.size == 1          => s"{${args.head}}"
-          case "mutable.Set" if args.size == 1  => s"mut {${args.head}}"
-          case _                                => s"$head(${args.mkString(", ")})"
-        }
-      }
-    }
-  }
-
   /** ValueType as it sits in a name-valueType-value line: a top-level function
     * arrow is parenthesized so the value-type reads as one token-group between
-    * the name and the value (fix isEmpty (RuleAspect => Boolean) ra => ...);
-    * an arrow nested inside a type application needs none (Map(String, [String] => Unit)). */
+    * the name and the value (fix isEmpty (RuleAspect -> Boolean) \ra -> ...);
+    * an arrow nested inside a type application needs none. A string leaf is written
+    * as authored. */
   private def typeExpressionSlot (valueType: Json) : String =
-    if (TypeForm.isTree(valueType)) {
-      val rendered = drakeType(valueType)
-      if (TypeForm.node(valueType).exists(_._1 == "->")) s"($rendered)" else rendered
-    } else {
-      val text      = valueType.text
-      val converted = typeExpression(text)
-      if (splitTopArrow(text.trim, scalaArrow).size > 1) s"($converted)" else converted
-    }
+    if (!TypeForm.isTree(valueType)) valueType.text
+    else if (TypeForm.node(valueType).exists(_._1 == "->")) s"(${drakeType(valueType)})"
+    else drakeType(valueType)
 
-  /** A type-form TREE on the drake surface: TypeForm.neutral's spelling, except that
-    * a string LEAF — host text, the `mut {T}` tail — is respelled through
-    * typeExpression as any string value type is. The two renderers agree on every
-    * node; only the leaf differs, and only because the surface owns the respelling. */
-  private def drakeType (form: Json) : String = TypeForm.node(form) match {
-    case None                          => typeExpression(form.text)
-    case Some(("->", Vector(s, t)))    =>
-      val left = drakeType(s)
-      s"${if (TypeForm.node(s).exists(_._1 == "->")) s"($left)" else left} -> ${drakeType(t)}"
-    case Some(("(,)", members))        => members.map(drakeType).mkString("(", ", ", ")")
-    case Some(("[]", Vector(a)))       => s"[${drakeType(a)}]"
-    case Some(("{}", members))         => members.map(drakeType).mkString("{", ", ", "}")
-    case Some(("[]+", Vector(a)))      => s"[${drakeType(a)}]+"
-    case Some(("{}+", members))        => members.map(drakeType).mkString("{", ", ", "}+")
-    case Some(("()", f +: arguments))  => s"${f.text}(${arguments.map(drakeType).mkString(", ")})"
-    case Some((op @ ("<:" | ">:"), Vector(p, b))) => s"${drakeType(p)} $op ${drakeType(b)}"
-    case Some((op, _)) => sys.error(s"Drake.emit: not a type form: '$op' in ${form.noSpaces}")
-  }
+  /** A type form on the drake surface is its NEUTRAL spelling, tree or leaf: ONE renderer
+    * (2026-11-10, GitHub #11). Until then a string leaf was respelled here from the Scala
+    * target's notation (`Seq[T]` to `[T]`, `=>` to `->`) by a second, string-era renderer;
+    * the last leaf that needed it, sentient Path's `Primal(Seq[Waypoint])`, is authored
+    * `Primal([Waypoint])`, and TypeLeafTest asserts no type leaf in the corpus carries host
+    * type syntax, so a leaf is a name and is written verbatim. */
+  private def drakeType (form: Json) : String = TypeForm.neutral(form)
 
   /** The value-type slot as the surface spells it, for a string or a tree — public
     * so DrakeParseTest can compare the two eras by their one surface. */

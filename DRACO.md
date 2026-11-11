@@ -65,8 +65,13 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1200 tests / 84 suites**, verified by Dev on 2026-11-10 for the single type-form renderer of the drake emitter (record
+`git-record-2026-11-10-1714`): the emitter's string-era type respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest`
+(two tests, the 84th suite) asserting every type leaf in main and mods is a name, its `type leaves` line in the gate grep; one existing
+DracoAspectTest assertion re-stated in tree form; every other headline unchanged; its direct run 1200 / 85 including discovery, green on
+its second run (the first failed that one assertion). First full Dev gate green. Before it:
 **1198 tests / 83 suites**, verified by Dev on 2026-11-10 for the definition-backed assembly of the drake surface (record
-`git-record-2026-11-10-1527`): `draketarget.DefinitionText` and `gendrake.DefinitionOf` own the order and joining of the six
+`git-record-2026-11-10-1527`, committed as 427442e, pushed): `draketarget.DefinitionText` and `gendrake.DefinitionOf` own the order and joining of the six
 sections, `Drake.emit` is its three guards and one call, every surface byte-identical; fifteen tests added (DefinitionTextTest's
 five, the 83rd suite, and five per-type gates for each of the two new corpus types); parse scope 121 + 73, surface losses 0 across
 194 types, 121 aspect sections, GenDrake 119 of 119, the `Definition over` line in the gate grep; its direct run 1198 / 84
@@ -370,7 +375,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -1283,11 +1288,11 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 127 on 2026-11-10.
+Current documentation was reconciled through journal chapter 129 on 2026-11-10.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 127 on
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 129 on
   2026-11-10.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
@@ -1298,7 +1303,9 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-10 after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
+  Last prepared 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`): the emitter's string-era type
+  respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
+  Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
   `DefinitionText` and `DefinitionOf`, `Drake.emit` its guards and one call, #11 open. Before it, the same day, after the JOURNAL UPDATE (record `git-record-2026-11-10-1343`): chapters 113–127 written from the four
   original session records, coverage current through 043f578; the assembly recommendation is still preserved unaccepted. Before it,
   the same day, as a HANDOFF TO A NEW SESSION at Dev's direction (record `git-record-2026-11-10-1237`): the journal,
@@ -1516,7 +1523,7 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 127 -->
+<!-- draco-docs-synced-through: chapter 129 -->
 
 **Role presence increment (2026-10-22, Codex; Dev verified 857 / 61).** Dev accepted Presence-typed
 rule/actor slots and their field-level encoding. Absent omits the key; Present writes its
@@ -2389,7 +2396,24 @@ increment. Direct run: 1198 tests / 84 suites including discovery, zero failed, 
 on its first run; every headline as expected — example gate 48 / 0, host text 21 leaves of 2237 in the 11 named seams and 0
 outside, scenario 23 clean, rule 24 and actor 15 sections, 87 records and 4 codec sections over 194 definitions, `Definition
 over the corpus: 194 surfaces reproduced whole from 518 sections, 0 skipped`, the PON pair 42 and 7 as suspended, the rete
-finding categorical; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-10: 1198 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run. Next on this thread, each a design
+finding categorical; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-10: 1198 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; committed by Dev as 427442e and pushed the same day (d815338..427442e). Next on this thread, each a design
 question and none accepted: the element, expression and type-form renderers; a failure form for the guards; whether
 generation should consult compiled classes (§6). The journal is current through chapter 127; this session is its one
 uncovered stretch. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The drake emitter has one type-form renderer; a type leaf is a name (2026-11-10, Claude Code; GitHub #11, the issue open).**
+The next related point after 427442e. MEASURED over the 194 gated definitions: about 1,700 type leaves, exactly one in the Scala
+target's notation — sentient Path's `Primal(Seq[Waypoint])`, on the surface and in the JSON, unseen because HostTextTest reads
+`value` leaves only — and for it a second, string-era renderer in the emitter (`typeExpression`: `Seq[T]` to `[T]`, `=>` to
+`->`), the identity everywhere else. Dev accepted "Accepted, build it". BUILT: Path is `type Path from Sentient draco
+Primal([Waypoint])`, its JSON re-parsed to the tree, its companion byte-identical; `typeExpression` is removed and `drakeType`
+is `TypeForm.neutral`; `DrakeCLI check` reads drift 0 over main and mods. `TypeLeafTest` (2) is the 84th suite: every string
+leaf in a type slot is a dotted name, failing by file and leaf otherwise; its `type leaves` line joins the gate grep (§1). ONE
+EXISTING ASSERTION CHANGED: DracoAspectTest pinned the removed behavior — a factory result given as the string "Example[T]"
+respelled and elided — and failed the first direct run; it now gives the result as the tree the parser writes. OBSERVED, left:
+the parser's `parseTypeExpression` has no caller but itself; two test resources (Natural, TupleFact) carry host-spelled types
+and have no surface. REJECTED: the renderer as a definition in this increment. Second direct run: 1200 tests / 85 suites
+including discovery, zero failed, canceled, ignored, pending or aborted; every headline unchanged, and `type leaves: 1585 in 194
+definitions, 0 carrying host type syntax`; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-10: 1200 tests, zero failed, canceled, ignored or pending, every headline matching, the new `type leaves` line as expected, green on its first run; commit pending. THE JOURNAL was brought current through chapter 129 before that commit, at Dev's request ("Update the draco-dev-journal before the commit. I noticed that the session was compacted already."): chapters 128–129 cover this session from its original record — 19 records, 9 completed exchanges, the request itself the open turn, two compaction boundaries with originals on both sides — with one extract and audit under `draco-dev-journal/sources/`; the markers advance to chapter 129. Next on this thread,
+none accepted: the type-form renderer as a definition; the element and expression renderers; a failure form for the guards.
+EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

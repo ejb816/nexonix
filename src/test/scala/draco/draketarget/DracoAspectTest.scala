@@ -86,9 +86,12 @@ class DracoAspectTest extends AnyFunSuite with PersistentTestLog {
     assert(Drake.emit(Drake.parse(Drake.emit(td))) == source)
     val explicit = source.replace("  factory\n", "  factory ActorType(T)\n")
     assert(Drake.emit(Drake.parse(explicit)) == explicit)
-    val legacy = TypeDefinition(td.typeName, _dracoAspect = DracoAspect(_typeParameters = td.dracoAspect.typeParameters,
-      _factory = Factory(_valueType = Json.fromString("Example[T]"))))
-    assert(render(legacy) == "type Example(T)\n  factory")
+    // The implicit result is recognized as the TREE the parser writes. A Scala-spelled string
+    // ("Example[T]") was respelled and elided here until 2026-11-10, when the emitter's
+    // string-era type renderer was removed; a type leaf is a name now (TypeLeafTest).
+    val implicitResult = TypeDefinition(td.typeName, _dracoAspect = DracoAspect(_typeParameters = td.dracoAspect.typeParameters,
+      _factory = Factory(_valueType = Json.obj("()" -> Json.arr(Json.fromString("Example"), Json.fromString("T"))))))
+    assert(render(implicitResult) == "type Example(T)\n  factory")
   }
 
   test("nameless anchors and absent factories do not force unused factory rendering") {

@@ -1,14 +1,37 @@
 # Development Handoff
 
 Refreshed November 10, 2026 by Claude Code in the session that RECEIVED the handoff below and did its first task: the
-journal is current through chapter 127. The checkpoint that follows this paragraph's section was prepared earlier the same day
+journal is current through chapter 127, and through chapter 129 since that session journaled itself the same day (see the
+current checkpoint). The checkpoint that follows this paragraph's section was prepared earlier the same day
 by the previous Claude Code session, at Dev's direction, for a NEW SESSION in either agent: Dev called the handoff when
 that session's context reached 75%, with the journal several sessions behind. It supersedes the record-and-codec, actor-section, rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
 and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the assembly of the drake surface is definition-backed (Claude Code, November 10, 2026; direct run 1198 / 84; Dev's gate 1198 / 83)
+## Current checkpoint — one type-form renderer in the drake emitter (Claude Code, November 10, 2026; direct run 1200 / 85; Dev's gate 1200 / 84; commit pending)
+
+Same session. After 427442e Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open).
+Record `git-record-2026-11-10-1714`.
+
+- **Built.** Sentient Path authored `Primal([Waypoint])` (JSON re-parsed, Scala byte-identical); the emitter's string-era
+  `typeExpression` removed, `drakeType` is `TypeForm.neutral`; `DrakeCLI check` drift 0 over main and mods. `TypeLeafTest` (2),
+  the 84th suite, asserts every type leaf in main and mods is a name; the gate grep gains `type leaves`.
+- **One existing assertion changed.** DracoAspectTest's factory-elision case pinned the removed respelling of the string
+  "Example[T]"; it now uses the tree. The first direct run failed on it (1199 / 1).
+- **Evidence.** Second direct run: 1200 tests / 85 suites including discovery, all green, every headline unchanged, `type
+  leaves: 1585 in 194 definitions, 0 carrying host type syntax`. Dev's first full gate on November 10: 1200 tests, zero failed,
+  canceled, ignored or pending, every headline matching. The baseline is **1200 tests / 84 suites**; commit pending.
+- **Journal.** Current through chapter 129, written before the commit at Dev's request after he noticed the session had been
+  compacted: chapters 128–129 cover this session from its original record (19 records, 9 completed exchanges, the request the
+  open turn; two compaction boundaries, originals on both sides), extract and audit `sources/claude-2026-11-10-session-2`.
+  Markers at chapter 129. Uncovered: only what follows that request — this journal update's own reply and the commit.
+- **Observed, left.** `parseTypeExpression` in the parser is dead code; Natural.json and TupleFact.json under src/test carry
+  host-spelled types and have no surface.
+- **Next, none accepted:** the type-form renderer as a definition; the element and expression renderers; a failure form for
+  the guards; whether generation should consult compiled classes.
+
+## Earlier the same session — the assembly of the drake surface is definition-backed (Claude Code, November 10, 2026; direct run 1198 / 84; Dev's gate 1198 / 83)
 
 Same session as the journal checkpoint below. After d815338 Dev said "Yes, recommend" and then "Accepted, build it" to the one
 recommendation: OWNING ISSUE GitHub #11 (open; stays open). Record `git-record-2026-11-10-1527`.
@@ -24,12 +47,11 @@ recommendation: OWNING ISSUE GitHub #11 (open; stays open). Record `git-record-2
   domain and draco aspect probes 121, rule 24, actor 15, 87 records, 4 codec sections, `Definition over the corpus: 194
   surfaces reproduced whole from 518 sections, 0 skipped`, PON 42 and 7 as suspended, the rete finding categorical. The tree
   afterwards held the intended changes only. Dev's first full gate on November 10: 1198 tests, zero failed, canceled, ignored or pending, every headline matching, green on
-  its first run. The baseline is **1198 tests / 83 suites**. Commit and push: handed to Dev with the record; check `git log`.
+  its first run. The baseline is **1198 tests / 83 suites**. Committed and pushed by Dev as 427442e on November 10 (20 files, d815338..427442e).
 - **Rejected.** The guards inside the transform (drake has no failure form); the renderer track in this increment.
 - **Next, none accepted, each a design question:** the element, expression and type-form renderers (about 380 lines of
   Drake.scala); a failure form for the guards; whether generation should consult compiled classes (DRACO.md §6).
-- **Journal.** Current through chapter 127; this session (the scope confirmation, the journal update, this increment) is the
-  one uncovered stretch.
+- **Journal.** Chapters 128–129 now cover this session through the type-renderer increment's verified gate (see the checkpoint above).
 
 ## Earlier the same session — the journal is current through chapter 127 (Claude Code, November 10, 2026)
 
@@ -1252,8 +1274,8 @@ premature "handoff ready" claim of October 26.
 
 **Covered on November 10: chapters 113–127**, the thirty-nine commits e241378 … c70d6b8 and the handoff commit 043f578, from
 the four sources below. Extracts and audits: `sources/claude-2026-10-26-to-11-03`, `sources/claude-2026-11-03-to-06`,
-`sources/claude-2026-11-07-to-10`, `sources/codex-2026-11-04-to-05` (each a `.jsonl` and an `-audit.md`). Uncovered: the
-session that wrote them (November 10, from Dev's "Accept" of the scope onward). The paragraphs below are the previous
+`sources/claude-2026-11-07-to-10`, `sources/codex-2026-11-04-to-05` (each a `.jsonl` and an `-audit.md`). That session is covered by chapters 128–129
+(`sources/claude-2026-11-10-session-2`), written later the same day; uncovered is only what follows Dev's request for them. The paragraphs below are the previous
 session's description of the sources, kept as written. Sources, on this machine only: the session records under
 `/Users/edwardburke/.claude/projects/-Users-edwardburke-IdeaProjects-nexonix/`, identified by FIRST timestamp (UTC), not mtime:
 

@@ -18,11 +18,17 @@ the block below.
 
 ## [Unreleased]
 
+- The drake emitter has one type-form renderer: the string-era respelling of Scala-notation type leaves (`Seq[T]`, `=>`)
+  is removed, and a type leaf is written as authored (GitHub #11). The one definition that needed it, sentient Path, is
+  authored `Primal([Waypoint])`; its Scala is unchanged. TypeLeafTest (2) is new and asserts that every type leaf in the
+  corpus is a name (1585 leaves in 194 definitions); the gate grep gains `type leaves`. Every surface is byte-identical.
 - The assembly of the drake surface is emitted by definitions: `draketarget.DefinitionText` owns the order of the six
   sections and their joining, `gendrake.DefinitionOf` composes the six section transforms from a definition, and
   `Drake.emit` is its three guards and one call (GitHub #11). Every surface is byte-identical. DefinitionTextTest (5) is
   new and reproduces all 194 surfaces of the corpus whole; two corpus types added (parse scope 121 + 73, GenDrake 119 of
   119); the gate grep gains `Definition over`.
+- Journal chapters 128–129 cover the November 10 session that wrote chapters 113–127 and built the assembly and the single
+  type-form renderer, from its original record, with one extract and audit under `draco-dev-journal/sources/`.
 - The development journal is current: chapters 113–127 cover October 26 – November 10 (the 39 commits e241378 … c70d6b8 and
   the handoff 043f578), written from the original Claude Code and Codex session records with four extracts and audits under
   `draco-dev-journal/sources/`. One historical statement is corrected from the originals: the Codex session of November 4

@@ -1,0 +1,62 @@
+The drake emitter has one type-form renderer; the last host-spelled type in the corpus is a drake type form (GitHub #11)
+
+Dev accepted, in the words "Accepted, build it", the next related point after the assembly (427442e). OWNING ISSUE:
+https://github.com/ejb816/nexonix/issues/11, the generator domain, open: the type-form renderer is one of the four
+dependencies every section transform still receives from the hand-written emitter. The issue stays open.
+
+MEASURED before recommending, over the 194 gated definitions of main and mods: about 1,700 type leaves (value types,
+type parameters, bounds, foreign derivations), exactly ONE spelled in the Scala target's notation — sentient Path,
+whose surface read `type Path from Sentient draco Primal(Seq[Waypoint])` and whose JSON carried the string
+"Seq[Waypoint]". HostTextTest bounds host text in `value` leaves only, so nothing saw it. For that one leaf the emitter
+kept a second, string-era renderer beside `drakeType`: `typeExpression` (`Seq[T]` to `[T]`, `=>` to `->`, about
+thirty lines), the identity on every other leaf in the corpus.
+
+BUILT. Path.drake is `type Path from Sentient draco Primal([Waypoint])`; its JSON is `DrakeCLI parse` of it (one leaf
+becomes the tree `{"[]": ["Waypoint"]}`); its companion regenerates byte-identical (`Primal[Seq[Waypoint]]`). In
+Drake.scala `typeExpression` is removed, `drakeType` is `TypeForm.neutral` — the one spelling of a type form, tree or
+leaf — and the value-type slot writes a string leaf as authored. With the recompiled emitter `DrakeCLI check` reads
+surface drift 0, json drift 0 over main and over mods. `TypeLeafTest` (2) is the 84th suite: every string leaf in a
+type slot of the main and mods corpus is a dotted name (1585 leaves in 194 definitions, 0 carrying host type syntax;
+console line `type leaves: …`, added to the gate grep), failing by file and leaf otherwise, with the renderer's three
+shapes pinned; and Path's trio in its new form. No corpus type added; no other headline moves.
+
+ONE EXISTING TEST CHANGED, and it is the behavior removed: DracoAspectTest's factory-elision case ended by building a
+definition whose factory result was the Scala-spelled STRING "Example[T]" and asserting it was respelled and elided as
+the implicit result. The first full direct run failed on it (1199 / 1). The assertion now gives the result as the tree
+the parser writes, `{"()": ["Example", "T"]}`, with a comment saying why; nothing in the corpus carried the string
+form, which is what TypeLeafTest asserts.
+
+LEFT AS IT IS, observed: the parser's `parseTypeExpression` (the old inverse, about thirty lines) has no caller left
+but itself — dead code, not removed here because the accepted scope was the emitter; `splitTypeArguments`,
+`splitTopArrow` and the two arrow constants are still the parser's. Two TEST resources carry host-spelled types
+(`domains/natural/Natural.json` with `Primal[Int]`, `org/nexonix/rules/rete/TupleFact.json` with `(Int,Int,Int)`);
+neither has a drake surface and the full run shows no gate emits them. REJECTED: moving the renderer to a definition
+in this increment (it would have carried the respelling into drake); the guards' failure form first.
+
+DIRECT RUN of every discovered suite on compiled classes with current main, mods and test resources on the loader roots
+(test classes on the Runner's runpath alone): the second run, after the test above was updated — 1200 tests / 85
+suites including discovery, zero failed, canceled, ignored, pending or aborted; every headline unchanged — example gate
+48 / 0, surface losses 0 across 194 types, parse scope 121 + 73 with 0 held back, host text 21 leaves of 2237 in the 11
+named seams and 0 outside, scenario 23 clean, GenDrake 119 of 119, the aspect probes and the `Definition over` line as
+at 427442e, the PON pair 42 and 7 as suspended, the rete finding categorical — and the new line `type leaves: 1585 in
+194 definitions, 0 carrying host type syntax`; ExampleLoadingTest's two-stage load reads the treed `Waypoint`; the tree
+afterwards held the intended changes only.
+
+DEV'S GATE (2026-11-10): 1200 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `type leaves` line as expected, green on its first run.
+
+DOCUMENTATION in this commit: DRACO.md (the gate grep gaining `type leaves`, a dated paragraph, the §5 handoff
+line), CHANGELOG (one entry), DEVELOPMENT_HANDOFF.md (a new current checkpoint), DEVELOPMENT_RESUME_PROMPT.md. The fold
+of 427442e, its commit and push, uncommitted since, rides here. No tracker action: #11 stays open.
+
+JOURNAL in this commit, at Dev's request before committing ("Update the draco-dev-journal before the commit. I noticed that
+the session was compacted already."): chapters 128 (receiving the handoff, writing chapters 113–127) and 129 (the assembly
+and this increment) from this session's original record, with the bounded extract and retrieval audit
+draco-dev-journal/sources/claude-2026-11-10-session-2 — 19 records, 9 completed exchanges, the request the open turn, two
+compaction boundaries with originals on both sides, every record re-read from its source line and matched on uuid,
+timestamp and hash. The introduction's index and integrity note, README's coverage paragraph and both
+draco-docs-synced-through markers move to chapter 129.
+
+Not done, by design: no tracker action. PON suspended; activation
+and .dcon deferred; EgoActor, scripts/inspect-type.scala and the Scala guide's authoring section observed only.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

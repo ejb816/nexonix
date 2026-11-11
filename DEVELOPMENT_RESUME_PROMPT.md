@@ -13,7 +13,9 @@ grep is the one in DRACO.md section 1.
 THE JOURNAL IS CURRENT. A Claude Code session wrote chapters 113–127 on November 10 from the original records (three
 Claude Code session records and the Codex rollouts of November 4–5), with four extracts and audits under
 draco-dev-journal/sources/; record git-record-2026-11-10-1343. HEAD should be that documentation commit on top of the
-handoff commit 043f578. The one stretch not yet journaled is that session itself.
+handoff commit 043f578. That session is itself journaled in chapters 128–129 (extract and audit
+sources/claude-2026-11-10-session-2), written before the sixth increment's commit at my request; coverage is current
+through chapter 129 and only what followed that request is not journaled.
 
 DEVELOPMENT RESUMES WHEN I SAY SO. Preserved and NOT accepted: the assembly of the drake surface as a definition
 (draketarget.DefinitionText owning the order of the six sections, gendrake.DefinitionOf composing the six transforms,
@@ -80,7 +82,13 @@ WHAT HAPPENED (November 10, fifth increment, after the journal): I accepted the 
 draketarget.DefinitionText owning the order and joining of the six sections, gendrake.DefinitionOf composing the six
 transforms, Drake.emit its three guards and one call, DefinitionTextTest +5, two corpus types (record
 git-record-2026-11-10-1527). My full gate on it passed, 1198 tests with every headline matching: that is the baseline
-now, 1198 tests / 83 suites. Check `git log` for its commit above d815338.
+now, 1198 tests / 83 suites. I committed and pushed it as 427442e; HEAD should be that commit or a fold above it.
+
+WHAT HAPPENED (November 10, sixth increment): I accepted one type-form renderer in the drake emitter — the string-era
+respelling removed, sentient Path authored Primal([Waypoint]), TypeLeafTest asserting every type leaf is a name (record
+git-record-2026-11-10-1714). My full gate on it passed, 1200 tests with every headline matching: the baseline is
+now 1200 tests / 84 suites. Check DEVELOPMENT_HANDOFF.md and `git log` for whether its commit is recorded; if not, settle
+that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

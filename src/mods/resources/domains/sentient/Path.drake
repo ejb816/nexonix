@@ -1,2 +1,2 @@
-type Path from Sentient draco Primal(Seq[Waypoint])
+type Path from Sentient draco Primal([Waypoint])
 domain domains sentient Sentient

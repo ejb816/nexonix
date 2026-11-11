@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 127 chapters of development sessions between March 22 and November 10, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 129 chapters of development sessions between March 22 and November 10, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -10,6 +10,15 @@ chapters 105–112. Original records survive both observed compactions. A separa
 Claude extract closes the prior handoff boundary. The journal includes the initial premature
 handoff claim, Dev’s challenge and Codex’s correction; this repair’s final reply lies outside
 the frozen prefix. Bounded recoverability does not establish completeness beyond that prefix.
+
+**November 10 integrity checkpoint, second update:** Chapters 128–129 cover the session that wrote
+chapters 113–127 and then resumed development, from its own record
+([retrieval audit](sources/claude-2026-11-10-session-2-audit.md)): 19 records, 10 Dev messages and
+9 final replies, 9 completed exchanges and one open turn — Dev's request for this update, made before
+the commit of the increment in progress, after Dev noticed the session had been compacted. Two
+compaction boundaries are observed, each directly after a Dev message; original messages survive on
+both sides of each and no summary supplies a quotation. The session was still open when the extract
+was frozen, so the reply to the open turn is not journaled.
 
 **November 10 integrity checkpoint:** Chapters 113–127 were written in one pass on November 10
 from four sources: three Claude Code session records
@@ -682,3 +691,11 @@ The host-text bound lands at e2ca0be (1128). Dev asks when the commits are pushe
 ### [Chapter 127 - The Actor, Record and Codec Sections, and the Handoff](draco-dev-chapter-127.md)
 
 The actor section lands at 8b127aa (1158), the record and codec sections at c70d6b8 (1183): all six drake sections are definition-backed. Dev calls the handoff (043f578).
+
+### [Chapter 128 - Receiving the Handoff and Bringing the Journal Current](draco-dev-chapter-128.md)
+
+A new session receives the handoff, confirms the scope and writes chapters 113–127 from the original records, correcting the claim that the Codex session had not asked; committed as d815338.
+
+### [Chapter 129 - The Assembly and the Single Type-Form Renderer](draco-dev-chapter-129.md)
+
+The assembly of the drake surface becomes a definition at 427442e (1198). The emitter's string-era type respelling is removed and a type leaf is asserted a name (1200, verified, uncommitted at the chapter's close). Dev asks for the journal before the commit.

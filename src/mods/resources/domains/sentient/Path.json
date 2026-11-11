@@ -21,7 +21,11 @@
           "draco"
         ],
         "typeParameters": [
-          "Seq[Waypoint]"
+          {
+            "[]": [
+              "Waypoint"
+            ]
+          }
         ]
       }
     ]
