@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- The drake surface's type-form renderer is a definition: `gendrake.TypeFormOf` maps a type form (a name or one of the
+  nine tree nodes) onto drake's own spelling, and the emitter delegates to it (GitHub #11). Every surface is
+  byte-identical. TypeFormOfTest (5) is new and reproduces all 2062 type forms of the corpus; one corpus type added
+  (parse scope 122 + 73, GenDrake 120 of 120); the gate grep gains `TypeForm over`.
 - The drake parser's unreachable string-era type converter (`parseTypeExpression`, drake type text back to Scala
   notation) is removed with its `scalaArrow` constant, and five stale comments in Drake.scala and TypeForm.scala are
   corrected (GitHub #11). No behavior, definition or test change.

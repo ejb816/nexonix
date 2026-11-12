@@ -1,0 +1,18 @@
+type TypeFormOf from draco draketarget Surface
+  factory
+    parameters
+      par form Dracon
+    body
+      loc form Dracon _form
+      loc items (Text -> [Dracon]) \key -> form.field(key).itemsOrEmpty.fold([], \members -> members)
+      loc text (Dracon -> Text) \member -> TypeFormOf(member).value
+      loc list (Text -> Text) \key -> join(", ", items(key).map(text))
+      loc source Text guard(items("->").head.has("->")).ifThenElse("(" ++ text(items("->").head) ++ ")", text(items("->").head))
+      loc bound (Text -> Text) \op -> text(items(op).head) ++ " " ++ op ++ " " ++ text(items(op).last)
+      loc applied Text text(items("()").head) ++ "(" ++ join(", ", items("()").tail.map(text)) ++ ")"
+      fix value Text guard(form.has("->")).ifThenElse(source ++ " -> " ++ text(items("->").last), guard(form.has("(,)")).ifThenElse("(" ++ list("(,)") ++ ")", guard(form.has("[]")).ifThenElse("[" ++ list("[]") ++ "]", guard(form.has("{}")).ifThenElse("{" ++ list("{}") ++ "}", guard(form.has("[]+")).ifThenElse("[" ++ list("[]+") ++ "]+", guard(form.has("{}+")).ifThenElse("{" ++ list("{}+") ++ "}+", guard(form.has("()")).ifThenElse(applied, guard(form.has("<:")).ifThenElse(bound("<:"), guard(form.has(">:")).ifThenElse(bound(">:"), form.textOrEmpty.fold("", \leaf -> leaf))))))))))
+uses [
+  draco drake Text
+  draco format dracon Dracon
+]
+domain draco gendrake GenDrake

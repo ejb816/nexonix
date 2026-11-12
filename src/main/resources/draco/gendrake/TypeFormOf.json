@@ -1,0 +1,643 @@
+{
+  "typeName": {
+    "name": "TypeFormOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "TypeFormOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "form",
+          "valueType": "Dracon"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "form",
+          "valueType": "Dracon",
+          "value": "_form"
+        },
+        {
+          "kind": "Local",
+          "name": "items",
+          "valueType": {
+            "->": [
+              "Text",
+              {
+                "[]": [
+                  "Dracon"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "key",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "form.field",
+                          "key"
+                        ]
+                      },
+                      "itemsOrEmpty",
+                      "fold"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "\\": [
+                      "members",
+                      "members"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "text",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "member",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "TypeFormOf",
+                      "member"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "list",
+          "valueType": {
+            "->": [
+              "Text",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "key",
+              {
+                "()": [
+                  "join",
+                  "\", \"",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "items",
+                              "key"
+                            ]
+                          },
+                          "map"
+                        ]
+                      },
+                      "text"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "source",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "()": [
+                          {
+                            ".": [
+                              {
+                                "()": [
+                                  "items",
+                                  "\"->\""
+                                ]
+                              },
+                              "head",
+                              "has"
+                            ]
+                          },
+                          "\"->\""
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "++": [
+                  "\"(\"",
+                  {
+                    "()": [
+                      "text",
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "items",
+                              "\"->\""
+                            ]
+                          },
+                          "head"
+                        ]
+                      }
+                    ]
+                  },
+                  "\")\""
+                ]
+              },
+              {
+                "()": [
+                  "text",
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "items",
+                          "\"->\""
+                        ]
+                      },
+                      "head"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "bound",
+          "valueType": {
+            "->": [
+              "Text",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "op",
+              {
+                "++": [
+                  {
+                    "()": [
+                      "text",
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "items",
+                              "op"
+                            ]
+                          },
+                          "head"
+                        ]
+                      }
+                    ]
+                  },
+                  "\" \"",
+                  "op",
+                  "\" \"",
+                  {
+                    "()": [
+                      "text",
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "items",
+                              "op"
+                            ]
+                          },
+                          "last"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "applied",
+          "valueType": "Text",
+          "value": {
+            "++": [
+              {
+                "()": [
+                  "text",
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "items",
+                          "\"()\""
+                        ]
+                      },
+                      "head"
+                    ]
+                  }
+                ]
+              },
+              "\"(\"",
+              {
+                "()": [
+                  "join",
+                  "\", \"",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "items",
+                              "\"()\""
+                            ]
+                          },
+                          "tail",
+                          "map"
+                        ]
+                      },
+                      "text"
+                    ]
+                  }
+                ]
+              },
+              "\")\""
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "()": [
+                          "form.has",
+                          "\"->\""
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "++": [
+                  "source",
+                  "\" -> \"",
+                  {
+                    "()": [
+                      "text",
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "items",
+                              "\"->\""
+                            ]
+                          },
+                          "last"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "()": [
+                              "form.has",
+                              "\"(,)\""
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "++": [
+                      "\"(\"",
+                      {
+                        "()": [
+                          "list",
+                          "\"(,)\""
+                        ]
+                      },
+                      "\")\""
+                    ]
+                  },
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              {
+                                "()": [
+                                  "form.has",
+                                  "\"[]\""
+                                ]
+                              }
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      {
+                        "++": [
+                          "\"[\"",
+                          {
+                            "()": [
+                              "list",
+                              "\"[]\""
+                            ]
+                          },
+                          "\"]\""
+                        ]
+                      },
+                      {
+                        "()": [
+                          {
+                            ".": [
+                              {
+                                "()": [
+                                  "guard",
+                                  {
+                                    "()": [
+                                      "form.has",
+                                      "\"{}\""
+                                    ]
+                                  }
+                                ]
+                              },
+                              "ifThenElse"
+                            ]
+                          },
+                          {
+                            "++": [
+                              "\"{\"",
+                              {
+                                "()": [
+                                  "list",
+                                  "\"{}\""
+                                ]
+                              },
+                              "\"}\""
+                            ]
+                          },
+                          {
+                            "()": [
+                              {
+                                ".": [
+                                  {
+                                    "()": [
+                                      "guard",
+                                      {
+                                        "()": [
+                                          "form.has",
+                                          "\"[]+\""
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  "ifThenElse"
+                                ]
+                              },
+                              {
+                                "++": [
+                                  "\"[\"",
+                                  {
+                                    "()": [
+                                      "list",
+                                      "\"[]+\""
+                                    ]
+                                  },
+                                  "\"]+\""
+                                ]
+                              },
+                              {
+                                "()": [
+                                  {
+                                    ".": [
+                                      {
+                                        "()": [
+                                          "guard",
+                                          {
+                                            "()": [
+                                              "form.has",
+                                              "\"{}+\""
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      "ifThenElse"
+                                    ]
+                                  },
+                                  {
+                                    "++": [
+                                      "\"{\"",
+                                      {
+                                        "()": [
+                                          "list",
+                                          "\"{}+\""
+                                        ]
+                                      },
+                                      "\"}+\""
+                                    ]
+                                  },
+                                  {
+                                    "()": [
+                                      {
+                                        ".": [
+                                          {
+                                            "()": [
+                                              "guard",
+                                              {
+                                                "()": [
+                                                  "form.has",
+                                                  "\"()\""
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          "ifThenElse"
+                                        ]
+                                      },
+                                      "applied",
+                                      {
+                                        "()": [
+                                          {
+                                            ".": [
+                                              {
+                                                "()": [
+                                                  "guard",
+                                                  {
+                                                    "()": [
+                                                      "form.has",
+                                                      "\"<:\""
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              "ifThenElse"
+                                            ]
+                                          },
+                                          {
+                                            "()": [
+                                              "bound",
+                                              "\"<:\""
+                                            ]
+                                          },
+                                          {
+                                            "()": [
+                                              {
+                                                ".": [
+                                                  {
+                                                    "()": [
+                                                      "guard",
+                                                      {
+                                                        "()": [
+                                                          "form.has",
+                                                          "\">:\""
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  "ifThenElse"
+                                                ]
+                                              },
+                                              {
+                                                "()": [
+                                                  "bound",
+                                                  "\">:\""
+                                                ]
+                                              },
+                                              {
+                                                "()": [
+                                                  "form.textOrEmpty.fold",
+                                                  "\"\"",
+                                                  {
+                                                    "\\": [
+                                                      "leaf",
+                                                      "leaf"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

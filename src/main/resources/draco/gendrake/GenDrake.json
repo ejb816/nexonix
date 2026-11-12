@@ -43,6 +43,7 @@
       "UsesOf",
       "CodecAspectOf",
       "DefinitionOf",
+      "TypeFormOf",
       "Emit",
       "Emitter"
     ],

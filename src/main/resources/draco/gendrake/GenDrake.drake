@@ -12,6 +12,7 @@ domain draco gendrake GenDrake
     UsesOf
     CodecAspectOf
     DefinitionOf
+    TypeFormOf
     Emit
     Emitter
   ]

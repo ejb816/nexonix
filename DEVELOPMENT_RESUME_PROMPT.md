@@ -91,8 +91,11 @@ now 1200 tests / 84 suites. I committed it as e8dbd11, with journal chapters 128
 
 WHAT HAPPENED (November 11): I accepted removing the parser's dead string-era type converter (parseTypeExpression and
 scalaArrow in Drake.scala) with five stale comments corrected (record git-record-2026-11-11-1205, which also folds e8dbd11
-into the documents). Its direct run passed 1200 tests with every headline unchanged. Check DEVELOPMENT_HANDOFF.md and
-`git log` for whether my gate and its commit are recorded; if not, settle that with me first.
+into the documents). Its direct run and my gate both passed 1200 tests with every headline unchanged; I committed it as decc752 and pushed it.
+
+WHAT HAPPENED (November 11, second increment): I accepted the type-form renderer as a definition, gendrake.TypeFormOf, with
+the emitter delegating to it (record git-record-2026-11-11-1753). Its direct run passed 1210 tests and my full sbt gate passed 1210 tests on November 12, every headline matching; the baseline is 1210 / 85. Check
+DEVELOPMENT_HANDOFF.md and `git log` for whether my gate and its commit are recorded; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

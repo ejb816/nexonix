@@ -165,8 +165,10 @@ object Drake {
     * target's notation (`Seq[T]` to `[T]`, `=>` to `->`) by a second, string-era renderer;
     * the last leaf that needed it, sentient Path's `Primal(Seq[Waypoint])`, is authored
     * `Primal([Waypoint])`, and TypeLeafTest asserts no type leaf in the corpus carries host
-    * type syntax, so a leaf is a name and is written verbatim. */
-  private def drakeType (form: Json) : String = TypeForm.neutral(form)
+    * type syntax, so a leaf is a name and is written verbatim. Since 2026-11-11 that one
+    * renderer is the definition `gendrake.TypeFormOf`; `TypeForm.neutral` stays as the text
+    * of a tree for every other reader, and as the reference TypeFormOfTest compares against. */
+  private def drakeType (form: Json) : String = draco.gendrake.TypeFormOf(draco.format.dracon.Dracon(form)).value
 
   /** The value-type slot as the surface spells it, for a string or a tree — public
     * so DrakeParseTest can compare the two eras by their one surface. */

@@ -1,0 +1,59 @@
+The type-form renderer of the drake surface is definition-backed: gendrake.TypeFormOf (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+decc752. This record also carries the fold of decc752 into DRACO.md, the handoff and the resume prompt.
+
+ACCEPTED by Dev on 2026-11-11: "Accepted, build it", on the recommendation that the type-form renderer cross to one
+definition, `draco.gendrake.TypeFormOf`, taking a type form as Dracon and yielding its drake text, dispatching by
+`guard(form.has(key)).ifThenElse(...)` over the node keys with existing vocabulary only, `Drake.emit`'s `drakeType`
+delegating to it, one focused suite comparing it with the current renderer over the corpus, its headline in the gate grep.
+
+MEASURED before recommending: the renderer is `TypeForm.neutral`, twelve lines over nine node kinds, recursive, one
+parenthesization rule (an arrow in an arrow's source); the emitter is its only caller outside TypeForm itself, through
+`drakeType`, one of the four rendering dependencies handed to DefinitionOf; it is the leaf of the remaining hand-written
+renderers (the element renderer calls it, the expression renderer does not). Dracon already offers `has`, `field`,
+`itemsOrEmpty` and `textOrEmpty`; DomainOntology.ancestors is the precedent for recursion. NOT probed before the
+recommendation, and said so: whether a nine-way nested `ifThenElse` with recursion generates and compiles. The probe was
+the first build step and passed on its first attempt.
+
+BUILT:
+- `src/main/resources/draco/gendrake/TypeFormOf.drake` (new): `type TypeFormOf from draco draketarget Surface`, factory
+  `par form Dracon`; body bindings `items` (a node's members by key), `text` (the recursion, `TypeFormOf(member).value`),
+  `list`, `source` (the arrow's left operand, parenthesized when itself an arrow), `bound`, `applied`, and `value`, the
+  nine-way dispatch ending in the leaf's own text. `uses` records Text and Dracon. Its JSON is `DrakeCLI parse` of it and
+  its Scala `GeneratorCLI generate`, stable on regeneration after compilation (the DRACO.md section 6 order).
+- GenDrake lists TypeFormOf (drake, JSON, Scala: one member each).
+- `Drake.scala`: `drakeType` is `draco.gendrake.TypeFormOf(Dracon(form)).value`; its comment says so. No other engine change.
+  `TypeForm.neutral` STAYS: it is the text of a tree for every other reader (`TypeForm.text`) and the reference the new
+  suite compares against.
+- `src/test/scala/draco/gendrake/TypeFormOfTest.scala` (new, 5 tests, the 85th suite): each form's spelling; the arrow's
+  right grouping; the form read once and only on demand, with Null and a non-type node the empty text; the live emitter
+  spelling through the definition; every type form under a type slot in main and mods compared with `TypeForm.text`.
+- No surface moves: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods with the new emitter.
+
+ONE DIFFERENCE from the hand-written renderer, on malformed input only: `TypeForm.neutral` raises on a node that is none
+of the nine; the definition yields the empty text, drake having no failure form yet (the same reason the codec guards
+stayed in the emitter). No definition in the corpus carries such a node; TypeFormOfTest pins the behavior.
+
+REJECTED: a paired draketarget layout type (a type form is one line with no layout to own); the element or expression
+renderer first; removing `TypeForm.neutral` in this increment.
+
+HEADLINES MOVED by the one corpus type added: parse scope 122 + 73, surface losses 0 across 195 types, 122 aspect sections
+in both aspect probes, GenDrake 120 of 120, rule/actor/uses/codec probes over 195 definitions with 88 records, Definition
+195 surfaces from 521 sections, host text 21 leaves of 2369 (still 0 outside the 11 seams), type leaves 1602 in 195
+definitions. New line, added to the gate grep as `TypeForm over`:
+`TypeForm over the corpus: 2062 type forms reproduced in 195 definitions (460 trees, 1602 leaves), 0 differing`.
+
+DIRECT RUN (2026-11-11, every discovered suite, main, mods and tests compiled from source, current main, mods and test
+resources on the loader roots): 1210 tests / 86 suites including discovery, zero failed, canceled, ignored, pending or
+aborted, green on its first run. The ten new tests are TypeFormOfTest's five and the five per-type gates of the new
+definition. Example gate 48 / 0, scenario 23 clean, PON 42 and 7 as suspended, the rete finding categorical. The tree
+afterwards held the intended changes only.
+
+DEV'S GATE (2026-11-12): 1210 tests, zero failed, canceled, ignored or pending, every headline matching the direct run,
+the new `TypeForm over` line as expected, green on its first run. The baseline is 1210 tests / 85 suites.
+
+Nothing on the tracker was touched. Journal: current through chapter 129; uncovered is what follows Dev's journal request
+of November 10.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

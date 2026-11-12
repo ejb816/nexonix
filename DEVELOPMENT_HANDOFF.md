@@ -9,7 +9,24 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the parser's dead type converter removed (Claude Code, November 11, 2026; direct run 1200 / 85; Dev's gate 1200 green)
+## Current checkpoint — the type-form renderer is a definition (Claude Code, November 11, 2026; direct run 1210 / 86; Dev's gate 1210 green on November 12; commit pending)
+
+Same session. HEAD decc752, pushed (Dev's paste: e8dbd11..decc752). Dev accepted ("Accepted, build it") the next related
+point under GitHub #11 (open; stays open). Record `git-record-2026-11-11-1753`, which also folds decc752 into the documents.
+
+- **Built.** `gendrake.TypeFormOf` (trio, listed by GenDrake) maps a type form onto drake's spelling; `Drake.emit`'s
+  `drakeType` delegates to it; `TypeForm.neutral` stays as the reference and as `TypeForm.text`'s tree spelling.
+  TypeFormOfTest (5) is new. A node that is none of the nine yields the empty text (the hand-written renderer raises).
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods. Direct run: 1210 tests / 86 suites including discovery, green on
+  its first run. Headlines: parse scope 122 + 73, losses 0 across 195 types, 122 aspect sections, GenDrake 120 of 120, 88
+  records, Definition 195 surfaces from 521 sections, host text 21 of 2369, type leaves 1602, and the new
+  `TypeForm over the corpus: 2062 type forms reproduced in 195 definitions (460 trees, 1602 leaves), 0 differing`.
+  Dev's first full gate on 2026-11-12: 1210 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run. The baseline is **1210 tests / 85 suites**. The gate grep in DRACO.md §1 carries `TypeForm over`.
+- **In the tree, uncommitted.** The TypeFormOf trio and test, the GenDrake trio, Drake.scala, CHANGELOG.md, DRACO.md, this
+  file, the resume prompt, the record.
+- **Next on this thread, none accepted.** The element and expression renderers; a failure form for the guards.
+
+## Earlier the same session — the parser's dead type converter removed (Claude Code, November 11, 2026; direct run 1200 / 85; Dev's gate 1200 green; committed as decc752, pushed)
 
 Same session, continued November 11. HEAD e8dbd11, pushed (Dev's paste: 427442e..e8dbd11). Dev accepted ("Accepted, build it")
 the next related point under GitHub #11 (open; stays open). Record `git-record-2026-11-11-1205`, which also carries the fold of
@@ -19,8 +36,7 @@ e8dbd11 into the shared documents.
   five stale comments corrected in Drake.scala and TypeForm.scala (the recommendation said four). No definition, JSON,
   generated Scala or test change.
 - **Evidence.** Direct run on freshly compiled classes: 1200 tests / 85 suites including discovery, all green on the first
-  run, every headline unchanged. Dev's first full gate on 2026-11-11: 1200 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; the baseline stays 1200 / 84. Commit pending.
-- **In the tree, uncommitted.** Drake.scala, TypeForm.scala, CHANGELOG.md, DRACO.md, this file, the resume prompt, the record.
+  run, every headline unchanged. Dev's first full gate on 2026-11-11: 1200 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; the baseline stays 1200 / 84. Committed by Dev as decc752 and pushed (e8dbd11..decc752).
 - **Next on this thread, none accepted.** The type-form renderer as a definition; the element and expression renderers; a
   failure form for the guards. Observed, left: Natural.json and TupleFact.json under src/test carry host-spelled types.
 - **Journal.** Current through chapter 129; uncovered is what follows Dev's journal request of November 10 — the e8dbd11

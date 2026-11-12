@@ -65,6 +65,11 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1210 tests / 85 suites**, verified by Dev on 2026-11-12 for the definition-backed type-form renderer (record
+`git-record-2026-11-11-1753`): `gendrake.TypeFormOf` renders a type form in drake's spelling and the emitter's `drakeType` delegates to it,
+every surface byte-identical; ten tests added (TypeFormOfTest's five, the 85th suite, and the five per-type gates of the one new corpus
+type); parse scope 122 + 73, surface losses 0 across 195 types, 122 aspect sections, GenDrake 120 of 120, the `TypeForm over` line in the
+gate grep; its direct run 1210 / 86 including discovery, green on its first run. First full Dev gate green. Before it:
 **1200 tests / 84 suites**, verified by Dev on 2026-11-10 for the single type-form renderer of the drake emitter (record
 `git-record-2026-11-10-1714`, committed as e8dbd11, pushed): the emitter's string-era type respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest`
 (two tests, the 84th suite) asserting every type leaf in main and mods is a name, its `type leaves` line in the gate grep; one existing
@@ -375,7 +380,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -688,7 +693,10 @@ one at the end) and `gendrake.DefinitionOf` composes the six section transforms 
 the four rendering dependencies DracoAspectOf receives, through `definitionText`. `Drake.emit` is its
 three guards (a duplicate or malformed payload field, a discriminator — refused before anything
 renders) and that one call; what stays hand-written on the drake side is the guards and the
-renderers the transforms call back into (GitHub #11). Drake output only, as above.
+renderers the transforms call back into (GitHub #11). Drake output only, as above. The first RENDERER crossed on
+2026-11-11: `gendrake.TypeFormOf` maps a type form (a name leaf or one of the nine tree nodes) onto drake's spelling,
+recursively, deriving `draketarget.Surface`; the emitter's `drakeType` delegates to it, and `TypeForm.neutral` stays
+as the text of a tree for every other reader. The element and expression renderers remain hand-written.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `dracon`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
@@ -1303,7 +1311,8 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
+  Last prepared 2026-11-12 after the definition-backed type-form renderer (record `git-record-2026-11-11-1753`, Dev's gate of 1210 green): `gendrake.TypeFormOf`, the emitter's `drakeType` delegating, #11 open.
+  Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
   `DefinitionText` and `DefinitionOf`, `Drake.emit` its guards and one call, #11 open. Before it, the same day, after the JOURNAL UPDATE (record `git-record-2026-11-10-1343`): chapters 113–127 written from the four
@@ -2427,7 +2436,23 @@ text and two a string leaf as host text where TypeLeafTest asserts it a name. No
 change. The record (`git-record-2026-11-11-1205`) also carries the fold of e8dbd11 into this file, the handoff and the resume
 prompt. Direct run on freshly compiled classes: 1200 tests / 85 suites including discovery, zero failed, canceled, ignored,
 pending or aborted, green on its first run, every headline unchanged; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-11: 1200 tests, zero failed, canceled, ignored or pending, every headline matching, green on its first run; the
-baseline stays 1200 / 84. Next on this thread, none accepted: the type-form renderer as a definition; the
+baseline stays 1200 / 84. Committed by Dev as decc752 and pushed the same day (e8dbd11..decc752). Next on this thread, none accepted: the type-form renderer as a definition; the
 element and expression renderers; a failure form for the guards. The journal is current through chapter 129; uncovered is what
 follows Dev's journal request of November 10. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon
 deferred; PON suspended.
+
+**The type-form renderer of the drake surface is definition-backed (2026-11-11, Claude Code; GitHub #11, the issue open).**
+The next related point after decc752. MEASURED: `TypeForm.neutral` is twelve lines over nine node kinds, recursive, the
+emitter its only caller outside TypeForm, and the leaf of the remaining hand-written renderers. Dev accepted "Accepted, build
+it". BUILT: `gendrake.TypeFormOf` (factory `par form Dracon`, deriving `draketarget.Surface`; the dispatch
+`guard(form.has(key)).ifThenElse(…)` over the node keys, the recursion `TypeFormOf(member).value`, existing vocabulary only),
+listed by GenDrake; `Drake.emit`'s `drakeType` delegates to it; `DrakeCLI check` reads drift 0 over main and mods. The
+nine-way dispatch, not probed before the recommendation, generated and compiled on its first attempt. ONE DIFFERENCE on
+malformed input only: a node that is none of the nine yields the empty text where `TypeForm.neutral` raises, drake having no
+failure form. TypeFormOfTest (5) is the 85th suite and reproduces all 2062 type forms of the corpus (460 trees, 1602 leaves).
+One corpus type added: parse scope 122 + 73, surface losses 0 across 195 types, 122 aspect sections, GenDrake 120 of 120; the
+gate grep gains `TypeForm over`. REJECTED: a paired layout type; removing `TypeForm.neutral`. Direct run: 1210 tests / 86
+suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; the tree afterwards
+held the intended changes only. Dev's first full gate on 2026-11-12: 1210 tests, zero failed, canceled, ignored or pending, every headline matching, the new `TypeForm over` line as expected, green on its first run; the baseline is 1210 / 85. Next on this thread, none
+accepted: the element and expression renderers; a failure form for the guards. The journal is current through chapter 129.
+EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
