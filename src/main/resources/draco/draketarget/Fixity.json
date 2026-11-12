@@ -1,0 +1,284 @@
+{
+  "typeName": {
+    "name": "Fixity",
+    "namePackage": [
+      "draco",
+      "draketarget"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "precedence",
+        "valueType": "Int"
+      },
+      {
+        "kind": "Fixed",
+        "name": "associativity",
+        "valueType": "Text"
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "Fixity",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "precedence",
+          "valueType": "Int"
+        },
+        {
+          "kind": "Parameter",
+          "name": "associativity",
+          "valueType": "Text"
+        }
+      ]
+    },
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "operators",
+        "valueType": {
+          "[]": [
+            {
+              "(,)": [
+                "Text",
+                "Fixity"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "[]": [
+            {
+              "(,)": [
+                "\"*\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "7",
+                    "\"left\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"/\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "7",
+                    "\"left\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"%\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "7",
+                    "\"left\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"+\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "6",
+                    "\"left\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"-\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "6",
+                    "\"left\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"++\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "5",
+                    "\"right\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"==\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "4",
+                    "\"none\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"!=\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "4",
+                    "\"none\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"<\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "4",
+                    "\"none\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"<=\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "4",
+                    "\"none\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\">\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "4",
+                    "\"none\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\">=\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "4",
+                    "\"none\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"&&\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "3",
+                    "\"right\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"||\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "2",
+                    "\"right\""
+                  ]
+                }
+              ]
+            },
+            {
+              "(,)": [
+                "\"->\"",
+                {
+                  "()": [
+                    "Fixity",
+                    "0",
+                    "\"right\""
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "table",
+        "valueType": {
+          "{}": [
+            "Text",
+            "Fixity"
+          ]
+        },
+        "value": "operators.toMap"
+      },
+      {
+        "kind": "Fixed",
+        "name": "flattened",
+        "valueType": {
+          "{}": [
+            "Text"
+          ]
+        },
+        "value": {
+          "{}": [
+            "\"++\"",
+            "\"&&\"",
+            "\"||\""
+          ]
+        }
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}

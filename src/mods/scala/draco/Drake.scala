@@ -88,8 +88,8 @@ object Drake {
       case (Some(p), Some(c)) =>
         c.precedence < p.precedence ||
           (c.precedence == p.precedence && (p.associativity match {
-            case 'l' => index > 0
-            case 'r' => index < count - 1
+            case "left"  => index > 0
+            case "right" => index < count - 1
             case _   => true
           }))
       case (Some(_), None) => child == "\\" && index < count - 1
@@ -533,18 +533,12 @@ object Drake {
     * at parse, as in Haskell). The arrow sits BELOW every other row, so a lambda body
     * takes everything to its right — the arrow's fixity is what makes a lambda's scope
     * unambiguous (Dev, 2026-09-21). `++`, `&&` and `||` are FLAT VARIADIC in the tree,
-    * one node for the whole run; the others stay binary. */
-  private final case class Fixity (precedence: Int, associativity: Char)
-  private val fixity: Map[String, Fixity] = Map (
-    "*"  -> Fixity (7, 'l'), "/"  -> Fixity (7, 'l'), "%"  -> Fixity (7, 'l'),
-    "+"  -> Fixity (6, 'l'), "-"  -> Fixity (6, 'l'),
-    "++" -> Fixity (5, 'r'),
-    "==" -> Fixity (4, 'n'), "!=" -> Fixity (4, 'n'),
-    "<"  -> Fixity (4, 'n'), "<=" -> Fixity (4, 'n'), ">"  -> Fixity (4, 'n'), ">=" -> Fixity (4, 'n'),
-    "&&" -> Fixity (3, 'r'),
-    "||" -> Fixity (2, 'r'),
-    "->" -> Fixity (0, 'r'))
-  private val flattened: Set[String] = Set ("++", "&&", "||")
+    * one node for the whole run; the others stay binary. The table is the definition
+    * `draco.draketarget.Fixity` since 2026-11-12 (its `table` and `flattened` globals);
+    * the parser and the emitter both read it from there. */
+  private type Fixity = draco.draketarget.Fixity
+  private lazy val fixity: Map[String, Fixity] = draco.draketarget.Fixity.table
+  private lazy val flattened: Set[String] = draco.draketarget.Fixity.flattened
 
   /** One expression over a token run. The run is split FLAT at every operator token; a
     * lambda — a token opening with `\` in operand position — takes every token after it
@@ -611,10 +605,10 @@ object Drake {
       while (next < operators.length && fixity (operators (next)).precedence >= floor) {
         val op = operators (next)
         val f  = fixity (op)
-        if (last.exists (l => l.precedence == f.precedence && (l.associativity == 'n' || f.associativity == 'n' || l.associativity != f.associativity)))
+        if (last.exists (l => l.precedence == f.precedence && (l.associativity == "none" || f.associativity == "none" || l.associativity != f.associativity)))
           sys.error (s"Drake.parse: '$op' does not associate with the operator before it; parenthesize")
         next += 1
-        val right = climb (if (f.associativity == 'r') f.precedence else f.precedence + 1)
+        val right = climb (if (f.associativity == "right") f.precedence else f.precedence + 1)
         left = infixNode (op, left, right)
         last = Some (f)
       }

@@ -94,8 +94,12 @@ scalaArrow in Drake.scala) with five stale comments corrected (record git-record
 into the documents). Its direct run and my gate both passed 1200 tests with every headline unchanged; I committed it as decc752 and pushed it.
 
 WHAT HAPPENED (November 11, second increment): I accepted the type-form renderer as a definition, gendrake.TypeFormOf, with
-the emitter delegating to it (record git-record-2026-11-11-1753). Its direct run passed 1210 tests and my full sbt gate passed 1210 tests on November 12, every headline matching; the baseline is 1210 / 85. Check
-DEVELOPMENT_HANDOFF.md and `git log` for whether my gate and its commit are recorded; if not, settle that with me first.
+the emitter delegating to it (record git-record-2026-11-11-1753). Its direct run passed 1210 tests and my full sbt gate passed 1210 tests on November 12, every headline matching; the baseline is 1210 / 85. I committed it as 270ca7d and pushed it.
+
+WHAT HAPPENED (November 12): I accepted drake's operator fixity table as a definition, draketarget.Fixity, read by the
+parser and the emitter in Drake.scala (record git-record-2026-11-12-1410, which also folds 270ca7d into the documents).
+Its direct run and my full sbt gate both passed 1219 tests, every headline matching; the baseline is 1219 / 86. Check
+DEVELOPMENT_HANDOFF.md and `git log` for whether its commit is recorded; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

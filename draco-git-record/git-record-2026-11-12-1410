@@ -1,0 +1,59 @@
+Drake's operator fixity table is a definition: draketarget.Fixity, read by the parser and the emitter (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+270ca7d. This record also carries the fold of 270ca7d into DRACO.md, the handoff and the resume prompt.
+
+ACCEPTED by Dev on 2026-11-12: "Accepted, build it", on the recommendation that drake's operator fixity table move, alone,
+to one definition in `draco.draketarget`, carrying the operators as data in existing vocabulary (name, precedence,
+grouping, the flat-variadic set), with `Drake.parse` and `Drake.emit` both reading it from there, one focused test pinning
+the fifteen rows as drake.dlt states them, and the expression renderer itself left out.
+
+MEASURED before recommending: what is left hand-written on the emit side is the expression renderer (`render`,
+`parenthesized`) and the element renderer, which calls it; the expression renderer decides parentheses from the fixity
+table, a private value of the hand-written engine in mods shared by the parser (`expression`, `resolve`, `infixNode`) and
+the emitter; a definition in main may not reach into mods, so `gendrake.ExpressionOf` cannot be written while the table
+lives there. NOT probed before the recommendation, and said so: whether a table of records generates cleanly. The probe
+was the first build step and passed on its first attempt, with the grouping as Text ("left", "right", "none") in place of
+the engine's character.
+
+BUILT:
+- `src/main/resources/draco/draketarget/Fixity.drake` (new): `type Fixity`, elements `precedence Int` and
+  `associativity Text`, a two-parameter factory, and three globals — `operators [(Text, Fixity)]` (the fifteen rows in
+  drake.dlt's order), `table {Text, Fixity}` (`operators.toMap`) and `flattened {Text}` (`++`, `&&`, `||`). `uses` records
+  Text. Its JSON is `DrakeCLI parse` of it and its Scala `GeneratorCLI generate`, stable on regeneration after compilation.
+  The form is HostBindings' (a list of pairs and its map), with a record in the value position.
+- DrakeTarget lists Fixity (drake, JSON, Scala: one member each).
+- `Drake.scala`: the private `Fixity` case class and the two private tables are gone; `fixity` and `flattened` are lazy
+  references to `draco.draketarget.Fixity.table` and `.flattened`, and the three places that read the grouping compare
+  "left" / "right" / "none". The comment says where the table lives. No other engine change; the parser's and the
+  emitter's logic is untouched.
+- `src/test/scala/draco/draketarget/FixityTest.scala` (new, 4 tests, the 86th suite): the fifteen rows as specified, each
+  operator once, three flat; the parser reading every row (each operator a node; a run grouping left, right, flat, or
+  refused for a non-associative row; a tighter row binding first); the emitter writing a pair only where the table would
+  regroup and dropping a redundant one; the record's lazy factory arguments and codec round trip.
+- `drake.dlt`: one sentence under the fixity table naming the definition.
+- No surface, JSON or Scala of any other definition moves: `DrakeCLI check` reads surface drift 0, json drift 0 over main
+  and mods with the new engine.
+
+LEFT OUT, as recommended: the expression renderer itself (it raises on an unknown operator, and drake has no failure
+form); the element renderer; the Scala target's own precedence table in DracoGenerator.
+
+HEADLINES MOVED by the one corpus type added: parse scope 123 + 73, surface losses 0 across 196 types, 123 aspect sections
+in both aspect probes, GenDrake 121 of 121, rule/actor/uses/codec probes over 196 definitions with 89 records, Definition
+196 surfaces from 524 sections, host text 21 leaves of 2433 (still 0 outside the 11 seams), type leaves 1612 in 196
+definitions, TypeForm 2076 type forms (464 trees, 1612 leaves), 0 differing. No new line in the gate grep.
+
+DIRECT RUN (2026-11-12, every discovered suite, main, mods and tests compiled from source, current main, mods and test
+resources on the loader roots): 1219 tests / 87 suites including discovery, zero failed, canceled, ignored, pending or
+aborted. The nine new tests are FixityTest's four and the five per-type gates of the new definition. Example gate 48 / 0,
+scenario 23 clean, forest 1 of 2, PON 42 and 7 as suspended, the rete finding categorical. A first run had failed three
+ScenarioGenTest tests through the harness (the test resources were not on a loader root, so the scenario definitions
+loaded as stubs); with the test resources on their own root, as the recorded procedure has it, the same classes are green.
+The tree afterwards held the intended changes only.
+
+DEV'S GATE (2026-11-12): 1219 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run. The baseline is 1219 tests / 86 suites.
+
+Nothing on the tracker was touched. Journal: current through chapter 129; uncovered is what follows Dev's journal request
+of November 10 (decc752, 270ca7d and this increment).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

@@ -65,8 +65,14 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1219 tests / 86 suites**, verified by Dev on 2026-11-12 for drake's operator fixity table as a definition (record
+`git-record-2026-11-12-1410`): `draketarget.Fixity` carries the fifteen operators and the three flat-variadic ones, and the parser and the
+emitter in Drake.scala read it, every surface byte-identical; nine tests added (FixityTest's four, the 86th suite, and the five per-type
+gates of the one new corpus type); parse scope 123 + 73, surface losses 0 across 196 types, 123 aspect sections, GenDrake 121 of 121, no
+new grep line; its direct run 1219 / 87 including discovery, green on its second run (the first failed three ScenarioGenTest tests on a
+harness error, test resources off the loader roots). First full Dev gate green. Before it:
 **1210 tests / 85 suites**, verified by Dev on 2026-11-12 for the definition-backed type-form renderer (record
-`git-record-2026-11-11-1753`): `gendrake.TypeFormOf` renders a type form in drake's spelling and the emitter's `drakeType` delegates to it,
+`git-record-2026-11-11-1753`, committed as 270ca7d, pushed): `gendrake.TypeFormOf` renders a type form in drake's spelling and the emitter's `drakeType` delegates to it,
 every surface byte-identical; ten tests added (TypeFormOfTest's five, the 85th suite, and the five per-type gates of the one new corpus
 type); parse scope 122 + 73, surface losses 0 across 195 types, 122 aspect sections, GenDrake 120 of 120, the `TypeForm over` line in the
 gate grep; its direct run 1210 / 86 including discovery, green on its first run. First full Dev gate green. Before it:
@@ -696,7 +702,8 @@ renders) and that one call; what stays hand-written on the drake side is the gua
 renderers the transforms call back into (GitHub #11). Drake output only, as above. The first RENDERER crossed on
 2026-11-11: `gendrake.TypeFormOf` maps a type form (a name leaf or one of the nine tree nodes) onto drake's spelling,
 recursively, deriving `draketarget.Surface`; the emitter's `drakeType` delegates to it, and `TypeForm.neutral` stays
-as the text of a tree for every other reader. The element and expression renderers remain hand-written.
+as the text of a tree for every other reader. The element and expression renderers remain hand-written; the operator
+fixity table the expression renderer and the parser read is the definition `draketarget.Fixity` since 2026-11-12.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `dracon`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
@@ -1311,7 +1318,8 @@ claims against the code rather than treating a historical audit as permanent val
   Both agents read the same operating rules; edit DRACO.md, never the symlinks.
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
-  Last prepared 2026-11-12 after the definition-backed type-form renderer (record `git-record-2026-11-11-1753`, Dev's gate of 1210 green): `gendrake.TypeFormOf`, the emitter's `drakeType` delegating, #11 open.
+  Last prepared 2026-11-12 after the definition-backed type-form renderer (record `git-record-2026-11-11-1753`, committed by Dev as 270ca7d after his gate of 1210 green, pushed): `gendrake.TypeFormOf`, the emitter's `drakeType` delegating, #11 open.
+  After it, the same day: drake's fixity table as the definition `draketarget.Fixity` (record `git-record-2026-11-12-1410`, Dev's gate of 1219 green).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2453,6 +2461,23 @@ failure form. TypeFormOfTest (5) is the 85th suite and reproduces all 2062 type 
 One corpus type added: parse scope 122 + 73, surface losses 0 across 195 types, 122 aspect sections, GenDrake 120 of 120; the
 gate grep gains `TypeForm over`. REJECTED: a paired layout type; removing `TypeForm.neutral`. Direct run: 1210 tests / 86
 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; the tree afterwards
-held the intended changes only. Dev's first full gate on 2026-11-12: 1210 tests, zero failed, canceled, ignored or pending, every headline matching, the new `TypeForm over` line as expected, green on its first run; the baseline is 1210 / 85. Next on this thread, none
+held the intended changes only. Dev's first full gate on 2026-11-12: 1210 tests, zero failed, canceled, ignored or pending, every headline matching, the new `TypeForm over` line as expected, green on its first run; the baseline is 1210 / 85. Committed by Dev as 270ca7d and pushed the same day (decc752..270ca7d). Next on this thread, none
 accepted: the element and expression renderers; a failure form for the guards. The journal is current through chapter 129.
 EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**Drake's operator fixity table is a definition (2026-11-12, Claude Code; GitHub #11, the issue open).** The next related
+point after 270ca7d. MEASURED: the expression renderer, the next leaf of the hand-written renderers, decides parentheses
+from the fixity table, which was a private value of the engine in mods shared by the parser and the emitter; a definition
+in main cannot read mods, so the table had to cross first. Dev accepted "Accepted, build it". BUILT:
+`draketarget.Fixity` — a record of `precedence` and `associativity` (Text: left, right, none) with the globals
+`operators` (the fifteen rows as pairs), `table` (their map) and `flattened` (`++`, `&&`, `||`) — listed by DrakeTarget;
+`Drake.scala` reads `Fixity.table` and `Fixity.flattened` in place of its private case class and maps, parser and emitter
+logic untouched; `DrakeCLI check` reads drift 0 over main and mods. FixityTest (4) is the 86th suite: the rows as
+drake.dlt states them, the parser reading every row, the emitter's minimal pairs, the record's codec. One corpus type
+added: parse scope 123 + 73, surface losses 0 across 196 types, 123 aspect sections, GenDrake 121 of 121; no new grep
+line. LEFT OUT: the expression renderer itself; the Scala target's precedence table in DracoGenerator. Direct run: 1219
+tests / 87 suites including discovery, zero failed, canceled, ignored, pending or aborted, after a first run that failed
+three ScenarioGenTest tests through the harness (test resources off the loader roots); the tree afterwards held the
+intended changes only. Dev's first full gate on 2026-11-12: 1219 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1219 / 86. Next on this thread, none accepted: the expression renderer as a definition;
+the element renderer; a failure form for the guards. The journal is current through chapter 129. EgoActor and
+scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

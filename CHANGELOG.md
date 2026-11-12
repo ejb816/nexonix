@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- Drake's operator fixity table is a definition: `draketarget.Fixity` carries the fifteen infix operators with their
+  precedence and grouping and the three flat-variadic ones, and the parser and the emitter both read it (GitHub #11).
+  No surface moves. FixityTest (4) is new; one corpus type added (parse scope 123 + 73, GenDrake 121 of 121).
 - The drake surface's type-form renderer is a definition: `gendrake.TypeFormOf` maps a type form (a name or one of the
   nine tree nodes) onto drake's own spelling, and the emitter delegates to it (GitHub #11). Every surface is
   byte-identical. TypeFormOfTest (5) is new and reproduces all 2062 type forms of the corpus; one corpus type added

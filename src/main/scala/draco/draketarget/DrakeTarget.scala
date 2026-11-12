@@ -8,7 +8,7 @@ object DrakeTarget extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("DrakeTarget", _namePackage = Seq ("draco", "draketarget")))
   lazy val dracoType: Type[DrakeTarget] = Type[DrakeTarget] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ("Surface", "DomainLine", "DomainAspectText", "DracoAspectText", "RuleAspectText", "ActorAspectText", "UsesText", "CodecAspectText", "DefinitionText")
+  lazy val elementTypeNames: Seq[String] = Seq ("Surface", "DomainLine", "DomainAspectText", "DracoAspectText", "RuleAspectText", "ActorAspectText", "UsesText", "CodecAspectText", "DefinitionText", "Fixity")
 
   lazy val domainType: Domain[DrakeTarget] = Domain[DrakeTarget] (typeDefinition)
 }

@@ -166,6 +166,8 @@ EXPRESSIONS  (value expressions — normative JSON tree vs drake surface)
             0  ->             right — BELOW every other row, so a lambda body takes everything to its
                               right (Dev, 2026-09-21: the arrow's fixity is what makes a lambda's scope
                               unambiguous). `->` is also the function/type arrow node (below).
+          The table is itself a definition since 2026-11-12: `draco.draketarget.Fixity` (its `operators`,
+          `table` and `flattened` globals), which the parser and the emitter both read.
     "()"  application — first operand applied to the rest; a literal argument keeps its
           embedded quotes ({"()": [{".": ["Rule","knowledgeService","newKnowledge"]}, "\"Primes\""]}
           renders Rule.knowledgeService.newKnowledge("Primes")). drake surface f(a, b) — see

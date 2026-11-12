@@ -667,7 +667,8 @@ directions:
   definition-backed layout and mapping in the live Drake emitter since 2026-11-10, and so has their assembly
   (`draketarget.DefinitionText`, `gendrake.DefinitionOf`); the emitter keeps the codec guards and the renderers the
   transforms call back into; the first of those renderers, the type form, is the definition `gendrake.TypeFormOf` since
-  2026-11-11. The element and expression rendering
+  2026-11-11, and the operator fixity table the expression renderer and the parser read is the definition
+  `draketarget.Fixity` since 2026-11-12. The element and expression rendering
   dependencies, the remaining aspects, and the Scala target transforms remain to be developed.
 - **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
   runs through an emitter whose Draco and domain section mappings are definition-backed; the remaining

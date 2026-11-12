@@ -1,0 +1,16 @@
+type Fixity
+  elements
+    fix precedence Int
+    fix associativity Text
+  factory
+    parameters
+      par precedence Int
+      par associativity Text
+  globals
+    fix operators [(Text, Fixity)] [("*", Fixity(7, "left")), ("/", Fixity(7, "left")), ("%", Fixity(7, "left")), ("+", Fixity(6, "left")), ("-", Fixity(6, "left")), ("++", Fixity(5, "right")), ("==", Fixity(4, "none")), ("!=", Fixity(4, "none")), ("<", Fixity(4, "none")), ("<=", Fixity(4, "none")), (">", Fixity(4, "none")), (">=", Fixity(4, "none")), ("&&", Fixity(3, "right")), ("||", Fixity(2, "right")), ("->", Fixity(0, "right"))]
+    fix table {Text, Fixity} operators.toMap
+    fix flattened {Text} {"++", "&&", "||"}
+uses [
+  draco drake Text
+]
+domain draco draketarget DrakeTarget

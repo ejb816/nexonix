@@ -33,7 +33,8 @@
       "ActorAspectText",
       "UsesText",
       "CodecAspectText",
-      "DefinitionText"
+      "DefinitionText",
+      "Fixity"
     ]
   }
 }
