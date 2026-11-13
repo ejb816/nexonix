@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- Drake's element keyword table is a definition: `draketarget.Keyword` carries the nine member kinds with their
+  keywords (`fix`, `mut`, `dyn`, `par`, `loc`, `mon`, `var`, `con`, `case`) and the strictness word `now`; the emitter
+  looks an element's keyword up by the name of the kind definition the element carries, and the parser's member keywords
+  are the table's values (GitHub #11). Every surface is byte-identical. KeywordTest (4) is new.
 - The drake surface's expression renderer is a definition: `gendrake.ExpressionOf` spells a value tree in drake's own
   form, with the minimal parentheses by the fixity table, and the emitter delegates to it after refusing a value outside
   the tree language (GitHub #11). Every surface is byte-identical. ExpressionOfTest (5) is new and reproduces all 629

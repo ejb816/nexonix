@@ -11,4 +11,5 @@ domain draco draketarget DrakeTarget
     CodecAspectText
     DefinitionText
     Fixity
+    Keyword
   ]

@@ -9,7 +9,25 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the expression renderer is a definition (Claude Code, November 12, 2026; direct run 1229 / 88; Dev's gate 1229 green; commit pending)
+## Current checkpoint — drake's element keyword table is a definition (Claude Code, November 12, 2026; direct run 1238 / 89; Dev's gate 1238 green; commit pending)
+
+Same session. HEAD cafb359, pushed (Dev's paste: f80584d..cafb359). Dev accepted ("Accepted, build it") the next related
+point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-2103`, which also folds cafb359 into the documents.
+
+- **Built.** `draketarget.Keyword` (trio, listed by DrakeTarget): the globals `kinds` (the nine member kinds with their
+  keywords), `table` and `strict` (`now`). `Drake.scala`'s emitter looks an element's keyword up by the name of the kind
+  definition the element carries; the parser's member keywords are the table's values. KeywordTest (4) is new.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods. Direct run: 1238 tests / 89 suites including discovery, green
+  on its first run. Headlines: parse scope 125 + 73, losses 0 across 198 types, 125 aspect sections, GenDrake 123 of 123,
+  91 records, Definition 198 surfaces from 530 sections, host text 21 of 2634, type leaves 1643, TypeForm 2115 forms
+  (472 trees, 1643 leaves), Expression 632 values (453 trees, 179 leaves). No new grep line.
+  Dev's first full gate on 2026-11-12: 1238 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run.
+- **In the tree, uncommitted.** The Keyword trio and test, the DrakeTarget trio, Drake.scala, CHANGELOG.md, DRACO.md,
+  README.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** The element renderer; removing the hand-written expression renderer; a failure
+  form for the guards.
+
+## Earlier the same session — the expression renderer is a definition (Claude Code, November 12, 2026; direct run 1229 / 88; Dev's gate 1229 green; committed as cafb359, pushed)
 
 Same session. HEAD f80584d, pushed (Dev's paste: 270ca7d..f80584d). Dev accepted ("Accepted, build it") the next related
 point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-1906`, which also folds f80584d into the documents.
@@ -23,8 +41,7 @@ point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-1906`, 
   527 sections, host text 21 of 2614, type leaves 1638, TypeForm 2107 forms (469 trees, 1638 leaves), and the new
   `Expression over the corpus: 629 values reproduced in 197 definitions (452 trees, 177 leaves), 0 differing`.
   Dev's first full gate on 2026-11-12: 1229 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Expression over` line as expected, green on its first run. The gate grep in DRACO.md §1 carries `Expression over`.
-- **In the tree, uncommitted.** The ExpressionOf trio and test, the GenDrake trio, Drake.scala, CHANGELOG.md, DRACO.md,
-  README.md, this file, the resume prompt, the record.
+- **Committed.** As cafb359 by Dev after the gate, 14 files, pushed (f80584d..cafb359).
 - **Next on this thread, none accepted.** The element renderer; removing the hand-written expression renderer; a failure
   form for the guards.
 

@@ -252,19 +252,18 @@ object Drake {
 
   /** The element's keyword, prefixed `now ` when it is marked strict (drake.dlt
     * EVALUATION): the override reads before the keyword, as it is parsed. */
-  private def keyword (element: TypeElement) : String = (if (element.now) "now " else "") + bareKeyword (element)
+  private def keyword (element: TypeElement) : String =
+    (if (element.now) draco.draketarget.Keyword.strict + " " else "") + bareKeyword (element)
 
-  private def bareKeyword (element: TypeElement) : String = element match {
-    case _: Fixed     => "fix"
-    case _: Mutable   => "mut"
-    case _: Dynamic   => "dyn"
-    case _: Parameter => "par"
-    case _: Local     => "loc"
-    case _: Monadic   => "mon"
-    case _: Variable  => "var"
-    case _: Condition => "con"
-    case _: Case      => "case"
-    case e            => sys.error(s"Drake.emit: no drake keyword for element '${e.name}' (${e.getClass.getSimpleName})")
+  /** The keyword of an element's KIND, read from the definition `draketarget.Keyword`
+    * (2026-11-12, GitHub #11): an element carries its kind's own definition, so the kind is
+    * its name — `Fixed`, `Dynamic` — and the table maps it to `fix`, `dyn`. Until then this
+    * was a match on the host class, which a definition in main could not make. A kind with
+    * no row (Action, Factory, Pattern: sections, never member lines) is refused as before. */
+  private def bareKeyword (element: TypeElement) : String = {
+    val kind = element.typeDefinition.typeName.name
+    draco.draketarget.Keyword.table.getOrElse (kind,
+      sys.error(s"Drake.emit: no drake keyword for element '${element.name}' ($kind)"))
   }
 
   /** Render one element at `level` (2 spaces per level). A leaf renders one line;
@@ -395,8 +394,9 @@ object Drake {
 
   // Plain vals: unlike the App companions in the model, `Drake` is a bare object, so
   // there is no DelayedInit to defer them past first use.
-  private val memberKeywords: Set[String] =
-    Set ("fix", "mut", "dyn", "par", "loc", "mon", "var", "con")
+  // The member keywords are the rows of the definition `draketarget.Keyword` since 2026-11-12
+  // (`case` among them, which `reserved` below named on its own before).
+  private val memberKeywords: Set[String] = draco.draketarget.Keyword.table.values.toSet
 
   /** The member keywords that can open a STATEMENT inside a dyn-with-body — the
     * bindings and effects, and a case-branch (drake.dlt CASE-BRANCH), which is

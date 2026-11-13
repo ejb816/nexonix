@@ -1,0 +1,9 @@
+type Keyword
+  globals
+    fix kinds [(Text, Text)] [("Fixed", "fix"), ("Mutable", "mut"), ("Dynamic", "dyn"), ("Parameter", "par"), ("Local", "loc"), ("Monadic", "mon"), ("Variable", "var"), ("Condition", "con"), ("Case", "case")]
+    fix table {Text, Text} kinds.toMap
+    fix strict Text "now"
+uses [
+  draco drake Text
+]
+domain draco draketarget DrakeTarget

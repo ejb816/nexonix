@@ -34,7 +34,8 @@
       "UsesText",
       "CodecAspectText",
       "DefinitionText",
-      "Fixity"
+      "Fixity",
+      "Keyword"
     ]
   }
 }

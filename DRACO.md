@@ -65,8 +65,14 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1238 tests / 88 suites**, verified by Dev on 2026-11-12 for drake's element keyword table as a definition (record
+`git-record-2026-11-12-2103`): `draketarget.Keyword` carries the nine member kinds with their keywords and the strictness word, the emitter
+looks a keyword up by the name of the kind definition an element carries and the parser's member keywords are the table's values, every
+surface byte-identical; nine tests added (KeywordTest's four, the 88th suite, and the five per-type gates of the one new corpus type);
+parse scope 125 + 73, surface losses 0 across 198 types, 125 aspect sections, GenDrake 123 of 123, no new grep line; its direct run
+1238 / 89 including discovery, green on its first run. First full Dev gate green. Before it:
 **1229 tests / 87 suites**, verified by Dev on 2026-11-12 for the definition-backed expression renderer (record
-`git-record-2026-11-12-1906`): `gendrake.ExpressionOf` spells a value tree with the minimal parentheses and `Drake.expression` delegates to it
+`git-record-2026-11-12-1906`, committed as cafb359, pushed): `gendrake.ExpressionOf` spells a value tree with the minimal parentheses and `Drake.expression` delegates to it
 after refusing a value outside the tree language, every surface byte-identical; ten tests added (ExpressionOfTest's five, the 87th suite, and the
 five per-type gates of the one new corpus type); parse scope 124 + 73, surface losses 0 across 197 types, 124 aspect sections, GenDrake 122 of 122,
 the `Expression over` line in the gate grep; its direct run 1229 / 88 including discovery, green on its second run (the first failed the new
@@ -712,7 +718,9 @@ as the text of a tree for every other reader. The operator fixity table the pars
 the definition `draketarget.Fixity` since 2026-11-12, and the EXPRESSION renderer crossed the same day:
 `gendrake.ExpressionOf` spells a value tree with the minimal parentheses, and `Drake.expression` delegates to it after
 refusing a value outside the tree language (the hand-written renderer stays as `handExpression`, the test reference).
-The element renderer remains hand-written.
+The element renderer remains hand-written; the keyword of each element kind it writes is read from the definition
+`draketarget.Keyword` since 2026-11-12 (an element carries its kind's definition, so the kind is that definition's name),
+and the parser's member keywords are that table's values.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `dracon`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
@@ -1329,7 +1337,8 @@ claims against the code rather than treating a historical audit as permanent val
   refresh it at a handoff or completed development increment, and verify it on resumption.
   Last prepared 2026-11-12 after the definition-backed type-form renderer (record `git-record-2026-11-11-1753`, committed by Dev as 270ca7d after his gate of 1210 green, pushed): `gendrake.TypeFormOf`, the emitter's `drakeType` delegating, #11 open.
   After it, the same day: drake's fixity table as the definition `draketarget.Fixity` (record `git-record-2026-11-12-1410`, committed by Dev as f80584d after his gate of 1219 green, pushed).
-  After it, the same day, Dev's gate of 1229 green, commit pending: the expression renderer as the definition `gendrake.ExpressionOf` (record `git-record-2026-11-12-1906`).
+  After it, the same day: the expression renderer as the definition `gendrake.ExpressionOf` (record `git-record-2026-11-12-1906`, committed by Dev as cafb359 after the gate of 1229 green, pushed).
+  After it, the same day, Dev's gate of 1238 green, commit pending: the element keyword table as the definition `draketarget.Keyword` (record `git-record-2026-11-12-2103`).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2506,6 +2515,25 @@ corpus (452 trees, 177 leaves). One corpus type added: parse scope 124 + 73, sur
 sections, GenDrake 122 of 122; the gate grep gains `Expression over`. LEFT OUT: the element renderer; removing the
 hand-written renderer. Direct run: 1229 tests / 88 suites including discovery, zero failed, canceled, ignored, pending or
 aborted, on its second run (the first failed the new corpus test on its own guessed lower bound; nothing differed); the
-tree afterwards held the intended changes only. Dev's first full gate on 2026-11-12: 1229 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Expression over` line as expected, green on its first run; the baseline is 1229 / 87. Next on this thread, none accepted: the element
+tree afterwards held the intended changes only. Dev's first full gate on 2026-11-12: 1229 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Expression over` line as expected, green on its first run; the baseline is 1229 / 87. Committed by Dev as cafb359 and pushed the same day (f80584d..cafb359). Next on this thread, none accepted: the element
 renderer; removing the hand-written expression renderer; a failure form for the guards. The journal is current through
 chapter 129. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**Drake's element keyword table is a definition (2026-11-12, Claude Code; GitHub #11, the issue open).** The next related
+point after cafb359. MEASURED: the element renderer, the last hand-written renderer of the emitter (about 80 lines),
+decides first by the element's kind, which the emitter took by a match on the host class; a definition in main cannot
+make that match, but every element instance carries its kind's own definition, so the kind is readable as
+`element.typeDefinition.typeName.name` with no core change. Dev accepted "Accepted, build it". BUILT:
+`draketarget.Keyword` — the globals `kinds` (the nine member kinds with their keywords: Fixed fix, Mutable mut, Dynamic
+dyn, Parameter par, Local loc, Monadic mon, Variable var, Condition con, Case case), `table` (their map) and `strict`
+(`now`) — listed by DrakeTarget; `Drake.scala`'s `bareKeyword` reads `Keyword.table` by the kind name and refuses a kind
+with no row as before, `keyword` writes `Keyword.strict`, and the parser's `memberKeywords` is the table's values, its
+other keyword sets and dispatch literals untouched; `DrakeCLI check` reads drift 0 over main and mods. KeywordTest (4) is
+the 88th suite: the rows, an element's kind as the name of the definition it carries (parsed or decoded), one probe
+surface with all nine member lines emitted byte for byte, every kind in the corpus a row or one of the three section
+kinds (Action, Factory, Pattern). One corpus type added: parse scope 125 + 73, surface losses 0 across 198 types, 125
+aspect sections, GenDrake 123 of 123; no new grep line. LEFT OUT: the element renderer itself. Direct run: 1238 tests / 89
+suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; the tree
+afterwards held the intended changes only. Dev's first full gate on 2026-11-12: 1238 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1238 / 88. Next on this thread, none accepted: the element renderer;
+removing the hand-written expression renderer; a failure form for the guards. The journal is current through chapter
+129. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

@@ -1,0 +1,120 @@
+{
+  "typeName": {
+    "name": "Keyword",
+    "namePackage": [
+      "draco",
+      "draketarget"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "globalElements": [
+      {
+        "kind": "Fixed",
+        "name": "kinds",
+        "valueType": {
+          "[]": [
+            {
+              "(,)": [
+                "Text",
+                "Text"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "[]": [
+            {
+              "(,)": [
+                "\"Fixed\"",
+                "\"fix\""
+              ]
+            },
+            {
+              "(,)": [
+                "\"Mutable\"",
+                "\"mut\""
+              ]
+            },
+            {
+              "(,)": [
+                "\"Dynamic\"",
+                "\"dyn\""
+              ]
+            },
+            {
+              "(,)": [
+                "\"Parameter\"",
+                "\"par\""
+              ]
+            },
+            {
+              "(,)": [
+                "\"Local\"",
+                "\"loc\""
+              ]
+            },
+            {
+              "(,)": [
+                "\"Monadic\"",
+                "\"mon\""
+              ]
+            },
+            {
+              "(,)": [
+                "\"Variable\"",
+                "\"var\""
+              ]
+            },
+            {
+              "(,)": [
+                "\"Condition\"",
+                "\"con\""
+              ]
+            },
+            {
+              "(,)": [
+                "\"Case\"",
+                "\"case\""
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "table",
+        "valueType": {
+          "{}": [
+            "Text",
+            "Text"
+          ]
+        },
+        "value": "kinds.toMap"
+      },
+      {
+        "kind": "Fixed",
+        "name": "strict",
+        "valueType": "Text",
+        "value": "\"now\""
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "DrakeTarget",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  }
+}

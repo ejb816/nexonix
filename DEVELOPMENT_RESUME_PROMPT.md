@@ -103,7 +103,12 @@ Its direct run and my full sbt gate both passed 1219 tests, every headline match
 WHAT HAPPENED (November 12, second increment): I accepted the expression renderer as a definition, gendrake.ExpressionOf,
 with Drake.expression refusing a value outside the tree language and then delegating to it (record
 git-record-2026-11-12-1906, which also folds f80584d into the documents). Its direct run passed 1229 tests and my
-full gate passed 1229 on its first run, the baseline 1229 / 87. Check `git log` for whether its commit and push are recorded; if not, settle that with me first.
+full gate passed 1229 on its first run, the baseline 1229 / 87. I committed it as cafb359 and pushed it.
+
+WHAT HAPPENED (November 12, third increment): I accepted drake's element keyword table as a definition,
+draketarget.Keyword, read by the emitter and the parser in Drake.scala (record git-record-2026-11-12-2103, which also
+folds cafb359 into the documents). Its direct run and my full gate both passed 1238 tests, the baseline 1238 / 88. Check `git log` for
+whether its commit and push are recorded; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

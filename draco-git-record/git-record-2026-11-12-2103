@@ -1,0 +1,59 @@
+Drake's element keyword table is a definition: draketarget.Keyword, read by the emitter and the parser (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+cafb359. This record also carries the fold of cafb359 into DRACO.md, the handoff and the resume prompt.
+
+ACCEPTED by Dev on 2026-11-12: "Accepted, build it", on the recommendation that the kind-to-keyword table of the element
+renderer cross to the definition `draco.draketarget.Keyword` before the element renderer itself does, the order Fixity
+and ExpressionOf took: a global list of the nine (kind, keyword) pairs, its map and the strictness word `now`, listed by
+DrakeTarget; the emitter's `bareKeyword` looking the keyword up by the element's kind name and keeping its error; the
+parser's element-keyword set derived from the table, its dispatch literals staying; one small suite.
+
+MEASURED before recommending: the element renderer is the last hand-written renderer in Drake.scala, about 80 lines
+(leaf line, dyn block, case block, sections, method formals, keyword); its first decision is the element's kind, which
+`bareKeyword` took by a match on the host class (nine rows), a match a definition in main cannot make; every element
+instance carries its kind's own definition (`Fixed.apply` sets `typeDefinition = Fixed.typeDefinition`), so
+`element.typeDefinition.typeName.name` is the kind with no core change; the parser spells the same nine keywords in
+three keyword sets and in the literals of its element reader.
+
+BUILT:
+- `src/main/resources/draco/draketarget/Keyword.drake` (new): `type Keyword`, globals `fix kinds [(Text, Text)]` (Fixed
+  fix, Mutable mut, Dynamic dyn, Parameter par, Local loc, Monadic mon, Variable var, Condition con, Case case),
+  `fix table {Text, Text} kinds.toMap` and `fix strict Text "now"`; `uses` records Text. Its JSON is `DrakeCLI parse` of
+  it and its Scala `GeneratorCLI generate`, stable on regeneration after compilation (the DRACO.md section 6 order).
+- DrakeTarget lists Keyword (drake, JSON, Scala: one member each).
+- `Drake.scala`: `bareKeyword` reads `Keyword.table` by `element.typeDefinition.typeName.name` and refuses a kind with
+  no row with the message it had, naming the kind in place of the host class; `keyword` writes `Keyword.strict` for a
+  strict element; the parser's `memberKeywords` is `Keyword.table.values.toSet` (it gains `case`, which `reserved`
+  already named on its own, so the reserved set is unchanged). The parser's statement, declaration and action sets and
+  its dispatch literals stay as they are.
+- `src/test/scala/draco/draketarget/KeywordTest.scala` (new, 4 tests, the 88th suite): the nine rows and the strictness
+  word, the three section kinds (Action, Factory, Pattern) without a row; an element's kind as the name of the
+  definition it carries, parsed or decoded from JSON; one probe surface carrying all nine member lines, a strict one
+  among them, emitted byte for byte from the parsed and from the decoded definition; every element kind in the main and
+  mods corpus a row or a section, and every row used.
+- No surface moves: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods with the new emitter.
+
+Everything generated, compiled and passed on its first attempt.
+
+LEFT OUT, as recommended: the element renderer itself; removing `handExpression`; a failure form for the guards.
+
+HEADLINES MOVED by the one corpus type added: parse scope 125 + 73, surface losses 0 across 198 types, 125 aspect sections
+in both aspect probes, GenDrake 123 of 123, rule/actor/uses/codec probes over 198 definitions with 91 records, Definition
+198 surfaces from 530 sections, host text 21 leaves of 2634 (still 0 outside the 11 seams), type leaves 1643 in 198
+definitions, TypeForm 2115 type forms (472 trees, 1643 leaves), Expression 632 values (453 trees, 179 leaves). No new
+grep line.
+
+DIRECT RUN (2026-11-12, every discovered suite, main, mods and tests compiled from source, current main, mods and test
+resources on the loader roots): 1238 tests / 89 suites including discovery, zero failed, canceled, ignored, pending or
+aborted, green on its first run. The nine new tests are KeywordTest's four and the five per-type gates of the new
+definition. Example gate 48 / 0, scenario 23 clean, forest 1 of 2, PON 42 and 7 as suspended, the rete finding
+categorical. The tree afterwards held the intended changes only.
+
+DEV'S GATE (2026-11-12): 1238 tests, zero failed, canceled, ignored or pending, every headline matching the direct run,
+green on its first run.
+
+Nothing on the tracker was touched. Journal: current through chapter 129; uncovered is what follows Dev's journal request
+of November 10 (decc752, 270ca7d, f80584d, cafb359 and this increment).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
