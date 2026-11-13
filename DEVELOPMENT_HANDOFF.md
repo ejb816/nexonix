@@ -1,7 +1,8 @@
 # Development Handoff
 
 Refreshed November 10, 2026 by Claude Code in the session that RECEIVED the handoff below and did its first task: the
-journal is current through chapter 127, and through chapter 129 since that session journaled itself the same day (see the
+journal is current through chapter 127, through chapter 129 since that session journaled itself the same day, and through
+chapter 133 since November 13, when it journaled the renderer thread before the element renderer's commit (see the
 current checkpoint). The checkpoint that follows this paragraph's section was prepared earlier the same day
 by the previous Claude Code session, at Dev's direction, for a NEW SESSION in either agent: Dev called the handoff when
 that session's context reached 75%, with the journal several sessions behind. It supersedes the record-and-codec, actor-section, rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
@@ -9,7 +10,34 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the element renderer's two string-era respellings are removed (Claude Code, November 12, 2026; direct run 1239 / 89; Dev's gate 1239 green; commit pending)
+## Current checkpoint — the element renderer is a definition (Claude Code, November 12, 2026; direct run 1249 / 90; Dev's gate 1249 green; commit pending)
+
+Same session. HEAD d06bed5, pushed (Dev's paste: 042bef1..d06bed5). Dev accepted ("Accepted, build it") the next related
+point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-2138`, which also folds d06bed5 into the documents.
+
+- **Built.** `gendrake.ElementOf` (trio, listed by GenDrake) spells one element at a level as its member lines, taking
+  the name spelling as an explicit dependency; `Drake.scala`'s `elementLines` refuses a malformed element and delegates;
+  the hand-written renderer stays as `handElementLines`, the reference. ElementOfTest (5) is new.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods. Direct run: 1249 tests / 90 suites including discovery, green
+  on its first run. Headlines: parse scope 126 + 73, losses 0 across 199 types, 126 aspect sections, GenDrake 124 of 124,
+  92 records, Definition 199 surfaces from 533 sections, host text 21 of 2774, type leaves 1681, TypeForm 2172 forms
+  (491 trees, 1681 leaves), Expression 655 values (471 trees, 184 leaves), and the new
+  `Element over the corpus: 1119 elements reproduced in 199 definitions (1366 lines), 0 differing`.
+  Dev's first full gate, reported 2026-11-13: 1249 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Element over` line as expected, green on its first run. The gate grep in DRACO.md §1 carries `Element over`.
+- **Observed, not fixed, not filed.** The generator quotes a `*` tree in a Text-typed slot as a string literal (DRACO.md §6).
+- **In the tree, uncommitted.** The ElementOf trio and test, the GenDrake trio, Drake.scala, CHANGELOG.md, DRACO.md,
+  README.md, this file, the resume prompt, the record, and the journal update below (four chapters, the introduction, one
+  extract and one audit).
+- **Journal.** Current through chapter 133, written on November 13 before this commit after Dev asked ("What about updating
+  and creating chapters in draco-dev-jpurnal, before this commit/push?"): chapters 130–133 cover this session from the open
+  turn of chapter 129 through this increment's verified gate, from its original record (55 records, 27 completed exchanges,
+  Dev's question the open turn, five compaction boundaries with originals on both sides of each; extract and audit
+  `draco-dev-journal/sources/claude-2026-11-10-to-13-session-2-continued`). Markers at chapter 133. Uncovered: only what
+  follows that question — this update's own reply and the commit.
+- **Next on this thread, none accepted.** Removing the hand-written renderers; method formals readable from a
+  definition; a failure form for the guards.
+
+## Earlier the same session — the element renderer's two string-era respellings are removed (Claude Code, November 12, 2026; direct run 1239 / 89; Dev's gate 1239 green; committed as d06bed5, pushed)
 
 Same session. HEAD 042bef1, pushed (Dev's paste: cafb359..042bef1). Dev accepted ("Accepted, build it") the next related
 point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-2123`, which also folds 042bef1 into the documents.
@@ -21,8 +49,7 @@ point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-2123`, 
 - **Evidence.** `DrakeCLI check` drift 0 over main and mods. Direct run: 1239 tests / 89 suites including discovery, green
   on its first run, every headline unchanged from 042bef1.
   Dev's first full gate on 2026-11-12: 1239 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its first run.
-- **In the tree, uncommitted.** Drake.scala, DrakeCLI.scala, DrakeParseTest, HostTextTest, drake.dlt, CHANGELOG.md,
-  DRACO.md, this file, the resume prompt, the record.
+- **Committed.** As d06bed5 by Dev after the gate, 10 files, pushed (042bef1..d06bed5).
 - **Next on this thread, none accepted.** The element renderer as a definition; removing the hand-written expression
   renderer; a failure form for the guards.
 

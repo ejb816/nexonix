@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 129 chapters of development sessions between March 22 and November 10, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 133 chapters of development sessions between March 22 and November 13, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -10,6 +10,15 @@ chapters 105–112. Original records survive both observed compactions. A separa
 Claude extract closes the prior handoff boundary. The journal includes the initial premature
 handoff claim, Dev’s challenge and Codex’s correction; this repair’s final reply lies outside
 the frozen prefix. Bounded recoverability does not establish completeness beyond that prefix.
+
+**November 13 integrity checkpoint:** Chapters 130–133 continue the same session from the open turn
+of chapter 129 through the renderer thread under GitHub #11, from its own record
+([retrieval audit](sources/claude-2026-11-10-to-13-session-2-continued-audit.md)): 55 records, 28 Dev
+messages (three of them local-command records) and 27 final replies, 27 completed exchanges and one
+open turn — Dev's question about this update, asked before the commit of the element renderer. Five
+compaction boundaries are observed, each directly after a Dev message; original messages survive on
+both sides of each and no summary supplies a quotation. The session was still open when the extract
+was frozen, so the reply to the open turn is not journaled.
 
 **November 10 integrity checkpoint, second update:** Chapters 128–129 cover the session that wrote
 chapters 113–127 and then resumed development, from its own record
@@ -699,3 +708,19 @@ A new session receives the handoff, confirms the scope and writes chapters 113�
 ### [Chapter 129 - The Assembly and the Single Type-Form Renderer](draco-dev-chapter-129.md)
 
 The assembly of the drake surface becomes a definition at 427442e (1198). The emitter's string-era type respelling is removed and a type leaf is asserted a name (1200, verified, uncommitted at the chapter's close). Dev asks for the journal before the commit.
+
+### [Chapter 130 - The Journal Before the Commit and the Dead Converter](draco-dev-chapter-130.md)
+
+Chapters 128–129 are written before the commit and land with the single type-form renderer as e8dbd11. The parser's dead string-era type converter is removed at decc752 (1200).
+
+### [Chapter 131 - The Type-Form Renderer and the Fixity Table as Definitions](draco-dev-chapter-131.md)
+
+The type-form renderer becomes `gendrake.TypeFormOf` at 270ca7d (1210); the operator fixity table becomes `draketarget.Fixity` at f80584d (1219).
+
+### [Chapter 132 - The Expression Renderer and the Keyword Table](draco-dev-chapter-132.md)
+
+The expression renderer becomes `gendrake.ExpressionOf` at cafb359 (1229); the element keyword table becomes `draketarget.Keyword` at 042bef1 (1238), its commit block run three times.
+
+### [Chapter 133 - The Respellings Removed and the Element Renderer](draco-dev-chapter-133.md)
+
+The element renderer's two string-era respellings go at d06bed5 (1239). The element renderer becomes `gendrake.ElementOf` (1249, verified, uncommitted at the chapter's close). Dev asks about the journal before the commit.

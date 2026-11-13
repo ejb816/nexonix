@@ -263,6 +263,43 @@ object Drake {
     * was CLI's `dyn drake` followed by `fix commands`. A construct that delimits
     * itself closes the grammar with no appeal to indentation. */
   private def elementLines (element: TypeElement, level: Int) : Seq[String] = {
+    refuseElement(element)
+    draco.gendrake.ElementOf(element, level, elementNameText(_)).lines
+  }
+
+  /** The name as a member line spells it: a method's with its formals appended, any other
+    * element's as authored. The one ingredient `gendrake.ElementOf` receives as a dependency:
+    * formals live on Dynamic alone, which a definition holding a TypeElement cannot reach. */
+  private[draco] def elementNameText (element: TypeElement) : String = element match {
+    case d: Dynamic => methodName(d)
+    case e          => e.name
+  }
+
+  /** What the element renderer refuses, checked over the whole element before anything
+    * renders (drake has no failure form, so the definition cannot raise): a kind with no
+    * keyword, invalid method formals, a value outside the tree language, and a block — a dyn
+    * with parameters or a body, a case-branch — carrying a value outside its body. */
+  private def refuseElement (element: TypeElement) : Unit = {
+    bareKeyword(element)
+    if (!element.value.isNull) refuseUnrenderable(element.value.json)
+    element match {
+      case d: Dynamic =>
+        MethodTypeParameters.validate(d)
+        if (opensBlock(d) && !d.value.isNull && expression(d.value).nonEmpty)
+          sys.error(s"Drake.emit: block dyn '${d.name}' carries a value outside its body — the result is the body element named `value`")
+      case c: Case =>
+        if (!c.value.isNull && expression(c.value).nonEmpty)
+          sys.error(s"Drake.emit: case-branch carries a value outside its body — the result is the body element named `value`")
+      case _ =>
+    }
+    element.parameters.foreach(refuseElement)
+    element.body.foreach(refuseElement)
+  }
+
+  /** The hand-written element renderer, kept as the reference ElementOfTest compares the
+    * definition against over the corpus (as `handExpression` is for values). Since
+    * 2026-11-12 the emitter renders through `gendrake.ElementOf` (GitHub #11). */
+  private[draco] def handElementLines (element: TypeElement, level: Int) : Seq[String] = {
     val indent = "  " * level
     if (!opensBlock(element)) leafLines(indent, keyword(element), element)
     else element match {
@@ -296,7 +333,7 @@ object Drake {
       (if (c.valueType.text.nonEmpty) Seq(typeExpressionSlot(c.valueType)) else Seq.empty)
     if (!c.value.isNull && expression(c.value).nonEmpty)
       sys.error(s"Drake.emit: case-branch carries a value outside its body — the result is the body element named `value`")
-    val statementLines = c.body.flatMap(elementLines(_, level + 1))
+    val statementLines = c.body.flatMap(handElementLines(_, level + 1))
     ((head :+ "[").mkString(" ") +: statementLines) :+ s"$indent]"
   }
 
@@ -304,7 +341,7 @@ object Drake {
     * member is bounded by its own keyword, and an opener bounds itself. Only a
     * NAME list needs brackets (nameListLines: its members carry no keyword). */
   private def sectionLines (keyword: String, members: Seq[TypeElement], level: Int) : Seq[String] =
-    s"${"  " * level}$keyword" +: members.flatMap(elementLines(_, level + 1))
+    s"${"  " * level}$keyword" +: members.flatMap(handElementLines(_, level + 1))
 
   /** The type section is definition-backed; type forms and element bodies still
     * use this target's renderers through explicit dependencies. */

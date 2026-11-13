@@ -1,0 +1,88 @@
+The element renderer of the drake surface is definition-backed: gendrake.ElementOf (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+d06bed5. This record also carries the fold of d06bed5 into DRACO.md, the handoff and the resume prompt.
+
+ACCEPTED by Dev on 2026-11-12: "Accepted, build it", on the recommendation that the element renderer, the last
+hand-written renderer of the emitter, cross to one definition, `draco.gendrake.ElementOf`: taking an element, its level
+and the name spelling as an explicit dependency `(TypeElement -> Text)`, carrying the rendered lines as `[Text]` and
+recursing into parameters, bodies and case statements; `Drake.emit`'s `elementLines` checking its refusals first and
+then delegating; the hand-written renderer kept as the test reference; one suite comparing the two over every element
+in main and mods, its headline in the gate grep.
+
+MEASURED before recommending: about 60 lines of renderer (leaf line, dyn block, case block, indented section), 1003 leaf
+lines and 89 blocks over main and mods; the keyword (`Keyword`), the value (`ExpressionOf`) and the type (`TypeFormOf`)
+already definitions, the type slot adding one rule (a top-level arrow in a pair); a method's formals on Dynamic alone,
+which a definition holding a TypeElement cannot reach (ten dyns carry them). NOT probed before the recommendation, and
+said so: whether a definition recursing with a function-typed parameter and returning a list generates and compiles.
+The probe was the first build step.
+
+BUILT:
+- `src/main/resources/draco/gendrake/ElementOf.drake` (new): `type ElementOf`, one element `fix lines [Text]`, factory
+  `par element TypeElement`, `par level Int`, `par nameText (TypeElement -> Text)`; body bindings `kind` (the name of
+  the definition the element carries), `step` / `pad` / `indent`, `keyword` (the strictness word, then the kind's row
+  of `Keyword.table`), `typed` / `form` / `slot` (the type through TypeFormOf, a top-level arrow in a pair), `spelled` /
+  `rendered` / `valued` (the value through ExpressionOf, appended when there is one), `bare` and `leaf` (a `mon` or
+  `con` carries a value only), `nested` and `section` (the recursion; a section's head one level in, its members two),
+  `method` (the dyn block), `head` and `branch` (the case-branch), `block`, and `lines`. `uses` records TypeElement,
+  Text, Keyword and Dracon. Its JSON is `DrakeCLI parse` of it and its Scala `GeneratorCLI generate`, stable on
+  regeneration after compilation (the DRACO.md section 6 order).
+- GenDrake lists ElementOf (drake, JSON, Scala: one member each).
+- `Drake.scala`: `elementLines` is `refuseElement(element)` and then `ElementOf(element, level, elementNameText(_)).lines`.
+  `refuseElement` walks the element and raises, before anything renders, on a kind with no keyword, invalid method
+  formals, a value outside the tree language, and a block dyn or a case-branch carrying a value outside its body (the
+  two messages the renderer had). `elementNameText` is the dependency: a method's name with its formals, any other
+  element's as authored. The hand-written renderer STAYS as `private[draco] handElementLines` (with `leafLines`,
+  `caseLines`, `sectionLines`), the reference the new suite compares against.
+- `src/test/scala/draco/gendrake/ElementOfTest.scala` (new, 5 tests, the 89th suite): the leaf line by kind; the dyn
+  block and the two case heads; the lines read on demand with the name asked of the dependency; the live emitter
+  spelling through the definition and refusing four malformed elements; every element the sections hand the renderer
+  in main and mods compared with the hand-written renderer.
+- No surface moves: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods with the new emitter.
+
+TWO SHAPE CHANGES the probe forced, both the engine's Text-slot rule quoting a value as a literal:
+- `loc form Text TypeFormOf(element.valueType).value` and `loc rendered Text ExpressionOf(element.value).value` were
+  generated as quoted strings (a construction followed by a member, in a Text-typed slot); each is bound as a function
+  (`typed`, `spelled`) and applied, the form TypeFormOf and ExpressionOf use inside their own lambdas.
+- `loc indent Text step * level` — a `*` tree in the JSON — was generated as the quoted string "step * level"; the
+  repetition sits in a function (`pad`) and is applied. OBSERVED, not fixed and not filed: the generator quotes a `*`
+  tree in a Text-typed slot, a defect of the String-slot rule no definition met before.
+With those the definition generated and compiled, and its suite and the full run passed on their first attempt.
+
+ONE DIFFERENCE from the hand-written renderer, on malformed input only and not reachable through the emitter: the
+definition spells a kind with no row with an empty keyword and renders a block's stray value nowhere, drake having no
+failure form; `elementLines` refuses such an element first. ElementOfTest pins the refusals.
+
+LEFT OUT, as recommended: making method formals readable from a definition; removing the hand-written renderers; a
+failure form for the guards.
+
+HEADLINES MOVED by the one corpus type added: parse scope 126 + 73, surface losses 0 across 199 types, 126 aspect sections
+in both aspect probes, GenDrake 124 of 124, rule/actor/uses/codec probes over 199 definitions with 92 records, Definition
+199 surfaces from 533 sections, host text 21 leaves of 2774 (still 0 outside the 11 seams), type leaves 1681 in 199
+definitions, TypeForm 2172 type forms (491 trees, 1681 leaves), Expression 655 values (471 trees, 184 leaves). New line,
+added to the gate grep as `Element over`:
+`Element over the corpus: 1119 elements reproduced in 199 definitions (1366 lines), 0 differing`.
+
+DIRECT RUN (2026-11-12, every discovered suite, main, mods and tests compiled from source, current main, mods and test
+resources on the loader roots): 1249 tests / 90 suites including discovery, zero failed, canceled, ignored, pending or
+aborted, green on its first run. The ten new tests are ElementOfTest's five and the five per-type gates of the new
+definition. Example gate 48 / 0, scenario 23 clean, forest 1 of 2, PON 42 and 7 as suspended, the rete finding
+categorical. The tree afterwards held the intended changes only.
+
+DEV'S GATE (reported 2026-11-13): 1249 tests, zero failed, canceled, ignored or pending, every headline matching the
+direct run, the new `Element over` line as expected, green on its first run.
+
+THE JOURNAL rides in this commit, written before it after Dev asked on November 13: chapters 130–133 cover the session
+from the open turn of chapter 129 (Dev's journal request of November 10) through this increment's verified gate —
+e8dbd11's commit, decc752, 270ca7d, f80584d, cafb359, 042bef1, d06bed5 and this increment — from the session's original
+record: 55 records, 28 Dev messages and 27 final replies, 27 completed exchanges and one open turn (Dev's question about
+this update), five compaction boundaries with original records on both sides of each, every record re-read from its source
+line and matched on uuid, timestamp and text hash. One bounded extract and one retrieval audit are added under
+draco-dev-journal/sources/; the introduction's index and integrity note, both draco-docs-synced-through markers (chapter
+133), README's coverage paragraph, DRACO.md, the handoff and the resume prompt are updated. Documentation only for this
+part: no engine, definition, Scala or test file changed after the gate, so the gate of 1249 describes the tree.
+
+Nothing on the tracker was touched. Journal: current through chapter 133; uncovered is only what follows Dev's question of
+November 13 — this update's own reply and the commit.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

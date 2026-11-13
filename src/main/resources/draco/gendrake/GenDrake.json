@@ -45,6 +45,7 @@
       "DefinitionOf",
       "TypeFormOf",
       "ExpressionOf",
+      "ElementOf",
       "Emit",
       "Emitter"
     ],

@@ -1,0 +1,809 @@
+{
+  "typeName": {
+    "name": "ElementOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "TypeElement",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Keyword",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "lines",
+        "valueType": {
+          "[]": [
+            "Text"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ElementOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "element",
+          "valueType": "TypeElement"
+        },
+        {
+          "kind": "Parameter",
+          "name": "level",
+          "valueType": "Int"
+        },
+        {
+          "kind": "Parameter",
+          "name": "nameText",
+          "valueType": {
+            "->": [
+              "TypeElement",
+              "Text"
+            ]
+          }
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "element",
+          "valueType": "TypeElement",
+          "value": "_element"
+        },
+        {
+          "kind": "Local",
+          "name": "level",
+          "valueType": "Int",
+          "value": "_level"
+        },
+        {
+          "kind": "Local",
+          "name": "nameText",
+          "valueType": {
+            "->": [
+              "TypeElement",
+              "Text"
+            ]
+          },
+          "value": "_nameText"
+        },
+        {
+          "kind": "Local",
+          "name": "kind",
+          "valueType": "Text",
+          "value": "element.typeDefinition.typeName.name"
+        },
+        {
+          "kind": "Local",
+          "name": "step",
+          "valueType": "Text",
+          "value": "\"  \""
+        },
+        {
+          "kind": "Local",
+          "name": "pad",
+          "valueType": {
+            "->": [
+              "Int",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "depth",
+              {
+                "*": [
+                  "step",
+                  "depth"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "indent",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              "pad",
+              "level"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "keyword",
+          "valueType": "Text",
+          "value": {
+            "++": [
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "element.now"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "++": [
+                      "Keyword.strict",
+                      "\" \""
+                    ]
+                  },
+                  "\"\""
+                ]
+              },
+              {
+                "()": [
+                  "Keyword.table.getOrElse",
+                  "kind",
+                  "\"\""
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "typed",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "form",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "TypeFormOf",
+                      "form"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "form",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              "typed",
+              "element.valueType"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "slot",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "()": [
+                          "element.valueType.has",
+                          "\"->\""
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "++": [
+                  "\"(\"",
+                  "form",
+                  "\")\""
+                ]
+              },
+              "form"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "spelled",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "node",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ExpressionOf",
+                      "node"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "rendered",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              "spelled",
+              "element.value"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "valued",
+          "valueType": {
+            "->": [
+              "Text",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "prefix",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "==": [
+                              "rendered",
+                              "\"\""
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  "prefix",
+                  {
+                    "++": [
+                      "prefix",
+                      "\" \"",
+                      "rendered"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "bare",
+          "valueType": "Boolean",
+          "value": {
+            "||": [
+              {
+                "==": [
+                  "kind",
+                  "\"Monadic\""
+                ]
+              },
+              {
+                "==": [
+                  "kind",
+                  "\"Condition\""
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "leaf",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "[]": [
+              {
+                "()": [
+                  "valued",
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              "bare"
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      {
+                        "++": [
+                          "indent",
+                          "keyword"
+                        ]
+                      },
+                      {
+                        "++": [
+                          "indent",
+                          "keyword",
+                          "\" \"",
+                          {
+                            "()": [
+                              "nameText",
+                              "element"
+                            ]
+                          },
+                          "\" \"",
+                          "slot"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "nested",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "TypeElement",
+                  "Int"
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "member",
+              "depth",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ElementOf",
+                      "member",
+                      "depth",
+                      "nameText"
+                    ]
+                  },
+                  "lines"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "section",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "Text",
+                  {
+                    "[]": [
+                      "TypeElement"
+                    ]
+                  }
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "head",
+              "members",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "members.isEmpty"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "++": [
+                      {
+                        "[]": [
+                          {
+                            "++": [
+                              "indent",
+                              "step",
+                              "head"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "()": [
+                          "members.flatMap",
+                          {
+                            "\\": [
+                              "member",
+                              {
+                                "()": [
+                                  "nested",
+                                  "member",
+                                  {
+                                    "+": [
+                                      "level",
+                                      "2"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "method",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "++": [
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "indent",
+                      "keyword",
+                      "\" \"",
+                      {
+                        "()": [
+                          "nameText",
+                          "element"
+                        ]
+                      },
+                      "\" \"",
+                      "slot",
+                      "\" [\""
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  "section",
+                  "\"parameters\"",
+                  "element.parameters"
+                ]
+              },
+              {
+                "()": [
+                  "section",
+                  "\"body\"",
+                  "element.body"
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "indent",
+                      "\"]\""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "head",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "++": [
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "indent",
+                      "keyword"
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "==": [
+                              "element.name",
+                              "\"\""
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "[]": [
+                      "element.name"
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "==": [
+                              "slot",
+                              "\"\""
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "[]": [
+                      "slot"
+                    ]
+                  }
+                ]
+              },
+              {
+                "[]": [
+                  "\"[\""
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "branch",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "++": [
+              {
+                "[]": [
+                  {
+                    "()": [
+                      "join",
+                      "\" \"",
+                      "head"
+                    ]
+                  }
+                ]
+              },
+              {
+                "()": [
+                  "element.body.flatMap",
+                  {
+                    "\\": [
+                      "member",
+                      {
+                        "()": [
+                          "nested",
+                          "member",
+                          {
+                            "+": [
+                              "level",
+                              "1"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "indent",
+                      "\"]\""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "block",
+          "valueType": "Boolean",
+          "value": {
+            "&&": [
+              {
+                "==": [
+                  "kind",
+                  "\"Dynamic\""
+                ]
+              },
+              {
+                "||": [
+                  "element.parameters.nonEmpty",
+                  "element.body.nonEmpty"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "lines",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "==": [
+                          "kind",
+                          "\"Case\""
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              "branch",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "block"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  "method",
+                  "leaf"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

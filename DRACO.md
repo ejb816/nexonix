@@ -65,8 +65,14 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1249 tests / 89 suites**, verified by Dev (reported 2026-11-13) for the definition-backed element renderer (record
+`git-record-2026-11-12-2138`): `gendrake.ElementOf` spells an element at a level as its member lines and `Drake.scala`'s `elementLines`
+delegates to it after refusing a malformed element, every surface byte-identical; ten tests added (ElementOfTest's five, the 89th suite, and
+the five per-type gates of the one new corpus type); parse scope 126 + 73, surface losses 0 across 199 types, 126 aspect sections, GenDrake
+124 of 124, the `Element over` line in the gate grep; its direct run 1249 / 90 including discovery, green on its first run. First full Dev
+gate green. Before it:
 **1239 tests / 88 suites**, verified by Dev on 2026-11-12 for the removal of the element renderer's two string-era respellings (record
-`git-record-2026-11-12-2123`): the emitter writes a value and a name as authored, the parser's inverse of the name respelling goes with them,
+`git-record-2026-11-12-2123`, committed as d06bed5, pushed): the emitter writes a value and a name as authored, the parser's inverse of the name respelling goes with them,
 and one added HostTextTest case asserts no definition needs either; no suite or corpus type added, every headline unchanged; its direct run
 1239 / 89 including discovery, green on its first run. First full Dev gate green. Before it:
 **1238 tests / 88 suites**, verified by Dev on 2026-11-12 for drake's element keyword table as a definition (record
@@ -402,7 +408,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|Expression over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|Expression over|Element over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -722,7 +728,11 @@ as the text of a tree for every other reader. The operator fixity table the pars
 the definition `draketarget.Fixity` since 2026-11-12, and the EXPRESSION renderer crossed the same day:
 `gendrake.ExpressionOf` spells a value tree with the minimal parentheses, and `Drake.expression` delegates to it after
 refusing a value outside the tree language (the hand-written renderer stays as `handExpression`, the test reference).
-The element renderer remains hand-written; the keyword of each element kind it writes is read from the definition
+The ELEMENT renderer crossed last, the same day: `gendrake.ElementOf` spells an element at a level as its member lines
+(leaf line, dyn block, case-branch), taking the name spelling as an explicit dependency because a method's formals live
+on Dynamic alone; `elementLines` refuses a malformed element and delegates, and the hand-written renderer stays as
+`handElementLines`, the test reference. No renderer of the drake surface is hand-written in the emitter's live path.
+The keyword of each element kind is read from the definition
 `draketarget.Keyword` since 2026-11-12 (an element carries its kind's definition, so the kind is that definition's name),
 and the parser's member keywords are that table's values. Its two string-era respellings — a host empty collection onto
 `[]` / `{}`, an element name `f[T]` onto `f(T)`, with the parser's inverse of the latter — were removed the same day:
@@ -1326,12 +1336,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 129 on 2026-11-10.
+Current documentation was reconciled through journal chapter 133 on 2026-11-13.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 129 on
-  2026-11-10.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 133 on
+  2026-11-13.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -1345,7 +1355,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it, the same day: drake's fixity table as the definition `draketarget.Fixity` (record `git-record-2026-11-12-1410`, committed by Dev as f80584d after his gate of 1219 green, pushed).
   After it, the same day: the expression renderer as the definition `gendrake.ExpressionOf` (record `git-record-2026-11-12-1906`, committed by Dev as cafb359 after the gate of 1229 green, pushed).
   After it, the same day: the element keyword table as the definition `draketarget.Keyword` (record `git-record-2026-11-12-2103`, committed by Dev as 042bef1 after the gate of 1238 green, pushed).
-  After it, the same day, Dev's gate of 1239 green, commit pending: the element renderer's two string-era respellings removed (record `git-record-2026-11-12-2123`).
+  After it, the same day: the element renderer's two string-era respellings removed (record `git-record-2026-11-12-2123`, committed by Dev as d06bed5 after the gate of 1239 green, pushed).
+  After it, Dev's gate of 1249 green (reported 2026-11-13), commit pending: the element renderer as the definition `gendrake.ElementOf` (record `git-record-2026-11-12-2138`).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -1488,6 +1499,10 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   `draco.FactDisjointness` line on 2026-11-09 and ActorAspectOf's `draco.draketarget.ActorAspectText` on 2026-11-10 both
   failed the first direct run this way. Order: generate the new definition, COMPILE it into the overlay, then generate
   its referrers; sbt's gate always sees every class, so only a pre-gate regeneration is exposed.
+- **A Text-typed slot quotes two value shapes as literals.** In a `loc`/`fix` typed `Text`, a construction followed by a
+  member (`TypeFormOf(x).value`) and a `*` tree (`step * level`) are generated as quoted strings. Bind the expression as
+  a function and apply it (`loc typed (Dracon -> Text) \form -> TypeFormOf(form).value`), as ElementOf does (2026-11-12).
+  The `*` case is a generator defect, observed and not fixed.
 - **`now` is a reserved word everywhere, including as a binding name.** A body binding called `now` is
   read as the strictness marker; name the thing `wave`, `current`, anything else (2026-10-12).
 - **A self-declaration is keyed by name and package, parameters free.** `Format(F)` self-declares as
@@ -1566,7 +1581,7 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 129 -->
+<!-- draco-docs-synced-through: chapter 133 -->
 
 **Role presence increment (2026-10-22, Codex; Dev verified 857 / 61).** Dev accepted Presence-typed
 rule/actor slots and their field-level encoding. Absent omits the key; Present writes its
@@ -2556,6 +2571,28 @@ is read as it is written; drake.dlt's `[] | {}` convention says so. HostTextTest
 no value renders to a host empty collection and no name carries a bracket or parenthesis. No definition, JSON or
 generated Scala change; `DrakeCLI check` reads drift 0 over main and mods. Direct run: 1239 tests / 89 suites including
 discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged; the tree
-afterwards held the intended changes only. Dev's first full gate on 2026-11-12: 1239 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its first run; the baseline is 1239 / 88. Next on this thread, none accepted: the element renderer
+afterwards held the intended changes only. Dev's first full gate on 2026-11-12: 1239 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its first run; the baseline is 1239 / 88. Committed by Dev as d06bed5 and pushed the same day (042bef1..d06bed5). Next on this thread, none accepted: the element renderer
 as a definition; removing the hand-written expression renderer; a failure form for the guards. The journal is current
 through chapter 129. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The element renderer of the drake surface is definition-backed (2026-11-12, Claude Code; GitHub #11, the issue open).**
+The next related point after d06bed5 and the last renderer. MEASURED: about 60 lines (leaf line, dyn block, case block,
+section), 1003 leaf lines and 89 blocks; keyword, value and type already definitions; a method's formals unreachable from
+a definition holding a TypeElement. Dev accepted "Accepted, build it". BUILT: `gendrake.ElementOf` (one element `lines
+[Text]`; factory `element`, `level`, `nameText`; the recursion renders parameters, bodies and case statements), listed by
+GenDrake; `Drake.scala`'s `elementLines` refuses a malformed element (`refuseElement`: a kind with no keyword, invalid
+formals, a value outside the tree language, a block carrying a value outside its body) and delegates, the name spelled by
+`elementNameText`; the hand-written renderer stays as `handElementLines`, the suite's reference; `DrakeCLI check` reads
+drift 0 over main and mods. TWO SHAPE CHANGES the probe forced, both the engine's Text-slot rule quoting a value as a
+literal: a construction followed by a member (`TypeFormOf(x).value`) and a `*` tree, each now bound as a function and
+applied; the `*` case is an engine defect OBSERVED, not fixed (§6). ElementOfTest (5) is the 89th suite and reproduces all
+1119 elements of the corpus (1366 lines). One corpus type added: parse scope 126 + 73, surface losses 0 across 199 types,
+126 aspect sections, GenDrake 124 of 124; the gate grep gains `Element over`. LEFT OUT: formals readable from a
+definition; removing the hand-written renderers. Direct run: 1249 tests / 90 suites including discovery, zero failed,
+canceled, ignored, pending or aborted, green on its first run; the tree afterwards held the intended changes only. Dev's first full gate, reported 2026-11-13: 1249 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Element over` line as expected, green on its first run; the baseline is 1249 / 89. Next on this thread, none accepted: removing the hand-written renderers; method formals readable from a
+definition; a failure form for the guards. THE JOURNAL was brought current through chapter 133 before the commit, after Dev
+asked on November 13 ("What about updating and creating chapters in draco-dev-jpurnal, before this commit/push?"): chapters
+130–133 cover the session from the open turn of chapter 129 through this increment's verified gate, from its original
+record — 55 records, 27 completed exchanges, the question itself the open turn, five compaction boundaries with originals on
+both sides of each — with one extract and audit under `draco-dev-journal/sources/`; the markers advance to chapter 133.
+EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

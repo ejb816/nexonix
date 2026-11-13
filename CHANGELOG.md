@@ -18,6 +18,13 @@ the block below.
 
 ## [Unreleased]
 
+- The drake surface's element renderer is a definition: `gendrake.ElementOf` spells one element at a level as its
+  member lines — a leaf line, a `dyn` block, a `case` branch — and the emitter delegates to it after refusing a malformed
+  element (GitHub #11). Every surface is byte-identical. ElementOfTest (5) is new and reproduces all 1119 elements of the
+  corpus; its `Element over` headline joins the gate grep.
+- Journal chapters 130–133 cover November 10–13: the parser's dead type converter, the type-form, expression and element
+  renderers and the fixity and keyword tables as definitions, from the session's original record, with one extract and
+  audit under `draco-dev-journal/sources/`.
 - The drake emitter no longer respells a host empty collection (`Seq.empty`, `Seq()`, `Set.empty`, `Set()`) as `[]` or
   `{}`, nor an element name `f[T]` as `f(T)`, and the parser no longer reads the latter back: a value and a name are
   carried as authored (GitHub #11). No definition needed either respelling, and HostTextTest now asserts none does.

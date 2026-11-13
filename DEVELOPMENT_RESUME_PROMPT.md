@@ -15,7 +15,9 @@ Claude Code session records and the Codex rollouts of November 4–5), with four
 draco-dev-journal/sources/; record git-record-2026-11-10-1343. HEAD should be that documentation commit on top of the
 handoff commit 043f578. That session is itself journaled in chapters 128–129 (extract and audit
 sources/claude-2026-11-10-session-2), written before the sixth increment's commit at my request; coverage is current
-through chapter 129 and only what followed that request is not journaled.
+through chapter 129 for that stretch. Chapters 130–133 (extract and audit sources/claude-2026-11-10-to-13-session-2-continued)
+then cover the same session through the element renderer's verified gate, written on November 13 before its commit after I
+asked; coverage is current through chapter 133 and only what followed that question is not journaled.
 
 DEVELOPMENT RESUMES WHEN I SAY SO. Preserved and NOT accepted: the assembly of the drake surface as a definition
 (draketarget.DefinitionText owning the order of the six sections, gendrake.DefinitionOf composing the six transforms,
@@ -112,8 +114,12 @@ folds cafb359 into the documents). Its direct run and my full gate both passed 1
 WHAT HAPPENED (November 12, fourth increment): I accepted removing the element renderer's two string-era respellings
 from Drake.scala (host empty collections onto [] and {}, an element name f[T] onto f(T)), with the parser's inverse of
 the second and one HostTextTest assertion that no definition needs either (record git-record-2026-11-12-2123, which also folds
-042bef1 into the documents). Its direct run and my full gate both passed 1239 tests, the baseline 1239 / 88. Check `git log` for whether
-its commit and push are recorded; if not, settle that with me first.
+042bef1 into the documents). Its direct run and my full gate both passed 1239 tests, the baseline 1239 / 88. I committed it as d06bed5 and pushed it.
+
+WHAT HAPPENED (November 12, fifth increment): I accepted the element renderer as a definition, gendrake.ElementOf, with
+Drake.scala's elementLines refusing a malformed element and then delegating to it (record git-record-2026-11-12-2138,
+which also folds d06bed5 into the documents). Its direct run and my full gate both passed 1249 tests, the baseline 1249 / 89. Check
+`git log` for whether its commit and push are recorded; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already
