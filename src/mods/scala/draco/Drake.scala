@@ -45,8 +45,9 @@ object Drake {
     * Since 2026-11-12 the renderer is the definition `gendrake.ExpressionOf` (GitHub #11), which
     * reads the fixity table `draketarget.Fixity` for its parentheses. What stays here is the
     * REFUSAL of a value outside the tree language — drake has no failure form, so the
-    * definition would spell such a node as the empty text — and `handExpression`, the
-    * hand-written renderer, kept as the reference ExpressionOfTest compares against. */
+    * definition would spell such a node as the empty text. The hand-written renderer, kept
+    * as a test reference from 2026-11-12, was removed on 2026-11-13: ExpressionOfTest compares
+    * the definition with the authored surfaces instead. */
   def expression (value: Json) : String = {
     refuseUnrenderable (value)
     draco.gendrake.ExpressionOf (draco.format.dracon.Dracon (value)).value
@@ -63,75 +64,6 @@ object Drake {
         operands.asArray.getOrElse(Vector(operands)).foreach(refuseUnrenderable)
       case _ => sys.error(s"Drake.expression: unrenderable value ${value.noSpaces}")
     }
-
-  /** The hand-written renderer `expression` was until 2026-11-12: the reference. */
-  private[draco] def handExpression (value: Json) : String = render (value, None, 0, 1)
-
-  /** Render `value` standing as operand `index` of `count` under the node `parent` (None at
-    * the top), with the MINIMAL parenthesization (2026-09-21): a tree is already
-    * associated, so a pair is written only where the surface would otherwise read the tree
-    * differently — see `parenthesized`. */
-  private def render (value: Json, parent: Option[String], index: Int, count: Int) : String = {
-    if (value == null || value.isNull) ""
-    else value.asString.getOrElse {
-      value.asObject.map(_.toList) match {
-        case Some((op, operands) :: Nil) =>
-          val all  = operands.asArray.getOrElse(Vector(operands))
-          val args = all.zipWithIndex.map { case (a, i) => render(a, Some(op), i, all.size) }
-          val text = op match {
-            case "."        => args.mkString(".")
-            case "->"       => args.mkString(" -> ")
-            case "()"       => s"${args.head}(${args.tail.mkString(", ")})"
-            case "\\"       => s"\\${args.init.mkString(" ")} -> ${args.last}"
-            // no "if": a conditional is `ifThenElse` on a Presence, a call like any other
-            // (retired from the tree language 2026-09-21 with Value's last two)
-            case "(,)"      => args.mkString("(", ", ", ")")
-            case "[]"       => args.mkString("[", ", ", "]")   // a sequence literal, `[]` when empty
-            case "{}"       => args.mkString("{", ", ", "}")   // a set literal
-            case "="        => s"${args(0)}:${args(1)}"
-            // every declared infix operator (the fixity table) spells itself, spaced
-            case _ if fixity.contains(op) => args.mkString(s" $op ")
-            case _          => sys.error(s"Drake.expression: unknown operator '$op' in ${value.noSpaces}")
-          }
-          if (parent.exists(p => parenthesized(p, op, index, count))) s"($text)" else text
-        case _ => sys.error(s"Drake.expression: unrenderable value ${value.noSpaces}")
-      }
-    }
-  }
-
-  /** Whether the node `child`, operand `index` of `count` under `parent`, needs its pair on
-    * the DRAKE surface — by drake's own fixity table, since the parse reads it back by the
-    * same table. Under an infix parent: a looser child always; an equally tight child on
-    * the side its associativity does not cover (left-grouping: any but the first; right-
-    * grouping: any but the last; non-associative: either); a lambda only when something
-    * follows it, since otherwise it runs to the end as the arrow's fixity says. Under a
-    * path or an application: the receiver or head when it is any of those. Arguments,
-    * tuple and literal members, a lambda's own body: never. */
-  private def parenthesized (parent: String, child: String, index: Int, count: Int) : Boolean =
-    (fixity.get(parent), fixity.get(child)) match {
-      case (Some(p), Some(c)) =>
-        c.precedence < p.precedence ||
-          (c.precedence == p.precedence && (p.associativity match {
-            case "left"  => index > 0
-            case "right" => index < count - 1
-            case _   => true
-          }))
-      case (Some(_), None) => child == "\\" && index < count - 1
-      case (None, _)       => (parent == "." || parent == "()") && index == 0 &&
-                                (fixity.contains(child) || child == "\\")
-    }
-
-  /** Render a value into the slot after `prefix`, on ONE line. Every value form — a
-    * leaf, a call, a tuple, a `++` run — is a single line now that a call is one
-    * token (drake.dlt APPLICATION SURFACE): its parentheses bound it, so nothing has
-    * to unfold onto chain lines, bracket itself inside a `++`, or spell a `par` list.
-    * The value is written as the expression renderer spells it: the string-era collapse of
-    * the host's empty collections (`Seq.empty`, `Seq()`) onto `[]` and `{}` was removed on
-    * 2026-11-12, no value in the corpus needing it (HostTextTest asserts none does). */
-  private def valueLine (prefix: String, value: Json) : String = {
-    val rendered = expression(value)
-    if (rendered.isEmpty) prefix else s"$prefix $rendered"
-  }
 
   /** Split a type-expression argument list on top-level commas only
     * (commas nested in [ ], ( ), { } belong to an inner expression). */
@@ -224,23 +156,6 @@ object Drake {
     case _          => false
   }
 
-  /** One leaf element line: `kw name value-type value?`. A `mon` (Unit effect)
-    * and a `con` (rule condition predicate) carry a value only — no name or
-    * value-type; a `con`'s value is its boolean expression tree. A construction of
-    * the declared value type spells its head like any other call (`fix report T T(…)`):
-    * the elision that once dropped the head before `parameters` went with that form,
-    * because `(…)` alone is a tuple. */
-  private def leafLines (indent: String, keyword: String, element: TypeElement) : Seq[String] =
-    element match {
-      case _: Monadic | _: Condition => Seq(valueLine(s"$indent$keyword", element.value))
-      case e => Seq(valueLine(s"$indent$keyword ${(e match { case d: Dynamic => methodName(d); case _ => e.name })} ${typeExpressionSlot(e.valueType)}", e.value))
-    }
-
-  /** The element's keyword, prefixed `now ` when it is marked strict (drake.dlt
-    * EVALUATION): the override reads before the keyword, as it is parsed. */
-  private def keyword (element: TypeElement) : String =
-    (if (element.now) draco.draketarget.Keyword.strict + " " else "") + bareKeyword (element)
-
   /** The keyword of an element's KIND, read from the definition `draketarget.Keyword`
     * (2026-11-12, GitHub #11): an element carries its kind's own definition, so the kind is
     * its name — `Fixed`, `Dynamic` — and the table maps it to `fix`, `dyn`. Until then this
@@ -296,53 +211,6 @@ object Drake {
     element.body.foreach(refuseElement)
   }
 
-  /** The hand-written element renderer, kept as the reference ElementOfTest compares the
-    * definition against over the corpus (as `handExpression` is for values). Since
-    * 2026-11-12 the emitter renders through `gendrake.ElementOf` (GitHub #11). */
-  private[draco] def handElementLines (element: TypeElement, level: Int) : Seq[String] = {
-    val indent = "  " * level
-    if (!opensBlock(element)) leafLines(indent, keyword(element), element)
-    else element match {
-      case c: Case => caseLines(c, indent, level)
-      case d: Dynamic =>
-      val header = s"$indent${keyword(d)} ${methodName(d)} ${typeExpressionSlot(d.valueType)} ["
-      val parameters =
-        if (d.parameters.isEmpty) Seq.empty
-        else sectionLines("parameters", d.parameters, level + 1)
-      // The body is a `body` section like the factory's, and the RESULT is its element
-      // named `value` (drake.dlt DYN-WITH-BODY) — a block dyn never carries a value of
-      // its own; the retired `=` marker was that field made visible.
-      if (!d.value.isNull && expression(d.value).nonEmpty)
-        sys.error(s"Drake.emit: block dyn '${d.name}' carries a value outside its body — the result is the body element named `value`")
-      val body =
-        if (d.body.isEmpty) Seq.empty
-        else sectionLines("body", d.body, level + 1)
-      (header +: (parameters ++ body)) :+ s"$indent]"
-      case e => sys.error(s"Drake.emit: '${e.name}' opens a block but has no block form (${e.getClass.getSimpleName})")
-    }
-  }
-
-  /** A case-branch (drake.dlt CASE-BRANCH) brackets itself: `case`, an optional
-    * binder, an optional branch type, `[`, its statements, `]`. Its result, when it
-    * has one, is its statement named `value`, as in a dyn-with-body. Case alone tells
-    * the four head forms apart — a lower-case token is the binder, an upper-case one
-    * the type — so an absent binder or type leaves no marker on the surface. */
-  private def caseLines (c: Case, indent: String, level: Int) : Seq[String] = {
-    val head = Seq(s"$indent${keyword(c)}") ++
-      (if (c.name.nonEmpty) Seq(c.name) else Seq.empty) ++
-      (if (c.valueType.text.nonEmpty) Seq(typeExpressionSlot(c.valueType)) else Seq.empty)
-    if (!c.value.isNull && expression(c.value).nonEmpty)
-      sys.error(s"Drake.emit: case-branch carries a value outside its body — the result is the body element named `value`")
-    val statementLines = c.body.flatMap(handElementLines(_, level + 1))
-    ((head :+ "[").mkString(" ") +: statementLines) :+ s"$indent]"
-  }
-
-  /** A list-block: head keyword, members one level deeper, never bracketed — each
-    * member is bounded by its own keyword, and an opener bounds itself. Only a
-    * NAME list needs brackets (nameListLines: its members carry no keyword). */
-  private def sectionLines (keyword: String, members: Seq[TypeElement], level: Int) : Seq[String] =
-    s"${"  " * level}$keyword" +: members.flatMap(handElementLines(_, level + 1))
-
   /** The type section is definition-backed; type forms and element bodies still
     * use this target's renderers through explicit dependencies. */
   private[draco] def dracoAspectText (td: TypeDefinition) : String =
@@ -396,7 +264,8 @@ object Drake {
     * one at the end); gendrake.DefinitionOf composes the six section transforms from a
     * definition. The four rendering dependencies are this target's renderers, passed explicitly
     * as the section transforms receive them. What stays hand-written in this emitter is the
-    * guards above and those renderers. */
+    * guards above, the refusals and the name spelling; the renderers themselves delegate to
+    * definitions and no second hand-written copy remains (2026-11-13). */
   private[draco] def definitionText (td: TypeDefinition) : String =
     draco.gendrake.DefinitionOf(td, typeParameterSurface(_), drakeType(_), typeSurface(_), elementLines(_, _)).value
 

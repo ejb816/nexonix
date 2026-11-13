@@ -12,9 +12,9 @@ import scala.jdk.CollectionConverters._
  *  dyn block bracketing its `parameters` and `body`, a case-branch bracketing its statements —
  *  reading the keyword from `draketarget.Keyword`, the type from `TypeFormOf` and the value
  *  from `ExpressionOf`. The name is the one explicit dependency: a method's formals live on
- *  Dynamic alone. `Drake.emit` refuses what the renderer refused and then delegates; the
- *  hand-written renderer stays as `Drake.handElementLines`, the reference this suite compares
- *  against over the corpus.
+ *  Dynamic alone. `Drake.emit` refuses what the renderer refused and then delegates. Over the
+ *  corpus the reference is the AUTHORED SURFACE: every member's lines stand as one block in its
+ *  definition's `.drake` (the hand-written renderer that was the reference until 2026-11-13 is removed).
  */
 class ElementOfTest extends AnyFunSuite with PersistentTestLog {
 
@@ -137,17 +137,18 @@ class ElementOfTest extends AnyFunSuite with PersistentTestLog {
     var lines    = 0
     val differing: Seq[String] = definitions.flatMap { path =>
       val td = decoded(parser.parse(Files.readString(Paths.get(path))).fold(error => fail(s"$path: $error"), identity))
+      val surface = Files.readAllLines(Paths.get(path.stripSuffix(".json") + ".drake")).asScala.toSeq
       members(td).flatMap { case (element, level) =>
         elements += size(element)
-        val expected = Drake.handElementLines(element, level)
-        val actual   = of(element, level)
-        lines += expected.size
-        if (actual == expected) None else Some(s"$path: '${element.name}':\n    ${actual.mkString("\n    ")}\n  for\n    ${expected.mkString("\n    ")}")
+        val actual = of(element, level)
+        lines += actual.size
+        if (actual.nonEmpty && surface.containsSlice(actual)) None
+        else Some(s"$path: '${element.name}' is no block of the authored surface:\n    ${actual.mkString("\n    ")}")
       }
     }
     differing.foreach(line => log.info(line))
     assert(elements >= 1000 && lines >= 1000, s"the walk found only $elements elements and $lines lines")
     console.info(s"Element over the corpus: $elements elements reproduced in ${definitions.size} definitions ($lines lines), ${differing.size} differing")
-    assert(differing.isEmpty, "the definition spells an element differently from the hand-written renderer:\n  " + differing.mkString("\n  "))
+    assert(differing.isEmpty, "the definition spells an element differently from its authored surface:\n  " + differing.mkString("\n  "))
   }
 }

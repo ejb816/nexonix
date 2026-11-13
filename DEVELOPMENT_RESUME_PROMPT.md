@@ -118,8 +118,13 @@ the second and one HostTextTest assertion that no definition needs either (recor
 
 WHAT HAPPENED (November 12, fifth increment): I accepted the element renderer as a definition, gendrake.ElementOf, with
 Drake.scala's elementLines refusing a malformed element and then delegating to it (record git-record-2026-11-12-2138,
-which also folds d06bed5 into the documents). Its direct run and my full gate both passed 1249 tests, the baseline 1249 / 89. Check
-`git log` for whether its commit and push are recorded; if not, settle that with me first.
+which also folds d06bed5 into the documents). Its direct run and my full gate both passed 1249 tests, the baseline 1249 / 89. I committed
+it as a80be95 with journal chapters 130–133 in the same commit, and pushed it (d06bed5..a80be95).
+
+WHAT HAPPENED (November 13, after the journal update): I accepted removing the two hand-written reference renderers
+from Drake.scala, with ExpressionOfTest and ElementOfTest comparing the definitions with the authored surfaces instead
+(record git-record-2026-11-13-1816, which also folds a80be95 into the documents). Its direct run and my full gate both passed 1249 tests with
+every headline unchanged. Check `git log` for whether its commit and push are recorded; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

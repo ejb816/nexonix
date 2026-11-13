@@ -1,0 +1,50 @@
+Remove the two hand-written reference renderers; the corpus tests compare the definitions with the authored surfaces (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+a80be95. This record also carries the fold of a80be95 into DRACO.md, the handoff and the resume prompt.
+
+ACCEPTED by Dev on 2026-11-13: "Accepted, build it", on the recommendation that the hand-written expression and element
+renderers kept in Drake.scala as test references be removed and the two corpus tests that used them be re-based onto the
+authored surfaces, the `Expression over` and `Element over` headlines kept.
+
+MEASURED before recommending: `handExpression` (with `render` and `parenthesized`) and `handElementLines` (with
+`leafLines`, `caseLines` and `sectionLines`) were about 110 lines; nothing in the engine called them; their only users
+were three test sites, two in ExpressionOfTest and one in ElementOfTest, comparing each definition with a second
+implementation of the same rule, while DrakeGenTest already pins every emitted surface to its authored `.drake`.
+NOT PROBED before the recommendation, and said so: whether block containment is exact for every nested element. It is:
+the re-based tests passed on their first run with nothing differing.
+
+BUILT:
+- `Drake.scala`: the seven functions are removed, and with them two helpers they alone used (`valueLine`, `keyword`) —
+  an addition to the stated list, both dead once the renderers went. 141 lines removed, three comments corrected. What
+  stays hand-written on the drake side: the three emit guards, `refuseUnrenderable`, `refuseElement`, the name spelling
+  (`elementNameText`, `methodName`) and the type-slot helpers.
+- `ExpressionOfTest`: over the corpus, every value's spelling by the definition must close a line of its definition's
+  authored `.drake` (the whole trimmed line, or its end after a space); the focused emitter test no longer names the
+  removed function.
+- `ElementOfTest`: over the corpus, every member's lines by the definition must stand as one contiguous block, exact
+  with indentation, in its definition's authored `.drake`.
+- No definition, JSON or generated Scala change. `TypeForm.neutral` stays: `TypeForm.text` and other readers use it.
+
+REJECTED: deleting the two corpus tests (two headlines lost, the renderers checked only through whole surfaces); method
+formals readable from a definition first (a core-shape question); a failure form for the guards (no definition needs one).
+
+CHECKED, left: `splitTypeArguments`, `splitTopArrow` and `drakeArrow`, which sit beside the removed code, are live
+parser helpers (the type-form reader), not emitter residue.
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods. Direct run of every
+discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1249 tests
+/ 90 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; every
+headline unchanged — `Expression over the corpus: 655 values reproduced in 199 definitions (471 trees, 184 leaves), 0
+differing`, `Element over the corpus: 1119 elements reproduced in 199 definitions (1366 lines), 0 differing`, parse scope
+126 + 73, surface losses 0 across 199 types, GenDrake 124 of 124, example gate 48 / 0, host text 21 of 2774, type leaves
+1681, TypeForm 2172, scenario 23 clean, the PON pair 42 and 7 as suspended, the rete finding categorical. The tree
+afterwards held the intended changes only. No test count, suite count or headline moves; the baseline stays 1249 / 89.
+
+DEV'S GATE (2026-11-13): 1249 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its
+first run.
+
+Nothing on the tracker was touched. Journal: current through chapter 133; uncovered is what follows Dev's question of
+November 13 (the a80be95 commit exchange and this increment).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

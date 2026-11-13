@@ -10,7 +10,23 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the element renderer is a definition (Claude Code, November 12, 2026; direct run 1249 / 90; Dev's gate 1249 green; commit pending)
+## Current checkpoint — the hand-written reference renderers are removed (Claude Code, November 13, 2026; direct run 1249 / 90; Dev's gate 1249 green; commit pending)
+
+Same session. HEAD a80be95, pushed (Dev's paste: d06bed5..a80be95). Dev accepted ("Accepted, build it") the next related
+point under GitHub #11 (open; stays open). Record `git-record-2026-11-13-1816`, which also folds a80be95 into the documents.
+
+- **Built.** `Drake.scala` loses `handExpression`, `render`, `parenthesized`, `handElementLines`, `leafLines`, `caseLines`,
+  `sectionLines`, and the two helpers only they used (`valueLine`, `keyword`): 141 lines. ExpressionOfTest and
+  ElementOfTest compare the definitions with the authored `.drake` surfaces over the corpus (a value's spelling closes a
+  line; a member's lines stand as one exact block). No definition, JSON or generated Scala change.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods. Direct run: 1249 tests / 90 suites including discovery, green
+  on its first run, every headline unchanged (Expression 655 values, Element 1119 elements in 1366 lines, 0 differing).
+  Dev's first full gate on 2026-11-13: 1249 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its first run; the baseline stays 1249 / 89.
+- **In the tree, uncommitted.** Drake.scala, the two tests, CHANGELOG.md, DRACO.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** Method formals readable from a definition; a failure form for the guards.
+- **Journal.** Current through chapter 133; uncovered is the a80be95 commit exchange and this increment.
+
+## Earlier the same session — the element renderer is a definition (Claude Code, November 12, 2026; direct run 1249 / 90; Dev's gate 1249 green; committed as a80be95, pushed)
 
 Same session. HEAD d06bed5, pushed (Dev's paste: 042bef1..d06bed5). Dev accepted ("Accepted, build it") the next related
 point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-2138`, which also folds d06bed5 into the documents.
@@ -25,9 +41,9 @@ point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-2138`, 
   `Element over the corpus: 1119 elements reproduced in 199 definitions (1366 lines), 0 differing`.
   Dev's first full gate, reported 2026-11-13: 1249 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Element over` line as expected, green on its first run. The gate grep in DRACO.md §1 carries `Element over`.
 - **Observed, not fixed, not filed.** The generator quotes a `*` tree in a Text-typed slot as a string literal (DRACO.md §6).
-- **In the tree, uncommitted.** The ElementOf trio and test, the GenDrake trio, Drake.scala, CHANGELOG.md, DRACO.md,
-  README.md, this file, the resume prompt, the record, and the journal update below (four chapters, the introduction, one
-  extract and one audit).
+- **Committed and pushed.** a80be95 on 2026-11-13 (Dev's paste: 21 files, d06bed5..a80be95, `## main...origin/main`): the
+  ElementOf trio and test, the GenDrake trio, Drake.scala, the documents, the record, and the journal update below (four
+  chapters, the introduction, one extract and one audit). The fold of this hash is uncommitted and rides with the next commit.
 - **Journal.** Current through chapter 133, written on November 13 before this commit after Dev asked ("What about updating
   and creating chapters in draco-dev-jpurnal, before this commit/push?"): chapters 130–133 cover this session from the open
   turn of chapter 129 through this increment's verified gate, from its original record (55 records, 27 completed exchanges,

@@ -12,8 +12,9 @@ import scala.jdk.CollectionConverters._
  *  `gendrake.ExpressionOf` maps a value — a leaf or a single-key `{op: [operands]}` node — onto
  *  drake's own spelling, writing a pair of parentheses only where the fixity table
  *  (`draketarget.Fixity`) says the surface would otherwise regroup, and `Drake.expression`
- *  delegates to it after refusing a value outside the tree language. The hand-written renderer
- *  stays as `Drake.handExpression`, the reference this suite compares against over the corpus.
+ *  delegates to it after refusing a value outside the tree language. Over the corpus the
+ *  reference is the AUTHORED SURFACE: every value's spelling closes a line of its definition's
+ *  `.drake` (the hand-written renderer that was the reference until 2026-11-13 is removed).
  */
 class ExpressionOfTest extends AnyFunSuite with PersistentTestLog {
 
@@ -65,7 +66,7 @@ class ExpressionOfTest extends AnyFunSuite with PersistentTestLog {
   test("the live emitter spells a value through the definition, and still refuses what is outside the language") {
     val value = node("()", node(".", node("()", leaf("guard"), node("==", a, b)), leaf("ifThenElse")), node("+", a, b), c)
     assert(Drake.expression(value) == "guard(a == b).ifThenElse(a + b, c)")
-    assert(Drake.expression(value) == of(value) && Drake.expression(value) == Drake.handExpression(value))
+    assert(Drake.expression(value) == of(value))
     assert(Drake.expression(Json.Null) == "")
     assertThrows[RuntimeException](Drake.expression(node("<:", a, b)))
     assertThrows[RuntimeException](Drake.expression(node("+", a, node("?", b, c))))
@@ -93,16 +94,17 @@ class ExpressionOfTest extends AnyFunSuite with PersistentTestLog {
     var leaves = 0
     val differing: Seq[String] = definitions.flatMap { path =>
       val json = parser.parse(Files.readString(Paths.get(path))).fold(error => fail(s"$path: $error"), identity)
+      val surface = Files.readAllLines(Paths.get(path.stripSuffix(".json") + ".drake")).asScala.map(_.trim).toSet
       values(json).filterNot(_.isNull).flatMap { value =>
         if (value.isObject) trees += 1 else leaves += 1
-        val expected = Drake.handExpression(value)
-        val actual   = of(value)
-        if (actual == expected) None else Some(s"$path: ${value.noSpaces}: '$actual' for '$expected'")
+        val actual = of(value)
+        if (actual.isEmpty || surface.exists(line => line == actual || line.endsWith(" " + actual))) None
+        else Some(s"$path: ${value.noSpaces}: '$actual' closes no line of the authored surface")
       }
     }
     differing.foreach(line => log.info(line))
     assert(trees >= 400 && leaves >= 150, s"the walk found only $trees trees and $leaves leaves")
     console.info(s"Expression over the corpus: ${trees + leaves} values reproduced in ${definitions.size} definitions ($trees trees, $leaves leaves), ${differing.size} differing")
-    assert(differing.isEmpty, "the definition spells a value differently from the hand-written renderer:\n  " + differing.mkString("\n  "))
+    assert(differing.isEmpty, "the definition spells a value differently from its authored surface:\n  " + differing.mkString("\n  "))
   }
 }

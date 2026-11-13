@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- The two hand-written renderers kept in the drake emitter as test references are removed (GitHub #11): the expression
+  and element renderers exist once, as the definitions `gendrake.ExpressionOf` and `gendrake.ElementOf`, and their
+  corpus tests compare them with the authored surfaces. No surface, definition or headline changes.
 - The drake surface's element renderer is a definition: `gendrake.ElementOf` spells one element at a level as its
   member lines — a leaf line, a `dyn` block, a `case` branch — and the emitter delegates to it after refusing a malformed
   element (GitHub #11). Every surface is byte-identical. ElementOfTest (5) is new and reproduces all 1119 elements of the
