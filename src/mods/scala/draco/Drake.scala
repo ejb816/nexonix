@@ -125,9 +125,11 @@ object Drake {
     * leaf, a call, a tuple, a `++` run — is a single line now that a call is one
     * token (drake.dlt APPLICATION SURFACE): its parentheses bound it, so nothing has
     * to unfold onto chain lines, bracket itself inside a `++`, or spell a `par` list.
-    * The empty-collection defaults collapse to their surface forms (defaultValue). */
+    * The value is written as the expression renderer spells it: the string-era collapse of
+    * the host's empty collections (`Seq.empty`, `Seq()`) onto `[]` and `{}` was removed on
+    * 2026-11-12, no value in the corpus needing it (HostTextTest asserts none does). */
   private def valueLine (prefix: String, value: Json) : String = {
-    val rendered = defaultValue(expression(value))
+    val rendered = expression(value)
     if (rendered.isEmpty) prefix else s"$prefix $rendered"
   }
 
@@ -208,12 +210,6 @@ object Drake {
     }.mkString("(", ", ", ")")
   }
 
-  private def elementName (name: String) : String = {
-    val idx = name.indexOf('[')
-    if (idx < 0 || !name.endsWith("]")) name
-    else name.substring(0, idx) + "(" + name.substring(idx + 1, name.length - 1) + ")"
-  }
-
   /** A TYPE PARAMETER on the surface: a tree spells as any type form does (the parser
     * builds one for every header parameter and reference argument since 2026-09-17);
     * a string — the JSON corpus until it re-canonicalizes — spells VERBATIM, as a
@@ -228,16 +224,6 @@ object Drake {
     case _          => false
   }
 
-  /** Empty-collection default in the value position of a name-valueType-value
-    * line: [] = Seq.empty, {} = Set.empty. Both host spellings a JSON value may
-    * carry (the Seq.empty tree renders "Seq.empty"; legacy strings say "Seq()")
-    * collapse to the drake surface form. */
-  def defaultValue (rendered: String) : String = rendered match {
-    case "Seq.empty" | "Seq()" => "[]"
-    case "Set.empty" | "Set()" => "{}"
-    case other                 => other
-  }
-
   /** One leaf element line: `kw name value-type value?`. A `mon` (Unit effect)
     * and a `con` (rule condition predicate) carry a value only — no name or
     * value-type; a `con`'s value is its boolean expression tree. A construction of
@@ -247,7 +233,7 @@ object Drake {
   private def leafLines (indent: String, keyword: String, element: TypeElement) : Seq[String] =
     element match {
       case _: Monadic | _: Condition => Seq(valueLine(s"$indent$keyword", element.value))
-      case e => Seq(valueLine(s"$indent$keyword ${(e match { case d: Dynamic => methodName(d); case _ => elementName(e.name) })} ${typeExpressionSlot(e.valueType)}", e.value))
+      case e => Seq(valueLine(s"$indent$keyword ${(e match { case d: Dynamic => methodName(d); case _ => e.name })} ${typeExpressionSlot(e.valueType)}", e.value))
     }
 
   /** The element's keyword, prefixed `now ` when it is marked strict (drake.dlt
@@ -306,7 +292,7 @@ object Drake {
     * the type — so an absent binder or type leaves no marker on the surface. */
   private def caseLines (c: Case, indent: String, level: Int) : Seq[String] = {
     val head = Seq(s"$indent${keyword(c)}") ++
-      (if (c.name.nonEmpty) Seq(elementName(c.name)) else Seq.empty) ++
+      (if (c.name.nonEmpty) Seq(c.name) else Seq.empty) ++
       (if (c.valueType.text.nonEmpty) Seq(typeExpressionSlot(c.valueType)) else Seq.empty)
     if (!c.value.isNull && expression(c.value).nonEmpty)
       sys.error(s"Drake.emit: case-branch carries a value outside its body — the result is the body element named `value`")
@@ -503,7 +489,7 @@ object Drake {
       c.source.substring (first.start, end)
     }
 
-  /** Invert defaultValue + expression for a LEAF value: the empty-collection
+  /** Read a LEAF value: the empty-collection
     * surface forms recover their canonical trees, everything else is carried as
     * host-opaque source text.
     *
@@ -798,13 +784,6 @@ object Drake {
     TypeParameter(name, bound(upper), bound(lower))
   }
 
-  /** Invert elementName: a method type-parameter rides the name via ( ) on the
-    * drake surface — `updated(V1 >: V)` -> JSON "updated[V1 >: V]". */
-  private def parseElementName (token: String) : String = {
-    val idx = token.indexOf ('(')
-    if (idx < 0 || !token.endsWith (")")) token
-    else token.substring (0, idx) + "[" + token.substring (idx + 1, token.length - 1) + "]"
-  }
 
   /** Consume a value-type slot: one token, read as a type-form tree. */
   private def takeValueType (c: Cursor) : Json = typeForm (c.takeText ())
@@ -976,7 +955,7 @@ object Drake {
       case "mon" => val value = parseValue (c); Monadic (value)
       case "con" => val value = parseValue (c); Condition (value)
       case "var" =>
-        val name      = parseElementName (c.takeText ())
+        val name      = c.takeText ()
         val valueType = takeValueType (c)
         Variable (name, valueType)
       case "dyn" =>
@@ -1008,14 +987,14 @@ object Drake {
           // package is dotted (`draco.dreams.user.Latent`, 2026-10-13): a token whose
           // LAST segment is upper-case is the type; a bare lower-case token the binder.
           val isType = t.split ('.').lastOption.exists (_.headOption.exists (_.isUpper))
-          if (isType) valueType = typeForm (t) else name = parseElementName (t)
+          if (isType) valueType = typeForm (t) else name = t
         }
         c.expect ("[")
         val body = statements (c)
         c.expect ("]")
         Case (name, valueType, body, Json.Null)
       case keyword @ ("fix" | "mut" | "loc" | "par") =>
-        val name      = parseElementName (c.takeText ())
+        val name      = c.takeText ()
         val valueType = takeValueType (c)
         val value     = parseValue (c)
         keyword match {

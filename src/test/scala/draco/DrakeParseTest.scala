@@ -29,11 +29,10 @@ import scala.util.Using
  *         `->` tree. The parser reads flat values as strings, so the comparison
  *         normalizes every value to its rendered surface. The tail closes as the
  *         corpus converts to trees (drake.dlt: isString = host-opaque tail).
- *       - EMPTY-COLLECTION SPELLING. `Drake.defaultValue` collapses `Seq.empty` and the
- *         legacy `Seq()` onto the one surface form `[]`, so the parser cannot know
- *         which spelling it came from and canonicalizes to the tree. The comparison
- *         runs both sides through `Drake.defaultValue`; the loss goes to zero once the
- *         three remaining legacy spellings in the corpus become trees.
+ *       - EMPTY-COLLECTION SPELLING (closed). The emitter collapsed the host's `Seq.empty`
+ *         and the legacy `Seq()` onto the one surface form `[]` until 2026-11-12, and this
+ *         comparison ran both sides through that collapse. No value in the corpus carries a
+ *         host spelling any more (HostTextTest asserts it), and the collapse is removed.
  *     Reference packages USED to be the third, and are now verified outright rather
  *     than normalized (GitHub #51): a reference is bare only in the referring type's
  *     own package, qualified elsewhere, and a FOREIGN referent — one in no draco
@@ -147,7 +146,7 @@ class DrakeParseTest extends AnyFunSuite with PersistentTestLog {
       json,
       array => Json.fromValues(array.map(surfaceCarried)),
       obj => Json.fromJsonObject(JsonObject.fromIterable(obj.toIterable.map {
-        case ("value", v) => "value" -> Json.fromString(Drake.defaultValue(Drake.expression(v)))
+        case ("value", v) => "value" -> Json.fromString(Drake.expression(v))
         // A valueType is a string or a type-form tree and the surface spells both one
         // way; the JSON round-trip compares that spelling until the corpus is trees.
         case ("valueType", v) => "valueType" -> Json.fromString(Drake.typeSurface(v))

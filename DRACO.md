@@ -65,8 +65,12 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1239 tests / 88 suites**, verified by Dev on 2026-11-12 for the removal of the element renderer's two string-era respellings (record
+`git-record-2026-11-12-2123`): the emitter writes a value and a name as authored, the parser's inverse of the name respelling goes with them,
+and one added HostTextTest case asserts no definition needs either; no suite or corpus type added, every headline unchanged; its direct run
+1239 / 89 including discovery, green on its first run. First full Dev gate green. Before it:
 **1238 tests / 88 suites**, verified by Dev on 2026-11-12 for drake's element keyword table as a definition (record
-`git-record-2026-11-12-2103`): `draketarget.Keyword` carries the nine member kinds with their keywords and the strictness word, the emitter
+`git-record-2026-11-12-2103`, committed as 042bef1, pushed): `draketarget.Keyword` carries the nine member kinds with their keywords and the strictness word, the emitter
 looks a keyword up by the name of the kind definition an element carries and the parser's member keywords are the table's values, every
 surface byte-identical; nine tests added (KeywordTest's four, the 88th suite, and the five per-type gates of the one new corpus type);
 parse scope 125 + 73, surface losses 0 across 198 types, 125 aspect sections, GenDrake 123 of 123, no new grep line; its direct run
@@ -720,7 +724,9 @@ the definition `draketarget.Fixity` since 2026-11-12, and the EXPRESSION rendere
 refusing a value outside the tree language (the hand-written renderer stays as `handExpression`, the test reference).
 The element renderer remains hand-written; the keyword of each element kind it writes is read from the definition
 `draketarget.Keyword` since 2026-11-12 (an element carries its kind's definition, so the kind is that definition's name),
-and the parser's member keywords are that table's values.
+and the parser's member keywords are that table's values. Its two string-era respellings — a host empty collection onto
+`[]` / `{}`, an element name `f[T]` onto `f(T)`, with the parser's inverse of the latter — were removed the same day:
+a value and a name are carried as authored, and HostTextTest asserts no definition needs either.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `dracon`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
@@ -1338,7 +1344,8 @@ claims against the code rather than treating a historical audit as permanent val
   Last prepared 2026-11-12 after the definition-backed type-form renderer (record `git-record-2026-11-11-1753`, committed by Dev as 270ca7d after his gate of 1210 green, pushed): `gendrake.TypeFormOf`, the emitter's `drakeType` delegating, #11 open.
   After it, the same day: drake's fixity table as the definition `draketarget.Fixity` (record `git-record-2026-11-12-1410`, committed by Dev as f80584d after his gate of 1219 green, pushed).
   After it, the same day: the expression renderer as the definition `gendrake.ExpressionOf` (record `git-record-2026-11-12-1906`, committed by Dev as cafb359 after the gate of 1229 green, pushed).
-  After it, the same day, Dev's gate of 1238 green, commit pending: the element keyword table as the definition `draketarget.Keyword` (record `git-record-2026-11-12-2103`).
+  After it, the same day: the element keyword table as the definition `draketarget.Keyword` (record `git-record-2026-11-12-2103`, committed by Dev as 042bef1 after the gate of 1238 green, pushed).
+  After it, the same day, Dev's gate of 1239 green, commit pending: the element renderer's two string-era respellings removed (record `git-record-2026-11-12-2123`).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2534,6 +2541,21 @@ surface with all nine member lines emitted byte for byte, every kind in the corp
 kinds (Action, Factory, Pattern). One corpus type added: parse scope 125 + 73, surface losses 0 across 198 types, 125
 aspect sections, GenDrake 123 of 123; no new grep line. LEFT OUT: the element renderer itself. Direct run: 1238 tests / 89
 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run; the tree
-afterwards held the intended changes only. Dev's first full gate on 2026-11-12: 1238 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1238 / 88. Next on this thread, none accepted: the element renderer;
+afterwards held the intended changes only. Dev's first full gate on 2026-11-12: 1238 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1238 / 88. Committed by Dev as 042bef1 and pushed the same day (cafb359..042bef1). Next on this thread, none accepted: the element renderer;
 removing the hand-written expression renderer; a failure form for the guards. The journal is current through chapter
 129. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The element renderer's two string-era respellings are removed (2026-11-12, Claude Code; GitHub #11, the issue open).**
+The next related point after 042bef1, in the order e8dbd11 took for type forms. MEASURED over main and mods (1003 leaf
+lines, 89 blocks): the emitter's `defaultValue` collapsed a value rendered `Seq.empty`, `Seq()`, `Set.empty` or `Set()`
+onto `[]` or `{}`, and no value in main, mods or the test resources renders to any of the four; its `elementName`
+respelled a name `f[T]` as `f(T)`, and no element name carries a bracket. Dev accepted "Accepted, build it". BUILT: both
+removed from the emitter, with the normalizer calls in DrakeParseTest and `DrakeCLI check`; ONE ADDITION found while
+building — the parser's `parseElementName`, the live inverse of `elementName` at three sites, is removed too, so a name
+is read as it is written; drake.dlt's `[] | {}` convention says so. HostTextTest +1: over every element of main and mods,
+no value renders to a host empty collection and no name carries a bracket or parenthesis. No definition, JSON or
+generated Scala change; `DrakeCLI check` reads drift 0 over main and mods. Direct run: 1239 tests / 89 suites including
+discovery, zero failed, canceled, ignored, pending or aborted, green on its first run, every headline unchanged; the tree
+afterwards held the intended changes only. Dev's first full gate on 2026-11-12: 1239 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its first run; the baseline is 1239 / 88. Next on this thread, none accepted: the element renderer
+as a definition; removing the hand-written expression renderer; a failure form for the guards. The journal is current
+through chapter 129. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

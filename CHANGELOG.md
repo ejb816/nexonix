@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- The drake emitter no longer respells a host empty collection (`Seq.empty`, `Seq()`, `Set.empty`, `Set()`) as `[]` or
+  `{}`, nor an element name `f[T]` as `f(T)`, and the parser no longer reads the latter back: a value and a name are
+  carried as authored (GitHub #11). No definition needed either respelling, and HostTextTest now asserts none does.
 - Drake's element keyword table is a definition: `draketarget.Keyword` carries the nine member kinds with their
   keywords (`fix`, `mut`, `dyn`, `par`, `loc`, `mon`, `var`, `con`, `case`) and the strictness word `now`; the emitter
   looks an element's keyword up by the name of the kind definition the element carries, and the parser's member keywords

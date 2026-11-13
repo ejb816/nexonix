@@ -107,8 +107,13 @@ full gate passed 1229 on its first run, the baseline 1229 / 87. I committed it a
 
 WHAT HAPPENED (November 12, third increment): I accepted drake's element keyword table as a definition,
 draketarget.Keyword, read by the emitter and the parser in Drake.scala (record git-record-2026-11-12-2103, which also
-folds cafb359 into the documents). Its direct run and my full gate both passed 1238 tests, the baseline 1238 / 88. Check `git log` for
-whether its commit and push are recorded; if not, settle that with me first.
+folds cafb359 into the documents). Its direct run and my full gate both passed 1238 tests, the baseline 1238 / 88. I committed it as 042bef1 and pushed it.
+
+WHAT HAPPENED (November 12, fourth increment): I accepted removing the element renderer's two string-era respellings
+from Drake.scala (host empty collections onto [] and {}, an element name f[T] onto f(T)), with the parser's inverse of
+the second and one HostTextTest assertion that no definition needs either (record git-record-2026-11-12-2123, which also folds
+042bef1 into the documents). Its direct run and my full gate both passed 1239 tests, the baseline 1239 / 88. Check `git log` for whether
+its commit and push are recorded; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

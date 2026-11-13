@@ -9,7 +9,24 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — drake's element keyword table is a definition (Claude Code, November 12, 2026; direct run 1238 / 89; Dev's gate 1238 green; commit pending)
+## Current checkpoint — the element renderer's two string-era respellings are removed (Claude Code, November 12, 2026; direct run 1239 / 89; Dev's gate 1239 green; commit pending)
+
+Same session. HEAD 042bef1, pushed (Dev's paste: cafb359..042bef1). Dev accepted ("Accepted, build it") the next related
+point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-2123`, which also folds 042bef1 into the documents.
+
+- **Built.** `Drake.scala`'s emitter writes a value as the expression renderer spells it and a name as authored:
+  `defaultValue` (host empty collections onto `[]` / `{}`) and `elementName` (`f[T]` onto `f(T)`) are removed, and so is
+  the parser's `parseElementName`, the inverse of the latter — an addition found while building. The normalizers in
+  DrakeParseTest and DrakeCLI follow. HostTextTest +1 asserts no definition needs either respelling.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods. Direct run: 1239 tests / 89 suites including discovery, green
+  on its first run, every headline unchanged from 042bef1.
+  Dev's first full gate on 2026-11-12: 1239 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its first run.
+- **In the tree, uncommitted.** Drake.scala, DrakeCLI.scala, DrakeParseTest, HostTextTest, drake.dlt, CHANGELOG.md,
+  DRACO.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** The element renderer as a definition; removing the hand-written expression
+  renderer; a failure form for the guards.
+
+## Earlier the same session — drake's element keyword table is a definition (Claude Code, November 12, 2026; direct run 1238 / 89; Dev's gate 1238 green; committed as 042bef1, pushed)
 
 Same session. HEAD cafb359, pushed (Dev's paste: f80584d..cafb359). Dev accepted ("Accepted, build it") the next related
 point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-2103`, which also folds cafb359 into the documents.
@@ -22,8 +39,7 @@ point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-2103`, 
   91 records, Definition 198 surfaces from 530 sections, host text 21 of 2634, type leaves 1643, TypeForm 2115 forms
   (472 trees, 1643 leaves), Expression 632 values (453 trees, 179 leaves). No new grep line.
   Dev's first full gate on 2026-11-12: 1238 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run.
-- **In the tree, uncommitted.** The Keyword trio and test, the DrakeTarget trio, Drake.scala, CHANGELOG.md, DRACO.md,
-  README.md, this file, the resume prompt, the record.
+- **Committed.** As 042bef1 by Dev after the gate, 14 files, pushed (cafb359..042bef1).
 - **Next on this thread, none accepted.** The element renderer; removing the hand-written expression renderer; a failure
   form for the guards.
 

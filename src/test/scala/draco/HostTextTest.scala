@@ -108,4 +108,50 @@ class HostTextTest extends AnyFunSuite with PersistentTestLog {
       outside.flatMap { case (path, host) => host.map(leaf => s"  $path: $leaf") }.mkString("\n"))
     assert(moved.isEmpty, "a seam's host text moved — update the recorded count in the same commit:\n  " + moved.mkString("\n  "))
   }
+
+  /** The four host spellings of an empty collection the emitter collapsed onto `[]` and `{}`
+   *  until 2026-11-12 (GitHub #11), as a rendered value. */
+  private val hostEmpty = Set("Seq.empty", "Seq()", "Set.empty", "Set()")
+
+  /** Every element in a definition — an object carrying a `kind` — as (name, value). */
+  private def elements(json: Json): Seq[(String, Json)] = json.fold[Seq[(String, Json)]](
+    Seq.empty, _ => Seq.empty, _ => Seq.empty, _ => Seq.empty,
+    members => members.flatMap(elements),
+    fields => {
+      val own = if (fields.contains("kind"))
+        Seq((fields("name").flatMap(_.asString).getOrElse(""), fields("value").getOrElse(Json.Null))) else Seq.empty
+      own ++ fields.values.flatMap(elements)
+    }
+  )
+
+  test("no value spells an empty collection the host's way and no element name carries a bracket") {
+    // The emitter and the parser carry both as authored: the two string-era respellings are gone.
+    val probe = "type Probe\n  elements\n    fix xs [Int] []\n    fix ys {Int} {}\ndomain draco Draco\n"
+    val read  = Drake.parse(probe)
+    assert(Drake.emit(read) == probe)
+    assert(read.dracoAspect.elements.map(_.value.json) == Seq(Json.obj("[]" -> Json.arr()), Json.obj("{}" -> Json.arr())))
+    assert(Drake.expression(Json.fromString("Seq()")) == "Seq()", "a host spelling is written as it stands, not collapsed")
+
+    val definitions = roots.flatMap { root =>
+      Files.walk(Paths.get(root)).iterator().asScala
+        .filter(p => p.toString.endsWith(".json") && p.getFileName.toString != ".json") // the nameless domain's anchor
+        .map(_.toString).toSeq
+    }.sorted
+    assert(definitions.size >= 198, s"the corpus walk found only ${definitions.size} definitions")
+
+    var count = 0
+    val found: Seq[String] = definitions.flatMap { path =>
+      val json = parser.parse(Files.readString(Paths.get(path))).fold(error => fail(s"$path: $error"), identity)
+      elements(json).flatMap { case (name, value) =>
+        count += 1
+        val spelled  = if (value.isNull) "" else Drake.expression(value)
+        val emptyHit = if (hostEmpty(spelled)) Seq(s"$path: '$name' has the value $spelled — author [] or {}") else Seq.empty
+        val nameHit  = if (name.exists("[]()".contains(_))) Seq(s"$path: element name '$name' carries a bracket") else Seq.empty
+        emptyHit ++ nameHit
+      }
+    }
+    found.foreach(line => log.info(line))
+    assert(count >= 1000, s"the walk found only $count elements")
+    assert(found.isEmpty, "a host spelling the emitter no longer respells:\n  " + found.mkString("\n  "))
+  }
 }

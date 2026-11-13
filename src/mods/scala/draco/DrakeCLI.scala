@@ -122,7 +122,7 @@ object DrakeCLI {
         def carried(j: Json): Json = j.arrayOrObject(j,
           a => Json.fromValues(a.map(carried)),
           o => Json.fromJsonObject(io.circe.JsonObject.fromIterable(o.toIterable.map {
-            case ("value", v) => "value" -> Json.fromString(Drake.defaultValue(Drake.expression(v)))
+            case ("value", v) => "value" -> Json.fromString(Drake.expression(v))
             case (k, v) => k -> carried(v)
           })))
         if (carried(TypeDefinition.encoder(Drake.parse(rendered))) != carried(TypeDefinition.encoder(td))) {

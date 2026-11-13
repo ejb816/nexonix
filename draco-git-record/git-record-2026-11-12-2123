@@ -1,0 +1,52 @@
+Remove the element renderer's two string-era respellings, emitter and parser; assert the corpus needs neither (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+042bef1. This record also carries the fold of 042bef1 into DRACO.md, the handoff and the resume prompt.
+
+ACCEPTED by Dev on 2026-11-12: "Accepted, build it", on the recommendation that, before the element renderer crosses to
+a definition, the two string-era respellings it still carried be removed and the corpus asserted never to need them —
+the order e8dbd11 took for type forms: `valueLine` writing the expression as rendered, a name written as authored,
+`defaultValue` and `elementName` removed with the two normalizer calls in DrakeParseTest and DrakeCLI, one assertion
+over main and mods in an existing suite, drake.dlt's sentence corrected.
+
+MEASURED before recommending (main and mods: 1003 leaf lines, 89 blocks): `defaultValue` rewrote a rendered value of
+`Seq.empty`, `Seq()`, `Set.empty` or `Set()` to `[]` or `{}`, and no value in main, mods or the test resources renders
+to any of the four (the empty collections are the `[]` and `{}` literal nodes since 2026-09-18); `elementName` rewrote
+a name `f[T]` to `f(T)`, and no element name carries a bracket (method formals are records since 2026-10-19, and
+`methodName` refuses a legacy generic name). A definition built now would have had to copy both or silently drop them.
+
+BUILT:
+- `Drake.scala`, emitter: `valueLine` writes `expression(value)`; a leaf line and a case head write the element's name
+  as it stands; `defaultValue` and `elementName` are removed.
+- `Drake.scala`, parser — ONE ADDITION to the accepted scope, found while building: `parseElementName`, the inverse of
+  `elementName` (`f(T)` read as the name `f[T]`), was live at three sites (a rule variable, a case binder, a
+  fix/mut/loc/par name). Left in place it would have read a name the emitter no longer writes back, so it is removed
+  too: a name is read as authored. No surface in main, mods or the scenario carries such a name.
+- `DrakeCLI.scala` and `DrakeParseTest`: the value normalizers compare `Drake.expression(v)`; DrakeParseTest's class
+  comment marks the empty-collection normalization closed.
+- `HostTextTest` +1: the emitter and parser carry `[]` and `{}` as the literal nodes and write a host spelling as it
+  stands; over every element of main and mods (at least 1000), no value renders to one of the four host spellings and
+  no element name carries a bracket or a parenthesis, a new one failing by file and name.
+- `drake.dlt`: the CONVENTIONS entry for `[] | {}` says the collapse is removed and asserted.
+- No definition, JSON or generated Scala change: `DrakeCLI check` reads surface drift 0, json drift 0 over main and
+  mods with the new emitter and parser.
+
+LEFT OUT, as recommended: the element renderer as a definition (the point after this one); removing `handExpression`;
+a failure form for the guards.
+
+DIRECT RUN (2026-11-12, every discovered suite, main, mods and tests compiled from source, current main, mods and test
+resources on the loader roots): 1239 tests / 89 suites including discovery, zero failed, canceled, ignored, pending or
+aborted, green on its first run. One test added, in HostTextTest; no suite added. Every headline unchanged from 042bef1:
+parse scope 125 + 73 with 0 held back, surface losses 0 across 198 types, 125 aspect sections, GenDrake 123 of 123,
+rule 24, actor 15, 91 records and 4 codec sections over 198 definitions, Definition 198 surfaces from 530 sections, host
+text 21 leaves of 2634 with 0 outside the 11 seams, type leaves 1643, TypeForm 2115 type forms, Expression 632 values,
+example gate 48 / 0, scenario 23 clean, forest 1 of 2, PON 42 and 7 as suspended, the rete finding categorical. The tree
+afterwards held the intended changes only.
+
+DEV'S GATE (2026-11-12): 1239 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its
+first run.
+
+Nothing on the tracker was touched. Journal: current through chapter 129; uncovered is what follows Dev's journal request
+of November 10 (decc752, 270ca7d, f80584d, cafb359, 042bef1 and this increment).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
