@@ -1,0 +1,70 @@
+The expression renderer of the drake surface is definition-backed: gendrake.ExpressionOf (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+f80584d. This record also carries the fold of f80584d into DRACO.md, the handoff and the resume prompt.
+
+ACCEPTED by Dev on 2026-11-12: "Accepted, build it", on the recommendation that the expression renderer cross to one
+definition, `draco.gendrake.ExpressionOf`, deriving `draketarget.Surface`, in existing vocabulary only: taking the value,
+the parent's operator and the operand's position and count, reading `Fixity.table` for the parentheses, with
+`Drake.emit`'s `expression` delegating to it, the two refusals kept in the emitter as a check before the call, and one
+focused suite comparing it with the current renderer over every value in main and mods, its headline in the gate grep.
+
+MEASURED before recommending: the renderer is `render` and `parenthesized` in Drake.scala, about 50 lines — eight
+structural nodes (path, arrow, application, lambda, tuple, the two collection literals, named argument) and the fifteen
+infix operators, with a pair written only where the fixity table says the surface would regroup; Dracon offers
+`has(name)` and nothing that reads a node's own key, so the operator is found by trying the known keys, as TypeFormOf
+does; no test asserted either of its two errors. NOT probed before the recommendation, and said so: whether the dispatch
+with four-argument recursion generates and compiles. The probe was the first build step.
+
+BUILT:
+- `src/main/resources/draco/gendrake/ExpressionOf.drake` (new): `type ExpressionOf from draco draketarget Surface`,
+  factory `par node Dracon`, `par parent Text ""`, `par index Int 0`, `par count Int 1`; body bindings `keys` (the seven
+  structural keys and the fixity table's), `op` (the node's operator, the empty text for a leaf), `items`, `args` (the
+  recursion, each operand rendered under this operator at its position), `infix`, `tight`, `side`, `looser`, `paired`
+  (the parenthesization rule, the hand-written one clause for clause), `text` (the spelling by operator, a leaf's own
+  text last) and `value`. `uses` records Text, Fixity and Dracon. Its JSON is `DrakeCLI parse` of it and its Scala
+  `GeneratorCLI generate`, stable on regeneration after compilation (the DRACO.md section 6 order).
+- GenDrake lists ExpressionOf (drake, JSON, Scala: one member each).
+- `Drake.scala`: `expression` is `refuseUnrenderable(value)` and then `ExpressionOf(Dracon(value)).value`. The refusal
+  walks the value and raises, with the two messages the renderer had, on an operator outside the tree language or a
+  value that is neither a leaf nor a single-key node, before anything renders. The hand-written renderer STAYS as
+  `private[draco] handExpression`, the reference the new suite compares against (as `TypeForm.neutral` stayed).
+- `src/test/scala/draco/gendrake/ExpressionOfTest.scala` (new, 5 tests, the 87th suite): each node's spelling; the
+  minimal pairs by fixity, for a lambda, and under a path or an application; the value read once and only on demand,
+  with Null and a non-expression node the empty text; the live emitter spelling through the definition and still
+  refusing four malformed values; every value in main and mods compared with the hand-written renderer.
+- No surface moves: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods with the new emitter.
+
+ONE SHAPE CHANGE the probe forced: the list of structural keys held the lambda's key as a quoted backslash, and the
+parser carried the whole list as one host-text leaf (a token run with a backslash is read for a lambda); the key is bound
+on its own line (`loc lambda Text "\\"`) and named in the list and the comparisons. Everything else generated and
+compiled on its first attempt.
+
+ONE DIFFERENCE from the hand-written renderer, on malformed input only and not reachable through the emitter: the
+definition spells a node outside the language as the empty text, drake having no failure form; `Drake.expression`
+refuses such a value first, so the emitter's behavior is unchanged. ExpressionOfTest pins both.
+
+LEFT OUT, as recommended: the element renderer; a `keys` inspection on Dracon; a failure form for drake. Removing
+`handExpression`, `render` and `parenthesized` is a later point.
+
+HEADLINES MOVED by the one corpus type added: parse scope 124 + 73, surface losses 0 across 197 types, 124 aspect sections
+in both aspect probes, GenDrake 122 of 122, rule/actor/uses/codec probes over 197 definitions with 90 records, Definition
+197 surfaces from 527 sections, host text 21 leaves of 2614 (still 0 outside the 11 seams), type leaves 1638 in 197
+definitions, TypeForm 2107 type forms (469 trees, 1638 leaves). New line, added to the gate grep as `Expression over`:
+`Expression over the corpus: 629 values reproduced in 197 definitions (452 trees, 177 leaves), 0 differing`.
+
+DIRECT RUN (2026-11-12, every discovered suite, main, mods and tests compiled from source, current main, mods and test
+resources on the loader roots): 1229 tests / 88 suites including discovery, zero failed, canceled, ignored, pending or
+aborted, on its second run. The ten new tests are ExpressionOfTest's five and the five per-type gates of the new
+definition. The first run passed 1228 and failed the new corpus comparison on the test's own lower bound for the walk
+(500 trees and 500 leaves guessed; the corpus holds 452 and 177), corrected to 400 and 150; nothing differed. Example
+gate 48 / 0, scenario 23 clean, forest 1 of 2, PON 42 and 7 as suspended, the rete finding categorical. The tree
+afterwards held the intended changes only.
+
+DEV'S GATE (2026-11-12): 1229 tests, zero failed, canceled, ignored or pending, every headline matching the direct run,
+the new `Expression over` line as expected, green on its first run.
+
+Nothing on the tracker was touched. Journal: current through chapter 129; uncovered is what follows Dev's journal request
+of November 10 (decc752, 270ca7d, f80584d and this increment).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

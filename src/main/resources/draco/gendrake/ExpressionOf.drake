@@ -1,0 +1,30 @@
+type ExpressionOf from draco draketarget Surface
+  factory
+    parameters
+      par node Dracon
+      par parent Text ""
+      par index Int 0
+      par count Int 1
+    body
+      loc node Dracon _node
+      loc parent Text _parent
+      loc index Int _index
+      loc count Int _count
+      loc lambda Text "\\"
+      loc keys [Text] [".", "()", lambda, "(,)", "[]", "{}", "="] ++ Fixity.table.keys.toSeq
+      loc op Text presence(keys.find(\key -> node.has(key))).fold("", \key -> key)
+      loc items [Dracon] node.field(op).itemsOrEmpty.fold([node.field(op)], \members -> members)
+      loc args [Text] items.indices.map(\i -> ExpressionOf(items(i), op, i, items.size).value)
+      loc infix (Text -> Boolean) \key -> Fixity.table.contains(key)
+      loc tight (Text -> Int) \key -> Fixity.table(key).precedence
+      loc side Boolean guard(Fixity.table(parent).associativity == "left").ifThenElse(index > 0, guard(Fixity.table(parent).associativity == "right").ifThenElse(index < count - 1, true))
+      loc looser Boolean tight(op) < tight(parent) || tight(op) == tight(parent) && side
+      loc paired Boolean guard(infix(parent)).ifThenElse(guard(infix(op)).ifThenElse(looser, op == lambda && index < count - 1), (parent == "." || parent == "()") && index == 0 && (infix(op) || op == lambda))
+      loc text Text guard(op == ".").ifThenElse(join(".", args), guard(op == "()").ifThenElse(args.head ++ "(" ++ join(", ", args.tail) ++ ")", guard(op == lambda).ifThenElse(lambda ++ join(" ", args.init) ++ " -> " ++ args.last, guard(op == "(,)").ifThenElse("(" ++ join(", ", args) ++ ")", guard(op == "[]").ifThenElse("[" ++ join(", ", args) ++ "]", guard(op == "{}").ifThenElse("{" ++ join(", ", args) ++ "}", guard(op == "=").ifThenElse(args.head ++ ":" ++ args.last, guard(infix(op)).ifThenElse(join(" " ++ op ++ " ", args), node.textOrEmpty.fold("", \leaf -> leaf)))))))))
+      fix value Text guard(paired).ifThenElse("(" ++ text ++ ")", text)
+uses [
+  draco drake Text
+  draco draketarget Fixity
+  draco format dracon Dracon
+]
+domain draco gendrake GenDrake

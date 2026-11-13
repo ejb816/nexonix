@@ -9,7 +9,26 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — drake's fixity table is a definition (Claude Code, November 12, 2026; direct run 1219 / 87; Dev's gate 1219 green; commit pending)
+## Current checkpoint — the expression renderer is a definition (Claude Code, November 12, 2026; direct run 1229 / 88; Dev's gate 1229 green; commit pending)
+
+Same session. HEAD f80584d, pushed (Dev's paste: 270ca7d..f80584d). Dev accepted ("Accepted, build it") the next related
+point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-1906`, which also folds f80584d into the documents.
+
+- **Built.** `gendrake.ExpressionOf` (trio, listed by GenDrake) spells a value tree in drake's form with the minimal
+  parentheses by `Fixity.table`; `Drake.expression` refuses a value outside the tree language and delegates to it; the
+  hand-written renderer stays as `handExpression`, the reference. ExpressionOfTest (5) is new.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods. Direct run: 1229 tests / 88 suites including discovery, green
+  on its second run (the first failed the new corpus test on its own guessed lower bound). Headlines: parse scope
+  124 + 73, losses 0 across 197 types, 124 aspect sections, GenDrake 122 of 122, 90 records, Definition 197 surfaces from
+  527 sections, host text 21 of 2614, type leaves 1638, TypeForm 2107 forms (469 trees, 1638 leaves), and the new
+  `Expression over the corpus: 629 values reproduced in 197 definitions (452 trees, 177 leaves), 0 differing`.
+  Dev's first full gate on 2026-11-12: 1229 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Expression over` line as expected, green on its first run. The gate grep in DRACO.md §1 carries `Expression over`.
+- **In the tree, uncommitted.** The ExpressionOf trio and test, the GenDrake trio, Drake.scala, CHANGELOG.md, DRACO.md,
+  README.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** The element renderer; removing the hand-written expression renderer; a failure
+  form for the guards.
+
+## Earlier the same session — drake's fixity table is a definition (Claude Code, November 12, 2026; direct run 1219 / 87; Dev's gate 1219 green; committed as f80584d, pushed)
 
 Same session. HEAD 270ca7d, pushed (Dev's paste: decc752..270ca7d). Dev accepted ("Accepted, build it") the next related
 point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-1410`, which also folds 270ca7d into the documents.
@@ -22,8 +41,7 @@ point under GitHub #11 (open; stays open). Record `git-record-2026-11-12-1410`, 
   scope 123 + 73, losses 0 across 196 types, 123 aspect sections, GenDrake 121 of 121, 89 records, Definition 196 surfaces
   from 524 sections, host text 21 of 2433, type leaves 1612, TypeForm 2076 forms (464 trees, 1612 leaves). Dev's first full gate on
   2026-11-12: 1219 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run. The baseline is **1219 tests / 86 suites**.
-- **In the tree, uncommitted.** The Fixity trio and test, the DrakeTarget trio, Drake.scala, drake.dlt, CHANGELOG.md,
-  DRACO.md, README.md, this file, the resume prompt, the record.
+- **Committed.** By Dev as f80584d on 2026-11-12, pushed (270ca7d..f80584d).
 - **Next on this thread, none accepted.** The expression renderer as a definition (it raises on an unknown operator, and
   drake has no failure form); the element renderer; a failure form for the guards.
 

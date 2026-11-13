@@ -1,0 +1,844 @@
+{
+  "typeName": {
+    "name": "ExpressionOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Fixity",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ExpressionOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "node",
+          "valueType": "Dracon"
+        },
+        {
+          "kind": "Parameter",
+          "name": "parent",
+          "valueType": "Text",
+          "value": "\"\""
+        },
+        {
+          "kind": "Parameter",
+          "name": "index",
+          "valueType": "Int",
+          "value": "0"
+        },
+        {
+          "kind": "Parameter",
+          "name": "count",
+          "valueType": "Int",
+          "value": "1"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "node",
+          "valueType": "Dracon",
+          "value": "_node"
+        },
+        {
+          "kind": "Local",
+          "name": "parent",
+          "valueType": "Text",
+          "value": "_parent"
+        },
+        {
+          "kind": "Local",
+          "name": "index",
+          "valueType": "Int",
+          "value": "_index"
+        },
+        {
+          "kind": "Local",
+          "name": "count",
+          "valueType": "Int",
+          "value": "_count"
+        },
+        {
+          "kind": "Local",
+          "name": "lambda",
+          "valueType": "Text",
+          "value": "\"\\\\\""
+        },
+        {
+          "kind": "Local",
+          "name": "keys",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "++": [
+              {
+                "[]": [
+                  "\".\"",
+                  "\"()\"",
+                  "lambda",
+                  "\"(,)\"",
+                  "\"[]\"",
+                  "\"{}\"",
+                  "\"=\""
+                ]
+              },
+              "Fixity.table.keys.toSeq"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "op",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "presence",
+                      {
+                        "()": [
+                          "keys.find",
+                          {
+                            "\\": [
+                              "key",
+                              {
+                                "()": [
+                                  "node.has",
+                                  "key"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "fold"
+                ]
+              },
+              "\"\"",
+              {
+                "\\": [
+                  "key",
+                  "key"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "items",
+          "valueType": {
+            "[]": [
+              "Dracon"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "node.field",
+                      "op"
+                    ]
+                  },
+                  "itemsOrEmpty",
+                  "fold"
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "()": [
+                      "node.field",
+                      "op"
+                    ]
+                  }
+                ]
+              },
+              {
+                "\\": [
+                  "members",
+                  "members"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "args",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              "items.indices.map",
+              {
+                "\\": [
+                  "i",
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "ExpressionOf",
+                          {
+                            "()": [
+                              "items",
+                              "i"
+                            ]
+                          },
+                          "op",
+                          "i",
+                          "items.size"
+                        ]
+                      },
+                      "value"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "infix",
+          "valueType": {
+            "->": [
+              "Text",
+              "Boolean"
+            ]
+          },
+          "value": {
+            "\\": [
+              "key",
+              {
+                "()": [
+                  "Fixity.table.contains",
+                  "key"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "tight",
+          "valueType": {
+            "->": [
+              "Text",
+              "Int"
+            ]
+          },
+          "value": {
+            "\\": [
+              "key",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "Fixity.table",
+                      "key"
+                    ]
+                  },
+                  "precedence"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "side",
+          "valueType": "Boolean",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "==": [
+                          {
+                            ".": [
+                              {
+                                "()": [
+                                  "Fixity.table",
+                                  "parent"
+                                ]
+                              },
+                              "associativity"
+                            ]
+                          },
+                          "\"left\""
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                ">": [
+                  "index",
+                  "0"
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "==": [
+                              {
+                                ".": [
+                                  {
+                                    "()": [
+                                      "Fixity.table",
+                                      "parent"
+                                    ]
+                                  },
+                                  "associativity"
+                                ]
+                              },
+                              "\"right\""
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "<": [
+                      "index",
+                      {
+                        "-": [
+                          "count",
+                          "1"
+                        ]
+                      }
+                    ]
+                  },
+                  "true"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "looser",
+          "valueType": "Boolean",
+          "value": {
+            "||": [
+              {
+                "<": [
+                  {
+                    "()": [
+                      "tight",
+                      "op"
+                    ]
+                  },
+                  {
+                    "()": [
+                      "tight",
+                      "parent"
+                    ]
+                  }
+                ]
+              },
+              {
+                "&&": [
+                  {
+                    "==": [
+                      {
+                        "()": [
+                          "tight",
+                          "op"
+                        ]
+                      },
+                      {
+                        "()": [
+                          "tight",
+                          "parent"
+                        ]
+                      }
+                    ]
+                  },
+                  "side"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "paired",
+          "valueType": "Boolean",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "()": [
+                          "infix",
+                          "parent"
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "()": [
+                              "infix",
+                              "op"
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  "looser",
+                  {
+                    "&&": [
+                      {
+                        "==": [
+                          "op",
+                          "lambda"
+                        ]
+                      },
+                      {
+                        "<": [
+                          "index",
+                          {
+                            "-": [
+                              "count",
+                              "1"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "&&": [
+                  {
+                    "||": [
+                      {
+                        "==": [
+                          "parent",
+                          "\".\""
+                        ]
+                      },
+                      {
+                        "==": [
+                          "parent",
+                          "\"()\""
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "==": [
+                      "index",
+                      "0"
+                    ]
+                  },
+                  {
+                    "||": [
+                      {
+                        "()": [
+                          "infix",
+                          "op"
+                        ]
+                      },
+                      {
+                        "==": [
+                          "op",
+                          "lambda"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "text",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "==": [
+                          "op",
+                          "\".\""
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "()": [
+                  "join",
+                  "\".\"",
+                  "args"
+                ]
+              },
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "==": [
+                              "op",
+                              "\"()\""
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "++": [
+                      "args.head",
+                      "\"(\"",
+                      {
+                        "()": [
+                          "join",
+                          "\", \"",
+                          "args.tail"
+                        ]
+                      },
+                      "\")\""
+                    ]
+                  },
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              {
+                                "==": [
+                                  "op",
+                                  "lambda"
+                                ]
+                              }
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      {
+                        "++": [
+                          "lambda",
+                          {
+                            "()": [
+                              "join",
+                              "\" \"",
+                              "args.init"
+                            ]
+                          },
+                          "\" -> \"",
+                          "args.last"
+                        ]
+                      },
+                      {
+                        "()": [
+                          {
+                            ".": [
+                              {
+                                "()": [
+                                  "guard",
+                                  {
+                                    "==": [
+                                      "op",
+                                      "\"(,)\""
+                                    ]
+                                  }
+                                ]
+                              },
+                              "ifThenElse"
+                            ]
+                          },
+                          {
+                            "++": [
+                              "\"(\"",
+                              {
+                                "()": [
+                                  "join",
+                                  "\", \"",
+                                  "args"
+                                ]
+                              },
+                              "\")\""
+                            ]
+                          },
+                          {
+                            "()": [
+                              {
+                                ".": [
+                                  {
+                                    "()": [
+                                      "guard",
+                                      {
+                                        "==": [
+                                          "op",
+                                          "\"[]\""
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  "ifThenElse"
+                                ]
+                              },
+                              {
+                                "++": [
+                                  "\"[\"",
+                                  {
+                                    "()": [
+                                      "join",
+                                      "\", \"",
+                                      "args"
+                                    ]
+                                  },
+                                  "\"]\""
+                                ]
+                              },
+                              {
+                                "()": [
+                                  {
+                                    ".": [
+                                      {
+                                        "()": [
+                                          "guard",
+                                          {
+                                            "==": [
+                                              "op",
+                                              "\"{}\""
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      "ifThenElse"
+                                    ]
+                                  },
+                                  {
+                                    "++": [
+                                      "\"{\"",
+                                      {
+                                        "()": [
+                                          "join",
+                                          "\", \"",
+                                          "args"
+                                        ]
+                                      },
+                                      "\"}\""
+                                    ]
+                                  },
+                                  {
+                                    "()": [
+                                      {
+                                        ".": [
+                                          {
+                                            "()": [
+                                              "guard",
+                                              {
+                                                "==": [
+                                                  "op",
+                                                  "\"=\""
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          "ifThenElse"
+                                        ]
+                                      },
+                                      {
+                                        "++": [
+                                          "args.head",
+                                          "\":\"",
+                                          "args.last"
+                                        ]
+                                      },
+                                      {
+                                        "()": [
+                                          {
+                                            ".": [
+                                              {
+                                                "()": [
+                                                  "guard",
+                                                  {
+                                                    "()": [
+                                                      "infix",
+                                                      "op"
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              "ifThenElse"
+                                            ]
+                                          },
+                                          {
+                                            "()": [
+                                              "join",
+                                              {
+                                                "++": [
+                                                  "\" \"",
+                                                  "op",
+                                                  "\" \""
+                                                ]
+                                              },
+                                              "args"
+                                            ]
+                                          },
+                                          {
+                                            "()": [
+                                              "node.textOrEmpty.fold",
+                                              "\"\"",
+                                              {
+                                                "\\": [
+                                                  "leaf",
+                                                  "leaf"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "paired"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "++": [
+                  "\"(\"",
+                  "text",
+                  "\")\""
+                ]
+              },
+              "text"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

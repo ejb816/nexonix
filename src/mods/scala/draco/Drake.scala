@@ -40,8 +40,32 @@ object Drake {
     * first, then `name:value` (drake.dlt APPLICATION SURFACE) — and it is the ONLY
     * spelling: since 2026-09-16 there is no multi-line `parameters` / `par` form to
     * unfold into, so this flat rendering is what every value position gets. The tree
-    * keeps `=` as its named-argument key; the surface spells the colon. */
-  def expression (value: Json) : String = render (value, None, 0, 1)
+    * keeps `=` as its named-argument key; the surface spells the colon.
+    *
+    * Since 2026-11-12 the renderer is the definition `gendrake.ExpressionOf` (GitHub #11), which
+    * reads the fixity table `draketarget.Fixity` for its parentheses. What stays here is the
+    * REFUSAL of a value outside the tree language — drake has no failure form, so the
+    * definition would spell such a node as the empty text — and `handExpression`, the
+    * hand-written renderer, kept as the reference ExpressionOfTest compares against. */
+  def expression (value: Json) : String = {
+    refuseUnrenderable (value)
+    draco.gendrake.ExpressionOf (draco.format.dracon.Dracon (value)).value
+  }
+
+  private lazy val structural: Set[String] = Set (".", "()", "\\", "(,)", "[]", "{}", "=")
+
+  /** Raise on an operator outside the tree language or a value that is neither a leaf nor a
+    * single-key node, at any depth — before anything renders. */
+  private def refuseUnrenderable (value: Json) : Unit =
+    if (value != null && !value.isNull && !value.isString) value.asObject.map(_.toList) match {
+      case Some((op, operands) :: Nil) =>
+        if (!structural (op) && !fixity.contains (op)) sys.error(s"Drake.expression: unknown operator '$op' in ${value.noSpaces}")
+        operands.asArray.getOrElse(Vector(operands)).foreach(refuseUnrenderable)
+      case _ => sys.error(s"Drake.expression: unrenderable value ${value.noSpaces}")
+    }
+
+  /** The hand-written renderer `expression` was until 2026-11-12: the reference. */
+  private[draco] def handExpression (value: Json) : String = render (value, None, 0, 1)
 
   /** Render `value` standing as operand `index` of `count` under the node `parent` (None at
     * the top), with the MINIMAL parenthesization (2026-09-21): a tree is already

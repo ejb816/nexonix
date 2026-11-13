@@ -13,6 +13,7 @@ domain draco gendrake GenDrake
     CodecAspectOf
     DefinitionOf
     TypeFormOf
+    ExpressionOf
     Emit
     Emitter
   ]

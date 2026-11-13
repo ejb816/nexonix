@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- The drake surface's expression renderer is a definition: `gendrake.ExpressionOf` spells a value tree in drake's own
+  form, with the minimal parentheses by the fixity table, and the emitter delegates to it after refusing a value outside
+  the tree language (GitHub #11). Every surface is byte-identical. ExpressionOfTest (5) is new and reproduces all 629
+  values of the corpus; one corpus type added (parse scope 124 + 73, GenDrake 122 of 122); the gate grep gains
+  `Expression over`.
 - Drake's operator fixity table is a definition: `draketarget.Fixity` carries the fifteen infix operators with their
   precedence and grouping and the three flat-variadic ones, and the parser and the emitter both read it (GitHub #11).
   No surface moves. FixityTest (4) is new; one corpus type added (parse scope 123 + 73, GenDrake 121 of 121).

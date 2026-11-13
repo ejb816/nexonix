@@ -65,8 +65,14 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1229 tests / 87 suites**, verified by Dev on 2026-11-12 for the definition-backed expression renderer (record
+`git-record-2026-11-12-1906`): `gendrake.ExpressionOf` spells a value tree with the minimal parentheses and `Drake.expression` delegates to it
+after refusing a value outside the tree language, every surface byte-identical; ten tests added (ExpressionOfTest's five, the 87th suite, and the
+five per-type gates of the one new corpus type); parse scope 124 + 73, surface losses 0 across 197 types, 124 aspect sections, GenDrake 122 of 122,
+the `Expression over` line in the gate grep; its direct run 1229 / 88 including discovery, green on its second run (the first failed the new
+corpus test on its own guessed lower bound). First full Dev gate green. Before it:
 **1219 tests / 86 suites**, verified by Dev on 2026-11-12 for drake's operator fixity table as a definition (record
-`git-record-2026-11-12-1410`): `draketarget.Fixity` carries the fifteen operators and the three flat-variadic ones, and the parser and the
+`git-record-2026-11-12-1410`, committed as f80584d, pushed): `draketarget.Fixity` carries the fifteen operators and the three flat-variadic ones, and the parser and the
 emitter in Drake.scala read it, every surface byte-identical; nine tests added (FixityTest's four, the 86th suite, and the five per-type
 gates of the one new corpus type); parse scope 123 + 73, surface losses 0 across 196 types, 123 aspect sections, GenDrake 121 of 121, no
 new grep line; its direct run 1219 / 87 including discovery, green on its second run (the first failed three ScenarioGenTest tests on a
@@ -386,7 +392,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|Expression over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -702,8 +708,11 @@ renders) and that one call; what stays hand-written on the drake side is the gua
 renderers the transforms call back into (GitHub #11). Drake output only, as above. The first RENDERER crossed on
 2026-11-11: `gendrake.TypeFormOf` maps a type form (a name leaf or one of the nine tree nodes) onto drake's spelling,
 recursively, deriving `draketarget.Surface`; the emitter's `drakeType` delegates to it, and `TypeForm.neutral` stays
-as the text of a tree for every other reader. The element and expression renderers remain hand-written; the operator
-fixity table the expression renderer and the parser read is the definition `draketarget.Fixity` since 2026-11-12.
+as the text of a tree for every other reader. The operator fixity table the parser and the expression renderer read is
+the definition `draketarget.Fixity` since 2026-11-12, and the EXPRESSION renderer crossed the same day:
+`gendrake.ExpressionOf` spells a value tree with the minimal parentheses, and `Drake.expression` delegates to it after
+refusing a value outside the tree language (the hand-written renderer stays as `handExpression`, the test reference).
+The element renderer remains hand-written.
 
 **Domains.** `draco` (root), `draco.base`, `draco.primes`, `draco.format` (+ `dracon`,
 `xml`), `draco.rete`, `draco.drake` (the runtime: `Presence(T)` / `Present` / `Absent` with `fold` and `ifThenElse` as dispatch, 2026-09-17 and 2026-09-20; a Boolean reaches `ifThenElse` through the `guard` symbol), `draco.draketarget`, `draco.generator` (+ `carrier`),
@@ -1319,7 +1328,8 @@ claims against the code rather than treating a historical audit as permanent val
 - **`DEVELOPMENT_HANDOFF.md`** — shared current-state handoff and documentation coverage;
   refresh it at a handoff or completed development increment, and verify it on resumption.
   Last prepared 2026-11-12 after the definition-backed type-form renderer (record `git-record-2026-11-11-1753`, committed by Dev as 270ca7d after his gate of 1210 green, pushed): `gendrake.TypeFormOf`, the emitter's `drakeType` delegating, #11 open.
-  After it, the same day: drake's fixity table as the definition `draketarget.Fixity` (record `git-record-2026-11-12-1410`, Dev's gate of 1219 green).
+  After it, the same day: drake's fixity table as the definition `draketarget.Fixity` (record `git-record-2026-11-12-1410`, committed by Dev as f80584d after his gate of 1219 green, pushed).
+  After it, the same day, Dev's gate of 1229 green, commit pending: the expression renderer as the definition `gendrake.ExpressionOf` (record `git-record-2026-11-12-1906`).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2478,6 +2488,24 @@ added: parse scope 123 + 73, surface losses 0 across 196 types, 123 aspect secti
 line. LEFT OUT: the expression renderer itself; the Scala target's precedence table in DracoGenerator. Direct run: 1219
 tests / 87 suites including discovery, zero failed, canceled, ignored, pending or aborted, after a first run that failed
 three ScenarioGenTest tests through the harness (test resources off the loader roots); the tree afterwards held the
-intended changes only. Dev's first full gate on 2026-11-12: 1219 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1219 / 86. Next on this thread, none accepted: the expression renderer as a definition;
+intended changes only. Dev's first full gate on 2026-11-12: 1219 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1219 / 86. Committed by Dev as f80584d and pushed the same day (270ca7d..f80584d). Next on this thread, none accepted: the expression renderer as a definition;
 the element renderer; a failure form for the guards. The journal is current through chapter 129. EgoActor and
 scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The expression renderer of the drake surface is definition-backed (2026-11-12, Claude Code; GitHub #11, the issue open).**
+The next related point after f80584d. MEASURED: `render` and `parenthesized`, about 50 lines over eight structural nodes
+and the fifteen infix operators; Dracon reads no node's own key, so the operator is found by trying the known keys. Dev
+accepted "Accepted, build it". BUILT: `gendrake.ExpressionOf` (factory `node`, `parent`, `index`, `count`; deriving
+`draketarget.Surface`; the recursion renders each operand under its operator at its position, and `paired` is the
+hand-written parenthesization rule over `Fixity.table`), listed by GenDrake; `Drake.expression` refuses a value outside
+the tree language (`refuseUnrenderable`, the renderer's two errors, before anything renders) and delegates; the
+hand-written renderer stays as `handExpression`, the suite's reference; `DrakeCLI check` reads drift 0 over main and mods.
+ONE SHAPE CHANGE the probe forced: a quoted backslash inside a list literal made the parser carry the list as host text,
+so the lambda's key is bound on its own line. ExpressionOfTest (5) is the 87th suite and reproduces all 629 values of the
+corpus (452 trees, 177 leaves). One corpus type added: parse scope 124 + 73, surface losses 0 across 197 types, 124 aspect
+sections, GenDrake 122 of 122; the gate grep gains `Expression over`. LEFT OUT: the element renderer; removing the
+hand-written renderer. Direct run: 1229 tests / 88 suites including discovery, zero failed, canceled, ignored, pending or
+aborted, on its second run (the first failed the new corpus test on its own guessed lower bound; nothing differed); the
+tree afterwards held the intended changes only. Dev's first full gate on 2026-11-12: 1229 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Expression over` line as expected, green on its first run; the baseline is 1229 / 87. Next on this thread, none accepted: the element
+renderer; removing the hand-written expression renderer; a failure form for the guards. The journal is current through
+chapter 129. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
