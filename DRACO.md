@@ -65,6 +65,14 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1259 tests / 90 suites**, verified by Dev on 2026-11-13 for the definition-backed formal spelling (record
+`git-record-2026-11-13-1834`): `gendrake.FormalOf` spells one formal type parameter, the type header and the element renderer read it,
+and `ElementOf` receives a method's formals as data, every surface byte-identical; ten tests added (FormalOfTest's five, the 90th suite, and
+the five per-type gates of the one new corpus type); parse scope 127 + 73, surface losses 0 across 200 types, 127 aspect sections, GenDrake
+125 of 125, the `Formal over` line in the gate grep; its direct run 1259 / 91 including discovery, green on its first run. First full Dev
+gate green. Before it, the same **1249 tests / 89 suites** as the entry below, verified by Dev on 2026-11-13 for the removal of the two
+hand-written reference renderers (record `git-record-2026-11-13-1816`, committed as a216865, pushed): no test, suite or headline moved.
+Before it:
 **1249 tests / 89 suites**, verified by Dev (reported 2026-11-13) for the definition-backed element renderer (record
 `git-record-2026-11-12-2138`, committed as a80be95, pushed): `gendrake.ElementOf` spells an element at a level as its member lines and `Drake.scala`'s `elementLines`
 delegates to it after refusing a malformed element, every surface byte-identical; ten tests added (ElementOfTest's five, the 89th suite, and
@@ -408,7 +416,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|Expression over|Element over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|Expression over|Element over|Formal over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -729,8 +737,9 @@ the definition `draketarget.Fixity` since 2026-11-12, and the EXPRESSION rendere
 `gendrake.ExpressionOf` spells a value tree with the minimal parentheses, and `Drake.expression` delegates to it after
 refusing a value outside the tree language.
 The ELEMENT renderer crossed last, the same day: `gendrake.ElementOf` spells an element at a level as its member lines
-(leaf line, dyn block, case-branch), taking the name spelling as an explicit dependency because a method's formals live
-on Dynamic alone; `elementLines` refuses a malformed element and delegates. No renderer of the drake surface is hand-written: the two
+(leaf line, dyn block, case-branch), taking a method's FORMALS as an explicit dependency — data, since they live on
+Dynamic alone — and spelling each through `gendrake.FormalOf`, the one definition of a formal's text since 2026-11-13
+(`V1 >: V`, `T <: Product`), which the header in DracoAspectOf reads too; `elementLines` refuses a malformed element and delegates. No renderer of the drake surface is hand-written: the two
 hand-written renderers kept as test references (`handExpression`, `handElementLines`) were removed on 2026-11-13, and
 ExpressionOfTest and ElementOfTest compare the definitions with the authored surfaces instead.
 The keyword of each element kind is read from the definition
@@ -1358,7 +1367,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it, the same day: the element keyword table as the definition `draketarget.Keyword` (record `git-record-2026-11-12-2103`, committed by Dev as 042bef1 after the gate of 1238 green, pushed).
   After it, the same day: the element renderer's two string-era respellings removed (record `git-record-2026-11-12-2123`, committed by Dev as d06bed5 after the gate of 1239 green, pushed).
   After it: the element renderer as the definition `gendrake.ElementOf` (record `git-record-2026-11-12-2138`, committed by Dev as a80be95 on 2026-11-13 after the gate of 1249 green, pushed, journal chapters 130–133 in the same commit).
-  After it, Dev's gate of 1249 green, commit pending: the two hand-written reference renderers removed (record `git-record-2026-11-13-1816`).
+  After it: the two hand-written reference renderers removed (record `git-record-2026-11-13-1816`, committed by Dev as a216865 on 2026-11-13 after the gate of 1249 green, pushed).
+  After it, Dev's gate of 1259 green, commit pending: the formal spelling as the definition `gendrake.FormalOf` (record `git-record-2026-11-13-1834`).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2609,6 +2619,22 @@ probed before the recommendation, held on the first run. No definition, JSON or 
 stays for its other readers; the parser's `splitTypeArguments` and `splitTopArrow` beside the removed code are live.
 `DrakeCLI check` reads drift 0 over main and mods. Direct run: 1249 tests / 90 suites including discovery, zero failed,
 canceled, ignored, pending or aborted, green on its first run, every headline unchanged; the tree afterwards held the
-intended changes only. Dev's first full gate on 2026-11-13: 1249 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its first run; the baseline stays 1249 / 89. Next on this thread, none accepted: method formals
+intended changes only. Dev's first full gate on 2026-11-13: 1249 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its first run; the baseline stays 1249 / 89. Committed by Dev as a216865 and pushed the same day (a80be95..a216865). Next on this thread, none accepted: method formals
 readable from a definition; a failure form for the guards. The journal is current through chapter 133. EgoActor and
 scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The spelling of a formal type parameter is definition-backed (2026-11-13, Claude Code; GitHub #11, the issue open).** The
+next related point after a216865. MEASURED: a formal was spelled twice — a local function in DracoAspectOf for a header,
+`methodName` by hand in the emitter for a method, which is why ElementOf received a spelled name. Dev accepted "Accepted,
+build it". BUILT: `gendrake.FormalOf` (factory `par formal TypeParameter`, deriving `draketarget.Surface`: the name, the
+lower bound, the upper bound, each bound through `TypeFormOf`), listed by GenDrake; DracoAspectOf's header reads it;
+ElementOf's dependency is `formals (TypeElement -> [TypeParameter])`, data, and it writes `name(formals)` itself;
+`methodName` and `elementNameText` leave Drake.scala for `elementFormals`, validation staying in `refuseElement`; the §6
+generation order followed, all four generated files stable; `DrakeCLI check` reads drift 0 over main and mods.
+FormalOfTest (5) is the 90th suite and reproduces all 36 formals of the corpus (33 lists, 7 bounded). One corpus type
+added: parse scope 127 + 73, surface losses 0 across 200 types, 127 aspect sections, GenDrake 125 of 125; the gate grep
+gains `Formal over`. NOT BUILT: `typeParameters` on TypeElement, the core-shape change that would remove the dependency.
+Direct run: 1259 tests / 91 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its
+first run; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-13: 1259 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Formal over` line as expected, green on its first run; the baseline is 1259 / 90. Next on this thread, none accepted: formals on TypeElement; a failure form for the guards. The journal is
+current through chapter 133. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON
+suspended.

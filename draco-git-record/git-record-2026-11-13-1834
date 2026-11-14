@@ -1,0 +1,59 @@
+The spelling of a formal type parameter is definition-backed: gendrake.FormalOf, read by the header and the element renderer (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+a216865. This record also carries the fold of a216865 into DRACO.md, the handoff and the resume prompt.
+
+ACCEPTED by Dev on 2026-11-13: "Accepted, build it", on the recommendation that the spelling of one formal type
+parameter become the definition `gendrake.FormalOf`, that `DracoAspectOf` use it for the header in place of its local
+function, and that `ElementOf` take a method's formals as data — `formals (TypeElement -> [TypeParameter])` — instead of
+a spelled name, `methodName` leaving the emitter and its validation staying in `refuseElement`.
+
+MEASURED before recommending: a formal (`V1 >: V`, `T <: Product`) was spelled in two places — a local function inside
+DracoAspectOf for a type header, and by hand in Drake.scala's `methodName` for a method, which is why ElementOf received
+the name as a text dependency. Formals live on Dynamic alone, so a definition holding a TypeElement cannot read them.
+The recommendation counted 4 bounded header formals and 10 methods with formals; the suite now measures the whole:
+36 formals in 33 lists (23 headers, 10 methods), 7 of them bounded.
+
+BUILT:
+- `gendrake.FormalOf` (trio, listed by GenDrake after ElementOf): factory `par formal TypeParameter`, deriving
+  `draketarget.Surface`; the name, then ` >: ` and the lower bound, then ` <: ` and the upper bound, each bound spelled
+  through `TypeFormOf` and absent when null.
+- `gendrake.DracoAspectOf`: `formalText` is `\p -> FormalOf(p).value`; the header is byte-identical.
+- `gendrake.ElementOf`: the third factory parameter is `formals (TypeElement -> [TypeParameter])`; the element's `name`
+  is its authored name with `(` the formals `)` appended when it has any, written by the definition; the recursion passes
+  `formals` on. Its record gains `draco TypeParameter`.
+- `Drake.scala`: `methodName` and `elementNameText` are removed; `elementFormals` returns a Dynamic's formals and nothing
+  for any other element, and `elementLines` passes it. `refuseElement` validates formals as before.
+- The generation order of DRACO.md section 6 was followed: FormalOf generated and compiled, then its three referrers;
+  all four generated files are stable on regeneration against the fully compiled tree.
+- `FormalOfTest` (5), the 90th suite: the spelling of each shape; the formal read once and only on demand; a header's
+  and a method's formals through the live emitter, a probe surface byte for byte; the emitter passing data and still
+  refusing duplicate formals; every formal list of main and mods found in its authored surface, with the headline
+  `Formal over the corpus`. `ElementOfTest`'s dependency case now passes formals and pins `fix a(T, S <: Product) Int 1`.
+
+ONE DIFFERENCE, on no input in the corpus: a method's bound was spelled through `TypeForm.text`, a header's through the
+type-form renderer; both now go through `TypeFormOf`. The two agree on every type form (TypeFormOfTest).
+
+NOT BUILT, as stated: `typeParameters` does not move onto TypeElement; the dependency remains, as data.
+REJECTED: moving formals onto TypeElement now (the element family's shape and codec, for ten methods); a failure form
+for the guards (no definition needs one).
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods. Direct run of every
+discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1259 tests
+/ 91 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first run. Headlines:
+parse scope 127 + 73 with 0 held back, surface losses 0 across 200 types, DomainAspect and DracoAspect 127 complete,
+GenDrake 125 of 125, rule 24, actor 15, 93 records and 4 codec sections over 200 definitions, Definition 200 surfaces
+from 536 sections, host text 21 leaves of 2800 in the 11 named seams and 0 outside, type leaves 1697, TypeForm 2195
+forms (498 trees, 1697 leaves), Expression 662 values (477 trees, 185 leaves), Element 1127 elements (1374 lines), and
+the new `Formal over the corpus: 36 formals reproduced in 200 definitions (33 lists, 7 bounded), 0 differing`; example
+gate 48 / 0, scenario 23 clean, the PON pair 42 and 7 as suspended, the rete finding categorical. The ten new tests are
+FormalOfTest's five and the five per-type gates of the one new corpus type. The tree afterwards held the intended
+changes only.
+
+DEV'S GATE (2026-11-13): 1259 tests, zero failed, canceled, ignored or pending, every headline matching the direct run,
+the new `Formal over` line as expected, green on its first run. The baseline is 1259 tests / 90 suites.
+
+Nothing on the tracker was touched. Journal: current through chapter 133; uncovered is what follows Dev's question of
+November 13 (the a80be95 and a216865 exchanges and this increment).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

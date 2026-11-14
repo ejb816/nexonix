@@ -1,0 +1,15 @@
+type FormalOf from draco draketarget Surface
+  factory
+    parameters
+      par formal TypeParameter
+    body
+      loc formal TypeParameter _formal
+      loc text (Dracon -> Text) \form -> TypeFormOf(form).value
+      loc bound ((Text, Dracon) -> Text) \op form -> guard(form.isNull).ifThenElse("", " " ++ op ++ " " ++ text(form))
+      fix value Text formal.name ++ bound(">:", formal.lowerBound) ++ bound("<:", formal.upperBound)
+uses [
+  draco TypeParameter
+  draco drake Text
+  draco format dracon Dracon
+]
+domain draco gendrake GenDrake

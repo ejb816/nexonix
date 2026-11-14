@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- The spelling of a formal type parameter is a definition: `gendrake.FormalOf` (`V1 >: V`, `T <: Product`), read by the
+  type header and by the element renderer, which now receives a method's formals as data (GitHub #11). Every surface is
+  byte-identical. FormalOfTest (5) is new and reproduces all 36 formals of the corpus; one corpus type added (parse
+  scope 127 + 73, GenDrake 125 of 125); the gate grep gains `Formal over`.
 - The two hand-written renderers kept in the drake emitter as test references are removed (GitHub #11): the expression
   and element renderers exist once, as the definitions `gendrake.ExpressionOf` and `gendrake.ElementOf`, and their
   corpus tests compare them with the authored surfaces. No surface, definition or headline changes.

@@ -1,0 +1,171 @@
+{
+  "typeName": {
+    "name": "FormalOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "TypeParameter",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "FormalOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "formal",
+          "valueType": "TypeParameter"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "formal",
+          "valueType": "TypeParameter",
+          "value": "_formal"
+        },
+        {
+          "kind": "Local",
+          "name": "text",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "form",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "TypeFormOf",
+                      "form"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "bound",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "Text",
+                  "Dracon"
+                ]
+              },
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "op",
+              "form",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "form.isNull"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  "\"\"",
+                  {
+                    "++": [
+                      "\" \"",
+                      "op",
+                      "\" \"",
+                      {
+                        "()": [
+                          "text",
+                          "form"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": {
+            "++": [
+              "formal.name",
+              {
+                "()": [
+                  "bound",
+                  "\">:\"",
+                  "formal.lowerBound"
+                ]
+              },
+              {
+                "()": [
+                  "bound",
+                  "\"<:\"",
+                  "formal.upperBound"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

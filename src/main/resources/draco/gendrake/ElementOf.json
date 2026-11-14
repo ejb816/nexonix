@@ -14,6 +14,12 @@
       ]
     },
     {
+      "name": "TypeParameter",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
       "name": "Text",
       "namePackage": [
         "draco",
@@ -64,11 +70,15 @@
         },
         {
           "kind": "Parameter",
-          "name": "nameText",
+          "name": "formals",
           "valueType": {
             "->": [
               "TypeElement",
-              "Text"
+              {
+                "[]": [
+                  "TypeParameter"
+                ]
+              }
             ]
           }
         }
@@ -88,14 +98,103 @@
         },
         {
           "kind": "Local",
-          "name": "nameText",
+          "name": "formals",
           "valueType": {
             "->": [
               "TypeElement",
+              {
+                "[]": [
+                  "TypeParameter"
+                ]
+              }
+            ]
+          },
+          "value": "_formals"
+        },
+        {
+          "kind": "Local",
+          "name": "formal",
+          "valueType": {
+            "->": [
+              "TypeParameter",
               "Text"
             ]
           },
-          "value": "_nameText"
+          "value": {
+            "\\": [
+              "p",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "FormalOf",
+                      "p"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "given",
+          "valueType": {
+            "[]": [
+              "TypeParameter"
+            ]
+          },
+          "value": {
+            "()": [
+              "formals",
+              "element"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "name",
+          "valueType": "Text",
+          "value": {
+            "++": [
+              "element.name",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "given.isEmpty"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  "\"\"",
+                  {
+                    "++": [
+                      "\"(\"",
+                      {
+                        "()": [
+                          "join",
+                          "\", \"",
+                          {
+                            "()": [
+                              "given.map",
+                              "formal"
+                            ]
+                          }
+                        ]
+                      },
+                      "\")\""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
           "kind": "Local",
@@ -387,12 +486,7 @@
                           "indent",
                           "keyword",
                           "\" \"",
-                          {
-                            "()": [
-                              "nameText",
-                              "element"
-                            ]
-                          },
+                          "name",
                           "\" \"",
                           "slot"
                         ]
@@ -433,7 +527,7 @@
                       "ElementOf",
                       "member",
                       "depth",
-                      "nameText"
+                      "formals"
                     ]
                   },
                   "lines"
@@ -544,12 +638,7 @@
                       "indent",
                       "keyword",
                       "\" \"",
-                      {
-                        "()": [
-                          "nameText",
-                          "element"
-                        ]
-                      },
+                      "name",
                       "\" \"",
                       "slot",
                       "\" [\""

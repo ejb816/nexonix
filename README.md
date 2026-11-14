@@ -670,7 +670,8 @@ directions:
   2026-11-11, and the operator fixity table the expression renderer and the parser read is the definition
   `draketarget.Fixity` since 2026-11-12; the expression renderer is the definition `gendrake.ExpressionOf` since the
   same day, and so are the element keyword table, `draketarget.Keyword`, and the element renderer,
-  `gendrake.ElementOf` (a method's formals reach it as a dependency). The remaining
+  `gendrake.ElementOf` (a method's formals reach it as a dependency, as data, and `gendrake.FormalOf` spells each
+  formal for it and for the type header). The remaining
   aspects, and the Scala target transforms remain to be developed.
 - **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
   runs through an emitter whose Draco and domain section mappings are definition-backed; the remaining

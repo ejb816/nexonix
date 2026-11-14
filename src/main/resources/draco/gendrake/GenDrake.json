@@ -46,6 +46,7 @@
       "TypeFormOf",
       "ExpressionOf",
       "ElementOf",
+      "FormalOf",
       "Emit",
       "Emitter"
     ],

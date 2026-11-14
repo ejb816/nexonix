@@ -10,7 +10,26 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the hand-written reference renderers are removed (Claude Code, November 13, 2026; direct run 1249 / 90; Dev's gate 1249 green; commit pending)
+## Current checkpoint — the formal spelling is a definition (Claude Code, November 13, 2026; direct run 1259 / 91; Dev's gate 1259 green; commit pending)
+
+Same session. HEAD a216865, pushed (Dev's paste: a80be95..a216865). Dev accepted ("Accepted, build it") the next related
+point under GitHub #11 (open; stays open). Record `git-record-2026-11-13-1834`, which also folds a216865 into the documents.
+
+- **Built.** `gendrake.FormalOf` (trio, listed by GenDrake) spells one formal type parameter; DracoAspectOf's header reads
+  it; ElementOf takes `formals (TypeElement -> [TypeParameter])` as data and writes `name(formals)` itself; Drake.scala
+  loses `methodName` and `elementNameText` for `elementFormals`. FormalOfTest (5) is new.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods. Direct run: 1259 tests / 91 suites including discovery, green
+  on its first run. Headlines: parse scope 127 + 73, losses 0 across 200 types, 127 aspect sections, GenDrake 125 of 125,
+  93 records, Definition 200 surfaces from 536 sections, host text 21 of 2800, type leaves 1697, TypeForm 2195 forms
+  (498 trees, 1697 leaves), Expression 662 values (477 trees, 185 leaves), Element 1127 elements (1374 lines), and the new
+  `Formal over the corpus: 36 formals reproduced in 200 definitions (33 lists, 7 bounded), 0 differing`.
+  Dev's first full gate on 2026-11-13: 1259 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Formal over` line as expected, green on its first run; the baseline is 1259 / 90. The gate grep in DRACO.md §1 carries `Formal over`.
+- **In the tree, uncommitted.** The FormalOf trio and test, the DracoAspectOf, ElementOf and GenDrake trios, Drake.scala,
+  ElementOfTest, CHANGELOG.md, DRACO.md, README.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** Formals on TypeElement; a failure form for the guards.
+- **Journal.** Current through chapter 133; uncovered is the a80be95 and a216865 exchanges and this increment.
+
+## Earlier the same session — the hand-written reference renderers are removed (Claude Code, November 13, 2026; direct run 1249 / 90; Dev's gate 1249 green; committed as a216865, pushed)
 
 Same session. HEAD a80be95, pushed (Dev's paste: d06bed5..a80be95). Dev accepted ("Accepted, build it") the next related
 point under GitHub #11 (open; stays open). Record `git-record-2026-11-13-1816`, which also folds a80be95 into the documents.
@@ -22,7 +41,7 @@ point under GitHub #11 (open; stays open). Record `git-record-2026-11-13-1816`, 
 - **Evidence.** `DrakeCLI check` drift 0 over main and mods. Direct run: 1249 tests / 90 suites including discovery, green
   on its first run, every headline unchanged (Expression 655 values, Element 1119 elements in 1366 lines, 0 differing).
   Dev's first full gate on 2026-11-13: 1249 tests, zero failed, canceled, ignored or pending, every headline unchanged, green on its first run; the baseline stays 1249 / 89.
-- **In the tree, uncommitted.** Drake.scala, the two tests, CHANGELOG.md, DRACO.md, this file, the resume prompt, the record.
+- **Committed and pushed.** a216865 on 2026-11-13 (Dev's paste: 8 files, a80be95..a216865, `## main...origin/main`). The fold of this hash is uncommitted and rides with the next commit.
 - **Next on this thread, none accepted.** Method formals readable from a definition; a failure form for the guards.
 - **Journal.** Current through chapter 133; uncovered is the a80be95 commit exchange and this increment.
 

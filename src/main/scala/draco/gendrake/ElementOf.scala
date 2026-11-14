@@ -17,11 +17,14 @@ object ElementOf extends App with DracoType {
   def apply (
     _element: => draco.TypeElement,
     _level: => Int,
-    _nameText: => draco.TypeElement => String
+    _formals: => draco.TypeElement => Seq[draco.TypeParameter]
   ) : ElementOf = new ElementOf {
     lazy val element: draco.TypeElement = _element
     lazy val level: Int = _level
-    lazy val nameText: draco.TypeElement => String = _nameText
+    lazy val formals: draco.TypeElement => Seq[draco.TypeParameter] = _formals
+    lazy val formal: draco.TypeParameter => String = p => FormalOf(p).value
+    lazy val given: Seq[draco.TypeParameter] = formals(element)
+    lazy val name: String = element.name ++ (if (given.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse("", "(" ++ given.map(formal).mkString(", ") ++ ")")
     lazy val kind: String = element.typeDefinition.typeName.name
     lazy val step: String = "  "
     lazy val pad: Int => String = depth => step * depth
@@ -34,10 +37,10 @@ object ElementOf extends App with DracoType {
     lazy val rendered: String = spelled(element.value)
     lazy val valued: String => String = prefix => (if (rendered == "") draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(prefix, prefix ++ " " ++ rendered)
     lazy val bare: Boolean = kind == "Monadic" || kind == "Condition"
-    lazy val leaf: Seq[String] = Seq(valued((if (bare) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(indent ++ keyword, indent ++ keyword ++ " " ++ nameText(element) ++ " " ++ slot)))
-    lazy val nested: (draco.TypeElement, Int) => Seq[String] = (member, depth) => ElementOf(member, depth, nameText).lines
+    lazy val leaf: Seq[String] = Seq(valued((if (bare) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(indent ++ keyword, indent ++ keyword ++ " " ++ name ++ " " ++ slot)))
+    lazy val nested: (draco.TypeElement, Int) => Seq[String] = (member, depth) => ElementOf(member, depth, formals).lines
     lazy val section: (String, Seq[draco.TypeElement]) => Seq[String] = (head, members) => (if (members.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(Seq.empty, Seq(indent ++ step ++ head) ++ members.flatMap(member => nested(member, level + 2)))
-    lazy val method: Seq[String] = Seq(indent ++ keyword ++ " " ++ nameText(element) ++ " " ++ slot ++ " [") ++ section("parameters", element.parameters) ++ section("body", element.body) ++ Seq(indent ++ "]")
+    lazy val method: Seq[String] = Seq(indent ++ keyword ++ " " ++ name ++ " " ++ slot ++ " [") ++ section("parameters", element.parameters) ++ section("body", element.body) ++ Seq(indent ++ "]")
     lazy val head: Seq[String] = Seq(indent ++ keyword) ++ (if (element.name == "") draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(Seq.empty, Seq(element.name)) ++ (if (slot == "") draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(Seq.empty, Seq(slot)) ++ Seq("[")
     lazy val branch: Seq[String] = Seq(head.mkString(" ")) ++ element.body.flatMap(member => nested(member, level + 1)) ++ Seq(indent ++ "]")
     lazy val block: Boolean = kind == "Dynamic" && (element.parameters.nonEmpty || element.body.nonEmpty)
@@ -48,7 +51,7 @@ object ElementOf extends App with DracoType {
   lazy val Null: ElementOf = apply(
     _element = null.asInstanceOf[draco.TypeElement],
     _level = 0,
-    _nameText = null.asInstanceOf[draco.TypeElement => String]
+    _formals = null.asInstanceOf[draco.TypeElement => Seq[draco.TypeParameter]]
   )
 
 

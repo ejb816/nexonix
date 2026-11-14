@@ -132,16 +132,6 @@ object Drake {
     * so DrakeParseTest can compare the two eras by their one surface. */
   def typeSurface (valueType: Json) : String = typeExpressionSlot(valueType)
 
-  /** Method formals are records; only the surface appends their declarations to the name. */
-  private def methodName(d: Dynamic): String = {
-    MethodTypeParameters.validate(d)
-    if (d.typeParameters.isEmpty) d.name
-    else d.name + d.typeParameters.map { p =>
-      p.name + (if (p.lowerBound.isNull) "" else " >: " + TypeForm.text(p.lowerBound.json)) +
-        (if (p.upperBound.isNull) "" else " <: " + TypeForm.text(p.upperBound.json))
-    }.mkString("(", ", ", ")")
-  }
-
   /** A TYPE PARAMETER on the surface: a tree spells as any type form does (the parser
     * builds one for every header parameter and reference argument since 2026-09-17);
     * a string — the JSON corpus until it re-canonicalizes — spells VERBATIM, as a
@@ -179,15 +169,17 @@ object Drake {
     * itself closes the grammar with no appeal to indentation. */
   private def elementLines (element: TypeElement, level: Int) : Seq[String] = {
     refuseElement(element)
-    draco.gendrake.ElementOf(element, level, elementNameText(_)).lines
+    draco.gendrake.ElementOf(element, level, elementFormals(_)).lines
   }
 
-  /** The name as a member line spells it: a method's with its formals appended, any other
-    * element's as authored. The one ingredient `gendrake.ElementOf` receives as a dependency:
-    * formals live on Dynamic alone, which a definition holding a TypeElement cannot reach. */
-  private[draco] def elementNameText (element: TypeElement) : String = element match {
-    case d: Dynamic => methodName(d)
-    case e          => e.name
+  /** The formals a member line declares: a method's, none for any other element. The one
+    * ingredient `gendrake.ElementOf` receives as a dependency, and it is DATA, not spelling
+    * (2026-11-13): formals live on Dynamic alone, which a definition holding a TypeElement
+    * cannot reach; the definition spells each through `gendrake.FormalOf` and appends them to
+    * the name itself. `refuseElement` validates them before anything renders. */
+  private[draco] def elementFormals (element: TypeElement) : Seq[TypeParameter] = element match {
+    case d: Dynamic => d.typeParameters
+    case _          => Seq.empty
   }
 
   /** What the element renderer refuses, checked over the whole element before anything

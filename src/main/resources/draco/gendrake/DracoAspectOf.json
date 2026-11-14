@@ -497,62 +497,14 @@
             "\\": [
               "p",
               {
-                "++": [
-                  "p.name",
+                ".": [
                   {
                     "()": [
-                      {
-                        ".": [
-                          {
-                            "()": [
-                              "guard",
-                              "p.lowerBound.isNull"
-                            ]
-                          },
-                          "ifThenElse"
-                        ]
-                      },
-                      "\"\"",
-                      {
-                        "++": [
-                          "\" >: \"",
-                          {
-                            "()": [
-                              "formText",
-                              "p.lowerBound"
-                            ]
-                          }
-                        ]
-                      }
+                      "FormalOf",
+                      "p"
                     ]
                   },
-                  {
-                    "()": [
-                      {
-                        ".": [
-                          {
-                            "()": [
-                              "guard",
-                              "p.upperBound.isNull"
-                            ]
-                          },
-                          "ifThenElse"
-                        ]
-                      },
-                      "\"\"",
-                      {
-                        "++": [
-                          "\" <: \"",
-                          {
-                            "()": [
-                              "formText",
-                              "p.upperBound"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
+                  "value"
                 ]
               }
             ]

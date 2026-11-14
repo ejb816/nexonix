@@ -15,6 +15,7 @@ domain draco gendrake GenDrake
     TypeFormOf
     ExpressionOf
     ElementOf
+    FormalOf
     Emit
     Emitter
   ]
