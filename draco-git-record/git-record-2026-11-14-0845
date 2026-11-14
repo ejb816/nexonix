@@ -1,0 +1,36 @@
+Journal chapters 134–136 from the session's original record; fold 180a7ab (GitHub #11, documentation only)
+
+OWNING ISSUE: GitHub #11 (open; stays open). Nothing on the tracker was touched.
+
+WHY. After 180a7ab (the section transforms spelling their own types, `gendrake.SlotOf`) the next point was recommended:
+`typeParameters` declared on TypeElement so that ElementOf reads a method's formals itself. Dev answered "Journal
+first". The recommendation is NOT accepted. The journal ended at chapter 133; the a80be95, a216865, 9d1e6cf and 180a7ab
+exchanges were uncovered and the session had compacted three more times.
+
+WHAT. Chapters 134–136 cover the session from the open turn of chapter 133 (Dev's journal question of November 13)
+through the 180a7ab commit and the unaccepted recommendation, from ORIGINAL message records of session
+92b66875-d6a1-4bde-bc3d-a3186065293e:
+- 134: chapters 130–133 written before the element renderer's commit (a80be95); the two hand-written reference
+  renderers removed (a216865, gate 1249).
+- 135: the formal spelling as `gendrake.FormalOf` (9d1e6cf, gate 1259).
+- 136: the slot rule as `gendrake.SlotOf` and the three type-spelling dependencies removed (180a7ab, gate 1269); formals
+  on TypeElement recommended; "Journal first", the open turn.
+One bounded extract and one retrieval audit under draco-dev-journal/sources/
+(claude-2026-11-13-to-14-session-2-continued): 23 records, 12 Dev messages (5 assertive, 7 responsive pastes) and 11
+final replies, 11 completed exchanges, one open turn; three compaction boundaries, originals on both sides of each, no
+summary quoted; every record re-read from its source line and matched on uuid, timestamp and text hash (23 of 23);
+frozen prefix through line 4023. The introduction's count, checkpoint paragraph and index are updated.
+
+DOCUMENTS. DRACO.md: 180a7ab folded into the baseline entry, the §5 line and the SlotOf paragraph; a dated paragraph
+for this update; coverage statements and the `draco-docs-synced-through` marker at chapter 136, each chapter's Status
+having been read against DRACO.md and README, whose dated text already carries the three increments. README.md:
+coverage sentence and marker. DEVELOPMENT_HANDOFF.md: new current checkpoint, the SlotOf checkpoint marked committed.
+DEVELOPMENT_RESUME_PROMPT.md: the commit, the unaccepted recommendation and the coverage. CHANGELOG.md: one entry.
+
+NOT CHANGED. No engine, definition, generated Scala or test; no sbt run; no gate needed. The baseline 1269 tests / 91
+suites at 180a7ab stands.
+
+CHECKS. `git diff --check` clean; every repository-local link in the three chapters resolves; the agent links are
+intact (CLAUDE.md and AGENTS.md symlinks to DRACO.md).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

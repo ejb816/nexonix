@@ -66,7 +66,7 @@ suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
 **1269 tests / 91 suites**, verified by Dev on 2026-11-14 for the section transforms spelling their own types (record
-`git-record-2026-11-14-0007`): `gendrake.SlotOf` is the value-type slot rule, DracoAspectOf, DomainAspectOf, ActorAspectOf and DefinitionOf
+`git-record-2026-11-14-0007`, committed as 180a7ab, pushed): `gendrake.SlotOf` is the value-type slot rule, DracoAspectOf, DomainAspectOf, ActorAspectOf and DefinitionOf
 call `TypeFormOf` and `SlotOf` and receive no type spelling, every surface byte-identical; ten tests added (SlotOfTest's five, the 91st suite,
 and the five per-type gates of the one new corpus type); parse scope 128 + 73, surface losses 0 across 201 types, 128 aspect sections,
 GenDrake 126 of 126, the `Slot over` line in the gate grep; its direct run 1269 / 92 including discovery, green on its second run (the first
@@ -1355,11 +1355,11 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 133 on 2026-11-13.
+Current documentation was reconciled through journal chapter 136 on 2026-11-14.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 133 on
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 136 on
   2026-11-13.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
@@ -1378,7 +1378,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it: the element renderer as the definition `gendrake.ElementOf` (record `git-record-2026-11-12-2138`, committed by Dev as a80be95 on 2026-11-13 after the gate of 1249 green, pushed, journal chapters 130–133 in the same commit).
   After it: the two hand-written reference renderers removed (record `git-record-2026-11-13-1816`, committed by Dev as a216865 on 2026-11-13 after the gate of 1249 green, pushed).
   After it: the formal spelling as the definition `gendrake.FormalOf` (record `git-record-2026-11-13-1834`, committed by Dev as 9d1e6cf on 2026-11-13 after the gate of 1259 green, pushed).
-  After it: the section transforms spelling their own types, `gendrake.SlotOf` (record `git-record-2026-11-14-0007`; Dev's gate of 1269 green on 2026-11-14, commit to follow).
+  After it: the section transforms spelling their own types, `gendrake.SlotOf` (record `git-record-2026-11-14-0007`, committed by Dev as 180a7ab on 2026-11-14 after the gate of 1269 green, pushed).
+  After it, documentation only: journal chapters 134–136 (record `git-record-2026-11-14-0845`).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -1603,7 +1604,7 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 133 -->
+<!-- draco-docs-synced-through: chapter 136 -->
 
 **Role presence increment (2026-10-22, Codex; Dev verified 857 / 61).** Dev accepted Presence-typed
 rule/actor slots and their field-level encoding. Absent omits the key; Present writes its
@@ -2662,6 +2663,18 @@ type added: parse scope 128 + 73, surface losses 0 across 201 types, 128 aspect 
 gains `Slot over`; the element, value and type-form counts fall by the removed parameters and bindings. WHAT STAYS a
 dependency: element rendering. Direct run: 1269 tests / 92 suites including discovery, zero failed, canceled, ignored, pending
 or aborted, on its second run (the first failed the new suite's probe on its own authored surface; nothing in the corpus
-differed); the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Slot over` line as expected, green on its first run; the baseline is 1269 / 91. Next on this thread, none accepted: formals
+differed); the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Slot over` line as expected, green on its first run; the baseline is 1269 / 91. Committed by Dev as 180a7ab and pushed the same day (9d1e6cf..180a7ab). Next on this thread, none accepted: formals
 on TypeElement; a failure form for the guards. The journal is current through chapter 133. EgoActor and
 scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The journal is current through chapter 136 (2026-11-14, Claude Code; Dev answered "Journal first").** After 180a7ab the next point
+under GitHub #11 was recommended — `typeParameters` declared on TypeElement, so that ElementOf reads a method's formals itself and
+`elementFormals` leaves the emitter — and Dev chose the journal before answering it; the recommendation is NOT accepted. Chapters
+134–136 cover the session from the open turn of chapter 133 through 180a7ab, from its original record: 23 records, 11 completed
+exchanges, "Journal first" itself the open turn, three compaction boundaries with originals on both sides of each, every record
+re-read from its source line and matched on uuid, timestamp and text hash; one extract and audit under
+`draco-dev-journal/sources/` (`claude-2026-11-13-to-14-session-2-continued`). The markers advance to chapter 136: each chapter's
+Status was read against this file and README, whose dated paragraphs already carry a216865, 9d1e6cf and 180a7ab. Documentation
+only (record `git-record-2026-11-14-0845`, which also folds 180a7ab): no engine, definition, Scala or test change, no sbt, no
+tracker action; the gate 1269 / 91 at 180a7ab stands. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon
+deferred; PON suspended.

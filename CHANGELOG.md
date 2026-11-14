@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- Journal chapters 134–136 cover November 13–14: the reference renderers removed, and the formal spelling and the
+  value-type slot rule as definitions, from the session's original record, with one extract and audit under
+  `draco-dev-journal/sources/`.
 - The section transforms of the drake surface spell their own types (GitHub #11): the value-type slot rule is the
   definition `gendrake.SlotOf`, and `DracoAspectOf`, `DomainAspectOf`, `ActorAspectOf` and `DefinitionOf` no longer
   receive a type spelling from the emitter — element rendering is their one remaining dependency. Every surface is

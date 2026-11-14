@@ -2,15 +2,31 @@
 
 Refreshed November 10, 2026 by Claude Code in the session that RECEIVED the handoff below and did its first task: the
 journal is current through chapter 127, through chapter 129 since that session journaled itself the same day, and through
-chapter 133 since November 13, when it journaled the renderer thread before the element renderer's commit (see the
-current checkpoint). The checkpoint that follows this paragraph's section was prepared earlier the same day
+chapter 133 since November 13, when it journaled the renderer thread before the element renderer's commit, and through
+chapter 136 since November 14 (see the current checkpoint). The checkpoint that follows this paragraph's section was prepared earlier the same day
 by the previous Claude Code session, at Dev's direction, for a NEW SESSION in either agent: Dev called the handoff when
 that session's context reached 75%, with the journal several sessions behind. It supersedes the record-and-codec, actor-section, rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
 and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the section transforms spell their own types (Claude Code, November 14, 2026; Dev's gate 1269 green; commit pending)
+## Current checkpoint — the journal through chapter 136 (Claude Code, November 14, 2026; documentation only; commit pending)
+
+Same session. HEAD 180a7ab, pushed (Dev's paste: 9d1e6cf..180a7ab, 33 files), Dev's gate 1269 tests on it; the baseline is
+1269 / 91. Record `git-record-2026-11-14-0845`, which also folds 180a7ab into the documents.
+
+- **Done.** Chapters 134–136 written from the session's original record (23 records, 11 completed exchanges, one open turn,
+  three compaction boundaries with originals on both sides), with the extract and audit
+  `draco-dev-journal/sources/claude-2026-11-13-to-14-session-2-continued`; introduction and index updated; markers at
+  chapter 136. No engine, definition, Scala or test change; no sbt; nothing on the tracker.
+- **In the tree, uncommitted.** The three chapters, the extract, the audit, the introduction, CHANGELOG.md, DRACO.md,
+  README.md, this file, the resume prompt, the record.
+- **Recommended, NOT accepted.** `typeParameters` declared on TypeElement (default empty, Dynamic supplying it), so that
+  ElementOf reads a method's formals itself and `elementFormals` leaves Drake.scala; unprobed. Dev answered "Journal first".
+  Behind it: the element refusals, the reason `elementText` is still passed; a failure form for the guards.
+- **Journal.** Current through chapter 136; uncovered is only what follows Dev's "Journal first" of November 14.
+
+## Previous checkpoint — the section transforms spell their own types (Claude Code, November 14, 2026; committed 180a7ab, pushed)
 
 Same session. HEAD 9d1e6cf, pushed (Dev's paste: a216865..9d1e6cf). Dev accepted ("Accepted, build it") the next related
 point under GitHub #11 (open; stays open). Record `git-record-2026-11-14-0007`, which also folds 9d1e6cf into the documents.

@@ -17,7 +17,9 @@ handoff commit 043f578. That session is itself journaled in chapters 128–129 (
 sources/claude-2026-11-10-session-2), written before the sixth increment's commit at my request; coverage is current
 through chapter 129 for that stretch. Chapters 130–133 (extract and audit sources/claude-2026-11-10-to-13-session-2-continued)
 then cover the same session through the element renderer's verified gate, written on November 13 before its commit after I
-asked; coverage is current through chapter 133 and only what followed that question is not journaled.
+asked. Chapters 134–136 (extract and audit sources/claude-2026-11-13-to-14-session-2-continued) cover it through 180a7ab,
+written on November 14 when I answered a recommendation with "Journal first"; coverage is current through chapter 136 and only
+what followed that answer is not journaled.
 
 DEVELOPMENT RESUMES WHEN I SAY SO. Preserved and NOT accepted: the assembly of the drake surface as a definition
 (draketarget.DefinitionText owning the order of the six sections, gendrake.DefinitionOf composing the six transforms,
@@ -134,8 +136,11 @@ baseline 1259 / 90. I committed it as 9d1e6cf and pushed it (a216865..9d1e6cf).
 WHAT HAPPENED (November 14, next increment): I accepted removing the three type-spelling dependencies from the section
 transforms: the value-type slot rule is the definition gendrake.SlotOf, and DracoAspectOf, DomainAspectOf, ActorAspectOf and
 DefinitionOf spell their own types (record git-record-2026-11-14-0007, which also folds 9d1e6cf into the documents). Its direct run
-passed 1269 tests / 92 suites including discovery and my full gate passed 1269 tests on November 14 (baseline 1269 / 91). Check
-`git log` for whether its commit and push are recorded; if not, settle that with me first. The gate grep is the one in DRACO.md section 1 (it gained `Slot over`).
+passed 1269 tests / 92 suites including discovery and my full gate passed 1269 tests on November 14 (baseline 1269 / 91). I
+committed it as 180a7ab and pushed it (9d1e6cf..180a7ab). The gate grep is the one in DRACO.md section 1 (it gained `Slot over`).
+The next point was then recommended and is NOT accepted: typeParameters declared on TypeElement, so that ElementOf reads a
+method's formals itself. I answered "Journal first"; chapters 134–136 followed (record git-record-2026-11-14-0845, documentation
+only). Check `git log` for whether that commit and push are recorded; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

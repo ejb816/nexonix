@@ -829,7 +829,9 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 133 (November 13, 2026): chapters 130–133 continue that session through the
+Journal coverage reaches chapter 136 (November 14, 2026): chapters 134–136 continue the same session through the
+reference renderers' removal and the formal spelling and slot rule as definitions, with their own extract and audit.
+Chapters 130–133 continue that session through the
 renderer thread — the dead type converter, the type-form, expression and element renderers and the fixity and
 keyword tables as definitions — with their own extract and audit. Chapters 128–129 cover the session that wrote
 chapters 113–127 and then built the definition-backed assembly and the single type-form renderer of the
@@ -877,7 +879,7 @@ figure unchanged: Create and Update as verbs over the abstract Latent shape, and
 moved into four Editor-domain rules over an Accepted fact, the actor thinned to a membrane and codec
 eligibility made transitive.
 
-<!-- draco-docs-synced-through: chapter 133 -->
+<!-- draco-docs-synced-through: chapter 136 -->
 
 Role slots now carry `Presence(RuleAspect)` and `Presence(ActorAspect)`. The containing
 record omits an Absent field and writes a Present aspect directly as its existing JSON
