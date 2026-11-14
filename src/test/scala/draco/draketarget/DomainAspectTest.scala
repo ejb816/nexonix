@@ -17,7 +17,7 @@ class DomainAspectTest extends AnyFunSuite with PersistentTestLog {
     TypeName(value, Seq("example"), parameters)
 
   private def render(td: TypeDefinition): String =
-    DomainAspectOf(td, Drake.typeParameterSurface(_)).value
+    DomainAspectOf(td).value
 
   private def section(source: String): String = {
     val lines = source.linesIterator.dropWhile(l => l != "domain" && !l.startsWith("domain ")).toList

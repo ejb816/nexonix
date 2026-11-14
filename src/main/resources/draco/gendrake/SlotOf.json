@@ -1,0 +1,135 @@
+{
+  "typeName": {
+    "name": "SlotOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "derivation": [
+      {
+        "name": "Surface",
+        "namePackage": [
+          "draco",
+          "draketarget"
+        ]
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "SlotOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "form",
+          "valueType": "Dracon"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "form",
+          "valueType": "Dracon",
+          "value": "_form"
+        },
+        {
+          "kind": "Local",
+          "name": "typed",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "node",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "TypeFormOf",
+                      "node"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "text",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              "typed",
+              "form"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "value",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "()": [
+                          "form.has",
+                          "\"->\""
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "++": [
+                  "\"(\"",
+                  "text",
+                  "\")\""
+                ]
+              },
+              "text"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

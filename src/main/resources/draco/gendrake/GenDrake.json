@@ -47,6 +47,7 @@
       "ExpressionOf",
       "ElementOf",
       "FormalOf",
+      "SlotOf",
       "Emit",
       "Emitter"
     ],

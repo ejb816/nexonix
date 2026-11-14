@@ -75,16 +75,6 @@
         },
         {
           "kind": "Parameter",
-          "name": "parameterText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          }
-        },
-        {
-          "kind": "Parameter",
           "name": "elementText",
           "valueType": {
             "->": [
@@ -112,14 +102,29 @@
         },
         {
           "kind": "Local",
-          "name": "parameterText",
+          "name": "typed",
           "valueType": {
             "->": [
               "Dracon",
               "Text"
             ]
           },
-          "value": "_parameterText"
+          "value": {
+            "\\": [
+              "form",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "TypeFormOf",
+                      "form"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
         },
         {
           "kind": "Local",
@@ -214,7 +219,7 @@
                               {
                                 "()": [
                                   "name.typeParameters.map",
-                                  "parameterText"
+                                  "typed"
                                 ]
                               }
                             ]

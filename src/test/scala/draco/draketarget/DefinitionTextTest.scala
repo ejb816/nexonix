@@ -41,7 +41,7 @@ class DefinitionTextTest extends AnyFunSuite with PersistentTestLog {
   test("a definition maps onto the six section transforms in order through the live emitter and reads back; the guards stay") {
     val td = carrier
     val sections = Seq(Drake.dracoAspectText(td), Drake.usesText(td),
-      draco.gendrake.DomainAspectOf(td, (_: draco.format.dracon.Dracon) => "").value,
+      draco.gendrake.DomainAspectOf(td).value,
       Drake.ruleAspectText(td), Drake.actorAspectText(td), Drake.codecAspectText(td))
     assert(Drake.definitionText(td) == sections.filter(_.nonEmpty).mkString("", "\n", "\n"))
     assert(Drake.emit(td) == Drake.definitionText(td))

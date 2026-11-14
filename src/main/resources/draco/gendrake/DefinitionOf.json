@@ -32,14 +32,6 @@
         "draco",
         "draketarget"
       ]
-    },
-    {
-      "name": "Dracon",
-      "namePackage": [
-        "draco",
-        "format",
-        "dracon"
-      ]
     }
   ],
   "dracoAspect": {
@@ -60,36 +52,6 @@
           "kind": "Parameter",
           "name": "definition",
           "valueType": "TypeDefinition"
-        },
-        {
-          "kind": "Parameter",
-          "name": "parameterText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          }
-        },
-        {
-          "kind": "Parameter",
-          "name": "formText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          }
-        },
-        {
-          "kind": "Parameter",
-          "name": "slotText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          }
         },
         {
           "kind": "Parameter",
@@ -120,39 +82,6 @@
         },
         {
           "kind": "Local",
-          "name": "parameterText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          },
-          "value": "_parameterText"
-        },
-        {
-          "kind": "Local",
-          "name": "formText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          },
-          "value": "_formText"
-        },
-        {
-          "kind": "Local",
-          "name": "slotText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          },
-          "value": "_slotText"
-        },
-        {
-          "kind": "Local",
           "name": "elementText",
           "valueType": {
             "->": [
@@ -179,9 +108,6 @@
             "()": [
               "DracoAspectOf",
               "definition",
-              "parameterText",
-              "formText",
-              "slotText",
               "elementText"
             ]
           }
@@ -204,8 +130,7 @@
           "value": {
             "()": [
               "DomainAspectOf",
-              "definition",
-              "parameterText"
+              "definition"
             ]
           }
         },
@@ -229,7 +154,6 @@
             "()": [
               "ActorAspectOf",
               "definition",
-              "parameterText",
               "elementText"
             ]
           }

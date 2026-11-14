@@ -129,7 +129,13 @@ every headline unchanged. I committed it as a216865 and pushed it (a80be95..a216
 WHAT HAPPENED (November 13, next increment): I accepted the spelling of a formal type parameter as a definition,
 gendrake.FormalOf, read by the type header and by ElementOf, which now receives a method's formals as data (record
 git-record-2026-11-13-1834, which also folds a216865 into the documents). Its direct run and my full gate both passed 1259 tests, the
-baseline 1259 / 90. Check `git log` for whether its commit and push are recorded; if not, settle that with me first. The gate grep is the one in DRACO.md section 1 (it gained `Formal over`).
+baseline 1259 / 90. I committed it as 9d1e6cf and pushed it (a216865..9d1e6cf).
+
+WHAT HAPPENED (November 14, next increment): I accepted removing the three type-spelling dependencies from the section
+transforms: the value-type slot rule is the definition gendrake.SlotOf, and DracoAspectOf, DomainAspectOf, ActorAspectOf and
+DefinitionOf spell their own types (record git-record-2026-11-14-0007, which also folds 9d1e6cf into the documents). Its direct run
+passed 1269 tests / 92 suites including discovery and my full gate passed 1269 tests on November 14 (baseline 1269 / 91). Check
+`git log` for whether its commit and push are recorded; if not, settle that with me first. The gate grep is the one in DRACO.md section 1 (it gained `Slot over`).
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

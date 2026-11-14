@@ -81,36 +81,6 @@
         },
         {
           "kind": "Parameter",
-          "name": "parameterText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          }
-        },
-        {
-          "kind": "Parameter",
-          "name": "formText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          }
-        },
-        {
-          "kind": "Parameter",
-          "name": "slotText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          }
-        },
-        {
-          "kind": "Parameter",
           "name": "elementText",
           "valueType": {
             "->": [
@@ -138,39 +108,6 @@
         },
         {
           "kind": "Local",
-          "name": "parameterText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          },
-          "value": "_parameterText"
-        },
-        {
-          "kind": "Local",
-          "name": "formText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          },
-          "value": "_formText"
-        },
-        {
-          "kind": "Local",
-          "name": "slotText",
-          "valueType": {
-            "->": [
-              "Dracon",
-              "Text"
-            ]
-          },
-          "value": "_slotText"
-        },
-        {
-          "kind": "Local",
           "name": "elementText",
           "valueType": {
             "->": [
@@ -194,6 +131,58 @@
           "name": "aspect",
           "valueType": "DracoAspect",
           "value": "definition.dracoAspect"
+        },
+        {
+          "kind": "Local",
+          "name": "typed",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "form",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "TypeFormOf",
+                      "form"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "slot",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "form",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "SlotOf",
+                      "form"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
         },
         {
           "kind": "Local",
@@ -234,7 +223,7 @@
                               {
                                 "()": [
                                   "name.typeParameters.map",
-                                  "parameterText"
+                                  "typed"
                                 ]
                               }
                             ]
@@ -471,7 +460,7 @@
                         "[]": [
                           {
                             "()": [
-                              "formText",
+                              "typed",
                               "parent"
                             ]
                           }
@@ -695,7 +684,7 @@
             ".": [
               {
                 "()": [
-                  "slotText",
+                  "slot",
                   "aspect.factory.valueType"
                 ]
               },
@@ -731,13 +720,13 @@
                             "==": [
                               {
                                 "()": [
-                                  "slotText",
+                                  "slot",
                                   "aspect.factory.valueType"
                                 ]
                               },
                               {
                                 "()": [
-                                  "slotText",
+                                  "slot",
                                   "factoryType"
                                 ]
                               }
@@ -751,7 +740,7 @@
                   "\"\"",
                   {
                     "()": [
-                      "slotText",
+                      "slot",
                       "aspect.factory.valueType"
                     ]
                   }

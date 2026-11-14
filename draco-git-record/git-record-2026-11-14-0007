@@ -1,0 +1,67 @@
+The section transforms spell their own types: gendrake.SlotOf, and the three type-spelling dependencies removed (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (the generator's own text as definitions), open; it stays open. The next related point after
+9d1e6cf. This record also carries the fold of 9d1e6cf into DRACO.md, the handoff and the resume prompt.
+
+ACCEPTED by Dev late on 2026-11-13, built and verified on 2026-11-14: "Accepted, build it", on the recommendation that
+the three type-spelling dependencies leave the section transforms now that what they pass in is a definition — the
+value-type slot rule becoming the one new definition `gendrake.SlotOf`, read by ElementOf and DracoAspectOf, and
+DracoAspectOf, DomainAspectOf, ActorAspectOf and DefinitionOf calling `TypeFormOf` and `SlotOf` directly.
+
+MEASURED before recommending: `DefinitionOf` received four rendering dependencies and handed them down; three spelled
+types. `formText` was `TypeFormOf(form).value`; `parameterText` was the same for a tree and the leaf's text for a
+string, which is what `TypeFormOf` gives for a leaf; `slotText` was that spelling with a top-level arrow parenthesized,
+a rule ElementOf already spelled itself — written twice, once in the definition and once by hand in Drake.scala.
+
+BUILT:
+- `gendrake.SlotOf` (trio, listed by GenDrake after FormalOf): factory `par form Dracon`, deriving
+  `draketarget.Surface`; the type form through `TypeFormOf`, parenthesized when the form is an arrow at the top.
+- `gendrake.DracoAspectOf`: parameters `definition`, `elementText`; `typed` (`TypeFormOf`) spells a reference's
+  arguments and a foreign parent, `slot` (`SlotOf`) the factory result.
+- `gendrake.DomainAspectOf`: the one parameter `definition`; `gendrake.ActorAspectOf`: `definition`, `elementText`;
+  each spells a reference's arguments through `TypeFormOf`.
+- `gendrake.DefinitionOf`: `definition`, `elementText`; its record loses `draco format dracon Dracon`, which its body
+  no longer names.
+- `gendrake.ElementOf`: its slot is `SlotOf(element.valueType).value`; the local copy of the rule is gone.
+- `Drake.scala`: `typeExpressionSlot`, `drakeType` and `typeParameterSurface` are removed; `typeSurface` stays public as
+  a one-line delegate to `SlotOf`, the normalizer DrakeParseTest compares carriers by; the four delegations pass
+  element rendering alone.
+- The generation order of DRACO.md section 6 was followed: SlotOf generated and compiled, then its referrers; all seven
+  generated files and their JSON are stable on regeneration against the fully compiled tree.
+- `SlotOfTest` (5), the 91st suite: the rule over each shape, an absent type the empty text; the form read once and only
+  on demand; a probe surface through the live emitter byte for byte; the section transforms constructed with no type
+  spelling passed; every value-type slot of main and mods found in its authored surface, with the headline
+  `Slot over the corpus`. DracoAspectTest, DomainAspectTest, DefinitionTextTest and TypeFormOfTest construct the
+  transforms in their new shape; DracoAspectTest's assertion that the form callback is never evaluated went with the
+  callback.
+
+THE POINT NOT PROBED before the recommendation held: an absent factory value type is the empty text through
+`TypeFormOf` (TypeFormOfTest already pinned it), so DracoAspectOf's emptiness test needed no shape change.
+
+WHAT STAYS a dependency: `elementText`, because the element refusals and a method's formals are still the emitter's.
+NOT BUILT, none accepted: formals on TypeElement; a failure form for the guards.
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods. Direct run of every
+discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1269 tests
+/ 92 suites including discovery, zero failed, canceled, ignored, pending or aborted, on its SECOND run — the first
+failed one test, the new suite's probe, on its own authored surface (a redundant pair around an arrow inside a map
+type, which the emitter writes minimal); nothing in the corpus differed. Headlines: parse scope 128 + 73 with 0 held
+back, surface losses 0 across 201 types, DomainAspect and DracoAspect 128 complete, GenDrake 126 of 126, rule 24, actor
+15, 94 records and 4 codec sections over 201 definitions, Definition 201 surfaces from 539 sections, host text 21
+leaves of 2810 in the 11 named seams and 0 outside, type leaves 1682, TypeForm 2169 forms (487 trees, 1682 leaves),
+Expression 661 values (483 trees, 178 leaves), Element 1119 elements (1366 lines), Formal 36 formals in 201 definitions
+(33 lists, 7 bounded), and the new `Slot over the corpus: 1101 value-type slots reproduced in 201 definitions (83
+arrows parenthesized), 0 differing`; example gate 48 / 0, scenario 23 clean, the PON pair 42 and 7 as suspended, the
+rete finding categorical. The counts of type leaves, type forms, values and elements fall because the removed
+parameters and their bindings were themselves elements of the corpus (eight elements net). The ten new tests are
+SlotOfTest's five and the five per-type gates of the one new corpus type. The tree afterwards held the intended changes
+only.
+
+DEV'S GATE (2026-11-14, full `sbt test`, output pasted): Tests: succeeded 1269, failed 0, canceled 0, ignored 0, pending
+0; every headline matching the direct run, the new `Slot over` line as expected; green on its first run. The baseline
+is 1269 tests / 91 suites (the direct run's 92 less its discovery wrapper).
+
+Nothing on the tracker was touched. Journal: current through chapter 133; uncovered is what follows Dev's question of
+November 13 (the a80be95, a216865 and 9d1e6cf exchanges and this increment).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

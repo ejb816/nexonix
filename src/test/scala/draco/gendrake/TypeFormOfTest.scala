@@ -57,7 +57,7 @@ class TypeFormOfTest extends AnyFunSuite with PersistentTestLog {
   test("the live emitter spells a type through the definition") {
     assert(Drake.typeSurface(node("[]", leaf("Waypoint"))) == "[Waypoint]")
     assert(Drake.typeSurface(node("->", leaf("A"), leaf("B"))) == "(A -> B)", "a value-type slot parenthesizes a top-level arrow")
-    assert(Drake.typeParameterSurface(node("(,)", leaf("S"), leaf("T"))) == "(S, T)")
+    assert(of(node("(,)", leaf("S"), leaf("T"))) == "(S, T)", "a type parameter is a type form, with no spelling of its own since 2026-11-14")
     val td = TypeDefinition(TypeName("Carrier", Seq("example")),
       _dracoAspect = DracoAspect(_derivation = Seq(Dracon(node("{}", leaf("K"), leaf("V"))))))
     assert(Drake.emit(td) == "type Carrier from {K, V}\n")

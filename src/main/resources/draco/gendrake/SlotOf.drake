@@ -1,0 +1,14 @@
+type SlotOf from draco draketarget Surface
+  factory
+    parameters
+      par form Dracon
+    body
+      loc form Dracon _form
+      loc typed (Dracon -> Text) \node -> TypeFormOf(node).value
+      loc text Text typed(form)
+      fix value Text guard(form.has("->")).ifThenElse("(" ++ text ++ ")", text)
+uses [
+  draco drake Text
+  draco format dracon Dracon
+]
+domain draco gendrake GenDrake

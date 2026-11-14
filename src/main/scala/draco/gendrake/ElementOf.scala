@@ -30,9 +30,8 @@ object ElementOf extends App with DracoType {
     lazy val pad: Int => String = depth => step * depth
     lazy val indent: String = pad(level)
     lazy val keyword: String = (if (element.now) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(Keyword.strict ++ " ", "") ++ Keyword.table.getOrElse(kind, "")
-    lazy val typed: Dracon => String = form => TypeFormOf(form).value
-    lazy val form: String = typed(element.valueType)
-    lazy val slot: String = (if (element.valueType.has("->")) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse("(" ++ form ++ ")", form)
+    lazy val slotted: Dracon => String = form => SlotOf(form).value
+    lazy val slot: String = slotted(element.valueType)
     lazy val spelled: Dracon => String = node => ExpressionOf(node).value
     lazy val rendered: String = spelled(element.value)
     lazy val valued: String => String = prefix => (if (rendered == "") draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(prefix, prefix ++ " " ++ rendered)

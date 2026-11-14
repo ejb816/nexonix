@@ -14,15 +14,14 @@ object ActorAspectOf extends App with DracoType {
 
   def apply (
     _definition: => draco.TypeDefinition,
-    _parameterText: => Dracon => String,
     _elementText: => (draco.TypeElement, Int) => Seq[String]
   ) : ActorAspectOf = new ActorAspectOf {
     lazy val definition: draco.TypeDefinition = _definition
-    lazy val parameterText: Dracon => String = _parameterText
+    lazy val typed: Dracon => String = form => TypeFormOf(form).value
     lazy val elementText: (draco.TypeElement, Int) => Seq[String] = _elementText
     lazy val present: Boolean = definition.actorAspect.fold(false, aspect => true)
     lazy val aspect: draco.ActorAspect = definition.actorAspect.fold(draco.ActorAspect.Null, aspect => aspect)
-    lazy val appliedName: draco.TypeName => String = name => name.name ++ (if (name.typeParameters.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse("", "(" ++ name.typeParameters.map(parameterText).mkString(", ") ++ ")")
+    lazy val appliedName: draco.TypeName => String = name => name.name ++ (if (name.typeParameters.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse("", "(" ++ name.typeParameters.map(typed).mkString(", ") ++ ")")
     lazy val reference: draco.TypeName => String = name => (if (name.name.isEmpty) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse("", (if (name.namePackage == definition.typeName.namePackage) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(appliedName(name), (name.namePackage ++ Seq(appliedName(name))).mkString(" ")))
     lazy val rendered: draco.draketarget.ActorAspectText = draco.draketarget.ActorAspectText(reference(aspect.messageType), aspect.start.body.flatMap(element => elementText(element, 2)), aspect.message.body.flatMap(element => elementText(element, 2)), aspect.signal.body.flatMap(element => elementText(element, 2)), present)
     override lazy val value: String = rendered.value
@@ -31,7 +30,6 @@ object ActorAspectOf extends App with DracoType {
 
   lazy val Null: ActorAspectOf = apply(
     _definition = null.asInstanceOf[draco.TypeDefinition],
-    _parameterText = null.asInstanceOf[Dracon => String],
     _elementText = null.asInstanceOf[(draco.TypeElement, Int) => Seq[String]]
   )
 

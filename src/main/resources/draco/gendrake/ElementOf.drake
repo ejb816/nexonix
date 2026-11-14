@@ -18,9 +18,8 @@ type ElementOf
       loc pad (Int -> Text) \depth -> step * depth
       loc indent Text pad(level)
       loc keyword Text guard(element.now).ifThenElse(Keyword.strict ++ " ", "") ++ Keyword.table.getOrElse(kind, "")
-      loc typed (Dracon -> Text) \form -> TypeFormOf(form).value
-      loc form Text typed(element.valueType)
-      loc slot Text guard(element.valueType.has("->")).ifThenElse("(" ++ form ++ ")", form)
+      loc slotted (Dracon -> Text) \form -> SlotOf(form).value
+      loc slot Text slotted(element.valueType)
       loc spelled (Dracon -> Text) \node -> ExpressionOf(node).value
       loc rendered Text spelled(element.value)
       loc valued (Text -> Text) \prefix -> guard(rendered == "").ifThenElse(prefix, prefix ++ " " ++ rendered)

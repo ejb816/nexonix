@@ -103,8 +103,7 @@ class DracoAspectTest extends AnyFunSuite with PersistentTestLog {
       _factoryBody = throw new AssertionError("body evaluated")).value == "type Stub")
     val noFactory = TypeDefinition(TypeName("Stub"), _dracoAspect = DracoAspect(
       _factory = Factory(_valueType = Json.Null, _body = Seq(Fixed(_name = "unused", _valueType = Json.fromString("T"))))))
-    val rendered = draco.gendrake.DracoAspectOf(noFactory, Drake.typeParameterSurface(_),
-      _ => throw new AssertionError("form evaluated"), Drake.typeSurface(_),
+    val rendered = draco.gendrake.DracoAspectOf(noFactory,
       (_, _) => throw new AssertionError("element evaluated")).value
     assert(rendered == "type Stub")
   }

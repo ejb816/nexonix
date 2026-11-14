@@ -65,8 +65,14 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1269 tests / 91 suites**, verified by Dev on 2026-11-14 for the section transforms spelling their own types (record
+`git-record-2026-11-14-0007`): `gendrake.SlotOf` is the value-type slot rule, DracoAspectOf, DomainAspectOf, ActorAspectOf and DefinitionOf
+call `TypeFormOf` and `SlotOf` and receive no type spelling, every surface byte-identical; ten tests added (SlotOfTest's five, the 91st suite,
+and the five per-type gates of the one new corpus type); parse scope 128 + 73, surface losses 0 across 201 types, 128 aspect sections,
+GenDrake 126 of 126, the `Slot over` line in the gate grep; its direct run 1269 / 92 including discovery, green on its second run (the first
+failed the new suite's probe on its own authored surface). First full Dev gate green. Before it:
 **1259 tests / 90 suites**, verified by Dev on 2026-11-13 for the definition-backed formal spelling (record
-`git-record-2026-11-13-1834`): `gendrake.FormalOf` spells one formal type parameter, the type header and the element renderer read it,
+`git-record-2026-11-13-1834`, committed as 9d1e6cf, pushed): `gendrake.FormalOf` spells one formal type parameter, the type header and the element renderer read it,
 and `ElementOf` receives a method's formals as data, every surface byte-identical; ten tests added (FormalOfTest's five, the 90th suite, and
 the five per-type gates of the one new corpus type); parse scope 127 + 73, surface losses 0 across 200 types, 127 aspect sections, GenDrake
 125 of 125, the `Formal over` line in the gate grep; its direct run 1259 / 91 including discovery, green on its first run. First full Dev
@@ -416,7 +422,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|Expression over|Element over|Formal over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|Expression over|Element over|Formal over|Slot over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -739,7 +745,10 @@ refusing a value outside the tree language.
 The ELEMENT renderer crossed last, the same day: `gendrake.ElementOf` spells an element at a level as its member lines
 (leaf line, dyn block, case-branch), taking a method's FORMALS as an explicit dependency — data, since they live on
 Dynamic alone — and spelling each through `gendrake.FormalOf`, the one definition of a formal's text since 2026-11-13
-(`V1 >: V`, `T <: Product`), which the header in DracoAspectOf reads too; `elementLines` refuses a malformed element and delegates. No renderer of the drake surface is hand-written: the two
+(`V1 >: V`, `T <: Product`), which the header in DracoAspectOf reads too; `elementLines` refuses a malformed element and delegates. Since 2026-11-14 the
+section transforms spell their own TYPES: a type form through `TypeFormOf`, a value-type slot through `gendrake.SlotOf` (the form,
+parenthesized when an arrow is at the top), so DracoAspectOf, DomainAspectOf, ActorAspectOf and DefinitionOf receive no type spelling
+and element rendering is the ONE dependency the emitter passes (the callbacks the paragraphs above describe are otherwise gone). No renderer of the drake surface is hand-written: the two
 hand-written renderers kept as test references (`handExpression`, `handElementLines`) were removed on 2026-11-13, and
 ExpressionOfTest and ElementOfTest compare the definitions with the authored surfaces instead.
 The keyword of each element kind is read from the definition
@@ -1368,7 +1377,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it, the same day: the element renderer's two string-era respellings removed (record `git-record-2026-11-12-2123`, committed by Dev as d06bed5 after the gate of 1239 green, pushed).
   After it: the element renderer as the definition `gendrake.ElementOf` (record `git-record-2026-11-12-2138`, committed by Dev as a80be95 on 2026-11-13 after the gate of 1249 green, pushed, journal chapters 130–133 in the same commit).
   After it: the two hand-written reference renderers removed (record `git-record-2026-11-13-1816`, committed by Dev as a216865 on 2026-11-13 after the gate of 1249 green, pushed).
-  After it, Dev's gate of 1259 green, commit pending: the formal spelling as the definition `gendrake.FormalOf` (record `git-record-2026-11-13-1834`).
+  After it: the formal spelling as the definition `gendrake.FormalOf` (record `git-record-2026-11-13-1834`, committed by Dev as 9d1e6cf on 2026-11-13 after the gate of 1259 green, pushed).
+  After it: the section transforms spelling their own types, `gendrake.SlotOf` (record `git-record-2026-11-14-0007`; Dev's gate of 1269 green on 2026-11-14, commit to follow).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2635,6 +2645,23 @@ FormalOfTest (5) is the 90th suite and reproduces all 36 formals of the corpus (
 added: parse scope 127 + 73, surface losses 0 across 200 types, 127 aspect sections, GenDrake 125 of 125; the gate grep
 gains `Formal over`. NOT BUILT: `typeParameters` on TypeElement, the core-shape change that would remove the dependency.
 Direct run: 1259 tests / 91 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its
-first run; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-13: 1259 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Formal over` line as expected, green on its first run; the baseline is 1259 / 90. Next on this thread, none accepted: formals on TypeElement; a failure form for the guards. The journal is
+first run; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-13: 1259 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Formal over` line as expected, green on its first run; the baseline is 1259 / 90. Committed by Dev as 9d1e6cf and pushed the same day (a216865..9d1e6cf). Next on this thread, none accepted: formals on TypeElement; a failure form for the guards. The journal is
 current through chapter 133. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON
 suspended.
+
+**The section transforms spell their own types; the slot rule is a definition (2026-11-14, Claude Code; GitHub #11, the issue
+open).** The next related point after 9d1e6cf. MEASURED: of the four rendering dependencies DefinitionOf handed down, three
+spelled types, and each was by then a definition or a rule ElementOf already wrote — the slot rule existing twice. Dev accepted
+"Accepted, build it". BUILT: `gendrake.SlotOf` (factory `par form Dracon`, deriving `draketarget.Surface`: the type form,
+parenthesized when an arrow is at the top), listed by GenDrake; ElementOf and DracoAspectOf read it; DracoAspectOf,
+DomainAspectOf, ActorAspectOf and DefinitionOf lose `parameterText`, `formText` and `slotText` and call `TypeFormOf` and
+`SlotOf`; `typeExpressionSlot`, `drakeType` and `typeParameterSurface` leave Drake.scala, `typeSurface` staying as a delegate
+for DrakeParseTest; the §6 generation order followed, all seven generated files stable; `DrakeCLI check` reads drift 0 over
+main and mods. SlotOfTest (5) is the 91st suite and reproduces all 1101 value-type slots of the corpus (83 arrows). One corpus
+type added: parse scope 128 + 73, surface losses 0 across 201 types, 128 aspect sections, GenDrake 126 of 126; the gate grep
+gains `Slot over`; the element, value and type-form counts fall by the removed parameters and bindings. WHAT STAYS a
+dependency: element rendering. Direct run: 1269 tests / 92 suites including discovery, zero failed, canceled, ignored, pending
+or aborted, on its second run (the first failed the new suite's probe on its own authored surface; nothing in the corpus
+differed); the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Slot over` line as expected, green on its first run; the baseline is 1269 / 91. Next on this thread, none accepted: formals
+on TypeElement; a failure form for the guards. The journal is current through chapter 133. EgoActor and
+scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

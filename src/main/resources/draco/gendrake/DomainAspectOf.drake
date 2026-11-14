@@ -2,11 +2,10 @@ type DomainAspectOf from draco draketarget DomainAspectText
   factory
     parameters
       par definition TypeDefinition
-      par parameterText (Dracon -> Text)
     body
       loc definition TypeDefinition _definition
-      loc parameterText (Dracon -> Text) _parameterText
-      loc reference (TypeName -> Text) \name -> guard(name.name.isEmpty).ifThenElse("", join(" ", name.namePackage ++ [name.name ++ guard(name.typeParameters.isEmpty).ifThenElse("", "(" ++ join(", ", name.typeParameters.map(parameterText)) ++ ")")]))
+      loc typed (Dracon -> Text) \form -> TypeFormOf(form).value
+      loc reference (TypeName -> Text) \name -> guard(name.name.isEmpty).ifThenElse("", join(" ", name.namePackage ++ [name.name ++ guard(name.typeParameters.isEmpty).ifThenElse("", "(" ++ join(", ", name.typeParameters.map(typed)) ++ ")")]))
       loc aspect DomainAspect definition.domainAspect
       loc rendered DomainAspectText DomainAspectText(reference(aspect.typeName), reference(definition.dracoAspect.superDomain), reference(aspect.source), reference(aspect.target), aspect.elementTypeNames, definition.typeName.name.isEmpty)
       fix value Text rendered.value

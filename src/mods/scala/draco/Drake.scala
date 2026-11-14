@@ -108,36 +108,14 @@ object Drake {
     parts.result()
   }
 
-  /** ValueType as it sits in a name-valueType-value line: a top-level function
-    * arrow is parenthesized so the value-type reads as one token-group between
-    * the name and the value (fix isEmpty (RuleAspect -> Boolean) \ra -> ...);
-    * an arrow nested inside a type application needs none. A string leaf is written
-    * as authored. */
-  private def typeExpressionSlot (valueType: Json) : String =
-    if (!TypeForm.isTree(valueType)) valueType.text
-    else if (TypeForm.node(valueType).exists(_._1 == "->")) s"(${drakeType(valueType)})"
-    else drakeType(valueType)
-
-  /** A type form on the drake surface is its NEUTRAL spelling, tree or leaf: ONE renderer
-    * (2026-11-10, GitHub #11). Until then a string leaf was respelled here from the Scala
-    * target's notation (`Seq[T]` to `[T]`, `=>` to `->`) by a second, string-era renderer;
-    * the last leaf that needed it, sentient Path's `Primal(Seq[Waypoint])`, is authored
-    * `Primal([Waypoint])`, and TypeLeafTest asserts no type leaf in the corpus carries host
-    * type syntax, so a leaf is a name and is written verbatim. Since 2026-11-11 that one
-    * renderer is the definition `gendrake.TypeFormOf`; `TypeForm.neutral` stays as the text
-    * of a tree for every other reader, and as the reference TypeFormOfTest compares against. */
-  private def drakeType (form: Json) : String = draco.gendrake.TypeFormOf(draco.format.dracon.Dracon(form)).value
-
-  /** The value-type slot as the surface spells it, for a string or a tree — public
-    * so DrakeParseTest can compare the two eras by their one surface. */
-  def typeSurface (valueType: Json) : String = typeExpressionSlot(valueType)
-
-  /** A TYPE PARAMETER on the surface: a tree spells as any type form does (the parser
-    * builds one for every header parameter and reference argument since 2026-09-17);
-    * a string — the JSON corpus until it re-canonicalizes — spells VERBATIM, as a
-    * TypeName's parameters have always been written. */
-  private[draco] def typeParameterSurface (parameter: Json) : String =
-    if (TypeForm.isTree(parameter)) drakeType(parameter) else parameter.text
+  /** The value-type slot as the surface spells it — a top-level function arrow parenthesized
+    * so the type reads as one token-group between the name and the value, a leaf as authored.
+    * Since 2026-11-14 (GitHub #11) the rule is the definition `gendrake.SlotOf`, which ElementOf
+    * and DracoAspectOf read directly; a type form anywhere else is `gendrake.TypeFormOf`, and
+    * the section transforms no longer receive a type spelling from this emitter. This delegate
+    * stays public as the normalizer DrakeParseTest compares the two eras' carriers by. */
+  def typeSurface (valueType: Json) : String =
+    if (valueType == null) "" else draco.gendrake.SlotOf(draco.format.dracon.Dracon(valueType)).value
 
   /** A dyn-with-body opens its own sub-block; its container needs [ ]. */
   private def opensBlock (element: TypeElement) : Boolean = element match {
@@ -203,11 +181,10 @@ object Drake {
     element.body.foreach(refuseElement)
   }
 
-  /** The type section is definition-backed; type forms and element bodies still
-    * use this target's renderers through explicit dependencies. */
+  /** The type section is definition-backed; it spells its own types through TypeFormOf and
+    * SlotOf (2026-11-14), and element bodies reach it as the one explicit dependency. */
   private[draco] def dracoAspectText (td: TypeDefinition) : String =
-    draco.gendrake.DracoAspectOf(td, typeParameterSurface(_), drakeType(_),
-      typeSurface(_), elementLines(_, _)).value
+    draco.gendrake.DracoAspectOf(td, elementLines(_, _)).value
 
   /** The rule section is definition-backed too (2026-11-10, GitHub #11): the layout is
     * draketarget.RuleAspectText, the mapping gendrake.RuleAspectOf; element rendering
@@ -218,9 +195,9 @@ object Drake {
   /** The actor section is definition-backed too (2026-11-10, GitHub #11): the layout is
     * draketarget.ActorAspectText, the mapping gendrake.ActorAspectOf — the message type in
     * the package-relative spelling the type section's references take, then the three
-    * blocks. Type-parameter spelling and element rendering stay this target's. */
+    * blocks. Element rendering is its one explicit dependency (2026-11-14). */
   private[draco] def actorAspectText (td: TypeDefinition) : String =
-    draco.gendrake.ActorAspectOf(td, typeParameterSurface(_), elementLines(_, _)).value
+    draco.gendrake.ActorAspectOf(td, elementLines(_, _)).value
 
   /** The resolution record and the codec section are definition-backed too (2026-11-10,
     * GitHub #11): draketarget.UsesText / gendrake.UsesOf and draketarget.CodecAspectText /
@@ -254,12 +231,13 @@ object Drake {
     * draketarget.DefinitionText owns the order of the six sections — type, `uses`, domain, rule,
     * actor, codec — and their joining (the empty ones dropped, one line break between the rest,
     * one at the end); gendrake.DefinitionOf composes the six section transforms from a
-    * definition. The four rendering dependencies are this target's renderers, passed explicitly
-    * as the section transforms receive them. What stays hand-written in this emitter is the
+    * definition. Of the four rendering dependencies it first received, the three type spellings
+    * left on 2026-11-14 (the transforms read TypeFormOf and SlotOf themselves); element rendering
+    * remains, because the element refusals and a method's formals are still this target's. What stays hand-written in this emitter is the
     * guards above, the refusals and the name spelling; the renderers themselves delegate to
     * definitions and no second hand-written copy remains (2026-11-13). */
   private[draco] def definitionText (td: TypeDefinition) : String =
-    draco.gendrake.DefinitionOf(td, typeParameterSurface(_), drakeType(_), typeSurface(_), elementLines(_, _)).value
+    draco.gendrake.DefinitionOf(td, elementLines(_, _)).value
 
   // --- Parsing (.drake surface -> JSON TypeDefinition) ---
   //

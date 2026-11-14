@@ -280,7 +280,7 @@
         },
         {
           "kind": "Local",
-          "name": "typed",
+          "name": "slotted",
           "valueType": {
             "->": [
               "Dracon",
@@ -294,7 +294,7 @@
                 ".": [
                   {
                     "()": [
-                      "TypeFormOf",
+                      "SlotOf",
                       "form"
                     ]
                   },
@@ -306,45 +306,12 @@
         },
         {
           "kind": "Local",
-          "name": "form",
-          "valueType": "Text",
-          "value": {
-            "()": [
-              "typed",
-              "element.valueType"
-            ]
-          }
-        },
-        {
-          "kind": "Local",
           "name": "slot",
           "valueType": "Text",
           "value": {
             "()": [
-              {
-                ".": [
-                  {
-                    "()": [
-                      "guard",
-                      {
-                        "()": [
-                          "element.valueType.has",
-                          "\"->\""
-                        ]
-                      }
-                    ]
-                  },
-                  "ifThenElse"
-                ]
-              },
-              {
-                "++": [
-                  "\"(\"",
-                  "form",
-                  "\")\""
-                ]
-              },
-              "form"
+              "slotted",
+              "element.valueType"
             ]
           }
         },

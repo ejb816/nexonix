@@ -2,15 +2,14 @@ type ActorAspectOf from draco draketarget ActorAspectText
   factory
     parameters
       par definition TypeDefinition
-      par parameterText (Dracon -> Text)
       par elementText ((TypeElement, Int) -> [Text])
     body
       loc definition TypeDefinition _definition
-      loc parameterText (Dracon -> Text) _parameterText
+      loc typed (Dracon -> Text) \form -> TypeFormOf(form).value
       loc elementText ((TypeElement, Int) -> [Text]) _elementText
       loc present Boolean definition.actorAspect.fold(false, \aspect -> true)
       loc aspect ActorAspect definition.actorAspect.fold(ActorAspect.Null, \aspect -> aspect)
-      loc appliedName (TypeName -> Text) \name -> name.name ++ guard(name.typeParameters.isEmpty).ifThenElse("", "(" ++ join(", ", name.typeParameters.map(parameterText)) ++ ")")
+      loc appliedName (TypeName -> Text) \name -> name.name ++ guard(name.typeParameters.isEmpty).ifThenElse("", "(" ++ join(", ", name.typeParameters.map(typed)) ++ ")")
       loc reference (TypeName -> Text) \name -> guard(name.name.isEmpty).ifThenElse("", guard(name.namePackage == definition.typeName.namePackage).ifThenElse(appliedName(name), join(" ", name.namePackage ++ [appliedName(name)])))
       loc rendered ActorAspectText ActorAspectText(reference(aspect.messageType), aspect.start.body.flatMap(\element -> elementText(element, 2)), aspect.message.body.flatMap(\element -> elementText(element, 2)), aspect.signal.body.flatMap(\element -> elementText(element, 2)), present)
       fix value Text rendered.value

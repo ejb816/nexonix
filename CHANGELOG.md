@@ -18,6 +18,11 @@ the block below.
 
 ## [Unreleased]
 
+- The section transforms of the drake surface spell their own types (GitHub #11): the value-type slot rule is the
+  definition `gendrake.SlotOf`, and `DracoAspectOf`, `DomainAspectOf`, `ActorAspectOf` and `DefinitionOf` no longer
+  receive a type spelling from the emitter — element rendering is their one remaining dependency. Every surface is
+  byte-identical. SlotOfTest (5) is new and reproduces all 1101 value-type slots of the corpus; one corpus type added
+  (parse scope 128 + 73, GenDrake 126 of 126); the gate grep gains `Slot over`.
 - The spelling of a formal type parameter is a definition: `gendrake.FormalOf` (`V1 >: V`, `T <: Product`), read by the
   type header and by the element renderer, which now receives a method's formals as data (GitHub #11). Every surface is
   byte-identical. FormalOfTest (5) is new and reproduces all 36 formals of the corpus; one corpus type added (parse
