@@ -10,7 +10,25 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — formals on TypeElement (Claude Code, November 14, 2026; Dev's gate 1269 green; commit pending)
+## Current checkpoint — the refusals ahead of rendering (Claude Code, November 14, 2026; Dev's gate 1269 green; commit pending)
+
+Same session. HEAD ddaec87, pushed (Dev's paste: 73f77c8..ddaec87, 17 files). Dev accepted ("Accepted, build it") the next
+related point under GitHub #11 (open; stays open). Record `git-record-2026-11-14-0904`, which also folds ddaec87.
+
+- **Built.** `Drake.scala`'s `refuseDefinition` walks every element the surface renders through `refuseElement`, called by
+  the four section entry points before delegating; `elementLines` removed. DracoAspectOf, RuleAspectOf and ActorAspectOf
+  bind element rendering themselves (`ElementOf(element, level).lines`); DefinitionOf receives the definition alone. Two
+  tests restated (DracoAspectTest, SlotOfTest); none added.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods; the four trios stable on regeneration. Direct run: 1269 tests /
+  92 suites including discovery, green on its first run. Headlines that move: Element 1112 elements (1359 lines),
+  Expression 660 values (486 trees, 174 leaves), Slot 1094 slots (76 arrows), TypeForm 2131 forms (468 trees, 1663 leaves),
+  type leaves 1663, host text 21 of 2818. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline stays 1269 / 91.
+- **In the tree, uncommitted.** The four transform trios; Drake.scala; two test files; CHANGELOG.md, DRACO.md, README.md,
+  this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** A failure form for the guards and refusals.
+- **Journal.** Current through chapter 136; uncovered is what follows Dev's "Journal first" of November 14.
+
+## Previous checkpoint — formals on TypeElement (Claude Code, November 14, 2026; committed ddaec87, pushed)
 
 Same session. HEAD 73f77c8, pushed (Dev's paste: 180a7ab..73f77c8, 12 files). Dev accepted ("Accepted, build it") the point
 recommended after 180a7ab, under GitHub #11 (open; stays open). Record `git-record-2026-11-14-0850`, which also folds 73f77c8.

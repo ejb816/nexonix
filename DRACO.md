@@ -65,8 +65,13 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
-**1269 tests / 91 suites**, verified by Dev on 2026-11-14 for a method's formals declared on TypeElement (record
-`git-record-2026-11-14-0850`): ElementOf reads `element.typeParameters` and takes no dependency of its own, no test or corpus type added;
+**1269 tests / 91 suites**, verified by Dev on 2026-11-14 for the element refusals made once ahead of rendering (record
+`git-record-2026-11-14-0904`): the section transforms render their own elements through ElementOf and receive the definition alone, no test
+or corpus type added; Element 1112 elements in 1359 lines, Expression 660 values, Slot 1094 slots with 76 arrows, TypeForm 2131 forms, type
+leaves 1663, host text 21 of 2818, every other headline unchanged; its direct run 1269 / 92 including discovery, green on its first run.
+First full Dev gate green. Before it, the same **1269 tests / 91 suites**,
+verified by Dev on 2026-11-14 for a method's formals declared on TypeElement (record
+`git-record-2026-11-14-0850`, committed as ddaec87, pushed): ElementOf reads `element.typeParameters` and takes no dependency of its own, no test or corpus type added;
 Element 1117 elements in 1364 lines, Slot 1099 slots with 81 arrows, TypeForm 2161 forms, type leaves 1678, host text 21 of 2807, every other
 headline unchanged; its direct run 1269 / 92 including discovery, green on its first run. First full Dev gate green. Before it, the same
 **1269 tests / 91 suites**, verified by Dev on 2026-11-14 for the section transforms spelling their own types (record
@@ -753,7 +758,9 @@ dependency of the emitter's for the day before) and spelling each through `gendr
 (`V1 >: V`, `T <: Product`), which the header in DracoAspectOf reads too; `elementLines` refuses a malformed element and delegates. Since 2026-11-14 the
 section transforms spell their own TYPES: a type form through `TypeFormOf`, a value-type slot through `gendrake.SlotOf` (the form,
 parenthesized when an arrow is at the top), so DracoAspectOf, DomainAspectOf, ActorAspectOf and DefinitionOf receive no type spelling
-and element rendering is the ONE dependency the emitter passes (the callbacks the paragraphs above describe are otherwise gone). No renderer of the drake surface is hand-written: the two
+and since the same day they render their own ELEMENTS through `ElementOf`, the emitter refusing a malformed definition once, ahead of rendering
+(`refuseDefinition`): DracoAspectOf, RuleAspectOf, ActorAspectOf and DefinitionOf receive the definition alone, and every callback the paragraphs
+above describe is gone. No renderer of the drake surface is hand-written: the two
 hand-written renderers kept as test references (`handExpression`, `handElementLines`) were removed on 2026-11-13, and
 ExpressionOfTest and ElementOfTest compare the definitions with the authored surfaces instead.
 The keyword of each element kind is read from the definition
@@ -1385,7 +1392,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it: the formal spelling as the definition `gendrake.FormalOf` (record `git-record-2026-11-13-1834`, committed by Dev as 9d1e6cf on 2026-11-13 after the gate of 1259 green, pushed).
   After it: the section transforms spelling their own types, `gendrake.SlotOf` (record `git-record-2026-11-14-0007`, committed by Dev as 180a7ab on 2026-11-14 after the gate of 1269 green, pushed).
   After it, documentation only: journal chapters 134–136 (record `git-record-2026-11-14-0845`, committed by Dev as 73f77c8, pushed).
-  After it: a method's formals on TypeElement, ElementOf reading them itself (record `git-record-2026-11-14-0850`; Dev's gate of 1269 green on 2026-11-14, commit to follow).
+  After it: a method's formals on TypeElement, ElementOf reading them itself (record `git-record-2026-11-14-0850`, committed by Dev as ddaec87 on 2026-11-14 after the gate of 1269 green, pushed).
+  After it: the element refusals ahead of rendering, no rendering dependency left (record `git-record-2026-11-14-0904`; Dev's gate of 1269 green on 2026-11-14, commit to follow).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2701,6 +2709,27 @@ no corpus type added. WHAT STAYS a dependency: `elementText` to the section tran
 emitter's. Direct run: 1269 tests / 92 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on
 its first run; headlines that move, by the two elements net removed: Element 1117 elements (1364 lines), Slot 1099 slots (81
 arrows), TypeForm 2161 forms (483 trees, 1678 leaves), type leaves 1678, host text 21 of 2807; every other headline unchanged;
-the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline stays 1269 / 91. Next on this thread, none accepted: the element refusals
+the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline stays 1269 / 91. Committed by Dev as ddaec87 and pushed the same day (73f77c8..ddaec87). Next on this thread, none accepted: the element refusals
 ahead of rendering, so that the section transforms call ElementOf themselves; a failure form for the guards. The journal is
 current through chapter 136. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The emitter refuses once, ahead of rendering; no rendering dependency is left (2026-11-14, Claude Code; GitHub #11, the issue
+open).** The next related point after ddaec87. MEASURED: DracoAspectOf, RuleAspectOf, ActorAspectOf and DefinitionOf each took
+`elementText ((TypeElement, Int) -> [Text])`, and the emitter's `elementLines` behind it was two steps, `refuseElement` then
+`ElementOf(element, level).lines` — the transforms could not call ElementOf themselves only because the refusal was interleaved
+with the rendering. Dev accepted "Accepted, build it". BUILT: `Drake.scala`'s `refuseDefinition(td)` walks every element the
+surface renders — the type section's elements, a PRESENT factory's parameters and body, the globals, a present rule's variables,
+conditions and action, a present actor's three blocks — through the existing `refuseElement`, and the four section entry points
+call it before delegating (`emit` reaches it through `definitionText`, after its three codec guards); `elementLines` is removed.
+The three section transforms bind `elementText` themselves, `\element level -> ElementOf(element, level).lines`, and
+DefinitionOf is `DefinitionOf(definition)`, its record losing `draco TypeElement`. Four trios regenerated, stable; `DrakeCLI
+check` reads drift 0 over main and mods. An element the surface does not render — an absent factory's, an absent role's — is
+not judged, as before; the one difference is WHEN a malformed element is refused: before any section renders, where it was
+refused on reaching its own section. Two tests restated (DracoAspectTest: an absent factory's body is not rendered; SlotOfTest:
+the transform built from the definition alone); no test or corpus type added. `Drake.emit` is its three guards, the refusal
+walk and one call. Direct run: 1269 tests / 92 suites including discovery, zero failed, canceled, ignored, pending or aborted,
+green on its first run; headlines that move, by the five elements net removed: Element 1112 elements (1359 lines), Expression
+660 values (486 trees, 174 leaves), Slot 1094 slots (76 arrows), TypeForm 2131 forms (468 trees, 1663 leaves), type leaves
+1663, host text 21 of 2818; every other headline unchanged; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline stays 1269 / 91. Next on this thread, none accepted: a failure form for the guards and refusals, the last hand-written part of the
+emit side. The journal is current through chapter 136. EgoActor and scripts/inspect-type.scala observed only; activation and
+.dcon deferred; PON suspended.

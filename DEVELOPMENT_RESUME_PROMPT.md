@@ -143,7 +143,11 @@ method's formals itself. I answered "Journal first"; chapters 134–136 followed
 only), which I committed as 73f77c8 and pushed (180a7ab..73f77c8). I then accepted the recommendation: TypeElement declares
 typeParameters, ElementOf reads a method's formals itself and elementFormals left Drake.scala (record git-record-2026-11-14-0850).
 Its direct run passed 1269 tests / 92 suites including discovery, no test added, and my full gate passed 1269 tests on November 14.
-Check `git log` for whether its commit and push are recorded; if not, settle that with me first.
+I committed it as ddaec87 and pushed it (73f77c8..ddaec87). I then accepted the next point: the emitter refuses a malformed
+definition once, ahead of rendering, and the section transforms render their own elements through ElementOf, receiving the
+definition alone (record git-record-2026-11-14-0904). Its direct run passed 1269 tests / 92 suites including discovery, no test
+added, and my full gate passed 1269 tests on November 14. Check `git log` for whether its commit and push are recorded; if not,
+settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

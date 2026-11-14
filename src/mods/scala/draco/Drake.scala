@@ -135,7 +135,7 @@ object Drake {
       sys.error(s"Drake.emit: no drake keyword for element '${element.name}' ($kind)"))
   }
 
-  /** Render one element at `level` (2 spaces per level). A leaf renders one line;
+  /* HOW AN ELEMENT RENDERS (the rule `gendrake.ElementOf` carries). One element at `level` (2 spaces per level). A leaf renders one line;
     * a dyn-with-body BRACKETS its own body (drake.dlt BRACKETS) — its parameters
     * block and its body, whose element named `value` is the result.
     *
@@ -145,10 +145,10 @@ object Drake {
     * container-bracketed corpus can still be ambiguous, and drake's one such case
     * was CLI's `dyn drake` followed by `fix commands`. A construct that delimits
     * itself closes the grammar with no appeal to indentation. */
-  private def elementLines (element: TypeElement, level: Int) : Seq[String] = {
-    refuseElement(element)
-    draco.gendrake.ElementOf(element, level).lines
-  }
+
+  // Since 2026-11-14 nothing here renders an element: the section transforms call
+  // `gendrake.ElementOf` themselves, and what this emitter keeps is the REFUSAL, made once
+  // over the whole definition before anything renders (`refuseDefinition`).
 
   // A member line's formals are the element's own `typeParameters` (declared on TypeElement
   // since 2026-11-14, empty for every kind but a method), which `gendrake.ElementOf` reads and
@@ -175,23 +175,56 @@ object Drake {
     element.body.foreach(refuseElement)
   }
 
+  /** Refuse every element the surface would render, before any section renders (2026-11-14,
+    * GitHub #11): the type section's elements, a present factory's parameters and body, the
+    * globals, a present rule's variables, conditions and action, a present actor's three
+    * blocks. Until then the refusal was interleaved with rendering, one element at a time,
+    * which is why the section transforms received element rendering as a dependency. An
+    * element the surface does not render — an absent factory's, an absent role's — is not
+    * judged, as before. */
+  private def refuseDefinition (td: TypeDefinition) : Unit = {
+    val aspect = td.dracoAspect
+    aspect.elements.foreach(refuseElement)
+    if (typeSurface(aspect.factory.valueType.json).nonEmpty) {
+      aspect.factory.parameters.foreach(refuseElement)
+      aspect.factory.body.foreach(refuseElement)
+    }
+    aspect.globalElements.foreach(refuseElement)
+    td.ruleAspect.fold[Unit]((), rule => {
+      rule.pattern.variables.foreach(refuseElement)
+      rule.pattern.conditions.foreach(refuseElement)
+      rule.action.body.foreach(refuseElement)
+    })
+    td.actorAspect.fold[Unit]((), actor => {
+      actor.start.body.foreach(refuseElement)
+      actor.message.body.foreach(refuseElement)
+      actor.signal.body.foreach(refuseElement)
+    })
+  }
+
   /** The type section is definition-backed; it spells its own types through TypeFormOf and
-    * SlotOf (2026-11-14), and element bodies reach it as the one explicit dependency. */
-  private[draco] def dracoAspectText (td: TypeDefinition) : String =
-    draco.gendrake.DracoAspectOf(td, elementLines(_, _)).value
+    * SlotOf and its own elements through ElementOf (2026-11-14), receiving the definition alone. */
+  private[draco] def dracoAspectText (td: TypeDefinition) : String = {
+    refuseDefinition(td)
+    draco.gendrake.DracoAspectOf(td).value
+  }
 
   /** The rule section is definition-backed too (2026-11-10, GitHub #11): the layout is
-    * draketarget.RuleAspectText, the mapping gendrake.RuleAspectOf; element rendering
-    * stays this target's, an explicit dependency. Empty when the definition is no rule. */
-  private[draco] def ruleAspectText (td: TypeDefinition) : String =
-    draco.gendrake.RuleAspectOf(td, elementLines(_, _)).value
+    * draketarget.RuleAspectText, the mapping gendrake.RuleAspectOf, which renders its elements
+    * through ElementOf itself since 2026-11-14. Empty when the definition is no rule. */
+  private[draco] def ruleAspectText (td: TypeDefinition) : String = {
+    refuseDefinition(td)
+    draco.gendrake.RuleAspectOf(td).value
+  }
 
   /** The actor section is definition-backed too (2026-11-10, GitHub #11): the layout is
     * draketarget.ActorAspectText, the mapping gendrake.ActorAspectOf — the message type in
     * the package-relative spelling the type section's references take, then the three
-    * blocks. Element rendering is its one explicit dependency (2026-11-14). */
-  private[draco] def actorAspectText (td: TypeDefinition) : String =
-    draco.gendrake.ActorAspectOf(td, elementLines(_, _)).value
+    * blocks, each element through ElementOf; it receives the definition alone (2026-11-14). */
+  private[draco] def actorAspectText (td: TypeDefinition) : String = {
+    refuseDefinition(td)
+    draco.gendrake.ActorAspectOf(td).value
+  }
 
   /** The resolution record and the codec section are definition-backed too (2026-11-10,
     * GitHub #11): draketarget.UsesText / gendrake.UsesOf and draketarget.CodecAspectText /
@@ -226,12 +259,14 @@ object Drake {
     * actor, codec — and their joining (the empty ones dropped, one line break between the rest,
     * one at the end); gendrake.DefinitionOf composes the six section transforms from a
     * definition. Of the four rendering dependencies it first received, the three type spellings
-    * left on 2026-11-14 (the transforms read TypeFormOf and SlotOf themselves); element rendering
-    * remains, because the element refusals are still this target's. What stays hand-written in this emitter is the
-    * guards above, the refusals and the name spelling; the renderers themselves delegate to
-    * definitions and no second hand-written copy remains (2026-11-13). */
-  private[draco] def definitionText (td: TypeDefinition) : String =
-    draco.gendrake.DefinitionOf(td, elementLines(_, _)).value
+    * left on 2026-11-14 (the transforms read TypeFormOf and SlotOf themselves), and element rendering
+    * the same day, once the element refusals were made ahead of rendering: DefinitionOf receives
+    * the definition alone. What stays hand-written in this emitter is the guards above and the
+    * refusals; every renderer is a definition and no second hand-written copy remains (2026-11-13). */
+  private[draco] def definitionText (td: TypeDefinition) : String = {
+    refuseDefinition(td)
+    draco.gendrake.DefinitionOf(td).value
+  }
 
   // --- Parsing (.drake surface -> JSON TypeDefinition) ---
   //

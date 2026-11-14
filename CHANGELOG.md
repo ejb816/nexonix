@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- The drake emitter refuses a malformed definition once, before any section renders, and the section transforms
+  (`DracoAspectOf`, `RuleAspectOf`, `ActorAspectOf`, `DefinitionOf`) render their own elements through
+  `gendrake.ElementOf`, receiving the definition alone (GitHub #11). No surface changes; no test added.
 - A method's formal type parameters are declared on `TypeElement` (`typeParameters`, default empty, supplied by
   `Dynamic` alone), so `gendrake.ElementOf` reads them from the element and takes no dependency of its own (GitHub #11).
   No definition's JSON or drake surface changes beyond the three trios; no test added.

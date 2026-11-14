@@ -72,25 +72,6 @@
           "kind": "Parameter",
           "name": "definition",
           "valueType": "TypeDefinition"
-        },
-        {
-          "kind": "Parameter",
-          "name": "elementText",
-          "valueType": {
-            "->": [
-              {
-                "(,)": [
-                  "TypeElement",
-                  "Int"
-                ]
-              },
-              {
-                "[]": [
-                  "Text"
-                ]
-              }
-            ]
-          }
         }
       ],
       "body": [
@@ -144,7 +125,24 @@
               }
             ]
           },
-          "value": "_elementText"
+          "value": {
+            "\\": [
+              "element",
+              "level",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ElementOf",
+                      "element",
+                      "level"
+                    ]
+                  },
+                  "lines"
+                ]
+              }
+            ]
+          }
         },
         {
           "kind": "Local",

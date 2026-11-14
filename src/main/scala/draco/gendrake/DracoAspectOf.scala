@@ -13,11 +13,10 @@ object DracoAspectOf extends App with DracoType {
   lazy val domainType: Domain[GenDrake] = Domain[GenDrake] (typeDefinition)
 
   def apply (
-    _definition: => draco.TypeDefinition,
-    _elementText: => (draco.TypeElement, Int) => Seq[String]
+    _definition: => draco.TypeDefinition
   ) : DracoAspectOf = new DracoAspectOf {
     lazy val definition: draco.TypeDefinition = _definition
-    lazy val elementText: (draco.TypeElement, Int) => Seq[String] = _elementText
+    lazy val elementText: (draco.TypeElement, Int) => Seq[String] = (element, level) => ElementOf(element, level).lines
     lazy val aspect: draco.DracoAspect = definition.dracoAspect
     lazy val typed: Dracon => String = form => TypeFormOf(form).value
     lazy val slot: Dracon => String = form => SlotOf(form).value
@@ -38,8 +37,7 @@ object DracoAspectOf extends App with DracoType {
   }
 
   lazy val Null: DracoAspectOf = apply(
-    _definition = null.asInstanceOf[draco.TypeDefinition],
-    _elementText = null.asInstanceOf[(draco.TypeElement, Int) => Seq[String]]
+    _definition = null.asInstanceOf[draco.TypeDefinition]
   )
 
 

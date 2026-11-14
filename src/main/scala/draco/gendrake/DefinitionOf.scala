@@ -11,16 +11,14 @@ object DefinitionOf extends App with DracoType {
   lazy val domainType: Domain[GenDrake] = Domain[GenDrake] (typeDefinition)
 
   def apply (
-    _definition: => draco.TypeDefinition,
-    _elementText: => (draco.TypeElement, Int) => Seq[String]
+    _definition: => draco.TypeDefinition
   ) : DefinitionOf = new DefinitionOf {
     lazy val definition: draco.TypeDefinition = _definition
-    lazy val elementText: (draco.TypeElement, Int) => Seq[String] = _elementText
-    lazy val typeSection: DracoAspectOf = DracoAspectOf(definition, elementText)
+    lazy val typeSection: DracoAspectOf = DracoAspectOf(definition)
     lazy val usesSection: UsesOf = UsesOf(definition)
     lazy val domainSection: DomainAspectOf = DomainAspectOf(definition)
-    lazy val ruleSection: RuleAspectOf = RuleAspectOf(definition, elementText)
-    lazy val actorSection: ActorAspectOf = ActorAspectOf(definition, elementText)
+    lazy val ruleSection: RuleAspectOf = RuleAspectOf(definition)
+    lazy val actorSection: ActorAspectOf = ActorAspectOf(definition)
     lazy val codecSection: CodecAspectOf = CodecAspectOf(definition)
     lazy val rendered: draco.draketarget.DefinitionText = draco.draketarget.DefinitionText(typeSection.value, usesSection.value, domainSection.value, ruleSection.value, actorSection.value, codecSection.value)
     override lazy val value: String = rendered.value
@@ -28,8 +26,7 @@ object DefinitionOf extends App with DracoType {
   }
 
   lazy val Null: DefinitionOf = apply(
-    _definition = null.asInstanceOf[draco.TypeDefinition],
-    _elementText = null.asInstanceOf[(draco.TypeElement, Int) => Seq[String]]
+    _definition = null.asInstanceOf[draco.TypeDefinition]
   )
 
 

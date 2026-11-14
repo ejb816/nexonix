@@ -64,8 +64,7 @@ class SlotOfTest extends AnyFunSuite with PersistentTestLog {
 
   test("the section transforms spell their own types: no type spelling is passed to them") {
     val read = Drake.parse(probe)
-    val elements: (TypeElement, Int) => Seq[String] = (_, _) => Seq("    member")
-    val section = DracoAspectOf(read, elements).value
+    val section = DracoAspectOf(read).value
     assert(section.linesIterator.next() == "type Holder(T) from [T]")
     assert(section.contains("  factory (Holder(T) -> Holder(T))"))
     val referring = TypeDefinition(TypeName("Member", Seq("example")),

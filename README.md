@@ -672,8 +672,8 @@ directions:
   same day, and so are the element keyword table, `draketarget.Keyword`, and the element renderer,
   `gendrake.ElementOf` (it reads a method's formals from the element, `typeParameters` being declared on TypeElement
   since 2026-11-14, and `gendrake.FormalOf` spells each formal for it and for the type header); since 2026-11-14 the section transforms spell their own types through
-  `TypeFormOf` and `gendrake.SlotOf`, the value-type slot rule, and element rendering is the one dependency the
-  emitter still passes them. The remaining
+  `TypeFormOf` and `gendrake.SlotOf`, the value-type slot rule, and their own elements through `gendrake.ElementOf`, the
+  emitter refusing a malformed definition once, ahead of rendering, and passing them nothing but the definition. The remaining
   aspects, and the Scala target transforms remain to be developed.
 - **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
   runs through an emitter whose Draco and domain section mappings are definition-backed; the remaining

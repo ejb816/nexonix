@@ -2,10 +2,9 @@ type DracoAspectOf from draco draketarget DracoAspectText
   factory
     parameters
       par definition TypeDefinition
-      par elementText ((TypeElement, Int) -> [Text])
     body
       loc definition TypeDefinition _definition
-      loc elementText ((TypeElement, Int) -> [Text]) _elementText
+      loc elementText ((TypeElement, Int) -> [Text]) \element level -> ElementOf(element, level).lines
       loc aspect DracoAspect definition.dracoAspect
       loc typed (Dracon -> Text) \form -> TypeFormOf(form).value
       loc slot (Dracon -> Text) \form -> SlotOf(form).value

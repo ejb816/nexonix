@@ -14,12 +14,6 @@
       ]
     },
     {
-      "name": "TypeElement",
-      "namePackage": [
-        "draco"
-      ]
-    },
-    {
       "name": "Text",
       "namePackage": [
         "draco",
@@ -52,25 +46,6 @@
           "kind": "Parameter",
           "name": "definition",
           "valueType": "TypeDefinition"
-        },
-        {
-          "kind": "Parameter",
-          "name": "elementText",
-          "valueType": {
-            "->": [
-              {
-                "(,)": [
-                  "TypeElement",
-                  "Int"
-                ]
-              },
-              {
-                "[]": [
-                  "Text"
-                ]
-              }
-            ]
-          }
         }
       ],
       "body": [
@@ -82,33 +57,12 @@
         },
         {
           "kind": "Local",
-          "name": "elementText",
-          "valueType": {
-            "->": [
-              {
-                "(,)": [
-                  "TypeElement",
-                  "Int"
-                ]
-              },
-              {
-                "[]": [
-                  "Text"
-                ]
-              }
-            ]
-          },
-          "value": "_elementText"
-        },
-        {
-          "kind": "Local",
           "name": "typeSection",
           "valueType": "DracoAspectOf",
           "value": {
             "()": [
               "DracoAspectOf",
-              "definition",
-              "elementText"
+              "definition"
             ]
           }
         },
@@ -141,8 +95,7 @@
           "value": {
             "()": [
               "RuleAspectOf",
-              "definition",
-              "elementText"
+              "definition"
             ]
           }
         },
@@ -153,8 +106,7 @@
           "value": {
             "()": [
               "ActorAspectOf",
-              "definition",
-              "elementText"
+              "definition"
             ]
           }
         },

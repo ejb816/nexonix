@@ -2,21 +2,18 @@ type DefinitionOf from draco draketarget DefinitionText
   factory
     parameters
       par definition TypeDefinition
-      par elementText ((TypeElement, Int) -> [Text])
     body
       loc definition TypeDefinition _definition
-      loc elementText ((TypeElement, Int) -> [Text]) _elementText
-      loc typeSection DracoAspectOf DracoAspectOf(definition, elementText)
+      loc typeSection DracoAspectOf DracoAspectOf(definition)
       loc usesSection UsesOf UsesOf(definition)
       loc domainSection DomainAspectOf DomainAspectOf(definition)
-      loc ruleSection RuleAspectOf RuleAspectOf(definition, elementText)
-      loc actorSection ActorAspectOf ActorAspectOf(definition, elementText)
+      loc ruleSection RuleAspectOf RuleAspectOf(definition)
+      loc actorSection ActorAspectOf ActorAspectOf(definition)
       loc codecSection CodecAspectOf CodecAspectOf(definition)
       loc rendered DefinitionText DefinitionText(typeSection.value, usesSection.value, domainSection.value, ruleSection.value, actorSection.value, codecSection.value)
       fix value Text rendered.value
 uses [
   draco TypeDefinition
-  draco TypeElement
   draco drake Text
   draco draketarget DefinitionText
 ]

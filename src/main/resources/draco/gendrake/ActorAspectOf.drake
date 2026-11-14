@@ -2,11 +2,10 @@ type ActorAspectOf from draco draketarget ActorAspectText
   factory
     parameters
       par definition TypeDefinition
-      par elementText ((TypeElement, Int) -> [Text])
     body
       loc definition TypeDefinition _definition
       loc typed (Dracon -> Text) \form -> TypeFormOf(form).value
-      loc elementText ((TypeElement, Int) -> [Text]) _elementText
+      loc elementText ((TypeElement, Int) -> [Text]) \element level -> ElementOf(element, level).lines
       loc present Boolean definition.actorAspect.fold(false, \aspect -> true)
       loc aspect ActorAspect definition.actorAspect.fold(ActorAspect.Null, \aspect -> aspect)
       loc appliedName (TypeName -> Text) \name -> name.name ++ guard(name.typeParameters.isEmpty).ifThenElse("", "(" ++ join(", ", name.typeParameters.map(typed)) ++ ")")

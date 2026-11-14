@@ -1,0 +1,51 @@
+The drake emitter refuses once, ahead of rendering; the section transforms render their own elements (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (open; stays open). Nothing on the tracker was touched.
+
+WHY. After ddaec87 one rendering dependency was left: DracoAspectOf, RuleAspectOf, ActorAspectOf and DefinitionOf each
+took `elementText ((TypeElement, Int) -> [Text])`, and the emitter supplied `elementLines`, by then two steps:
+`refuseElement(element)`, then `ElementOf(element, level).lines`. The transforms could not call ElementOf themselves only
+because the refusal was interleaved with the rendering, one element at a time. Dev accepted "Accepted, build it".
+
+WHAT.
+- Drake.scala: `refuseDefinition(td)` walks every element the surface renders — the type section's elements, a present
+  factory's parameters and body, the globals, a present rule's variables, conditions and action, a present actor's three
+  blocks — through the existing `refuseElement`. `dracoAspectText`, `ruleAspectText`, `actorAspectText` and
+  `definitionText` call it before delegating; `emit` reaches it through `definitionText`, after its three codec guards.
+  `elementLines` is removed.
+- gendrake.DracoAspectOf, RuleAspectOf, ActorAspectOf: the `elementText` parameter removed; the binding is
+  `loc elementText ((TypeElement, Int) -> [Text]) \element level -> ElementOf(element, level).lines`.
+- gendrake.DefinitionOf: `DefinitionOf(definition)`, calling the three with the definition alone; its `uses` record loses
+  `draco TypeElement`.
+- Four surfaces authored in drake, their JSON `DrakeCLI parse`, their Scala `GeneratorCLI generate`; all stable on
+  regeneration with the recompiled engine.
+- Tests: DracoAspectTest asserts an absent factory's body is not rendered, through the transform and through the
+  emitter; SlotOfTest builds DracoAspectOf from the definition alone. No test added, no corpus type added.
+
+WHAT IS THE SAME. The same malformed definitions are refused with the same messages; an element the surface does not
+render — an absent factory's, an absent role's — is not judged. ONE DIFFERENCE: a malformed element is refused before
+any section renders, where it was refused on reaching its own section. Nothing observes it; a refusal raises either way.
+
+WHAT STAYS hand-written on the emit side: the three codec guards and the refusals (`refuseDefinition`, `refuseElement`,
+`refuseUnrenderable`, `bareKeyword`), and `typeSurface`, a one-line delegate DrakeParseTest reads. NOT BUILT, not
+accepted: a failure form for the guards and refusals.
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods. Direct run of every
+discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1269 tests
+/ 92 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its FIRST run. Headlines
+that move, by the five elements net removed (four parameters and DefinitionOf's binding): Element 1112 elements (1359
+lines), Expression 660 values (486 trees, 174 leaves), Slot 1094 value-type slots (76 arrows parenthesized), TypeForm
+2131 forms (468 trees, 1663 leaves), type leaves 1663, host text 21 leaves of 2818 in the 11 named seams. Unchanged:
+parse scope 128 + 73 with 0 held back, surface losses 0 across 201 types, DomainAspect and DracoAspect 128, GenDrake 126
+of 126, rule 24, actor 15, 94 records, 4 codec sections, Definition 201 surfaces from 539 sections, Formal 36 formals (33
+lists, 7 bounded), example gate 48 / 0, scenario 23 clean, the PON pair 42 and 7 as suspended, the rete finding
+categorical. The tree afterwards held the intended changes only.
+
+DEV'S GATE (2026-11-14, full `sbt test`, output pasted): Tests: succeeded 1269, failed 0, canceled 0, ignored 0, pending
+0; every headline matching the direct run, the six moved ones included; green on its first run. The baseline stays
+1269 tests / 91 suites.
+
+This record also folds ddaec87 (formals on TypeElement) into the shared documents. Journal: current through chapter
+136; uncovered is what follows Dev's "Journal first" of November 14.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
