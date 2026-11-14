@@ -670,8 +670,8 @@ directions:
   2026-11-11, and the operator fixity table the expression renderer and the parser read is the definition
   `draketarget.Fixity` since 2026-11-12; the expression renderer is the definition `gendrake.ExpressionOf` since the
   same day, and so are the element keyword table, `draketarget.Keyword`, and the element renderer,
-  `gendrake.ElementOf` (a method's formals reach it as a dependency, as data, and `gendrake.FormalOf` spells each
-  formal for it and for the type header); since 2026-11-14 the section transforms spell their own types through
+  `gendrake.ElementOf` (it reads a method's formals from the element, `typeParameters` being declared on TypeElement
+  since 2026-11-14, and `gendrake.FormalOf` spells each formal for it and for the type header); since 2026-11-14 the section transforms spell their own types through
   `TypeFormOf` and `gendrake.SlotOf`, the value-type slot rule, and element rendering is the one dependency the
   emitter still passes them. The remaining
   aspects, and the Scala target transforms remain to be developed.

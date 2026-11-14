@@ -9,6 +9,7 @@ type TypeElement from Primal(draco.format.dracon.Dracon)
     fix body [BodyElement] []
     fix value Dracon Dracon.Null
     fix now Boolean false
+    fix typeParameters [TypeParameter] []
 uses [
   draco format dracon Dracon
 ]

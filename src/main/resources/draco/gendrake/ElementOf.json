@@ -67,20 +67,6 @@
           "kind": "Parameter",
           "name": "level",
           "valueType": "Int"
-        },
-        {
-          "kind": "Parameter",
-          "name": "formals",
-          "valueType": {
-            "->": [
-              "TypeElement",
-              {
-                "[]": [
-                  "TypeParameter"
-                ]
-              }
-            ]
-          }
         }
       ],
       "body": [
@@ -95,21 +81,6 @@
           "name": "level",
           "valueType": "Int",
           "value": "_level"
-        },
-        {
-          "kind": "Local",
-          "name": "formals",
-          "valueType": {
-            "->": [
-              "TypeElement",
-              {
-                "[]": [
-                  "TypeParameter"
-                ]
-              }
-            ]
-          },
-          "value": "_formals"
         },
         {
           "kind": "Local",
@@ -145,12 +116,7 @@
               "TypeParameter"
             ]
           },
-          "value": {
-            "()": [
-              "formals",
-              "element"
-            ]
-          }
+          "value": "element.typeParameters"
         },
         {
           "kind": "Local",
@@ -493,8 +459,7 @@
                     "()": [
                       "ElementOf",
                       "member",
-                      "depth",
-                      "formals"
+                      "depth"
                     ]
                   },
                   "lines"

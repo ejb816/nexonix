@@ -1,0 +1,52 @@
+A method's formals are declared on TypeElement; gendrake.ElementOf reads them itself (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (open; stays open). Nothing on the tracker was touched.
+
+WHY. After 180a7ab `gendrake.ElementOf` still took one dependency of its own, `formals (TypeElement -> [TypeParameter])`:
+`typeParameters` was declared on Dynamic alone, a definition holding a TypeElement could not reach it, and the emitter
+supplied it through `elementFormals`, a match on the host class. TypeElement already declares six defaulted shared
+fields, two of them (`parameters`, `body`) used by some kinds only. Recommended after 180a7ab; Dev answered "Journal
+first" (chapters 134–136, 73f77c8) and then "Accepted, build it".
+
+WHAT.
+- draco.TypeElement: `fix typeParameters [TypeParameter] []`, the seventh defaulted shared field.
+- draco.Dynamic: its own `elements` declaration of `typeParameters` removed; the factory parameter and its binding stay,
+  so Dynamic alone supplies the field.
+- gendrake.ElementOf: factory `element`, `level`; `loc given [TypeParameter] element.typeParameters`; the recursion is
+  `ElementOf(member, depth)`.
+- Three surfaces authored in drake, their JSON `DrakeCLI parse`, their Scala the generator's output: the family file
+  TypeElement.scala (generate-multi over the fourteen family definitions) changes in four places — the trait's defaulted
+  line, the encoder writing the field in the shared list when non-empty where it had a Dynamic branch, Dynamic's trait
+  losing its abstract member — and ElementOf.scala loses the parameter. The shape of the regenerated family file was
+  NOT probed before the recommendation and came out as expected.
+- Drake.scala: `elementFormals` removed, `elementLines` calling `ElementOf(element, level)`; `refuseElement` still
+  validates a method's formals before anything renders.
+- Tests: ElementOfTest's formals case reads them from a Dynamic element and asserts the empty default on another kind;
+  FormalOfTest reads `_.typeParameters`. No test added, no corpus type added.
+
+THE CARRIER DOES NOT MOVE: an empty list is elided and only Dynamic's factory supplies the field, so no definition's
+JSON or drake surface changes beyond the three trios.
+
+WHAT STAYS a dependency: `elementText`, passed by the emitter to the section transforms, because the element refusals
+are still the emitter's. NOT BUILT, none accepted: the refusals ahead of rendering; a failure form for the guards.
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods; the three trios are
+stable on regeneration with the recompiled engine. Direct run of every discovered suite on freshly compiled classes
+with current main, mods and test resources on the loader roots: 1269 tests / 92 suites including discovery, zero
+failed, canceled, ignored, pending or aborted, green on its FIRST run. Headlines that move, by the two elements net
+removed (ElementOf's parameter and binding, Dynamic's declaration; TypeElement's added): Element 1117 elements (1364
+lines), Slot 1099 value-type slots (81 arrows parenthesized), TypeForm 2161 forms (483 trees, 1678 leaves), type leaves
+1678, host text 21 leaves of 2807 in the 11 named seams. Unchanged: parse scope 128 + 73 with 0 held back, surface
+losses 0 across 201 types, DomainAspect and DracoAspect 128, GenDrake 126 of 126, rule 24, actor 15, 94 records, 4 codec
+sections, Definition 201 surfaces from 539 sections, Expression 661 values (483 trees, 178 leaves), Formal 36 formals
+(33 lists, 7 bounded), example gate 48 / 0, scenario 23 clean, the PON pair 42 and 7 as suspended, the rete finding
+categorical. The tree afterwards held the intended changes only.
+
+DEV'S GATE (2026-11-14, full `sbt test`, output pasted): Tests: succeeded 1269, failed 0, canceled 0, ignored 0, pending
+0; every headline matching the direct run, the five moved ones included; green on its first run. The baseline stays
+1269 tests / 91 suites.
+
+This record also folds 73f77c8 (journal chapters 134–136) into the shared documents. Journal: current through chapter
+136; uncovered is what follows Dev's "Journal first" of November 14.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

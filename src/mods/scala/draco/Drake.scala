@@ -147,18 +147,12 @@ object Drake {
     * itself closes the grammar with no appeal to indentation. */
   private def elementLines (element: TypeElement, level: Int) : Seq[String] = {
     refuseElement(element)
-    draco.gendrake.ElementOf(element, level, elementFormals(_)).lines
+    draco.gendrake.ElementOf(element, level).lines
   }
 
-  /** The formals a member line declares: a method's, none for any other element. The one
-    * ingredient `gendrake.ElementOf` receives as a dependency, and it is DATA, not spelling
-    * (2026-11-13): formals live on Dynamic alone, which a definition holding a TypeElement
-    * cannot reach; the definition spells each through `gendrake.FormalOf` and appends them to
-    * the name itself. `refuseElement` validates them before anything renders. */
-  private[draco] def elementFormals (element: TypeElement) : Seq[TypeParameter] = element match {
-    case d: Dynamic => d.typeParameters
-    case _          => Seq.empty
-  }
+  // A member line's formals are the element's own `typeParameters` (declared on TypeElement
+  // since 2026-11-14, empty for every kind but a method), which `gendrake.ElementOf` reads and
+  // spells through `gendrake.FormalOf`; `refuseElement` validates them before anything renders.
 
   /** What the element renderer refuses, checked over the whole element before anything
     * renders (drake has no failure form, so the definition cannot raise): a kind with no
@@ -233,7 +227,7 @@ object Drake {
     * one at the end); gendrake.DefinitionOf composes the six section transforms from a
     * definition. Of the four rendering dependencies it first received, the three type spellings
     * left on 2026-11-14 (the transforms read TypeFormOf and SlotOf themselves); element rendering
-    * remains, because the element refusals and a method's formals are still this target's. What stays hand-written in this emitter is the
+    * remains, because the element refusals are still this target's. What stays hand-written in this emitter is the
     * guards above, the refusals and the name spelling; the renderers themselves delegate to
     * definitions and no second hand-written copy remains (2026-11-13). */
   private[draco] def definitionText (td: TypeDefinition) : String =

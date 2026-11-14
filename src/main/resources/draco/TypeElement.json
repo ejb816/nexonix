@@ -85,6 +85,19 @@
         "name": "now",
         "valueType": "Boolean",
         "value": "false"
+      },
+      {
+        "kind": "Fixed",
+        "name": "typeParameters",
+        "valueType": {
+          "[]": [
+            "TypeParameter"
+          ]
+        },
+        "value": {
+          "[]": [
+          ]
+        }
       }
     ]
   },

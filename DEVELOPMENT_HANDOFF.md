@@ -10,7 +10,26 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the journal through chapter 136 (Claude Code, November 14, 2026; documentation only; commit pending)
+## Current checkpoint — formals on TypeElement (Claude Code, November 14, 2026; Dev's gate 1269 green; commit pending)
+
+Same session. HEAD 73f77c8, pushed (Dev's paste: 180a7ab..73f77c8, 12 files). Dev accepted ("Accepted, build it") the point
+recommended after 180a7ab, under GitHub #11 (open; stays open). Record `git-record-2026-11-14-0850`, which also folds 73f77c8.
+
+- **Built.** TypeElement declares `fix typeParameters [TypeParameter] []`; Dynamic drops its own element declaration and
+  supplies the field through its factory; ElementOf is `ElementOf(element, level)` and reads `element.typeParameters`;
+  `elementFormals` leaves Drake.scala. Two tests restated (ElementOfTest, FormalOfTest); none added.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods; the three trios stable on regeneration. Direct run: 1269 tests /
+  92 suites including discovery, green on its first run. Headlines that move: Element 1117 elements (1364 lines), Slot 1099
+  slots (81 arrows), TypeForm 2161 forms (483 trees, 1678 leaves), type leaves 1678, host text 21 of 2807. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run;
+  the baseline stays 1269 / 91.
+- **In the tree, uncommitted.** The TypeElement, Dynamic and ElementOf surfaces and JSON; TypeElement.scala (the family
+  file) and ElementOf.scala; Drake.scala; two test files; CHANGELOG.md, DRACO.md, README.md, this file, the resume prompt,
+  the record.
+- **Next on this thread, none accepted.** The element refusals ahead of rendering, so the section transforms call ElementOf
+  themselves; a failure form for the guards.
+- **Journal.** Current through chapter 136; uncovered is what follows Dev's "Journal first" of November 14.
+
+## Previous checkpoint — the journal through chapter 136 (Claude Code, November 14, 2026; documentation only; committed 73f77c8, pushed)
 
 Same session. HEAD 180a7ab, pushed (Dev's paste: 9d1e6cf..180a7ab, 33 files), Dev's gate 1269 tests on it; the baseline is
 1269 / 91. Record `git-record-2026-11-14-0845`, which also folds 180a7ab into the documents.

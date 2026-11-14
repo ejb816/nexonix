@@ -140,7 +140,10 @@ passed 1269 tests / 92 suites including discovery and my full gate passed 1269 t
 committed it as 180a7ab and pushed it (9d1e6cf..180a7ab). The gate grep is the one in DRACO.md section 1 (it gained `Slot over`).
 The next point was then recommended and is NOT accepted: typeParameters declared on TypeElement, so that ElementOf reads a
 method's formals itself. I answered "Journal first"; chapters 134–136 followed (record git-record-2026-11-14-0845, documentation
-only). Check `git log` for whether that commit and push are recorded; if not, settle that with me first.
+only), which I committed as 73f77c8 and pushed (180a7ab..73f77c8). I then accepted the recommendation: TypeElement declares
+typeParameters, ElementOf reads a method's formals itself and elementFormals left Drake.scala (record git-record-2026-11-14-0850).
+Its direct run passed 1269 tests / 92 suites including discovery, no test added, and my full gate passed 1269 tests on November 14.
+Check `git log` for whether its commit and push are recorded; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

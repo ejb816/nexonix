@@ -19,7 +19,7 @@ import scala.jdk.CollectionConverters._
  */
 class ElementOfTest extends AnyFunSuite with PersistentTestLog {
 
-  private def of(element: TypeElement, level: Int): Seq[String] = ElementOf(element, level, Drake.elementFormals(_)).lines
+  private def of(element: TypeElement, level: Int): Seq[String] = ElementOf(element, level).lines
 
   private val probe: String =
     """type Probe
@@ -101,13 +101,16 @@ class ElementOfTest extends AnyFunSuite with PersistentTestLog {
     assert(of(message(1), 2) == Seq("    case [", "      mon println(msg)", "    ]"), "no binder and no type leave no marker")
   }
 
-  test("the lines are read on demand, and the formals are asked of the dependency") {
+  test("the lines are read on demand, and a method's formals are read from the element") {
     var reads = 0
     val element = Drake.parse(probe).dracoAspect.elements.head
-    val rendered = ElementOf({ reads += 1; element }, 0, _ => Seq(TypeParameter("T"), TypeParameter("S", Dracon.string("Product"))))
+    val rendered = ElementOf({ reads += 1; element }, 0)
     assert(reads == 0)
-    assert(rendered.lines == Seq("fix a(T, S <: Product) Int 1") && rendered.lines.size == 1 && reads == 1)
-    assert(ElementOf(element, 0, _ => Seq.empty).lines == Seq("fix a Int 1"), "no formals leave the name as authored")
+    assert(rendered.lines == Seq("fix a Int 1") && rendered.lines.size == 1 && reads == 1, "no formals leave the name as authored")
+    assert(element.typeParameters.isEmpty, "every kind but a method carries the empty default")
+    val method = Dynamic("a", Dracon.string("Int"), _value = Dracon.string("1"),
+      _typeParameters = Seq(TypeParameter("T"), TypeParameter("S", Dracon.string("Product"))))
+    assert(ElementOf(method, 0).lines == Seq("dyn a(T, S <: Product) Int 1"))
   }
 
   test("the live emitter spells elements through the definition and still refuses what it refused") {

@@ -24,17 +24,6 @@
         ]
       }
     ],
-    "elements": [
-      {
-        "kind": "Fixed",
-        "name": "typeParameters",
-        "valueType": {
-          "[]": [
-            "TypeParameter"
-          ]
-        }
-      }
-    ],
     "factory": {
       "kind": "Factory",
       "valueType": "Dynamic",

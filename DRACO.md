@@ -65,6 +65,10 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1269 tests / 91 suites**, verified by Dev on 2026-11-14 for a method's formals declared on TypeElement (record
+`git-record-2026-11-14-0850`): ElementOf reads `element.typeParameters` and takes no dependency of its own, no test or corpus type added;
+Element 1117 elements in 1364 lines, Slot 1099 slots with 81 arrows, TypeForm 2161 forms, type leaves 1678, host text 21 of 2807, every other
+headline unchanged; its direct run 1269 / 92 including discovery, green on its first run. First full Dev gate green. Before it, the same
 **1269 tests / 91 suites**, verified by Dev on 2026-11-14 for the section transforms spelling their own types (record
 `git-record-2026-11-14-0007`, committed as 180a7ab, pushed): `gendrake.SlotOf` is the value-type slot rule, DracoAspectOf, DomainAspectOf, ActorAspectOf and DefinitionOf
 call `TypeFormOf` and `SlotOf` and receive no type spelling, every surface byte-identical; ten tests added (SlotOfTest's five, the 91st suite,
@@ -579,7 +583,8 @@ single-key `{op: [operands]}` expression tree. **`valueType` holds Dracon on the
 is a type-form tree (the parser trees the four forms since 2026-09-17); every consumer reads it through
 `TypeForm.text` (`e.valueType.text`), and the engine spells it for the target once, in
 `targetTypes`. Every element also carries `now: Boolean` (default false, elided), the strictness
-override of drake.dlt EVALUATION. JSON uses a `"kind"` discriminator;
+override of drake.dlt EVALUATION, and since 2026-11-14 `typeParameters: [TypeParameter]` (default empty, elided), a method's
+formals — declared on the family as `parameters` and `body` are, supplied by Dynamic's factory alone, so the carrier is unchanged. JSON uses a `"kind"` discriminator;
 `Codec.sub` narrows the parent codec.
 
 **`TypeName`** is `name` + `namePackage` + `typeParameters`, with derived `namePath` and
@@ -743,8 +748,8 @@ the definition `draketarget.Fixity` since 2026-11-12, and the EXPRESSION rendere
 `gendrake.ExpressionOf` spells a value tree with the minimal parentheses, and `Drake.expression` delegates to it after
 refusing a value outside the tree language.
 The ELEMENT renderer crossed last, the same day: `gendrake.ElementOf` spells an element at a level as its member lines
-(leaf line, dyn block, case-branch), taking a method's FORMALS as an explicit dependency — data, since they live on
-Dynamic alone — and spelling each through `gendrake.FormalOf`, the one definition of a formal's text since 2026-11-13
+(leaf line, dyn block, case-branch), reading a method's FORMALS from the element itself since 2026-11-14 (`element.typeParameters`, declared on TypeElement; an explicit
+dependency of the emitter's for the day before) and spelling each through `gendrake.FormalOf`, the one definition of a formal's text since 2026-11-13
 (`V1 >: V`, `T <: Product`), which the header in DracoAspectOf reads too; `elementLines` refuses a malformed element and delegates. Since 2026-11-14 the
 section transforms spell their own TYPES: a type form through `TypeFormOf`, a value-type slot through `gendrake.SlotOf` (the form,
 parenthesized when an arrow is at the top), so DracoAspectOf, DomainAspectOf, ActorAspectOf and DefinitionOf receive no type spelling
@@ -1379,7 +1384,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it: the two hand-written reference renderers removed (record `git-record-2026-11-13-1816`, committed by Dev as a216865 on 2026-11-13 after the gate of 1249 green, pushed).
   After it: the formal spelling as the definition `gendrake.FormalOf` (record `git-record-2026-11-13-1834`, committed by Dev as 9d1e6cf on 2026-11-13 after the gate of 1259 green, pushed).
   After it: the section transforms spelling their own types, `gendrake.SlotOf` (record `git-record-2026-11-14-0007`, committed by Dev as 180a7ab on 2026-11-14 after the gate of 1269 green, pushed).
-  After it, documentation only: journal chapters 134–136 (record `git-record-2026-11-14-0845`).
+  After it, documentation only: journal chapters 134–136 (record `git-record-2026-11-14-0845`, committed by Dev as 73f77c8, pushed).
+  After it: a method's formals on TypeElement, ElementOf reading them itself (record `git-record-2026-11-14-0850`; Dev's gate of 1269 green on 2026-11-14, commit to follow).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2678,3 +2684,23 @@ Status was read against this file and README, whose dated paragraphs already car
 only (record `git-record-2026-11-14-0845`, which also folds 180a7ab): no engine, definition, Scala or test change, no sbt, no
 tracker action; the gate 1269 / 91 at 180a7ab stands. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon
 deferred; PON suspended.
+
+**A method's formals are declared on TypeElement; ElementOf has no dependency of its own (2026-11-14, Claude Code; GitHub #11, the
+issue open).** The point recommended after 180a7ab and accepted after the journal commit (73f77c8, pushed: 180a7ab..73f77c8).
+MEASURED: `typeParameters` was declared on Dynamic alone, so ElementOf, holding a TypeElement, took the formals as a dependency the
+emitter supplied by a match on the host class (`elementFormals`); TypeElement already declares six defaulted shared fields, two of
+them (`parameters`, `body`) used by some kinds only. Dev accepted "Accepted, build it". BUILT: TypeElement declares
+`fix typeParameters [TypeParameter] []`; Dynamic drops its own element declaration and keeps the factory parameter and binding;
+ElementOf is `ElementOf(element, level)` and reads `element.typeParameters`; `elementFormals` leaves Drake.scala. The regenerated
+family file changes in four places, as expected and unprobed before the recommendation: the trait's defaulted line, the encoder
+writing the field in the shared list (non-empty only) where it had a Dynamic branch, and Dynamic's trait losing its abstract
+member. THE CARRIER DOES NOT MOVE: only Dynamic's factory supplies the field and an empty list is elided, so no other JSON or
+surface changes; `DrakeCLI check` reads drift 0 over main and mods and all three trios are stable on regeneration. Two tests
+restated (ElementOfTest: the formals read from the element; FormalOfTest: the same through `_.typeParameters`); no test added,
+no corpus type added. WHAT STAYS a dependency: `elementText` to the section transforms, the element refusals being the
+emitter's. Direct run: 1269 tests / 92 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on
+its first run; headlines that move, by the two elements net removed: Element 1117 elements (1364 lines), Slot 1099 slots (81
+arrows), TypeForm 2161 forms (483 trees, 1678 leaves), type leaves 1678, host text 21 of 2807; every other headline unchanged;
+the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline stays 1269 / 91. Next on this thread, none accepted: the element refusals
+ahead of rendering, so that the section transforms call ElementOf themselves; a failure form for the guards. The journal is
+current through chapter 136. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

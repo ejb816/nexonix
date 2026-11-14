@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- A method's formal type parameters are declared on `TypeElement` (`typeParameters`, default empty, supplied by
+  `Dynamic` alone), so `gendrake.ElementOf` reads them from the element and takes no dependency of its own (GitHub #11).
+  No definition's JSON or drake surface changes beyond the three trios; no test added.
 - Journal chapters 134–136 cover November 13–14: the reference renderers removed, and the formal spelling and the
   value-type slot rule as definitions, from the session's original record, with one extract and audit under
   `draco-dev-journal/sources/`.

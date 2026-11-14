@@ -60,10 +60,10 @@ class FormalOfTest extends AnyFunSuite with PersistentTestLog {
     assert(Drake.dracoAspectText(read).linesIterator.next() == "type Holder(T <: Product, S)")
   }
 
-  test("the emitter passes formals as data, and still refuses invalid ones") {
+  test("the formals are read from the element, and the emitter still refuses invalid ones") {
     val read = Drake.parse(probe)
     val methods = read.dracoAspect.elements
-    assert(methods.map(Drake.elementFormals(_).map(_.name)) == Seq(Seq("V1"), Seq.empty, Seq("R")))
+    assert(methods.map(_.typeParameters.map(_.name)) == Seq(Seq("V1"), Seq.empty, Seq("R")))
     val json = TypeDefinition.encoder(read)
     val doubled = json.hcursor.downField("dracoAspect").downField("elements").downN(2).downField("typeParameters")
       .withFocus(formals => Json.arr(formals.asArray.get ++ formals.asArray.get: _*)).top.get

@@ -1,6 +1,4 @@
 type Dynamic from BodyElement
-  elements
-    fix typeParameters [TypeParameter]
   factory
     parameters
       par name String

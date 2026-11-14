@@ -12,6 +12,7 @@ sealed trait TypeElement extends Primal[Dracon] {
   lazy val body: Seq[BodyElement] = Seq.empty
   lazy val value: Dracon = Dracon.Null
   lazy val now: Boolean = false
+  lazy val typeParameters: Seq[TypeParameter] = Seq.empty
 }
 
 object TypeElement extends App with DracoType {
@@ -41,11 +42,9 @@ object TypeElement extends App with DracoType {
       if (x.parameters.nonEmpty) Some("parameters" -> x.parameters.asJson) else None,
       if (x.body.nonEmpty) Some("body" -> x.body.asJson) else None,
       if (!x.value.isNull && x.value.textOrEmpty.fold(true, _.nonEmpty)) Some("value" -> draco.scalatarget.CirceCodecs.encodePayload(x.value)) else None,
-      if (x.now) Some("now" -> x.now.asJson) else None
+      if (x.now) Some("now" -> x.now.asJson) else None,
+      if (x.typeParameters.nonEmpty) Some("typeParameters" -> x.typeParameters.asJson) else None
     ).flatten ++ (x match {
-      case x: Dynamic => Seq(
-        if (x.typeParameters.nonEmpty) Some("typeParameters" -> x.typeParameters.asJson) else None
-      ).flatten
       case x: Pattern => Seq(
         if (x.variables.nonEmpty) Some("variables" -> x.variables.asJson) else None,
         if (x.conditions.nonEmpty) Some("conditions" -> x.conditions.asJson) else None
@@ -231,9 +230,7 @@ object Mutable extends App with DracoType {
 
 }
 
-trait Dynamic extends BodyElement {
-  val typeParameters: Seq[TypeParameter]
-}
+trait Dynamic extends BodyElement
 
 object Dynamic extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("Dynamic", _namePackage = Seq ("draco")))

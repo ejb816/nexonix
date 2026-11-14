@@ -5,13 +5,11 @@ type ElementOf
     parameters
       par element TypeElement
       par level Int
-      par formals (TypeElement -> [TypeParameter])
     body
       loc element TypeElement _element
       loc level Int _level
-      loc formals (TypeElement -> [TypeParameter]) _formals
       loc formal (TypeParameter -> Text) \p -> FormalOf(p).value
-      loc given [TypeParameter] formals(element)
+      loc given [TypeParameter] element.typeParameters
       loc name Text element.name ++ guard(given.isEmpty).ifThenElse("", "(" ++ join(", ", given.map(formal)) ++ ")")
       loc kind Text element.typeDefinition.typeName.name
       loc step Text "  "
@@ -25,7 +23,7 @@ type ElementOf
       loc valued (Text -> Text) \prefix -> guard(rendered == "").ifThenElse(prefix, prefix ++ " " ++ rendered)
       loc bare Boolean kind == "Monadic" || kind == "Condition"
       loc leaf [Text] [valued(guard(bare).ifThenElse(indent ++ keyword, indent ++ keyword ++ " " ++ name ++ " " ++ slot))]
-      loc nested ((TypeElement, Int) -> [Text]) \member depth -> ElementOf(member, depth, formals).lines
+      loc nested ((TypeElement, Int) -> [Text]) \member depth -> ElementOf(member, depth).lines
       loc section ((Text, [TypeElement]) -> [Text]) \head members -> guard(members.isEmpty).ifThenElse([], [indent ++ step ++ head] ++ members.flatMap(\member -> nested(member, level + 2)))
       loc method [Text] [indent ++ keyword ++ " " ++ name ++ " " ++ slot ++ " ["] ++ section("parameters", element.parameters) ++ section("body", element.body) ++ [indent ++ "]"]
       loc head [Text] [indent ++ keyword] ++ guard(element.name == "").ifThenElse([], [element.name]) ++ guard(slot == "").ifThenElse([], [slot]) ++ ["["]
