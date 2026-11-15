@@ -133,22 +133,11 @@ object Drake {
 
   // A member line's formals are the element's own `typeParameters` (declared on TypeElement
   // since 2026-11-14, empty for every kind but a method), which `gendrake.ElementOf` reads and
-  // spells through `gendrake.FormalOf`; `refuseElement` validates them before anything renders.
-
-  /** What the element renderer refuses and this emitter still judges by hand, checked over the
-    * whole element before anything renders: invalid method formals, the one check shared with
-    * the parser and the Scala generator. The other three refusals are data since 2026-11-14,
-    * returned as Problems by `gendrake.ElementRefusalOf` over the same walk: a kind with no
-    * keyword, a value outside the tree language (`gendrake.ValueRefusalOf`), and a block — a dyn
-    * with parameters or a body, a case-branch — carrying a value outside its body. */
-  private def refuseElement (element: TypeElement) : Unit = {
-    element match {
-      case d: Dynamic => MethodTypeParameters.validate(d)
-      case _ =>
-    }
-    element.parameters.foreach(refuseElement)
-    element.body.foreach(refuseElement)
-  }
+  // spells through `gendrake.FormalOf`. Every element refusal is data: `gendrake.ElementRefusalOf`
+  // returns a kind with no keyword, invalid method formals (`draco.FormalsRefusalOf`, the check
+  // the parser and the Scala generator read too, since 2026-11-15), a value outside the tree
+  // language (`gendrake.ValueRefusalOf`) and a block carrying a value outside its body, each as
+  // a Problem, over the walk `gendrake.RefusalOf` makes.
 
   /** Refuse every element the surface would render, before any section renders (2026-11-14,
     * GitHub #11): the type section's elements, a present factory's parameters and body, the
@@ -157,30 +146,11 @@ object Drake {
     * which is why the section transforms received element rendering as a dependency. An
     * element the surface does not render — an absent factory's, an absent role's — is not
     * judged, as before. */
-  private def refuseDefinition (td: TypeDefinition) : Unit = {
-    // The walk and the first element refusal are a definition's (2026-11-14, GitHub #11):
-    // gendrake.RefusalOf walks the rendered elements and returns each kind with no keyword, each
-    // value outside the tree language and each block carrying a value outside its body as a
-    // Problem; the first is raised here, ahead of the one refusal still judged by hand.
+  private def refuseDefinition (td: TypeDefinition) : Unit =
+    // The walk and every element refusal are a definition's (2026-11-14 and 2026-11-15, GitHub
+    // #11): gendrake.RefusalOf walks the rendered elements and returns each refusal as a Problem;
+    // the first is raised here, and nothing is judged by hand.
     draco.gendrake.RefusalOf(td).elementProblems.headOption.foreach(problem => throw new IllegalArgumentException(problem.message))
-    val aspect = td.dracoAspect
-    aspect.elements.foreach(refuseElement)
-    if (typeSurface(aspect.factory.valueType.json).nonEmpty) {
-      aspect.factory.parameters.foreach(refuseElement)
-      aspect.factory.body.foreach(refuseElement)
-    }
-    aspect.globalElements.foreach(refuseElement)
-    td.ruleAspect.fold[Unit]((), rule => {
-      rule.pattern.variables.foreach(refuseElement)
-      rule.pattern.conditions.foreach(refuseElement)
-      rule.action.body.foreach(refuseElement)
-    })
-    td.actorAspect.fold[Unit]((), actor => {
-      actor.start.body.foreach(refuseElement)
-      actor.message.body.foreach(refuseElement)
-      actor.signal.body.foreach(refuseElement)
-    })
-  }
 
   /** The type section is definition-backed; it spells its own types through TypeFormOf and
     * SlotOf and its own elements through ElementOf (2026-11-14), receiving the definition alone. */
@@ -647,7 +617,11 @@ object Drake {
     else (token.substring (0, idx), splitTypeArguments (token.substring (idx + 1, token.length - 1)))
   }
 
-  private def checkedDynamic(d: Dynamic): Dynamic = { MethodTypeParameters.validate(d); d }
+  /** A method read from a surface is refused when its formals are malformed: the first reason
+    * of `draco.FormalsRefusalOf`, the one definition of the check (2026-11-15, GitHub #11). */
+  private def checkedDynamic(d: Dynamic): Dynamic = {
+    FormalsRefusalOf(d).reasons.headOption.foreach(reason => throw new IllegalArgumentException(reason)); d
+  }
 
   private def parseMethodFormal(text: String): TypeParameter = {
     val upper = splitTopArrow(text, " <: ")

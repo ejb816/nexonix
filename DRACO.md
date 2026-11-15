@@ -65,8 +65,14 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1317 tests / 95 suites**, verified by Dev on 2026-11-15 for the formals check as a core definition (record
+`git-record-2026-11-15-0916`): `draco.FormalsRefusalOf` returns the reasons a method's formals are invalid, read by `gendrake.ElementRefusalOf`,
+the parser and the Scala generator, the hand-written `MethodTypeParameters` deleted, every surface byte-identical; twelve tests added
+(FormalsRefusalOfTest's seven, the 95th suite, and the five per-type gates of the one new corpus type); parse scope 132 + 73, surface losses 0
+across 205 types, 132 aspect sections, GenDrake 130 of 130, no new grep line; its direct run 1317 / 96 including discovery, green on its second
+run (the first failed eight tests of the increment's own making). First full Dev gate green. Before it:
 **1305 tests / 94 suites**, verified by Dev on 2026-11-14 for the value-tree refusal as a definition (record
-`git-record-2026-11-14-2202`): `gendrake.ValueRefusalOf` returns the reasons a value is outside the tree language, `gendrake.ElementRefusalOf`
+`git-record-2026-11-14-2202`, committed as 980de86, pushed): `gendrake.ValueRefusalOf` returns the reasons a value is outside the tree language, `gendrake.ElementRefusalOf`
 reports each as a Problem and `Drake.expression` raises the first, every surface byte-identical; twelve tests added (ValueRefusalOfTest's six,
 the 94th suite, the five per-type gates of the one new corpus type, one in ElementRefusalOfTest); parse scope 131 + 73, surface losses 0
 across 204 types, 131 aspect sections, GenDrake 129 of 129, no new grep line; its direct run 1305 / 95 including discovery, green on its first
@@ -790,8 +796,8 @@ above describe is gone. The FAILURE FORM is data since the same day: `gendrake.R
 definition a surface — the three codec refusals first — and `Drake.emit` raises the first; the first ELEMENT refusal followed, also that day: `gendrake.ElementRefusalOf` returns a kind
 with no keyword as a Problem, recursively, over the walk of the rendered elements `RefusalOf` now makes (`codecProblems`, `elementProblems`, `problems`),
 a value outside the tree language as one Problem per reason of `gendrake.ValueRefusalOf` (which `Drake.expression` raises from too, reading
-`Dracon.keys` and `Dracon.compact`), and a block carrying a value outside its body; invalid method formals, the check shared with the parser
-and the Scala generator, is the one refusal still hand-written. No renderer of the drake surface is hand-written: the two
+`Dracon.keys` and `Dracon.compact`), and a block carrying a value outside its body; and since 2026-11-15 invalid method formals, each reason of the core
+definition `draco.FormalsRefusalOf`, which the parser and the Scala generator read too and raise from — no refusal is hand-written. No renderer of the drake surface is hand-written: the two
 hand-written renderers kept as test references (`handExpression`, `handElementLines`) were removed on 2026-11-13, and
 ExpressionOfTest and ElementOfTest compare the definitions with the authored surfaces instead.
 The keyword of each element kind is read from the definition
@@ -1398,12 +1404,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 139 on 2026-11-14.
+Current documentation was reconciled through journal chapter 142 on 2026-11-15.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 139 on
-  2026-11-14.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 142 on
+  2026-11-15.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -1429,7 +1435,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it: the first element refusal as data, `gendrake.ElementRefusalOf` and the walk in `RefusalOf` (record `git-record-2026-11-14-2126`; committed by Dev as 05aa585 on 2026-11-14 after the gate of 1291 green, pushed).
   After it: the block-value refusal as data, in `gendrake.ElementRefusalOf` (record `git-record-2026-11-14-2137`; committed by Dev as 6e475be on 2026-11-14 after the gate of 1292 green, pushed).
   After it: Dracon's `keys` and `compact`, the inspections the value-tree refusal needs (record `git-record-2026-11-14-2149`; committed by Dev as 101ea48 on 2026-11-14 after the gate of 1293 green, pushed).
-  After it: the value-tree refusal as the definition `gendrake.ValueRefusalOf` (record `git-record-2026-11-14-2202`; direct run 1305 green, Dev's gate of 1305 green on 2026-11-14).
+  After it: the value-tree refusal as the definition `gendrake.ValueRefusalOf` (record `git-record-2026-11-14-2202`; committed by Dev as 980de86 on 2026-11-14 after the gate of 1305 green, pushed).
+  After it: the formals check as the core definition `draco.FormalsRefusalOf` (record `git-record-2026-11-15-0916`; direct run 1317 green, Dev's gate of 1317 green on 2026-11-15, commit pending).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -1656,7 +1663,7 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 139 -->
+<!-- draco-docs-synced-through: chapter 142 -->
 
 **Role presence increment (2026-10-22, Codex; Dev verified 857 / 61).** Dev accepted Presence-typed
 rule/actor slots and their field-level encoding. Absent omits the key; Present writes its
@@ -2862,6 +2869,29 @@ ValueRefusalOfTest (6) is the 94th suite; ElementRefusalOfTest +1. One corpus ty
 0 across 204 types, 131 aspect sections, GenDrake 129 of 129; no new grep line. NOT BUILT: the formals check
 (`MethodTypeParameters.validate`), shared by the emitter, the parser and the Scala generator — a design question of its own.
 Direct run: 1305 tests / 95 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first
-run; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1305 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1305 / 94. Next on this thread, none accepted: where the
+run; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1305 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1305 / 94. Committed by Dev as 980de86 and pushed the same day (101ea48..980de86). Next on this thread, none accepted: where the
 shared formals check lives. The journal is current through chapter 139. EgoActor and scripts/inspect-type.scala observed only;
 activation and .dcon deferred; PON suspended.
+
+**The formals check is a core definition; no refusal of the drake surface is hand-written (2026-11-15, Claude Code; GitHub #11,
+the issue open).** The next related point after 980de86. MEASURED: `MethodTypeParameters.validate`, 30 lines in mods, was the one
+refusal left on the emit side and had three callers — the emitter, the parser, the Scala generator; what it checks is a property
+of the definition, not of a target. Dev accepted "Accepted, build it" on a definition in core beside TypeParameter. BUILT:
+`draco.FormalsRefusalOf` (factory `par element TypeElement`, `reasons [Text]`: a method's name carrying its formals, a duplicate
+formal, a formal that is not a name, a bound that is not a well-formed type form, a bound leaf carrying a bound marker; the
+globals `wellFormed` and `leaves` recurse over a bound), listed by Draco; `gendrake.ElementRefusalOf` reports each reason as a
+Problem after the keyword problem and ahead of the value's; `refuseElement` and the hand walk of `refuseDefinition` leave
+Drake.scala, the parser's `checkedDynamic` and the generator's `methodName` raise the first reason, and
+`MethodTypeParameters.scala` is deleted. The §6 generation order followed, the trios stable; `DrakeCLI check` reads drift 0 over
+main and mods. DIFFERENCES: the messages lose "requirement failed: "; every reason is reported; a bound marker is reported per
+LEAF, where the hand-written check printed the whole bound's text (the recommendation had said today's messages; identical for a
+one-leaf bound). FormalsRefusalOfTest (7) is the 95th suite; two existing tests restated. One corpus type added: parse scope
+132 + 73, surface losses 0 across 205 types, 132 aspect sections, GenDrake 130 of 130; no new grep line. Direct run: 1317 tests /
+96 suites including discovery, zero failed, canceled, ignored, pending or aborted, on its second run (the first failed 8, all the
+increment's own: an authored redundant pair of parentheses the parser dissolves, and the new corpus test's guessed lower bounds);
+the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-15: 1317 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1317 / 95. Next on this thread, none accepted. THE JOURNAL was brought current
+through chapter 142 before the gate, Dev answering the gate question with "Journal first": chapters 140–142 cover the session from
+the open turn of chapter 139 through this increment's direct run, from its original record — 31 records, 15 completed exchanges,
+the answer itself the open turn, one compaction boundary with originals on both sides, every record matched on uuid, timestamp and
+text hash — with one extract and audit under `draco-dev-journal/sources/` (`claude-2026-11-14-to-15-session-2-continued`); the
+markers advance to chapter 142, each chapter's Status read against this file and README. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

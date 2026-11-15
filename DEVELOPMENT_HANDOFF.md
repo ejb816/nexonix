@@ -3,14 +3,43 @@
 Refreshed November 10, 2026 by Claude Code in the session that RECEIVED the handoff below and did its first task: the
 journal is current through chapter 127, through chapter 129 since that session journaled itself the same day, and through
 chapter 133 since November 13, when it journaled the renderer thread before the element renderer's commit, and through
-chapter 136 and then chapter 139 since November 14 (see the current checkpoint). The checkpoint that follows this paragraph's section was prepared earlier the same day
+chapter 136 and then chapter 139 since November 14, and through chapter 142 since November 15 (see the current checkpoint). The checkpoint that follows this paragraph's section was prepared earlier the same day
 by the previous Claude Code session, at Dev's direction, for a NEW SESSION in either agent: Dev called the handoff when
 that session's context reached 75%, with the journal several sessions behind. It supersedes the record-and-codec, actor-section, rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
 and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the value-tree refusal as a definition (Claude Code, November 14, 2026; direct run 1305 / 95; Dev's gate 1305 green; commit pending)
+## Current checkpoint — the formals check as a core definition (Claude Code, November 15, 2026; direct run 1317 / 96; Dev's gate 1317 green; commit pending)
+
+Same session. HEAD 980de86, pushed (Dev's paste: 101ea48..980de86, 18 files), Dev's gate 1305 tests on it; the baseline is
+1305 / 94. Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open). Record
+`git-record-2026-11-15-0916`, which also folds 980de86.
+
+- **Built.** `draco.FormalsRefusalOf` (one new trio, listed by Draco): the reasons a method's formal declarations are
+  malformed, as texts, with the hand-written check's messages. `gendrake.ElementRefusalOf` reports each as a Problem, after
+  the keyword problem. `refuseElement` and the hand walk of `refuseDefinition` leave Drake.scala; the parser and the Scala
+  generator raise the first reason; `MethodTypeParameters.scala` is deleted. FormalsRefusalOfTest (7) is the 95th suite.
+- **Differences.** The messages lose "requirement failed: "; every reason is reported; a bound marker is reported per leaf,
+  not with the whole bound's text (identical for a one-leaf bound).
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods; the trios stable. Direct run: 1317 tests / 96 suites including
+  discovery, green on its second run (the first failed 8, all the increment's own making). Headlines that move: parse scope
+  132 + 73, losses 0 across 205 types, aspect sections 132, GenDrake 130 of 130, 98 records, Definition 205 surfaces from 551
+  sections, Element 1203 (1456 lines), Expression 736 (546 trees, 190 leaves), Slot 1189 (93 arrows), TypeForm 2316 (538
+  trees, 1778 leaves), type leaves 1778, host text 21 of 3190, Refusal 205 definitions with 0 refused. No new grep line.
+  Dev's gate: 1317 tests on November 15, zero failed, canceled, ignored or pending, every headline matching the direct run,
+  green on its first run; the baseline is **1317 tests / 95 suites**.
+- **In the tree, uncommitted.** The FormalsRefusalOf trio, the ElementRefusalOf and Draco trios, Drake.scala,
+  DracoGenerator.scala, the deleted MethodTypeParameters.scala, three test suites; chapters 140–142, their extract and audit, the
+  introduction; CHANGELOG.md, DRACO.md, README.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** No refusal or renderer of the drake surface is hand-written; what the emit side
+  of `Drake.scala` keeps is its entry points. The next point under #11 is to be recommended after the commit.
+- **Journal.** Current through chapter 142, written before the gate when Dev answered the gate question with "Journal
+  first" (31 records, 15 completed exchanges, one open turn, one compaction boundary with originals on both sides; extract
+  and audit `draco-dev-journal/sources/claude-2026-11-14-to-15-session-2-continued`; markers at chapter 142). Uncovered is
+  only what follows that third "Journal first", of November 15.
+
+## Previous checkpoint — the value-tree refusal as a definition (Claude Code, November 14, 2026; committed 980de86, pushed)
 
 Same session. HEAD 101ea48, pushed (Dev's paste: 6e475be..101ea48, 9 files), Dev's gate 1293 tests on it; the baseline is
 1293 / 93. Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open). Record
@@ -28,8 +57,7 @@ Same session. HEAD 101ea48, pushed (Dev's paste: 6e475be..101ea48, 9 files), Dev
   (519 trees, 186 leaves), Slot 1151 (83 arrows), TypeForm 2231 (503 trees, 1728 leaves), type leaves 1728, host text 21 of
   3010, Refusal 204 definitions with 0 refused. No new grep line. Dev's first full gate on November 14: 1305 tests, zero
   failed, canceled, ignored or pending, every headline matching the direct run; the baseline is **1305 tests / 94 suites**.
-- **In the tree, uncommitted.** The ValueRefusalOf trio, the ElementRefusalOf and GenDrake trios, Drake.scala, the two test
-  suites; CHANGELOG.md, DRACO.md, README.md, this file, the resume prompt, the record.
+- **Committed** by Dev as 980de86 and pushed (101ea48..980de86, 18 files).
 - **Next on this thread, none accepted.** Where the formals check lives (`MethodTypeParameters.validate`, shared by the
   emitter, the parser and the Scala generator): the one refusal still hand-written on the emit side, a design question.
 - **Journal.** Current through chapter 139; uncovered is what follows Dev's second "Journal first" of November 14.

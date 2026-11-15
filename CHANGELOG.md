@@ -18,6 +18,14 @@ the block below.
 
 ## [Unreleased]
 
+- Journal chapters 140–142 cover November 14–15: the element refusals as data, Dracon's `keys` and `compact`, and the
+  formals check as a core definition, from the session's original record, with one extract and audit under
+  `draco-dev-journal/sources/`.
+- The check on a method's formal type parameters is a definition (GitHub #11): `draco.FormalsRefusalOf` returns the
+  reasons — a name carrying its formals, a duplicate, a formal that is not a name, a malformed or marked bound — and
+  the drake emitter (as `draco.Problem`s through `gendrake.ElementRefusalOf`), the drake parser and the Scala generator
+  raise the first. The messages lose the prefix "requirement failed: ". No refusal of the drake surface is hand-written;
+  `MethodTypeParameters` is removed. `FormalsRefusalOfTest` adds seven tests.
 - The refusal of a value outside drake's tree language is a definition (GitHub #11): `gendrake.ValueRefusalOf` returns
   the reasons — an unknown operator, a value that is neither a leaf nor a single-key node — with the emitter's
   messages; `gendrake.ElementRefusalOf` reports each as a `draco.Problem` and `Drake.expression` raises the first.

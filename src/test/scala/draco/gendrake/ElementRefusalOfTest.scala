@@ -13,8 +13,9 @@ import org.scalatest.funsuite.AnyFunSuite
  *  rule's, a present actor's) and joins those problems after the codec refusals. The second
  *  element refusal followed the same day: a block — a dyn with parameters or a body, a
  *  case-branch — carrying a value outside its body; and the third, a value outside the tree
- *  language, each reason of `gendrake.ValueRefusalOf` as a Problem. Invalid formals, the check
- *  shared with the parser and the Scala generator, stays in the emitter.
+ *  language, each reason of `gendrake.ValueRefusalOf` as a Problem. The last, invalid method
+ *  formals, followed on 2026-11-15: each reason of `draco.FormalsRefusalOf` as a Problem, after
+ *  the keyword problem and ahead of the value's — nothing is judged by hand.
  */
 class ElementRefusalOfTest extends AnyFunSuite {
 
@@ -144,11 +145,12 @@ class ElementRefusalOfTest extends AnyFunSuite {
     assert(intercept[IllegalArgumentException](Drake.emit(block)).getMessage == "Drake.emit: block dyn 'd'" + outside)
     val unrenderable = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(Fixed("a", int, unknown))))
     assert(intercept[IllegalArgumentException](Drake.emit(unrenderable)).getMessage == unknownOperator)
-    // the one refusal still judged by hand, a method's formals, follows the definition's, over the whole definition
+    // a method's formals are the definition's too (2026-11-15): judged in element order with the rest
     val duplicate = Dynamic("f", int, _typeParameters = Seq(TypeParameter("T"), TypeParameter("T")))
-    assert(intercept[IllegalArgumentException](Drake.emit(TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(duplicate))))).getMessage.contains("Duplicate type parameters"))
+    assert(intercept[IllegalArgumentException](Drake.emit(TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(duplicate))))).getMessage == "Duplicate type parameters on 'f'")
     val twoWays = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(duplicate, Action())))
-    assert(intercept[IllegalArgumentException](Drake.emit(twoWays)).getMessage == noKeyword("", "Action"), "the definition's refusals are judged over the whole definition first")
+    assert(RefusalOf(twoWays).elementProblems.map(_.message) == Seq("Duplicate type parameters on 'f'", noKeyword("", "Action")))
+    assert(intercept[IllegalArgumentException](Drake.emit(twoWays)).getMessage == "Duplicate type parameters on 'f'")
     assert(Drake.emit(Drake.parse(probe)) == probe)
   }
 }

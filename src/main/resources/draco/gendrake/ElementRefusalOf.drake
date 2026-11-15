@@ -11,6 +11,8 @@ type ElementRefusalOf
       loc kind Text element.typeDefinition.typeName.name
       loc reason Text "Drake.emit: no drake keyword for element '" ++ element.name ++ "' (" ++ kind ++ ")"
       loc unkeyed [Problem] guard(Keyword.table.contains(kind)).ifThenElse([], [Problem(subject, reason)])
+      loc informal (TypeElement -> [Text]) \member -> FormalsRefusalOf(member).reasons
+      loc malformed [Problem] informal(element).map(\cause -> Problem(subject, cause))
       loc spelled (Dracon -> Text) \node -> ExpressionOf(node).value
       loc branch Boolean kind == "Case"
       loc block Boolean kind == "Dynamic" && (element.parameters.nonEmpty || element.body.nonEmpty)
@@ -20,8 +22,9 @@ type ElementRefusalOf
       loc unrenderable [Problem] refused(element.value).map(\cause -> Problem(subject, cause))
       loc misplaced [Problem] guard((branch || block) && unrenderable.isEmpty && spelled(element.value) != "").ifThenElse([Problem(subject, opener ++ result)], [])
       loc nested (TypeElement -> [Problem]) \member -> ElementRefusalOf(member, subject).problems
-      fix problems [Problem] unkeyed ++ unrenderable ++ misplaced ++ element.parameters.flatMap(nested) ++ element.body.flatMap(nested)
+      fix problems [Problem] unkeyed ++ malformed ++ unrenderable ++ misplaced ++ element.parameters.flatMap(nested) ++ element.body.flatMap(nested)
 uses [
+  draco FormalsRefusalOf
   draco Problem
   draco TypeElement
   draco TypeName

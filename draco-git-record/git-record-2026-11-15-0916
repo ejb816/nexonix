@@ -1,0 +1,75 @@
+The formals check is a definition: draco.FormalsRefusalOf returns the reasons, read by the emitter, the parser and the Scala generator (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (open; stays open). Nothing on the tracker was touched.
+
+WHY. After 980de86 one refusal was still hand-written on the emit side: `MethodTypeParameters.validate`, 30 lines in mods,
+called by the drake emitter (`refuseElement`), the drake parser (`checkedDynamic`) and the Scala generator (`methodName`).
+What it checks is a property of the definition, not of a target: a method's name carries no formals, no formal is declared
+twice, each formal is a name, each bound is a well-formed type form carrying no bound marker. Dev accepted "Accepted, build
+it" on a definition in the core `draco` domain, beside TypeParameter, read by all three callers.
+
+WHAT.
+- New trio `draco.FormalsRefusalOf`: factory `par element TypeElement`, one element `reasons [Text]`, with the messages the
+  hand-written check raised, in its order: the name, the duplicates, then per formal its name, its lower bound, its upper
+  bound. Only a method (an element whose kind definition is Dynamic) is judged. Two globals carry the recursion over a
+  bound: `wellFormed` (a non-blank text leaf, or a single-key node of the right arity — `[]` `[]+` one operand, `{}` `{}+`
+  one or two, `->` two, `()` `(,)` two or more — whose operands are well formed) and `leaves` (a form's text leaves in
+  order). Authored in drake with its `uses` record, JSON `DrakeCLI parse`, Scala `GeneratorCLI generate`; listed by Draco.
+- `gendrake.ElementRefusalOf`: `problems` is the keyword problem, one Problem per formals reason, one per value reason, the
+  block-value problem, then the recursion — the order the hand-written emitter judged them in.
+- Drake.scala: `refuseElement` and the hand walk in `refuseDefinition` are removed, which is now the one line raising the
+  first of `RefusalOf(td).elementProblems`; the parser's `checkedDynamic` raises the first reason. DracoGenerator's
+  `methodName` raises the first reason. `MethodTypeParameters.scala` is deleted.
+- The §6 generation order was followed (FormalsRefusalOf generated and compiled, then ElementRefusalOf and Draco); the
+  three trios are stable on the recompiled engine.
+- FormalsRefusalOfTest (7), the 95th suite: well-formed methods and non-methods; each reason with its message; every
+  reason in order; the arity rows and the leaves; the element read once and lazily; the emitter, the parser and the Scala
+  generator each raising the first reason; no method of the corpus refused (104 methods, 10 carrying formals).
+  MethodTypeParameterTest's two direct calls and ElementRefusalOfTest's emitter test restated; no test removed.
+
+DIFFERENCES. (1) As recommended: the messages lose the host prefix "requirement failed: "; every reason is reported, the
+first unchanged; on the emit side the formals are judged in element order with the other refusals, where they were judged
+after them over the whole definition. (2) NOT as recommended: a bound marker (`<:`, `>:`, `: `) is reported per text leaf,
+"Invalid bound for 'T': <leaf>", where the hand-written check printed the whole bound's text. For a bound that is one leaf
+— the only shape the parser can produce a marker in — the message is identical. Spelling the whole bound would have made
+core read `gendrake.TypeFormOf`. One edge follows: a leaf ending in a colon inside a tree, which the old text check caught
+through the punctuation after it, is not reported.
+
+PROBED IN BUILDING. The bound recursion, unprobed at the recommendation, generated and compiled as written (two recursive
+globals, the nine-key dispatch not needed: the node's key is read through `Dracon.keys`). Quoted brackets and parentheses
+in values parse as written.
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods. Direct run of every
+discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1317 tests
+/ 96 suites including discovery, zero failed, canceled, ignored, pending or aborted, on its SECOND run (1305 + the five
+per-type gates of the one new corpus type + FormalsRefusalOfTest's seven). The first run failed 8, all of this
+increment's making: seven on one authored redundant pair of parentheses in `wellFormed`'s result, which the parser
+dissolves (§3), and one on the new corpus test's guessed lower bounds; while editing Drake.scala I also removed
+`dracoAspectText` by an overrun and restored it before the first compile. Headlines that move: parse scope 132 + 73
+with 0 held back, surface losses 0 across 205 types, DomainAspect and DracoAspect 132, GenDrake 130 of 130, 98 records,
+Definition 205 surfaces from 551 sections, Element 1203 elements (1456 lines), Expression 736 values (546 trees, 190
+leaves), Slot 1189 slots (93 arrows), TypeForm 2316 forms (538 trees, 1778 leaves), type leaves 1778, host text 21
+leaves of 3190 in the 11 named seams, Refusal 205 definitions (4 carrying a payload) with 0 refused. Unchanged: rule 24,
+actor 15, 4 codec sections, Formal 36 formals (33 lists, 7 bounded), example gate 48 / 0, scenario 23 clean, the PON pair
+42 and 7 as suspended, the rete finding categorical. No new grep line. The tree afterwards held the intended changes
+only.
+
+DEV'S GATE: 1317 tests on 2026-11-15, zero failed, canceled, ignored or pending, green on its first run; every headline
+matching the direct run. The baseline is 1317 tests / 95 suites.
+
+This record also folds 980de86 (the value-tree refusal; pushed 101ea48..980de86) into the shared documents.
+JOURNAL, IN THIS COMMIT. Asked to run the gate, Dev answered "Journal first". Chapters 140–142 cover the session from the
+open turn of chapter 139 through this increment's direct run, from ORIGINAL message records of session
+92b66875-d6a1-4bde-bc3d-a3186065293e: 140, chapters 137–139 committed with the failure form (ed37e5d) and the first
+element refusal (05aa585); 141, the block-value refusal (6e475be) and Dracon's `keys` and `compact` (101ea48); 142, the
+value-tree refusal (980de86) and this increment through its direct run, the third "Journal first" the open turn. One
+bounded extract and one retrieval audit under draco-dev-journal/sources/ (claude-2026-11-14-to-15-session-2-continued):
+31 records, 16 Dev messages (7 assertive, 9 responsive pastes) and 15 final replies, 15 completed exchanges, one open
+turn; one compaction boundary, originals on both sides, no summary quoted; every record re-read from its source line and
+matched on uuid, timestamp and text hash (31 of 31); frozen prefix through line 5899. Two texts that ended a turn while a
+background run was pending are excluded as intermediate and named in the audit. The introduction's count, checkpoint
+paragraph and index are updated; the `draco-docs-synced-through` markers advance to chapter 142, each chapter's Status
+having been read against DRACO.md and README, whose dated text already carries the five increments. Uncovered is only what
+follows that answer.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

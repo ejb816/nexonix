@@ -675,9 +675,9 @@ directions:
   `TypeFormOf` and `gendrake.SlotOf`, the value-type slot rule, and their own elements through `gendrake.ElementOf`, the
   emitter refusing a malformed definition once, ahead of rendering, and passing them nothing but the definition; and the failure form
   is data — `gendrake.RefusalOf` returns the codec refusals as `draco.Problem`s, and through `gendrake.ElementRefusalOf` an element kind with no
-  keyword, a value outside the tree language (`gendrake.ValueRefusalOf`) and a block carrying a value outside its body,
-  over its own walk of the rendered elements, and the emitter raises the first; one refusal, a method's formals, is
-  still hand-written. The remaining
+  keyword, invalid method formals (`draco.FormalsRefusalOf`, the one check the parser and the Scala generator read too,
+  since 2026-11-15), a value outside the tree language (`gendrake.ValueRefusalOf`) and a block carrying a value outside
+  its body, over its own walk of the rendered elements, and the emitter raises the first; no refusal is hand-written. The remaining
   aspects, and the Scala target transforms remain to be developed.
 - **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
   runs through an emitter whose Draco and domain section mappings are definition-backed; the remaining
@@ -833,7 +833,9 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 139 (November 14, 2026): chapters 137–139 continue the same session through a
+Journal coverage reaches chapter 142 (November 15, 2026): chapters 140–142 continue the same session through the
+element refusals as data and the formals check as a core definition, with their own extract and audit.
+Chapters 137–139 continue it through a
 method's formals on TypeElement, the refusals ahead of rendering and the failure form as data, with their own
 extract and audit. Chapters 134–136 continue it through the
 reference renderers' removal and the formal spelling and slot rule as definitions, with their own extract and audit.
@@ -885,7 +887,7 @@ figure unchanged: Create and Update as verbs over the abstract Latent shape, and
 moved into four Editor-domain rules over an Accepted fact, the actor thinned to a membrane and codec
 eligibility made transitive.
 
-<!-- draco-docs-synced-through: chapter 139 -->
+<!-- draco-docs-synced-through: chapter 142 -->
 
 Role slots now carry `Presence(RuleAspect)` and `Presence(ActorAspect)`. The containing
 record omits an Absent field and writes a Present aspect directly as its existing JSON

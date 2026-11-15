@@ -1,0 +1,1029 @@
+{
+  "typeName": {
+    "name": "FormalsRefusalOf",
+    "namePackage": [
+      "draco"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "reasons",
+        "valueType": {
+          "[]": [
+            "Text"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "FormalsRefusalOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "element",
+          "valueType": "TypeElement"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "element",
+          "valueType": "TypeElement",
+          "value": "_element"
+        },
+        {
+          "kind": "Local",
+          "name": "method",
+          "valueType": "Boolean",
+          "value": {
+            "==": [
+              "element.typeDefinition.typeName.name",
+              "\"Dynamic\""
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "formals",
+          "valueType": {
+            "[]": [
+              "TypeParameter"
+            ]
+          },
+          "value": "element.typeParameters"
+        },
+        {
+          "kind": "Local",
+          "name": "names",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              "formals.map",
+              {
+                "\\": [
+                  "formal",
+                  "formal.name"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "bracketed",
+          "valueType": "Boolean",
+          "value": {
+            "||": [
+              {
+                "()": [
+                  "element.name.contains",
+                  "\"[\""
+                ]
+              },
+              {
+                "()": [
+                  "element.name.contains",
+                  "\"]\""
+                ]
+              },
+              {
+                "()": [
+                  "element.name.contains",
+                  "\"(\""
+                ]
+              },
+              {
+                "()": [
+                  "element.name.contains",
+                  "\")\""
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "embedded",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "bracketed"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"Method '\"",
+                      "element.name",
+                      "\"' must declare type parameters separately\""
+                    ]
+                  }
+                ]
+              },
+              {
+                "[]": [
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "repeated",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "==": [
+                          "names.distinct.size",
+                          "names.size"
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"Duplicate type parameters on '\"",
+                      "element.name",
+                      "\"'\""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "unnamed",
+          "valueType": {
+            "->": [
+              "TypeParameter",
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "formal",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          {
+                            "()": [
+                              "formal.name.matches",
+                              "\"[A-Za-z_][A-Za-z0-9_]*\""
+                            ]
+                          }
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "[]": [
+                      {
+                        "++": [
+                          "\"Invalid type parameter '\"",
+                          "formal.name",
+                          "\"'\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "marked",
+          "valueType": {
+            "->": [
+              "Text",
+              "Boolean"
+            ]
+          },
+          "value": {
+            "\\": [
+              "leaf",
+              {
+                "||": [
+                  {
+                    "()": [
+                      "leaf.contains",
+                      "\"<:\""
+                    ]
+                  },
+                  {
+                    "()": [
+                      "leaf.contains",
+                      "\">:\""
+                    ]
+                  },
+                  {
+                    "()": [
+                      "leaf.contains",
+                      "\": \""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "malformed",
+          "valueType": {
+            "->": [
+              "Text",
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "owner",
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"Invalid type-form bound for '\"",
+                      "owner",
+                      "\"'\""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "mistaken",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "Text",
+                  "Dracon"
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "owner",
+              "form",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          {
+                            ".": [
+                              {
+                                "()": [
+                                  "leaves",
+                                  "form"
+                                ]
+                              },
+                              "filter"
+                            ]
+                          },
+                          "marked"
+                        ]
+                      },
+                      "map"
+                    ]
+                  },
+                  {
+                    "\\": [
+                      "leaf",
+                      {
+                        "++": [
+                          "\"Invalid bound for '\"",
+                          "owner",
+                          "\"': \"",
+                          "leaf"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "bounded",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "Text",
+                  "Dracon"
+                ]
+              },
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "owner",
+              "form",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "form.isNull"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "()": [
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "guard",
+                              {
+                                "()": [
+                                  "wellFormed",
+                                  "form"
+                                ]
+                              }
+                            ]
+                          },
+                          "ifThenElse"
+                        ]
+                      },
+                      {
+                        "()": [
+                          "mistaken",
+                          "owner",
+                          "form"
+                        ]
+                      },
+                      {
+                        "()": [
+                          "malformed",
+                          "owner"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "judged",
+          "valueType": {
+            "->": [
+              "TypeParameter",
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "formal",
+              {
+                "++": [
+                  {
+                    "()": [
+                      "unnamed",
+                      "formal"
+                    ]
+                  },
+                  {
+                    "()": [
+                      "bounded",
+                      "formal.name",
+                      "formal.lowerBound"
+                    ]
+                  },
+                  {
+                    "()": [
+                      "bounded",
+                      "formal.name",
+                      "formal.upperBound"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "reasons",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "method"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "++": [
+                  "embedded",
+                  "repeated",
+                  {
+                    "()": [
+                      "formals.flatMap",
+                      "judged"
+                    ]
+                  }
+                ]
+              },
+              {
+                "[]": [
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "globalElements": [
+      {
+        "kind": "Dynamic",
+        "name": "wellFormed",
+        "valueType": "Boolean",
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "form",
+            "valueType": "Dracon"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Local",
+            "name": "keys",
+            "valueType": {
+              "[]": [
+                "Text"
+              ]
+            },
+            "value": "form.keys"
+          },
+          {
+            "kind": "Local",
+            "name": "op",
+            "valueType": "Text",
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "guard",
+                        {
+                          "==": [
+                            "keys.size",
+                            "1"
+                          ]
+                        }
+                      ]
+                    },
+                    "ifThenElse"
+                  ]
+                },
+                "keys.head",
+                "\"\""
+              ]
+            }
+          },
+          {
+            "kind": "Local",
+            "name": "operands",
+            "valueType": {
+              "[]": [
+                "Dracon"
+              ]
+            },
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "form.field",
+                        "op"
+                      ]
+                    },
+                    "itemsOrEmpty",
+                    "fold"
+                  ]
+                },
+                {
+                  "[]": [
+                    {
+                      "()": [
+                        "form.field",
+                        "op"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "\\": [
+                    "members",
+                    "members"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Local",
+            "name": "count",
+            "valueType": "Int",
+            "value": "operands.size"
+          },
+          {
+            "kind": "Local",
+            "name": "sequences",
+            "valueType": {
+              "[]": [
+                "Text"
+              ]
+            },
+            "value": {
+              "[]": [
+                "\"[]\"",
+                "\"[]+\""
+              ]
+            }
+          },
+          {
+            "kind": "Local",
+            "name": "sets",
+            "valueType": {
+              "[]": [
+                "Text"
+              ]
+            },
+            "value": {
+              "[]": [
+                "\"{}\"",
+                "\"{}+\""
+              ]
+            }
+          },
+          {
+            "kind": "Local",
+            "name": "products",
+            "valueType": {
+              "[]": [
+                "Text"
+              ]
+            },
+            "value": {
+              "[]": [
+                "\"()\"",
+                "\"(,)\""
+              ]
+            }
+          },
+          {
+            "kind": "Local",
+            "name": "arity",
+            "valueType": "Boolean",
+            "value": {
+              "()": [
+                {
+                  ".": [
+                    {
+                      "()": [
+                        "guard",
+                        {
+                          "()": [
+                            "sequences.contains",
+                            "op"
+                          ]
+                        }
+                      ]
+                    },
+                    "ifThenElse"
+                  ]
+                },
+                {
+                  "==": [
+                    "count",
+                    "1"
+                  ]
+                },
+                {
+                  "()": [
+                    {
+                      ".": [
+                        {
+                          "()": [
+                            "guard",
+                            {
+                              "()": [
+                                "sets.contains",
+                                "op"
+                              ]
+                            }
+                          ]
+                        },
+                        "ifThenElse"
+                      ]
+                    },
+                    {
+                      "||": [
+                        {
+                          "==": [
+                            "count",
+                            "1"
+                          ]
+                        },
+                        {
+                          "==": [
+                            "count",
+                            "2"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "()": [
+                        {
+                          ".": [
+                            {
+                              "()": [
+                                "guard",
+                                {
+                                  "==": [
+                                    "op",
+                                    "\"->\""
+                                  ]
+                                }
+                              ]
+                            },
+                            "ifThenElse"
+                          ]
+                        },
+                        {
+                          "==": [
+                            "count",
+                            "2"
+                          ]
+                        },
+                        {
+                          "()": [
+                            {
+                              ".": [
+                                {
+                                  "()": [
+                                    "guard",
+                                    {
+                                      "()": [
+                                        "products.contains",
+                                        "op"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "ifThenElse"
+                              ]
+                            },
+                            {
+                              ">=": [
+                                "count",
+                                "2"
+                              ]
+                            },
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Local",
+            "name": "leaf",
+            "valueType": "Boolean",
+            "value": {
+              "()": [
+                "form.textOrEmpty.fold",
+                "false",
+                {
+                  "\\": [
+                    "text",
+                    "text.trim.nonEmpty"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Local",
+            "name": "nested",
+            "valueType": {
+              "->": [
+                "Dracon",
+                "Boolean"
+              ]
+            },
+            "value": {
+              "\\": [
+                "operand",
+                {
+                  "()": [
+                    "wellFormed",
+                    "operand"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": "Boolean",
+            "value": {
+              "||": [
+                "leaf",
+                {
+                  "&&": [
+                    "arity",
+                    {
+                      "()": [
+                        "operands.forall",
+                        "nested"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Dynamic",
+        "name": "leaves",
+        "valueType": {
+          "[]": [
+            "Text"
+          ]
+        },
+        "parameters": [
+          {
+            "kind": "Parameter",
+            "name": "form",
+            "valueType": "Dracon"
+          }
+        ],
+        "body": [
+          {
+            "kind": "Local",
+            "name": "items",
+            "valueType": {
+              "->": [
+                "Text",
+                {
+                  "[]": [
+                    "Dracon"
+                  ]
+                }
+              ]
+            },
+            "value": {
+              "\\": [
+                "key",
+                {
+                  "()": [
+                    {
+                      ".": [
+                        {
+                          "()": [
+                            "form.field",
+                            "key"
+                          ]
+                        },
+                        "itemsOrEmpty",
+                        "fold"
+                      ]
+                    },
+                    {
+                      "[]": [
+                        {
+                          "()": [
+                            "form.field",
+                            "key"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "\\": [
+                        "members",
+                        "members"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Local",
+            "name": "operands",
+            "valueType": {
+              "[]": [
+                "Dracon"
+              ]
+            },
+            "value": {
+              "()": [
+                "form.keys.flatMap",
+                "items"
+              ]
+            }
+          },
+          {
+            "kind": "Local",
+            "name": "nested",
+            "valueType": {
+              "->": [
+                "Dracon",
+                {
+                  "[]": [
+                    "Text"
+                  ]
+                }
+              ]
+            },
+            "value": {
+              "\\": [
+                "operand",
+                {
+                  "()": [
+                    "leaves",
+                    "operand"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "Fixed",
+            "name": "value",
+            "valueType": {
+              "[]": [
+                "Text"
+              ]
+            },
+            "value": {
+              "()": [
+                "form.textOrEmpty.fold",
+                {
+                  "()": [
+                    "operands.flatMap",
+                    "nested"
+                  ]
+                },
+                {
+                  "\\": [
+                    "text",
+                    {
+                      "[]": [
+                        "text"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "Draco",
+      "namePackage": [
+        "draco"
+      ]
+    }
+  }
+}

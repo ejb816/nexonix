@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 139 chapters of development sessions between March 22 and November 14, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 142 chapters of development sessions between March 22 and November 15, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -10,6 +10,18 @@ chapters 105–112. Original records survive both observed compactions. A separa
 Claude extract closes the prior handoff boundary. The journal includes the initial premature
 handoff claim, Dev’s challenge and Codex’s correction; this repair’s final reply lies outside
 the frozen prefix. Bounded recoverability does not establish completeness beyond that prefix.
+
+**November 15 integrity checkpoint:** Chapters 140–142 continue the same session from the open turn
+of chapter 139 through five more increments under GitHub #11 — the element refusals as data (a kind
+with no keyword, a block carrying a value outside its body, a value outside the tree language, with
+Dracon's `keys` and `compact` between them) and the check on a method's formals as a core
+definition — from its own record
+([retrieval audit](sources/claude-2026-11-14-to-15-session-2-continued-audit.md)): 31 records, 16 Dev
+messages and 15 final replies, 15 completed exchanges and one open turn — Dev's third "Journal
+first", asked before the gate of the fifth increment was run. One compaction boundary is observed,
+directly after a Dev message; original messages survive on both sides and no summary supplies a
+quotation. The session was still open when the extract was frozen, so the reply to the open turn
+is not journaled.
 
 **November 14 integrity checkpoint, second update:** Chapters 137–139 continue the same session from
 the open turn of chapter 136 through three more increments under GitHub #11 — a method's formals
@@ -769,3 +781,15 @@ The emitter refuses a malformed definition before any section renders, and the s
 ### [Chapter 139 - Drake's Failure Form Is Data](draco-dev-chapter-139.md)
 
 `gendrake.RefusalOf` returns the three codec refusals as Problems and the emitter raises the first (1280, verified, uncommitted at the chapter's close). Dev answers "Journal first".
+
+### [Chapter 140 - The First Element Refusal Is Data](draco-dev-chapter-140.md)
+
+Chapters 137–139 ride in ed37e5d with the failure form. `gendrake.ElementRefusalOf` returns a kind with no keyword as a Problem over the walk `RefusalOf` makes, at 05aa585 (1291).
+
+### [Chapter 141 - The Block-Value Refusal, and What Dracon Must Read](draco-dev-chapter-141.md)
+
+The block-value refusal is data at 6e475be (1292); Dracon gains `keys` and `compact` at 101ea48 (1293).
+
+### [Chapter 142 - The Value-Tree Refusal, and the Formals Check in Core](draco-dev-chapter-142.md)
+
+`gendrake.ValueRefusalOf` at 980de86 (1305). The formals check becomes `draco.FormalsRefusalOf` (direct run 1317, Dev's gate not yet run at the chapter's close). Dev answers "Journal first".

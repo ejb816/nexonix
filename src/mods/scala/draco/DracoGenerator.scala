@@ -433,7 +433,7 @@ object DracoGenerator extends App {
   private def typeParameterScala (parameter: Json) : String = targetType(parameter).text
 
   private def methodName(d: Dynamic): String = {
-    MethodTypeParameters.validate(d)
+    FormalsRefusalOf(d).reasons.headOption.foreach(reason => throw new IllegalArgumentException(reason))
     if (d.typeParameters.isEmpty) d.name
     else d.name + d.typeParameters.map { p =>
       p.name + (if (p.lowerBound.isNull) "" else " >: " + typeParameterScala(p.lowerBound.json)) +

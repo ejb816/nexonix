@@ -88,9 +88,9 @@ class MethodTypeParameterTest extends AnyFunSuite {
       intercept[IllegalArgumentException](definition(s"dyn $name Unit ()"))
     }
     val method = Dynamic("f[T]", Json.fromString("Unit"))
-    intercept[IllegalArgumentException](MethodTypeParameters.validate(method))
+    assert(FormalsRefusalOf(method).reasons == Seq("Method 'f[T]' must declare type parameters separately"))
     val duplicate = Dynamic("f", Json.fromString("Unit"),
       _typeParameters = Seq(TypeParameter("T"), TypeParameter("T")))
-    intercept[IllegalArgumentException](MethodTypeParameters.validate(duplicate))
+    assert(FormalsRefusalOf(duplicate).reasons == Seq("Duplicate type parameters on 'f'"))
   }
 }

@@ -20,7 +20,9 @@ then cover the same session through the element renderer's verified gate, writte
 asked. Chapters 134–136 (extract and audit sources/claude-2026-11-13-to-14-session-2-continued) cover it through 180a7ab,
 written on November 14 when I answered a recommendation with "Journal first"; chapters 137–139 (extract and audit
 sources/claude-2026-11-14-session-2-continued) cover it through the failure form's verified gate, written the same day before its
-commit when I again answered "Journal first". Coverage is current through chapter 139 and only what followed that answer is not journaled.
+commit when I again answered "Journal first". Chapters 140–142 (extract and audit
+sources/claude-2026-11-14-to-15-session-2-continued) cover it through the formals check's direct run, written on November 15 before
+its gate when I answered "Journal first" a third time. Coverage is current through chapter 142 and only what followed that answer is not journaled.
 
 DEVELOPMENT RESUMES WHEN I SAY SO. Preserved and NOT accepted: the assembly of the drake surface as a definition
 (draketarget.DefinitionText owning the order of the six sections, gendrake.DefinitionOf composing the six transforms,
@@ -162,8 +164,12 @@ value-tree refusal needs before it can cross (record git-record-2026-11-14-2149)
 discovery and my full gate passed 1293 tests on November 14, the baseline 1293 tests / 93 suites. I committed it as 101ea48 and
 pushed it (6e475be..101ea48). I then accepted the next point: the value-tree refusal as the definition gendrake.ValueRefusalOf, read
 by ElementRefusalOf and Drake.expression (record git-record-2026-11-14-2202). Its direct run passed 1305 tests / 95 suites including
-discovery and my full gate passed 1305 tests on November 14, the baseline 1305 tests / 94 suites. Check `git log` for whether its
-commit and push happened; if not, settle that with me first.
+discovery and my full gate passed 1305 tests on November 14, the baseline 1305 tests / 94 suites. I committed it as 980de86 and
+pushed it (101ea48..980de86). I then accepted the next point: the formals check as the core definition draco.FormalsRefusalOf, read
+by the emitter (through ElementRefusalOf), the parser and the Scala generator, the hand-written MethodTypeParameters removed (record
+git-record-2026-11-15-0916). Its direct run passed 1317 tests / 96 suites including discovery
+and my full gate passed 1317 tests on November 15, the baseline 1317 tests / 95 suites. Check `git log` and the handoff for
+whether its commit and its push happened; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

@@ -1,0 +1,52 @@
+type FormalsRefusalOf
+  elements
+    fix reasons [Text]
+  factory
+    parameters
+      par element TypeElement
+    body
+      loc element TypeElement _element
+      loc method Boolean element.typeDefinition.typeName.name == "Dynamic"
+      loc formals [TypeParameter] element.typeParameters
+      loc names [Text] formals.map(\formal -> formal.name)
+      loc bracketed Boolean element.name.contains("[") || element.name.contains("]") || element.name.contains("(") || element.name.contains(")")
+      loc embedded [Text] guard(bracketed).ifThenElse(["Method '" ++ element.name ++ "' must declare type parameters separately"], [])
+      loc repeated [Text] guard(names.distinct.size == names.size).ifThenElse([], ["Duplicate type parameters on '" ++ element.name ++ "'"])
+      loc unnamed (TypeParameter -> [Text]) \formal -> guard(formal.name.matches("[A-Za-z_][A-Za-z0-9_]*")).ifThenElse([], ["Invalid type parameter '" ++ formal.name ++ "'"])
+      loc marked (Text -> Boolean) \leaf -> leaf.contains("<:") || leaf.contains(">:") || leaf.contains(": ")
+      loc malformed (Text -> [Text]) \owner -> ["Invalid type-form bound for '" ++ owner ++ "'"]
+      loc mistaken ((Text, Dracon) -> [Text]) \owner form -> leaves(form).filter(marked).map(\leaf -> "Invalid bound for '" ++ owner ++ "': " ++ leaf)
+      loc bounded ((Text, Dracon) -> [Text]) \owner form -> guard(form.isNull).ifThenElse([], guard(wellFormed(form)).ifThenElse(mistaken(owner, form), malformed(owner)))
+      loc judged (TypeParameter -> [Text]) \formal -> unnamed(formal) ++ bounded(formal.name, formal.lowerBound) ++ bounded(formal.name, formal.upperBound)
+      fix reasons [Text] guard(method).ifThenElse(embedded ++ repeated ++ formals.flatMap(judged), [])
+  globals
+    dyn wellFormed Boolean [
+      parameters
+        par form Dracon
+      body
+        loc keys [Text] form.keys
+        loc op Text guard(keys.size == 1).ifThenElse(keys.head, "")
+        loc operands [Dracon] form.field(op).itemsOrEmpty.fold([form.field(op)], \members -> members)
+        loc count Int operands.size
+        loc sequences [Text] ["[]", "[]+"]
+        loc sets [Text] ["{}", "{}+"]
+        loc products [Text] ["()", "(,)"]
+        loc arity Boolean guard(sequences.contains(op)).ifThenElse(count == 1, guard(sets.contains(op)).ifThenElse(count == 1 || count == 2, guard(op == "->").ifThenElse(count == 2, guard(products.contains(op)).ifThenElse(count >= 2, false))))
+        loc leaf Boolean form.textOrEmpty.fold(false, \text -> text.trim.nonEmpty)
+        loc nested (Dracon -> Boolean) \operand -> wellFormed(operand)
+        fix value Boolean leaf || arity && operands.forall(nested)
+    ]
+    dyn leaves [Text] [
+      parameters
+        par form Dracon
+      body
+        loc items (Text -> [Dracon]) \key -> form.field(key).itemsOrEmpty.fold([form.field(key)], \members -> members)
+        loc operands [Dracon] form.keys.flatMap(items)
+        loc nested (Dracon -> [Text]) \operand -> leaves(operand)
+        fix value [Text] form.textOrEmpty.fold(operands.flatMap(nested), \text -> [text])
+    ]
+uses [
+  draco drake Text
+  draco format dracon Dracon
+]
+domain draco Draco

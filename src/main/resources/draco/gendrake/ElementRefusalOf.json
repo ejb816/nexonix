@@ -8,6 +8,12 @@
   },
   "uses": [
     {
+      "name": "FormalsRefusalOf",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
       "name": "Problem",
       "namePackage": [
         "draco"
@@ -145,6 +151,72 @@
                       "Problem",
                       "subject",
                       "reason"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "informal",
+          "valueType": {
+            "->": [
+              "TypeElement",
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "member",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "FormalsRefusalOf",
+                      "member"
+                    ]
+                  },
+                  "reasons"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "malformed",
+          "valueType": {
+            "[]": [
+              "Problem"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "informal",
+                      "element"
+                    ]
+                  },
+                  "map"
+                ]
+              },
+              {
+                "\\": [
+                  "cause",
+                  {
+                    "()": [
+                      "Problem",
+                      "subject",
+                      "cause"
                     ]
                   }
                 ]
@@ -417,6 +489,7 @@
           "value": {
             "++": [
               "unkeyed",
+              "malformed",
               "unrenderable",
               "misplaced",
               {

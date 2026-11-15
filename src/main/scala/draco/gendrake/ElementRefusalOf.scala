@@ -23,6 +23,8 @@ object ElementRefusalOf extends App with DracoType {
     lazy val kind: String = element.typeDefinition.typeName.name
     lazy val reason: String = "Drake.emit: no drake keyword for element '" ++ element.name ++ "' (" ++ kind ++ ")"
     lazy val unkeyed: Seq[draco.Problem] = (if (Keyword.table.contains(kind)) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(Seq.empty, Seq(draco.Problem(subject, reason)))
+    lazy val informal: draco.TypeElement => Seq[String] = member => draco.FormalsRefusalOf(member).reasons
+    lazy val malformed: Seq[draco.Problem] = informal(element).map(cause => draco.Problem(subject, cause))
     lazy val spelled: Dracon => String = node => ExpressionOf(node).value
     lazy val branch: Boolean = kind == "Case"
     lazy val block: Boolean = kind == "Dynamic" && (element.parameters.nonEmpty || element.body.nonEmpty)
@@ -32,7 +34,7 @@ object ElementRefusalOf extends App with DracoType {
     lazy val unrenderable: Seq[draco.Problem] = refused(element.value).map(cause => draco.Problem(subject, cause))
     lazy val misplaced: Seq[draco.Problem] = (if ((branch || block) && unrenderable.isEmpty && spelled(element.value) != "") draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(Seq(draco.Problem(subject, opener ++ result)), Seq.empty)
     lazy val nested: draco.TypeElement => Seq[draco.Problem] = member => ElementRefusalOf(member, subject).problems
-    override lazy val problems: Seq[draco.Problem] = unkeyed ++ unrenderable ++ misplaced ++ element.parameters.flatMap(nested) ++ element.body.flatMap(nested)
+    override lazy val problems: Seq[draco.Problem] = unkeyed ++ malformed ++ unrenderable ++ misplaced ++ element.parameters.flatMap(nested) ++ element.body.flatMap(nested)
     override lazy val typeDefinition: TypeDefinition = ElementRefusalOf.typeDefinition
   }
 
