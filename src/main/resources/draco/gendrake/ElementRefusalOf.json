@@ -38,6 +38,14 @@
         "draco",
         "draketarget"
       ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
     }
   ],
   "dracoAspect": {
@@ -146,6 +154,162 @@
         },
         {
           "kind": "Local",
+          "name": "spelled",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "node",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ExpressionOf",
+                      "node"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "branch",
+          "valueType": "Boolean",
+          "value": {
+            "==": [
+              "kind",
+              "\"Case\""
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "block",
+          "valueType": "Boolean",
+          "value": {
+            "&&": [
+              {
+                "==": [
+                  "kind",
+                  "\"Dynamic\""
+                ]
+              },
+              {
+                "||": [
+                  "element.parameters.nonEmpty",
+                  "element.body.nonEmpty"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "result",
+          "valueType": "Text",
+          "value": "\" carries a value outside its body — the result is the body element named `value`\""
+        },
+        {
+          "kind": "Local",
+          "name": "opener",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "branch"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              "\"Drake.emit: case-branch\"",
+              {
+                "++": [
+                  "\"Drake.emit: block dyn '\"",
+                  "element.name",
+                  "\"'\""
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "misplaced",
+          "valueType": {
+            "[]": [
+              "Problem"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "&&": [
+                          {
+                            "||": [
+                              "branch",
+                              "block"
+                            ]
+                          },
+                          {
+                            "!=": [
+                              {
+                                "()": [
+                                  "spelled",
+                                  "element.value"
+                                ]
+                              },
+                              "\"\""
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "()": [
+                      "Problem",
+                      "subject",
+                      {
+                        "++": [
+                          "opener",
+                          "result"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "[]": [
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
           "name": "nested",
           "valueType": {
             "->": [
@@ -186,6 +350,7 @@
           "value": {
             "++": [
               "unkeyed",
+              "misplaced",
               {
                 "()": [
                   "element.parameters.flatMap",

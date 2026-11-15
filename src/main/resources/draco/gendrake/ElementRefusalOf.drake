@@ -11,13 +11,20 @@ type ElementRefusalOf
       loc kind Text element.typeDefinition.typeName.name
       loc reason Text "Drake.emit: no drake keyword for element '" ++ element.name ++ "' (" ++ kind ++ ")"
       loc unkeyed [Problem] guard(Keyword.table.contains(kind)).ifThenElse([], [Problem(subject, reason)])
+      loc spelled (Dracon -> Text) \node -> ExpressionOf(node).value
+      loc branch Boolean kind == "Case"
+      loc block Boolean kind == "Dynamic" && (element.parameters.nonEmpty || element.body.nonEmpty)
+      loc result Text " carries a value outside its body — the result is the body element named `value`"
+      loc opener Text guard(branch).ifThenElse("Drake.emit: case-branch", "Drake.emit: block dyn '" ++ element.name ++ "'")
+      loc misplaced [Problem] guard((branch || block) && spelled(element.value) != "").ifThenElse([Problem(subject, opener ++ result)], [])
       loc nested (TypeElement -> [Problem]) \member -> ElementRefusalOf(member, subject).problems
-      fix problems [Problem] unkeyed ++ element.parameters.flatMap(nested) ++ element.body.flatMap(nested)
+      fix problems [Problem] unkeyed ++ misplaced ++ element.parameters.flatMap(nested) ++ element.body.flatMap(nested)
 uses [
   draco Problem
   draco TypeElement
   draco TypeName
   draco drake Text
   draco draketarget Keyword
+  draco format dracon Dracon
 ]
 domain draco gendrake GenDrake

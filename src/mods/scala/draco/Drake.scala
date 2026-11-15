@@ -117,13 +117,6 @@ object Drake {
   def typeSurface (valueType: Json) : String =
     if (valueType == null) "" else draco.gendrake.SlotOf(draco.format.dracon.Dracon(valueType)).value
 
-  /** A dyn-with-body opens its own sub-block; its container needs [ ]. */
-  private def opensBlock (element: TypeElement) : Boolean = element match {
-    case d: Dynamic => d.parameters.nonEmpty || d.body.nonEmpty
-    case _: Case    => true
-    case _          => false
-  }
-
   /* The drake keyword of an element kind is read from the definition `draketarget.Keyword`
     * (2026-11-12, GitHub #11): an element carries its kind's own definition, so the kind is
     * its name — `Fixed`, `Dynamic` — and the table maps it to `fix`, `dyn`. A kind with no row
@@ -151,20 +144,14 @@ object Drake {
   // spells through `gendrake.FormalOf`; `refuseElement` validates them before anything renders.
 
   /** What the element renderer refuses and this emitter still judges by hand, checked over the
-    * whole element before anything renders: invalid method formals, a value outside the tree
-    * language, and a block — a dyn with parameters or a body, a case-branch — carrying a value
-    * outside its body. The fourth refusal, a kind with no keyword, is data since 2026-11-14:
-    * `gendrake.ElementRefusalOf` returns it as a Problem, over the same walk. */
+    * whole element before anything renders: invalid method formals and a value outside the tree
+    * language. The other two refusals are data since 2026-11-14, returned as Problems by
+    * `gendrake.ElementRefusalOf` over the same walk: a kind with no keyword, and a block — a dyn
+    * with parameters or a body, a case-branch — carrying a value outside its body. */
   private def refuseElement (element: TypeElement) : Unit = {
     if (!element.value.isNull) refuseUnrenderable(element.value.json)
     element match {
-      case d: Dynamic =>
-        MethodTypeParameters.validate(d)
-        if (opensBlock(d) && !d.value.isNull && expression(d.value).nonEmpty)
-          sys.error(s"Drake.emit: block dyn '${d.name}' carries a value outside its body — the result is the body element named `value`")
-      case c: Case =>
-        if (!c.value.isNull && expression(c.value).nonEmpty)
-          sys.error(s"Drake.emit: case-branch carries a value outside its body — the result is the body element named `value`")
+      case d: Dynamic => MethodTypeParameters.validate(d)
       case _ =>
     }
     element.parameters.foreach(refuseElement)
@@ -180,8 +167,9 @@ object Drake {
     * judged, as before. */
   private def refuseDefinition (td: TypeDefinition) : Unit = {
     // The walk and the first element refusal are a definition's (2026-11-14, GitHub #11):
-    // gendrake.RefusalOf walks the rendered elements and returns each kind with no keyword as a
-    // Problem; the first is raised here, ahead of the three refusals still judged by hand.
+    // gendrake.RefusalOf walks the rendered elements and returns each kind with no keyword, and
+    // each block carrying a value outside its body, as a Problem; the first is raised here,
+    // ahead of the two refusals still judged by hand.
     draco.gendrake.RefusalOf(td).elementProblems.headOption.foreach(problem => throw new IllegalArgumentException(problem.message))
     val aspect = td.dracoAspect
     aspect.elements.foreach(refuseElement)
@@ -246,8 +234,8 @@ object Drake {
   def emit (td: TypeDefinition) : String = {
     // The failure form is data (2026-11-14, GitHub #11): gendrake.RefusalOf returns the Problems
     // that refuse a definition a surface — its codec aspect's first (a discriminator, a duplicate
-    // or malformed payload field), then its rendered elements' (a kind with no keyword,
-    // 2026-11-14) — and the emitter raises the first, before anything renders.
+    // or malformed payload field), then its rendered elements' (a kind with no keyword, a block's
+    // value outside its body, 2026-11-14) — and the emitter raises the first, before anything renders.
     draco.gendrake.RefusalOf(td).problems.headOption.foreach(problem => throw new IllegalArgumentException(problem.message))
     definitionText(td)
   }

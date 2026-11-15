@@ -10,15 +10,17 @@ import org.scalatest.funsuite.AnyFunSuite
  *  keyword (Action, Factory, Pattern: sections, never member lines), with the message the emitter
  *  raised by hand — and recurses into its parameters and body. `gendrake.RefusalOf` walks the
  *  elements a surface renders (the type section's, a present factory's, the globals, a present
- *  rule's, a present actor's) and joins those problems after the codec refusals. The other three
- *  element refusals — invalid formals, a value outside the tree language, a block carrying a
- *  value outside its body — stay in the emitter.
+ *  rule's, a present actor's) and joins those problems after the codec refusals. The second
+ *  element refusal followed the same day: a block — a dyn with parameters or a body, a
+ *  case-branch — carrying a value outside its body. The other two — invalid formals, a value
+ *  outside the tree language — stay in the emitter.
  */
 class ElementRefusalOfTest extends AnyFunSuite {
 
   private val subject = TypeName("Probe", Seq("example"))
   private val int = Dracon.string("Int")
   private def noKeyword(name: String, kind: String) = s"Drake.emit: no drake keyword for element '$name' ($kind)"
+  private val outside = " carries a value outside its body — the result is the body element named `value`"
   private def of(element: TypeElement): Seq[String] = ElementRefusalOf(element, subject).problems.map(_.message)
 
   private val probe: String =
@@ -69,6 +71,25 @@ class ElementRefusalOfTest extends AnyFunSuite {
     assert(of(nested) == Seq(noKeyword("", "Action"), noKeyword("", "Pattern"), noKeyword("", "Pattern")))
   }
 
+  test("a block carrying a value outside its body is one Problem, with the emitter's message") {
+    val one = Dracon.string("1")
+    val method = Dynamic("d", int, _body = Seq(Fixed("value", int, one)), _value = Dracon.string("2"))
+    assert(of(method) == Seq("Drake.emit: block dyn 'd'" + outside))
+    assert(of(Dynamic("d", int, _parameters = Seq(Parameter("x", int, Dracon.Null)), _value = one)) == Seq("Drake.emit: block dyn 'd'" + outside))
+    // a leaf dyn's value is its own line; a block with no value of its own is as authored
+    assert(of(Dynamic("d", int, _value = one)).isEmpty)
+    assert(of(Dynamic("d", int, _body = Seq(Fixed("value", int, one)))).isEmpty)
+    // a case-branch is always a block
+    val message = Drake.parse(probe).actorAspect.fold(Seq.empty[TypeElement], _.message.body)
+    assert(message.flatMap(of).isEmpty)
+    val valued = TypeDefinition.decoder.decodeJson(TypeDefinition.encoder(Drake.parse(probe)).hcursor
+      .downField("actorAspect").downField("message").downField("body").downN(0).withFocus(_.mapObject(_.add("value", io.circe.Json.fromString("1")))).top.get)
+      .fold(error => fail(error.toString), identity)
+    assert(RefusalOf(valued).elementProblems.map(_.message) == Seq("Drake.emit: case-branch" + outside))
+    // nested, after its container's own problems
+    assert(of(Dynamic("outer", int, _body = Seq(method, Action()))) == Seq("Drake.emit: block dyn 'd'" + outside, noKeyword("", "Action")))
+  }
+
   test("RefusalOf walks the elements the surface renders, and no others") {
     def typed(aspect: DracoAspect) = TypeDefinition(subject, _dracoAspect = aspect)
     def count(td: TypeDefinition) = RefusalOf(td).elementProblems.size
@@ -105,12 +126,15 @@ class ElementRefusalOfTest extends AnyFunSuite {
     val both = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(Action())), _codecAspect = CodecAspect(_discriminator = "tag"))
     assert(intercept[IllegalArgumentException](Drake.emit(both)).getMessage == "Drake.emit: codec discriminator not yet emitted: Probe")
     assert(intercept[IllegalArgumentException](Drake.dracoAspectText(both)).getMessage == noKeyword("", "Action"))
-    // the three refusals still judged by hand follow the keyword refusal
     val valued = Dynamic("d", int, _body = Seq(Fixed("value", int, Dracon.string("1"))), _value = Dracon.string("2"))
     val block = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(valued)))
-    assert(intercept[RuntimeException](Drake.emit(block)).getMessage.contains("carries a value outside its body"))
-    val twoWays = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(valued, Action())))
-    assert(intercept[IllegalArgumentException](Drake.emit(twoWays)).getMessage == noKeyword("", "Action"), "the keyword refusal is judged over the whole definition first")
+    assert(intercept[IllegalArgumentException](Drake.emit(block)).getMessage == "Drake.emit: block dyn 'd'" + outside)
+    // the two refusals still judged by hand follow the definition's, over the whole definition
+    val unknown = Dracon(io.circe.Json.obj("<:" -> io.circe.Json.arr(io.circe.Json.fromString("a"), io.circe.Json.fromString("b"))))
+    val unrenderable = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(Fixed("a", int, unknown))))
+    assert(intercept[RuntimeException](Drake.emit(unrenderable)).getMessage.contains("unknown operator"))
+    val twoWays = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(Fixed("a", int, unknown), Action())))
+    assert(intercept[IllegalArgumentException](Drake.emit(twoWays)).getMessage == noKeyword("", "Action"), "the definition's refusals are judged over the whole definition first")
     assert(Drake.emit(Drake.parse(probe)) == probe)
   }
 }

@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- A block carrying a value outside its body is refused as data (GitHub #11): `gendrake.ElementRefusalOf` returns it as
+  a `draco.Problem` with the emitter's message, after the keyword problem, and the two block checks leave the
+  emitter. `ElementRefusalOfTest` adds one test.
 - The first element refusal of the drake emitter is data (GitHub #11): `gendrake.ElementRefusalOf` returns an element
   kind with no keyword as a `draco.Problem`, and `gendrake.RefusalOf` walks the elements a surface renders, joining
   those problems after the codec refusals. The message is unchanged; the refusal is now judged over the whole

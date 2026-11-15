@@ -154,7 +154,10 @@ the gate grep gained `Refusal over`; my full gate passed 1280 tests on November 
 with journal chapters 137–139, and pushed it (0b53e39..ed37e5d). I then accepted the next point: the first element refusal as data —
 gendrake.ElementRefusalOf returns a kind with no keyword as a Problem and gendrake.RefusalOf walks the rendered elements (record
 git-record-2026-11-14-2126). Its direct run passed 1291 tests / 94 suites including discovery and my full gate passed 1291 tests on November 14, the
-baseline 1291 tests / 93 suites. Check `git log` for whether its commit and push happened; if not, settle that with me first.
+baseline 1291 tests / 93 suites. I committed it as 05aa585 and pushed it (ed37e5d..05aa585). I then accepted the next point: the
+block-value refusal as data, in gendrake.ElementRefusalOf (record git-record-2026-11-14-2137). Its direct run passed 1292 tests / 94 suites
+including discovery and my full gate passed 1292 tests on November 14, the baseline 1292 tests / 93 suites. Check `git log` for
+whether its commit and push happened; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

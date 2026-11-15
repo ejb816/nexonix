@@ -10,7 +10,29 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the first element refusal as data (Claude Code, November 14, 2026; direct run 1291 / 94; Dev's gate 1291 green; commit pending)
+## Current checkpoint — the block-value refusal as data (Claude Code, November 14, 2026; direct run 1292 / 94; Dev's gate 1292 green; commit pending)
+
+Same session. HEAD 05aa585, pushed (Dev's paste: ed37e5d..05aa585, 17 files), Dev's gate 1291 tests on it; the baseline is
+1291 / 93. Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open). Record
+`git-record-2026-11-14-2137`, which also folds 05aa585.
+
+- **Built.** `gendrake.ElementRefusalOf` also returns a block (a dyn with parameters or a body, a case-branch) carrying a
+  value outside its body as a Problem, with the emitter's two messages, after the keyword problem. `refuseElement` keeps
+  the formals check and the value-tree check; `opensBlock` is removed. ElementRefusalOfTest +1, its emitter test restated.
+- **One difference.** The refusal is judged over the whole definition before the two that remain, and is raised as an
+  IllegalArgumentException.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods; the trio stable. Direct run: 1292 tests / 94 suites including
+  discovery, green on its first run. Headlines that move: Element 1147 (1394 lines), Expression 688 (506 trees, 182 leaves),
+  Slot 1131 (81 arrows), TypeForm 2196 (490 trees, 1706 leaves), type leaves 1706, host text 21 of 2937. No new corpus type
+  or grep line. Dev's first full gate on November 14: 1292 tests, zero failed, canceled, ignored or pending, every headline
+  matching the direct run; the baseline is **1292 tests / 93 suites**.
+- **In the tree, uncommitted.** The ElementRefusalOf trio, Drake.scala, ElementRefusalOfTest; CHANGELOG.md, DRACO.md,
+  README.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** The last two element refusals as Problems: invalid formals, a value outside the
+  tree language.
+- **Journal.** Current through chapter 139; uncovered is what follows Dev's second "Journal first" of November 14.
+
+## Previous checkpoint — the first element refusal as data (Claude Code, November 14, 2026; committed 05aa585, pushed)
 
 Same session. HEAD ed37e5d, pushed (Dev's paste: 0b53e39..ed37e5d, 20 files), Dev's gate 1280 tests on it; the baseline is
 1280 / 92. Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open). Record

@@ -1,0 +1,50 @@
+The block-value refusal is data: gendrake.ElementRefusalOf returns a block carrying a value outside its body as a Problem (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (open; stays open). Nothing on the tracker was touched.
+
+WHY. After 05aa585 three element refusals stayed hand-written in the emitter's `refuseElement`: invalid method formals, a
+value outside the tree language, and a block — a dyn with parameters or a body, a case-branch — carrying a value outside
+its body. The third needs only what ElementOf already reads: the kind, whether the element opens a block, and the value's
+spelling through ExpressionOf. Dev accepted "Accepted, build it" on adding it to `gendrake.ElementRefusalOf` with its two
+messages and removing it from the emitter.
+
+WHAT.
+- `gendrake.ElementRefusalOf`: `problems` is the keyword problem, then the block-value problem, then the recursion. A
+  Dynamic with parameters or a body, or a Case, whose own value spells to a non-empty text is one Problem with the
+  emitter's message, unchanged ("Drake.emit: block dyn 'd' carries a value outside its body — the result is the body
+  element named `value`", and the case-branch form). Its record gains `draco format dracon Dracon`. Drake re-authored, JSON
+  `DrakeCLI parse`, Scala `GeneratorCLI generate`; stable on the recompiled engine, as RefusalOf and GenDrake are.
+- Drake.scala: `refuseElement` keeps the formals check and the value-tree check; the two block checks and the now-unused
+  `opensBlock` are removed.
+- ElementRefusalOfTest: one test added (a block dyn with a body, with parameters, a leaf dyn and a valueless block not
+  refused, a case-branch, nesting order); the emitter test restated — the block refusal by exact message as an
+  IllegalArgumentException, a value outside the tree language as the hand-judged refusal that follows.
+
+ONE DIFFERENCE, as recommended. The block-value refusal is judged over the whole definition before the two that remain,
+and is raised as an IllegalArgumentException where it was a RuntimeException (still one, by subclass). No existing test
+outside the suite changed.
+
+PROBED IN BUILDING. The em dash and the backticks inside a quoted text, unprobed at the recommendation, are carried as
+written by the parser and the generator.
+
+NOT BUILT, not accepted: the last two element refusals as Problems (invalid method formals; a value outside the tree
+language).
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods. Direct run of every
+discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1292 tests
+/ 94 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its FIRST run (1291 + the
+one added test). Headlines that move, by ElementRefusalOf's six added lines: Element 1147 elements (1394 lines),
+Expression 688 values (506 trees, 182 leaves), Slot 1131 slots (81 arrows), TypeForm 2196 forms (490 trees, 1706 leaves),
+type leaves 1706, host text 21 leaves of 2937 in the 11 named seams. Unchanged: parse scope 130 + 73 with 0 held back,
+surface losses 0 across 203 types, DomainAspect and DracoAspect 130, GenDrake 128 of 128, 96 records, Definition 203
+surfaces from 545 sections, Refusal 203 definitions (4 carrying a payload) with 0 refused, rule 24, actor 15, 4 codec
+sections, Formal 36 formals, example gate 48 / 0, scenario 23 clean, the PON pair 42 and 7 as suspended, the rete finding
+categorical. No new corpus type, no new grep line. The tree afterwards held the intended changes only.
+
+DEV'S GATE: 1292 tests on 2026-11-14, zero failed, canceled, ignored or pending, green on its first run; every headline
+matching the direct run. The baseline is 1292 tests / 93 suites.
+
+This record also folds 05aa585 (the first element refusal as data; pushed ed37e5d..05aa585) into the shared documents.
+Journal: current through chapter 139; uncovered is what follows Dev's second "Journal first" of November 14.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

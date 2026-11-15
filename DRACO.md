@@ -65,8 +65,13 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1292 tests / 93 suites**, verified by Dev on 2026-11-14 for the block-value refusal as data (record
+`git-record-2026-11-14-2137`): `gendrake.ElementRefusalOf` returns a block carrying a value outside its body as a `draco.Problem`, the emitter's
+two block checks removed, every surface byte-identical; one test added, no suite or corpus type; Element 1147 elements in 1394 lines, Expression
+688 values, Slot 1131 slots with 81 arrows, TypeForm 2196 forms, type leaves 1706, host text 21 of 2937, every other headline unchanged; its
+direct run 1292 / 94 including discovery, green on its first run. First full Dev gate green. Before it:
 **1291 tests / 93 suites**, verified by Dev on 2026-11-14 for the first element refusal as data (record
-`git-record-2026-11-14-2126`): `gendrake.ElementRefusalOf` returns an element kind with no keyword as a `draco.Problem` and `gendrake.RefusalOf`
+`git-record-2026-11-14-2126`, committed as 05aa585, pushed): `gendrake.ElementRefusalOf` returns an element kind with no keyword as a `draco.Problem` and `gendrake.RefusalOf`
 walks the rendered elements, every surface byte-identical; eleven tests added (ElementRefusalOfTest's six, the 93rd suite, and the five per-type
 gates of the one new corpus type); parse scope 130 + 73, surface losses 0 across 203 types, 130 aspect sections, GenDrake 128 of 128, no new
 grep line; its direct run 1291 / 94 including discovery, green on its first run. First full Dev gate green. Before it:
@@ -772,8 +777,8 @@ and since the same day they render their own ELEMENTS through `ElementOf`, the e
 (`refuseDefinition`): DracoAspectOf, RuleAspectOf, ActorAspectOf and DefinitionOf receive the definition alone, and every callback the paragraphs
 above describe is gone. The FAILURE FORM is data since the same day: `gendrake.RefusalOf` returns the `draco.Problem`s that refuse a
 definition a surface — the three codec refusals first — and `Drake.emit` raises the first; the first ELEMENT refusal followed, also that day: `gendrake.ElementRefusalOf` returns a kind
-with no keyword as a Problem, recursively, over the walk of the rendered elements `RefusalOf` now makes (`codecProblems`, `elementProblems`, `problems`);
-invalid formals, a value outside the tree language and a block's value outside its body stay hand-written. No renderer of the drake surface is hand-written: the two
+with no keyword as a Problem, recursively, over the walk of the rendered elements `RefusalOf` now makes (`codecProblems`, `elementProblems`, `problems`),
+and a block carrying a value outside its body as a second; invalid formals and a value outside the tree language stay hand-written. No renderer of the drake surface is hand-written: the two
 hand-written renderers kept as test references (`handExpression`, `handElementLines`) were removed on 2026-11-13, and
 ExpressionOfTest and ElementOfTest compare the definitions with the authored surfaces instead.
 The keyword of each element kind is read from the definition
@@ -1408,7 +1413,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it: a method's formals on TypeElement, ElementOf reading them itself (record `git-record-2026-11-14-0850`, committed by Dev as ddaec87 on 2026-11-14 after the gate of 1269 green, pushed).
   After it: the element refusals ahead of rendering, no rendering dependency left (record `git-record-2026-11-14-0904`, committed by Dev as 0b53e39 on 2026-11-14 after the gate of 1269 green, pushed).
   After it: drake's failure form as data, `gendrake.RefusalOf` carrying the three codec refusals (record `git-record-2026-11-14-1258`; committed by Dev as ed37e5d on 2026-11-14 after the gate of 1280 green, pushed, journal chapters 137–139 in the same commit).
-  After it: the first element refusal as data, `gendrake.ElementRefusalOf` and the walk in `RefusalOf` (record `git-record-2026-11-14-2126`; direct run 1291 green, Dev's gate of 1291 green on 2026-11-14).
+  After it: the first element refusal as data, `gendrake.ElementRefusalOf` and the walk in `RefusalOf` (record `git-record-2026-11-14-2126`; committed by Dev as 05aa585 on 2026-11-14 after the gate of 1291 green, pushed).
+  After it: the block-value refusal as data, in `gendrake.ElementRefusalOf` (record `git-record-2026-11-14-2137`; direct run 1292 green, Dev's gate of 1292 green on 2026-11-14).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2788,6 +2794,22 @@ existing test changed. The recursion through the definition's own factory, unpro
 written. ElementRefusalOfTest (6) is the 93rd suite. One corpus type added: parse scope 130 + 73, surface losses 0 across 203
 types, 130 aspect sections, GenDrake 128 of 128; no new grep line. NOT BUILT: the other three element refusals as Problems.
 Direct run: 1291 tests / 94 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first
-run; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1291 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1291 / 93. Next on this thread, none accepted: the other
+run; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1291 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1291 / 93. Committed by Dev as 05aa585 and pushed the same day (ed37e5d..05aa585). Next on this thread, none accepted: the other
 three element refusals. The journal is current through chapter 139. EgoActor and scripts/inspect-type.scala observed only;
 activation and .dcon deferred; PON suspended.
+
+**The block-value refusal is data (2026-11-14, Claude Code; GitHub #11, the issue open).** The next related point after 05aa585.
+MEASURED: of the three element refusals left in `refuseElement`, a block carrying a value outside its body needs only what
+ElementOf already reads — the kind, whether the element opens a block, the value's spelling through ExpressionOf. Dev accepted
+"Accepted, build it". BUILT: `gendrake.ElementRefusalOf` reports the keyword problem, then the block-value problem (a Dynamic
+with parameters or a body, or a Case, whose own value spells to a non-empty text; the emitter's two messages unchanged), then
+the recursion; `refuseElement` keeps the formals check and the value-tree check, and `opensBlock` leaves Drake.scala. The trio
+is stable; `DrakeCLI check` reads drift 0 over main and mods. ONE DIFFERENCE: the refusal is judged over the whole definition
+before the two that remain, and raised as an IllegalArgumentException. The em dash and backticks in a quoted text, unprobed at
+the recommendation, are carried as written. ElementRefusalOfTest +1, its emitter test restated; no corpus type added, no new
+grep line. Direct run: 1292 tests / 94 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on
+its first run; headlines that move, by the definition's six added lines: Element 1147 elements (1394 lines), Expression 688
+values (506 trees, 182 leaves), Slot 1131 slots (81 arrows), TypeForm 2196 forms (490 trees, 1706 leaves), type leaves 1706,
+host text 21 of 2937; every other headline unchanged; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1292 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1292 / 93.
+Next on this thread, none accepted: the last two element refusals (formals; a value outside the tree language). The journal is
+current through chapter 139. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
