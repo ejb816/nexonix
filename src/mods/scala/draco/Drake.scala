@@ -244,13 +244,10 @@ object Drake {
     if (scope == null) emit(td) else emit(td, scope)
 
   def emit (td: TypeDefinition) : String = {
-    // The three guards stay here: they refuse before anything renders, and drake has no
-    // failure form for a transform to carry them.
-    if (td.codecAspect.discriminator.nonEmpty)
-      sys.error(s"Drake.emit: codec discriminator not yet emitted: ${td.typeName.name}")
-    val payload = td.codecAspect.payload
-    require(payload.distinct.size == payload.size, s"Drake.emit: duplicate payload field in ${td.typeName.name}")
-    require(payload.forall(_.matches("[A-Za-z_][A-Za-z0-9_]*")), s"Drake.emit: invalid payload field in ${td.typeName.name}")
+    // The failure form is data (2026-11-14, GitHub #11): gendrake.RefusalOf returns the Problems
+    // a definition's codec aspect raises — a discriminator, a duplicate or malformed payload
+    // field — and the emitter raises the first, before anything renders.
+    draco.gendrake.RefusalOf(td).problems.headOption.foreach(problem => throw new IllegalArgumentException(problem.message))
     definitionText(td)
   }
 
@@ -261,8 +258,8 @@ object Drake {
     * definition. Of the four rendering dependencies it first received, the three type spellings
     * left on 2026-11-14 (the transforms read TypeFormOf and SlotOf themselves), and element rendering
     * the same day, once the element refusals were made ahead of rendering: DefinitionOf receives
-    * the definition alone. What stays hand-written in this emitter is the guards above and the
-    * refusals; every renderer is a definition and no second hand-written copy remains (2026-11-13). */
+    * the definition alone. What stays hand-written in this emitter is the element
+    * refusals (the codec refusals are gendrake.RefusalOf's since 2026-11-14); every renderer is a definition and no second hand-written copy remains (2026-11-13). */
   private[draco] def definitionText (td: TypeDefinition) : String = {
     refuseDefinition(td)
     draco.gendrake.DefinitionOf(td).value

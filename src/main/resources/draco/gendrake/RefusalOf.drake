@@ -1,0 +1,20 @@
+type RefusalOf
+  elements
+    fix problems [Problem]
+  factory
+    parameters
+      par definition TypeDefinition
+    body
+      loc definition TypeDefinition _definition
+      loc subject TypeName definition.typeName
+      loc payload [Text] definition.codecAspect.payload
+      loc wellFormed Boolean payload.forall(\field -> field.matches("[A-Za-z_][A-Za-z0-9_]*"))
+      loc refusal ((Boolean, Text) -> [Problem]) \accepted reason -> guard(accepted).ifThenElse([], [Problem(subject, reason ++ subject.name)])
+      fix problems [Problem] refusal(definition.codecAspect.discriminator.isEmpty, "Drake.emit: codec discriminator not yet emitted: ") ++ refusal(payload.distinct.size == payload.size, "Drake.emit: duplicate payload field in ") ++ refusal(wellFormed, "Drake.emit: invalid payload field in ")
+uses [
+  draco Problem
+  draco TypeDefinition
+  draco TypeName
+  draco drake Text
+]
+domain draco gendrake GenDrake

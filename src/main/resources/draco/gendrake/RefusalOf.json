@@ -1,0 +1,213 @@
+{
+  "typeName": {
+    "name": "RefusalOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Problem",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeName",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "problems",
+        "valueType": {
+          "[]": [
+            "Problem"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "RefusalOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "definition",
+          "valueType": "TypeDefinition"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "definition",
+          "valueType": "TypeDefinition",
+          "value": "_definition"
+        },
+        {
+          "kind": "Local",
+          "name": "subject",
+          "valueType": "TypeName",
+          "value": "definition.typeName"
+        },
+        {
+          "kind": "Local",
+          "name": "payload",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": "definition.codecAspect.payload"
+        },
+        {
+          "kind": "Local",
+          "name": "wellFormed",
+          "valueType": "Boolean",
+          "value": {
+            "()": [
+              "payload.forall",
+              {
+                "\\": [
+                  "field",
+                  {
+                    "()": [
+                      "field.matches",
+                      "\"[A-Za-z_][A-Za-z0-9_]*\""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "refusal",
+          "valueType": {
+            "->": [
+              {
+                "(,)": [
+                  "Boolean",
+                  "Text"
+                ]
+              },
+              {
+                "[]": [
+                  "Problem"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "accepted",
+              "reason",
+              {
+                "()": [
+                  {
+                    ".": [
+                      {
+                        "()": [
+                          "guard",
+                          "accepted"
+                        ]
+                      },
+                      "ifThenElse"
+                    ]
+                  },
+                  {
+                    "[]": [
+                    ]
+                  },
+                  {
+                    "[]": [
+                      {
+                        "()": [
+                          "Problem",
+                          "subject",
+                          {
+                            "++": [
+                              "reason",
+                              "subject.name"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "problems",
+          "valueType": {
+            "[]": [
+              "Problem"
+            ]
+          },
+          "value": {
+            "++": [
+              {
+                "()": [
+                  "refusal",
+                  "definition.codecAspect.discriminator.isEmpty",
+                  "\"Drake.emit: codec discriminator not yet emitted: \""
+                ]
+              },
+              {
+                "()": [
+                  "refusal",
+                  {
+                    "==": [
+                      "payload.distinct.size",
+                      "payload.size"
+                    ]
+                  },
+                  "\"Drake.emit: duplicate payload field in \""
+                ]
+              },
+              {
+                "()": [
+                  "refusal",
+                  "wellFormed",
+                  "\"Drake.emit: invalid payload field in \""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

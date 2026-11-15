@@ -1,0 +1,62 @@
+Drake's failure form is data: gendrake.RefusalOf returns the codec refusals as Problems, and the emitter raises the first (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (open; stays open). Nothing on the tracker was touched.
+
+WHY. After 0b53e39 what was still hand-written on the emit side was refusal alone: the three codec guards in `Drake.emit`
+and the element refusals. They had stayed because drake has no way for a definition to raise. Draco already has a way to
+REPORT: `draco.Problem` (a subject and a message), which the validation rules produce. Dev accepted "Accepted, build it" on
+the recommendation that the failure form be data — a definition returns the problems, the emitter raises when there are
+any — starting with the three codec guards, the element refusals to follow as points of their own.
+
+WHAT.
+- New trio `gendrake.RefusalOf`: factory `par definition TypeDefinition`, one element `problems [Problem]`. It reports, in
+  the order the emitter judged them, a codec discriminator (drake has no syntax for one), a duplicate payload field and a
+  payload field that is not a name, each one Problem whose subject is the definition's name and whose message is the
+  emitter's, unchanged. Authored in drake with its `uses` record, JSON `DrakeCLI parse`, Scala `GeneratorCLI generate`;
+  listed by GenDrake, whose trio moves with it. Both generated files stable on the recompiled engine.
+- Drake.scala: `emit` reads `RefusalOf(td).problems` and raises the first message; the three hand-written guards are
+  removed. The parser's own two payload checks (`Drake.parse: …`) are untouched.
+- RefusalOfTest (6), the 92nd suite: nothing to refuse; each refusal with its message and subject; all three reported in
+  order; the definition read once and lazily; the live emitter raising the first; no definition of the corpus refused.
+
+ONE DIFFERENCE. The two payload guards were `require`s, so their message carried the host prefix "requirement failed: ";
+the emitter now raises every refusal as an IllegalArgumentException with the Problem's message alone. The discriminator
+refusal was a RuntimeException and still is one (by subclass). No existing test changed.
+
+PROBED IN BUILDING. The pattern match on a text (`field.matches("…")`), unprobed at the recommendation, is carried as a
+call tree and generates as written. ONE SHAPE CHANGE the parser forced: a lambda binder named `message` is read as the
+actor section's keyword ("a lambda has no arrow"), so the binder is `reason` (DRACO.md §6).
+
+NOT BUILT, not accepted: the element refusals (`refuseDefinition`, `refuseElement`, `refuseUnrenderable`, `bareKeyword`)
+as Problems; they stay hand-written in the emitter.
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods. Direct run of every
+discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1280 tests
+/ 93 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its FIRST run (1269 + the
+five per-type gates of the one new corpus type + RefusalOfTest's six). Headlines that move, by the one corpus type:
+parse scope 129 + 73 with 0 held back, surface losses 0 across 202 types, DomainAspect and DracoAspect 129, GenDrake 127
+of 127, 95 records, Definition 202 surfaces from 542 sections, Element 1120 elements (1367 lines), Expression 666 values
+(489 trees, 177 leaves), Slot 1103 slots (77 arrows), TypeForm 2148 forms (474 trees, 1674 leaves), type leaves 1674,
+host text 21 leaves of 2844 in the 11 named seams; new: `Refusal over the corpus: 202 definitions (4 carrying a
+payload), 0 refused`, added to the gate grep. Unchanged: rule 24, actor 15, 4 codec sections, Formal 36 formals (33
+lists, 7 bounded), example gate 48 / 0, scenario 23 clean, the PON pair 42 and 7 as suspended, the rete finding
+categorical. The tree afterwards held the intended changes only.
+
+DEV'S GATE: 1280 tests on 2026-11-14, zero failed, canceled, ignored or pending, green on its first run; every headline
+matching the direct run, the new `Refusal over the corpus: 202 definitions (4 carrying a payload), 0 refused` line as
+expected. The baseline is 1280 tests / 92 suites.
+
+This record also folds 0b53e39 (the refusals ahead of rendering; pushed ddaec87..0b53e39) into the shared documents.
+JOURNAL, IN THIS COMMIT. Asked whether to write the chapters before committing, Dev answered "Journal first". Chapters
+137–139 cover the session from the open turn of chapter 136 through this increment's verified gate, from ORIGINAL message
+records of session 92b66875-d6a1-4bde-bc3d-a3186065293e: 137, chapters 134–136 committed (73f77c8) and a method's formals
+on TypeElement (ddaec87); 138, the refusals ahead of rendering (0b53e39); 139, this increment through Dev's gate, the
+second "Journal first" the open turn. One bounded extract and one retrieval audit under draco-dev-journal/sources/
+(claude-2026-11-14-session-2-continued): 21 records, 11 Dev messages (5 assertive, 6 responsive pastes) and 10 final
+replies, 10 completed exchanges, one open turn; two compaction boundaries, originals on both sides of each, no summary
+quoted; every record re-read from its source line and matched on uuid, timestamp and text hash (21 of 21); frozen prefix
+through line 4809. The introduction's count, checkpoint paragraph and index are updated; the `draco-docs-synced-through`
+markers advance to chapter 139, each chapter's Status having been read against DRACO.md and README, whose dated text
+already carries the three increments. Uncovered is only what follows that answer.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

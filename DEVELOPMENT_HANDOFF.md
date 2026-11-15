@@ -3,14 +3,39 @@
 Refreshed November 10, 2026 by Claude Code in the session that RECEIVED the handoff below and did its first task: the
 journal is current through chapter 127, through chapter 129 since that session journaled itself the same day, and through
 chapter 133 since November 13, when it journaled the renderer thread before the element renderer's commit, and through
-chapter 136 since November 14 (see the current checkpoint). The checkpoint that follows this paragraph's section was prepared earlier the same day
+chapter 136 and then chapter 139 since November 14 (see the current checkpoint). The checkpoint that follows this paragraph's section was prepared earlier the same day
 by the previous Claude Code session, at Dev's direction, for a NEW SESSION in either agent: Dev called the handoff when
 that session's context reached 75%, with the journal several sessions behind. It supersedes the record-and-codec, actor-section, rule-section and host-text checkpoints of the same day, the #49, #63, #47 and #50 checkpoints of November 9 and the November 8, November 6
 and November 4 checkpoints below, which stay as written as the history of this handoff; the dated sections below them are the history of the increments,
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the refusals ahead of rendering (Claude Code, November 14, 2026; Dev's gate 1269 green; commit pending)
+## Current checkpoint — drake's failure form as data (Claude Code, November 14, 2026; direct run 1280 / 93; Dev's gate 1280 green; commit pending)
+
+Same session. HEAD 0b53e39, pushed (Dev's paste: ddaec87..0b53e39, 21 files). Dev accepted ("Accepted, build it") the next
+related point under GitHub #11 (open; stays open). Record `git-record-2026-11-14-1258`, which also folds 0b53e39.
+
+- **Built.** `gendrake.RefusalOf` (one new trio, listed by GenDrake): a definition's codec refusals as `[Problem]` — a
+  discriminator, a duplicate payload field, a payload field that is not a name — with the emitter's messages. `Drake.emit`
+  raises the first and its three hand-written guards are removed. RefusalOfTest (6) is the 92nd suite.
+- **One difference.** The two payload refusals lose the host prefix "requirement failed: "; every refusal is raised as an
+  IllegalArgumentException. No existing test changed.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods; both generated files stable. Direct run: 1280 tests / 93 suites
+  including discovery, green on its first run. Headlines that move by the one corpus type: parse scope 129 + 73, losses 0
+  across 202 types, aspect sections 129, GenDrake 127 of 127, 95 records, Definition 202 surfaces from 542 sections, Element
+  1120 (1367 lines), Expression 666 (489 trees, 177 leaves), Slot 1103 (77 arrows), TypeForm 2148 (474 trees, 1674 leaves),
+  type leaves 1674, host text 21 of 2844; new `Refusal over the corpus: 202 definitions (4 carrying a payload), 0 refused`,
+  in the gate grep of DRACO.md §1. Dev's first full gate on November 14: 1280 tests, zero failed, canceled, ignored or
+  pending, every headline matching the direct run; the baseline is **1280 tests / 92 suites**.
+- **In the tree, uncommitted.** The RefusalOf trio, the GenDrake trio, Drake.scala, RefusalOfTest; chapters 137–139, their
+  extract and audit, the introduction; CHANGELOG.md, DRACO.md, README.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** The element refusals as Problems.
+- **Journal.** Current through chapter 139, written before this commit when Dev answered the commit question with "Journal
+  first" (21 records, 10 completed exchanges, one open turn, two compaction boundaries with originals on both sides; extract
+  and audit `draco-dev-journal/sources/claude-2026-11-14-session-2-continued`; markers at chapter 139). Uncovered is only what
+  follows that second "Journal first" of November 14.
+
+## Previous checkpoint — the refusals ahead of rendering (Claude Code, November 14, 2026; committed 0b53e39, pushed)
 
 Same session. HEAD ddaec87, pushed (Dev's paste: 73f77c8..ddaec87, 17 files). Dev accepted ("Accepted, build it") the next
 related point under GitHub #11 (open; stays open). Record `git-record-2026-11-14-0904`, which also folds ddaec87.
@@ -23,8 +48,6 @@ related point under GitHub #11 (open; stays open). Record `git-record-2026-11-14
   92 suites including discovery, green on its first run. Headlines that move: Element 1112 elements (1359 lines),
   Expression 660 values (486 trees, 174 leaves), Slot 1094 slots (76 arrows), TypeForm 2131 forms (468 trees, 1663 leaves),
   type leaves 1663, host text 21 of 2818. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline stays 1269 / 91.
-- **In the tree, uncommitted.** The four transform trios; Drake.scala; two test files; CHANGELOG.md, DRACO.md, README.md,
-  this file, the resume prompt, the record.
 - **Next on this thread, none accepted.** A failure form for the guards and refusals.
 - **Journal.** Current through chapter 136; uncovered is what follows Dev's "Journal first" of November 14.
 

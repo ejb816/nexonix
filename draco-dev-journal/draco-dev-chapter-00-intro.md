@@ -1,6 +1,6 @@
 # Draco Dev Journal — Introduction
 
-This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 136 chapters of development sessions between March 22 and November 14, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
+This journal documents the collaborative development of Draco, a self-describing domain-driven rule engine, across 139 chapters of development sessions between March 22 and November 14, 2026. An earlier session predating the journal (where initial companion object consistency work began) is referenced in Chapter 2 but was not captured. The sessions record Dev (the framework's creator) working with Claude and, in the latest chapters, Codex, capturing not just the code changes but the reasoning, missteps, and discoveries along the way. Chapters disclose where missing dialogue requires a factual summary instead.
 
 ## Journal Conventions
 
@@ -10,6 +10,17 @@ chapters 105–112. Original records survive both observed compactions. A separa
 Claude extract closes the prior handoff boundary. The journal includes the initial premature
 handoff claim, Dev’s challenge and Codex’s correction; this repair’s final reply lies outside
 the frozen prefix. Bounded recoverability does not establish completeness beyond that prefix.
+
+**November 14 integrity checkpoint, second update:** Chapters 137–139 continue the same session from
+the open turn of chapter 136 through three more increments under GitHub #11 — a method's formals
+declared on TypeElement, the element refusals made once ahead of rendering, and drake's failure form
+as data — from its own record
+([retrieval audit](sources/claude-2026-11-14-session-2-continued-audit.md)): 21 records, 11 Dev
+messages and 10 final replies, 10 completed exchanges and one open turn — Dev's second "Journal
+first", asked before the third increment's commit. Two compaction boundaries are observed, each
+directly after a Dev message; original messages survive on both sides of each and no summary
+supplies a quotation. The session was still open when the extract was frozen, so the reply to the
+open turn is not journaled.
 
 **November 14 integrity checkpoint:** Chapters 134–136 continue the same session from the open turn
 of chapter 133 through three more increments under GitHub #11 — the reference renderers removed, the
@@ -746,3 +757,15 @@ The spelling of a formal type parameter becomes `gendrake.FormalOf` at 9d1e6cf (
 ### [Chapter 136 - The Section Transforms Spell Their Own Types](draco-dev-chapter-136.md)
 
 The value-type slot rule becomes `gendrake.SlotOf` and the section transforms lose their three type-spelling dependencies at 180a7ab (1269). Formals on TypeElement are recommended; Dev answers "Journal first".
+
+### [Chapter 137 - The Journal First, Then a Method's Formals on TypeElement](draco-dev-chapter-137.md)
+
+Chapters 134–136 are committed at 73f77c8. `typeParameters` is declared on TypeElement and ElementOf reads a method's formals itself at ddaec87 (1269).
+
+### [Chapter 138 - The Emitter Refuses Once, Ahead of Rendering](draco-dev-chapter-138.md)
+
+The emitter refuses a malformed definition before any section renders, and the section transforms render their own elements, at 0b53e39 (1269).
+
+### [Chapter 139 - Drake's Failure Form Is Data](draco-dev-chapter-139.md)
+
+`gendrake.RefusalOf` returns the three codec refusals as Problems and the emitter raises the first (1280, verified, uncommitted at the chapter's close). Dev answers "Journal first".

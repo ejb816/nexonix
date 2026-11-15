@@ -673,7 +673,9 @@ directions:
   `gendrake.ElementOf` (it reads a method's formals from the element, `typeParameters` being declared on TypeElement
   since 2026-11-14, and `gendrake.FormalOf` spells each formal for it and for the type header); since 2026-11-14 the section transforms spell their own types through
   `TypeFormOf` and `gendrake.SlotOf`, the value-type slot rule, and their own elements through `gendrake.ElementOf`, the
-  emitter refusing a malformed definition once, ahead of rendering, and passing them nothing but the definition. The remaining
+  emitter refusing a malformed definition once, ahead of rendering, and passing them nothing but the definition; and the failure form
+  is data — `gendrake.RefusalOf` returns the codec refusals as `draco.Problem`s and the emitter raises the first, the element
+  refusals still hand-written. The remaining
   aspects, and the Scala target transforms remain to be developed.
 - **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
   runs through an emitter whose Draco and domain section mappings are definition-backed; the remaining
@@ -829,7 +831,9 @@ link checker are version-controlled alongside these documents. Either agent can
 read the skill directly from the checkout; automatic discovery is not required.
 Other `.draco` contents, including local settings and worktrees, remain ignored.
 
-Journal coverage reaches chapter 136 (November 14, 2026): chapters 134–136 continue the same session through the
+Journal coverage reaches chapter 139 (November 14, 2026): chapters 137–139 continue the same session through a
+method's formals on TypeElement, the refusals ahead of rendering and the failure form as data, with their own
+extract and audit. Chapters 134–136 continue it through the
 reference renderers' removal and the formal spelling and slot rule as definitions, with their own extract and audit.
 Chapters 130–133 continue that session through the
 renderer thread — the dead type converter, the type-form, expression and element renderers and the fixity and
@@ -879,7 +883,7 @@ figure unchanged: Create and Update as verbs over the abstract Latent shape, and
 moved into four Editor-domain rules over an Accepted fact, the actor thinned to a membrane and codec
 eligibility made transitive.
 
-<!-- draco-docs-synced-through: chapter 136 -->
+<!-- draco-docs-synced-through: chapter 139 -->
 
 Role slots now carry `Presence(RuleAspect)` and `Presence(ActorAspect)`. The containing
 record omits an Absent field and writes a Present aspect directly as its existing JSON

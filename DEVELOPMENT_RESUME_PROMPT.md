@@ -18,8 +18,9 @@ sources/claude-2026-11-10-session-2), written before the sixth increment's commi
 through chapter 129 for that stretch. Chapters 130–133 (extract and audit sources/claude-2026-11-10-to-13-session-2-continued)
 then cover the same session through the element renderer's verified gate, written on November 13 before its commit after I
 asked. Chapters 134–136 (extract and audit sources/claude-2026-11-13-to-14-session-2-continued) cover it through 180a7ab,
-written on November 14 when I answered a recommendation with "Journal first"; coverage is current through chapter 136 and only
-what followed that answer is not journaled.
+written on November 14 when I answered a recommendation with "Journal first"; chapters 137–139 (extract and audit
+sources/claude-2026-11-14-session-2-continued) cover it through the failure form's verified gate, written the same day before its
+commit when I again answered "Journal first". Coverage is current through chapter 139 and only what followed that answer is not journaled.
 
 DEVELOPMENT RESUMES WHEN I SAY SO. Preserved and NOT accepted: the assembly of the drake surface as a definition
 (draketarget.DefinitionText owning the order of the six sections, gendrake.DefinitionOf composing the six transforms,
@@ -146,8 +147,11 @@ Its direct run passed 1269 tests / 92 suites including discovery, no test added,
 I committed it as ddaec87 and pushed it (73f77c8..ddaec87). I then accepted the next point: the emitter refuses a malformed
 definition once, ahead of rendering, and the section transforms render their own elements through ElementOf, receiving the
 definition alone (record git-record-2026-11-14-0904). Its direct run passed 1269 tests / 92 suites including discovery, no test
-added, and my full gate passed 1269 tests on November 14. Check `git log` for whether its commit and push are recorded; if not,
-settle that with me first.
+added, and my full gate passed 1269 tests on November 14. I committed it as 0b53e39 and pushed it (ddaec87..0b53e39). I then
+accepted the next point: drake's failure form as data — gendrake.RefusalOf returns the three codec refusals as Problems and the
+emitter raises the first (record git-record-2026-11-14-1258). Its direct run passed 1280 tests / 93 suites including discovery;
+the gate grep gained `Refusal over`; my full gate passed 1280 tests on November 14, the baseline 1280 tests / 92 suites. Check `git log`
+for whether its commit and push happened; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

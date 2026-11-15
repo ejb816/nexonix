@@ -65,8 +65,13 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1280 tests / 92 suites**, verified by Dev on 2026-11-14 for drake's failure form as data (record
+`git-record-2026-11-14-1258`): `gendrake.RefusalOf` returns the three codec refusals as `draco.Problem`s and `Drake.emit` raises the first,
+every surface byte-identical; eleven tests added (RefusalOfTest's six, the 92nd suite, and the five per-type gates of the one new corpus
+type); parse scope 129 + 73, surface losses 0 across 202 types, 129 aspect sections, GenDrake 127 of 127, the `Refusal over` line in the gate
+grep; its direct run 1280 / 93 including discovery, green on its first run. First full Dev gate green. Before it:
 **1269 tests / 91 suites**, verified by Dev on 2026-11-14 for the element refusals made once ahead of rendering (record
-`git-record-2026-11-14-0904`): the section transforms render their own elements through ElementOf and receive the definition alone, no test
+`git-record-2026-11-14-0904`, committed as 0b53e39, pushed): the section transforms render their own elements through ElementOf and receive the definition alone, no test
 or corpus type added; Element 1112 elements in 1359 lines, Expression 660 values, Slot 1094 slots with 76 arrows, TypeForm 2131 forms, type
 leaves 1663, host text 21 of 2818, every other headline unchanged; its direct run 1269 / 92 including discovery, green on its first run.
 First full Dev gate green. Before it, the same **1269 tests / 91 suites**,
@@ -431,7 +436,7 @@ logger, not to the per-suite files, so they have to be caught off stdout (a file
 pending-surface count, sat below until 2026-11-03, when a missing surface became a per-type failure):
 
 ```bash
-sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|Expression over|Element over|Formal over|Slot over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
+sbt test 2>&1 | tee /tmp/sbt-test.log | grep -E "GEN MAP|surface losses|parse scope|host text|type leaves|PON CORPUS|CANONICAL|scenario in|forest runs|GenDrake runs|DomainAspect over|DracoAspect over|RuleAspect over|ActorAspect over|Uses over|CodecAspect over|Definition over|TypeForm over|Expression over|Element over|Formal over|Slot over|Refusal over|CO-DECLARATION|error|Failed|FAILED|^\[info\] Tests:"
 ```
 
 | test | headline | baseline |
@@ -760,7 +765,8 @@ section transforms spell their own TYPES: a type form through `TypeFormOf`, a va
 parenthesized when an arrow is at the top), so DracoAspectOf, DomainAspectOf, ActorAspectOf and DefinitionOf receive no type spelling
 and since the same day they render their own ELEMENTS through `ElementOf`, the emitter refusing a malformed definition once, ahead of rendering
 (`refuseDefinition`): DracoAspectOf, RuleAspectOf, ActorAspectOf and DefinitionOf receive the definition alone, and every callback the paragraphs
-above describe is gone. No renderer of the drake surface is hand-written: the two
+above describe is gone. The FAILURE FORM is data since the same day: `gendrake.RefusalOf` returns the `draco.Problem`s that refuse a
+definition a surface — the three codec refusals first — and `Drake.emit` raises the first; the element refusals stay hand-written. No renderer of the drake surface is hand-written: the two
 hand-written renderers kept as test references (`handExpression`, `handElementLines`) were removed on 2026-11-13, and
 ExpressionOfTest and ElementOfTest compare the definitions with the authored surfaces instead.
 The keyword of each element kind is read from the definition
@@ -1367,12 +1373,12 @@ first fails the gate, the regeneration follows, the second is green).
 
 ## 5. Documentation status
 
-Current documentation was reconciled through journal chapter 136 on 2026-11-14.
+Current documentation was reconciled through journal chapter 139 on 2026-11-14.
 Dates below distinguish that reconciliation from earlier rewrites; always check
 claims against the code rather than treating a historical audit as permanent validation:
 
-- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 136 on
-  2026-11-13.** The canonical architecture doc, written in draco's own vocabulary rather than any
+- **`README.md`** — **rewritten and verified 2026-08-15, synced through journal chapter 139 on
+  2026-11-14.** The canonical architecture doc, written in draco's own vocabulary rather than any
   target's, with a *Language-specific residues* table recording every place a host term still leaks.
 - **`GETTING_STARTED_TARGET_*.md`** — **rewritten 2026-08-17**, one guide per target:
   `SCALA` (realized), `HASKELL` and `TYPESCRIPT` (stubs holding structure and open
@@ -1393,7 +1399,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it: the section transforms spelling their own types, `gendrake.SlotOf` (record `git-record-2026-11-14-0007`, committed by Dev as 180a7ab on 2026-11-14 after the gate of 1269 green, pushed).
   After it, documentation only: journal chapters 134–136 (record `git-record-2026-11-14-0845`, committed by Dev as 73f77c8, pushed).
   After it: a method's formals on TypeElement, ElementOf reading them itself (record `git-record-2026-11-14-0850`, committed by Dev as ddaec87 on 2026-11-14 after the gate of 1269 green, pushed).
-  After it: the element refusals ahead of rendering, no rendering dependency left (record `git-record-2026-11-14-0904`; Dev's gate of 1269 green on 2026-11-14, commit to follow).
+  After it: the element refusals ahead of rendering, no rendering dependency left (record `git-record-2026-11-14-0904`, committed by Dev as 0b53e39 on 2026-11-14 after the gate of 1269 green, pushed).
+  After it: drake's failure form as data, `gendrake.RefusalOf` carrying the three codec refusals (record `git-record-2026-11-14-1258`; direct run 1280 green, Dev's gate of 1280 green on 2026-11-14).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -1540,6 +1547,8 @@ auto-memory, `.claude`/`.draco` settings) lives outside this file.
   member (`TypeFormOf(x).value`) and a `*` tree (`step * level`) are generated as quoted strings. Bind the expression as
   a function and apply it (`loc typed (Dracon -> Text) \form -> TypeFormOf(form).value`), as ElementOf does (2026-11-12).
   The `*` case is a generator defect, observed and not fixed.
+- **`message` is a section keyword, so it cannot be a lambda binder.** `\accepted message -> …` fails with "a lambda has no arrow":
+  the parser stops the binder list at the actor section's word. Name it `reason` (RefusalOf, 2026-11-14).
 - **`now` is a reserved word everywhere, including as a binding name.** A body binding called `now` is
   read as the strictness marker; name the thing `wave`, `current`, anything else (2026-10-12).
 - **A self-declaration is keyed by name and package, parameters free.** `Format(F)` self-declares as
@@ -1618,7 +1627,7 @@ older quotations when extending an already-journaled task, but preserve historic
 Prefer a new development task at a verified increment boundary after the handoff is
 current, not solely because compaction occurred. No task is created automatically.
 
-<!-- draco-docs-synced-through: chapter 136 -->
+<!-- draco-docs-synced-through: chapter 139 -->
 
 **Role presence increment (2026-10-22, Codex; Dev verified 857 / 61).** Dev accepted Presence-typed
 rule/actor slots and their field-level encoding. Absent omits the key; Present writes its
@@ -2730,6 +2739,27 @@ the transform built from the definition alone); no test or corpus type added. `D
 walk and one call. Direct run: 1269 tests / 92 suites including discovery, zero failed, canceled, ignored, pending or aborted,
 green on its first run; headlines that move, by the five elements net removed: Element 1112 elements (1359 lines), Expression
 660 values (486 trees, 174 leaves), Slot 1094 slots (76 arrows), TypeForm 2131 forms (468 trees, 1663 leaves), type leaves
-1663, host text 21 of 2818; every other headline unchanged; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline stays 1269 / 91. Next on this thread, none accepted: a failure form for the guards and refusals, the last hand-written part of the
+1663, host text 21 of 2818; every other headline unchanged; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1269 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline stays 1269 / 91. Committed by Dev as 0b53e39 and pushed the same day (ddaec87..0b53e39). Next on this thread, none accepted: a failure form for the guards and refusals, the last hand-written part of the
 emit side. The journal is current through chapter 136. EgoActor and scripts/inspect-type.scala observed only; activation and
 .dcon deferred; PON suspended.
+
+**Drake's failure form is data; the codec refusals are a definition's (2026-11-14, Claude Code; GitHub #11, the issue open).** The
+next related point after 0b53e39. MEASURED: what was still hand-written on the emit side was refusal alone — three codec guards in
+`Drake.emit` and the element refusals — kept there because a definition cannot raise; `draco.Problem` already carries a subject and
+a message. Dev accepted "Accepted, build it" on a failure form that is data, starting with the three guards. BUILT:
+`gendrake.RefusalOf` (factory `par definition TypeDefinition`, one element `problems [Problem]`: a discriminator, a duplicate
+payload field, a payload field that is not a name, in the emitter's order and with its messages), listed by GenDrake; `Drake.emit`
+raises the first problem's message and its three guards are gone; `DrakeCLI check` reads drift 0 over main and mods, both generated
+files stable. ONE DIFFERENCE: the two payload refusals lose the host prefix "requirement failed: " and every refusal is raised as an
+IllegalArgumentException; no existing test changed. The pattern match on a text, unprobed at the recommendation, generated as
+written; a lambda binder named `message` did not parse (§6). RefusalOfTest (6) is the 92nd suite. One corpus type added: parse
+scope 129 + 73, surface losses 0 across 202 types, 129 aspect sections, GenDrake 127 of 127; the gate grep gains `Refusal over`.
+NOT BUILT: the element refusals as Problems. Direct run: 1280 tests / 93 suites including discovery, zero failed, canceled,
+ignored, pending or aborted, green on its first run; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1280 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, the new `Refusal over` line as expected, green on its first run; the baseline is 1280 / 92. Next
+on this thread, none accepted: the element refusals as Problems. THE JOURNAL was brought current through chapter 139 before the
+commit, Dev answering the commit question with "Journal first": chapters 137–139 cover the session from the open turn of chapter
+136 through this increment's verified gate, from its original record — 21 records, 10 completed exchanges, the answer itself the
+open turn, two compaction boundaries with originals on both sides of each, every record matched on uuid, timestamp and text hash —
+with one extract and audit under `draco-dev-journal/sources/` (`claude-2026-11-14-session-2-continued`); the markers advance to
+chapter 139, each chapter's Status read against this file and README. EgoActor and
+scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.

@@ -18,6 +18,13 @@ the block below.
 
 ## [Unreleased]
 
+- Journal chapters 137–139 cover November 14: a method's formals on `TypeElement`, the refusals ahead of rendering and
+  drake's failure form as data, from the session's original record, with one extract and audit under
+  `draco-dev-journal/sources/`.
+- Drake's failure form is data (GitHub #11): `gendrake.RefusalOf` returns the `draco.Problem`s that refuse a definition
+  a drake surface — a codec discriminator, a duplicate or malformed payload field — and `Drake.emit` raises the first,
+  its three hand-written guards removed. Messages are unchanged apart from the host prefix "requirement failed: " on
+  the two payload refusals; `RefusalOfTest` adds six tests.
 - The drake emitter refuses a malformed definition once, before any section renders, and the section transforms
   (`DracoAspectOf`, `RuleAspectOf`, `ActorAspectOf`, `DefinitionOf`) render their own elements through
   `gendrake.ElementOf`, receiving the definition alone (GitHub #11). No surface changes; no test added.
