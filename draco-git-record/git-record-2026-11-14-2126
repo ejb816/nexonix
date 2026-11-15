@@ -1,0 +1,57 @@
+The first element refusal is data: gendrake.ElementRefusalOf returns a kind with no keyword as a Problem, over the walk RefusalOf now makes (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (open; stays open). Nothing on the tracker was touched.
+
+WHY. After ed37e5d the codec refusals were a definition's and four element refusals stayed hand-written in the emitter's
+`refuseElement`, walked over the definition by `refuseDefinition`: a kind with no keyword, invalid method formals, a value
+outside the tree language, a block carrying a value outside its body. All four share the walk — which elements the surface
+renders, and the recursion into each element's parameters and body. Dev accepted "Accepted, build it" on moving the walk and
+the smallest refusal, the kind with no keyword, into definitions, the other three to follow as points of their own.
+
+WHAT.
+- New trio `gendrake.ElementRefusalOf`: factory `par element TypeElement`, `par subject TypeName`, one element
+  `problems [Problem]`. A kind with no row in `draketarget.Keyword.table` (Action, Factory, Pattern: sections, never member
+  lines) is one Problem with the emitter's message, unchanged; then the element's parameters and body, recursively. Authored
+  in drake with its `uses` record, JSON `DrakeCLI parse`, Scala `GeneratorCLI generate`; listed by GenDrake.
+- `gendrake.RefusalOf` gains the walk and two elements: `codecProblems` (the three refusals of ed37e5d), `elementProblems`
+  (ElementRefusalOf over the type section's elements, a PRESENT factory's parameters and body, the globals, a present
+  rule's variables, conditions and action, a present actor's three blocks — the elements `refuseDefinition` walks, in its
+  order) and `problems`, the two joined, codec first. An absent factory's or role's elements are not judged, as before.
+- Drake.scala: `refuseDefinition` raises the first of `RefusalOf(td).elementProblems` before the three refusals it still
+  judges by hand; `emit` keeps raising the first of `problems`; `bareKeyword` is removed and `refuseElement` no longer calls it.
+- The §6 generation order was followed (ElementRefusalOf generated and compiled, then RefusalOf and GenDrake); all three
+  trios stable on the recompiled engine.
+- ElementRefusalOfTest (6), the 93rd suite: keyed kinds at any depth; each unkeyed kind with its message and subject; the
+  recursion in order; the walk (present and absent factory, globals, rule, actor, codec first); the element read once and
+  lazily; the live emitter and its three section entry points raising the first problem, the hand-judged refusals after it.
+
+ONE DIFFERENCE, as recommended. The keyword refusal is judged over the whole definition before the other three, so a
+definition malformed in two ways may raise a different first message (the new suite pins the case); and it is raised as an
+IllegalArgumentException where it was a RuntimeException (still one, by subclass). No existing test changed.
+
+PROBED IN BUILDING. The definition recursing through its own factory with a carried `subject`, unprobed at the
+recommendation, generated and compiled as written. Two names avoided as section keywords: the elements are
+`codecProblems` and `elementProblems`, the bindings `ruled` and `acted`.
+
+NOT BUILT, not accepted: the other three element refusals as Problems (formals; a value outside the tree language; a
+block's value outside its body).
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods. Direct run of every
+discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1291 tests
+/ 94 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its FIRST run (1280 + the
+five per-type gates of the one new corpus type + ElementRefusalOfTest's six). Headlines that move, by the one corpus type
+and RefusalOf's added lines: parse scope 130 + 73 with 0 held back, surface losses 0 across 203 types, DomainAspect and
+DracoAspect 130, GenDrake 128 of 128, 96 records, Definition 203 surfaces from 545 sections, Element 1141 elements (1388
+lines), Expression 682 values (501 trees, 181 leaves), Slot 1125 slots (80 arrows), TypeForm 2187 forms (488 trees, 1699
+leaves), type leaves 1699, host text 21 leaves of 2907 in the 11 named seams, `Refusal over the corpus: 203 definitions
+(4 carrying a payload), 0 refused`. Unchanged: rule 24, actor 15, 4 codec sections, Formal 36 formals (33 lists, 7
+bounded), example gate 48 / 0, scenario 23 clean, the PON pair 42 and 7 as suspended, the rete finding categorical. No new
+grep line. The tree afterwards held the intended changes only.
+
+DEV'S GATE: 1291 tests on 2026-11-14, zero failed, canceled, ignored or pending, green on its first run; every headline
+matching the direct run. The baseline is 1291 tests / 93 suites.
+
+This record also folds ed37e5d (the failure form as data, with journal chapters 137–139; pushed 0b53e39..ed37e5d) into the
+shared documents. Journal: current through chapter 139; uncovered is what follows Dev's second "Journal first" of November 14.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

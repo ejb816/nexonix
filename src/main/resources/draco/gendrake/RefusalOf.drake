@@ -1,5 +1,7 @@
 type RefusalOf
   elements
+    fix codecProblems [Problem]
+    fix elementProblems [Problem]
     fix problems [Problem]
   factory
     parameters
@@ -10,11 +12,25 @@ type RefusalOf
       loc payload [Text] definition.codecAspect.payload
       loc wellFormed Boolean payload.forall(\field -> field.matches("[A-Za-z_][A-Za-z0-9_]*"))
       loc refusal ((Boolean, Text) -> [Problem]) \accepted reason -> guard(accepted).ifThenElse([], [Problem(subject, reason ++ subject.name)])
-      fix problems [Problem] refusal(definition.codecAspect.discriminator.isEmpty, "Drake.emit: codec discriminator not yet emitted: ") ++ refusal(payload.distinct.size == payload.size, "Drake.emit: duplicate payload field in ") ++ refusal(wellFormed, "Drake.emit: invalid payload field in ")
+      loc aspect DracoAspect definition.dracoAspect
+      loc slot (Dracon -> Text) \form -> SlotOf(form).value
+      loc made [TypeElement] guard(slot(aspect.factory.valueType).nonEmpty).ifThenElse(aspect.factory.parameters ++ aspect.factory.body, [])
+      loc ruled RuleAspect definition.ruleAspect.fold(RuleAspect.Null, \present -> present)
+      loc acted ActorAspect definition.actorAspect.fold(ActorAspect.Null, \present -> present)
+      loc rendered [TypeElement] aspect.elements ++ made ++ aspect.globalElements ++ ruled.pattern.variables ++ ruled.pattern.conditions ++ ruled.action.body ++ acted.start.body ++ acted.message.body ++ acted.signal.body
+      loc refused (TypeElement -> [Problem]) \element -> ElementRefusalOf(element, subject).problems
+      fix codecProblems [Problem] refusal(definition.codecAspect.discriminator.isEmpty, "Drake.emit: codec discriminator not yet emitted: ") ++ refusal(payload.distinct.size == payload.size, "Drake.emit: duplicate payload field in ") ++ refusal(wellFormed, "Drake.emit: invalid payload field in ")
+      fix elementProblems [Problem] rendered.flatMap(refused)
+      fix problems [Problem] codecProblems ++ elementProblems
 uses [
+  draco ActorAspect
+  draco DracoAspect
   draco Problem
+  draco RuleAspect
   draco TypeDefinition
+  draco TypeElement
   draco TypeName
   draco drake Text
+  draco format dracon Dracon
 ]
 domain draco gendrake GenDrake

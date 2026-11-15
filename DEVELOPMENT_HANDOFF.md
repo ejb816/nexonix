@@ -10,7 +10,33 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — drake's failure form as data (Claude Code, November 14, 2026; direct run 1280 / 93; Dev's gate 1280 green; commit pending)
+## Current checkpoint — the first element refusal as data (Claude Code, November 14, 2026; direct run 1291 / 94; Dev's gate 1291 green; commit pending)
+
+Same session. HEAD ed37e5d, pushed (Dev's paste: 0b53e39..ed37e5d, 20 files), Dev's gate 1280 tests on it; the baseline is
+1280 / 92. Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open). Record
+`git-record-2026-11-14-2126`, which also folds ed37e5d.
+
+- **Built.** `gendrake.ElementRefusalOf` (one new trio, listed by GenDrake): an element kind with no keyword as a Problem,
+  with the emitter's message, recursively over parameters and body. `gendrake.RefusalOf` gains the walk of the rendered
+  elements and carries `codecProblems`, `elementProblems` and `problems` (codec first). `refuseDefinition` raises the first
+  element problem ahead of the three refusals it still judges by hand; `bareKeyword` is removed. ElementRefusalOfTest (6) is
+  the 93rd suite.
+- **One difference.** The keyword refusal is judged over the whole definition before the other three, and is raised as an
+  IllegalArgumentException. No existing test changed.
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods; all three trios stable. Direct run: 1291 tests / 94 suites
+  including discovery, green on its first run. Headlines that move: parse scope 130 + 73, losses 0 across 203 types, aspect
+  sections 130, GenDrake 128 of 128, 96 records, Definition 203 surfaces from 545 sections, Element 1141 (1388 lines),
+  Expression 682 (501 trees, 181 leaves), Slot 1125 (80 arrows), TypeForm 2187 (488 trees, 1699 leaves), type leaves 1699,
+  host text 21 of 2907, Refusal 203 definitions (4 carrying a payload), 0 refused. No new grep line. Dev's first full gate
+  on November 14: 1291 tests, zero failed, canceled, ignored or pending, every headline matching the direct run; the
+  baseline is **1291 tests / 93 suites**.
+- **In the tree, uncommitted.** The ElementRefusalOf trio, the RefusalOf and GenDrake trios, Drake.scala,
+  ElementRefusalOfTest; CHANGELOG.md, DRACO.md, README.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** The other three element refusals as Problems: invalid formals, a value outside
+  the tree language, a block's value outside its body.
+- **Journal.** Current through chapter 139; uncovered is what follows Dev's second "Journal first" of November 14.
+
+## Previous checkpoint — drake's failure form as data (Claude Code, November 14, 2026; committed ed37e5d, pushed)
 
 Same session. HEAD 0b53e39, pushed (Dev's paste: ddaec87..0b53e39, 21 files). Dev accepted ("Accepted, build it") the next
 related point under GitHub #11 (open; stays open). Record `git-record-2026-11-14-1258`, which also folds 0b53e39.

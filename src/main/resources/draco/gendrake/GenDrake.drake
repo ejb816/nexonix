@@ -18,6 +18,7 @@ domain draco gendrake GenDrake
     FormalOf
     SlotOf
     RefusalOf
+    ElementRefusalOf
     Emit
     Emitter
   ]

@@ -49,6 +49,7 @@
       "FormalOf",
       "SlotOf",
       "RefusalOf",
+      "ElementRefusalOf",
       "Emit",
       "Emitter"
     ],

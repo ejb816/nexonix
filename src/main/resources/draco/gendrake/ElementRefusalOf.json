@@ -1,0 +1,216 @@
+{
+  "typeName": {
+    "name": "ElementRefusalOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Problem",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeElement",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeName",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Keyword",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "problems",
+        "valueType": {
+          "[]": [
+            "Problem"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ElementRefusalOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "element",
+          "valueType": "TypeElement"
+        },
+        {
+          "kind": "Parameter",
+          "name": "subject",
+          "valueType": "TypeName"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "element",
+          "valueType": "TypeElement",
+          "value": "_element"
+        },
+        {
+          "kind": "Local",
+          "name": "subject",
+          "valueType": "TypeName",
+          "value": "_subject"
+        },
+        {
+          "kind": "Local",
+          "name": "kind",
+          "valueType": "Text",
+          "value": "element.typeDefinition.typeName.name"
+        },
+        {
+          "kind": "Local",
+          "name": "reason",
+          "valueType": "Text",
+          "value": {
+            "++": [
+              "\"Drake.emit: no drake keyword for element '\"",
+              "element.name",
+              "\"' (\"",
+              "kind",
+              "\")\""
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "unkeyed",
+          "valueType": {
+            "[]": [
+              "Problem"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        "()": [
+                          "Keyword.table.contains",
+                          "kind"
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "()": [
+                      "Problem",
+                      "subject",
+                      "reason"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "nested",
+          "valueType": {
+            "->": [
+              "TypeElement",
+              {
+                "[]": [
+                  "Problem"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "member",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ElementRefusalOf",
+                      "member",
+                      "subject"
+                    ]
+                  },
+                  "problems"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "problems",
+          "valueType": {
+            "[]": [
+              "Problem"
+            ]
+          },
+          "value": {
+            "++": [
+              "unkeyed",
+              {
+                "()": [
+                  "element.parameters.flatMap",
+                  "nested"
+                ]
+              },
+              {
+                "()": [
+                  "element.body.flatMap",
+                  "nested"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

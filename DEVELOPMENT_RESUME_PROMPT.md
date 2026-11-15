@@ -150,8 +150,11 @@ definition alone (record git-record-2026-11-14-0904). Its direct run passed 1269
 added, and my full gate passed 1269 tests on November 14. I committed it as 0b53e39 and pushed it (ddaec87..0b53e39). I then
 accepted the next point: drake's failure form as data — gendrake.RefusalOf returns the three codec refusals as Problems and the
 emitter raises the first (record git-record-2026-11-14-1258). Its direct run passed 1280 tests / 93 suites including discovery;
-the gate grep gained `Refusal over`; my full gate passed 1280 tests on November 14, the baseline 1280 tests / 92 suites. Check `git log`
-for whether its commit and push happened; if not, settle that with me first.
+the gate grep gained `Refusal over`; my full gate passed 1280 tests on November 14, the baseline 1280 tests / 92 suites. I committed it as ed37e5d,
+with journal chapters 137–139, and pushed it (0b53e39..ed37e5d). I then accepted the next point: the first element refusal as data —
+gendrake.ElementRefusalOf returns a kind with no keyword as a Problem and gendrake.RefusalOf walks the rendered elements (record
+git-record-2026-11-14-2126). Its direct run passed 1291 tests / 94 suites including discovery and my full gate passed 1291 tests on November 14, the
+baseline 1291 tests / 93 suites. Check `git log` for whether its commit and push happened; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning
 issue named and its remaining scope checked against the tree, for accept-or-correct. Touch nothing on the tracker before I decide. A docs point already

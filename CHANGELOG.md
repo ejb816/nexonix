@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- The first element refusal of the drake emitter is data (GitHub #11): `gendrake.ElementRefusalOf` returns an element
+  kind with no keyword as a `draco.Problem`, and `gendrake.RefusalOf` walks the elements a surface renders, joining
+  those problems after the codec refusals. The message is unchanged; the refusal is now judged over the whole
+  definition before the three still hand-written. `ElementRefusalOfTest` adds six tests.
 - Journal chapters 137–139 cover November 14: a method's formals on `TypeElement`, the refusals ahead of rendering and
   drake's failure form as data, from the session's original record, with one extract and audit under
   `draco-dev-journal/sources/`.

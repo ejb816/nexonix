@@ -124,16 +124,12 @@ object Drake {
     case _          => false
   }
 
-  /** The keyword of an element's KIND, read from the definition `draketarget.Keyword`
+  /* The drake keyword of an element kind is read from the definition `draketarget.Keyword`
     * (2026-11-12, GitHub #11): an element carries its kind's own definition, so the kind is
-    * its name — `Fixed`, `Dynamic` — and the table maps it to `fix`, `dyn`. Until then this
-    * was a match on the host class, which a definition in main could not make. A kind with
-    * no row (Action, Factory, Pattern: sections, never member lines) is refused as before. */
-  private def bareKeyword (element: TypeElement) : String = {
-    val kind = element.typeDefinition.typeName.name
-    draco.draketarget.Keyword.table.getOrElse (kind,
-      sys.error(s"Drake.emit: no drake keyword for element '${element.name}' ($kind)"))
-  }
+    * its name — `Fixed`, `Dynamic` — and the table maps it to `fix`, `dyn`. A kind with no row
+    * (Action, Factory, Pattern: sections, never member lines) is refused by
+    * `gendrake.ElementRefusalOf` since 2026-11-14, as a Problem; the lookup that raised here
+    * (`bareKeyword`) is gone. */
 
   /* HOW AN ELEMENT RENDERS (the rule `gendrake.ElementOf` carries). One element at `level` (2 spaces per level). A leaf renders one line;
     * a dyn-with-body BRACKETS its own body (drake.dlt BRACKETS) — its parameters
@@ -154,12 +150,12 @@ object Drake {
   // since 2026-11-14, empty for every kind but a method), which `gendrake.ElementOf` reads and
   // spells through `gendrake.FormalOf`; `refuseElement` validates them before anything renders.
 
-  /** What the element renderer refuses, checked over the whole element before anything
-    * renders (drake has no failure form, so the definition cannot raise): a kind with no
-    * keyword, invalid method formals, a value outside the tree language, and a block — a dyn
-    * with parameters or a body, a case-branch — carrying a value outside its body. */
+  /** What the element renderer refuses and this emitter still judges by hand, checked over the
+    * whole element before anything renders: invalid method formals, a value outside the tree
+    * language, and a block — a dyn with parameters or a body, a case-branch — carrying a value
+    * outside its body. The fourth refusal, a kind with no keyword, is data since 2026-11-14:
+    * `gendrake.ElementRefusalOf` returns it as a Problem, over the same walk. */
   private def refuseElement (element: TypeElement) : Unit = {
-    bareKeyword(element)
     if (!element.value.isNull) refuseUnrenderable(element.value.json)
     element match {
       case d: Dynamic =>
@@ -183,6 +179,10 @@ object Drake {
     * element the surface does not render — an absent factory's, an absent role's — is not
     * judged, as before. */
   private def refuseDefinition (td: TypeDefinition) : Unit = {
+    // The walk and the first element refusal are a definition's (2026-11-14, GitHub #11):
+    // gendrake.RefusalOf walks the rendered elements and returns each kind with no keyword as a
+    // Problem; the first is raised here, ahead of the three refusals still judged by hand.
+    draco.gendrake.RefusalOf(td).elementProblems.headOption.foreach(problem => throw new IllegalArgumentException(problem.message))
     val aspect = td.dracoAspect
     aspect.elements.foreach(refuseElement)
     if (typeSurface(aspect.factory.valueType.json).nonEmpty) {
@@ -245,8 +245,9 @@ object Drake {
 
   def emit (td: TypeDefinition) : String = {
     // The failure form is data (2026-11-14, GitHub #11): gendrake.RefusalOf returns the Problems
-    // a definition's codec aspect raises — a discriminator, a duplicate or malformed payload
-    // field — and the emitter raises the first, before anything renders.
+    // that refuse a definition a surface — its codec aspect's first (a discriminator, a duplicate
+    // or malformed payload field), then its rendered elements' (a kind with no keyword,
+    // 2026-11-14) — and the emitter raises the first, before anything renders.
     draco.gendrake.RefusalOf(td).problems.headOption.foreach(problem => throw new IllegalArgumentException(problem.message))
     definitionText(td)
   }

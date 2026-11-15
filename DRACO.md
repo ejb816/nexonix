@@ -65,8 +65,13 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1291 tests / 93 suites**, verified by Dev on 2026-11-14 for the first element refusal as data (record
+`git-record-2026-11-14-2126`): `gendrake.ElementRefusalOf` returns an element kind with no keyword as a `draco.Problem` and `gendrake.RefusalOf`
+walks the rendered elements, every surface byte-identical; eleven tests added (ElementRefusalOfTest's six, the 93rd suite, and the five per-type
+gates of the one new corpus type); parse scope 130 + 73, surface losses 0 across 203 types, 130 aspect sections, GenDrake 128 of 128, no new
+grep line; its direct run 1291 / 94 including discovery, green on its first run. First full Dev gate green. Before it:
 **1280 tests / 92 suites**, verified by Dev on 2026-11-14 for drake's failure form as data (record
-`git-record-2026-11-14-1258`): `gendrake.RefusalOf` returns the three codec refusals as `draco.Problem`s and `Drake.emit` raises the first,
+`git-record-2026-11-14-1258`, committed as ed37e5d, pushed): `gendrake.RefusalOf` returns the three codec refusals as `draco.Problem`s and `Drake.emit` raises the first,
 every surface byte-identical; eleven tests added (RefusalOfTest's six, the 92nd suite, and the five per-type gates of the one new corpus
 type); parse scope 129 + 73, surface losses 0 across 202 types, 129 aspect sections, GenDrake 127 of 127, the `Refusal over` line in the gate
 grep; its direct run 1280 / 93 including discovery, green on its first run. First full Dev gate green. Before it:
@@ -766,7 +771,9 @@ parenthesized when an arrow is at the top), so DracoAspectOf, DomainAspectOf, Ac
 and since the same day they render their own ELEMENTS through `ElementOf`, the emitter refusing a malformed definition once, ahead of rendering
 (`refuseDefinition`): DracoAspectOf, RuleAspectOf, ActorAspectOf and DefinitionOf receive the definition alone, and every callback the paragraphs
 above describe is gone. The FAILURE FORM is data since the same day: `gendrake.RefusalOf` returns the `draco.Problem`s that refuse a
-definition a surface — the three codec refusals first — and `Drake.emit` raises the first; the element refusals stay hand-written. No renderer of the drake surface is hand-written: the two
+definition a surface — the three codec refusals first — and `Drake.emit` raises the first; the first ELEMENT refusal followed, also that day: `gendrake.ElementRefusalOf` returns a kind
+with no keyword as a Problem, recursively, over the walk of the rendered elements `RefusalOf` now makes (`codecProblems`, `elementProblems`, `problems`);
+invalid formals, a value outside the tree language and a block's value outside its body stay hand-written. No renderer of the drake surface is hand-written: the two
 hand-written renderers kept as test references (`handExpression`, `handElementLines`) were removed on 2026-11-13, and
 ExpressionOfTest and ElementOfTest compare the definitions with the authored surfaces instead.
 The keyword of each element kind is read from the definition
@@ -1400,7 +1407,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it, documentation only: journal chapters 134–136 (record `git-record-2026-11-14-0845`, committed by Dev as 73f77c8, pushed).
   After it: a method's formals on TypeElement, ElementOf reading them itself (record `git-record-2026-11-14-0850`, committed by Dev as ddaec87 on 2026-11-14 after the gate of 1269 green, pushed).
   After it: the element refusals ahead of rendering, no rendering dependency left (record `git-record-2026-11-14-0904`, committed by Dev as 0b53e39 on 2026-11-14 after the gate of 1269 green, pushed).
-  After it: drake's failure form as data, `gendrake.RefusalOf` carrying the three codec refusals (record `git-record-2026-11-14-1258`; direct run 1280 green, Dev's gate of 1280 green on 2026-11-14).
+  After it: drake's failure form as data, `gendrake.RefusalOf` carrying the three codec refusals (record `git-record-2026-11-14-1258`; committed by Dev as ed37e5d on 2026-11-14 after the gate of 1280 green, pushed, journal chapters 137–139 in the same commit).
+  After it: the first element refusal as data, `gendrake.ElementRefusalOf` and the walk in `RefusalOf` (record `git-record-2026-11-14-2126`; direct run 1291 green, Dev's gate of 1291 green on 2026-11-14).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2761,5 +2769,25 @@ commit, Dev answering the commit question with "Journal first": chapters 137–1
 136 through this increment's verified gate, from its original record — 21 records, 10 completed exchanges, the answer itself the
 open turn, two compaction boundaries with originals on both sides of each, every record matched on uuid, timestamp and text hash —
 with one extract and audit under `draco-dev-journal/sources/` (`claude-2026-11-14-session-2-continued`); the markers advance to
-chapter 139, each chapter's Status read against this file and README. EgoActor and
+chapter 139, each chapter's Status read against this file and README. Committed by Dev as ed37e5d and pushed the same day
+(0b53e39..ed37e5d, 20 files), the journal chapters in the same commit. EgoActor and
 scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**The first element refusal is data; RefusalOf walks the rendered elements (2026-11-14, Claude Code; GitHub #11, the issue
+open).** The next related point after ed37e5d. MEASURED: four element refusals stayed in the emitter's `refuseElement` — a kind
+with no keyword, invalid method formals, a value outside the tree language, a block carrying a value outside its body — sharing
+one walk, `refuseDefinition`. Dev accepted "Accepted, build it" on the walk and the smallest refusal. BUILT:
+`gendrake.ElementRefusalOf` (factory `element`, `subject`; `problems [Problem]`: a kind with no row in `Keyword.table`, with the
+emitter's message, then the element's parameters and body, recursively), listed by GenDrake; `gendrake.RefusalOf` gains
+`codecProblems`, `elementProblems` (the walk over the type section's elements, a present factory's, the globals, a present
+rule's and a present actor's, in the emitter's order) and `problems`, the two joined, codec first; `refuseDefinition` raises the
+first element problem before the three refusals it still judges by hand, and `bareKeyword` leaves Drake.scala. The §6
+generation order followed, all three trios stable; `DrakeCLI check` reads drift 0 over main and mods. ONE DIFFERENCE: the
+keyword refusal is judged over the whole definition before the other three, and raised as an IllegalArgumentException; no
+existing test changed. The recursion through the definition's own factory, unprobed at the recommendation, generated as
+written. ElementRefusalOfTest (6) is the 93rd suite. One corpus type added: parse scope 130 + 73, surface losses 0 across 203
+types, 130 aspect sections, GenDrake 128 of 128; no new grep line. NOT BUILT: the other three element refusals as Problems.
+Direct run: 1291 tests / 94 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its first
+run; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1291 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1291 / 93. Next on this thread, none accepted: the other
+three element refusals. The journal is current through chapter 139. EgoActor and scripts/inspect-type.scala observed only;
+activation and .dcon deferred; PON suspended.

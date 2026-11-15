@@ -8,13 +8,37 @@
   },
   "uses": [
     {
+      "name": "ActorAspect",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "DracoAspect",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
       "name": "Problem",
       "namePackage": [
         "draco"
       ]
     },
     {
+      "name": "RuleAspect",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
       "name": "TypeDefinition",
+      "namePackage": [
+        "draco"
+      ]
+    },
+    {
+      "name": "TypeElement",
       "namePackage": [
         "draco"
       ]
@@ -31,10 +55,36 @@
         "draco",
         "drake"
       ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
     }
   ],
   "dracoAspect": {
     "elements": [
+      {
+        "kind": "Fixed",
+        "name": "codecProblems",
+        "valueType": {
+          "[]": [
+            "Problem"
+          ]
+        }
+      },
+      {
+        "kind": "Fixed",
+        "name": "elementProblems",
+        "valueType": {
+          "[]": [
+            "Problem"
+          ]
+        }
+      },
       {
         "kind": "Fixed",
         "name": "problems",
@@ -160,8 +210,171 @@
           }
         },
         {
+          "kind": "Local",
+          "name": "aspect",
+          "valueType": "DracoAspect",
+          "value": "definition.dracoAspect"
+        },
+        {
+          "kind": "Local",
+          "name": "slot",
+          "valueType": {
+            "->": [
+              "Dracon",
+              "Text"
+            ]
+          },
+          "value": {
+            "\\": [
+              "form",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "SlotOf",
+                      "form"
+                    ]
+                  },
+                  "value"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "made",
+          "valueType": {
+            "[]": [
+              "TypeElement"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      {
+                        ".": [
+                          {
+                            "()": [
+                              "slot",
+                              "aspect.factory.valueType"
+                            ]
+                          },
+                          "nonEmpty"
+                        ]
+                      }
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "++": [
+                  "aspect.factory.parameters",
+                  "aspect.factory.body"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "ruled",
+          "valueType": "RuleAspect",
+          "value": {
+            "()": [
+              "definition.ruleAspect.fold",
+              "RuleAspect.Null",
+              {
+                "\\": [
+                  "present",
+                  "present"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "acted",
+          "valueType": "ActorAspect",
+          "value": {
+            "()": [
+              "definition.actorAspect.fold",
+              "ActorAspect.Null",
+              {
+                "\\": [
+                  "present",
+                  "present"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "rendered",
+          "valueType": {
+            "[]": [
+              "TypeElement"
+            ]
+          },
+          "value": {
+            "++": [
+              "aspect.elements",
+              "made",
+              "aspect.globalElements",
+              "ruled.pattern.variables",
+              "ruled.pattern.conditions",
+              "ruled.action.body",
+              "acted.start.body",
+              "acted.message.body",
+              "acted.signal.body"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "refused",
+          "valueType": {
+            "->": [
+              "TypeElement",
+              {
+                "[]": [
+                  "Problem"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "element",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ElementRefusalOf",
+                      "element",
+                      "subject"
+                    ]
+                  },
+                  "problems"
+                ]
+              }
+            ]
+          }
+        },
+        {
           "kind": "Fixed",
-          "name": "problems",
+          "name": "codecProblems",
           "valueType": {
             "[]": [
               "Problem"
@@ -195,6 +408,36 @@
                   "\"Drake.emit: invalid payload field in \""
                 ]
               }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "elementProblems",
+          "valueType": {
+            "[]": [
+              "Problem"
+            ]
+          },
+          "value": {
+            "()": [
+              "rendered.flatMap",
+              "refused"
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "problems",
+          "valueType": {
+            "[]": [
+              "Problem"
+            ]
+          },
+          "value": {
+            "++": [
+              "codecProblems",
+              "elementProblems"
             ]
           }
         }

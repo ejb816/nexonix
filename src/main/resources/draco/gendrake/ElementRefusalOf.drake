@@ -1,0 +1,23 @@
+type ElementRefusalOf
+  elements
+    fix problems [Problem]
+  factory
+    parameters
+      par element TypeElement
+      par subject TypeName
+    body
+      loc element TypeElement _element
+      loc subject TypeName _subject
+      loc kind Text element.typeDefinition.typeName.name
+      loc reason Text "Drake.emit: no drake keyword for element '" ++ element.name ++ "' (" ++ kind ++ ")"
+      loc unkeyed [Problem] guard(Keyword.table.contains(kind)).ifThenElse([], [Problem(subject, reason)])
+      loc nested (TypeElement -> [Problem]) \member -> ElementRefusalOf(member, subject).problems
+      fix problems [Problem] unkeyed ++ element.parameters.flatMap(nested) ++ element.body.flatMap(nested)
+uses [
+  draco Problem
+  draco TypeElement
+  draco TypeName
+  draco drake Text
+  draco draketarget Keyword
+]
+domain draco gendrake GenDrake
