@@ -50,6 +50,7 @@
       "SlotOf",
       "RefusalOf",
       "ElementRefusalOf",
+      "ValueRefusalOf",
       "Emit",
       "Emitter"
     ],

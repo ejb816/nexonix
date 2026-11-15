@@ -159,7 +159,10 @@ block-value refusal as data, in gendrake.ElementRefusalOf (record git-record-202
 including discovery and my full gate passed 1292 tests on November 14, the baseline 1292 tests / 93 suites. I committed it as
 6e475be and pushed it (05aa585..6e475be). I then accepted the next point: Dracon gains `keys` and `compact`, the two inspections the
 value-tree refusal needs before it can cross (record git-record-2026-11-14-2149). Its direct run passed 1293 tests / 94 suites including
-discovery and my full gate passed 1293 tests on November 14, the baseline 1293 tests / 93 suites. Check `git log` for whether its
+discovery and my full gate passed 1293 tests on November 14, the baseline 1293 tests / 93 suites. I committed it as 101ea48 and
+pushed it (6e475be..101ea48). I then accepted the next point: the value-tree refusal as the definition gendrake.ValueRefusalOf, read
+by ElementRefusalOf and Drake.expression (record git-record-2026-11-14-2202). Its direct run passed 1305 tests / 95 suites including
+discovery and my full gate passed 1305 tests on November 14, the baseline 1305 tests / 94 suites. Check `git log` for whether its
 commit and push happened; if not, settle that with me first.
 
 WHEN DEVELOPMENT RESUMES: bring ONE recommendation — a design point behind the assembly, or another of the 22 open issues — with its owning

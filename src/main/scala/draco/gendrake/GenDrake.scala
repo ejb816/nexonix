@@ -10,7 +10,7 @@ object GenDrake extends App with DracoType {
   override lazy val typeDefinition: TypeDefinition = TypeLoader.loadType(TypeName ("GenDrake", _namePackage = Seq ("draco", "gendrake")))
   lazy val dracoType: Type[GenDrake] = Type[GenDrake] (typeDefinition)
 
-  lazy val elementTypeNames: Seq[String] = Seq ("DomainLineOf", "DomainAspectOf", "DracoAspectOf", "RuleAspectOf", "ActorAspectOf", "UsesOf", "CodecAspectOf", "DefinitionOf", "TypeFormOf", "ExpressionOf", "ElementOf", "FormalOf", "SlotOf", "RefusalOf", "ElementRefusalOf", "Emit", "Emitter")
+  lazy val elementTypeNames: Seq[String] = Seq ("DomainLineOf", "DomainAspectOf", "DracoAspectOf", "RuleAspectOf", "ActorAspectOf", "UsesOf", "CodecAspectOf", "DefinitionOf", "TypeFormOf", "ExpressionOf", "ElementOf", "FormalOf", "SlotOf", "RefusalOf", "ElementRefusalOf", "ValueRefusalOf", "Emit", "Emitter")
 
   lazy val domainType: Domain[GenDrake] = Domain[GenDrake] (typeDefinition)
 }

@@ -675,8 +675,9 @@ directions:
   `TypeFormOf` and `gendrake.SlotOf`, the value-type slot rule, and their own elements through `gendrake.ElementOf`, the
   emitter refusing a malformed definition once, ahead of rendering, and passing them nothing but the definition; and the failure form
   is data — `gendrake.RefusalOf` returns the codec refusals as `draco.Problem`s, and through `gendrake.ElementRefusalOf` an element kind with no
-  keyword and a block carrying a value outside its body, over its own walk of the rendered elements, and the emitter
-  raises the first; two element refusals are still hand-written. The remaining
+  keyword, a value outside the tree language (`gendrake.ValueRefusalOf`) and a block carrying a value outside its body,
+  over its own walk of the rendered elements, and the emitter raises the first; one refusal, a method's formals, is
+  still hand-written. The remaining
   aspects, and the Scala target transforms remain to be developed.
 - **`GenScala` as rules** — the generator transform domains exist as structure and `GenDrake`
   runs through an emitter whose Draco and domain section mappings are definition-backed; the remaining

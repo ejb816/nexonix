@@ -12,8 +12,9 @@ import org.scalatest.funsuite.AnyFunSuite
  *  elements a surface renders (the type section's, a present factory's, the globals, a present
  *  rule's, a present actor's) and joins those problems after the codec refusals. The second
  *  element refusal followed the same day: a block — a dyn with parameters or a body, a
- *  case-branch — carrying a value outside its body. The other two — invalid formals, a value
- *  outside the tree language — stay in the emitter.
+ *  case-branch — carrying a value outside its body; and the third, a value outside the tree
+ *  language, each reason of `gendrake.ValueRefusalOf` as a Problem. Invalid formals, the check
+ *  shared with the parser and the Scala generator, stays in the emitter.
  */
 class ElementRefusalOfTest extends AnyFunSuite {
 
@@ -21,6 +22,8 @@ class ElementRefusalOfTest extends AnyFunSuite {
   private val int = Dracon.string("Int")
   private def noKeyword(name: String, kind: String) = s"Drake.emit: no drake keyword for element '$name' ($kind)"
   private val outside = " carries a value outside its body — the result is the body element named `value`"
+  private val unknown = Dracon(io.circe.Json.obj("<:" -> io.circe.Json.arr(io.circe.Json.fromString("a"), io.circe.Json.fromString("b"))))
+  private val unknownOperator = "Drake.expression: unknown operator '<:' in {\"<:\":[\"a\",\"b\"]}"
   private def of(element: TypeElement): Seq[String] = ElementRefusalOf(element, subject).problems.map(_.message)
 
   private val probe: String =
@@ -90,6 +93,16 @@ class ElementRefusalOfTest extends AnyFunSuite {
     assert(of(Dynamic("outer", int, _body = Seq(method, Action()))) == Seq("Drake.emit: block dyn 'd'" + outside, noKeyword("", "Action")))
   }
 
+  test("a value outside the tree language is one Problem per reason, ahead of the block refusal") {
+    assert(of(Fixed("a", int, unknown)) == Seq(unknownOperator))
+    assert(ElementRefusalOf(Fixed("a", int, unknown), subject).problems.head.subject == subject)
+    assert(of(Fixed("a", int, Dracon(io.circe.Json.fromInt(1)))) == Seq("Drake.expression: unrenderable value 1"))
+    // inside a block, and on a block's own misplaced value: refused for the value, as the emitter judged it first
+    assert(of(Dynamic("d", int, _body = Seq(Fixed("value", int, unknown)))) == Seq(unknownOperator))
+    assert(of(Dynamic("d", int, _body = Seq(Fixed("value", int, Dracon.string("1"))), _value = unknown)) == Seq(unknownOperator))
+    assert(of(Fixed("a", int, Dracon.string("x + 1"))).isEmpty && of(Fixed("a", int)).isEmpty)
+  }
+
   test("RefusalOf walks the elements the surface renders, and no others") {
     def typed(aspect: DracoAspect) = TypeDefinition(subject, _dracoAspect = aspect)
     def count(td: TypeDefinition) = RefusalOf(td).elementProblems.size
@@ -129,11 +142,12 @@ class ElementRefusalOfTest extends AnyFunSuite {
     val valued = Dynamic("d", int, _body = Seq(Fixed("value", int, Dracon.string("1"))), _value = Dracon.string("2"))
     val block = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(valued)))
     assert(intercept[IllegalArgumentException](Drake.emit(block)).getMessage == "Drake.emit: block dyn 'd'" + outside)
-    // the two refusals still judged by hand follow the definition's, over the whole definition
-    val unknown = Dracon(io.circe.Json.obj("<:" -> io.circe.Json.arr(io.circe.Json.fromString("a"), io.circe.Json.fromString("b"))))
     val unrenderable = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(Fixed("a", int, unknown))))
-    assert(intercept[RuntimeException](Drake.emit(unrenderable)).getMessage.contains("unknown operator"))
-    val twoWays = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(Fixed("a", int, unknown), Action())))
+    assert(intercept[IllegalArgumentException](Drake.emit(unrenderable)).getMessage == unknownOperator)
+    // the one refusal still judged by hand, a method's formals, follows the definition's, over the whole definition
+    val duplicate = Dynamic("f", int, _typeParameters = Seq(TypeParameter("T"), TypeParameter("T")))
+    assert(intercept[IllegalArgumentException](Drake.emit(TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(duplicate))))).getMessage.contains("Duplicate type parameters"))
+    val twoWays = TypeDefinition(subject, _dracoAspect = DracoAspect(_elements = Seq(duplicate, Action())))
     assert(intercept[IllegalArgumentException](Drake.emit(twoWays)).getMessage == noKeyword("", "Action"), "the definition's refusals are judged over the whole definition first")
     assert(Drake.emit(Drake.parse(probe)) == probe)
   }

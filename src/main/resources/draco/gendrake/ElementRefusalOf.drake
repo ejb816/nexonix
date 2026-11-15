@@ -16,9 +16,11 @@ type ElementRefusalOf
       loc block Boolean kind == "Dynamic" && (element.parameters.nonEmpty || element.body.nonEmpty)
       loc result Text " carries a value outside its body — the result is the body element named `value`"
       loc opener Text guard(branch).ifThenElse("Drake.emit: case-branch", "Drake.emit: block dyn '" ++ element.name ++ "'")
-      loc misplaced [Problem] guard((branch || block) && spelled(element.value) != "").ifThenElse([Problem(subject, opener ++ result)], [])
+      loc refused (Dracon -> [Text]) \node -> ValueRefusalOf(node).reasons
+      loc unrenderable [Problem] refused(element.value).map(\cause -> Problem(subject, cause))
+      loc misplaced [Problem] guard((branch || block) && unrenderable.isEmpty && spelled(element.value) != "").ifThenElse([Problem(subject, opener ++ result)], [])
       loc nested (TypeElement -> [Problem]) \member -> ElementRefusalOf(member, subject).problems
-      fix problems [Problem] unkeyed ++ misplaced ++ element.parameters.flatMap(nested) ++ element.body.flatMap(nested)
+      fix problems [Problem] unkeyed ++ unrenderable ++ misplaced ++ element.parameters.flatMap(nested) ++ element.body.flatMap(nested)
 uses [
   draco Problem
   draco TypeElement

@@ -1,0 +1,366 @@
+{
+  "typeName": {
+    "name": "ValueRefusalOf",
+    "namePackage": [
+      "draco",
+      "gendrake"
+    ]
+  },
+  "uses": [
+    {
+      "name": "Text",
+      "namePackage": [
+        "draco",
+        "drake"
+      ]
+    },
+    {
+      "name": "Fixity",
+      "namePackage": [
+        "draco",
+        "draketarget"
+      ]
+    },
+    {
+      "name": "Dracon",
+      "namePackage": [
+        "draco",
+        "format",
+        "dracon"
+      ]
+    }
+  ],
+  "dracoAspect": {
+    "elements": [
+      {
+        "kind": "Fixed",
+        "name": "reasons",
+        "valueType": {
+          "[]": [
+            "Text"
+          ]
+        }
+      }
+    ],
+    "factory": {
+      "kind": "Factory",
+      "valueType": "ValueRefusalOf",
+      "parameters": [
+        {
+          "kind": "Parameter",
+          "name": "node",
+          "valueType": "Dracon"
+        }
+      ],
+      "body": [
+        {
+          "kind": "Local",
+          "name": "node",
+          "valueType": "Dracon",
+          "value": "_node"
+        },
+        {
+          "kind": "Local",
+          "name": "lambda",
+          "valueType": "Text",
+          "value": "\"\\\\\""
+        },
+        {
+          "kind": "Local",
+          "name": "structural",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "[]": [
+              "\".\"",
+              "\"()\"",
+              "lambda",
+              "\"(,)\"",
+              "\"[]\"",
+              "\"{}\"",
+              "\"=\""
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "leaf",
+          "valueType": "Boolean",
+          "value": {
+            "()": [
+              "node.textOrEmpty.fold",
+              "false",
+              {
+                "\\": [
+                  "text",
+                  "true"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "keys",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": "node.keys"
+        },
+        {
+          "kind": "Local",
+          "name": "single",
+          "valueType": "Boolean",
+          "value": {
+            "==": [
+              "keys.size",
+              "1"
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "op",
+          "valueType": "Text",
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "single"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              "keys.head",
+              "\"\""
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "known",
+          "valueType": "Boolean",
+          "value": {
+            "||": [
+              {
+                "()": [
+                  "structural.contains",
+                  "op"
+                ]
+              },
+              {
+                "()": [
+                  "Fixity.table.contains",
+                  "op"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "operands",
+          "valueType": {
+            "[]": [
+              "Dracon"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "node.field",
+                      "op"
+                    ]
+                  },
+                  "itemsOrEmpty",
+                  "fold"
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "()": [
+                      "node.field",
+                      "op"
+                    ]
+                  }
+                ]
+              },
+              {
+                "\\": [
+                  "members",
+                  "members"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "nested",
+          "valueType": {
+            "->": [
+              "Dracon",
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "operand",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ValueRefusalOf",
+                      "operand"
+                    ]
+                  },
+                  "reasons"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "unknown",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "known"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"Drake.expression: unknown operator '\"",
+                      "op",
+                      "\"' in \"",
+                      "node.compact"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "tree",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "single"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "++": [
+                  "unknown",
+                  {
+                    "()": [
+                      "operands.flatMap",
+                      "nested"
+                    ]
+                  }
+                ]
+              },
+              {
+                "[]": [
+                  {
+                    "++": [
+                      "\"Drake.expression: unrenderable value \"",
+                      "node.compact"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fixed",
+          "name": "reasons",
+          "valueType": {
+            "[]": [
+              "Text"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "guard",
+                      "leaf"
+                    ]
+                  },
+                  "ifThenElse"
+                ]
+              },
+              {
+                "[]": [
+                ]
+              },
+              "tree"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "domainAspect": {
+    "typeName": {
+      "name": "GenDrake",
+      "namePackage": [
+        "draco",
+        "gendrake"
+      ]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+type ValueRefusalOf
+  elements
+    fix reasons [Text]
+  factory
+    parameters
+      par node Dracon
+    body
+      loc node Dracon _node
+      loc lambda Text "\\"
+      loc structural [Text] [".", "()", lambda, "(,)", "[]", "{}", "="]
+      loc leaf Boolean node.textOrEmpty.fold(false, \text -> true)
+      loc keys [Text] node.keys
+      loc single Boolean keys.size == 1
+      loc op Text guard(single).ifThenElse(keys.head, "")
+      loc known Boolean structural.contains(op) || Fixity.table.contains(op)
+      loc operands [Dracon] node.field(op).itemsOrEmpty.fold([node.field(op)], \members -> members)
+      loc nested (Dracon -> [Text]) \operand -> ValueRefusalOf(operand).reasons
+      loc unknown [Text] guard(known).ifThenElse([], ["Drake.expression: unknown operator '" ++ op ++ "' in " ++ node.compact])
+      loc tree [Text] guard(single).ifThenElse(unknown ++ operands.flatMap(nested), ["Drake.expression: unrenderable value " ++ node.compact])
+      fix reasons [Text] guard(leaf).ifThenElse([], tree)
+uses [
+  draco drake Text
+  draco draketarget Fixity
+  draco format dracon Dracon
+]
+domain draco gendrake GenDrake

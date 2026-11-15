@@ -246,6 +246,72 @@
         },
         {
           "kind": "Local",
+          "name": "refused",
+          "valueType": {
+            "->": [
+              "Dracon",
+              {
+                "[]": [
+                  "Text"
+                ]
+              }
+            ]
+          },
+          "value": {
+            "\\": [
+              "node",
+              {
+                ".": [
+                  {
+                    "()": [
+                      "ValueRefusalOf",
+                      "node"
+                    ]
+                  },
+                  "reasons"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
+          "name": "unrenderable",
+          "valueType": {
+            "[]": [
+              "Problem"
+            ]
+          },
+          "value": {
+            "()": [
+              {
+                ".": [
+                  {
+                    "()": [
+                      "refused",
+                      "element.value"
+                    ]
+                  },
+                  "map"
+                ]
+              },
+              {
+                "\\": [
+                  "cause",
+                  {
+                    "()": [
+                      "Problem",
+                      "subject",
+                      "cause"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Local",
           "name": "misplaced",
           "valueType": {
             "[]": [
@@ -267,6 +333,7 @@
                               "block"
                             ]
                           },
+                          "unrenderable.isEmpty",
                           {
                             "!=": [
                               {
@@ -350,6 +417,7 @@
           "value": {
             "++": [
               "unkeyed",
+              "unrenderable",
               "misplaced",
               {
                 "()": [

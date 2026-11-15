@@ -43,27 +43,19 @@ object Drake {
     * keeps `=` as its named-argument key; the surface spells the colon.
     *
     * Since 2026-11-12 the renderer is the definition `gendrake.ExpressionOf` (GitHub #11), which
-    * reads the fixity table `draketarget.Fixity` for its parentheses. What stays here is the
-    * REFUSAL of a value outside the tree language — drake has no failure form, so the
-    * definition would spell such a node as the empty text. The hand-written renderer, kept
-    * as a test reference from 2026-11-12, was removed on 2026-11-13: ExpressionOfTest compares
-    * the definition with the authored surfaces instead. */
+    * reads the fixity table `draketarget.Fixity` for its parentheses. The REFUSAL of a value
+    * outside the tree language — an operator that is neither structural nor in the table, a
+    * value that is neither a text leaf nor a single-key node, at any depth — is a definition's
+    * too since 2026-11-14: `gendrake.ValueRefusalOf` returns the reasons as texts (there is no
+    * definition to name here) and this entry point raises the first, before anything renders.
+    * The hand-written renderer, kept as a test reference from 2026-11-12, was removed on
+    * 2026-11-13: ExpressionOfTest compares the definition with the authored surfaces instead. */
   def expression (value: Json) : String = {
-    refuseUnrenderable (value)
+    if (value != null)
+      draco.gendrake.ValueRefusalOf (draco.format.dracon.Dracon (value)).reasons.headOption.foreach (reason => throw new IllegalArgumentException (reason))
     draco.gendrake.ExpressionOf (draco.format.dracon.Dracon (value)).value
   }
 
-  private lazy val structural: Set[String] = Set (".", "()", "\\", "(,)", "[]", "{}", "=")
-
-  /** Raise on an operator outside the tree language or a value that is neither a leaf nor a
-    * single-key node, at any depth — before anything renders. */
-  private def refuseUnrenderable (value: Json) : Unit =
-    if (value != null && !value.isNull && !value.isString) value.asObject.map(_.toList) match {
-      case Some((op, operands) :: Nil) =>
-        if (!structural (op) && !fixity.contains (op)) sys.error(s"Drake.expression: unknown operator '$op' in ${value.noSpaces}")
-        operands.asArray.getOrElse(Vector(operands)).foreach(refuseUnrenderable)
-      case _ => sys.error(s"Drake.expression: unrenderable value ${value.noSpaces}")
-    }
 
   /** Split a type-expression argument list on top-level commas only
     * (commas nested in [ ], ( ), { } belong to an inner expression). */
@@ -144,12 +136,12 @@ object Drake {
   // spells through `gendrake.FormalOf`; `refuseElement` validates them before anything renders.
 
   /** What the element renderer refuses and this emitter still judges by hand, checked over the
-    * whole element before anything renders: invalid method formals and a value outside the tree
-    * language. The other two refusals are data since 2026-11-14, returned as Problems by
-    * `gendrake.ElementRefusalOf` over the same walk: a kind with no keyword, and a block — a dyn
+    * whole element before anything renders: invalid method formals, the one check shared with
+    * the parser and the Scala generator. The other three refusals are data since 2026-11-14,
+    * returned as Problems by `gendrake.ElementRefusalOf` over the same walk: a kind with no
+    * keyword, a value outside the tree language (`gendrake.ValueRefusalOf`), and a block — a dyn
     * with parameters or a body, a case-branch — carrying a value outside its body. */
   private def refuseElement (element: TypeElement) : Unit = {
-    if (!element.value.isNull) refuseUnrenderable(element.value.json)
     element match {
       case d: Dynamic => MethodTypeParameters.validate(d)
       case _ =>
@@ -167,9 +159,9 @@ object Drake {
     * judged, as before. */
   private def refuseDefinition (td: TypeDefinition) : Unit = {
     // The walk and the first element refusal are a definition's (2026-11-14, GitHub #11):
-    // gendrake.RefusalOf walks the rendered elements and returns each kind with no keyword, and
-    // each block carrying a value outside its body, as a Problem; the first is raised here,
-    // ahead of the two refusals still judged by hand.
+    // gendrake.RefusalOf walks the rendered elements and returns each kind with no keyword, each
+    // value outside the tree language and each block carrying a value outside its body as a
+    // Problem; the first is raised here, ahead of the one refusal still judged by hand.
     draco.gendrake.RefusalOf(td).elementProblems.headOption.foreach(problem => throw new IllegalArgumentException(problem.message))
     val aspect = td.dracoAspect
     aspect.elements.foreach(refuseElement)
@@ -234,8 +226,8 @@ object Drake {
   def emit (td: TypeDefinition) : String = {
     // The failure form is data (2026-11-14, GitHub #11): gendrake.RefusalOf returns the Problems
     // that refuse a definition a surface — its codec aspect's first (a discriminator, a duplicate
-    // or malformed payload field), then its rendered elements' (a kind with no keyword, a block's
-    // value outside its body, 2026-11-14) — and the emitter raises the first, before anything renders.
+    // or malformed payload field), then its rendered elements' (a kind with no keyword, a value
+    // outside the tree language, a block's value outside its body, 2026-11-14) — and the emitter raises the first, before anything renders.
     draco.gendrake.RefusalOf(td).problems.headOption.foreach(problem => throw new IllegalArgumentException(problem.message))
     definitionText(td)
   }

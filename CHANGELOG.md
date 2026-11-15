@@ -18,6 +18,10 @@ the block below.
 
 ## [Unreleased]
 
+- The refusal of a value outside drake's tree language is a definition (GitHub #11): `gendrake.ValueRefusalOf` returns
+  the reasons — an unknown operator, a value that is neither a leaf nor a single-key node — with the emitter's
+  messages; `gendrake.ElementRefusalOf` reports each as a `draco.Problem` and `Drake.expression` raises the first.
+  The emitter's one remaining hand-written refusal is a method's formals. `ValueRefusalOfTest` adds six tests.
 - `draco.format.dracon.Dracon` reads a record's own field names (`keys`, in written order, empty for anything else)
   and a value's compact text (`compact`). Nothing reads them yet; they are what the drake emitter's value-tree
   refusal needs to cross into a definition (GitHub #11). `DraconTest` adds one test.

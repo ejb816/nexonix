@@ -10,7 +10,31 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — Dracon's keys and compact text (Claude Code, November 14, 2026; direct run 1293 / 94; Dev's gate 1293 green; commit pending)
+## Current checkpoint — the value-tree refusal as a definition (Claude Code, November 14, 2026; direct run 1305 / 95; Dev's gate 1305 green; commit pending)
+
+Same session. HEAD 101ea48, pushed (Dev's paste: 6e475be..101ea48, 9 files), Dev's gate 1293 tests on it; the baseline is
+1293 / 93. Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open). Record
+`git-record-2026-11-14-2202`, which also folds 101ea48.
+
+- **Built.** `gendrake.ValueRefusalOf` (one new trio, listed by GenDrake): the reasons a value is outside the tree language,
+  as texts, with the emitter's two messages, at any depth. `gendrake.ElementRefusalOf` reports each as a Problem, between
+  the keyword and the block-value problems. `Drake.expression` raises the first reason; `refuseUnrenderable` is removed and
+  `refuseElement` keeps the formals check alone. ValueRefusalOfTest (6) is the 94th suite; ElementRefusalOfTest +1.
+- **Differences.** Judged over the whole definition before the formals check; raised as an IllegalArgumentException; a
+  block whose misplaced value is also unrenderable is refused for the value first (the recommendation had said the block).
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods; the trios stable. Direct run: 1305 tests / 95 suites including
+  discovery, green on its first run. Headlines that move: parse scope 131 + 73, losses 0 across 204 types, aspect sections
+  131, GenDrake 129 of 129, 97 records, Definition 204 surfaces from 548 sections, Element 1166 (1413 lines), Expression 705
+  (519 trees, 186 leaves), Slot 1151 (83 arrows), TypeForm 2231 (503 trees, 1728 leaves), type leaves 1728, host text 21 of
+  3010, Refusal 204 definitions with 0 refused. No new grep line. Dev's first full gate on November 14: 1305 tests, zero
+  failed, canceled, ignored or pending, every headline matching the direct run; the baseline is **1305 tests / 94 suites**.
+- **In the tree, uncommitted.** The ValueRefusalOf trio, the ElementRefusalOf and GenDrake trios, Drake.scala, the two test
+  suites; CHANGELOG.md, DRACO.md, README.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** Where the formals check lives (`MethodTypeParameters.validate`, shared by the
+  emitter, the parser and the Scala generator): the one refusal still hand-written on the emit side, a design question.
+- **Journal.** Current through chapter 139; uncovered is what follows Dev's second "Journal first" of November 14.
+
+## Previous checkpoint — Dracon's keys and compact text (Claude Code, November 14, 2026; committed 101ea48, pushed)
 
 Same session. HEAD 6e475be, pushed (Dev's paste: 05aa585..6e475be, 11 files), Dev's gate 1292 tests on it; the baseline is
 1292 / 93. Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open). Record
