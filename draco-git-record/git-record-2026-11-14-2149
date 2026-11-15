@@ -1,0 +1,45 @@
+Dracon reads a record's keys and a value's compact text: the two inspections the value-tree refusal needs (GitHub #11)
+
+OWNING ISSUE: GitHub #11 (open; stays open). Nothing on the tracker was touched.
+
+WHY. After 6e475be two element refusals stayed hand-written in the emitter. One, a value outside the tree language
+(`refuseUnrenderable`), names the unknown operator and prints the whole value in its messages, and refuses a node with
+more than one key. Dracon offered `has(name)`, `field(name)`, `isObject` and the text and list readers, but no way to read
+a record's own keys and no text of a value, so a definition could find a KNOWN operator by trying the known keys (as
+ExpressionOf does) and could not name an unknown one. Dev accepted "Accepted, build it" on adding the two inspections to
+Dracon as an increment of their own, the refusal to follow with its messages unchanged. The other refusal, invalid method
+formals, is shared by the emitter, the parser and the Scala generator; where a check shared across targets lives is a
+larger question, deferred and not recommended.
+
+WHAT.
+- `draco.format.dracon.Dracon` gains two elements: `dyn keys [Text]` — the field names of a record in their written order,
+  empty for anything else — and `dyn compact Text`, the value's compact text. Authored in drake, JSON `DrakeCLI parse`,
+  Scala `GeneratorCLI generate` (two `def`s on the trait, nothing else moved); stable on the recompiled engine.
+- DraconTest +1: the keys in order; no keys for a list, a null, a text or an empty record; an unknown operator named
+  through `keys` and printed through `compact`; the compact text of a number, a text, null and a whole document.
+- No consumer changes: nothing reads the two yet.
+
+NOT AS EXPECTED. The recommendation said Dracon's recorded host-text count in HostTextTest would move. It does not: `keys`
+is a call tree with a drake lambda and `compact` a path, neither host syntax, so the seam stays at 5 leaves and the list at
+21 in 11 definitions.
+
+NOT BUILT, not accepted: the value-tree refusal as Problems, which these two make possible; the formals check.
+
+VERIFIED before the gate: `DrakeCLI check` reads surface drift 0, json drift 0 over main and mods. Direct run of every
+discovered suite on freshly compiled classes with current main, mods and test resources on the loader roots: 1293 tests
+/ 94 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on its FIRST run (1292 + the
+one added test). Headlines that move, by Dracon's two added lines: Element 1149 elements (1396 lines), Expression 690
+values (507 trees, 183 leaves), Slot 1133 slots (81 arrows), TypeForm 2199 forms (491 trees, 1708 leaves), type leaves
+1708, host text 21 leaves of 2941 in the 11 named seams. Every other headline unchanged: parse scope 130 + 73 with 0 held
+back, surface losses 0 across 203 types, both aspect probes 130, GenDrake 128 of 128, 96 records, Definition 203 surfaces
+from 545 sections, Refusal 203 definitions with 0 refused, rule 24, actor 15, 4 codec sections, Formal 36, example gate
+48 / 0, scenario 23 clean, the PON pair 42 and 7 as suspended, the rete finding categorical. No new corpus type, no new
+grep line. The tree afterwards held the intended changes only.
+
+DEV'S GATE: 1293 tests on 2026-11-14, zero failed, canceled, ignored or pending, green on its first run; every headline
+matching the direct run. The baseline is 1293 tests / 93 suites.
+
+This record also folds 6e475be (the block-value refusal as data; pushed 05aa585..6e475be) into the shared documents.
+Journal: current through chapter 139; uncovered is what follows Dev's second "Journal first" of November 14.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

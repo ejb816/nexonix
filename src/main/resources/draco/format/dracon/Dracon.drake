@@ -4,6 +4,8 @@ type Dracon from draco format Format(Dracon)
     fix value Dracon this
     dyn isNull Boolean json.isNull
     dyn isObject Boolean json.isObject
+    dyn keys [Text] json.asObject.toSeq.flatMap(\fields -> fields.keys)
+    dyn compact Text json.noSpaces
     dyn textOrEmpty Presence(Text) presence(guard(json.isNull).ifThenElse(Some(""), json.asString))
     dyn itemsOrEmpty Presence([Dracon]) presence(guard(json.isNull).ifThenElse(Some(Seq.empty[Dracon]), json.asArray.map(_.map(Dracon(_)).toSeq)))
     dyn textsOrEmpty Presence([Text]) presence(guard(json.isNull).ifThenElse(Some(Seq.empty[String]), json.asArray.flatMap(values => if (values.forall(_.isString)) Some(values.flatMap(_.asString).toSeq) else None)))

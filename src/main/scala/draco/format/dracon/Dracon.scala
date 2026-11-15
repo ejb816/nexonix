@@ -12,6 +12,8 @@ trait Dracon extends Format[Dracon] {
   lazy val value: Dracon = this
   def isNull: Boolean = json.isNull
   def isObject: Boolean = json.isObject
+  def keys: Seq[String] = json.asObject.toSeq.flatMap(fields => fields.keys)
+  def compact: String = json.noSpaces
   def textOrEmpty: Presence[String] = ((if (json.isNull) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(Some(""), json.asString) match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
   def itemsOrEmpty: Presence[Seq[Dracon]] = ((if (json.isNull) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(Some(Seq.empty[Dracon]), json.asArray.map(_.map(Dracon(_)).toSeq)) match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })
   def textsOrEmpty: Presence[Seq[String]] = ((if (json.isNull) draco.drake.Present[Unit](()) else draco.drake.Absent[Unit]()).ifThenElse(Some(Seq.empty[String]), json.asArray.flatMap(values => if (values.forall(_.isString)) Some(values.flatMap(_.asString).toSeq) else None)) match { case Some(v) => draco.drake.Present(v); case None => draco.drake.Absent() })

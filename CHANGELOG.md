@@ -18,6 +18,9 @@ the block below.
 
 ## [Unreleased]
 
+- `draco.format.dracon.Dracon` reads a record's own field names (`keys`, in written order, empty for anything else)
+  and a value's compact text (`compact`). Nothing reads them yet; they are what the drake emitter's value-tree
+  refusal needs to cross into a definition (GitHub #11). `DraconTest` adds one test.
 - A block carrying a value outside its body is refused as data (GitHub #11): `gendrake.ElementRefusalOf` returns it as
   a `draco.Problem` with the emitter's message, after the keyword problem, and the two block checks leave the
   emitter. `ElementRefusalOfTest` adds one test.

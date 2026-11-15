@@ -62,6 +62,32 @@
       },
       {
         "kind": "Dynamic",
+        "name": "keys",
+        "valueType": {
+          "[]": [
+            "Text"
+          ]
+        },
+        "value": {
+          "()": [
+            "json.asObject.toSeq.flatMap",
+            {
+              "\\": [
+                "fields",
+                "fields.keys"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Dynamic",
+        "name": "compact",
+        "valueType": "Text",
+        "value": "json.noSpaces"
+      },
+      {
+        "kind": "Dynamic",
         "name": "textOrEmpty",
         "valueType": {
           "()": [

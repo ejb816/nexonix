@@ -42,6 +42,19 @@ class DraconTest extends AnyFunSuite {
       Seq("items", "2"), Seq("items", "0", "amount", "field")).foreach(path => assert(missing(source.select(path)), path.toString))
   }
 
+  test("a record's keys are read in order, and any value has a compact text") {
+    val source = document
+    assert(source.keys == Seq("items", "nothing", "0"), "the fields in their written order")
+    assert(source.field("items").keys.isEmpty && source.field("nothing").keys.isEmpty && Dracon.string("a").keys.isEmpty, "only a record has keys")
+    assert(Dracon.record(Seq.empty).keys.isEmpty)
+    // an operator a reader does not know can be named, which `has` over known names cannot do
+    val unknown = Dracon(Json.obj("<:" -> Json.arr(Json.fromString("a"), Json.fromString("b"))))
+    assert(unknown.keys == Seq("<:"))
+    assert(unknown.compact == """{"<:":["a","b"]}""")
+    assert(Dracon(Json.fromInt(1)).compact == "1" && Dracon.string("a").compact == "\"a\"" && Dracon.Null.compact == "null")
+    assert(source.compact == source.json.noSpaces)
+  }
+
   test("Value selects before decoding and does not evaluate the capability for a missing path") {
     var calls = 0
     val decoder = Decoder[Int](source => { calls += 1; intDecoder.decode(source) })

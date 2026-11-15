@@ -65,8 +65,13 @@ new corpus data quietly adding to a known tail. See GitHub #62 for the enforced 
 suite does not mean nothing regressed.
 
 **The baselines, originating at `87a2bb9` (2026-08-31).** The last verified full-suite baseline is
+**1293 tests / 93 suites**, verified by Dev on 2026-11-14 for Dracon's `keys` and `compact` (record
+`git-record-2026-11-14-2149`): a record's field names in written order and a value's compact text, the two inspections the value-tree refusal
+needs, no consumer changed; one test added, no suite or corpus type; Element 1149 elements in 1396 lines, Expression 690 values, Slot 1133
+slots with 81 arrows, TypeForm 2199 forms, type leaves 1708, host text 21 of 2941, every other headline unchanged; its direct run 1293 / 94
+including discovery, green on its first run. First full Dev gate green. Before it:
 **1292 tests / 93 suites**, verified by Dev on 2026-11-14 for the block-value refusal as data (record
-`git-record-2026-11-14-2137`): `gendrake.ElementRefusalOf` returns a block carrying a value outside its body as a `draco.Problem`, the emitter's
+`git-record-2026-11-14-2137`, committed as 6e475be, pushed): `gendrake.ElementRefusalOf` returns a block carrying a value outside its body as a `draco.Problem`, the emitter's
 two block checks removed, every surface byte-identical; one test added, no suite or corpus type; Element 1147 elements in 1394 lines, Expression
 688 values, Slot 1131 slots with 81 arrows, TypeForm 2196 forms, type leaves 1706, host text 21 of 2937, every other headline unchanged; its
 direct run 1292 / 94 including discovery, green on its first run. First full Dev gate green. Before it:
@@ -1414,7 +1419,8 @@ claims against the code rather than treating a historical audit as permanent val
   After it: the element refusals ahead of rendering, no rendering dependency left (record `git-record-2026-11-14-0904`, committed by Dev as 0b53e39 on 2026-11-14 after the gate of 1269 green, pushed).
   After it: drake's failure form as data, `gendrake.RefusalOf` carrying the three codec refusals (record `git-record-2026-11-14-1258`; committed by Dev as ed37e5d on 2026-11-14 after the gate of 1280 green, pushed, journal chapters 137–139 in the same commit).
   After it: the first element refusal as data, `gendrake.ElementRefusalOf` and the walk in `RefusalOf` (record `git-record-2026-11-14-2126`; committed by Dev as 05aa585 on 2026-11-14 after the gate of 1291 green, pushed).
-  After it: the block-value refusal as data, in `gendrake.ElementRefusalOf` (record `git-record-2026-11-14-2137`; direct run 1292 green, Dev's gate of 1292 green on 2026-11-14).
+  After it: the block-value refusal as data, in `gendrake.ElementRefusalOf` (record `git-record-2026-11-14-2137`; committed by Dev as 6e475be on 2026-11-14 after the gate of 1292 green, pushed).
+  After it: Dracon's `keys` and `compact`, the inspections the value-tree refusal needs (record `git-record-2026-11-14-2149`; direct run 1293 green, Dev's gate of 1293 green on 2026-11-14).
   Before it, 2026-11-10 after the single type-form renderer (record `git-record-2026-11-10-1714`, committed by Dev as e8dbd11 after his gate of 1200 green, pushed): the emitter's string-era type
   respelling removed, sentient Path authored `Primal([Waypoint])`, `TypeLeafTest` asserting every type leaf is a name, #11 open.
   Before it, the same day, after the definition-backed assembly of the drake surface (record `git-record-2026-11-10-1527`):
@@ -2810,6 +2816,23 @@ the recommendation, are carried as written. ElementRefusalOfTest +1, its emitter
 grep line. Direct run: 1292 tests / 94 suites including discovery, zero failed, canceled, ignored, pending or aborted, green on
 its first run; headlines that move, by the definition's six added lines: Element 1147 elements (1394 lines), Expression 688
 values (506 trees, 182 leaves), Slot 1131 slots (81 arrows), TypeForm 2196 forms (490 trees, 1706 leaves), type leaves 1706,
-host text 21 of 2937; every other headline unchanged; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1292 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1292 / 93.
+host text 21 of 2937; every other headline unchanged; the tree afterwards held the intended changes only. Dev's first full gate on 2026-11-14: 1292 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1292 / 93. Committed by Dev as 6e475be and pushed the same day (05aa585..6e475be).
 Next on this thread, none accepted: the last two element refusals (formals; a value outside the tree language). The journal is
 current through chapter 139. EgoActor and scripts/inspect-type.scala observed only; activation and .dcon deferred; PON suspended.
+
+**Dracon reads a record's keys and a value's compact text (2026-11-14, Claude Code; GitHub #11, the issue open).** The next
+related point after 6e475be. MEASURED: of the two element refusals still hand-written, a value outside the tree language names
+the unknown operator and prints the value in its messages, and Dracon offered no way to read a record's own keys or a value's
+text — a definition can find a KNOWN operator by trying the known keys, as ExpressionOf does, and cannot name an unknown one;
+the other, invalid method formals, is shared by the emitter, the parser and the Scala generator, a larger question, deferred.
+Dev accepted "Accepted, build it" on the two inspections as an increment of their own. BUILT: `Dracon` gains `dyn keys [Text]`
+(a record's field names in written order, empty for anything else) and `dyn compact Text` (the value's compact text); the trio
+re-authored, parsed and regenerated, two `def`s on the trait; no consumer changed. NOT AS EXPECTED: the seam count in
+HostTextTest does not move — neither body is host syntax — so Dracon stays at 5 leaves. DraconTest +1; no corpus type, no new
+grep line. `DrakeCLI check` reads drift 0 over main and mods. Direct run: 1293 tests / 94 suites including discovery, zero
+failed, canceled, ignored, pending or aborted, green on its first run; headlines that move, by the two added lines: Element
+1149 elements (1396 lines), Expression 690 values (507 trees, 183 leaves), Slot 1133 slots (81 arrows), TypeForm 2199 forms
+(491 trees, 1708 leaves), type leaves 1708, host text 21 of 2941; every other headline unchanged; the tree afterwards held the
+intended changes only. Dev's first full gate on 2026-11-14: 1293 tests, zero failed, canceled, ignored or pending, every headline matching the direct run, green on its first run; the baseline is 1293 / 93. Next on this thread, none accepted: the value-tree refusal as Problems; the formals
+check deferred. The journal is current through chapter 139. EgoActor and scripts/inspect-type.scala observed only; activation
+and .dcon deferred; PON suspended.

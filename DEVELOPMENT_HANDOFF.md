@@ -10,7 +10,27 @@ and November 4 checkpoints below, which stay as written as the history of this h
 kept as written. Git records, commits and journal chapters retain their historical evidence. No
 destination session has been launched or messaged, and no private agent memory is required.
 
-## Current checkpoint — the block-value refusal as data (Claude Code, November 14, 2026; direct run 1292 / 94; Dev's gate 1292 green; commit pending)
+## Current checkpoint — Dracon's keys and compact text (Claude Code, November 14, 2026; direct run 1293 / 94; Dev's gate 1293 green; commit pending)
+
+Same session. HEAD 6e475be, pushed (Dev's paste: 05aa585..6e475be, 11 files), Dev's gate 1292 tests on it; the baseline is
+1292 / 93. Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open). Record
+`git-record-2026-11-14-2149`, which also folds 6e475be.
+
+- **Built.** `draco.format.dracon.Dracon` gains `dyn keys [Text]` (a record's field names in written order, empty for
+  anything else) and `dyn compact Text` (the value's compact text). No consumer changed. DraconTest +1.
+- **Why.** The value-tree refusal's messages name an unknown operator and print the value; a definition could do neither.
+- **Not as expected.** HostTextTest's seam count for Dracon does not move (5 leaves; 21 in 11 definitions).
+- **Evidence.** `DrakeCLI check` drift 0 over main and mods; the trio stable. Direct run: 1293 tests / 94 suites including
+  discovery, green on its first run. Headlines that move: Element 1149 (1396 lines), Expression 690 (507 trees, 183 leaves),
+  Slot 1133 (81 arrows), TypeForm 2199 (491 trees, 1708 leaves), type leaves 1708, host text 21 of 2941. No new corpus type
+  or grep line. Dev's first full gate on November 14: 1293 tests, zero failed, canceled, ignored or pending, every headline
+  matching the direct run; the baseline is **1293 tests / 93 suites**.
+- **In the tree, uncommitted.** The Dracon trio, DraconTest; CHANGELOG.md, DRACO.md, this file, the resume prompt, the record.
+- **Next on this thread, none accepted.** The value-tree refusal as Problems, reading `keys` and `compact`. Deferred, not
+  recommended: the formals check, shared by the emitter, the parser and the Scala generator.
+- **Journal.** Current through chapter 139; uncovered is what follows Dev's second "Journal first" of November 14.
+
+## Previous checkpoint — the block-value refusal as data (Claude Code, November 14, 2026; committed 6e475be, pushed)
 
 Same session. HEAD 05aa585, pushed (Dev's paste: ed37e5d..05aa585, 17 files), Dev's gate 1291 tests on it; the baseline is
 1291 / 93. Dev accepted ("Accepted, build it") the next related point under GitHub #11 (open; stays open). Record
